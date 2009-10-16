@@ -46,10 +46,10 @@ if nargin < 5
     mu1 = [2 2];
     sigma1 = [1 .5; .5 1];
 end
-N(1) = prtRvMvn(mu0,sigma0);
-N(2) = prtRvMvn(mu1,sigma1);
+rv(1) = prtRvMvn(mu0,sigma0);
+rv(2) = prtRvMvn(mu1,sigma1);
 
-X = cat(1,draw(N(1),nSamples),draw(N(2),nSamples));
+X = cat(1,draw(rv(1),nSamples),draw(rv(2),nSamples));
 Y = prtUtilY(nSamples,nSamples);
 
 DataSet = prtDataSet(X,Y);
