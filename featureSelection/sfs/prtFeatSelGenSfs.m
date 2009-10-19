@@ -6,10 +6,11 @@ nFeats = DS.nDimensions;
 sfsPerformance = zeros(min(nFeats,PrtFeatSelOpt.nFeatures),1);
 sfsSelectedFeatures = [];
 
+canceled = false;
 for j = 1:min(nFeats,PrtFeatSelOpt.nFeatures);
     
     if PrtFeatSelOpt.showProgressBar
-        h = waitbar(0,sprintf('SFS: Processing Feature %d Out Of %d',j,min(nFeats,PrtFeatSelOpt.nFeatures)));
+        h = prtUtilWaitbarWithCancel('SFS');
     end
     
     availableFeatures = setdiff(1:nFeats,sfsSelectedFeatures);
@@ -20,12 +21,21 @@ for j = 1:min(nFeats,PrtFeatSelOpt.nFeatures);
         performance(i) = PrtFeatSelOpt.EvaluationMetric(tempDataSet);
         
         if PrtFeatSelOpt.showProgressBar
-            waitbar(i/length(availableFeatures),h);
+            prtUtilWaitbarWithCancel(i/length(availableFeatures),h);
+        end
+        
+        if ~ishandle(h)
+            canceled = true;
+            break
         end
     end
     
-    if PrtFeatSelOpt.showProgressBar
+    if PrtFeatSelOpt.showProgressBar && ~canceled
         close(h);
+    end
+    
+    if canceled
+        break
     end
     
     % Randomly choose the next feature if more than one provide the same performance

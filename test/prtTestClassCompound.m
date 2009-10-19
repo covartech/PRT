@@ -13,5 +13,4 @@ DS = prtDataSetLabeled(DS.data + randn(size(DS.data))*2,DS.dataLabels);
 
 Algo = prtGenerate(DS,opt);
 
-%%
 R = prtRun(Algo,DS);
