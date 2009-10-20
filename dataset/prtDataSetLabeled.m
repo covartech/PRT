@@ -48,7 +48,7 @@ classdef prtDataSetLabeled < prtDataSetBase
                 return
             end
             
-            % Check if we are supplying a set of data sets to join
+            % Check if we are supplying multiple data sets to join
             if all(cellfun(@(c)isa(c,'prtDataSetLabeled'),varargin))
                 prtDataSet = varargin{1};
                 for i = 2:length(varargin)
@@ -56,7 +56,6 @@ classdef prtDataSetLabeled < prtDataSetBase
                 end
                 return
             end
-            
             
             if isa(varargin{1},'prtDataSetLabeled')
                 prtDataSet = varargin{1};
@@ -119,12 +118,6 @@ classdef prtDataSetLabeled < prtDataSetBase
                 error('prt:prtDataSetLabeled:labelsClassNamesMismatch','obj.nClasses (%d) must match size(classNames(:),1) (%d)',obj.nClasses,size(classNames,2));
             end
             obj.classNames = classNames;
-        end
-        function obj = set.dataSetName(obj, dataSetName)
-            if ~isa(dataSetName,'char');
-                error('prt:prtDataSetLabeled:dataSetNameNonString','dataSetName is a (%s), but dataSetName must be a character array',class(dataSetName));
-            end
-            obj.dataSetName = dataSetName;
         end
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         
@@ -229,7 +222,7 @@ classdef prtDataSetLabeled < prtDataSetBase
             end
         end
         function labels = getLabels(obj,indices)
-            if nargin == 1
+            if nargin < 2
                 indices = 1:obj.nObservations;
             end
             labels = obj.dataLabels(indices,:);
