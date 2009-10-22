@@ -18,4 +18,4 @@ end
 X = cat(2,f1,f2,f3,f4);
 classNames = unique(class);
 Y = prtUtilStringsToClassNumbers(class);
-DataSet = prtDataSetLabeled(X,Y,'classNames',classNames,'dataSetName','UCI Iris Data');
+DataSet = prtDataSetLabeled(X,Y,'targetNames',classNames,'name','UCI Iris Data');

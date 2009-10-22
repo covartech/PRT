@@ -29,9 +29,8 @@ elseif iscell(PrtOptions)
                 newDataSets{j} = prtRun(PrtStruct{i}{j},DataSet);
             end
             classLabels = DataSet.getLabels;
-            DataSet = prtDataSet(newDataSets{:});
+            DataSet = joinFeatures(newDataSets{:});
             DataSet = prtDataSetLabeled(DataSet.data,classLabels);
-%            keyboard
         elseif isstruct(PrtOptions{i})
             %Serial
             classLabels = DataSet.getLabels;

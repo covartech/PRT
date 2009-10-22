@@ -42,4 +42,4 @@ R(2,2) = prtRvMvn([-2 -2],[1 .5; .5 1]);
 X = cat(1,draw(R(1,1),nSamples),draw(R(1,2),nSamples),draw(R(2,1),nSamples),draw(R(2,2),nSamples));
 Y = prtUtilY(nSamples*2, nSamples*2);
 
-DataSet = prtDataSet(X,Y,'dataSetName','prtDataBimodal');
+DataSet = prtDataSet(X,Y,'name','prtDataBimodal');

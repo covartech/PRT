@@ -24,7 +24,7 @@ else
             case 1
                 DS = prtDataSetUnLabeled(varargin{:});
             case 2
-                DS = prtDataSetLabeled(varargin{:});
+                DS = prtDataSetClass(varargin{:});
             otherwise
                 error('prt:prtDataSet:InvalidInput','Invalid input.');
         end
@@ -39,7 +39,7 @@ else
             case 2
                 DS = prtDataSetUnLabeled(varargin{:});
             case 3
-                DS = prtDataSetLabeled(varargin{:});
+                DS = prtDataSetClass(varargin{:});
             otherwise
                 error('prt:prtDataSet:InvalidInput','Invalid input.');
         end

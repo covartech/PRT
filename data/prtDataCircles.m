@@ -42,4 +42,4 @@ X1(:,2) = centers(2,2) + radius1*sin(X1thetas) + noiseStd*randn(nSamplesEachHypo
 X = cat(1,X0,X1);
 Y = cat(1,zeros(nSamplesEachHypothesis,1),ones(nSamplesEachHypothesis,1));
 
-DataSet = prtDataSet(X,Y,'dataSetName','prtDataCircles');
+DataSet = prtDataSet(X,Y,'name','prtDataCircles');
