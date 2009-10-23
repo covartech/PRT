@@ -234,6 +234,7 @@ classdef prtDataSetInMemory < prtDataSetBase
             % Convert stuff we want to be displayed into a struct and use
             % the struct display function
             display(struct('name',obj.name,'description',obj.description,'nObservations',obj.nObservations,'nFeatures',obj.nFeatures,'UserData',obj.UserData))
+            
             if ~isCompact
                 fprintf('\n')
             end
