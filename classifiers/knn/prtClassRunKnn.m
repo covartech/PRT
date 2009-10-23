@@ -5,9 +5,9 @@ x = getObservations(PrtDataSet);
 n = PrtDataSet.nObservations;
 k = PrtClassKnn.PrtOptions.k;
 
-nClasses = PrtClassKnn.PrtDataSet.nClasses;
-uClasses = PrtClassKnn.PrtDataSet.uniqueClasses;
-labels = getLabels(PrtClassKnn.PrtDataSet);
+nClasses = PrtClassKnn.PrtDataSet.nUniqueTargets;
+uClasses = PrtClassKnn.PrtDataSet.uniqueTargets;
+labels = getTargets(PrtClassKnn.PrtDataSet);
 y = zeros(n,nClasses);
 
 xTrain = getObservations(PrtClassKnn.PrtDataSet);
@@ -40,5 +40,5 @@ else
 end
 
 [Etc.nVotes,Etc.MapGuessInd] = max(y,[],2);
-Etc.MapGuess = uClasses(PrtResultsKnn.MapGuessInd);
+Etc.MapGuess = uClasses(Etc.MapGuessInd);
 ClassifierResults = prtDataSet(y);

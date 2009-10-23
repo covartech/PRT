@@ -17,5 +17,5 @@ PrtClassOpt.Private.PrtObjectType = 'classifier';
 PrtClassOpt.kernel = {@(x1,x2)prtKernelDc(x1,x2),@(x1,x2) prtKernelRbf(x1,x2,1)};
 PrtClassOpt.Laplacian.maxIterations = 1000;
 PrtClassOpt.Laplacian.thetaTol = 1e-3;
-PrtClassOpt.Laplacian.gNorm = 1e-3;
+PrtClassOpt.Laplacian.gNorm = 1e-1;
 PrtClassOpt.Laplacian.deltaThetaNormTol = 1e-7;

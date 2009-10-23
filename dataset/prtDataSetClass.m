@@ -98,14 +98,14 @@ classdef prtDataSetClass < prtDataSetLabeled
             
             % Set Values
             % To allow for capitalization miss match we do some extra work
-            propNames = properties(prtDataSet);
-            for iPair = 1:length(paramNames)
-                propFindLogical = ~cellfun(@isempty,strfind(propNames,lower(paramNames{iPair})));
-                if sum(propFindLogical) == 0
-                    error('prt:prtDataSetLabeled:invalidInputs','There is no public property %s for the class prtDataSetClass.',paramNames{iPair});
-                end
-                paramNames{iPair} = propNames{propFindLogical};
-            end
+%             propNames = properties(prtDataSet);
+%             for iPair = 1:length(paramNames)
+%                 propFindLogical = ~cellfun(@isempty,strfind(lower(propNames),lower(paramNames{iPair})));
+% %                 if sum(propFindLogical) == 0
+% %                     error('prt:prtDataSetLabeled:invalidInputs','There is no public property %s for the class prtDataSetClass.',paramNames{iPair});
+% %                 end
+%                 paramNames{iPair} = propNames{propFindLogical};
+%             end
             % Now we loop through and apply the properties
             for iPair = 1:length(paramNames)
                 prtDataSet.(paramNames{iPair}) = paramValues{iPair};

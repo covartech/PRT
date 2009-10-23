@@ -12,7 +12,7 @@ if DS.nObservations > 1000
         y(cI) = normcdf(gramm*PrtRvm.Beta);
     end
 else
-    gramm = prtKernelGrammMatrix(DS.data,PrtRvm.PrtDataSet.data,PrtRvm.PrtOptions.kernel);
+    gramm = prtKernelGrammMatrix(DS.getObservations,DS.getObservations,PrtRvm.PrtOptions.kernel);
     y = normcdf(gramm*PrtRvm.Beta);
 end
 

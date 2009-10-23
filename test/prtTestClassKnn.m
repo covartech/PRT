@@ -7,10 +7,9 @@ DS1 = prtDataUnimodal;
 DS2 = prtDataUnimodal;
 
 C = prtGenerate(DS1,prtClassOptKnn);
+[DS,Etc] = prtRun(C,DS2);
 
-DS = prtRun(C,DS2);
-
-cResult = abs(sum(DS.MapGuess-DS2.getLabels)./DS2.nObservations)< 0.1; % 0.1 is reasonable for this dataset
+cResult = abs(sum(Etc.MapGuess-DS2.getTargets)./DS2.nObservations)< 0.1; % 0.1 is reasonable for this dataset
 
 result = result & cResult; % Do this after each sub-test
 

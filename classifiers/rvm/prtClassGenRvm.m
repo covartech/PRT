@@ -9,10 +9,10 @@ if ~DS.isBinary
     error('prtClassGenRvm requires binary data set');
 end
 
-y = DS.dataLabels;
+y = DS.getTargets;
 y(y == 0) = -1;   %req'd for algorithm
 
-x = DS.data;
+x = DS.getObservations;
 [gramm,nBasis] = prtKernelGrammMatrix(x,x,Options.kernel);
 
 PrtRvm.nBasis = nBasis; %this can be used in plotting or for backing out which kernel corresponds to which element of w
