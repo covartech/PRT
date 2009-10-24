@@ -1,5 +1,5 @@
 function DataSet = prtDataBimodal(N)
-%DPRTDATABIMODAL   Generates some bimodal example data for the DPRT.
+%prtDataBimodal   Generates some bimodal example data for the DPRT.
 %  The data is distributed:
 %       H0: 1/2N([0 0],eye(2)) + 1/2*N([-4 -4],eye(2))
 %       H1: 1/2N([2 2],[1 .5; .5 1]) + 1/2*N([-2 -2],[1 .5; .5 1]

@@ -1,5 +1,5 @@
-function Y = mvnLogPdf(X,mu,Sigma)
-% MVNLOGPDF Multi-variate Normal Log PDF
+function Y = prtRvUtilMvnLogPdf(X,mu,Sigma)
+% prtRvUtilMvnLogPdf Multi-variate Normal Log PDF
 %
 % Syntax: Y = mvnLogPdf(X,mu,Sigma)
 %

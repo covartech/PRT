@@ -1,5 +1,5 @@
-function y = mvtLogPdf(x,mu,Sigma,dof)
-% y = mvtLogPdf(x,mu,Sigma,dof)
+function y = prtRvUtilMvtLogPdf(x,mu,Sigma,dof)
+% y = prtRvUtilMvtLogPdf(x,mu,Sigma,dof)
 
 d = size(x,2);
 
