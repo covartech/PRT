@@ -1,4 +1,4 @@
-classdef prtDataSetLabeledInMemory < prtDataSetLabeled & prtDataSetInMemory
+classdef prtDataSetLabeledInMemory < prtDataSetLabeled & prtDataSetBaseInMemoryLabeled
     
     properties (Dependent)
         nObservations       % size(data,1)
@@ -9,6 +9,7 @@ classdef prtDataSetLabeledInMemory < prtDataSetLabeled & prtDataSetInMemory
     % inherits: data, targets from prtDataSetInMemoryTemp
     
     methods
+        
         function nObservations = get.nObservations(obj)
             nObservations = size(obj.data,1); %use InMem's .data field
         end
@@ -72,36 +73,6 @@ classdef prtDataSetLabeledInMemory < prtDataSetLabeled & prtDataSetInMemory
             
             obj = catObservations@prtDataSetInMemory(obj,newData);     %inMemory
             obj = addObservationNames(obj,newObsNames,oldN);           %dataSetBase
-        end
-
-        %Required by prtDataSetLabeled
-        function targets = getTargets(obj,indices1,indices2)
-            if nargin < 3
-                indices2 = 1:obj.nTargetDimensions;
-            end
-            if nargin < 2
-                indices1 = 1:obj.nObservations;
-            end
-            if max(indices1) > obj.nObservations
-                error('prt:prtDataSetLabeledInMemory:incorrectInput','max(indices1) (%d) must be <= nObservations (%d)',max(indices1),obj.nObservations);
-            end
-            if max(indices2) > obj.nTargetDimensions
-                error('prt:prtDataSetLabeledInMemory:incorrectInput','max(indices2) (%d) must be <= nTargetDimensions (%d)',max(indices1),obj.nTargetDimensions);
-            end
-            targets = obj.targets(indices1,indices2);
-        end
-        
-        function obj = setTargets(obj,targets,indices1,indices2)
-            if nargin < 4
-                indices2 = 1:size(targets,2);
-            end
-            if nargin < 3
-                indices1 = 1:obj.nObservations;
-            end
-            if max(indices1) > obj.nObservations
-                error('prt:prtDataSetLabeledInMemory:incorrectInput','max(indices1) (%d) must be <= nObservations (%d)',max(indices1),obj.nObservations);
-            end
-            obj.targets(indices1,indices2) = targets;
         end
         
         function nTargetDimensions = get.nTargetDimensions(obj)

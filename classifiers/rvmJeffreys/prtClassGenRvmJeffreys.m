@@ -12,7 +12,7 @@ if ~DS.isBinary
     error('prtClassGenRvm requires binary data set');
 end
 
-y = DS.dataLabels;
+y = DS.getTargets;
 y(y == 0) = -1;     %req'd for algorithm
 
 x = DS.data;

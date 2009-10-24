@@ -1,16 +1,46 @@
-classdef prtDataSetInMemoryTemp < prtDataSetBase
+classdef prtDataSetBaseInMemory
     
     properties %public... for now... this is controversial :)
         data = [];            % matrix, doubles, features
-        targets = [];         % matrix, doubles, targets, for unlabeled data sets, just ignore(?)
     end
     
     methods
+        
+        
         %% Constructor %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        function obj = prtDataSetInMemoryTemp(varargin)
+        function obj = prtDataSetBaseInMemory(varargin)
             % Nothing to do.
             % This should only be called when initializing a sub-class
+        end
+        
+        %Required by prtDataSetBase:
+        
+        %Return the data by indices
+        function data = getObservations(obj,indices1,indices2)
+            if nargin < 2 || isempty(indices1)
+                indices1 = 1:obj.nObservations;
+            end
+            if nargin < 3 || isempty(indices2)
+                indices2 = 1:obj.nFeatures;
+            end
+            data = obj.data(indices1,indices2);
+        end
+        
+        %Set the observations to a new set
+        function obj = setObservations(obj,data,indices1,indices2)
+            %check sizes:
+            if nargin < 3 || isempty(indices1)
+                indices1 = 1:obj.nObservations;
+            end
+            if nargin < 4 || isempty(indices2)
+                indices2 = 1:obj.nFeatures;
+            end
+            if ~isequal([length(indices1),length(indices2)],size(data))
+                error('setObservations sizes not commensurate');
+            end
+            obj.data(indices1,indices2) = data;
+            return;
         end
         
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -26,132 +56,36 @@ classdef prtDataSetInMemoryTemp < prtDataSetBase
         function data = get.data(obj)
             data = obj.data;
         end
-        function obj = set.targets(obj, targets)
-            if ~isa(targets,'double') || ndims(targets) ~= 2
-                error('prt:prtDataSetLabeled:invalidData','targets must be a 2-Dimensional double array');
+        
+        function obj = joinObservations(obj, varargin)
+            for iCat = 1:length(varargin)
+                obj = catObservations(obj, varargin{iCat}.getObservations);
             end
-            obj.targets = targets;
         end
-        function targets = get.targets(obj)
-            targets = obj.targets;
+        
+        function obj = joinFeatures(obj, varargin)
+            for iCat = 1:length(varargin)
+                obj = catFeatures(obj, varargin{iCat}.getObservations);
+            end
+        end
+        
+        function obj = catFeatures(obj, newData)
+            obj.data = cat(2,obj.data, newData);
+        end
+        
+        function obj = catObservations(obj, newData)
+            obj.data = cat(1,obj.data, newData);
+        end
+        
+        function export(obj,varargin)
+            error('Not Done Yet');
         end
     end
+       
 %         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%         %% Other Get Methods %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%         %% Other Methods %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%         function featureNames = get.featureNames(obj)
-%             % We choose not to generate the default names here to save
-%             % time. Because the GetAccess is protected we generate these in
-%             % getFeatureNames(). This means internally or in sub-classes
-%             % you will sometimes get an {} if nothing has been set whereas 
-%             % getFeatureNames() will generate the default feature names.
-%             featureNames = obj.featureNames;
-%         end
-%         function obsNames = get.observationNames(obj)
-%             % We choose not to generate the default names here to save
-%             % time. Because the GetAccess is protected we generate these in
-%             % getObservationsNames(). This means internally or in
-%             % sub-classes you will sometimes get an {} if nothing has been
-%             % set whereas getObservationNames() will generate the default
-%             % observation names.
-%             obsNames = obj.observationNames;
-%         end
-%         function name = get.name(obj)
-%             if isempty(obj.name)
-%                 name = 'Unnamed';
-%             else
-%                 name = obj.name;
-%             end
-%         end
-%         
-% %         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% %         %% Other Methods %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% %         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% %         function obj = catFeatures(obj, newData, newFeatureNames)
-% %             if nargin < 2
-% %                 newFeatureNames = {};
-%             else
-%                 if ~iscellstr(newFeatureNames)
-%                     error('prt:prtDataSetInMemory:incorrectInput','newFeatureNames, must be a cellstr.');
-%                 end
-%                 if length(newFeatureNames) ~= size(newData,2)
-%                     error('prt:prtDataSetInMemory:incorrectInput','The number of observations in the new data and the new observation names do not match.');
-%                 end
-%             end
-%             
-%             % We need this in the event that we need to develop
-%             % featureNames
-%             oldNDims = obj.nFeatures;
-%             
-%             % Cat the data and labels
-%             obj.data = cat(2,obj.data, newData);
-%             
-%             if ~isempty(obj.featureNames)
-%                 if isempty(newFeatureNames)
-%                     % Generate default
-%                     newFeatureNames = cell(1,size(newData,2));
-%                     for i = 1:length(indices)
-%                         newFeatureNames{i,1} = sprintf('Feature %d',i+oldNDims);
-%                     end
-%                 else
-%                     obj.featureNames = cat(2,obj.getFeatureNames, newFeatureNames(:)');
-%                 end
-%             end
-%         end
-%         function obj = catObservations(obj, newData, newObsNames)
-%             if nargin < 3
-%                 newObsNames = {};
-%             else
-%                 if ~iscellstr(newObsNames)
-%                     error('prt:prtDataSetInMemory:incorrectInput','newObsNames, must be a cellstr.');
-%                 end
-%                 if length(newObsNames) ~= size(newData,1)
-%                     error('prt:prtDataSetInMemory:incorrectInput','The number of observations in the new data and the new observation names do not match.');
-%                 end
-%             end
-%             
-%             if size(newData,2) ~= obj.nFeatures
-%                 error('prt:prtDataSetInMemory:incorrectDimensionality','The dimensionality of the specified data (%d) does not match the dimensionality of this dataset (%d).', size(newData,2), obj.nFeatures);
-%             end
-%             
-%             % We need this in the event that we need to develop
-%             % observations
-%             oldNObs = obj.nObservations;
-%             
-%             % Cat the data and labels
-%             obj.data = cat(1,obj.data, newData);
-%             
-%             if ~isempty(obj.observationNames)
-%                 if isempty(newObsNames)
-%                     % Generate default
-%                     newObsNames = cell(size(newData,1),1);
-%                     for i = 1:length(indices)
-%                         newObsNames{i,1} = sprintf('Observation %d',i+oldNObs);
-%                     end
-%                 else
-%                     obj.observationNames = cat(1,obj.getObservationNames, newObsNames(:));
-%                 end
-%             end
-%         end
-%         function obj = joinFeatures(obj, varargin)
-%             for iCat = 1:length(varargin)
-%                 obj = catFeatures(obj, varargin{iCat}.getObservations, varargin{iCat}.getFeatureNames);
-%             end
-%         end
-%         function obj = joinObservations(obj, varargin)
-%             for iCat = 1:length(varargin)
-%                 obj = catObservations(obj, varargin{iCat}.getObservations, varargin{iCat}.getObservationNames);
-%             end
-%         end
-%         function n = size(obj)
-%             n = [obj.nObservations obj.nFeatures];
-%         end
-%         function b = isempty(obj)
-%             b = isempty(obj.data);
-%         end
-%         function disp(obj)
-%             display(obj)
-%         end
+       
 %         function display(obj)
 %             isCompact = strcmp(get(0,'FormatSpacing'),'compact');
 %             
@@ -170,9 +104,6 @@ classdef prtDataSetInMemoryTemp < prtDataSetBase
 %             if ~isCompact
 %                 fprintf('\n')
 %             end
-%         end
-%         function export(obj,varargin)
-%             error('Not Done Yet');
 %         end
 %         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %         %% Plotting Methods %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

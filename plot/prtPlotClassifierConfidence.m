@@ -11,7 +11,7 @@ if nargin == 1
     PrtDataSet = [];
 end
 
-nDims = PrtClassifier.PrtDataSet.nDimensions;
+nDims = PrtClassifier.PrtDataSet.nFeatures;
 if nDims > 3
     error('PrtClassifier.PrtDataSet.nDimensions (%d) must be less than or equal to 3',PrtClassifier.PrtDataSet.nDimensions);
 end

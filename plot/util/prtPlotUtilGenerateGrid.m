@@ -3,7 +3,7 @@ function [linGrid,gridSize,xx,yy,zz] = prtPlotUtilGenerateGrid(PrtClassifier,Prt
 xx = [];
 yy = [];
 zz = [];
-nDims = PrtClassifier.PrtDataSet.nDimensions;
+nDims = PrtClassifier.PrtDataSet.nFeatures;
 [plotMins,plotMaxs] = prtPlotUtilGetPlotLims(PrtClassifier,PrtDataSet);
 
 PlotOptions = PrtClassifier.PrtOptions.PlotOptions;
