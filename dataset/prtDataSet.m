@@ -7,8 +7,8 @@ function DS = prtDataSet(varargin)
 % UnLabeled = prtDataSet(X)
 % UnLabeled = prtDataSet(X,str1,val1,str2,val2,...)
 
-if isa(varargin{1},'prtDataSetLabeled')
-    DS = prtDataSetLabeled(varargin{:});
+if isa(varargin{1},'prtDataSetClass')
+    DS = prtDataSetClass(varargin{:});
     return;
 elseif isa(varargin{1},'prtDataSetUnLabeled')
     DS = prtDataSetUnLabeled(varargin{:});

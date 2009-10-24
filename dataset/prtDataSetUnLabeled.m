@@ -9,7 +9,7 @@ classdef prtDataSetUnLabeled < prtDataSetInMemory
     methods
         %% Constructor %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        function prtDataSet = prtDataSetUnsupervised(varargin)
+        function prtDataSet = prtDataSetUnLabeled(varargin)
             % prtDataSet = prtDataSetClass
             % prtDataSet = prtDataSetClass(prtDataSetClassIn, {paramName1, paramVal2, ...})
             % prtDataSet = prtDataSetClass(data, {paramName1, paramVal2, ...})
@@ -120,7 +120,7 @@ classdef prtDataSetUnLabeled < prtDataSetInMemory
             % Handle Outputs
             varargout = {};
             if nargout > 0
-                varargout = {handleArray};
+                varargout = {handleArray,{}};
             end
         end
     end

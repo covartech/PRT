@@ -4,7 +4,7 @@ function HandleStructure = prtPlot(varargin)
 %HandleStructure = prtPlot(PrtClassifier)
 %HandleStructure = prtPlot(PrtClassifier,PrtDataSet)
 
-if nargin == 1 && isa(varargin{1},'prtDataSet')
+if nargin == 1 && isa(varargin{1},'prtDataSetBase')
     [handles,legendStrings] = plot(varargin{1});
     
     if nargout > 0
