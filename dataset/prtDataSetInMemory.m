@@ -84,23 +84,16 @@ classdef prtDataSetInMemory
         function obj = catObservations(obj, newData)
             obj.data = cat(1,obj.data, newData);
         end
-
+        
+        function export(obj,varargin)
+            error('Not Done Yet');
+        end
     end
        
 %         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %         %% Other Methods %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
        
-                 
-%         function n = size(obj)
-%             n = [obj.nObservations obj.nFeatures];
-%         end
-%         function b = isempty(obj)
-%             b = isempty(obj.data);
-%         end
-%         function disp(obj)
-%             display(obj)
-%         end
 %         function display(obj)
 %             isCompact = strcmp(get(0,'FormatSpacing'),'compact');
 %             
@@ -119,9 +112,6 @@ classdef prtDataSetInMemory
 %             if ~isCompact
 %                 fprintf('\n')
 %             end
-%         end
-%         function export(obj,varargin)
-%             error('Not Done Yet');
 %         end
 %         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %         %% Plotting Methods %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

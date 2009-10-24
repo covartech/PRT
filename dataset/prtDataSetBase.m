@@ -175,15 +175,12 @@ classdef prtDataSetBase
         %Set the observations to a new set
         obj = setObservations(obj,data,indices1,indices2)
         
+        obj = joinFeatures(obj1,obj2)
+        obj = joinObservations(obj1,obj2)
+        obj = catObservations(obj1,newObservations)
+        obj = catFeatures(obj1,newFeatures)
+        
         %         handles = plot(obj)
-        %
-        %       Can all these JOINS and CATS be replaced by:
-        %         obj = cat(dim,obj,varargin), which calls horzcat and subcat?
-        %
-                 obj = joinFeatures(obj1,obj2)
-                 obj = joinObservations(obj1,obj2)
-        %         obj = catObservations(obj1,newObservations)
-        %         obj = catFeatures(obj1,newFeatures)
         %
         %         obj = removeObservations(obj,indices)
         %         obj = retainObservations(obj,indices)
