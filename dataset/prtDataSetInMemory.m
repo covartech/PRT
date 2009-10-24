@@ -6,6 +6,8 @@ classdef prtDataSetInMemory
     end
     
     methods
+        
+        
         %% Constructor %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         function obj = prtDataSetInMemoryTemp(varargin)
@@ -55,6 +57,7 @@ classdef prtDataSetInMemory
         function data = get.data(obj)
             data = obj.data;
         end
+        
         function obj = set.targets(obj, targets)
             if ~isa(targets,'double') || ndims(targets) ~= 2
                 error('prt:prtDataSetLabeled:invalidData','targets must be a 2-Dimensional double array');

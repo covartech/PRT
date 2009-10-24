@@ -166,6 +166,39 @@ classdef prtDataSetBase
             end
         end
     end
+    methods (Access = 'protected',Static = true)
+        function h = plotPoints(cX,featureNames,classSymbols,classColors,classEdgeColor,linewidth)
+            
+            nPlotDimensions = size(cX,2);
+            if nPlotDimensions < 1
+                warning('prt:plot:NoPlotDimensionality','No plot dimensions requested.');
+                return
+            end
+            if nPlotDimensions > 3
+                error('prt:plot:plotDimensionality','The number of requested plot dimensions (%d) is greater than 3. You may want to use explore() to selet and visualize a subset of the features.',nPlotDimensions);
+            end
+            
+            switch nPlotDimensions
+                case 1
+                    h = plot(cX,ones(size(cX)),classSymbols,'MarkerFaceColor',classColors,'MarkerEdgeColor',classEdgeColor,'linewidth',linewidth);
+                    xlabel(featureNames{1});
+                    grid on
+                case 2
+                    h = plot(cX(:,1),cX(:,2),classSymbols,'MarkerFaceColor',classColors,'MarkerEdgeColor',classEdgeColor,'linewidth',linewidth);
+                    xlabel(featureNames{1});
+                    ylabel(featureNames{2});
+                    grid on
+                case 3
+                    h = plot3(cX(:,1),cX(:,2),cX(:,3),classSymbols,'MarkerFaceColor',classColors,'MarkerEdgeColor',classEdgeColor,'linewidth',linewidth);
+                    xlabel(featureNames{1});
+                    ylabel(featureNames{2});
+                    zlabel(featureNames{3});
+                    grid on;
+            end
+            
+        end
+    end
+    
     methods (Abstract) 
         %all sub-classes must define these behaviors, this is the contract
         %that all "data sets" must follow

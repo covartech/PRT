@@ -1,5 +1,9 @@
 classdef prtDataSetLabeled < prtDataSetBase
     
+    properties (Dependent, Abstract)
+        nTargetDimensions
+    end
+    
     methods (Abstract)
         %All labeled data sets must implement at a minumum the folowing:
         targets = getTargets(obj,indices1,indices2)
