@@ -4,9 +4,9 @@ if ~isfield(PrtClassifier.PrtOptions,'PlotOptions')
     PrtClassifier.PrtOptions.PlotOptions = optionsDprtPlot;
 end
 
-nDims = PrtClassifier.PrtDataSet.nDimensions;
+nDims = PrtClassifier.PrtDataSet.nFeatures;
 if nDims > 3
-    error('PrtClassifier.PrtDataSet.nDimensions (%d) must be less than or equal to 3',PrtClassifier.PrtDataSet.nDimensions);
+    error('PrtClassifier.PrtDataSet.nFeatures (%d) must be less than or equal to 3',PrtClassifier.PrtDataSet.nFeatures);
 end
 
 % % Now we remove the PreProcess field so when we run the grid we don't

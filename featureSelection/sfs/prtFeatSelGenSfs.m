@@ -1,7 +1,7 @@
 function prtFeatSelector = prtFeatSelGenSfs(DS,PrtFeatSelOpt)
 %prtFeatSelector = prtFeatSelGenSfs(DS,PrtFeatSelOpt,PrtWrapperOpt)
 
-nFeats = DS.nDimensions;
+nFeats = DS.nFeatures;
 
 sfsPerformance = zeros(min(nFeats,PrtFeatSelOpt.nFeatures),1);
 sfsSelectedFeatures = [];

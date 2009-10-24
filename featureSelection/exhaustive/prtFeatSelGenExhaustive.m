@@ -4,13 +4,13 @@ function prtFeatSelector = prtFeatSelGenExhaustive(DS,PrtFeatSelOpt)
 bestPerformance = -inf;
 bestChoose = [];
 
-PrtFeatSelOpt.nFeatures = min(DS.nDimensions,PrtFeatSelOpt.nFeatures);
+PrtFeatSelOpt.nFeatures = min(DS.nFeatures,PrtFeatSelOpt.nFeatures);
 %warning off;
-maxIterations = nchoosek(DS.nDimensions,PrtFeatSelOpt.nFeatures);
+maxIterations = nchoosek(DS.nFeatures,PrtFeatSelOpt.nFeatures);
 %warning on;
 
 iterationCount = 1;
-nextChooseFn = prtNextChoose(DS.nDimensions,PrtFeatSelOpt.nFeatures);
+nextChooseFn = prtNextChoose(DS.nFeatures,PrtFeatSelOpt.nFeatures);
 firstChoose = nextChooseFn();
 currChoose = firstChoose;
 

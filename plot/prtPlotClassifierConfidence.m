@@ -13,7 +13,7 @@ end
 
 nDims = PrtClassifier.PrtDataSet.nFeatures;
 if nDims > 3
-    error('PrtClassifier.PrtDataSet.nDimensions (%d) must be less than or equal to 3',PrtClassifier.PrtDataSet.nDimensions);
+    error('PrtClassifier.PrtDataSet.nFeatures (%d) must be less than or equal to 3',PrtClassifier.PrtDataSet.nFeatures);
 end
 
 [isMary, isEmulated] = prtUtilDetermineMary(PrtClassifier);

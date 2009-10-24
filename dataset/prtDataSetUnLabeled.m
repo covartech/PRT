@@ -1,40 +1,55 @@
 classdef prtDataSetUnLabeled < prtDataSetInMemory
     
-    % There are no new properties
-    % All properties are inherited from prtDataSetInMemory
-
+    properties (Dependent, Hidden)
+        % Additional properties for plotting
+        plottingColors
+        plottingSymbols
+    end
+    
     methods
         %% Constructor %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        function prtDataSet = prtDataSetUnLabeled(varargin)
-            % prtDataSet = prtDataSetUnLabeled
-            % prtDataSet = prtDataSetUnLabeled(data)
-            % prtDataSet = prtDataSetUnLabeled(data, paramName1, paramVal1, ...)
+        function prtDataSet = prtDataSetUnsupervised(varargin)
+            % prtDataSet = prtDataSetClass
+            % prtDataSet = prtDataSetClass(prtDataSetClassIn, {paramName1, paramVal2, ...})
+            % prtDataSet = prtDataSetClass(data, {paramName1, paramVal2, ...})
             
-            if nargin == 0 % Empty constructor
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            % Empty Constructor %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            % prtDataSet = prtDataSetClass %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            if nargin == 0
+                % Empty constructor
                 % Nothing to do
                 return
             end
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             
-            % Check if we are supplying a set of data sets to join
-            if all(cellfun(@(c)isa(c,'prtDataSetUnLabeled'),varargin)) || all(cellfun(@(c)isa(c,'prtDataSetLabeled'),varargin))
-                prtDataSet = varargin{1};
-                if isa(varargin{1},'prtDataSetLabeled')
-                    prtDataSet = prtDataSetUnLabeled(prtDataSet.data);
-                end
-                for i = 2:length(varargin)
-                    prtDataSet = prtDataSetUnLabeled(prtDataSet,'data',cat(2,prtDataSet.data,varargin{i}.data));
-                end
-                return
-            end
-            
-            if isa(varargin{1},'prtDataSetUnLabeled')
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            % All Other Constructors %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            % prtDataSet = prtDataSetClass(prtDataSetIn, {paramName1, paramVal2, ...})
+            % prtDataSet = prtDataSetClass(data, targets, {paramName1, paramVal2, ...})
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            if isa(varargin{1}, 'prtDataSetUnsupervised')
+                %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                % Copy Constructor %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                % prtDataSet = prtDataSetClass(prtDataSetClassIn, {paramName1, paramVal2, ...})
+                % Will be the same as other constructors after this..
+                %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
                 prtDataSet = varargin{1};
                 varargin = varargin(2:end);
+                
             else
+                %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                % Regular Constructor %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                % prtDataSet = prtDataSetUnsupervised(data, {paramName1, paramVal2, ...})
+                %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
                 prtDataSet.data = varargin{1};
                 varargin = varargin(2:end);
             end
+            
+            % At this point we have varargin as string value pairs and
+            % prtDataSet with data and targets set
             
             % Quick exit if no more inputs.
             if isempty(varargin)
@@ -50,15 +65,63 @@ classdef prtDataSetUnLabeled < prtDataSetInMemory
             if ~iscellstr(paramNames)
                 inputError = true;
             end
+            
             paramValues = varargin(2:2:end);
             if inputError
-                error('prt:prtDataSetUnLabeled:invalidInputs','additional input arguments must be specified as parameter string, value pairs.')
+                error('prt:prtDataSetUnsupervised:invalidInputs','Additional input arguments must be specified as parameter string, value pairs.')
             end
-            % Set Values
+            
+            % Now we loop through and apply the properties
             for iPair = 1:length(paramNames)
                 prtDataSet.(paramNames{iPair}) = paramValues{iPair};
             end
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         end
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    end
+    
+    methods
+       
+        function colors = get.plottingColors(obj)
+            colors = prtPlotUtilClassColors(obj.nUniqueTargets);
+        end
+        function symbols = get.plottingSymbols(obj)
+            symbols = prtPlotUtilClassSymbols(obj.nUniqueTargets);
+        end
+        
+        %PLOT:
+        function varargout = plot(obj, featureIndices)
+            
+             if nargin < 2 || isempty(featureIndices)
+                 featureIndices = 1:obj.nFeatures;
+             end
+             if islogical(featureIndices)
+                 featureIndices = find(featureIndices);
+             end
+            
+            nPlotDimensions = length(featureIndices);
+            if nPlotDimensions < 1
+                warning('prt:plot:NoPlotDimensionality','No plot dimensions requested.');
+                return
+            end
+            
+            nClasses = 1;
+            classColors = prtPlotUtilClassColors(nClasses);
+            classSymbols = prtPlotUtilClassSymbols(nClasses);
+            handleArray = zeros(nClasses,1);
+            
+            cX = obj.getObservations;
+            classEdgeColor = min(classColors + 0.2,[0.8 0.8 0.8]);
+            linewidth = .1;
+            handleArray = prtDataSetBase.plotPoints(cX,obj.getFeatureNames(featureIndices),classSymbols,classColors,classEdgeColor,linewidth);
+            
+            % Set title
+            title(obj.name);
+                        
+            % Handle Outputs
+            varargout = {};
+            if nargout > 0
+                varargout = {handleArray};
+            end
+        end
     end
 end

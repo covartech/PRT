@@ -3,11 +3,11 @@ classdef prtDataSetRegress < prtDataSetLabeled
     %
     % Inherited propeties from prtDataSetInMemory
     %   Dependent:
-    %    nDimensions   % scalar, number of dimensions (columns) of the data
+    %    nFeatures   % scalar, number of dimensions (columns) of the data
     %    nObservations % scalar, number of observations (rows) of the data
     %   GetAccess = private
     %    dataSetName = ''      % char
-    %    featureNames  = {}    % strcell, 1 x nDimensions
+    %    featureNames  = {}    % strcell, 1 x nFeatures
     %    observationNames = {} % strcell, nObservations x 1
     %    data = []             % matrix, doubles, features
     %

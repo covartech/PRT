@@ -2,10 +2,10 @@ function PrtClassFld = prtClassGenFld(PrtDataSet,PrtClassOpt)
 %PrtClassFld = prtClassGenFld(PrtDataSet,PrtClassOpt)
 
 x = getObservations(PrtDataSet);
-y = getLabels(PrtDataSet);
+y = getTargets(PrtDataSet);
 
 n = PrtDataSet.nObservations;
-p = PrtDataSet.nDimensions;
+p = PrtDataSet.nFeatures;
 
 if p > n
     warning('prt:prtDataSet:illconditioned','PrtDataSet has n (%d) < p (%d); PrtClassFld may not be stable',n,p);

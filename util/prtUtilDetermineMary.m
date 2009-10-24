@@ -5,7 +5,7 @@ function [useMary, emulate] = prtUtilDetermineMary(varargin)
 %         [useMary, emulate] = prtUtilDetermineMary(PrtClassifier)
 %
 
-if nargin == 2 && isa(varargin{1},'prtDataSetLabeled') 
+if nargin == 2 && isa(varargin{1},'prtDataSetClass') 
     maryData = varargin{1}.isMary;
     PrtClassOpt = varargin{2};
 elseif prtUtilIsClassifier(varargin{1})

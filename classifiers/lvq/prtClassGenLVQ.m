@@ -8,10 +8,10 @@ function PrtClassKmeansPrototypes = prtClassGenLVQ(PrtDataSet,PrtClassOpt)
 % Peter Torrione
 
 x = getObservations(PrtDataSet);
-y = getLabels(PrtDataSet);
+y = getTargets(PrtDataSet);
 
 n = PrtDataSet.nObservations;
-p = PrtDataSet.nDimensions;
+p = PrtDataSet.nFeatures;
 
 uY = unique(y);
 PrtClassKmeansPrototypes.uY = uY; % we need this for later

@@ -28,12 +28,12 @@ elseif iscell(PrtOptions)
                 PrtStruct{i}{j} = prtGenerate(DataSet,cPrtOptionsCell{j});
                 newDataSets{j} = prtRun(PrtStruct{i}{j},DataSet);
             end
-            classLabels = DataSet.getLabels;
+            classLabels = DataSet.getTargets;
             DataSet = joinFeatures(newDataSets{:});
             DataSet = prtDataSetLabeled(DataSet.data,classLabels);
         elseif isstruct(PrtOptions{i})
             %Serial
-            classLabels = DataSet.getLabels;
+            classLabels = DataSet.getTargets;
             PrtStruct{i} = prtGenerate(DataSet,PrtOptions{i});
             DataSet = prtRun(PrtStruct{i},DataSet);
             DataSet = prtDataSetLabeled(DataSet.data,classLabels);
