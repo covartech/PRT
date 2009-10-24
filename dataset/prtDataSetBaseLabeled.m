@@ -1,4 +1,4 @@
-classdef prtDataSetLabeled < prtDataSetBase
+classdef prtDataSetBaseLabeled < prtDataSetBase
     
     properties (Dependent, Abstract)
         nTargetDimensions
