@@ -1,4 +1,4 @@
-classdef prtDataSetInMemory < prtDataSetBase
+classdef prtDataSetInMemoryTemp < prtDataSetBase
     
     properties %public... for now... this is controversial :)
         data = [];            % matrix, doubles, features

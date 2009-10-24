@@ -4,13 +4,32 @@ classdef prtDataSetBase
         nObservations       % size(data,1)
         nFeatures           % size(data,2)
     end
+    properties  %public, for now
+        name = ''             % char
+        description = ''      % char
+        UserData = struct([]) % Struct of additional data
+    end
     
-    properties (GetAccess = 'protected',SetAccess = 'protected')
+    %only prtDataSetBase knows about these, use getObs... and getFeat.. to
+    %get and set these, they handle the dirty stuff
+    properties (GetAccess = 'private',SetAccess = 'private')
         observationNames = {}
         featureNames = {}
     end
     
     methods
+        function obj = set.name(obj, newName)
+            if ~isa(newName,'char');
+                error('prt:prtDataSetLabeled:dataSetNameNonString','Specified name is a (%s), but name must be a character array',class(newName));
+            end
+            obj.name = newName;
+        end
+        function obj = set.description(obj, newDescr)
+            if ~isa(newDescr,'char');
+                error('prt:prtDataSetLabeled:dataSetNameNonString','Specified description is a (%s), but name must be a character array',class(newDescr));
+            end
+            obj.description = newDescr;
+        end
         
         function obsNames = getObservationNames(obj,indices1)
             % getObservationNames - Return DataSet's Observation Names
@@ -117,6 +136,10 @@ classdef prtDataSetBase
         obj = setObservations(obj,data,indices1,indices2)
         
         %         handles = plot(obj)
+        %
+        %       Can all these JOINS and CATS be replaced by:
+        %         obj = cat(dim,obj,varargin), which calls horzcat and subcat?
+        %
         %         obj = joinFeatures(obj1,obj2)
         %         obj = joinObservations(obj1,obj2)
         %         obj = catObservations(obj1,newObservations)
