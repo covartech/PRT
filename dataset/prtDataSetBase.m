@@ -12,7 +12,7 @@ classdef prtDataSetBase
     
     %only prtDataSetBase knows about these, use getObs... and getFeat.. to
     %get and set these, they handle the dirty stuff
-    properties (GetAccess = 'private',SetAccess = 'private')
+    properties (GetAccess = 'protected',SetAccess = 'private')
         observationNames = {}
         featureNames = {}
     end
@@ -47,7 +47,7 @@ classdef prtDataSetBase
                 indices1 = (1:obj.nObservations)';
             end
             if isempty(obj.observationNames)
-                obsNames = prtUtilCellPrintf('Observation %d',num2cell(indices1));
+                obsNames = prtDataSetBase.generateDefaultObservationNames(indices1);
             else
                 obsNames = obj.observationNames(indices1);
             end
@@ -74,6 +74,7 @@ classdef prtDataSetBase
             obj.observationNames(indices1) = obsNames;
         end
         
+        
         function featNames = getFeatureNames(obj,indices2)
             % getFeatureNames - Return DataSet's Feature Names
             %
@@ -90,7 +91,7 @@ classdef prtDataSetBase
                 indices2 = (1:obj.nFeatures)';
             end
             if isempty(obj.featureNames)
-                featNames = prtUtilCellPrintf('Feature %d',num2cell(indices2));
+                featNames = prtDataSetBase.generateDefaultFeatureNames(indices2);
             else
                 featNames = obj.featureNames(indices2);
             end
@@ -126,6 +127,45 @@ classdef prtDataSetBase
         
     end
 
+    methods (Access = 'private', Static = true)
+        function featNames = generateDefaultFeatureNames(indices2)
+            featNames = prtUtilCellPrintf('Feature %d',num2cell(indices2));
+            featNames = featNames(:);
+        end
+        function obsNames = generateDefaultObservationNames(indices2)
+            obsNames = prtUtilCellPrintf('Observation %d',num2cell(indices2));
+            obsNames = obsNames(:);
+        end
+    end
+    
+    methods (Access = 'protected')
+        
+        function obj = addFeatureNames(obj,newFeatureNames,prevDim)
+            if isempty(obj.featureNames) && isempty(newFeatureNames)
+                %don't worry about it
+                return;
+            elseif ~isempty(obj.featureNames) && isempty(newFeatureNames)
+                obj.featureNames = cat(1,obj.featureNames,prtDataSetBase.generateDefaultFeatureNames((length(obj.featureNames)+1:obj.nFeatures)'));
+            elseif isempty(obj.featureNames) && ~isempty(newFeatureNames)
+                obj.featureNames = cat(1,prtDataSetBase.generateDefaultFeatureNames(1:prevDim),newFeatureNames(:));
+            else
+                obj.featureNames = cat(1,obj.featureNames,newFeatureNames);
+            end
+        end
+        
+        function obj = addObservationNames(obj,newObservationNames,prevDim)
+            if isempty(obj.observationNames) && isempty(newObservationNames)
+                %don't worry about it
+                return;
+            elseif ~isempty(obj.observationNames) && isempty(newObservationNames)
+                obj.observationNames = cat(1,obj.observationNames,prtDataSetBase.generateDefaultObservationNames((length(obj.observationNames)+1:obj.nObservations)'));
+            elseif isempty(obj.observationNames) && ~isempty(newObservationNames)
+                obj.observationNames = cat(1,prtDataSetBase.generateDefaultObservationNames(1:prevDim),newObservationNames(:));
+            else
+                obj.observationNames = cat(1,obj.observationNames,newObservationNames);
+            end
+        end
+    end
     methods (Abstract) 
         %all sub-classes must define these behaviors, this is the contract
         %that all "data sets" must follow
@@ -140,8 +180,8 @@ classdef prtDataSetBase
         %       Can all these JOINS and CATS be replaced by:
         %         obj = cat(dim,obj,varargin), which calls horzcat and subcat?
         %
-        %         obj = joinFeatures(obj1,obj2)
-        %         obj = joinObservations(obj1,obj2)
+                 obj = joinFeatures(obj1,obj2)
+                 obj = joinObservations(obj1,obj2)
         %         obj = catObservations(obj1,newObservations)
         %         obj = catFeatures(obj1,newFeatures)
         %
