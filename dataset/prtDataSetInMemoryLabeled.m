@@ -1,4 +1,4 @@
-classdef prtDataSetInMemoryLabeled < prtDataSetInMemory & prtDataSetBaseInMemoryLabeled
+classdef prtDataSetInMemoryLabeled < prtDataSetInMemory & prtDataSetBaseInMemoryLabeled & prtDataSetBaseLabeled
     
     properties (Dependent)
         nTargetDimensions   % size(targets,2)

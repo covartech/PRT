@@ -39,12 +39,19 @@ classdef prtDataSetUnLabeled < prtDataSetInMemory
                 prtDataSet = varargin{1};
                 varargin = varargin(2:end);
                 
-            else
+            elseif isa(varargin{1},'double')
                 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
                 % Regular Constructor %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
                 % prtDataSet = prtDataSetUnLabeled(data, {paramName1, paramVal2, ...})
                 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
                 prtDataSet.data = varargin{1};
+                varargin = varargin(2:end);
+                
+            elseif isa(varargin{1},'prtDataSetBase')
+                prtDataSet.data = varargin{1}.getObservations;
+                prtDataSet.UserData = varargin{1}.UserData;
+                prtDataSet.name = varargin{1}.name;
+                prtDataSet.description = varargin{1}.description;
                 varargin = varargin(2:end);
             end
             
@@ -107,10 +114,10 @@ classdef prtDataSetUnLabeled < prtDataSetInMemory
             nClasses = 1;
             classColors = prtPlotUtilClassColors(nClasses);
             classSymbols = prtPlotUtilClassSymbols(nClasses);
-            handleArray = zeros(nClasses,1);
             
             cX = obj.getObservations;
-            classEdgeColor = min(classColors + 0.2,[0.8 0.8 0.8]);
+            classEdgeColor = prtDataSetBase.edgeColorMod(classColors);
+            
             linewidth = .1;
             handleArray = prtDataSetBase.plotPoints(cX,obj.getFeatureNames(featureIndices),classSymbols,classColors,classEdgeColor,linewidth);
             
