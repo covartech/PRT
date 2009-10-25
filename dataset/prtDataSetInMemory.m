@@ -48,7 +48,7 @@ classdef prtDataSetInMemory < prtDataSetBase & prtDataSetBaseInMemory
             end
             oldDim = obj.nFeatures;
             
-            obj = catFeatures@prtDataSetInMemory(obj,newData); %inMemory
+            obj = catFeatures@prtDataSetBaseInMemory(obj,newData); %inMemory
             obj = addFeatureNames(obj,newFeatureNames,oldDim); %dataSetBase
         end
         
@@ -70,7 +70,7 @@ classdef prtDataSetInMemory < prtDataSetBase & prtDataSetBaseInMemory
             
             oldN = obj.nObservations;
             
-            obj = catObservations@prtDataSetInMemory(obj,newData);     %inMemory
+            obj = catObservations@prtDataSetBaseInMemory(obj,newData);     %inMemory
             obj = addObservationNames(obj,newObsNames,oldN);           %dataSetBase
         end
         

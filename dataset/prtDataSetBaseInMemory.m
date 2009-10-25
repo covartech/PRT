@@ -1,7 +1,7 @@
 classdef prtDataSetBaseInMemory
     
     properties (SetAccess = 'protected') %public... for now... this is controversial :); this can be changed to protected without breaking anything
-        data = [];            % matrix, doubles, features
+        data = [];                       % matrix, doubles, features
     end
     
     methods (Access = 'protected',Static = true);
@@ -33,8 +33,8 @@ classdef prtDataSetBaseInMemory
             end
         end
     end
+    
     methods
-        
         
         %% Constructor %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
