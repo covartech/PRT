@@ -10,12 +10,13 @@ classdef prtDataSetClass < prtDataSetInMemoryLabeled
         isMary = nan           % logical, true if nClasses > 2
         isZeroOne = nan        % true if isequal(uniqueClasses,[0 1])
     end
+    
     properties (Dependent, Hidden)
         % Additional properties for plotting
         plottingColors
         plottingSymbols
     end
-    properties (GetAccess = 'protected')
+    properties %(GetAccess = 'protected') %why so protected?
         uniqueTargetNames = {} % strcell, 1 x nClasses
     end
     methods
@@ -184,6 +185,26 @@ classdef prtDataSetClass < prtDataSetInMemoryLabeled
                 tn = obj.uniqueTargetNames;
             end
         end
+        
+        function obj = setUniqueTargetNames(obj,names)
+            
+            obj.uniqueTargetNames = names;
+        end
+        
+        function targNames = getTargetNames(obj)
+            if isempty(obj.uniqueTargetNames)
+                tn = prtDataSetClass.generateDefaultTargetNames(obj.uniqueTargets);
+            else
+                tn = obj.uniqueTargetNames;
+            end
+            t = getTargets(obj);
+            uniqueT = unique(t);
+            for uniqueInd = 1:length(uniqueT)
+                targNames(t == uniqueT(uniqueInd),1) = tn(uniqueInd);
+            end
+        end
+        
+        
         function d = getObservationsByTarget(obj, uniqueTarget, featureIndices)
             if nargin < 3 || isempty(featureIndices)
                 featureIndices = 1:obj.nFeatures;
@@ -195,6 +216,7 @@ classdef prtDataSetClass < prtDataSetInMemoryLabeled
             end
             d = getObservationsByUniqueTargetInd(obj, utInd, featureIndices);
         end
+        
         function d = getObservationsByUniqueTargetInd(obj, uniqueTargetInd, featureIndices)
             if nargin < 3 || isempty(featureIndices)
                 featureIndices = 1:obj.nFeatures;

@@ -1,7 +1,7 @@
 classdef prtDataSetBaseInMemoryLabeled < prtDataSetBaseInMemory
     
     properties (SetAccess = 'protected') %public... for now... this is controversial :) ; this can be changed to protected without breaking anything
-        targets = [];         % matrix, doubles, targets, for unlabeled data sets, just ignore(?)
+        targets = [];         % matrix, doubles, targets
     end
     
     methods
