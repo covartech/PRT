@@ -1,4 +1,4 @@
-classdef prtDataSetClass < prtDataSetInMemoryLabeled
+classdef prtDataSetClass < prtDataSetInMemoryLabeled & prtDataSetBaseClass
     % Standard prtDataSet for data with categorical labels (integer targets)
     
     properties (Dependent)
