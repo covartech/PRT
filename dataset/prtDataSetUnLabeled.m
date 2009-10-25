@@ -30,7 +30,7 @@ classdef prtDataSetUnLabeled < prtDataSetInMemory
             % prtDataSet = prtDataSetClass(prtDataSetIn, {paramName1, paramVal2, ...})
             % prtDataSet = prtDataSetClass(data, targets, {paramName1, paramVal2, ...})
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-            if isa(varargin{1}, 'prtDataSetUnsupervised')
+            if isa(varargin{1}, 'prtDataSetUnLabeled')
                 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
                 % Copy Constructor %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
                 % prtDataSet = prtDataSetClass(prtDataSetClassIn, {paramName1, paramVal2, ...})
@@ -42,7 +42,7 @@ classdef prtDataSetUnLabeled < prtDataSetInMemory
             else
                 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
                 % Regular Constructor %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-                % prtDataSet = prtDataSetUnsupervised(data, {paramName1, paramVal2, ...})
+                % prtDataSet = prtDataSetUnLabeled(data, {paramName1, paramVal2, ...})
                 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
                 prtDataSet.data = varargin{1};
                 varargin = varargin(2:end);
@@ -68,7 +68,7 @@ classdef prtDataSetUnLabeled < prtDataSetInMemory
             
             paramValues = varargin(2:2:end);
             if inputError
-                error('prt:prtDataSetUnsupervised:invalidInputs','Additional input arguments must be specified as parameter string, value pairs.')
+                error('prt:prtDataSetUnLabeled:invalidInputs','Additional input arguments must be specified as parameter string, value pairs.')
             end
             
             % Now we loop through and apply the properties

@@ -69,8 +69,8 @@ classdef prtDataSetClass < prtDataSetLabeledInMemory
                 if size(varargin{1},1) ~= size(varargin{2},1)
                     error('prt:prtDataSetLabeled:dataTargetsMismatch','size(data,1) (%d) must match size(targets,1) (%d)',size(varargin{1},1), size(varargin{2},1));
                 end
-                prtDataSet.data = varargin{1};
-                prtDataSet.targets = varargin{2};
+                prtDataSet = prtDataSet.setDataAndTargets(varargin{1},varargin{2});
+                
                 varargin = varargin(3:end);
             end
             
@@ -112,7 +112,7 @@ classdef prtDataSetClass < prtDataSetLabeledInMemory
                 classNames = prtUtilCellPrintf('H_{%d}',num2cell(uY));
             end
         end
-        function classNames = generateDefaultTargetNamesNoTex(indices2)
+        function classNames = generateDefaultTargetNamesNoTex(uY)
             if isa(uY,'cell')
                 classNames = uY;
             else

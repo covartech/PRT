@@ -1,9 +1,38 @@
 classdef prtDataSetBaseInMemory
     
-    properties %public... for now... this is controversial :)
+    properties (Access = 'public') %public... for now... this is controversial :); this can be changed to protected without breaking anything
         data = [];            % matrix, doubles, features
     end
     
+    methods (Access = 'protected',Static = true);
+        function [err,errorID,errorMsg] = checkIndices(indices,maxVal,boolError)
+            if islogical(indices)
+                indices = find(indices);
+            end
+            if nargin < 3
+                boolError = true;
+            end
+            err = 0;
+            if any(indices < 1)
+                errorID = 'prt:prtDataSetBaseInMemory:indexOutOfRange';
+                errorMsg = 'Index elements out of range';
+                err = 1;
+            end
+            if any(indices > maxVal)
+                errorID = 'prt:prtDataSetBaseInMemory:indexOutOfRange';
+                errorMsg = 'Index elements out of range';
+                err = 2;
+            end
+            if ~isvector(indices)
+                errorID = 'prt:prtDataSetBaseInMemory:invalidIndices';
+                errorMsg = 'Indices must be a vector';
+                err = 3;
+            end
+            if err ~= 0 && boolError
+                error(errorID,errorMsg);
+            end
+        end
+    end
     methods
         
         
@@ -15,6 +44,50 @@ classdef prtDataSetBaseInMemory
         end
         
         %Required by prtDataSetBase:
+        function [obj,retainedFeatures] = removeFeatures(obj,indices)
+            
+            prtDataSetBaseInMemory.checkIndices(indices,obj.nFeatures);
+            [obj,retainedFeatures] = retainFeatures(obj,setdiff(1:obj.nFeatures,indices));
+        end
+        function [obj,retainedFeatures] = retainFeatures(obj,retainedFeatures)
+            
+            prtDataSetBaseInMemory.checkIndices(indices,obj.nFeatures);
+            obj.data = obj.data(:,retainedFeatures);
+        end
+        
+        function obj = replaceFeatures(obj,data,indices)
+            
+            prtDataSetBaseInMemory.checkIndices(indices,obj.nFeatures);
+            indices = indices(:);
+            if size(indices,1) ~= size(data,2)
+                error('prt:prtDataSetBaseInMemory:invalidIndices','length(indices) (%d) ~= size(data,1) (%d)',length(indices),size(data,1));
+            end
+            
+            obj.data(:,indices) = data;
+        end
+        
+        function [obj,retainedIndices] = removeObservations(obj,indices)
+            
+            prtDataSetBaseInMemory.checkIndices(indices,obj.nObservations);
+            [obj,retainedIndices] = retainObservations(obj,setdiff(1:obj.nObservations,indices));
+        end
+        
+        function [obj,retainedIndices] = retainObservations(obj,retainedIndices)
+            
+            prtDataSetBaseInMemory.checkIndices(retainedIndices,obj.nObservations);
+            obj.data = obj.data(retainedIndices,:);
+        end
+        
+        function obj = replaceObservations(obj,data,indices)
+            
+            prtDataSetBaseInMemory.checkIndices(indices,obj.nObservations);
+            if size(indices,1) ~= size(data,1)
+                indices = indices(:);
+                error('prt:prtDataSetBaseInMemory:invalidIndices','length(indices) (%d) ~= size(data,1) (%d)',length(indices),size(data,1));
+            end
+            
+            obj.data(indices,:) = data;
+        end
         
         %Return the data by indices
         function data = getObservations(obj,indices1,indices2)
@@ -24,6 +97,9 @@ classdef prtDataSetBaseInMemory
             if nargin < 3 || isempty(indices2)
                 indices2 = 1:obj.nFeatures;
             end
+            
+            prtDataSetBaseInMemory.checkIndices(indices1,obj.nObservations);
+            prtDataSetBaseInMemory.checkIndices(indices2,obj.nFeatures);
             data = obj.data(indices1,indices2);
         end
         
@@ -48,11 +124,17 @@ classdef prtDataSetBaseInMemory
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         % These just provide sanity error checking
         function obj = set.data(obj, data)
+            obj.data = data;
+        end
+        
+        %Required by prtDataSetBase:
+        function obj = setData(obj,data)
             if ~isa(data,'double') || ndims(data) ~= 2
-                error('prt:prtDataSetLabeled:invalidData','data must be a 2-Dimensional double array');
+                error('prt:prtDataSetBaseInMemeoryLabeled:invalidData','data must be a 2-Dimensional double array');
             end
             obj.data = data;
         end
+        
         function data = get.data(obj)
             data = obj.data;
         end
@@ -105,103 +187,8 @@ classdef prtDataSetBaseInMemory
 %                 fprintf('\n')
 %             end
 %         end
-%         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%         %% Plotting Methods %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%         function varargout = plot(obj, featureIndices)
-%             if nargin < 2 || isempty(featureIndices)
-%                 featureIndices = 1:obj.nFeatures;
-%             end
-%             if islogical(featureIndices)
-%                 featureIndices = find(featureIndices);
-%             end
-%             
-%             nPlotDimensions = length(featureIndices);
-%             if nPlotDimensions < 1
-%                 warning('prt:plot:NoPlotDimensionality','No plot dimensions requested.');
-%                 return
-%             end
-%             if nPlotDimensions > 3
-%                 error('prt:plot:plotDimensionality','The number of requested plot dimensions (%d) is greater than 3. You may want to use explore() to selet and visualize a subset of the features.',nPlotDimensions);
-%             end
-%             if max(featureIndices) > obj.nFeatures
-%                 error('prt:plot:plotDimensionality','A requested plot dimensions (%d) exceeds the dimensionality of the data set (%d).',max(featureIndices),obj.nFeatures);
-%             end
-%             
-%             % Preserve the hold state of the figure
-%             holdState = ishold;
-%             
-%             % This is a little weird. But it prevents us from duplicating
-%             % this code so ...
-%             % Get colors and symbols from the colors and symbols functions
-%             isLabeled = ismethod(obj,'getTargets');
-%             if isLabeled
-%                 nClasses = obj.nUniqueTargets;
-%                 classColors = obj.plottingColors;
-%                 classSymbols = obj.plottingSymbols;
-%             else
-%                 nClasses = 1;
-%                 classColors = prtPlotUtilClassColors(1);
-%                 classSymbols = prtPlotUtilClassSymbols(1);
-%             end
-%             
-%             
-%             handleArray = zeros(nClasses,1);
-%             % Loop through classes and plot
-%             for i = 1:nClasses
-%                 if isLabeled
-%                     cX = obj.getObservationsByUniqueTargetInd(i, featureIndices);
-%                 else
-%                     cX = obj.getObservations([], featureIndices);
-%                 end
-%                 
-%                 
-%                 cEdgeColor = min(classColors(i,:) + 0.2,[0.8 0.8 0.8]);
-%                 
-%                 switch nPlotDimensions
-%                     case 1
-%                         handleArray(i) = plot(cX,ones(size(cX)),classSymbols(i),'MarkerFaceColor',classColors(i,:),'MarkerEdgeColor',cEdgeColor,'linewidth',0.1);
-%                         xlabel(getFeatureNames(obj,featureIndices(1)));
-%                         grid on
-%                     case 2
-%                         handleArray(i) = plot(cX(:,1),cX(:,2),classSymbols(i),'MarkerFaceColor',classColors(i,:),'MarkerEdgeColor',cEdgeColor,'linewidth',0.1);
-%                         xlabel(getFeatureNames(obj,featureIndices(1)));
-%                         ylabel(getFeatureNames(obj,featureIndices(2)));
-%                         grid on
-%                     case 3
-%                         handleArray(i) = plot3(cX(:,1),cX(:,2),cX(:,3),classSymbols(i),'MarkerFaceColor',classColors(i,:),'MarkerEdgeColor',cEdgeColor,'linewidth',0.1);
-%                         xlabel(getFeatureNames(obj,featureIndices(1)));
-%                         ylabel(getFeatureNames(obj,featureIndices(2)));
-%                         zlabel(getFeatureNames(obj,featureIndices(3)));
-%                         grid on;
-%                 end
-%                 if i == 1
-%                     hold on;
-%                 end
-%             end
-%             
-%             % Set title
-%             title(obj.name);
-%             
-%             % Set hold state back to the way it was
-%             if holdState
-%                 hold on;
-%             else
-%                 hold off;
-%             end
-%             
-%             % Create legend
-%             if isLabeled
-%                 legendStrings = getUniqueTargetNames(obj);
-%                 legend(handleArray,legendStrings,'Location','SouthEast');
-%             end
-%             
-%             % Handle Outputs
-%             varargout = {};
-%             if nargout > 0
-%                 varargout = {handleArray,legendStrings};
-%             end
-%         end
+
+
 %         function explore(obj)
 %             % Get the window position and pick/set a figure size.
 %             ss = get(0,'screensize');

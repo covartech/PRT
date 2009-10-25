@@ -166,6 +166,7 @@ classdef prtDataSetBase
             end
         end
     end
+    
     methods (Access = 'protected',Static = true)
         function h = plotPoints(cX,featureNames,classSymbols,classColors,classEdgeColor,linewidth)
             
@@ -210,20 +211,23 @@ classdef prtDataSetBase
         
         obj = joinFeatures(obj1,obj2)
         obj = joinObservations(obj1,obj2)
-        obj = catObservations(obj1,newObservations)
-        obj = catFeatures(obj1,newFeatures)
         
-        %         handles = plot(obj)
-        %
-        %         obj = removeObservations(obj,indices)
-        %         obj = retainObservations(obj,indices)
-        %         obj = replaceObservations(obj,data,indices)
-        %
-        %         %Note: for BIG data sets, these have to be implemented "trickily" -
-        %         %I have an idea
-        %         obj = removeFeatures(obj,indices)
-        %         obj = retainFeatures(obj,indices)
-        %         obj = replaceFeatures(obj,data,indices)
+        obj = catFeatures(obj1,newFeatures)
+        obj = catObservations(obj1,newObservations)
+        
+        handles = plot(obj)
+        
+        obj = removeObservations(obj,indices)
+        obj = retainObservations(obj,indices)
+        obj = replaceObservations(obj,data,indices)
+        
+        
+        %Note: for BIG data sets, these have to be implemented "trickily" -
+        %I have an idea
+        obj = removeFeatures(obj,indices)
+        obj = retainFeatures(obj,indices)
+        obj = replaceFeatures(obj,data,indices)
+        
         %
         %         export(obj,exportOptions)
     end
