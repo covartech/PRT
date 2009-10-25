@@ -309,6 +309,7 @@ classdef prtDataSetBase
         obj = retainObservations(obj,indices)
         obj = replaceObservations(obj,data,indices)
         
+        export(obj,exportOptions)
         
         %Note: for BIG data sets, these have to be implemented "trickily" -
         %I have an idea
@@ -316,7 +317,6 @@ classdef prtDataSetBase
         obj = retainFeatures(obj,indices)
         obj = replaceFeatures(obj,data,indices)
         
-        %
-        %         export(obj,exportOptions)
+        
     end
 end

@@ -11,7 +11,7 @@ if nargin == 1 && isa(varargin{1},'prtDataSetBase')
         HandleStructure.Axes(1) = struct('handles',handles,'legendStrings',legendStrings);
     end
     return;
-elseif nargin == 2 && isa(varargin{1},'prtDataSet') && isa(varargin{2},'prtDataSet')    
+elseif nargin == 2 && isa(varargin{1},'prtDataSetBase') && isa(varargin{2},'prtDataSetBase')    
     [handles1,legendStrings1,handles2,legendStrings2] = multiDataSetPlot(varargin{1},varargin{2});
     
     if nargout > 0
@@ -34,7 +34,7 @@ elseif nargin == 1 && prtUtilIsClassifier(varargin{1})
         HandleStructure = HandleStructureTemp;
     end
     return;
-elseif nargin == 2 && prtUtilIsClassifier(varargin{1}) && isa(varargin{2},'prtDataSet')
+elseif nargin == 2 && prtUtilIsClassifier(varargin{1}) && isa(varargin{2},'prtDataSetBase')
     imageHandle = prtPlotClassifierConfidence(varargin{1});
     [M,N] = getSubplotDimensions(length(imageHandle));
     for subImage = 1:M*N
@@ -52,7 +52,7 @@ elseif nargin == 2 && prtUtilIsClassifier(varargin{1}) && isa(varargin{2},'prtDa
     return;
 end
 
-function [handles1,legendStrings1,handles2,legendStrings2] = multiDataSetPlot(DataSet1,DataSet2);
+function [handles1,legendStrings1,handles2,legendStrings2] = multiDataSetPlot(DataSet1,DataSet2)
 %[handles1,legendStrings1,handles2,legendStrings2] = multiDataSetPlot(DataSet1,DataSet2);
 %   Handle plotting 2 data sets at a time, taking care of fusing legends,
 %   making sure colors don't overlap, etc.

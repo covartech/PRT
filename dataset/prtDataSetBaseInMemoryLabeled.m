@@ -6,6 +6,15 @@ classdef prtDataSetBaseInMemoryLabeled < prtDataSetBaseInMemory
     
     methods
         
+        function obj = removeTargetDimensions(obj,indices)
+            indices = setdiff(1:size(obj.targets,2),indices);
+            obj.targets = obj.targets(:,indices);
+        end
+        
+        function obj = catTargetDimensions(obj,newTargets)
+            obj.targets = cat(2,obj.targets,newTargets);
+        end
+        
         function [sortedObs,sortedTargets,sortedInds] = sortObservationsByTarget(obj,ascendDescend)
             if nargin == 1
                 ascendDescend = 'ascend';
