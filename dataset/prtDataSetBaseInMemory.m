@@ -1,6 +1,6 @@
 classdef prtDataSetBaseInMemory
     
-    properties (Access = 'public') %public... for now... this is controversial :); this can be changed to protected without breaking anything
+    properties (SetAccess = 'protected') %public... for now... this is controversial :); this can be changed to protected without breaking anything
         data = [];            % matrix, doubles, features
     end
     
