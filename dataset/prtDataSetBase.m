@@ -1,8 +1,8 @@
 classdef prtDataSetBase
     
     properties (Abstract, Dependent)
-        nObservations       % size(data,1)
-        nFeatures           % size(data,2)
+        nObservations         % size(data,1)
+        nFeatures             % size(data,2)
     end
     properties  %public, for now
         name = ''             % char
@@ -10,8 +10,8 @@ classdef prtDataSetBase
         UserData = struct([]) % Struct of additional data
     end
     
-    %only prtDataSetBase knows about these, use getObs... and getFeat.. to
-    %get and set these, they handle the dirty stuff
+    % Only prtDataSetBase knows about these, use getObs... and getFeat.. to
+    % get and set these, they handle the dirty stuff
     properties (GetAccess = 'protected',SetAccess = 'private')
         observationNames = {}
         featureNames = {}
@@ -20,13 +20,13 @@ classdef prtDataSetBase
     methods
         function obj = set.name(obj, newName)
             if ~isa(newName,'char');
-                error('prt:prtDataSetLabeled:dataSetNameNonString','Specified name is a (%s), but name must be a character array',class(newName));
+                error('prt:prtDataSetBase:dataSetNameNonString','name must but name must be a character array');
             end
             obj.name = newName;
         end
         function obj = set.description(obj, newDescr)
             if ~isa(newDescr,'char');
-                error('prt:prtDataSetLabeled:dataSetNameNonString','Specified description is a (%s), but name must be a character array',class(newDescr));
+                error('prt:prtDataSetBase:dataSetNameNonString','description must be a character array');
             end
             obj.description = newDescr;
         end

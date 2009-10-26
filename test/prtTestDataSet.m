@@ -34,16 +34,16 @@ DS = prtDataUnimodal;
 UDS = prtDataSet(DS.getObservations);
 DS = prtDataSpiral;
 UDS2 = prtDataSet(DS.getObservations);
-CatDS = vertcat(UDS,UDS2);
-CatDS = horzcat(UDS,UDS2);
+CatDS = joinObservations(UDS,UDS2);
+CatDS = joinFeatures(UDS,UDS2);
 
 %% Test Catting of prtDataSetLabeled
 DS = prtDataUnimodal;
 DS2 = prtDataSpiral;
-CatDS = vertcat(DS, DS2);
-CatDS = horzcat(DS, DS2);
+CatDS = joinObservations(DS, DS2);
+CatDS = joinFeatures(DS, DS2);
 
 DS3 = prtDataMary2;
 
-CatDS = horzcat(DS, DS3);
+CatDS = joinFeatures(DS, DS3);
 
