@@ -15,7 +15,7 @@ end
 y = DS.getTargets;
 y(y == 0) = -1;     %req'd for algorithm
 
-x = DS.data;
+x = DS.getObservations;
 [gramm,nBasis] = prtKernelGrammMatrix(x,x,PrtOptions.kernel);
 
 nBasis = sum(nBasis);

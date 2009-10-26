@@ -1,4 +1,5 @@
-function DataSetOut = prtPreProcRunZmuv(PrtZmuv,DataSetIn)
+function [DataSetOut,Etc] = prtPreProcRunZmuv(PrtZmuv,DataSetIn)
 %DataSet = prtPreProcRunZmuv(PrtZmuv,DataSet)
 
-DataSetOut = prtDataSet(DataSetIn,'data',bsxfun(@rdivide,bsxfun(@minus,DataSetIn.data,PrtZmuv.mean),PrtZmuv.stdev));
+Etc = [];
+DataSetOut = prtDataSet(bsxfun(@rdivide,bsxfun(@minus,DataSetIn.getObservations,PrtZmuv.mean),PrtZmuv.stdev),DataSetIn.getTargets);

@@ -9,6 +9,9 @@ PrtFeatSelOpt.nFeatures = min(DS.nFeatures,PrtFeatSelOpt.nFeatures);
 maxIterations = nchoosek(DS.nFeatures,PrtFeatSelOpt.nFeatures);
 %warning on;
 
+data = DS.getObservations;
+labels = DS.getTargets;
+
 iterationCount = 1;
 nextChooseFn = prtNextChoose(DS.nFeatures,PrtFeatSelOpt.nFeatures);
 firstChoose = nextChooseFn();
@@ -27,7 +30,7 @@ while notFinished;
 
     prtUtilWaitbarWithCancel(iterationCount/maxIterations,h);
     
-    tempDataSet = prtDataSetLabeled(DS.data(:,currChoose),DS.dataLabels);
+    tempDataSet = prtDataSetClass(data(:,currChoose),labels);
     currPerformance = PrtFeatSelOpt.EvaluationMetric(tempDataSet);
     
     if any(currPerformance > bestPerformance) || isempty(bestChoose)

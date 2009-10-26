@@ -8,7 +8,7 @@ if DS.nObservations > 1000
     step = 1000;
     for i = 1:step:n;
         cI = i:min(i+step,n);
-        gramm = prtKernelGrammMatrix(DS.data(cI,:),PrtRvm.PrtDataSet.data,PrtRvm.PrtOptions.kernel);
+        gramm = prtKernelGrammMatrix(DS.getObservations(cI,:),PrtRvm.PrtDataSet.getObservations,PrtRvm.PrtOptions.kernel);
         y(cI) = normcdf(gramm*PrtRvm.Beta);
     end
 else
