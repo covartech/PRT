@@ -35,9 +35,9 @@ for iteration = 1:PrtOptions.Jeffereys.maxIterations
     uK = u(relevantIndices,relevantIndices);
     grammK = gramm(:,relevantIndices);
     
-    S = gramm*beta;
-    S(h1Ind) = S(h1Ind) + normpdf(S(h1Ind))./(1-normcdf(-S(h1Ind)));
-    S(h0Ind) = S(h0Ind) - normpdf(S(h0Ind))./(normcdf(-S(h0Ind)));
+%     S = gramm*beta;
+%     S(h1Ind) = S(h1Ind) + normpdf(S(h1Ind))./(1-normcdf(-S(h1Ind)));
+%     S(h0Ind) = S(h0Ind) - normpdf(S(h0Ind))./(normcdf(-S(h0Ind)));
     
     beta_OLD = beta;
     
