@@ -1,16 +1,10 @@
-classdef prtDataSetInMemoryLabeled < prtDataSetBaseInMemory
+classdef prtDataSetBaseInMemoryLabeled < prtDataSetBaseInMemory
     
     properties (SetAccess = 'protected') %public... for now... this is controversial :) ; this can be changed to protected without breaking anything
         targets = [];         % matrix, doubles, targets
     end
     
-    properties (Dependent)
-        nTargetDimensions   % size(targets,2)
-    end
     methods
-        function nTargetDimensions = get.nTargetDimensions(obj)
-            nTargetDimensions = size(obj.targets,2);
-        end
         function obj = removeTargetDimensions(obj,indices)
             indices = setdiff(1:size(obj.targets,2),indices);
             obj.targets = obj.targets(:,indices);
