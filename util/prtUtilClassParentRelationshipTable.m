@@ -1,4 +1,4 @@
-function Properties = prtUtilClassParentRelationshipTable(className)
+function [Properties, Methods] = prtUtilClassParentRelationshipTable(className)
 
 Info = prtUtilClassParentRelationship(className);
 
@@ -12,4 +12,16 @@ for iProp = 1:numel(Info.AllProperties)
 end
 Properties.classNames = Info.classNames;
 
-uitable('Data',Properties.names,'ColumnName',Properties.classNames,'Units','Normalized','Position',[0 0 1 1]);
+
+Methods.names = cell(size(Info.AllMethods));
+for iMeth = 1:numel(Info.AllMethods)
+    if isempty(Info.AllMethods{iMeth})
+        Methods.names{iMeth} = '';
+    else
+        Methods.names{iMeth} = Info.AllMethods{iMeth}.Name;
+    end
+end
+Methods.classNames = Info.classNames;
+
+uitable('Data',Properties.names,'ColumnName',Properties.classNames,'Units','Normalized','Position',[0 0.5 1 0.5]);
+uitable('Data',Methods.names,'ColumnName',Methods.classNames,'Units','Normalized','Position',[0 0 1 0.5]);
