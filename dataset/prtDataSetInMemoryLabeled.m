@@ -1,4 +1,4 @@
-classdef prtDataSetInMemoryLabeled  < prtDataSetBaseInMemoryLabeled & prtDataSetBaseLabeled
+classdef prtDataSetInMemoryLabeled  < prtDataSetBaseInMemoryLabeled & prtDataSetInMemory & prtDataSetBaseLabeled
     % This exists because we want to implement the dependent property nTarget
     % dimensions for in memory labeled datasets but this property is abstract
     % in prtDataSetBaseLabeled so it cant be implimented in
