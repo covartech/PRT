@@ -4,7 +4,7 @@ classdef prtDataSetClass < prtDataSetInMemoryLabeled & prtDataSetBaseClass
     properties %(GetAccess = 'protected') %why so protected?
         classNames = {} % strcell, 1 x nClasses
     end
-    properties (Dependent)
+    properties
         uniqueClasses = {};
     end
     methods

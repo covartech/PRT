@@ -10,5 +10,6 @@ classdef prtDataSetBaseLabeled < prtDataSetBase
         obj = setTargets(obj,targets,indices)
         
         tn = getTargetNames(obj,indices) % This referese to the dimension names
+        tn = setTargetNames(obj,indices) % This referese to the dimension names
     end
 end

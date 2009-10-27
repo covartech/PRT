@@ -1,4 +1,4 @@
-classdef prtDataSetBaseClass
+classdef prtDataSetBaseClass < prtDataSetBaseLabeled
     
     properties (Dependent)
         % New properties for labeled data only:
