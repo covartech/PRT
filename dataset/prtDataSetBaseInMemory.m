@@ -51,7 +51,7 @@ classdef prtDataSetBaseInMemory
         end
         function [obj,retainedFeatures] = retainFeatures(obj,retainedFeatures)
             
-            prtDataSetBaseInMemory.checkIndices(indices,obj.nFeatures);
+            prtDataSetBaseInMemory.checkIndices(retainedFeatures,obj.nFeatures);
             obj.data = obj.data(:,retainedFeatures);
         end
         
@@ -91,10 +91,10 @@ classdef prtDataSetBaseInMemory
         
         %Return the data by indices
         function data = getObservations(obj,indices1,indices2)
-            if nargin < 2 || isempty(indices1)
+            if nargin < 2 || isempty(indices1) || strcmpi(indices1,':')
                 indices1 = 1:obj.nObservations;
             end
-            if nargin < 3 || isempty(indices2)
+            if nargin < 3 || isempty(indices2) || strcmpi(indices2,':')
                 indices2 = 1:obj.nFeatures;
             end
             

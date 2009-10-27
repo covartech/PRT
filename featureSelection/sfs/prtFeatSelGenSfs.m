@@ -17,7 +17,7 @@ for j = 1:min(nFeats,PrtFeatSelOpt.nFeatures);
     performance = nan(size(availableFeatures));
     for i = 1:length(availableFeatures)
         currentFeatureSet = cat(2,sfsSelectedFeatures,availableFeatures(i));
-        tempDataSet = prtDataSetLabeled(DS.data(:,currentFeatureSet),DS.dataLabels);
+        tempDataSet = DS.retainFeatures(currentFeatureSet);
         performance(i) = PrtFeatSelOpt.EvaluationMetric(tempDataSet);
         
         if PrtFeatSelOpt.showProgressBar
