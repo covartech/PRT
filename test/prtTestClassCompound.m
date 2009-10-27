@@ -8,8 +8,7 @@ opt{2} = {prtFeatSelOptExhaustive,prtPreProcOptZmuv};
 opt{3} = prtClassOptFld;
 
 DS = prtDataUnimodal;
-DS = prtDataSetLabeled(DS,DS);
-DS = prtDataSetLabeled(DS.data + randn(size(DS.data))*2,DS.dataLabels);
+DS = joinFeatures(DS,DS);
 
 Algo = prtGenerate(DS,opt);
 

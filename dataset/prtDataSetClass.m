@@ -196,7 +196,7 @@ classdef prtDataSetClass < prtDataSetInMemoryLabeled & prtDataSetBaseClass
                 warning('prt:plot:NoPlotDimensionality','No plot dimensions requested.');
                 return
             end
-            nClasses = obj.nUniqueTargets;
+            nClasses = obj.nClasses;
             classColors = obj.plottingColors;
             classSymbols = obj.plottingSymbols;
             handleArray = zeros(nClasses,1);
@@ -205,7 +205,7 @@ classdef prtDataSetClass < prtDataSetInMemoryLabeled & prtDataSetBaseClass
             % Loop through classes and plot
             for i = 1:nClasses
                 %Use "i" here because it's by uniquetargetIND
-                cX = obj.getObservationsByUniqueTargetInd(i, featureIndices);                
+                cX = obj.getObservationsByClassInd(i, featureIndices);                
                 classEdgeColor = prtDataSetBase.edgeColorMod(classColors(i,:));
                 
                 linewidth = .1;
