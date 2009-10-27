@@ -1,23 +1,11 @@
 classdef prtDataSetClass < prtDataSetInMemoryLabeled & prtDataSetBaseClass
     % Standard prtDataSet for data with categorical labels (integer targets)
     
-    properties (Dependent)
-        % New properties for labeled data only:
-        nUniqueTargets = nan   % scalar, number of unique class labels
-        uniqueTargets = nan    % vector, unique class names in the dataSet
-        isUnary = nan          % logical, true if nClasses == 1
-        isBinary = nan         % logical, true if nClasses == 2
-        isMary = nan           % logical, true if nClasses > 2
-        isZeroOne = nan        % true if isequal(uniqueClasses,[0 1])
-    end
-    
-    properties (Dependent, Hidden)
-        % Additional properties for plotting
-        plottingColors
-        plottingSymbols
-    end
     properties %(GetAccess = 'protected') %why so protected?
-        uniqueTargetNames = {} % strcell, 1 x nClasses
+        classNames = {} % strcell, 1 x nClasses
+    end
+    properties (Dependent)
+        uniqueClasses = {};
     end
     methods
         %% Constructor %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -106,14 +94,14 @@ classdef prtDataSetClass < prtDataSetInMemoryLabeled & prtDataSetBaseClass
     end
     
     methods (Access = 'private',Static = true);
-        function classNames = generateDefaultTargetNames(uY)
+        function classNames = generateDefaultClassNames(uY)
             if isa(uY,'cell')
                 classNames = uY;
             else
                 classNames = prtUtilCellPrintf('H_{%d}',num2cell(uY));
             end
         end
-        function classNames = generateDefaultTargetNamesNoTex(uY)
+        function classNames = generateDefaultClassNamesNoTex(uY)
             if isa(uY,'cell')
                 classNames = uY;
             else
@@ -126,107 +114,67 @@ classdef prtDataSetClass < prtDataSetInMemoryLabeled & prtDataSetBaseClass
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %% Set Methods %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        function obj = set.uniqueTargetNames(obj, newTargetNames)
-            if isempty(newTargetNames)
-                obj.uniqueTargetNames = newTargetNames;
+        function obj = set.classNames(obj, newClassNames)
+            if isempty(newClassNames)
+                obj.classNames = newClassNames;
                 return;
             end
-            if  length(newTargetNames) ~= obj.nUniqueTargets
-                error('prt:prtDataSetLabeled:targetNamesInput','obj.nUniqueTargets (%d) must match length(newTargetNames) (%d)', obj.nUniqueTargets, length(newTargetNames));
+            if  length(newClassNames) ~= obj.nClasses
+                error('prt:prtDataSetLabeled:ClassNamesInput','obj.nUniqueTargets (%d) must match length(newClassNames) (%d)', obj.nUniqueTargets, length(newClassNames));
             end
-            if ~iscellstr(newTargetNames)
-                error('prt:prtDataSetLabeled:targetNamesInput','newTargetNames must be a cell array of strings.');
+            if ~iscellstr(newClassNames)
+                error('prt:prtDataSetLabeled:ClassNamesInput','newClassNames must be a cell array of strings.');
             end
-            obj.uniqueTargetNames = newTargetNames;
+            obj.classNames = newClassNames;
         end
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %% Get Methods for Dependent properties %%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        function isBin = get.isBinary(obj)
-            isBin = obj.nUniqueTargets == 2;
-        end
-        function isUnary = get.isUnary(obj)
-            isUnary = obj.nUniqueTargets == 1;
-        end
-        function isMary = get.isMary(obj)
-            isMary = obj.nUniqueTargets > 2;
-        end
-        function isZO = get.isZeroOne(obj)
-            isZO = isequal(obj.uniqueTargets,[0 1]);
-        end
-        function uT = get.uniqueTargets(obj)
-            % This can be slow, but we can't make this persistent.
-            % We don't know when if labels have changed
-            uT = unique(obj.targets);
-        end
-        function nUT = get.nUniqueTargets(obj)
-            nUT = length(obj.uniqueTargets);
-        end
-        function colors = get.plottingColors(obj)
-            colors = prtPlotUtilClassColors(obj.nUniqueTargets);
-        end
-        function symbols = get.plottingSymbols(obj)
-            symbols = prtPlotUtilClassSymbols(obj.nUniqueTargets);
-        end
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %% Other Get Methods
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        function tn = get.uniqueTargetNames(obj)
+
+        function tn = get.classNames(obj)
             % We choose not to generate the default names here to save
             % time. Because the GetAccess is protected we generate these in
-            % uniqueTargetNames(). This means internally or in sub-classes
+            % uniqueClassNames(). This means internally or in sub-classes
             % you will sometimes get an {} if nothing has been set whereas
-            % uniqueTargetNames() will generate the default feature names.
-            tn = obj.uniqueTargetNames;
+            % uniqueClassNames() will generate the default feature names.
+            tn = obj.classNames;
         end
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %% Access methods %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        function tn = getUniqueTargetNames(obj)
-            if isempty(obj.uniqueTargetNames)
-                tn = prtDataSetClass.generateDefaultTargetNames(obj.uniqueTargets);
+        function tn = getClassNames(obj)
+            if isempty(obj.classNames)
+                tn = prtDataSetClass.generateDefaultClassNames(obj.uniqueClasses);
             else
-                tn = obj.uniqueTargetNames;
+                tn = obj.classNames;
             end
         end
         
-        function obj = setUniqueTargetNames(obj,names)
-            
-            obj.uniqueTargetNames = names;
+        function obj = setClassNames(obj,names)
+            obj.classNames = names;
         end
         
-        function targNames = getTargetNames(obj)
-            if isempty(obj.uniqueTargetNames)
-                tn = prtDataSetClass.generateDefaultTargetNames(obj.uniqueTargets);
-            else
-                tn = obj.uniqueTargetNames;
-            end
-            t = getTargets(obj);
-            uniqueT = unique(t);
-            for uniqueInd = 1:length(uniqueT)
-                targNames(t == uniqueT(uniqueInd),1) = tn(uniqueInd);
-            end
-        end
-        
-        
-        function d = getObservationsByTarget(obj, uniqueTarget, featureIndices)
+        function d = getObservationsByClass(obj, class, featureIndices)
             if nargin < 3 || isempty(featureIndices)
                 featureIndices = 1:obj.nFeatures;
             end
-            utInd = find(obj.uniqueTargets == uniqueTarget,1);
+            utInd = find(obj.uniqueClasses == class,1);
             if isempty(utInd)
                 d = [];
                 return
             end
-            d = getObservationsByUniqueTargetInd(obj, utInd, featureIndices);
+            d = getObservationsByClassInd(obj, utInd, featureIndices);
         end
         
-        function d = getObservationsByUniqueTargetInd(obj, uniqueTargetInd, featureIndices)
+        function uT = get.uniqueClasses(obj)
+            % This can be slow, but we can't make this persistent.
+            % We don't know when if labels have changed
+            uT = unique(obj.targets);
+        end
+        
+        function d = getObservationsByClassInd(obj, classInd, featureIndices)
             if nargin < 3 || isempty(featureIndices)
                 featureIndices = 1:obj.nFeatures;
             end
             
-            d = obj.getObservations(obj.getTargets == obj.uniqueTargets(uniqueTargetInd),featureIndices);
+            d = obj.getObservations(obj.getTargets == obj.uniqueClasses(classInd),featureIndices);
         end
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         
@@ -271,7 +219,7 @@ classdef prtDataSetClass < prtDataSetInMemoryLabeled & prtDataSetBaseClass
             title(obj.name);
             
             % Create legend
-            legendStrings = getUniqueTargetNames(obj);
+            legendStrings = getClassNames(obj);
             legend(handleArray,legendStrings,'Location','SouthEast');
                         
             % Handle Outputs
