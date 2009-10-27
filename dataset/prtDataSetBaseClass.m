@@ -9,7 +9,7 @@ classdef prtDataSetBaseClass < prtDataSetBaseLabeled
         isZeroOne = nan        % true if isequal(uniqueClasses,[0 1])
     end
     
-    properties (Abstract)
+    properties (Abstract, Dependent)
         uniqueClasses          % vector, unique class names in the dataSet
         % We don't implement this here because big datasets might want to
         % cache it. 
