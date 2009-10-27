@@ -9,9 +9,6 @@ PrtFeatSelOpt.nFeatures = min(DS.nFeatures,PrtFeatSelOpt.nFeatures);
 maxIterations = nchoosek(DS.nFeatures,PrtFeatSelOpt.nFeatures);
 %warning on;
 
-data = DS.getObservations;
-labels = DS.getTargets;
-
 iterationCount = 1;
 nextChooseFn = prtNextChoose(DS.nFeatures,PrtFeatSelOpt.nFeatures);
 firstChoose = nextChooseFn();
@@ -30,7 +27,7 @@ while notFinished;
 
     prtUtilWaitbarWithCancel(iterationCount/maxIterations,h);
     
-    tempDataSet = prtDataSetClass(data(:,currChoose),labels);
+    tempDataSet = DS.retainFeatures(currChoose);
     currPerformance = PrtFeatSelOpt.EvaluationMetric(tempDataSet);
     
     if any(currPerformance > bestPerformance) || isempty(bestChoose)
@@ -53,6 +50,7 @@ end
 if PrtFeatSelOpt.showProgressBar && ~canceled
     delete(h);
 end
+drawnow;
 
 if size(bestChoose,1) > 1
     warning('prt:exaustiveSetsTie','Multiple identical performing feature sets found with performance %f; randomly selecting one feature set for output',bestPerformance(1));

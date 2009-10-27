@@ -5,8 +5,7 @@ result = true;
 %%
 
 DS = prtDataUnimodal;
-DS = prtDataSetLabeled(DS,DS);
-DS = prtDataSetLabeled(DS.data + randn(size(DS.data))*2,DS.dataLabels);
+DS = DS.setObservations([DS.getObservations,DS.getObservations + randn(size(DS.getObservations))*10]);
 
 opt = prtFeatSelOptExhaustive;
 opt.nFeatures = 4;

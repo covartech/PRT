@@ -18,7 +18,8 @@ elseif iscell(PrtObject)
             for j = 1:length(cPrtObjectCell)
                 [PrtResults{i}{j},Etc{i}{j}] = prtRun(cPrtObjectCell{j},PrtDataSet);
             end
-            PrtDataSet = prtDataSetUnLabeled(PrtResults{i}{:});
+            %PrtDataSet = prtDataSetUnLabeled(PrtResults{i}{:});
+            PrtDataSet = joinFeatures(PrtResults{i}{:});
         elseif isstruct(PrtObject{i})
             % Serial
             [PrtResults{i},Etc{i}] = prtRun(PrtObject{i},PrtDataSet);

@@ -62,7 +62,9 @@ else
     WV = K;
 end
 
-BC = prod(1:N)/(prod(1:(N-WV)) * prod(1:WV)) - 1;
+%BC = prod(1:N)/(prod(1:(N-WV)) * prod(1:WV)) - 1;
+BC = round(prod(1:N)/(prod(1:(N-WV)) * prod(1:WV)) - 1); 
+
 CNT = 0;  % Tells us when to restart.
 WV = [];  % Initial WV, the working vector for looping.  
 C = @nestfunc;  % Handle to nested function.
@@ -76,7 +78,7 @@ C = @nestfunc;  % Handle to nested function.
             return
         end
          
-        if CNT == BC;
+        if CNT >= BC;
             B = (N-K+1):N;  % The final vector, reset other vals.
             CNT = 0;
             inc = 1;            

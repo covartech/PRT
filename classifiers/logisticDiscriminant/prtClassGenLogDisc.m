@@ -17,9 +17,9 @@ switch lower(Options.wInit)
         error('Invalid value for Options.wInit; wInit must be one of {''FLD'',''randn'',''manual''}');
 end
 
-x = DS.data;
+x = DS.getObservations;
 x = cat(2,ones(size(x,1),1),x);
-y = DS.dataLabels;
+y = DS.getTargets;
 
 yOut = sigmaFn((x*w)')';
 rVec = yOut.*(1-yOut);

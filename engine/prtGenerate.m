@@ -28,15 +28,15 @@ elseif iscell(PrtOptions)
                 PrtStruct{i}{j} = prtGenerate(DataSet,cPrtOptionsCell{j});
                 newDataSets{j} = prtRun(PrtStruct{i}{j},DataSet);
             end
-            classLabels = DataSet.getTargets;
-            DataSet = joinFeatures(newDataSets{:});
-            DataSet = prtDataSetLabeled(DataSet.data,classLabels);
+            DataSetOut = joinFeatures(newDataSets{:});
+            DataSet = DataSet.setObservations(DataSetOut.getObservations);
         elseif isstruct(PrtOptions{i})
+            
             %Serial
-            classLabels = DataSet.getTargets;
             PrtStruct{i} = prtGenerate(DataSet,PrtOptions{i});
-            DataSet = prtRun(PrtStruct{i},DataSet);
-            DataSet = prtDataSetLabeled(DataSet.data,classLabels);
+            DataSetOut = prtRun(PrtStruct{i},DataSet);
+            DataSet = DataSet.setObservations(DataSetOut.getObservations);
+            
         else
             error('werawer')
         end

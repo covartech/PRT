@@ -45,5 +45,5 @@ CatDS = joinFeatures(DS, DS2);
 
 DS3 = prtDataMary2;
 
-CatDS = joinFeatures(DS, DS3);
+CatDS = joinFeatures(DS, DS2);
 

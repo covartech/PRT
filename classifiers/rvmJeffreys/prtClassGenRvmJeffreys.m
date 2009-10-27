@@ -2,7 +2,7 @@ function Rvm = prtClassGenRvmJeffreys(DS,PrtOptions)
 %Rvm = prtClassGenRvmJeffreys(DS,PrtOptions)
 
 warningState = warning;
-warning off MATLAB:nearlySingularMatrix
+%warning off MATLAB:nearlySingularMatrix
 
 if nargin == 1
     PrtOptions.maxIterations = 1000;
@@ -21,7 +21,19 @@ x = DS.getObservations;
 nBasis = sum(nBasis);
 
 sigmaSquared = eps;
-beta = (sigmaSquared*eye(nBasis) + gramm'*gramm)\gramm'*y;
+
+%Check to make sure the problem is well-posed.  This can be fixed either
+%with changes to kernels, or by regularization
+G = gramm'*gramm;
+while rcond(G) < 1e-6
+    if sigmaSquared == eps
+        warning('prtClassGenRvmJeffreys:illConditionedG','Jeffrey''s RVM initial G matrix ill-conditioned; trying to resolve; this can be modified by changing kernel parameters\n');
+    end
+    G = (sigmaSquared*eye(nBasis) + gramm'*gramm);
+    sigmaSquared = sigmaSquared*2;
+end
+beta = G\gramm'*y;
+
 u = diag(abs(beta));
 relevantIndices = 1:size(gramm,2);
 

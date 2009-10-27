@@ -106,6 +106,10 @@ classdef prtDataSetBaseInMemory
         %Set the observations to a new set
         function obj = setObservations(obj,data,indices1,indices2)
             %check sizes:
+            if nargin == 2
+                obj.data = data;
+                return;
+            end
             if nargin < 3 || isempty(indices1)
                 indices1 = 1:obj.nObservations;
             end

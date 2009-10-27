@@ -5,8 +5,8 @@ x = getObservations(PrtDataSet);
 n = PrtDataSet.nObservations;
 k = PrtClassKnn.PrtOptions.k;
 
-nClasses = PrtClassKnn.PrtDataSet.nUniqueTargets;
-uClasses = PrtClassKnn.PrtDataSet.uniqueTargets;
+nClasses = PrtClassKnn.PrtDataSet.nClasses;
+uClasses = PrtClassKnn.PrtDataSet.uniqueClasses;
 labels = getTargets(PrtClassKnn.PrtDataSet);
 y = zeros(n,nClasses);
 
