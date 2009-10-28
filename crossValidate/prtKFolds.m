@@ -1,7 +1,7 @@
 function varargout = prtKFolds(DataSet,PrtOptions,K)
 %[DS, TestInd, ClassStructs, uKeys, nativeDS] = prtKFolds(DataSet,PrtOptions,K)
 
-if nargin == 3 || isempty(K)
+if nargin == 2 || isempty(K)
     K = DataSet.nObservations;
 end
 

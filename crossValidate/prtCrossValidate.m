@@ -26,6 +26,9 @@ for uInd = 1:length(uKeys);
     testDataSet = PrtDataSet.retainObservations(cTestInd);
     classOut = prtGenerate(trainDataSet,AlgorithmOptions);
     [currResults, Etc] = prtRun(classOut,testDataSet);
+    if isa(currResults,'cell')
+        currResults = currResults{end};
+    end
     if uInd == 1
         Results = prtDataSetUnlabeled(nan(PrtDataSet.nObservations,currResults.nFeatures));
     end

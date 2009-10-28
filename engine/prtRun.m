@@ -23,6 +23,7 @@ elseif iscell(PrtObject)
         elseif isstruct(PrtObject{i})
             % Serial
             [PrtResults{i},Etc{i}] = prtRun(PrtObject{i},PrtDataSet);
+            PrtDataSet = PrtResults{i};
         else
             error('werawer')
         end
