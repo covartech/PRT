@@ -202,6 +202,10 @@ classdef prtDataSetBase
             end
         end
         
+        function h = plotLines(xInd,cY,linecolor,linewidth)
+            h = plot(xInd,cY,'color',linecolor,'linewidth',linewidth);
+        end
+        
         function makeExploreGui(theObject,theFeatures)
             % Get the window position and pick/set a figure size.
             ss = get(0,'screensize');

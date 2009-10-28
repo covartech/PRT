@@ -67,18 +67,18 @@ classdef prtDataSetBaseInMemoryLabeled < prtDataSetBaseInMemory
         %Required by prtDataSetBase:
         function [obj,retainedInds] = removeObservations(obj,indices)
             [obj,retainedInds] = retainObservations(obj,setdiff(1:obj.nObservations,indices));
-            fprintf('need to check to see if we removed any labels which will change uniqueTargetNames, etc')
+            %fprintf('need to check to see if we removed any labels which will change uniqueTargetNames, etc')
         end
         
         function [obj,retainedInds] = retainObservations(obj,indices)
             [obj,retainedInds] = retainObservations@prtDataSetBaseInMemory(obj,indices);
             obj.targets = obj.targets(retainedInds);
-            fprintf('need to check to see if we removed any labels which will change uniqueTargetNames, etc')
+            %fprintf('need to check to see if we removed any labels which will change uniqueTargetNames, etc')
         end
         
         function [obj,retainedInds] = replaceObservations(obj,data,indices)
             [obj,retainedInds] = replaceObservations@prtDataSetBaseInMemory(obj,data,indices);
-            fprintf('need to check to see if we removed/added any labels which will change uniqueTargetNames, etc')
+            %fprintf('need to check to see if we removed/added any labels which will change uniqueTargetNames, etc')
         end
         
         %% Constructor %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

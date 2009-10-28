@@ -181,15 +181,54 @@ classdef prtDataSetClass < prtDataSetInMemoryLabeled & prtDataSetBaseClass
         function explore(obj)
             prtDataSetClass.makeExploreGui(obj,obj.getFeatureNames);
         end
+        
+        function varargout = plotAsTimeSeries(obj,featureIndices)
+            if nargin < 2 || isempty(featureIndices)
+                featureIndices = 1:obj.nFeatures;
+            end
+            
+            nClasses = obj.nClasses;
+            classColors = obj.plottingColors;
+            classSymbols = obj.plottingSymbols;
+            handleArray = zeros(nClasses,1);
+            
+            holdState = get(gca,'nextPlot');
+            % Loop through classes and plot
+            for i = 1:nClasses
+                %Use "i" here because it's by uniquetargetIND
+                cX = obj.getObservationsByClassInd(i, featureIndices);                
+                
+                xInd = 1:size(cX,2);
+                linewidth = .1;
+                h = prtDataSetBase.plotLines(xInd,cX,classColors(i,:),linewidth);
+                handleArray(i) = h(1);
+                if i == 1
+                    hold on;
+                end
+            end
+            set(gca,'nextPlot',holdState);
+            % Set title
+            title(obj.name);
+            
+            % Create legend
+            legendStrings = getClassNames(obj);
+            legend(handleArray,legendStrings,'Location','SouthEast');
+                        
+            % Handle Outputs
+            varargout = {};
+            if nargout > 0
+                varargout = {handleArray,legendStrings};
+            end
+        end
         %PLOT:
         function varargout = plot(obj, featureIndices)
             
-             if nargin < 2 || isempty(featureIndices)
-                 featureIndices = 1:obj.nFeatures;
-             end
-             if islogical(featureIndices)
-                 featureIndices = find(featureIndices);
-             end
+            if nargin < 2 || isempty(featureIndices)
+                featureIndices = 1:obj.nFeatures;
+            end
+            if islogical(featureIndices)
+                featureIndices = find(featureIndices);
+            end
             
             nPlotDimensions = length(featureIndices);
             if nPlotDimensions < 1

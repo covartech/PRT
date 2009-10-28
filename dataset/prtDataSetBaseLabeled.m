@@ -28,7 +28,7 @@ classdef prtDataSetBaseLabeled < prtDataSetBase
                 indices2 = (1:obj.nTargetDimensions)';
             end
             if isempty(obj.targetNames)
-                targetNames = prtDataSetBase.generateDefaultTargetNames(indices2);
+                targetNames = prtDataSetBaseLabeled.generateDefaultTargetNames(indices2);
             else
                 targetNames = obj.targetNames(indices2);
             end
