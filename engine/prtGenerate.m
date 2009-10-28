@@ -13,12 +13,12 @@ end
 
 if isstruct(PrtOptions)
     [useMary, emulate] = prtUtilDetermineMary(DataSet,PrtOptions);
-    
     if useMary && emulate
         PrtStruct = PrtOptions.MaryEmulationOptions.emulationFunction(DataSet,PrtOptions);
     else
         PrtStruct = PrtOptions.Private.generateFunction(DataSet,PrtOptions);
     end
+    
 elseif iscell(PrtOptions)
     for i = 1:length(PrtOptions)
         if iscell(PrtOptions{i})
