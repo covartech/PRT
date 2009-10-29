@@ -128,7 +128,7 @@ classdef prtDataSetBaseInMemoryLabeled < prtDataSetBaseInMemory
                 error('prt:prtDataSetBaseInMemeoryLabeled:invalidTargets','size(data,1) (%d) must match size(targets,1) (%d)',size(obj.data,1),size(targets,1));
             end
             obj.targets = targets;
-            obj.uniqueTargetNames = {};
+            %obj.uniqueTargetNames = {};
         end
         
         function targets = get.targets(obj)

@@ -10,6 +10,7 @@ classdef prtDataSetClass < prtDataSetInMemoryLabeled & prtDataSetBaseClass
     methods
         %% Constructor %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        
         function prtDataSet = prtDataSetClass(varargin)
             % prtDataSet = prtDataSetClass
             % prtDataSet = prtDataSetClass(prtDataSetClassIn, {paramName1, paramVal2, ...})
@@ -177,13 +178,25 @@ classdef prtDataSetClass < prtDataSetInMemoryLabeled & prtDataSetBaseClass
             d = obj.getObservations(obj.getTargets == obj.uniqueClasses(classInd),featureIndices);
         end
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        
-        function obj = maryTargetsToZeroOneTargets(obj)
-            newTargets = zeros(obj.nObservations,obj.nClasses);
-            for i = 1:obj.nClasses
-                newTargets(:,i) = obj.getTargets == obj.uniqueClasses(i);
+        function prtDataSet = setTargets(obj,targets)
+            %prtDataSet = setTargets(obj,targets)
+            if iscellstr(targets)
+                [classes,uniqueClasses] = prtUtilStringsToClassNumbers(targets);
+            else
+                classes = targets;
+                uniqueClasses = {};
             end
-            obj.targets = newTargets;
+            prtDataSet = setTargets@prtDataSetInMemoryLabeled(obj,classes);
+            prtDataSet.classNames = uniqueClasses;
+        end
+        
+        
+        function binaryMatTargets = getTargetsAsBinaryMatrix(obj)
+            %binaryMatTargets = getTargetsAsBinaryMatrix(obj)
+            binaryMatTargets = zeros(obj.nObservations,obj.nClasses);
+            for i = 1:obj.nClasses
+                binaryMatTargets(:,i) = obj.getTargets == obj.uniqueClasses(i);
+            end
         end
         
         function explore(obj)
@@ -228,6 +241,61 @@ classdef prtDataSetClass < prtDataSetInMemoryLabeled & prtDataSetBaseClass
                 varargout = {handleArray,legendStrings};
             end
         end
+        
+        function varargout = starPlot(obj,featureIndices)
+            %varargout = starPlot(obj,featureIndices)
+            
+            if nargin < 2 || isempty(featureIndices)
+                featureIndices = 1:obj.nFeatures;
+            end
+            if islogical(featureIndices)
+                featureIndices = find(featureIndices);
+            end
+            
+            nPlotDimensions = length(featureIndices);
+            if nPlotDimensions < 1
+                warning('prt:plot:NoPlotDimensionality','No plot dimensions requested.');
+                return
+            end
+            
+            
+            nClasses = obj.nClasses;
+            classColors = obj.plottingColors;
+            classSymbols = obj.plottingSymbols;
+            handleArray = zeros(nClasses,1);
+            
+            
+            M = ceil(sqrt(obj.nObservations));
+            %plotGrid = linspace(0,1,M);
+            
+            theta = linspace(0,2*pi,length(featureIndices)+1);
+            theta = theta(1:end-1);
+            cT = cos(theta);
+            sT = sin(theta);
+            maxVal = max(abs(obj.getObservations(:,featureIndices)));
+            
+            nFeats = length(featureIndices);
+            classColors = obj.plottingColors;
+            uClasses = obj.uniqueClasses;
+            for i = 1:obj.nObservations;
+                [centerI,centerJ] = ind2sub([M,M],i);
+                centerJ = M - centerJ;
+                
+                currObs = obj.getObservations(i,featureIndices)./(maxVal*2);
+                points = bsxfun(@plus,[cT.*currObs;sT.*currObs],[centerI;centerJ]);
+                
+                ppoints = cat(2,points,points(:,1));
+                
+                h = plot([repmat(centerI,nFeats,1),points(1,:)']',[repmat(centerJ,nFeats,1),points(2,:)']',ppoints(1,:)',ppoints(2,:)');
+                classInd = obj.getTargets(i) == uClasses;
+                set(h,'color',classColors(classInd,:));
+                hold on;
+            end
+            hold off;
+            title(obj.name);
+        end
+        
+        
         %PLOT:
         function varargout = plot(obj, featureIndices)
             

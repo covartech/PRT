@@ -4,7 +4,9 @@ function Pls = prtPreProcGenPls(PrtDataSet,PrtOptions)
 Pls.PrtDataSet = PrtDataSet;
 Pls.PrtOptions = PrtOptions;
 
-PrtDataSet = PrtDataSet.maryTargetsToZeroOneTargets;
-[Bpls, W, P, Q, T] = prtUtilPls(PrtDataSet,PrtOptions.nComponents);
-keyboard
-Pls.projectionMatrix = P;
+[Bpls, W, P, Q, T, meanX, meanY] = prtUtilPls(PrtDataSet,PrtOptions.nComponents);
+
+Pls.meanX = meanX;
+Pls.projectionMatrix = pinv(P');
+Pls.projectionMatrix = bsxfun(@rdivide,Pls.projectionMatrix,sqrt(sum(Pls.projectionMatrix.^2,1)));
+

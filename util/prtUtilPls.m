@@ -1,4 +1,4 @@
-function [Bpls, W, P, Q, T] = prtUtilPls(DataSet,nComponents)
+function [Bpls, W, P, Q, T, meanX, meanY] = prtUtilPls(DataSet,nComponents)
 % prtUtilPls performs partial least squares regression
 %   This does not sphere the data first.
 %
@@ -31,7 +31,17 @@ function [Bpls, W, P, Q, T] = prtUtilPls(DataSet,nComponents)
 % Created: 05-May-2008
 
 X = DataSet.getObservations;
-Y = DataSet.getTargets;
+if DataSet.nClasses > 2
+    Y = DataSet.getTargetsAsBinaryMatrix;
+else
+    Y = DataSet.getTargetsAsBinaryMatrix;
+    Y = Y(:,2); %0's and 1's for H1
+end
+meanX = mean(X,1);
+meanY = mean(Y,1);
+
+X = bsxfun(@minus,X,meanX);
+Y = bsxfun(@minus,Y,meanY);
 
 E = X;
 F = Y;
@@ -77,12 +87,14 @@ for iVec = 1:nVectors
         prevT = t;
     end
 
+    B(iVec,iVec) = t'*u;
+    
     p = E'*t; % the current loadings for X % or p = X'*t % amazingly the same
     q = F'*t; % the current loadings for Y % or q = Y'*t % amazingly the same
     
     % Remove the effect of this term. 
 	E = E - t*p';
-    F = F - t*q';
+    F = F - B(iVec,iVec)*t*q';
 
     % Save everything
     U(:,iVec) = u;
@@ -92,5 +104,4 @@ for iVec = 1:nVectors
     W(:,iVec) = w./normT; % To get proper scaling.
     P(:,iVec) = p;
 end
-
 Bpls = W*Q';

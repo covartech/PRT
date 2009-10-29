@@ -6,7 +6,7 @@ disp('Note - input arguments in scoreconfusionmatrix have changed');
 [guess,truth,labels] = prtUtilScoreParseFirstTwoInputs(guess,truth);
 guess = guess(:);
 if nargin == 2
-    nClass = length(unique(truth));
+    nClass = length(unique(cat(1,truth(:),guess(:))));
 end
 
 if length(truth) ~= length(guess)

@@ -1,6 +1,7 @@
-function [DataSetOut,Etc] = prtPreProcRunPls(PrtLda,DataSetIn)
+function [DataSetOut,Etc] = prtPreProcRunPls(PrtPls,DataSetIn)
 %[DataSetOut,Etc] = prtPreProcGenPls(PrtDataSet,PrtOptions)
 
 Etc = [];
 X = DataSetIn.getObservations;
-DataSetOut = DataSetIn.setObservations(X*PrtLda.projectionMatrix);
+X = bsxfun(@minus,X,PrtPls.meanX);
+DataSetOut = DataSetIn.setObservations(X*PrtPls.projectionMatrix);
