@@ -178,6 +178,14 @@ classdef prtDataSetClass < prtDataSetInMemoryLabeled & prtDataSetBaseClass
         end
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         
+        function obj = maryTargetsToZeroOneTargets(obj)
+            newTargets = zeros(obj.nObservations,obj.nClasses);
+            for i = 1:obj.nClasses
+                newTargets(:,i) = obj.getTargets == obj.uniqueClasses(i);
+            end
+            obj.targets = newTargets;
+        end
+        
         function explore(obj)
             prtDataSetClass.makeExploreGui(obj,obj.getFeatureNames);
         end

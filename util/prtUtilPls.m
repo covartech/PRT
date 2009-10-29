@@ -36,7 +36,6 @@ Y = DataSet.getTargets;
 E = X;
 F = Y;
 
-
 [nSamples, nDimensions] = size(X);
 
 if nargin < 2
@@ -93,6 +92,5 @@ for iVec = 1:nVectors
     W(:,iVec) = w./normT; % To get proper scaling.
     P(:,iVec) = p;
 end
-
 
 Bpls = W*Q';
