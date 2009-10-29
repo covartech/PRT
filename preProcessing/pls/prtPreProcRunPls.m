@@ -3,4 +3,4 @@ function [DataSetOut,Etc] = prtPreProcRunPls(PrtLda,DataSetIn)
 
 Etc = [];
 X = DataSetIn.getObservations;
-DataSetOut = DataSetIn.setObservations(X*PrtLda.projectionMatrix');
+DataSetOut = DataSetIn.setObservations(X*PrtLda.projectionMatrix);

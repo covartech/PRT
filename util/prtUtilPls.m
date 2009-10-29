@@ -36,9 +36,10 @@ Y = DataSet.getTargets;
 E = X;
 F = Y;
 
+
 [nSamples, nDimensions] = size(X);
 
-if nargin < 3
+if nargin < 2
     nVectors = nDimensions;
 else
     nVectors = nComponents;
