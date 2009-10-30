@@ -29,3 +29,6 @@ elseif iscell(PrtObject)
         end
     end
 end
+if iscell(PrtResults)
+   PrtResults = PrtResults{end};
+end

@@ -6,7 +6,7 @@ if nargin < 2 || isempty(nFeaturesOut)
 end
 
 N = size(X,1);
-[V, L] = eig((1/N)*X*X');
+[V, L] = eig((1/N)*(X*X'));
 
 [lambda, sortedLInd] = sort(diag(L),'descend');
 V = V(:,sortedLInd);
