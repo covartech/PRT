@@ -40,10 +40,14 @@ for i=1:numel(allClasses)
     map.(allClasses{i}) = i;
 end
 
+keepClass = false(numel(allClasses),1);
 for i=1:numel(allClasses)
     try
         meta = eval(['?',allClasses{i}]);
         parents = meta.SuperClasses;
+        if ~isempty(meta)
+            keepClass(i) = true;
+        end
     catch ME %#ok
         %warning('CLASSTREE:discoveryWarning',['Could not discover information about class ',allClasses{i}]);
         continue;
@@ -53,10 +57,8 @@ for i=1:numel(allClasses)
     end
 end
 
-% for i=1:numel(allClasses)
-%     allClasses{i} = ['@',allClasses{i}];
-% end
-
+matrix = matrix(keepClass,keepClass);
+allClasses = allClasses(keepClass);
 h = biograph(matrix',allClasses);
 
 % Nodes = get(h,'Nodes');
