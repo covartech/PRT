@@ -24,7 +24,8 @@ elseif ischar(classNamesStrCell) && isdir(classNamesStrCell)
 end
 
 if suppliedDir
-    fileNames = what(directory);
+    %fileNames = what(directory);
+    fileNames = prtUtilRecursiveWhat(directory);
     classNamesStrCell = cellfun(@(c)c(1:end-2), fileNames.m,'uniformOutput',false);
 end
 

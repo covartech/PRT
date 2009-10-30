@@ -51,6 +51,6 @@ end
 
 end
 
-function I = getClassInfo(claseName)
-    I = eval(['?' claseName]);
+function I = getClassInfo(className)
+    I = eval(['?' className]);
 end
