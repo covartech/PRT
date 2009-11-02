@@ -277,7 +277,7 @@ set(Handles.handle, 'WindowScrollWheelFcn' , @scroll_zoom,...
             case 'block'
         end
         
-        deselectEverything();
+        %deselectEverything();
         % reset Gui.status
         Gui.status = '';
     end
