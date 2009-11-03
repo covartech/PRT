@@ -54,10 +54,10 @@ classdef prtDataSetClass < prtDataSetInMemoryLabeled & prtDataSetBaseClass
                 % prtDataSet = prtDataSetClass(data, targets, {paramName1, paramVal2, ...})
                 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
                 if nargin < 2
-                    error('prt:prtDataSetLabeled:invalidInputs','both data and targets must be specified.');
+                    error('prt:prtDataSetClass:invalidInputs','both data and targets must be specified.');
                 end
                 if size(varargin{1},1) ~= size(varargin{2},1)
-                    error('prt:prtDataSetLabeled:dataTargetsMismatch','size(data,1) (%d) must match size(targets,1) (%d)',size(varargin{1},1), size(varargin{2},1));
+                    error('prt:prtDataSetClass:dataTargetsMismatch','size(data,1) (%d) must match size(targets,1) (%d)',size(varargin{1},1), size(varargin{2},1));
                 end
                 prtDataSet = prtDataSet.setDataAndTargets(varargin{1},varargin{2});
                 

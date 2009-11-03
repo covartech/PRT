@@ -4,10 +4,6 @@ function Rvm = prtClassGenRvmJeffreys(DS,PrtOptions)
 warningState = warning;
 %warning off MATLAB:nearlySingularMatrix
 
-if nargin == 1
-    PrtOptions.maxIterations = 1000;
-end
-
 if ~DS.isBinary
     error('prtClassGenRvm requires binary data set');
 end
