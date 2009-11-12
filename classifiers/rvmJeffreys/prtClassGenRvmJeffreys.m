@@ -12,7 +12,7 @@ y = DS.getTargets;
 y(y == 0) = -1;     %req'd for algorithm
 
 x = DS.getObservations;
-[gramm,nBasis] = prtKernelGrammMatrix(x,x,PrtOptions.kernel);
+[gramm,nBasis,kernelHandles] = prtKernelGrammMatrix(x,x,PrtOptions.kernel);
 
 nBasis = sum(nBasis);
 
@@ -49,14 +49,15 @@ for iteration = 1:PrtOptions.Jeffereys.maxIterations
     
     beta_OLD = beta;
     
-    A = (eye(size(uK)) + uK*grammK'*grammK*uK);
+    A = (eye(size(uK)) + uK*(grammK'*grammK)*uK);
     B = uK*(grammK'*S);    %this is correct - see equation (21)
     
     beta(relevantIndices,1) = uK*(A\B);
     
-    %
+    % Remove irrelevant vectors
     relevantIndices = find(abs(beta) > max(abs(beta))*PrtOptions.Jeffereys.betaRelevantTolerance);
     irrelevantIndices = abs(beta) <= max(abs(beta))*PrtOptions.Jeffereys.betaRelevantTolerance;
+
     beta(irrelevantIndices,1) = 0;
     u = diag(abs(beta));
 
@@ -71,4 +72,6 @@ end
 Rvm.PrtOptions = PrtOptions;
 Rvm.PrtDataSet = DS;
 Rvm.Beta = beta;
+Rvm.sparseBeta = beta(relevantIndices,1);
+Rvm.sparseKernels = kernelHandles(relevantIndices);
 warning(warningState);

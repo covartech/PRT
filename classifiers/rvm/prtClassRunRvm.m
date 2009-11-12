@@ -8,12 +8,23 @@ if DS.nObservations > 1000
     step = 1000;
     for i = 1:step:n;
         cI = i:min(i+step,n);
-        gramm = prtKernelGrammMatrix(DS.getObservations(cI,:),PrtRvm.PrtDataSet.getObservations,PrtRvm.PrtOptions.kernel);
-        y(cI) = normcdf(gramm*PrtRvm.Beta);
+        if ~isfield(PrtRvm,'sparseKernels')
+            gramm = prtKernelGrammMatrix(DS.getObservations(cI,:),PrtRvm.PrtDataSet.getObservations,PrtRvm.PrtOptions.kernel);
+            y(cI) = normcdf(gramm*PrtRvm.Beta);
+        else
+            gramm = prtKernelGrammMatrixUnary(DS.getObservations(cI,:),PrtRvm.sparseKernels);
+            y(cI) = normcdf(gramm*PrtRvm.sparseBeta);
+        end
+        
     end
 else
-    gramm = prtKernelGrammMatrix(DS.getObservations,PrtRvm.PrtDataSet.getObservations,PrtRvm.PrtOptions.kernel);
-    y = normcdf(gramm*PrtRvm.Beta);
+    if ~isfield(PrtRvm,'sparseKernels')
+        gramm = prtKernelGrammMatrix(DS.getObservations,PrtRvm.PrtDataSet.getObservations,PrtRvm.sparseKernels);
+        y = normcdf(gramm*PrtRvm.Beta);
+    else
+        gramm = prtKernelGrammMatrixUnary(DS.getObservations,PrtRvm.sparseKernels);
+        y = normcdf(gramm*PrtRvm.sparseBeta);
+    end
 end
 
 ClassifierResults = prtDataSetUnLabeled(y);

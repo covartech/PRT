@@ -13,7 +13,7 @@ y = DS.getTargets;
 y(y == 0) = -1;   %req'd for algorithm
 
 x = DS.getObservations;
-[gramm,nBasis] = prtKernelGrammMatrix(x,x,Options.kernel);
+[gramm,nBasis,kFn] = prtKernelGrammMatrix(x,x,Options.kernel);
 
 PrtRvm.nBasis = nBasis; %this can be used in plotting or for backing out which kernel corresponds to which element of w
 PrtRvm.converged = 0;
@@ -87,3 +87,5 @@ for iteration = 1:Options.Laplacian.maxIterations
 end
 
 PrtRvm.Beta = w;
+PrtRvm.sparseBeta = w(relevantIndices);
+PrtRvm.sparseKernels = kFn(relevantIndices);
