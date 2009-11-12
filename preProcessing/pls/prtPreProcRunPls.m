@@ -3,5 +3,5 @@ function [DataSetOut,Etc] = prtPreProcRunPls(PrtPls,DataSetIn)
 
 Etc = [];
 X = DataSetIn.getObservations;
-X = bsxfun(@minus,X,PrtPls.meanX);
+X = bsxfun(@minus,X,PrtPls.xMeans);
 DataSetOut = DataSetIn.setObservations(X*PrtPls.projectionMatrix);
