@@ -121,7 +121,7 @@ classdef prtDataSetClass < prtDataSetInMemoryLabeled & prtDataSetBaseClass
                 return;
             end
             if  length(newClassNames) ~= obj.nClasses
-                error('prt:prtDataSetLabeled:ClassNamesInput','obj.nUniqueTargets (%d) must match length(newClassNames) (%d)', obj.nUniqueTargets, length(newClassNames));
+                error('prt:prtDataSetLabeled:ClassNamesInput','obj.nClasses (%d) must match length(newClassNames) (%d)', obj.nClasses, length(newClassNames));
             end
             if ~iscellstr(newClassNames)
                 error('prt:prtDataSetLabeled:ClassNamesInput','newClassNames must be a cell array of strings.');
@@ -210,7 +210,6 @@ classdef prtDataSetClass < prtDataSetInMemoryLabeled & prtDataSetBaseClass
             
             nClasses = obj.nClasses;
             classColors = obj.plottingColors;
-            classSymbols = obj.plottingSymbols;
             handleArray = zeros(nClasses,1);
             
             holdState = get(gca,'nextPlot');
@@ -258,13 +257,6 @@ classdef prtDataSetClass < prtDataSetInMemoryLabeled & prtDataSetBaseClass
                 return
             end
             
-            
-            nClasses = obj.nClasses;
-            classColors = obj.plottingColors;
-            classSymbols = obj.plottingSymbols;
-            handleArray = zeros(nClasses,1);
-            
-            
             M = ceil(sqrt(obj.nObservations));
             %plotGrid = linspace(0,1,M);
             
@@ -293,6 +285,9 @@ classdef prtDataSetClass < prtDataSetInMemoryLabeled & prtDataSetBaseClass
             end
             hold off;
             title(obj.name);
+            if nargout > 0
+                varargout = {h};
+            end
         end
         
         

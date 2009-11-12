@@ -19,5 +19,5 @@ end
 
 d = bsxfun(@minus,x1,x2');
 
-gramm = voigtProfile(d,sigma,gamma,N);
+gramm = prtUtilVoigtProfile(d,sigma,gamma,N);
 nBasis = size(gramm,2);

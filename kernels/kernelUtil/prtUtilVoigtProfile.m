@@ -1,4 +1,4 @@
-function y = voigtProfile(x,sigma,gamma,N)
+function y = prtUtilVoigtProfile(x,sigma,gamma,N)
 %y = voigtProfile(x,sigma,gamma)
 %y = voigtProfile(x,sigma,gamma,N)
 

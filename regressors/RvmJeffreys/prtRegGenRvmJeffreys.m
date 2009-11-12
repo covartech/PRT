@@ -54,5 +54,8 @@ for iter = 1:PrtOptions.Jeffereys.maxIterations
     end
 end
 
+irrelInd = setdiff(1:length(beta),relInd);
+beta(irrelInd) = 0;  %really sparsify!
+
 Rvm.beta = beta;
 Rvm.sigmaSquared = sigmaSquared;

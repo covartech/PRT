@@ -1,4 +1,4 @@
-function nfprtPath
+function prtPath
 %This function adds necessary directories for the gatool to your path.
 P = genpath(prtRoot);
 addpath(P);
@@ -14,3 +14,8 @@ while ~isempty(string);
     [string,remString] = strtok(remString,pathsep); %#ok
 end
 rmpath(removePath);
+
+warning('prtPath removes all DPRT functions from path');
+pathCell = prtUtilMatlabPath2StrCell;
+pathCell = prtUtilRemoveStrCell(pathCell,'dprt');
+path(prtUtilStrCell2MatlabPath(pathCell));
