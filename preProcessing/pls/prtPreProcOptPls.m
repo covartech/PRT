@@ -14,4 +14,4 @@ PrtPreProcOpt.Private.PrtObjectType = 'preProcessor';
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-PrtPreProcOpt.nComponents = 2;
+PrtPreProcOpt.nComponents = 3;

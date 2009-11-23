@@ -8,6 +8,10 @@ function [useMary, emulate] = prtUtilDetermineMary(varargin)
 if nargin == 2 && isa(varargin{1},'prtDataSetClass') 
     maryData = varargin{1}.isMary;
     PrtClassOpt = varargin{2};
+elseif nargin == 2 && isa(varargin{1},'prtDataSetUnLabeled')
+    useMary = false;
+    emulate = false;
+    return;
 elseif prtUtilIsClassifier(varargin{1})
     maryData = varargin{1}.PrtDataSet.isMary;
     PrtClassOpt = varargin{1}.PrtOptions;

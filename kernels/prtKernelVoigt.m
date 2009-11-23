@@ -1,7 +1,7 @@
 function [gramm,nBasis] = prtKernelVoigt(x1,x2,sigma,gamma)
 %   prtKernelRbf RBF Kernel function.
 %
-% Syntax: [gramm,nBasis] = rbfKernel(x1,x2,c);
+% Syntax: [gramm,nBasis] = prtKernelVoigt(x1,x2,sigma,gamma);
 %
 % Sample Usage:
 %

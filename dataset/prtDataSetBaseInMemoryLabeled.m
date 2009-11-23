@@ -94,6 +94,19 @@ classdef prtDataSetBaseInMemoryLabeled < prtDataSetBaseInMemory
             obj.targets = targets;
         end
         
+        
+        function DS = bootstrap(obj,nSamples)
+            sampleIndices = ceil(rand(1,nSamples).*obj.nObservations);
+            DS = obj;
+            DS = DS.setDataAndTargets(DS.getObservations(sampleIndices,:),DS.getTargets(sampleIndices));
+        end
+        
+        function DS = bootstrapByClass(DS,nSamplesPerClass)
+            error('Not implemented');
+            
+        end
+        
+        
         %Required by prtDataSetBase:
         function obj = setDataAndTargets(obj,data,targets)
             if ~isa(data,'double') || ndims(data) ~= 2

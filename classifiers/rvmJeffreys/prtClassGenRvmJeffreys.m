@@ -23,7 +23,7 @@ sigmaSquared = eps;
 G = gramm'*gramm;
 while rcond(G) < 1e-6
     if sigmaSquared == eps
-        warning('prtClassGenRvmJeffreys:illConditionedG','Jeffrey''s RVM initial G matrix ill-conditioned; trying to resolve; this can be modified by changing kernel parameters\n');
+        warning('prtClassGenRvmJeffreys:illConditionedG','Jeffrey''s RVM initial G matrix ill-conditioned; regularizing diagonal of G to resolve; this can be modified by changing kernel parameters\n');
     end
     G = (sigmaSquared*eye(nBasis) + gramm'*gramm);
     sigmaSquared = sigmaSquared*2;

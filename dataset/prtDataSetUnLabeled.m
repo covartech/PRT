@@ -130,5 +130,42 @@ classdef prtDataSetUnLabeled < prtDataSetInMemory
                 varargout = {handleArray,{}};
             end
         end
+        
+        
+        function varargout = plotAsTimeSeries(obj,featureIndices)
+            if nargin < 2 || isempty(featureIndices)
+                featureIndices = 1:obj.nFeatures;
+            end
+           
+            nClasses = 1;
+            classColors = prtPlotUtilClassColors(nClasses);
+            classSymbols = prtPlotUtilClassSymbols(nClasses);
+            
+            handleArray = zeros(nClasses,1);
+            
+            holdState = get(gca,'nextPlot');
+            % Loop through classes and plot
+            
+            %Use "i" here because it's by uniquetargetIND
+            cX = obj.getObservations;
+            
+            xInd = 1:size(cX,2);
+            linewidth = .1;
+            h = prtDataSetBase.plotLines(xInd,cX,classColors,linewidth);
+            handleArray = h(1);
+
+            set(gca,'nextPlot',holdState);
+            % Set title
+            title(obj.name);
+            
+            % Create legend
+            legend(handleArray,'Unlabeled','Location','SouthEast');
+                        
+            % Handle Outputs
+            varargout = {};
+            if nargout > 0
+                varargout = {handleArray,legendStrings};
+            end
+        end
     end
 end

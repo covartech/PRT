@@ -1,7 +1,7 @@
-function [DataSet,A,S] = prtDataSparseFactors(nFeatures,nSamples,nFactors,nFeatures)
+function [DataSet,A,S] = prtDataSparseFactors(dimensionality,nSamples,nFactors,nFeatures)
 %   prtDataSparseFactors Generate data with sparse underlying factors
 %
-%[DataSet,A,S] = prtDataSparseFactors(nFeatures = 1000,nSamples = 100,nFactors = 3,nFeatures = 5) 
+%[DataSet,A,S] = prtDataSparseFactors(dimensionality = 1000,nSamples = 100,nFactors = 3,nFeatures = 5) 
 %   generates unlabeled data X of size nSamples x nFeatures, where each 
 %   column of X is generated from a linear combination of the nFactors 
 %   columns of A.  A constitutes the factor loadings, and S is the factor 
@@ -22,22 +22,25 @@ function [DataSet,A,S] = prtDataSparseFactors(nFeatures,nSamples,nFactors,nFeatu
 
 
 Y = [];
-if nargin < 3
+if nargin < 1
+    dimensionality = 1000;
+end
+if nargin < 2
+    nSamples = 100;
     nFactors = 3;
 end
-if nargin < 4
+if nargin < 3
     nFeatures = 5;
 end
-A = zeros(nFeatures,nFactors);
-geneUsed = false(nFeatures,1);
+A = zeros(dimensionality,nFactors);
 
 for fact = 1:nFactors
-    importantFeatures = ceil(rand(1,nFeatures)*nFeatures);
+    importantFeatures = ceil(rand(1,nFeatures)*dimensionality);
     A(importantFeatures,fact) = randn(nFeatures,1) * 5;
 end
 S = randn(nFactors,nSamples);
 
-X = A*S + normrnd(0,ones(nFeatures,nSamples));
+X = A*S + normrnd(0,ones(dimensionality,nSamples));
 X = X';
 
-dataSet = prtDataSetUnLabeled(X);
+DataSet = prtDataSetUnLabeled(X);

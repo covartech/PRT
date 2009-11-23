@@ -290,7 +290,6 @@ classdef prtDataSetClass < prtDataSetInMemoryLabeled & prtDataSetBaseClass
             end
         end
         
-        
         %PLOT:
         function varargout = plot(obj, featureIndices)
             
