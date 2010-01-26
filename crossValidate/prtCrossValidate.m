@@ -22,8 +22,13 @@ for uInd = 1:length(uKeys);
     %get the testing indices:
     cTestInd = find(crossValidateEq(uKeys(uInd),validationKeys));
     
-    trainDataSet = PrtDataSet.removeObservations(cTestInd);
     testDataSet = PrtDataSet.retainObservations(cTestInd);
+    if length(uKeys) == 1  %1-fold, incestuous train and test
+        trainDataSet = testDataSet;
+    else
+        trainDataSet = PrtDataSet.removeObservations(cTestInd);
+    end
+    
     classOut = prtGenerate(trainDataSet,AlgorithmOptions);
     [currResults, Etc] = prtRun(classOut,testDataSet);
     if isa(currResults,'cell')

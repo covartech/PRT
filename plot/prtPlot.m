@@ -20,7 +20,11 @@ elseif nargin == 2 && isa(varargin{1},'prtDataSetBase') && isa(varargin{2},'prtD
     return;
 elseif nargin == 1 && prtUtilIsClassifier(varargin{1})
     imageHandle = prtPlotClassifierConfidence(varargin{1});
-    [M,N] = getSubplotDimensions(length(imageHandle));
+    %Can't do this; for 3-D classifiers, length(imageHandle) is 3 because
+    %"slice" returns handles to all the images, not the image axes
+    %[M,N] = getSubplotDimensions(length(imageHandle));
+    [M,N] = getSubplotDimensions(varargin{1}.PrtDataSet.nClasses-1);
+    
     for subImage = 1:M*N
         subplot(M,N,subImage)
         hold on;

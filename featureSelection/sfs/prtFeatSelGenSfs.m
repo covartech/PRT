@@ -1,5 +1,5 @@
 function prtFeatSelector = prtFeatSelGenSfs(DS,PrtFeatSelOpt)
-%prtFeatSelector = prtFeatSelGenSfs(DS,PrtFeatSelOpt,PrtWrapperOpt)
+%prtFeatSelector = prtFeatSelGenSfs(DS,PrtFeatSelOpt)
 
 nFeats = DS.nFeatures;
 

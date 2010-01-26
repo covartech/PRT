@@ -12,6 +12,10 @@ elseif nargin == 2 && isa(varargin{1},'prtDataSetUnLabeled')
     useMary = false;
     emulate = false;
     return;
+elseif nargin == 2 && isa(varargin{1},'prtDataSetRegress')
+    useMary = false;
+    emulate = false;
+    return;
 elseif prtUtilIsClassifier(varargin{1})
     maryData = varargin{1}.PrtDataSet.isMary;
     PrtClassOpt = varargin{1}.PrtOptions;
