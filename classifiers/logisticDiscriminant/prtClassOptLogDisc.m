@@ -14,7 +14,7 @@ Options.Private.PrtObjectType = 'classifier';
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-Options.handleNonPosDefR = 'regularize'
+Options.handleNonPosDefR = 'exit'; %'regularize'
 
 Options.twoClassParadigm = 'binary';
 Options.PlotOptions = optionsDprtPlot;
