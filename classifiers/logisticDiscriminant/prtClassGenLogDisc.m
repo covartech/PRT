@@ -1,4 +1,6 @@
 function LogDisc = prtClassGenLogDisc(DS,Options)
+%
+%   
 
 LogDisc.PrtDataSet = DS;
 LogDisc.PrtOptions = Options;
@@ -10,7 +12,7 @@ switch lower(Options.wInit)
         Fld = prtClassGenFld(DS,prtClassOptFld);
         w = [0;Fld.w]; %append zero for offset
     case 'randn'
-        w = randn(size(x,2)+1,1);
+        w = randn(DS.nFeatures+1,1);
     case 'manual'
         w = Options.initialW;
     otherwise 
@@ -35,12 +37,12 @@ while ~converged
     %using the rCond of rVec or any nans in rVec
     if rCondDiag(rVec) < eps*2 || any(isnan(rVec))
         %Numerical instability options are normalize, exit, or stepsize.
-        switch lower(OptionsLogDisc.handleNonPosDefR)
-            case 'normalize'
+        switch lower(Options.handleNonPosDefR)
+            case 'regularize'
                 warning('dprt:generateLogDisc:stepSize','rcond(R) < eps; attempting to diagonal load R');
-                diagAdd = 1e-5;
+                diagAdd = 1e-5*max(rVec);
                 while(rCondDiag(rVec) < eps*2)
-                    rVec = rVec + diagAdd*2;
+                    rVec = rVec + diagAdd;
                 end
             case 'exit'
                 warning('dprt:generateLogDisc:stepSize','rcond(R) < eps; Exiting; Try reducing Options.irlsStepSize');
@@ -48,25 +50,8 @@ while ~converged
                 LogDisc.w = w;
                 LogDisc.iter = iter;
                 return;
-            case 'stepsize'
-                %reduce the stepsize iteratively, and start the
-                %optimization over:
-                if isa(Options.irlsStepSize,'char') && strcmpi(Options.irlsStepSize,'hessian')
-                    warning('dprt:generateLogDisc:stepSize','rcond(R) < eps; Reducing Stepsize and Reinitializing');
-                    OptionsLogDisc.irlsStepSize = .05;
-                    LogDisc = generateLogDisc(x(:,2:end),y,OptionsLogDisc);
-                    return;
-                elseif Options.irlsStepSize > .001
-                    warning('dprt:generateLogDisc:stepSize','rcond(R) < eps; Reducing Stepsize and Reinitializing');
-                    OptionsLogDisc.irlsStepSize = OptionsLogDisc.irlsStepSize /2;
-                    LogDisc = generateLogDisc(x(:,2:end),y,OptionsLogDisc);
-                    return;
-                else
-                    warning('dprt:generateLogDisc:stepSize','rcond(R) < eps; StepSize < .001; Convergence failed');
-                    return;
-                end
             otherwise
-                error('Invalid OptionsLogDisc.handleNonPosDefR field');
+                error('Invalid Options.handleNonPosDefR field');
         end
     end
     
