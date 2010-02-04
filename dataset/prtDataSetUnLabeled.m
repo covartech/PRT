@@ -159,7 +159,8 @@ classdef prtDataSetUnLabeled < prtDataSetInMemory
             title(obj.name);
             
             % Create legend
-            legend(handleArray,'Unlabeled','Location','SouthEast');
+            legendStrings = 'Unlabeled';
+            legend(handleArray,legendStrings,'Location','SouthEast');
                         
             % Handle Outputs
             varargout = {};
