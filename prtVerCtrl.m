@@ -6,7 +6,7 @@ if strcmpi(command,'checkout') && nargin == 0
     varargin = {repoLoc varargin{1}};
 end
 
-[status, results] = svn(asRoot,command,varargin{:});
+[status, results] = svn(prtRoot,command,varargin{:});
 
 disp(strtrim(results))
 
