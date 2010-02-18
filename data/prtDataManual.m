@@ -8,7 +8,7 @@ function DataSet = prtDataManual
 %   on the bottom left of the figure.
 
 hF = figure;
-
+error('this is all broken');
 X = zeros(0,2);
 Y = zeros(0,1);
 currentLabel = 0;
@@ -19,9 +19,10 @@ set(hA,'buttondownfcn',@prtDataManualAxesButtonDownFcn);
 hB = uicontrol('style','pushbutton','string','Done','callback',@(o,e) close(hF),'units','normalized','Position',[0.05 0.05 0.05 0.05]);
 dataManualTitle;
 
-DataSet = prtDataSet(X,Y,'dataSetName','Manualy Defined DataSet');
+DataSet = prtDataSet(X,Y,'name','Manualy Defined DataSet');
 
 uiwait(hF);
+
 
     function dataManualTitle
         title(sprintf('Left-click to add an H_{%d} observation. Right-click to change hypothesis.',currentLabel));
@@ -32,7 +33,7 @@ uiwait(hF);
         point = get(gca,'CurrentPoint');
         switch sType
             case 'normal'
-                DataSet = addObservations(DataSet,point(2,1:2),currentLabel);
+                DataSet = catObservations(DataSet,point(2,1:2),currentLabel);
                 V = axis;
                 hP = plot(DataSet);
                 set(hP,'hittest','off');

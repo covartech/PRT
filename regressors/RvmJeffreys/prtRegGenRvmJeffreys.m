@@ -35,8 +35,7 @@ for iter = 1:PrtOptions.Jeffereys.maxIterations
     %beta(relInd) = U*(sigmaSquared*I + U*locGramm'*locGramm*U)^(-1)*U*locGramm'*y;    
     beta(relInd) = U*((sigmaSquared*I + U*(locGramm'*locGramm)*U)\(U*locGramm'*y));
     
-    plotting = true;
-    if plotting
+    if PrtOptions.Visualization.plotting
         Rvm.beta = beta;
         Results = prtRun(Rvm,PrtDataSet);
         subplot(2,1,1);

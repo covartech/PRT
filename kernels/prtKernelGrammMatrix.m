@@ -35,9 +35,11 @@ for i = 1:length(kernelFunctions)
         tempGramm = kernelFunctions{i}(x1,x2);
         gramm = cat(2,gramm,tempGramm);
         nBasis(i) = size(tempGramm,2);
-        for j = 1:nBasis(i)
-            kFn{end+1} = prtKernelToUnaryKernel(kernelFunctions{i},x2(j,:));
-            %kFn{end+1} = @(xTest)kernelFunctions{i}(xTest,x2(j,:));
+        if nargout > 2
+            for j = 1:nBasis(i)
+                kFn{end+1} = prtKernelToUnaryKernel(kernelFunctions{i},x2(j,:));
+                %kFn{end+1} = @(xTest)kernelFunctions{i}(xTest,x2(j,:));
+            end
         end
     end
 end
