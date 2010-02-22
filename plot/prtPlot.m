@@ -24,14 +24,21 @@ elseif nargin == 1 && prtUtilIsClassifier(varargin{1})
     %"slice" returns handles to all the images, not the image axes
     %[M,N] = getSubplotDimensions(length(imageHandle));
     [M,N] = getSubplotDimensions(varargin{1}.PrtDataSet.nClasses-1);
-    
-    for subImage = 1:M*N
-        subplot(M,N,subImage)
+    if M == 1 && N == 1
+        subImage = 1;
         hold on;
         [handles,legendStrings] = plot(varargin{1}.PrtDataSet);
         hold off;
-        
         HandleStructureTemp.Axes(subImage) = struct('imageHandle',{imageHandle(subImage)},'handles',{handles},'legendStrings',{legendStrings});
+    else
+        for subImage = 1:M*N
+            subplot(M,N,subImage)
+            hold on;
+            [handles,legendStrings] = plot(varargin{1}.PrtDataSet);
+            hold off;
+            
+            HandleStructureTemp.Axes(subImage) = struct('imageHandle',{imageHandle(subImage)},'handles',{handles},'legendStrings',{legendStrings});
+        end
     end
     
     if nargout > 0
