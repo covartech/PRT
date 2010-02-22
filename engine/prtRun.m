@@ -16,16 +16,16 @@ elseif iscell(PrtObject)
             % Parallel
             cPrtObjectCell = PrtObject{i};
             for j = 1:length(cPrtObjectCell)
-                [PrtResults{i}{j},Etc{i}{j}] = prtRun(cPrtObjectCell{j},PrtDataSet);
+                [PrtResults{i}{j}, Etc{i}{j}] = prtRun(cPrtObjectCell{j},PrtDataSet);
             end
             %PrtDataSet = prtDataSetUnLabeled(PrtResults{i}{:});
             PrtDataSet = joinFeatures(PrtResults{i}{:});
         elseif isstruct(PrtObject{i})
             % Serial
-            [PrtResults{i},Etc{i}] = prtRun(PrtObject{i},PrtDataSet);
+            [PrtResults{i}, Etc{i}] = prtRun(PrtObject{i},PrtDataSet);
             PrtDataSet = PrtResults{i};
         else
-            error('werawer')
+            error('prt:prtRunModelConstruction','Invalid PRT model construction.')
         end
     end
 end

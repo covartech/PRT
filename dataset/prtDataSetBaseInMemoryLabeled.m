@@ -109,10 +109,10 @@ classdef prtDataSetBaseInMemoryLabeled < prtDataSetBaseInMemory
         
         %Required by prtDataSetBase:
         function obj = setDataAndTargets(obj,data,targets)
-            if ~isa(data,'double') || ndims(data) ~= 2
+            if ~isnumeric(data) || ndims(data) ~= 2
                 error('prt:prtDataSetBaseInMemeoryLabeled:invalidData','data must be a 2-Dimensional double array');
             end
-            if ~isa(targets,'double') || ndims(targets) ~= 2
+            if ~(isnumeric(targets) || islogical(targets)) || ndims(targets) ~= 2
                 error('prt:prtDataSetBaseInMemeoryLabeled:invalidData','targets must be a 2-Dimensional double array');
             end
             if size(data,1) ~= size(targets,1)
