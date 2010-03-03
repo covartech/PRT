@@ -24,4 +24,4 @@ PrtClassOpt.PlotOptions = prtPlotOpt;
 
 % Mean of zero, covariance of 5
 PrtClassOpt.priorMeanFn = @(numEl) zeros(numEl,1);
-PrtClassOpt.priorCovFn = @(numEl) eye(numEl)*.01;
+PrtClassOpt.priorCovFn = @(numEl) eye(numEl)*1;

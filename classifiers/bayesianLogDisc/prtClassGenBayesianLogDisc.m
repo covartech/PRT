@@ -1,11 +1,14 @@
 function BayesianLogDisc = prtClassGenBayesianLogDisc(PrtDataSet,PrtClassOpt)
-%PrtClassFld = prtClassGenBayesianLogDisc(PrtDataSet,PrtClassOpt)
-
-LogDisc = prtClassGenLogDisc(PrtDataSet,PrtClassOptLogDisc);
-wInit = LogDisc.w;
+%BayesianLogDisc = prtClassGenBayesianLogDisc(PrtDataSet,PrtClassOpt)
+%
 
 sigmaFn = @(x) 1./(1 + exp(-x));
 
+%Find the MLE
+LogDisc = prtClassGenLogDisc(PrtDataSet,PrtClassOptLogDisc);
+wInit = LogDisc.w;
+
+%Find the MAP
 m0 = PrtClassOpt.priorMeanFn(length(wInit));
 s0 = PrtClassOpt.priorCovFn(length(wInit));
 
@@ -14,7 +17,8 @@ wMap = fminunc(myObjFn,wInit);
 
 [~,x,~,y] = bayesLogDiscObjFn(wMap);
 
-BayesianLogDisc.sMap = s0^(-1) + bsxfun(@times,y.*(1-y),x)'*x;
+%Store the wMap
+BayesianLogDisc.sMap = (s0^(-1) + bsxfun(@times,y.*(1-y),x)'*x)^-1;
 BayesianLogDisc.wMap = wMap;
 BayesianLogDisc.PrtDataSet = PrtDataSet;
 BayesianLogDisc.PrtOptions = PrtClassOpt;
@@ -26,6 +30,7 @@ BayesianLogDisc.isMary = false;
         x = PrtDataSet.getObservations;
         x = cat(2,ones(size(x,1),1),x);
         y = sigmaFn(x*w);
+        
         y(y < eps) = eps;
         y(y > 1-eps) = 1-eps;
         
