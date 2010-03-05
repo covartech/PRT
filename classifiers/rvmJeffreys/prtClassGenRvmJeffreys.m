@@ -12,7 +12,7 @@ y = DS.getTargets;
 y(y == 0) = -1;     %req'd for algorithm
 
 x = DS.getObservations;
-[gramm,nBasis,kernelHandles] = prtKernelGrammMatrix(x,x,PrtOptions.kernel);
+[gramm,nBasis,kernelHandles] = prtKernelGrammMatrix(x,x,PrtOptions.kernels);
 
 nBasis = sum(nBasis);
 
@@ -69,9 +69,13 @@ for iteration = 1:PrtOptions.Jeffereys.maxIterations
     end
 end
 
+
 Rvm.PrtOptions = PrtOptions;
 Rvm.PrtDataSet = DS;
 Rvm.Beta = beta;
 Rvm.sparseBeta = beta(relevantIndices,1);
 Rvm.sparseKernels = kernelHandles(relevantIndices);
 warning(warningState);
+
+% function Rvm = localAddOptions(Rvm,PrtOptions)
+% Rvm.PrtOptions = PrtOptions;
