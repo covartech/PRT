@@ -14,7 +14,7 @@ PrtClassOpt.Private.PrtObjectType = 'classifier';
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-PrtClassOpt.kernel = {@(x1,x2)prtKernelDc(x1,x2),@(x1,x2) prtKernelRbfNdimensionScale(x1,x2,1)};
+PrtClassOpt.kernels = {@(xTest)prtKernelDc(xTest),@(xTest,xTrain) prtKernelRbfNdimensionScale(xTest,xTrain,1)};
 PrtClassOpt.Jeffereys.maxIterations = 1000;
 PrtClassOpt.Jeffereys.betaConvergedTolerance = 1e-3;
 PrtClassOpt.Jeffereys.betaRelevantTolerance = 1e-3;
