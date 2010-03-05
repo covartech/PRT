@@ -16,6 +16,9 @@ classdef prtOptions < dynamicprops
         BinaryEmulationOptions = [];
         twoClassParadigm = 'binary';
     end
+    properties
+        UserData = struct([]);
+    end
     
     methods
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
