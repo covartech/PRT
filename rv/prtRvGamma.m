@@ -4,7 +4,7 @@
 %   R = rv.gamma
 %   R = rv.gamma(shape,inverseScale)
 
-classdef gamma < rv.rv
+classdef prtRvGamma < prtRv
     properties
         shape
         inverseScale
@@ -15,6 +15,8 @@ classdef gamma < rv.rv
         isPlottable
         isValid
         plotLimits
+        displayName
+        
         mean
         variance
     end 
@@ -23,7 +25,7 @@ classdef gamma < rv.rv
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         % The Constructor %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        function R = gamma(varargin)
+        function R = prtRvGamma(varargin)
             switch nargin
                 case 0
                     % Supply the default object
@@ -219,6 +221,12 @@ classdef gamma < rv.rv
             else
                 display@rv.rv(R);
             end
+        end
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        function val = get.displayName(R) %#ok
+            val = 'Gamma Random Variable';
         end
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     end % methods
