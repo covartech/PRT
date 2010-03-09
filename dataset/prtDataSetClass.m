@@ -46,7 +46,7 @@ classdef prtDataSetClass < prtDataSetInMemoryLabeled & prtDataSetBaseClass
                 % prtDataSet = prtDataSetClass(prtDataSetUnLabeledIn, targets, {paramName1, paramVal2, ...})
                 % Will be the same as other constructors after this..
                 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-                keyboard
+                error('Constructor not yet implemented.')
                 
             else
                 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -337,6 +337,62 @@ classdef prtDataSetClass < prtDataSetInMemoryLabeled & prtDataSetBaseClass
                 varargout = {handleArray,legendStrings};
             end
         end
-        
+        %PLOTBW:
+        function varargout = plotbw(obj, featureIndices)
+            
+            if nargin < 2 || isempty(featureIndices)
+                featureIndices = 1:obj.nFeatures;
+            end
+            if islogical(featureIndices)
+                featureIndices = find(featureIndices);
+            end
+            
+            nPlotDimensions = length(featureIndices);
+            if nPlotDimensions < 1
+                warning('prt:plot:NoPlotDimensionality','No plot dimensions requested.');
+                return
+            end
+            nClasses = obj.nClasses;
+            classColors = prtPlotUtilClassColorsBW(nClasses);
+            classSymbols = prtPlotUtilClassSymbolsBW(nClasses);
+            handleArray = zeros(nClasses,1);
+                
+            holdState = get(gca,'nextPlot');
+            % Loop through classes and plot
+            for i = 1:nClasses
+                %Use "i" here because it's by uniquetargetIND
+                cX = obj.getObservationsByClassInd(i, featureIndices);                
+                %classEdgeColor = prtDataSetBase.edgeColorMod(classColors(i,:));
+                
+                linewidth = 1;
+                %handleArray(i) = prtDataSetBase.plotPoints(cX,obj.getFeatureNames(featureIndices),classSymbols(i),classColors(i,:),classEdgeColor,linewidth);
+                switch size(cX,2)
+                    case 1
+                        handleArray(i) = plot(cX, ones(cX,1), classSymbols(i),'color',[0 0 0],'linewidth',linewidth,'markerfaceColor',classColors(i,:));
+                    case 2
+                        handleArray(i) = plot(cX(:,1), cX(:,2), classSymbols(i),'color',[0 0 0],'linewidth',linewidth,'markerfaceColor',classColors(i,:));
+                    case 3
+                        handleArray(i) = plot3(cX(:,1), cX(:,2), cX(:,3), classSymbols(i),'color',[0 0 0],'linewidth',linewidth,'markerfaceColor',classColors(i,:));
+                end
+                    
+                if i == 1
+                    hold on;
+                end
+            end
+            set(gca,'nextPlot',holdState);
+            % Set title
+            title(obj.name);
+            grid on
+            
+            % Create legend
+            legendStrings = getClassNames(obj);
+            legend(handleArray,legendStrings,'Location','SouthEast');
+                        
+            % Handle Outputs
+            varargout = {};
+            if nargout > 0
+                varargout = {handleArray,legendStrings};
+            end
+        end
     end
 end

@@ -35,7 +35,7 @@ for uInd = 1:length(uKeys);
         currResults = currResults{end};
     end
     if uInd == 1
-        Results = prtDataSetUnlabeled(nan(PrtDataSet.nObservations,currResults.nFeatures));
+        Results = prtDataSetUnLabeled(nan(PrtDataSet.nObservations,currResults.nFeatures));
     end
     Results = Results.setObservations(currResults.getObservations,cTestInd);
     
