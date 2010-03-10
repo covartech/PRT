@@ -1,12 +1,12 @@
-function [linGrid,gridSize,xx,yy,zz] = prtPlotUtilGenerateGrid(PrtClassifier,PrtDataSet)
+function [linGrid,gridSize,xx,yy,zz] = prtPlotUtilGenerateGrid(plotMins, plotMaxs, PlotOptions)
+% [linGrid,gridSize,xx,yy,zz] = prtPlotUtilGenerateGrid(plotMins, plotMaxs, PlotOptions)
 
 xx = [];
 yy = [];
 zz = [];
-nDims = PrtClassifier.PrtDataSet.nFeatures;
-[plotMins,plotMaxs] = prtPlotUtilGetPlotLims(PrtClassifier,PrtDataSet);
 
-PlotOptions = PrtClassifier.PrtOptions.PlotOptions;
+nDims = length(plotMins);
+
 switch nDims
     case 1
         xx = linspace(plotMins(1),plotMaxs(1),PlotOptions.nSamplesPerDim(nDims));

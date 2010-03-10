@@ -1,12 +1,13 @@
-function [ClassifierResults, Etc] = prtClassRunMap(PrtClassMap,PrtDataSet)
-% [ClassifierResults,Etc] = prtClassRunMap(PrtClassMap,PrtDataSet)
+function ClassifierResults = prtClassRunMap(PrtClassMap,PrtDataSet)
+% ClassifierResults = prtClassRunMap(PrtClassMap,PrtDataSet)
 
-Etc.logLikelihoods = zeros(PrtDataSet.nObservations, length(PrtClassMap.rvs));
+logLikelihoods = zeros(PrtDataSet.nObservations, length(PrtClassMap.rvs));
 
 for iY = 1:length(PrtClassMap.rvs)
-    Etc.logLikelihoods(:,iY) = logPdf(PrtClassMap.rvs(iY), PrtDataSet.getObservations());
+    logLikelihoods(:,iY) = logPdf(PrtClassMap.rvs(iY), PrtDataSet.getObservations());
 end
 
 % Change to posterior probabilities and package everything up in a
 % prtDataSet
-ClassifierResults = prtDataSet(exp(bsxfun(@minus, Etc.logLikelihoods, prtUtilSumExp(Etc.logLikelihoods.').')));
+ClassifierResults = prtDataSet(exp(bsxfun(@minus, logLikelihoods, prtUtilSumExp(logLikelihoods.').')));
+ClassifierResults.UserData.logLikelihoods = logLikelihoods;

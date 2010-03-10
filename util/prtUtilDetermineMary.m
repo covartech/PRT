@@ -7,7 +7,28 @@ function [useMary, emulate] = prtUtilDetermineMary(varargin)
 
 if nargin == 2 && isa(varargin{1},'prtDataSetClass') 
     maryData = varargin{1}.isMary;
-    PrtClassOpt = varargin{2};
+    
+    if isstruct(varargin{2})
+        isNativeMaryCapable = varargin{2}.Private.nativeMaryCapable;
+        isNativeBinaryCapable = varargin{2}.Private.nativeBinaryCapable;
+        if isfield(varargin{2},'MaryEmulationOptions')
+            MaryEmulationOptions = varargin{2}.MaryEmulationOptions;
+        else
+            MaryEmulationOptions = [];
+        end
+        if isfield(varargin{2},'BinaryEmulationOptions')
+            BinaryEmulationOptions = varargin{2}.BinaryEmulationOptions;
+        else
+            BinaryEmulationOptions = [];
+        end
+        if isfield(varargin{2},'twoClassParadigm')
+            preferBinary = strcmpi(varargin{2}.twoClassParadigm,'binary');
+        else % Forgot to add a twoClassParadigm
+            preferBinary = 1;
+        end
+    else
+        error('Not done yet')
+    end
 elseif nargin == 2 && isa(varargin{1},'prtDataSetUnLabeled')
     useMary = false;
     emulate = false;
@@ -17,42 +38,39 @@ elseif nargin == 2 && isa(varargin{1},'prtDataSetRegress')
     emulate = false;
     return;
 elseif prtUtilIsClassifier(varargin{1})
-    maryData = varargin{1}.PrtDataSet.isMary;
-    PrtClassOpt = varargin{1}.PrtOptions;
+    maryData = varargin{1}.dataSetIsMary;
+    %PrtClassOpt = varargin{1}.PrtOptions;
+    
+    preferBinary = strcmpi(varargin{1}.twoClassParadigm,'binary');
+    isNativeMaryCapable = varargin{1}.nativeMaryCapable;
+    isNativeBinaryCapable = varargin{1}.nativeBinaryCapable;
+    MaryEmulationOptions = varargin{1}.MaryEmulationOptions;
+    BinaryEmulationOptions = varargin{1}.BinaryEmulationOptions;
+
 else
     error('Invalid inputs')
 end
 
-maryEmulationSpecified = isfield(PrtClassOpt,'MaryEmulationOptions') && ...
-    ~isempty(PrtClassOpt.MaryEmulationOptions);
-
-binaryEmulationSpecified = isfield(PrtClassOpt,'BinaryEmulationOptions') && ...
-    ~isempty(PrtClassOpt.BinaryEmulationOptions) && ...
-    ~isempty(PrtClassOpt.BinaryEmulationOptions.classAssignment);
-
-if isfield(PrtClassOpt,'twoClassParadigm')
-    preferBinary = strcmpi(PrtClassOpt.twoClassParadigm,'binary');
-else % Forgot to add a twoClassParadigm
-    preferBinary = 1;
-end
+maryEmulationSpecified = ~isempty(MaryEmulationOptions);
+binaryEmulationSpecified = ~isempty(BinaryEmulationOptions) && ~isempty(BinaryEmulationOptions.classAssignment);
 
 if maryData
     if maryEmulationSpecified
-        if PrtClassOpt.Private.nativeBinaryCapable
+        if isNativeBinaryCapable
             useMary = true;
             emulate = true;
         else
             error('prt:MarySpec','M-ary Emulation is not possible because the classifier does not support binary classification.')
         end
     elseif binaryEmulationSpecified
-        if PrtClassOpt.Private.nativeMaryCapable
+        if isNativeMaryCapable
             useMary = false;
             emulate = true;
         else
             error('prt:MarySpec','Binary Emulation is not possible because the classifier does not support m-ary classification.')
         end
     else %PrtClassOpt.MaryEmulationOptions not specified
-        if PrtClassOpt.Private.nativeMaryCapable
+        if isNativeMaryCapable
             useMary = true;
             emulate = false;
         else
@@ -61,17 +79,17 @@ if maryData
     end
 else %Binary Data
     if preferBinary
-        if PrtClassOpt.Private.nativeBinaryCapable
+        if isNativeBinaryCapable
             useMary = false;
             emulate = false;
-        elseif PrtClassOpt.Private.nativeMaryCapable && binaryEmulationSpecified
+        elseif isNativeMaryCapable && binaryEmulationSpecified
             useMary = false;
             emulate = true;
         else
             error('prt:MarySpec','Binary classification is not supported by this classifier. To perform Binary classification, you will need to specifify BinaryEmulationOptions. See prtDocMary');
         end
     else %Prefer Mary
-        if PrtClassOpt.Private.nativeMaryCapable
+        if isNativeMaryCapable
             useMary = true;
             emulate = false;
         else % Mary is not possible

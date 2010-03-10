@@ -1,12 +1,11 @@
 function PrtClassMap = prtClassGenMap(PrtDataSet,PrtClassOpt)
 %PrtClassMap = prtClassGenMap(PrtDataSet,PrtClassOpt)
 
-PrtClassMap.PrtDataSet = PrtDataSet;
-PrtClassMap.PrtOptions = PrtClassOpt;
+% Repmat the rv objects to get one for each class
+PrtClassMap.rvs = repmat(PrtClassOpt.rvs(:), (PrtDataSet.nClasses - length(PrtClassOpt.rvs)+1),1);
+PrtClassMap.rvs = PrtClassMap.rvs(1:PrtDataSet.nClasses);
 
-PrtClassMap.rvs = repmat(PrtClassMap.PrtOptions.rvs(:), (PrtClassMap.PrtDataSet.nClasses - length(PrtClassMap.PrtOptions.rvs)+1),1);
-PrtClassMap.rvs = PrtClassMap.rvs(1:PrtClassMap.PrtDataSet.nClasses);
-
+% Get the ML estimates of the RV parameters for each class
 for iY = 1:PrtDataSet.nClasses
     PrtClassMap.rvs(iY) = mle(PrtClassMap.rvs(iY), PrtDataSet.getObservationsByClassInd(iY));
 end

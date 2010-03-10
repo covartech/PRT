@@ -1,74 +1,49 @@
-function imageHandle = prtPlotNativeMary(PrtClassifier,PrtDataSet) 
+function varargout = prtPlotNativeMary(PrtClassifier) 
+% imageHandle = prtPlotNativeMary(PrtClassifier) 
 
-if ~isfield(PrtClassifier.PrtOptions,'PlotOptions')
-    PrtClassifier.PrtOptions.PlotOptions = optionsDprtPlot;
-end
-
-nDims = PrtClassifier.PrtDataSet.nFeatures;
+nDims = PrtClassifier.dataSetNFeatures;
 if nDims > 3
     error('PrtClassifier.PrtDataSet.nFeatures (%d) must be less than or equal to 3',PrtClassifier.PrtDataSet.nFeatures);
 end
 
-% Make the Meshgrid
-[linGrid,gridSize,xx,yy,zz] = prtPlotUtilGenerateGrid(PrtClassifier,PrtDataSet);
+% Make the meshgrid
+[linGrid,gridSize] = prtPlotUtilGenerateGrid(PrtClassifier.dataSetLowerBounds, PrtClassifier.dataSetUpperBounds, PrtClassifier.PlotOptions);
 
-% Now we remove the PreProcess field so when we run the grid we don't
-% pre process it.
-if isfield(PrtClassifier.PrtOptions,'PreProcess')
-    PrtClassifier.PrtOptions = rmfield(PrtClassifier.PrtOptions,'PreProcess');
-end
-
+% Run the PrtClassifier on the grid and reshape.
 Results = prtRun(PrtClassifier,linGrid);
-data = Results.getObservations;
-
-PlotOptions = PrtClassifier.PrtOptions.PlotOptions;
-if isfield(PlotOptions,'mappingFunction') && ~isempty(PlotOptions.mappingFunction)
-    data = feval(PlotOptions.mappingFunction,data);
-end
 
 % So now we got this huge linear grid of data values.
-[M,N] = getSubplotDimensions(size(data,2));
+[M,N] = getSubplotDimensions(Results.nFeatures);
 
-classColors = feval(PlotOptions.colorsFunction,size(data,2));
+classColors = feval(PrtClassifier.PlotOptions.colorsFunction, Results.nFeatures);
 
-hf = cell([size(data,2) 1]);
-ha = cell([size(data,2) 1]);
-hp = cell([size(data,2) 1]);
-
-for i = 1:size(data,2);
+ha = cell([Results.nFeatures 1]);
+imageHandle = cell([Results.nFeatures 1]);
+for i = 1:Results.nFeatures;
     if M > 1 || N > 1
         subplot(M,N,i);
     end
     
-    % imageHandle(i) = prtPlotUtilImageEvaledClassifier(data(:,i),linGrid,gridSize,PlotOptions);
-    wasHold = ishold;
+    cPlotOptions = PrtClassifier.PlotOptions;
+    cPlotOptions.twoClassColorMapFunction = @()prtPlotUtilLinspaceColormap([1 1 1], classColors(i,:)*0.8,256);
     
-    cDS = reshape(data(:,i),size(xx));
-    
-    % Plot the grid
-    switch nDims
-        case 1
-            imageHandle(i) = imagesc(xx(:),yy(:),ind2rgb(gray2ind(mat2gray(cDS,[min(data(:)) max(data(:))]),256),linspaceColormap([1 1 1], classColors(i,:)*0.8,256)));
-            set(gca,'YTickLabel',[])
-        case 2
-            imageHandle(i) = imagesc(xx(1,:),yy(:,1),ind2rgb(gray2ind(mat2gray(cDS,[min(data(:)) max(data(:))]),256),linspaceColormap([1 1 1], classColors(i,:)*0.8,256)));
-        case 3
-            imageHandle{i} = feval(PlotOptions.displayFunction{nDims},xx,yy,zz,cDS,max(xx(:)),max(yy(:)),[min(zz(:)),mean(zz(:))]);
-            view(3)
+    data = reshape(Results.getObservations(:,i),gridSize);
+    PlotOptions = PrtClassifier.PlotOptions;
+    if isfield(PlotOptions,'mappingFunction') && ~isempty(PlotOptions.mappingFunction)
+        data = feval(PlotOptions.mappingFunction, data);
     end
-    axis tight;
-    axis xy;
-    hold on;
+
+    prtPlotUtilImageEvaledClassifier(data,linGrid,gridSize,cPlotOptions);
+    
+    prtPlotUtilFreezeColors(gca);
+    
     
     ha{i} = gca;
-    if ~wasHold
-        hold off
-    end
 end
 
+varargout = {};
 % Ready the output
 if nargout > 0
-    varargout{1} = hf;
+    varargout{1} = imageHandle;
     varargout{2} = ha;
-    varargout{3} = hp;
 end

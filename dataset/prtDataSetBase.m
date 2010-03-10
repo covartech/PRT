@@ -7,7 +7,7 @@ classdef prtDataSetBase
     properties  %public, for now
         name = ''             % char
         description = ''      % char
-        UserData = struct([]) % Struct of additional data
+        UserData = []         % Additional data
     end
     
     % Only prtDataSetBase knows about these, use getObs... and getFeat.. to

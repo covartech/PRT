@@ -1,61 +1,43 @@
-function imageHandle = prtPlotClassifierConfidence(PrtClassifier,PrtDataSet)
-%varargout = prtPlotClassifierContours(PrtClassifier,PrtDataSet)
-%   Note: this breaks if pre-processing included.  we still have to figure
-%   out how to do that
-%
-%   Should work for native M-ary
-%
-%   Not sure about emulated M-ary
+function imageHandle = prtPlotClassifierConfidence(PrtClassifier)
+% varargout = prtPlotClassifierContours(PrtClassifier)
 
-if nargin == 1
-    PrtDataSet = [];
-end
-
-nDims = PrtClassifier.PrtDataSet.nFeatures;
+nDims = PrtClassifier.dataSetNFeatures;
 if nDims > 3
-    error('PrtClassifier.PrtDataSet.nFeatures (%d) must be less than or equal to 3',PrtClassifier.PrtDataSet.nFeatures);
+    error('prt:prtActionPlot:tooManyDimensions','PrtDataSet.nFeatures (%d) must be less than or equal to 3',PrtClassifier.dataSetNFeatures);
 end
 
 [isMary, isEmulated] = prtUtilDetermineMary(PrtClassifier);
 if isMary
-    if ~isEmulated
-        imageHandle = feval(PrtClassifier.PrtOptions.PlotOptions.nativeMaryPlotFunction,PrtClassifier,PrtDataSet);
-    else
-        % We need to call the plot function specified in the
-        % MaryEmulationOptions
-        plotFunction = PrtClassifier.Classifiers(1).PrtOptions.MaryEmulationOptions.plotFunction;
-        imageHandle = feval(plotFunction,varargin{:});
-    end
-    return
+     if ~isEmulated
+         % Native M-ary
+         imageHandle = prtPlotNativeMary(PrtClassifier);
+     else
+         % We need to call the plot function specified in the
+         % MaryEmulationOptions
+         plotFunction = PrtClassifier.Classifiers(1).PrtOptions.MaryEmulationOptions.plotFunction;
+         imageHandle = feval(plotFunction, PrtClassifier);
+     end
+     return
 end
-
-if ~isfield(PrtClassifier.PrtOptions,'PlotOptions')
-    PrtClassifier.PrtOptions.PlotOptions = optionsDprtPlot;
-end
-
-% % Now we remove the PreProcess field so when we run the grid we don't
-% % pre process it.
-% if isfield(PrtClassifier.PrtOptions,'PreProcess')
-%     PrtClassifier.PrtOptions = rmfield(PrtClassifier.PrtOptions,'PreProcess');
-% end
+% Binary output - Either native or Emulated 
 
 % Make the Meshgrid
-[linGrid,gridSize] = prtPlotUtilGenerateGrid(PrtClassifier,PrtDataSet);
+[linGrid,gridSize] = prtPlotUtilGenerateGrid(PrtClassifier.dataSetLowerBounds, PrtClassifier.dataSetUpperBounds, PrtClassifier.PlotOptions);
 
 % Run the PrtClassifier on the grid and reshape.
 Results = prtRun(PrtClassifier,linGrid);
-data = reshape(Results.data,gridSize);
+data = reshape(Results.getObservations(),gridSize);
 
-PlotOptions = PrtClassifier.PrtOptions.PlotOptions;
+PlotOptions = PrtClassifier.PlotOptions;
 if isfield(PlotOptions,'mappingFunction') && ~isempty(PlotOptions.mappingFunction)
-    DS = feval(PlotOptions.mappingFunction,DS);
+    data = feval(PlotOptions.mappingFunction, data);
 end
 
 wasHold = ishold;
 
 % Plot the grid
 imageHandle = prtPlotUtilImageEvaledClassifier(data,linGrid,gridSize,PlotOptions);
-title(PrtClassifier.PrtOptions.Private.classifierName);
+title(PrtClassifier.name);
 
 % Check for PrtClassifier-specific plotting functions:
 if isfield(PlotOptions,'additionalPlotFunction') && ~isempty(PlotOptions.additionalPlotFunction);
