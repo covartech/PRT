@@ -1,7 +1,7 @@
 function imageHandle = prtPlotClassifierConfidence(PrtClassifier)
 % varargout = prtPlotClassifierContours(PrtClassifier)
 
-nDims = PrtClassifier.dataSetNFeatures;
+nDims = PrtClassifier.DataSetSummary.nFeatures;
 if nDims > 3
     error('prt:prtActionPlot:tooManyDimensions','PrtDataSet.nFeatures (%d) must be less than or equal to 3',PrtClassifier.dataSetNFeatures);
 end

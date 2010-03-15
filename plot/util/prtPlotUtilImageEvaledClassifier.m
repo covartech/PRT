@@ -1,6 +1,5 @@
-function imageHandle = prtPlotUtilImageEvaledClassifier(DS,linGrid,gridSize,PlotOptions)
+function imageHandle = prtPlotUtilImageEvaledClassifier(DS,linGrid,gridSize,cMap)
 
-cMap = feval(PlotOptions.twoClassColorMapFunction);
 nDims = size(linGrid,2);
 
 switch nDims

@@ -47,24 +47,8 @@ classdef prtDataSetRegress < prtDataSetInMemoryLabeled
             % Quick exit if no more inputs.
             if isempty(varargin)
                 return
-            end
-            
-            % Check Parameter string, value pairs
-            inputError = false;
-            if mod(length(varargin),2)
-                inputError = true;
-            end
-            paramNames = varargin(1:2:(end-1));
-            if ~iscellstr(paramNames)
-                inputError = true;
-            end
-            paramValues = varargin(2:2:end);
-            if inputError
-                error('prt:prtDataSetRegress:invalidInputs','additional input arguments must be specified as parameter string, value pairs.')
-            end
-            % Set Values
-            for iPair = 1:length(paramNames)
-                prtDataSet.(paramNames{iPair}) = paramValues{iPair};
+            else
+                prtDataSet = prtUtilAssignStringValuePairs(prtDataSet,varargin{:});
             end
         end
         
@@ -82,7 +66,7 @@ classdef prtDataSetRegress < prtDataSetInMemoryLabeled
                 warning('prt:plot:NoPlotDimensionality','No plot dimensions requested.');
                 return
             elseif nPlotDimensions > 2
-                warning('prt:plot:NoPlotDimensionality','Regression plots only for 1 dimensional data');
+                error('prt:plot:NoPlotDimensionality','Regression plots only for 1 dimensional data');
                 return
             end
             
@@ -99,5 +83,12 @@ classdef prtDataSetRegress < prtDataSetInMemoryLabeled
             end
         end
         
+        function Summary = summarize(Obj)
+            Summary.upperBounds = max(Obj.getObservations());
+            Summary.lowerBounds = min(Obj.getObservations());
+            Summary.nFeatures = Obj.nFeatures;
+            Summary.nTargetDimensions = Obj.nTargetDimensions;
+            Summary.nObservations = Obj.nObservations;
+        end
     end
 end

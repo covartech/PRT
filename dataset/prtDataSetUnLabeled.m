@@ -87,7 +87,7 @@ classdef prtDataSetUnLabeled < prtDataSetInMemory
     end
     
     methods
-       
+        
         function colors = get.plottingColors(obj)
             colors = prtPlotUtilClassColors(obj.nUniqueTargets);
         end
@@ -98,12 +98,12 @@ classdef prtDataSetUnLabeled < prtDataSetInMemory
         %PLOT:
         function varargout = plot(obj, featureIndices)
             
-             if nargin < 2 || isempty(featureIndices)
-                 featureIndices = 1:obj.nFeatures;
-             end
-             if islogical(featureIndices)
-                 featureIndices = find(featureIndices);
-             end
+            if nargin < 2 || isempty(featureIndices)
+                featureIndices = 1:obj.nFeatures;
+            end
+            if islogical(featureIndices)
+                featureIndices = find(featureIndices);
+            end
             
             nPlotDimensions = length(featureIndices);
             if nPlotDimensions < 1
@@ -123,7 +123,7 @@ classdef prtDataSetUnLabeled < prtDataSetInMemory
             
             % Set title
             title(obj.name);
-                        
+            
             % Handle Outputs
             varargout = {};
             if nargout > 0
@@ -136,7 +136,7 @@ classdef prtDataSetUnLabeled < prtDataSetInMemory
             if nargin < 2 || isempty(featureIndices)
                 featureIndices = 1:obj.nFeatures;
             end
-           
+            
             nClasses = 1;
             classColors = prtPlotUtilClassColors(nClasses);
             classSymbols = prtPlotUtilClassSymbols(nClasses);
@@ -153,7 +153,7 @@ classdef prtDataSetUnLabeled < prtDataSetInMemory
             linewidth = .1;
             h = prtDataSetBase.plotLines(xInd,cX,classColors,linewidth);
             handleArray = h(1);
-
+            
             set(gca,'nextPlot',holdState);
             % Set title
             title(obj.name);
@@ -161,12 +161,19 @@ classdef prtDataSetUnLabeled < prtDataSetInMemory
             % Create legend
             legendStrings = 'Unlabeled';
             legend(handleArray,legendStrings,'Location','SouthEast');
-                        
+            
             % Handle Outputs
             varargout = {};
             if nargout > 0
                 varargout = {handleArray,legendStrings};
             end
+        end
+        function Summary = summarize(Obj)
+            Summary.upperBounds = max(Obj.getObservations());
+            Summary.lowerBounds = min(Obj.getObservations());
+            Summary.nFeatures = Obj.nFeatures;
+            Summary.nTargetDimensions = Obj.nTargetDimensions;
+            Summary.nObservations = Obj.nObservations;
         end
     end
 end

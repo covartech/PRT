@@ -110,13 +110,28 @@ classdef prtDataSetBaseInMemory
                 obj.data = data;
                 return;
             end
-            if nargin < 3 || isempty(indices1)
+            if nargin < 3 || isempty(indices1) || isequal(indices1,':')
                 indices1 = 1:obj.nObservations;
             end
-            if nargin < 4 || isempty(indices2)
+            if nargin < 4 || isempty(indices2) || isequal(indices2,':')
                 indices2 = 1:obj.nFeatures;
             end
-            if ~isequal([length(indices1),length(indices2)],size(data))
+            if isnumeric(indices1)
+                nRefs1 = length(indices1);
+            elseif islogical(indices1)
+                nRefs1 = sum(indices1);
+            else
+                error('setObservations invalid indices');
+            end
+            if isnumeric(indices2)
+                nRefs2 = length(indices2);
+            elseif islogical(indices2)
+                nRefs2 = sum(indices2);
+            else
+                error('setObservations invalid indices');
+            end
+            
+            if ~isequal([nRefs1,nRefs2],size(data))
                 error('setObservations sizes not commensurate');
             end
             obj.data(indices1,indices2) = data;

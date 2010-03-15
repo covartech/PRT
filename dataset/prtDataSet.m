@@ -13,18 +13,25 @@ if isa(varargin{1},'prtDataSetClass')
 elseif isa(varargin{1},'prtDataSetUnLabeled')
     DS = prtDataSetUnLabeled(varargin{:});
     return;
+elseif isa(varargin{1},'prtDataSetRegress')
+    DS = prtDataSetRegress(varargin{:});
+    return;
 else
     % Find string inputs
     charBool = cellfun(@ischar,varargin);
     if ~any(charBool) % No string inputs
         % We can assume that we have either 1 or 2 inputs
         % 1.  Unlabeled, varargin{1}==X
-        % 2.  Unlabeled, varargin{1}==X, varargin{2}==Y
+        % 2.  Labeled, varargin{1}==X, varargin{2}==Y
         switch nargin
             case 1
                 DS = prtDataSetUnLabeled(varargin{:});
             case 2
-                DS = prtDataSetClass(varargin{:});
+                if classificationDecision(varargin{1},varargin{2})
+                    DS = prtDataSetClass(varargin{:});
+                else
+                    DS = prtDataSetRegress(varargin{:});
+                end
             otherwise
                 error('prt:prtDataSet:InvalidInput','Invalid input.');
         end
@@ -39,9 +46,18 @@ else
             case 2
                 DS = prtDataSetUnLabeled(varargin{:});
             case 3
-                DS = prtDataSetClass(varargin{:});
+                if classificationDecision(varargin{1},varargin{2})
+                    DS = prtDataSetClass(varargin{:});
+                else
+                    DS = prtDataSetRegress(varargin{:});
+                end
             otherwise
                 error('prt:prtDataSet:InvalidInput','Invalid input.');
         end
     end 
 end
+
+function isClassifier = classificationDecision(X,Y)
+
+% Relatively arbitrarly determine if there are "a lot" of Ys
+isClassifier = length(unique(Y)) < size(X,1)/3;

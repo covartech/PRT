@@ -5,6 +5,7 @@ function [useMary, emulate] = prtUtilDetermineMary(varargin)
 %         [useMary, emulate] = prtUtilDetermineMary(PrtClassifier)
 %
 
+
 if nargin == 2 && isa(varargin{1},'prtDataSetClass') 
     maryData = varargin{1}.isMary;
     
@@ -37,18 +38,20 @@ elseif nargin == 2 && isa(varargin{1},'prtDataSetRegress')
     useMary = false;
     emulate = false;
     return;
-elseif prtUtilIsClassifier(varargin{1})
-    maryData = varargin{1}.dataSetIsMary;
-    %PrtClassOpt = varargin{1}.PrtOptions;
-    
+elseif isa(varargin{1},'prtClass')
+    DataSetSummary = varargin{1}.DataSetSummary;
+    maryData = false;
+    if isfield(DataSetSummary,'isMary')
+        maryData = DataSetSummary.isMary;
+    end
     preferBinary = strcmpi(varargin{1}.twoClassParadigm,'binary');
-    isNativeMaryCapable = varargin{1}.nativeMaryCapable;
-    isNativeBinaryCapable = varargin{1}.nativeBinaryCapable;
-    MaryEmulationOptions = varargin{1}.MaryEmulationOptions;
-    BinaryEmulationOptions = varargin{1}.BinaryEmulationOptions;
-
+    isNativeMaryCapable = varargin{1}.maryCapable;
+    isNativeBinaryCapable = varargin{1}.binaryCapable;
 else
-    error('Invalid inputs')
+    % Assume every thing is cool. Regressor etc.
+    useMary = false;
+    emulate = false;
+    return
 end
 
 maryEmulationSpecified = ~isempty(MaryEmulationOptions);

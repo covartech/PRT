@@ -16,7 +16,9 @@ elseif nargin == 2
     
     cSortedProperties = cell(length(OutStruct.propNames),1);
     for iProp = 1:length(I.Properties)
-        cInd = find(~cellfun(@isempty, strfind(OutStruct.propNames,I.Properties{iProp}.Name)),1);
+        %cInd = find(~cellfun(@isempty, strfind(OutStruct.propNames,I.Properties{iProp}.Name)),1);
+        cInd = find(cellfun(@(s)isequal(I.Properties{iProp}.Name,s),OutStruct.propNames),1);
+        
         if isempty(cInd)
             error('Maximum property assumption invalid');
         end
@@ -33,7 +35,8 @@ elseif nargin == 2
             continue
         end
         
-        cInd = find(~cellfun(@isempty, strfind(OutStruct.methodNames,I.Methods{iMeth}.Name)),1);
+        %cInd = find(~cellfun(@isempty, strfind(OutStruct.methodNames,I.Methods{iMeth}.Name)),1);
+        cInd = find(cellfun(@(s)isequal(I.Methods{iMeth}.Name,s),OutStruct.methodNames),1);
         if isempty(cInd)
             error('Maximum method assumption invalid');
         end

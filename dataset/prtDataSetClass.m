@@ -191,12 +191,35 @@ classdef prtDataSetClass < prtDataSetInMemoryLabeled & prtDataSetBaseClass
         end
         
         
-        function binaryMatTargets = getTargetsAsBinaryMatrix(obj)
+        function binaryMatTargets = getTargetsAsBinaryMatrix(obj,indices1,indices2)
             %binaryMatTargets = getTargetsAsBinaryMatrix(obj)
             binaryMatTargets = zeros(obj.nObservations,obj.nClasses);
             for i = 1:obj.nClasses
                 binaryMatTargets(:,i) = obj.getTargets == obj.uniqueClasses(i);
             end
+            
+            if nargin == 1
+                return
+            end
+            
+            % Else select only some of the matrix
+            
+            if nargin < 2 || isempty(indices1) || strcmpi(indices1,':')
+                indices1 = 1:obj.nObservations;
+            end
+            if nargin < 3 || isempty(indices2) || strcmpi(indices2,':')
+                indices2 = 1:obj.nClasses;
+            end
+            
+            if max(indices1) > obj.nObservations
+                error('prt:prtDataSetClass:incorrectInput','max(indices1) (%d) must be <= nObservations (%d)',max(indices1),obj.nObservations);
+            end
+            if max(indices2) > obj.nClasses
+                error('prt:prtDataSetClass:incorrectInput','max(indices2) (%d) must be <= nClasses (%d)',max(indices1),obj.nClasses);
+            end
+            
+            binaryMatTargets = binaryMatTargets(indices1,indices2);
+            
         end
         
         function explore(obj)
@@ -393,6 +416,17 @@ classdef prtDataSetClass < prtDataSetInMemoryLabeled & prtDataSetBaseClass
             if nargout > 0
                 varargout = {handleArray,legendStrings};
             end
+        end
+        
+        function Summary = summarize(Obj)
+            Summary.upperBounds = max(Obj.getObservations());
+            Summary.lowerBounds = min(Obj.getObservations());
+            Summary.nFeatures = Obj.nFeatures;
+            Summary.nTargetDimensions = Obj.nTargetDimensions;
+            Summary.nObservations = Obj.nObservations;
+            
+            Summary.nClasses = Obj.nClasses;
+            Summary.isMary = Obj.isMary;
         end
     end
 end

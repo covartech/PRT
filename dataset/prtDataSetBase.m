@@ -315,6 +315,8 @@ classdef prtDataSetBase
         
         export(obj,exportOptions)
         
+        Summary = summarize(obj)
+        
         %Note: for BIG data sets, these have to be implemented "trickily" -
         %I have an idea
         obj = removeFeatures(obj,indices)
