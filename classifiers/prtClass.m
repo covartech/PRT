@@ -88,8 +88,8 @@ classdef prtClass < prtAction
             end
         end
         
-        function set.twoClassParadigm(Obj,val)
-            assert(ischar(val),'twoClassParadigm must be a string that is ''binary'' or ''mary');
+        function Obj = set.twoClassParadigm(Obj,val)
+            assert(ischar(val),'twoClassParadigm must be a string that is ''binary'' or ''mary''');
             assert(ismember(lower(val),{'binary','mary','m-ary'}),'twoClassParadigm must be either ''binary'' or ''mary');
             Obj.twoClassParadigm = lower(val);
         end
