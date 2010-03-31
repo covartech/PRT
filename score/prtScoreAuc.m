@@ -1,5 +1,5 @@
-function auc = prtScoreAuc(DS,PrtClassOpt)
+function auc = prtScoreAuc(DS,PrtClassObj)
 %auc = prtScoreAuc(DS,PrtClassOpt)
 
-Results = prtRun(prtGenerate(DS,PrtClassOpt),DS);
-[pf,pd,auc] = prtScoreRoc(Results.getObservations,DS.getTargets);
+Results = run(PrtClassObj.train(DS),DS);
+[~,~,auc] = prtScoreRoc(Results.getObservations,DS.getTargets);
