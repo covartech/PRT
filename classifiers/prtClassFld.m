@@ -1,4 +1,4 @@
-classdef prtClassFld < prtClass %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+classdef prtClassFld < prtClass
     % prtClassFld Properties: 
     %   name - Fisher Linear Discriminant
     %   nameAbbreviation - FLD

@@ -1,4 +1,4 @@
-classdef prtAction %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+classdef prtAction
     % prtAction Properties:
     %   name - (Abstract) Char, Descriptive name
     %   nameAbbreviation - (Abstract) Char, Shortened (2-4 character) name 
