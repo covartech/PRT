@@ -1,42 +1,77 @@
 classdef prtAction
+    % prtAction - Base class for PRT pattern classificaiton components.
+    %   Classification techniques, Regression techniques, Feature selection
+    %   techniques, etc. Are all sub-classes of prtAction.
+    %
     % prtAction Properties:
-    %   name - (Abstract) Char, Descriptive name
-    %   nameAbbreviation - (Abstract) Char, Shortened (2-4 character) name
+    %   name - (Abstract) Descriptive name for prtAction
+    %   nameAbbreviation - (Abstract) Shortened name for prtAction name
     %   isSupervised - (Abstract) Logical, Requires classifier training
     %   isTrained - (Read only) Logical, current status of the object
-    %   verboseStorage - Logical, store dataset with action object
+    %   verboseStorage - (Logical, store dataset with action object
     %   DataSetSummary - Struct, output of summarize(DataSet)
     %   DataSet - prtDataSet, only non-empty if verboseStorage == true
     %   UserData - Struct, user specified data
     %
     % prtAction Methods:
-    %   trainAction - (Abstract, Protected) Primary method for training a prtAction
-    %   runAction - (Abstract, Protected) Primary method for running a prtAction
-    %   train - Train action object using prtDataSet
-    %   run - Run action object on prtDataSet
-    %   crossValidate - Cross-validate action object using dataSet and keys
+    %   train - Train prtAction using prtDataSet
+    %   run - Evaluate prtAction on prtDataSet
+    %   crossValidate - Cross-validate prtAction using prtDataSet and keys
+    %   kfolds - K-folds cross-validate a prtAction using prtDataSet
+    %   trainAction - (Abstract) Primary method for training a prtAction
+    %   runAction - (Abstract) Primary method for running a prtAction
     %   preTrainProcessing - (Protected) Called by train() prior to trainAction()
     %   postRunProcessing - (Protected) Called by run() after runAction()
+    %
+    % See Also: prtClass, prtRegress, prtFeatSel, prtPreProc, prtDataSet
     
     properties (Abstract, SetAccess = private)
-        name % Char, Descriptive name
-        nameAbbreviation % Char, Shortened (2-4 character) name
+        % prtAction.name - Descriptive name of classifier object.
+        name 
+        
+        % prtAction.nameAbbreviation - Shortened name for the prtAction.
+        nameAbbreviation 
+        
+        % prtAction.isSupervised - Specifies if prtAction requires
+        % training.
         isSupervised % Logical, requires training data to run
     end
     
     properties (SetAccess = protected)
-        isTrained = false; % Logical, has been properly trained
+        % prtAction.isTrained - Specifies if prtAction has been trained.
+        %   Set automatically in prtAction.train().
+        isTrained = false;
+        
+        % prtAction.DataSetSummary - Structure that summarizes prtDataSet.
+        %   Produced by prtDataSet.summarize() and stored in
+        %   prtAction.train(). Used to characterize the dataset for
+        %   plotting when prtAction.verboseStorage == false
+        DataSetSummary = [];
+        
+        % prtAction.DataSet - Training prtDataSet. 
+        %   Only stored if prtAction.verboseStorage == true. Otherwise it
+        %   is empty.
+        DataSet = []; 
     end
     
     properties
-        verboseStorage = true; % Logical, specifies to store training dataSet with object
-        DataSetSummary = []; % Struct, Output of summarize(DataSet)
-        DataSet = []; % prtDataSet, only stored if verboseStorage == true
-        UserData = []; % Struct, user specified data
+        % prtAction.verboseStorage - Specifies storage the training prtDataset.
+        % If true the prtDataSet is stored internally in prtAction.DataSet.
+        verboseStorage = true;
+        
+        % prtAction.UserData - User specified data. 
+        %   Some prtActions store additional information from
+        %   prtAction.run() as a structure in prtAction.UserData()
+        UserData = [];
     end
     
     methods (Abstract, Access = protected)
+        % prtAction.trainAction() - Primary method for training a prtAction
+        %   Obj = prtAction.trainAction(Obj,DataSet)
         Obj = trainAction(Obj, DataSet)
+        
+        % prtAction.runAction() - Primary method for evaluating a prtAction
+        %   DataSet = runAction(Obj, DataSet)
         DataSet = runAction(Obj, DataSet)
     end
     
