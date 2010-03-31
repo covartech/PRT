@@ -21,8 +21,9 @@ classdef prtClassFld < prtClass
     end
     
     properties
-        % General Classifier Properties
-        w = []; % FLD weights, will be learning in train()
+        % w is a DataSet.nDimensions x 1 vector of projection weights
+        % learned during Fld.train(DataSet)
+        w = [];
         
         % plotting options
         plotBasis = true; % logical

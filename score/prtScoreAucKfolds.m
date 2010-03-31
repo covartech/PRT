@@ -1,5 +1,5 @@
-function auc = prtScoreAucKfolds(DS,PrtClassOpt,nFolds)
+function auc = prtScoreAucKfolds(DS,PrtClass,nFolds)
 %auc = prtScoreAucKfolds(DS,PrtClassOpt,nFolds)
 
-Results = prtKfolds(DS,PrtClassOpt,nFolds);
-[pf,pd,auc] = prtScoreRoc(Results.getObservations,DS.getTargets);
+Results = kfolds(PrtClass,DS,nFolds);
+[~,~,auc] = prtScoreRoc(Results.getObservations,DS.getTargets);

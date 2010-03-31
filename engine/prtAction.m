@@ -84,14 +84,17 @@ classdef prtAction
             % calls Obj.trainAction()
             
             % Default preTrainProcessing() stuff
-            Obj.isTrained = true;
             Obj.DataSetSummary = summarize(DataSet);
+            
+            %preTrainProcessing should make sure Obj has the right
+            %verboseStorage
+            Obj = preTrainProcessing(Obj,DataSet);
             if Obj.verboseStorage
                 Obj.DataSet = DataSet;
             end
             
-            Obj = preTrainProcessing(Obj,DataSet);
             Obj = trainAction(Obj, DataSet);
+            Obj.isTrained = true;
         end
         
         function DataSet = run(Obj, DataSet)

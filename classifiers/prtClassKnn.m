@@ -8,13 +8,13 @@ classdef prtClassKnn < prtClass
         
         % Required by prtClass
         isNativeMary = false;
+        
     end 
     
     properties
         % General Classifier Properties
         k = 3;
         distanceFunction = @(X1,X2)prtDistanceEuclidean(X1,X2);
-        TrainingDataSet = [];
     end
     
     methods
@@ -25,8 +25,15 @@ classdef prtClassKnn < prtClass
     end
     
     methods (Access=protected)
-        function Obj = trainAction(Obj,DataSet)
-            Obj.TrainingDataSet = DataSet;
+        function Obj = preTrainProcessing(Obj,DataSet)
+            if ~Obj.verboseStorage
+                warning('prtClassKnn:verboseStorage:false','prtClassKnn requires verboseStorage to be true; overriding manual settings');
+            end
+            Obj.verboseStorage = true;
+            Obj = preTrainProcessing@prtClass(Obj,DataSet);
+        end
+        function Obj = trainAction(Obj,~)
+            %Do nothing, sucka.
         end
         
         function ClassifierResults = runAction(Obj,PrtDataSet)
@@ -34,12 +41,12 @@ classdef prtClassKnn < prtClass
             x = getObservations(PrtDataSet);
             n = PrtDataSet.nObservations;
             
-            nClasses = Obj.TrainingDataSet.nClasses;
-            uClasses = Obj.TrainingDataSet.uniqueClasses;
-            labels = getTargets(Obj.TrainingDataSet);
+            nClasses = Obj.DataSet.nClasses;
+            uClasses = Obj.DataSet.uniqueClasses;
+            labels = getTargets(Obj.DataSet);
             y = zeros(n,nClasses);
             
-            xTrain = getObservations(Obj.TrainingDataSet);
+            xTrain = getObservations(Obj.DataSet);
             memBlock = 1000;
             
             if n > memBlock
