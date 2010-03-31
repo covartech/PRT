@@ -1,6 +1,15 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 classdef prtClassFld < prtClass %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    
+    % prtClassFld Properties: 
+    %   name - Fisher Linear Discriminant
+    %   nameAbbreviation - FLD
+    %   isSupervised - true
+    %   isNativeMary - false
+    %   w - regression weights - estimated during training
+    %   plotBasis - logical, plot the basis
+    %   plotProjections - logical, plot projections of points to basis
+    %
+    % prtClassFld Methods:
+
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     properties (SetAccess=private) %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         % Required by prtAction
@@ -18,7 +27,7 @@ classdef prtClassFld < prtClass %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         % General Classifier Properties
         w = []; % FLD weights, will be learning in train()
         
-        % Additional plotting options
+        % plotting options
         plotBasis = true; % logical
         plotProjections = false; % true, false or int (plot every nth projection)
     end
@@ -35,7 +44,7 @@ classdef prtClassFld < prtClass %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
         end
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        
+         
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         % Train %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

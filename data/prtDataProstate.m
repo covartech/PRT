@@ -26,6 +26,5 @@ X = cat(2,cellData{2:end-1});  %drop the counting var, and the Y
 varNames = varNames(2:end-1);
 varNames = cellfun(@(c)c{1},varNames,'uniformoutput',false);
 
-%DataSet = prtDataSet(X,Y,'featureNames',varNames,'dataSetName','UCI Prostate Data');
 DataSet = prtDataSet(X,Y,'name','UCI Prostate Data');
 DataSet = DataSet.setFeatureNames(varNames);

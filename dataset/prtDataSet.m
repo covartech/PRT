@@ -59,5 +59,5 @@ end
 
 function isClassifier = classificationDecision(X,Y)
 
-% Relatively arbitrarly determine if there are "a lot" of Ys
+% Relatively arbitrarly determine if there are "a lot" of unique Ys
 isClassifier = length(unique(Y)) < size(X,1)/3;
