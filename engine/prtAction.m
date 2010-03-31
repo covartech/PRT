@@ -49,10 +49,10 @@ classdef prtAction
             % calls Obj.trainAction()
             
             % Default preTrainProcessing() stuff
-            ClassObj.isTrained = true;
-            ClassObj.DataSetSummary = summarize(DataSet);
-            if ClassObj.verboseStorage
-                ClassObj.DataSet = DataSet;
+            Obj.isTrained = true;
+            Obj.DataSetSummary = summarize(DataSet);
+            if Obj.verboseStorage
+                Obj.DataSet = DataSet;
             end
             
             Obj = preTrainProcessing(Obj,DataSet);

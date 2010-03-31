@@ -86,7 +86,9 @@ classdef prtClassFld < prtClass
             DataSet = prtDataSet((Obj.w'*DataSet.getObservations()')');
         end
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        
+    end
+    
+    methods (Access=protected)
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         function imageHandle = plotGriddedEvaledClassifier(Obj, DS, linGrid, gridSize, cMap)
             
@@ -154,7 +156,6 @@ classdef prtClassFld < prtClass
             hold off;
         end
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        
     end
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
