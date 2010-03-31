@@ -1,7 +1,7 @@
 classdef prtAction
     % prtAction Properties:
     %   name - (Abstract) Char, Descriptive name
-    %   nameAbbreviation - (Abstract) Char, Shortened (2-4 character) name 
+    %   nameAbbreviation - (Abstract) Char, Shortened (2-4 character) name
     %   isSupervised - (Abstract) Logical, Requires classifier training
     %   isTrained - (Read only) Logical, current status of the object
     %   verboseStorage - Logical, store dataset with action object
@@ -10,8 +10,8 @@ classdef prtAction
     %   UserData - Struct, user specified data
     %
     % prtAction Methods:
-    %   trainAction - (Abstract) Primary method for training a prtAction
-    %   runAction - (Abstract) Primary method for running a prtAction
+    %   trainAction - (Abstract, Protected) Primary method for training a prtAction
+    %   runAction - (Abstract, Protected) Primary method for running a prtAction
     %   train - Train action object using prtDataSet
     %   run - Run action object on prtDataSet
     %   crossValidate - Cross-validate action object using dataSet and keys
@@ -20,7 +20,7 @@ classdef prtAction
     
     properties (Abstract, SetAccess = private)
         name % Char, Descriptive name
-        nameAbbreviation % Char, Shortened (2-4 character) name 
+        nameAbbreviation % Char, Shortened (2-4 character) name
         isSupervised % Logical, requires training data to run
     end
     
@@ -35,10 +35,10 @@ classdef prtAction
         UserData = []; % Struct, user specified data
     end
     
-    methods (Abstract)
+    methods (Abstract, Access = protected)
         Obj = trainAction(Obj, DataSet)
         DataSet = runAction(Obj, DataSet)
-    end 
+    end
     
     methods
         function Obj = train(Obj, DataSet)
@@ -76,7 +76,7 @@ classdef prtAction
             %   is requested each of the trained prtActions is returned.
             %   This will have a length equal to the number of unique
             %   validation keys.
-            %   
+            %
             % [OutputDataSet, TrainedActions] = crossValidate(Obj, DataSet, validationKeys)
             
             if length(validationKeys) ~= DataSet.nObservations;
@@ -121,6 +121,40 @@ classdef prtAction
                 end
             end
         end
+        
+        function varargout = kfolds(Obj,DataSet,K)
+            % kfolds - Perform k-folds cross validation of prtAction
+            %   on a prtDataSet. Generates cross validation keys by
+            %   patitioning the dataSet into K groups such that the number
+            %   of samples of each uniqut target type is attempted to be
+            %   held constant.
+            %
+            % [OutputDataSet, TrainedActions, crossValKeys] = kfolds(ActionObj, DataSet, K)
+            
+            if nargin == 2 || isempty(K)
+                K = DataSet.nObservations;
+            end
+            
+            nObs = DataSet.nObservations;
+            if K > nObs;
+                warning('prt:prtAction:kfolds:nFolds','Number of folds (%d) is greater than number of data points (%d); assuming Leave One Out training and testing',K,nObs);
+                K = nObs;
+            elseif K < 1
+                warning('prt:prtAction:kfolds:nFolds','Number of folds (%d) is less than 1 assuming FULL training and testing',K);
+                K = 1;
+            end
+            
+            keys = prtUtilEquallySubDivideData(DataSet.getTargets(),K);
+            
+            outputs = cell(1,min(max(nargout,1),2));
+            [outputs{:}] = Obj.crossValidate(DataSet,keys);
+            
+            varargout = outputs(:);
+            if nargout > 2
+                varargout = [varargout; {keys}];
+            end
+            
+        end
     end
     
     methods (Access=protected)
@@ -128,7 +162,7 @@ classdef prtAction
             % preTrainProcessing - Processing done prior to train()
             %   Called by train(). Can be overloaded by prtActions to
             %   store specific information about the DataSet or Classifier
-            %   prior to training. 
+            %   prior to training.
             %
             %   ClassObj = preTrainProcessing(ClassObj,DataSet)
         end
@@ -142,4 +176,4 @@ classdef prtAction
             %   DataSet = postRunProcessing(ClassObj, DataSet)
         end
     end
-end 
+end

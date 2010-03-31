@@ -1,9 +1,12 @@
 classdef prtClass < prtAction
     % prtClass Properties:
     %   isNativeMary - Logical, classifier natively produces an output for each unique class
+    %   PlotOptions - prtClassPlotOpt
+    %   twoClassParadigm - {'Binary','Mary')
     %
     % prtClass Methods:
-    %   kfolds - generate kfolds cross-val keys and cross val action
+    %   plot
+    %   plotDecision
     
     properties (SetAccess=private, Abstract)
         isNativeMary % Logical, classifier natively produces an output for each unique class
@@ -85,40 +88,11 @@ classdef prtClass < prtAction
             end
         end
         
-        function varargout = kfolds(Obj,DataSet,K)
-            % kfolds - Perform k-folds cross validation of prtAction
-            %   on a prtDataSet. Generates cross validation keys by
-            %   patitioning the dataSet into K groups such that the number
-            %   of samples of each uniqut target type is attempted to be
-            %   held constant.
-            %
-            % [OutputDataSet, TrainedActions, crossValKeys] = kfolds(ActionObj, DataSet, K)
-            
-            if nargin == 2 || isempty(K)
-                K = DataSet.nObservations;
-            end
-            
-            nObs = DataSet.nObservations;
-            if K > nObs;
-                warning('prt:prtAction:kfolds:nFolds','Number of folds (%d) is greater than number of data points (%d); assuming Leave One Out training and testing',K,nObs);
-                K = nObs;
-            elseif K < 1
-                warning('prt:prtAction:kfolds:nFolds','Number of folds (%d) is less than 1 assuming FULL training and testing',K);
-                K = 1;
-            end
-            
-            keys = prtUtilEquallySubDivideData(DataSet.getTargets(),K);
-            
-            outputs = cell(1,min(max(nargout,1),2));
-            [outputs{:}] = Obj.crossValidate(DataSet,keys);
-            
-            varargout = outputs(:);
-            if nargout > 2
-                varargout = [varargout; {keys}];
-            end
-            
+        function set.twoClassParadigm(Obj,val)
+            assert(ischar(val),'twoClassParadigm must be a string that is ''binary'' or ''mary');
+            assert(ismember(lower(val),{'binary','mary','m-ary'}),'twoClassParadigm must be either ''binary'' or ''mary');
+            Obj.twoClassParadigm = lower(val);
         end
-        
     end
     
     methods (Access = protected)
