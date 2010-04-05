@@ -1,4 +1,42 @@
 classdef prtDataSetBase
+    % prtDataSetBase
+    %   Base class for all prt DataSets.  
+    %
+    % prtDataSetBase Properties: 
+    %   nObservations - Number of observations in the data set
+    %   nFeatures - Dimensionality of the feature vectors
+    %   name - Data set descriptive name
+    %   description - Description of the data set
+    %   UserData - Structure for holding additional data
+    %
+    % prtDataSetBase Methods:
+    %   getObservationNames
+    %   setObservationNames
+    %   getFeatureNames
+    %   setFeatureNames
+    %
+    %  prtDataSetBase Methods: (Abstract)
+    %   getObservations
+    %   setObservations
+    %
+    %   joinFeatures - Combine the features from two or more data sets
+    %   joinObservations - Combine the observations from two or more data sets
+    %
+    %   catFeatures - Combine the features from a data set with additional data
+    %   catObservations - Combine the Observations from a data set with additional data
+    %
+    %   removeObservations - Remove observations from a data set
+    %   retainObservations - Retain observatons (remove all others) from a data set
+    %   replaceObservations - Replace observatons in a data set
+    %
+    %   removeFeatures - Remove features from a data set
+    %   retainFeatures - Remove features (remove all others) from a data set
+    %   replaceFeatures - Replace features in a data set
+    %
+    %   export - 
+    %   plot - 
+    %   summarize - 
+    
     
     properties (Abstract, Dependent)
         nObservations         % size(data,1)

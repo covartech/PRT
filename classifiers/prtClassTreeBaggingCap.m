@@ -171,36 +171,15 @@ classdef prtClassTreeBaggingCap < prtClass
             for j = 1:PrtDataSet.nObservations
                 for i = 1:length(Obj.root);
                     if Obj.useMex
-                        Yout(j,i) = evalCAPtreeMEX(Obj.root(i),x(j,:));
+                        Yout(j,i) = prtUtilEvalCAPtreeMEX(Obj.root(i),x(j,:));
                     else
-                        Yout(j,i) = evalCAPtree(Obj.root(i),x(j,:));
+                        Yout(j,i) = prtUtilEvalCAPtree(Obj.root(i),x(j,:));
                     end
                 end
             end
             ClassifierResults = prtDataSet(mean(Yout,2));
         end
         
-        function Yout = evalCAPtree(tree,X)
-            %Yout = evalCAPtree(tree,X)
-            %   Evaluate a CAP tree on a 1xN data point X
-            
-            index = 1;
-            voted = 0;
-            while ~voted
-                if any(isfinite(tree.W(:,index)))
-                    %disp(((tree.W(:,index)'*X(:,tree.featureIndices(:,index))')') - tree.threshold(:,index))
-                    Yout = double(((tree.W(:,index)'*X(:,tree.featureIndices(:,index))')' - tree.threshold(:,index)) >= 0);
-                    if Yout == 0
-                        index = find(tree.treeIndices(:) == index,1,'first');
-                    elseif Yout > 0
-                        index = find(tree.treeIndices(:) == index,1,'last');
-                    end
-                else
-                    Yout = tree.terminalVote(index);
-                    voted = 1;
-                end
-            end
-        end
         
     end
 end
