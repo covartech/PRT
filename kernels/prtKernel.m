@@ -29,6 +29,12 @@ classdef prtKernel
                 end
             end
         end
+        function h = classifierPlot(obj)
+            h = nan;
+        end
+        function h = classifierText(obj)
+            h = nan;
+        end
     end
     methods (Abstract)
         objectArray = initializeKernelArray(obj,x)
