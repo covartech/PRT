@@ -15,7 +15,7 @@
 %   ezCdfPlot
 
 
-classdef mvt < prt.rv.rv
+classdef prtRvMvt < prtRv
     properties
         covarianceStructure = 'full';
         mean

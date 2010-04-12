@@ -10,7 +10,6 @@ Options.BlockColors.preProcessor = [1 0.8 0.6];
 Options.BlockColors.featureSelector = [0.6 1 0.8];
 Options.BlockColors.classifier = [0.7 0.7 1];
 
-
 Handles.handle = figure('Units','Pixels','position',[390 331 820 615],'MenuBar','figure','DockControls','off');
 
 % Make the toolbox on the left side

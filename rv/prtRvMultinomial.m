@@ -1,4 +1,4 @@
-classdef multinomial < rv.rv
+classdef prtRvMultinomial < prtRv
     properties
         probabilities
     end

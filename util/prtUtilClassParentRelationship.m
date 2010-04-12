@@ -1,7 +1,7 @@
 function OutStruct = prtUtilClassParentRelationship(varargin)
 % prtUtilClassParentRelationship(baseClassName)
 
-I = getClassInfo(varargin{1});
+I = meta.class.fromName(varargin{1});
 if nargin == 1
     OutStruct.classNames = {I.Name};
     OutStruct.propNames = cellfun(@(c)c.Name,I.Properties,'uniformOutput',false);
@@ -52,8 +52,4 @@ for iParent = 1:length(I.SuperClasses);
     OutStruct = prtUtilClassParentRelationship(I.SuperClasses{iParent}.Name,OutStruct);
 end
 
-end
-
-function I = getClassInfo(className)
-    I = eval(['?' className]);
 end

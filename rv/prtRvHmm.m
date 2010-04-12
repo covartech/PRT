@@ -71,10 +71,10 @@ classdef prtRvHmm < prtRv
         % Set methods %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        function R = set.initialWeights(R,weights)
-            assert(abs(sum(weights)-1) < R.learningApproximatelyEqualThreshold,'Initial weights must sum to 1!')
-            R.initialWeights = weights;
-        end % function set.mixingWeights
+%         function R = set.initialWeights(R,weights)
+%             assert(abs(sum(weights)-1) < R.learningApproximatelyEqualThreshold,'Initial weights must sum to 1!')
+%             R.initialWeights = weights;
+%         end % function set.mixingWeights
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
