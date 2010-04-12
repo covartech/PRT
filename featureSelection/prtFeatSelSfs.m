@@ -1,17 +1,17 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-classdef prtFeatSelSfs < prtFeatSel %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+classdef prtFeatSelSfs < prtFeatSel %
     
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    properties (SetAccess=private) %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    
+    properties (SetAccess=private) 
         % Required by prtAction
         name = 'Sequentual Feature Selection'
         nameAbbreviation = 'SFS'
         isSupervised = true;
-    end %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    end 
     
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    properties %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    
+    
+    properties 
         % General Classifier Properties
         nFeatures = 3;
         showProgressBar = true;
@@ -20,26 +20,26 @@ classdef prtFeatSelSfs < prtFeatSel %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         performance = [];
         selectedFeatures = [];
     end
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    methods %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    
+    
+    methods 
         
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        % Constructor %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        function Obj = prtFeatSelSfs(varargin) %%%%%%%%%%%%%%%%%%%%%%%%%%%
+        
+        % Constructor %%
+        
+        function Obj = prtFeatSelSfs(varargin) 
             % Allow for string, value pairs
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
         end
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        
         
     end
     methods (Access = protected)
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        % Train %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        function Obj = trainAction(Obj,DS) %%%%%%%%%%%%%%%%%%%%%%%%%%%
+        
+        % Train %%
+        
+        function Obj = trainAction(Obj,DS) 
             
             nFeatsTotal = DS.nFeatures;
             
@@ -90,18 +90,17 @@ classdef prtFeatSelSfs < prtFeatSel %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             Obj.performance = sfsPerformance;
             Obj.selectedFeatures = sfsSelectedFeatures;
         end
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        % Run %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%        
-        function DataSet = runAction(Obj,DataSet) %%%%%%%%%%%%%%%%%%%%%%%%%
+        
+        
+        % Run %
+                
+        function DataSet = runAction(Obj,DataSet) %%
             DataSet = DataSet.retainFeatures(Obj.selectedFeatures);
         end
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        
         
     end
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    
     
 end
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
