@@ -16,11 +16,11 @@ classdef prtKernelRbf < prtKernelBinary
         function h = classifierPlot(obj)
             switch(size(obj.kernelCenter,2))
                 case 1
-                    h = plot(obj.kernelCenter,0,'ko');
+                    h = plot(obj.kernelCenter,0,'ko','MarkerSize',8,'LineWidth',2);
                 case 2
-                    h = plot(obj.kernelCenter(1),obj.kernelCenter(2),'ko');
+                    h = plot(obj.kernelCenter(1),obj.kernelCenter(2),'ko','MarkerSize',8,'LineWidth',2);
                 case 3
-                    h = plot3(obj.kernelCenter(1),obj.kernelCenter(2),'ko');
+                    h = plot3(obj.kernelCenter(1),obj.kernelCenter(2),'ko','MarkerSize',8,'LineWidth',2);
                 otherwise
                     h = nan;
             end

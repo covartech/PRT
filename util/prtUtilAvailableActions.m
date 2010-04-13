@@ -1,4 +1,4 @@
-function S = prtUtilAvailableActions
+function ActionStruct = prtUtilAvailableActions
 %%
 % All m files in the prt
 prtMFiles = prtUtilRecursiveDir(prtRoot,'*.m');
@@ -15,17 +15,17 @@ iAction = 1;
 for iClassType = 1:length(prtClassFiles)
     %cMeta = meta.class.fromName(prtClassFiles{iClassType});
     
-    cStruct = prtUtilClassParentRelationship(prtClassFiles{iClassType});
+    %
+    cStruct = prtUtilClassParentRelationshipNamesOnly(prtClassFiles{iClassType});
+    
     if any(strcmpi('prtAction',cStruct.classNames))
         ClassInfoStructs(iAction,1) = cStruct;
         iAction = iAction + 1;
     end
 end
 
-%%
-
 actionClassNames = arrayfun(@(S)S.classNames{1},ClassInfoStructs,'uniformoutput',false);
-%%
+
 parentIndicator = false(numel(actionClassNames));
 map = struct;
 for i=1:numel(actionClassNames)
@@ -40,24 +40,35 @@ for i=1:numel(actionClassNames)
     end
 end
 
-% parentIndicator is true if actionClassNames{j} is a (direct) parent of
-% actionClassNames{i}
-
-% For each direct parent of action 
-actionInd = strcmpi('prtAction',actionClassNames);
-
-parentIndicator(:,actionInd)
-
 %%
 
-actionClassLayers = arrayfun(@(S)length(S.classNames),ClassInfoStructs);
+% Manually Locate Root node. Then find Children.
+ActionStruct(1,1).index = find(~any(parentIndicator,2));
+ActionStruct(1,1).name = actionClassNames{ActionStruct(1,1).index};
+ActionStruct(1,1).Info = ClassInfoStructs(ActionStruct(1,1).index);
+ActionStruct(1,1).childrenInds = find(parentIndicator(:, ActionStruct(1,1).index));
+%ActionStruct(1,1).Children = find(parentIndicator(:, ActionStruct(1,1).index));
+ActionStruct.Children = findChildren(ActionStruct(1,1).index, parentIndicator, actionClassNames, ClassInfoStructs);
 
-ClassInfoStructs(actionClassLayers==1) = []; % We can remove prtAction it self
-actionClassLayers(actionClassLayers==1) = [];
-%%
-layers = actionClassLayers-1;
-uLayers = unique(layers);
-for iLayer = 1:length(uLayers)
-    thisLayerInds = find(actionClassLayers == uLayers(iLayer));
-    
+end
+
+function Children = findChildren(index, parentIndicator,actionClassNames, ClassInfoStructs)
+
+    childrenInds = find(parentIndicator(:, index));
+    Children = [];
+    for iChild = 1:length(childrenInds)
+        Children(iChild,1).index = childrenInds(iChild);    
+        Children(iChild,1).name = actionClassNames{Children(iChild,1).index};
+        Children(iChild,1).Info = ClassInfoStructs(Children(iChild,1).index);
+        Children(iChild,1).childrenInds = find(parentIndicator(:, Children(iChild,1).index));
+        
+        Children(iChild,1).Children = findChildren(Children(iChild,1).index, parentIndicator, actionClassNames, ClassInfoStructs);
+        
+        % For Each Child. Try to find the children.
+        for iSubChild = 1:length(Children(iChild,1).childrenInds)
+            if ~isempty(Children(iChild,1).Children(iSubChild).childrenInds)
+                Children(iChild,1).Children(iSubChild).Children = findChildren(Children(iChild,1).childrenInds(iSubChild), parentIndicator, actionClassNames, ClassInfoStructs);
+            end
+        end
+    end
 end

@@ -1,5 +1,7 @@
 classdef prtClassRvm < prtClass
-    
+    % DataSet = prtDataBimodal;
+    % RVM = train(prtClassRVM, DataSet);
+    % plot(RVM)
     properties (SetAccess=private)
         % Required by prtAction
         name = 'Relevance Vector Machine'
@@ -13,12 +15,12 @@ classdef prtClassRvm < prtClass
     properties
         % w is a DataSet.nDimensions x 1 vector of projection weights
         % learned during Fld.train(DataSet)
-        kernels = {@(xTest)prtKernelDc(xTest), @(xTest,xTrain)prtKernelRbfNdimensionScale(xTest,xTrain,1)};
-        
+        kernels = {prtKernelDc, prtKernelRbf};
+    
         % Estimated Parameters
         beta = [];
         sparseBeta = [];
-        sparseKernels = [];
+        sparseKernels = {};
         
         % Learning algorithm
         LearningConverged = 0;
@@ -49,10 +51,16 @@ classdef prtClassRvm < prtClass
             y = DataSet.getTargets();
             y(y == 0) = -1;     % Req'd for algorithm
             
-            x = DataSet.getObservations();
-            [gramm, nBasisPerKernelFun, kernelHandles] = prtKernelGrammMatrix(x, x, Obj.kernels);
+            % Train (center) the kernels at the trianing data (if
+            % necessary)
+            trainedKernels = cell(size(Obj.kernels));
+            for iKernel = 1:length(Obj.kernels);
+                trainedKernels{iKernel} = initializeKernelArray(Obj.kernels{iKernel},DataSet);
+            end
+            trainedKernels = cat(1,trainedKernels{:});
             
-            nBasis = sum(nBasisPerKernelFun);
+            gramm = prtKernelGrammMatrix(DataSet,trainedKernels);
+            nBasis = size(gramm,2);
             
             sigmaSquared = eps;
             
@@ -61,7 +69,7 @@ classdef prtClassRvm < prtClass
             G = gramm'*gramm;
             while rcond(G) < 1e-6
                 if sigmaSquared == eps
-                    warning('prtClassRvm:illConditionedG','Jeffrey''s RVM initial G matrix ill-conditioned; regularizing diagonal of G to resolve; this can be modified by changing kernel parameters\n');
+                    warning('prt:prtClassRvm:illConditionedG','RVM initial G matrix ill-conditioned; regularizing diagonal of G to resolve; this can be modified by changing kernel parameters\n');
                 end
                 G = (sigmaSquared*eye(nBasis) + gramm'*gramm);
                 sigmaSquared = sigmaSquared*2;
@@ -108,9 +116,13 @@ classdef prtClassRvm < prtClass
             end
             
             % Make sparse represenation
-            
             Obj.sparseBeta = Obj.beta(relevantIndices,1);
-            Obj.sparseKernels = kernelHandles(relevantIndices);
+            Obj.sparseKernels = trainedKernels(relevantIndices);
+            
+            % Very bad training
+            if isempty(Obj.sparseBeta)
+                warning('prt:prtClassRvm:NoRelevantFeatures','No relevant features were found during training.');
+            end
             
             % Reset warning
             warning(warningState);
@@ -118,15 +130,19 @@ classdef prtClassRvm < prtClass
         
         function DataSetOut = runAction(Obj,DataSet)
             
-            memChunkSize = 1000;
-            
+            if isempty(Obj.sparseBeta)
+                DataSetOut = DataSet.setObservations(nan(DataSet.nObservations,DataSet.nFeatures));
+                return
+            end
+                
+            memChunkSize = 1000; % Should this be moved somewhere?
             n = DataSet.nObservations;
             
             DataSetOut = prtDataSetUnLabeled(zeros(n,1));
             for i = 1:memChunkSize:n;
                 cI = i:min(i+memChunkSize,n);
-                
-                gramm = prtKernelGrammMatrixUnary(DataSet.getObservations(cI,:),Obj.sparseKernels);
+                cDataSet = prtDataSet(DataSet.getObservations(cI,:));
+                gramm = prtKernelGrammMatrix(cDataSet,Obj.sparseKernels);
                 
                 DataSetOut = DataSetOut.setObservations(normcdf(gramm*Obj.sparseBeta), cI);
             end
@@ -137,10 +153,16 @@ classdef prtClassRvm < prtClass
             % Call the original plot function
             imageHandle = plotGriddedEvaledClassifier@prtClass(Obj, DS, linGrid, gridSize, cMap);
             
-            return
-%             for iKernel = 1:length(Obj.sparseKernels)
-%                 plot(Obj.sparseKernels);
-%             end
+            holdState = ishold;
+            hold on;
+            for iKernel = 1:length(Obj.sparseKernels)
+                classifierPlot(Obj.sparseKernels{iKernel});
+            end
+            if ~holdState
+                hold('off')
+            end
+            
+            
         end
     end
 end
