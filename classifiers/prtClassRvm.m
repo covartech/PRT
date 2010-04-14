@@ -157,6 +157,7 @@ classdef prtClassRvm < prtClass
             hold on;
             for iKernel = 1:length(Obj.sparseKernels)
                 classifierPlot(Obj.sparseKernels{iKernel});
+                %classifierText(Obj.sparseKernels{iKernel});
             end
             if ~holdState
                 hold('off')
