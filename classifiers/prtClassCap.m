@@ -48,16 +48,38 @@ classdef prtClassCap < prtClass
     methods (Access=protected)
         function Obj = trainAction(Obj,DataSet)
             
+            y = DataSet.getTargets;
             x = DataSet.getObservations;
             mean0 = mean(DataSet.getObservationsByClass(0),1);
             mean1 = mean(DataSet.getObservationsByClass(1),1);
             
             Obj.w = mean1 - mean0;
             Obj.w = Obj.w./norm(Obj.w);
-            CAP.Obj.w = Obj.w;
             
-            y = DataSet.getTargets;
-            yOut = (CAP.Obj.w*x')';
+            %Evaluate the thresold using w:
+            Obj = optimizeThresholdPosNeg(Obj,x,y);
+        end
+        
+        function Obj = optimizeThresholdPosNeg(Obj,x,y)
+           
+            [thresholdValue,minPe] = optimizeThreshold(Obj,x,y);
+            
+            %It's possible that for oddly distributed data, the weight
+            %vector will point in the wrong direction, yielding a ROC curve
+            %that never goes above the chance diagonal; when this happens,
+            %try inverting the w vector, and re-run optimizeThreshold
+            if minPe >= 0.5
+                Obj.w = -Obj.w;
+                [thresholdValue,minPe] = optimizeThreshold(Obj,x,y);
+                if minPe >= 0.5
+                    warning('Min PE from CAP.trainAction is >= 0.5');
+                end
+            end
+            Obj.threshold = thresholdValue;
+        end
+        
+        function [thresholdValue,minPe] = optimizeThreshold(Obj,x,y)
+            yOut = (Obj.w*x')';
             
             if Obj.thresholdSampling > length(y)
                 [pf,pd,~,thresh] = prtScoreRoc(yOut,y);
@@ -66,12 +88,7 @@ classdef prtClassCap < prtClass
             end
             pE = prtUtilPfPd2Pe(pf,pd);
             [minPe,I] = min(pE);
-            
-            %             if length(unique(yOut >= thresh(unique(I)))) == 1
-            %                 error('Possible NaNs in data in generateCAP');
-            %             end
-            Obj.threshold = thresh(unique(I));
-
+            thresholdValue = thresh(unique(I));
         end
         
         function ClassifierResults = runAction(Obj,PrtDataSet)

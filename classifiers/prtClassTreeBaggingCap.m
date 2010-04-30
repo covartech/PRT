@@ -141,7 +141,7 @@ classdef prtClassTreeBaggingCap < prtClass
             tree.W(:,index) = TrainedCapClassifier.w;
             tree.threshold(:,index) = TrainedCapClassifier.threshold;
             %yOut = double(((tree.W(:,index)'*X(:,tree.featureIndices(:,index))')' - tree.threshold(:,index)) >= 0);
-            yOut = run(TrainedCapClassifier,DataSetTrain);
+            yOut = run(TrainedCapClassifier,DataSet.retainFeatures(tree.featureIndices(:,index)));
             clear classifier;
             
             ind0 = find(yOut.getObservations == 0);
