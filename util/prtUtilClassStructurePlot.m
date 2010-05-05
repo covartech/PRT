@@ -49,7 +49,7 @@ for i=1:numel(allClasses)
             keepClass(i) = true;
         end
     catch ME %#ok
-        %warning('CLASSTREE:discoveryWarning',['Could not discover information about class ',allClasses{i}]);
+        warning('CLASSTREE:discoveryWarning',['Could not discover information about class ',allClasses{i}]);
         continue;
     end
     for j=1:numel(parents)

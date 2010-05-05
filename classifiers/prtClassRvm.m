@@ -1,7 +1,23 @@
 classdef prtClassRvm < prtClass
-    % DataSet = prtDataBimodal;
-    % RVM = train(prtClassRVM, DataSet);
-    % plot(RVM)
+    % prtClassRvm Properties: 
+    %   name - Relevance Vector Machine
+    %   nameAbbreviation - RVM
+    %   isSupervised - true
+    %   isNativeMary - false
+    %   beta - regression weights - estimated during training
+    %   sparseBeta - sparse regression weights - estimated during training
+    %   sparseKernels - sparse regression kernels - estimated during
+    %      training
+    %
+    % prtClassRvm Methods:
+    %   trainAction (Private; see prtClass\train)
+    %   runAction (Private; see prtClass\run)
+    %
+    % Example usage:
+    %   DataSet = prtDataUnimodal;
+    %   RVM = train(prtClassRVM, DataSet);
+    %   plot(RVM)
+    
     properties (SetAccess=private)
         % Required by prtAction
         name = 'Relevance Vector Machine'
@@ -13,9 +29,7 @@ classdef prtClassRvm < prtClass
     end
     
     properties
-        % w is a DataSet.nDimensions x 1 vector of projection weights
-        % learned during Fld.train(DataSet)
-        kernels = {prtKernelDc, prtKernelRbf};
+        kernels = {prtKernelDc, prtKernelRbfNDimensionScale};
     
         % Estimated Parameters
         beta = [];
@@ -31,7 +45,7 @@ classdef prtClassRvm < prtClass
     
     methods
         
-        function Obj = prtClassFld(varargin)
+        function Obj = prtClassRvm(varargin)
             % Allow for string, value pairs
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
         end
@@ -41,6 +55,12 @@ classdef prtClassRvm < prtClass
     methods (Access=protected)
         
         function Obj = trainAction(Obj,DataSet)
+            %Rvm = trainAction(Rvm,DataSet) (Private; see prtClass\train)
+            %   Implements Jefferey's prior based training of a relevance
+            %   vector machine.  The Rvm output from this function contains
+            %   fields "sparseBeta" and "sparseKernels"
+            %   
+            
             warningState = warning;
             %warning off MATLAB:nearlySingularMatrix
             
@@ -146,24 +166,6 @@ classdef prtClassRvm < prtClass
                 
                 DataSetOut = DataSetOut.setObservations(normcdf(gramm*Obj.sparseBeta), cI);
             end
-        end
-        
-        function imageHandle = plotGriddedEvaledClassifier(Obj, DS, linGrid, gridSize, cMap)
-            
-            % Call the original plot function
-            imageHandle = plotGriddedEvaledClassifier@prtClass(Obj, DS, linGrid, gridSize, cMap);
-            
-            holdState = ishold;
-            hold on;
-            for iKernel = 1:length(Obj.sparseKernels)
-                classifierPlot(Obj.sparseKernels{iKernel});
-                %classifierText(Obj.sparseKernels{iKernel});
-            end
-            if ~holdState
-                hold('off')
-            end
-            
-            
         end
     end
 end
