@@ -46,8 +46,26 @@ classdef prtDataSetClass < prtDataSetInMemoryLabeled & prtDataSetBaseClass
                 % prtDataSet = prtDataSetClass(prtDataSetUnLabeledIn, targets, {paramName1, paramVal2, ...})
                 % Will be the same as other constructors after this..
                 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-                error('Constructor not yet implemented.')
+                if nargin < 2
+                    error('prt:prtDataSetClass:invalidConstructor','prtDataSetClass requires targets when called in this manner.');
+                end
                 
+                if isnumeric(varargin{2})
+                    % Supplied targets
+                    prtDataSet = prtDataSetClass(varargin{1}.getObservations(), varargin{2});
+                    
+                elseif isa(varargin{2},'prtDataSetBaseLabeled')
+                    % Supplied a labeled dataset to inherit from
+                    prtDataSet = prtDataSetClass(varargin{1}.getObservations(), varargin{2}.getTargets());
+                    
+                else
+                    error('prt:prtDataSetClass:invalidConstructor','Invalid targets specified.');
+                end
+                
+                % We need to inherit /reinherit all of properties from the
+                % input dataset (I don't know how to do this so we don't)
+                
+                varargin = varargin(3:end);
             else
                 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
                 % Regular Constructor %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
