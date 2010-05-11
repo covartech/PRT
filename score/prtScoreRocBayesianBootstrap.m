@@ -1,5 +1,5 @@
 function varargout = prtScoreRocBayesianBootstrap(ds, y, nBootStrapSamples, nPfSamples, alpha)
-% PRTSCOREROCBAYESIANBOOTSTRAP - Bayesian Boot strap an ROC curve
+% prtScoreRocBayesianBootstrap - Bayesian Boot strap an ROC curve
 %   Performs Bayesian boot strap sampling of an ROC curve and generates the
 %   100*(1-alpha) percent percentile uniform credible band. This is done
 %   following the methodology in:
@@ -119,13 +119,13 @@ if isNSamplesTooBig
     for iter = 1:nBootStrapSamples
     
         % Step 1
-        cH0Weights = prtRvUtilDirichletDraw(ones(1,nH0),1);% Note that these weights are relatively to the sorted indicies but since the dirichlet is symetric it doesn't matter.
+        cH0Weights = prtRvUtilDirichletDraw(ones(1,nH0),1);% Note that these weights are relative to the sorted indicies but since the dirichlet is symetric it doesn't matter.
         for iH1 = 1:nH1
             Z(iH1) = sum((sortedCDsH0 > dsH1(iH1)).*cH0Weights(:));
         end
 
         % Step 2
-        cZWeights = prtRvUtilDirichletDraw(ones(1,nH1),1);% Note that these weights are relatively to the sorted indicies but since the dirichlet is symetric it doesn't matter.
+        cZWeights = prtRvUtilDirichletDraw(ones(1,nH1),1);% Note that these weights are relative to the sorted indicies but since the dirichlet is symetric it doesn't matter.
         sortedZ = sort(Z);
         for iPf = 1:length(pfSamples)
             pds(iPf,iter) = sum((sortedZ <= pfSamples(iPf)).*cZWeights(:));
