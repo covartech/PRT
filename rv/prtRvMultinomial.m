@@ -57,47 +57,38 @@ classdef prtRvMultinomial < prtRv
                 warning('multinomial:overwrite','The probability vector has already been specified for this %s. These values have been over written and the number of categories may have changed.',R.displayName);
             end
             
-            R.probabilities = sum(X)./sum(X(:));
+            N_bar = sum(X,1);
+            R.probabilities = N_bar./sum(N_bar(:));
         end % function mle
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%        
         function R = weightedMle(R,X,weights)
-            assert(size(weights,1)==size(X,1),'The number of weights must mach the number of observations.');
-
-            Nbar = sum(weights);
-            R.mean = 1/Nbar*sum(bsxfun(@times,X,weights));
-            X = bsxfun(@times,bsxfun(@minus,X,R.mean),sqrt(weights));
-            R.covariance = 1/Nbar*X'*X;
+            assert(size(weights,1)==size(X,1),'The number of weights must mach the number of observations.');            
+            
+            N_bar = sum(bsxfun(@times,X,weights),1);
+            
+            R.probabilities = N_bar./sum(N_bar(:));
         end % function weightedMle
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%        
 
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         function vals = pdf(R,X)
             assert(R.isValid,'PDF cannot be evaluated because this RV object is not yet valid.')
-            assert(size(X,2) == 1,'Incorrect dimensionality for RV object.')
-            uX = unique(X);
+            assert(size(X,2) == R.nCategories,'Incorrect dimensionality for RV object.')
             
-            vals = exp(R.mvnLogPdf(X,R.mean,R.covariance));
+            vals = sum(bsxfun(@times,X,R.probabilities),2);
         end % function pdf
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         function vals = logPdf(R,X)
             assert(R.isValid,'LOGPDF cannot be evaluated be RV object is not yet valid.')
-            assert(size(X,2) == R.nDimensions,'Incorrect dimensionality for RV object.')            
-            vals = rv.mvnLogPdf(X,R.mean,R.covariance);
+            
+            vals = log(pdf(R,X));
         end % function pdf
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        function vals = cdf(R,X)
-            assert(R.isValid,'CDF cannot be evaluated be RV object is not yet valid.')
-            assert(size(X,2) == 1,'Incorrect dimensionality for RV object.')            
-            vals = mvncdf(X,R.mean,R.covariance);
-        end % function cdf
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         function vals = draw(R,N)
             vals = mvnrnd(R.mean,R.covariance,N);

@@ -94,7 +94,6 @@ classdef prtDataSetBaseInMemoryLabeled < prtDataSetBaseInMemory
             obj.targets = targets;
         end
         
-        
         function DS = bootstrap(obj,nSamples)
             sampleIndices = ceil(rand(1,nSamples).*obj.nObservations);
             DS = obj;
@@ -103,7 +102,6 @@ classdef prtDataSetBaseInMemoryLabeled < prtDataSetBaseInMemory
         
         function DS = bootstrapByClass(DS,nSamplesPerClass)
             error('Not implemented');
-            
         end
         
         

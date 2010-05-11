@@ -29,7 +29,7 @@ classdef prtClassRvm < prtClass
     end
     
     properties
-        kernels = {prtKernelDc, prtKernelRbfNDimensionScale};
+        kernels = {prtKernelDc, prtKernelRbfNdimensionScale};
     
         % Estimated Parameters
         beta = [];
