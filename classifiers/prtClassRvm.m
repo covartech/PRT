@@ -68,8 +68,12 @@ classdef prtClassRvm < prtClass
                 error('prt:prtClassRvm:nonBinaryData','prtClassRvm requires a binary data set');
             end
             
-            y = DataSet.getTargets();
-            y(y == 0) = -1;     % Req'd for algorithm
+            %Note: do not assume that getTargets returns a double array or
+            %values "0" and "1", instead use this:
+            yMat = double(DataSet.getTargetsAsBinaryMatrix());
+            y = nan(size(yMat,1),1);
+            y(yMat(:,1) == 1) = -1;
+            y(yMat(:,2) == 1) = 1;
             
             % Train (center) the kernels at the trianing data (if
             % necessary)
@@ -101,6 +105,7 @@ classdef prtClassRvm < prtClass
             
             h1Ind = y == 1;
             h0Ind = y == -1;
+            
             for iteration = 1:Obj.LearningMaxIterations
                 
                 %%%%
@@ -110,6 +115,7 @@ classdef prtClassRvm < prtClass
                 grammK = gramm(:,relevantIndices);
                 
                 S = gramm*Obj.beta;
+
                 S(h1Ind) = S(h1Ind) + normpdf(S(h1Ind))./(1-normcdf(-S(h1Ind)));
                 S(h0Ind) = S(h0Ind) - normpdf(S(h0Ind))./(normcdf(-S(h0Ind)));
                 
