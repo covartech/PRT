@@ -182,8 +182,8 @@ text(16,36+40,'Elapsed time:',a);
 text(16,20+40,'Remaining:',a);
 
 %Information texts
-text(200,36+40,'0:00:00',a,'Tag','Time'); %y = 36
-text(200,20+40,'0:00:00',a,'Tag','Task'); %y = 20
+text(184,36+40,'0:00:00',a,'Tag','Time'); %y = 36
+text(184,20+40,'0:00:00',a,'Tag','Task'); %y = 20
 
 a.HorizontalAlignment= 'Right';
 text(136,66+40,1,'0',a,'Tag','Done'); % y = 66

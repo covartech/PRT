@@ -4,7 +4,7 @@ classdef prtPreProcZmuv < prtPreProc
         % Required by prtAction
         name = 'Zero Mean Unit Variance'
         nameAbbreviation = 'ZMUV'
-        isSupervised = true;
+        isSupervised = false;
     end
     
     properties (SetAccess=private)
@@ -30,7 +30,7 @@ classdef prtPreProcZmuv < prtPreProc
         end
         
         function DataSet = runAction(Obj,DataSet)
-            DataSet = DataSet.setObservations(bsxfun(@rdivide,bsxfun(@minus,DataSet.getObservations,Obj.means),Obj.stds));
+            DataSet = DataSet.setObservations(bsxfun(@rdivide,bsxfun(@minus,DataSet.getObservations(),Obj.means),Obj.stds));
         end
         
     end

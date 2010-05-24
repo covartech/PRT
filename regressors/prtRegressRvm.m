@@ -1,62 +1,42 @@
-classdef prtClassRvm < prtClass
-    % prtClassRvm Properties:
-    %   name - Relevance Vector Machine
-    %   nameAbbreviation - RVM
-    %   isSupervised - true
-    %   isNativeMary - false
-    %   beta - regression weights - estimated during training
-    %   sparseBeta - sparse regression weights - estimated during training
-    %   sparseKernels - sparse regression kernels - estimated during
-    %      training
-    %
-    % prtClassRvm Methods:
-    %   trainAction (Private; see prtClass\train)
-    %   runAction (Private; see prtClass\run)
-    %
-    % Example usage:
-    %   DataSet = prtDataUnimodal;
-    %   RVM = train(prtClassRVM, DataSet);
-    %   plot(RVM)
+classdef prtRegressRvm < prtRegress
     
     properties (SetAccess=private)
         % Required by prtAction
         name = 'Relevance Vector Machine'
         nameAbbreviation = 'RVM'
         isSupervised = true;
-        
-        % Required by prtClass
-        isNativeMary = false;
     end
     
     properties
         kernels = {prtKernelDc, prtKernelRbfNdimensionScale};
-        algorithm = 'Figueiredo';
+        algorithm = 'JefferysPrior';
         
         % Estimated Parameters
-        Sigma = [];
+        sigma2 = [];
         beta = [];
+        Sigma = [];
         sparseBeta = [];
         sparseKernels = {};
+        LearningConverged = [];
         
         % Learning algorithm
         LearningPlot = false;
-        LearningConverged = false;
         LearningMaxIterations = 1000;
-        LearningBetaConvergedTolerance = 1e-3;
+        LearningBetaConvergedTolerance = 1e-6;
         LearningBetaRelevantTolerance = 1e-3;
-        LearningLikelihoodIncreaseThreshold = 1e-6;
+        LearningLikelihoodIncreaseThreshold = 1e-2;
         LearningResults
     end
     
     methods
         
-        function Obj = prtClassRvm(varargin)
+        function Obj = prtRegressRvm(varargin)
             % Allow for string, value pairs
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
         end
         
         function Obj = set.algorithm(Obj,newAlgo)
-            possibleAlgorithms = {'Figueiredo', 'Sequential'};
+            possibleAlgorithms = {'Jefferys', 'Sequential'};
             
             possibleAlgorithmsStr = sprintf('%s, ',possibleAlgorithms{:});
             possibleAlgorithmsStr = possibleAlgorithmsStr(1:end-2);
@@ -68,30 +48,9 @@ classdef prtClassRvm < prtClass
             Obj.algorithm = newAlgo;
         end
         
-        function varargout = plot(Obj)
-            % plot - Plot output confidence of prtClass object
-            %   Works when dimensionality of dataset is 3 or less.
-            %   Can produce both M-ary and Binary decision surfaces
-            %   See also: Obj.plotDecision()
-            
-            HandleStructure = plot@prtClass(Obj);
-            
-            % Plot the kernels
-            hold on
-            for iKernel = 1:length(Obj.sparseKernels)
-                Obj.sparseKernels{iKernel}.classifierPlot();
-            end
-            hold off
-            
-            varargout = {};
-            if nargout > 0
-                varargout = {HandleStructure};
-            end
-        end
-        
     end
     
-    methods (Access=protected)
+    methods (Access = protected)
         
         function Obj = trainAction(Obj,DataSet)
             %Rvm = trainAction(Rvm,DataSet) (Private; see prtClass\train)
@@ -101,18 +60,12 @@ classdef prtClassRvm < prtClass
             %
             
             warningState = warning;
-            %warning off MATLAB:nearlySingularMatrix
             
-            if ~DataSet.isBinary
-                error('prt:prtClassRvm:nonBinaryData','prtClassRvm requires a binary data set');
+            if DataSet.nTargetDimensions ~= 1
+                error('prt:prtRegressRvm:tooManyTargets','prtRegressRvm can only operate on single target data.');
             end
             
-            %Note: do not assume that getTargets returns a double array or
-            %values "0" and "1", instead use this:
-            yMat = double(DataSet.getTargetsAsBinaryMatrix());
-            y = nan(size(yMat,1),1);
-            y(yMat(:,1) == 1) = -1;
-            y(yMat(:,2) == 1) = 1;
+            y = DataSet.getTargets(:,1);
             
             % Train (center) the kernels at the trianing data (if
             % necessary)
@@ -122,12 +75,14 @@ classdef prtClassRvm < prtClass
             end
             trainedKernels = cat(1,trainedKernels{:});
             
+            
             switch Obj.algorithm
-                case 'Figueiredo'
-                    Obj = trainActionFigueiredo(Obj, DataSet, y, trainedKernels);
+                case 'JefferysPrior'
+                    Obj = trainActionJefferysPrior(Obj, DataSet, y, trainedKernels);
                 case 'Sequential'
                     Obj = trainActionSequential(Obj, DataSet, y, trainedKernels);
             end
+            
             
             % Very bad training
             if isempty(Obj.sparseBeta)
@@ -155,116 +110,113 @@ classdef prtClassRvm < prtClass
                 cDataSet = prtDataSet(DataSet.getObservations(cI,:));
                 gramm = prtKernelGrammMatrix(cDataSet,Obj.sparseKernels);
                 
-                DataSetOut = DataSetOut.setObservations(normcdf(gramm*Obj.sparseBeta), cI);
+                DataSetOut = DataSetOut.setObservations(gramm*Obj.sparseBeta, cI);
             end
         end
     end
+    
     methods (Access=private)
-        function Obj = trainActionFigueiredo(Obj, DataSet, y, trainedKernels)
-            
+        function Obj = trainActionJefferysPrior(Obj, DataSet, y, trainedKernels)
             gramm = prtKernelGrammMatrix(DataSet,trainedKernels);
             nBasis = size(gramm,2);
             
-            sigmaSquared = eps;
+            Obj.beta = zeros(nBasis,1);
             
-            %Check to make sure the problem is well-posed.  This can be fixed either
-            %with changes to kernels, or by regularization
-            G = gramm'*gramm;
-            while rcond(G) < 1e-6
-                if sigmaSquared == eps
-                    warning('prt:prtClassRvm:illConditionedG','RVM initial G matrix ill-conditioned; regularizing diagonal of G to resolve; this can be modified by changing kernel parameters\n');
-                end
-                G = (sigmaSquared*eye(nBasis) + gramm'*gramm);
-                sigmaSquared = sigmaSquared*2;
-            end
-            Obj.beta = G\gramm'*y;
+            relevantIndices = true(nBasis,1); % Everybody!
             
-            u = diag(abs(Obj.beta));
-            relevantIndices = 1:size(gramm,2);
+            alpha = ones(nBasis,1); % Initialize
             
-            h1Ind = y == 1;
-            h0Ind = y == -1;
+            Obj.sigma2 = var(y); % A descent guess
             
             for iteration = 1:Obj.LearningMaxIterations
+                % Given currenet relevant stuff find the weight mean and
+                % covariance
+                cPhi = gramm(:,relevantIndices);
+                A = diag(alpha(relevantIndices));
                 
-                %%%%
-                %%See: Figueiredo: "Adaptive Sparseness For Supervised Learning"
-                %%%%
-                uK = u(relevantIndices,relevantIndices);
-                grammK = gramm(:,relevantIndices);
+                sigma2Inv = (Obj.sigma2^-1);
                 
-                S = gramm*Obj.beta;
+                SigmaInv = A + sigma2Inv*(cPhi'*cPhi);
+                Obj.Sigma = inv(SigmaInv);
+                mu = sigma2Inv*(SigmaInv\(cPhi'*y));
                 
-                S(h1Ind) = S(h1Ind) + normpdf(S(h1Ind))./(1-normcdf(-S(h1Ind)));
-                S(h0Ind) = S(h0Ind) - normpdf(S(h0Ind))./(normcdf(-S(h0Ind)));
+                % Find the current prediction
+                yHat = cPhi*mu;
                 
-                beta_OLD = Obj.beta;
+                % Update A
+                logAlphaOld = log(alpha(relevantIndices));
                 
-                A = (eye(size(uK)) + uK*(grammK'*grammK)*uK);
-                B = uK*(grammK'*S);    %this is correct - see equation (21)
+                cG = 1 - alpha(relevantIndices).*diag(Obj.Sigma);
+                alpha(relevantIndices) = cG./(mu.^2);
                 
-                Obj.beta(relevantIndices,1) = uK*(A\B);
+                % Update sigma2
+                Obj.sigma2 = norm(y-yHat)./(length(yHat) - sum(cG));
                 
-                % Remove irrelevant vectors
-                relevantIndices = find(abs(Obj.beta) > max(abs(Obj.beta))*Obj.LearningBetaRelevantTolerance);
-                irrelevantIndices = abs(Obj.beta) <= max(abs(Obj.beta))*Obj.LearningBetaRelevantTolerance;
+                Obj.beta = zeros(nBasis,1);
+                Obj.beta(relevantIndices) = mu;
                 
-                Obj.beta(irrelevantIndices,1) = 0;
-                u = diag(abs(Obj.beta));
+                %check tolerance for basis removal
+                TOL = abs(log(alpha(relevantIndices))-logAlphaOld);
+                if TOL < Obj.LearningBetaConvergedTolerance
+                    Obj.LearningConverged = true;
+                    break;
+                end
+                % We didn't break so we can contiue on
                 
-                if Obj.LearningPlot && DataSet.nFeatures == 2
-                    DsSummary = DataSet.summarize;
+                if Obj.LearningPlot
+                    subplot(1,2,1)
+                    alphaPlot = log(alpha(2:end));
+                    alphaPlot(~relevantIndices(2:end)) = nan;
                     
-                    [linGrid, gridSize,xx,yy] = prtPlotUtilGenerateGrid(DsSummary.lowerBounds, DsSummary.upperBounds, Obj.PlotOptions);
-                    cPhi = prtKernelGrammMatrix(prtDataSet(linGrid),trainedKernels(relevantIndices));
+                    stem(DataSet.getObservations,alphaPlot);
+                    ylabel('Log Weight Precision')
+                    ylim([0 10]);
+                end
+                
+                % Select relevant stuff
+                relevantIndices = alpha < 1./Obj.LearningBetaRelevantTolerance;
+                
+                if Obj.LearningPlot
+                    subplot(1,2,2)
+                    [sortedObs,sortingInds] = sort(DataSet.getObservations());
                     
-                    confMap = reshape(normcdf(cPhi*Obj.beta(relevantIndices)),gridSize);
-                    imagesc(xx(1,:),yy(:,1),confMap,[0,1])
-                    colormap(Obj.PlotOptions.twoClassColorMapFunction());
-                    axis xy
+                    plot(sortedObs,yHat(sortingInds));
                     hold on
-                    plot(DataSet);
-                    for iRel = 1:length(relevantIndices)
-                        trainedKernels{relevantIndices(iRel)}.classifierPlot();
-                    end
+                    plot(DataSet.getObservations(),y,'.k')
+                    % Here we assumed we have a bias;
+                    plot(DataSet.getObservations(relevantIndices(2:end)),y(relevantIndices(2:end)),'ro')
                     hold off
-                    
+                    subplot_title(sprintf('Iteration %d',iteration));
                     set(gcf,'color',[1 1 1])
                     drawnow;
                     
                     Obj.UserData.movieFrames(iteration) = getframe(gcf);
                 end
                 
-                %check tolerance for basis removal
-                TOL = norm(Obj.beta-beta_OLD)/norm(beta_OLD);
-                if TOL < Obj.LearningBetaConvergedTolerance
-                    Obj.LearningConverged = true;
-                    break;
-                end
             end
             
             % Make sparse represenation
             Obj.sparseBeta = Obj.beta(relevantIndices,1);
             Obj.sparseKernels = trainedKernels(relevantIndices);
-            
         end
         function Obj = trainActionSequential(Obj, DataSet, y, trainedKernels)
-            % The sometimes we want y [-1 1] but mostly not
-            ym11 = y;
-            y(y ==-1) = 0;
             
             nBasis = size(trainedKernels,1);
             Obj.beta = zeros(nBasis,1);
             
             relevantIndices = false(nBasis,1); % Nobody!
-            alpha = inf(nBasis,1); % Nobody!
+            
+            alpha = inf(nBasis,1); % Initialize
+            
+            Obj.sigma2 = var(y)*0.1; % A descent guess
             
             % Find first kernel
             kernelCorrs = zeros(size(trainedKernels));
+            kernelEnergies = zeros(size(trainedKernels));
             for iKernel = 1:length(trainedKernels)
-                cVec = prtKernelGrammMatrix(DataSet, trainedKernels(iKernel));
-                %cVec = cVec ./ (sqrt(sum(cVec.^2)));
-                kernelCorrs(iKernel) = norm(cVec'*ym11);
+                cVec = prtKernelGrammMatrix(DataSet,trainedKernels(iKernel));
+                kernelEnergies(iKernel) = norm(cVec).^2;
+                kernelCorrs(iKernel) = (cVec'*y)^2 / kernelEnergies(iKernel);
             end
             [maxVal, maxInd] = max(kernelCorrs);
             
@@ -280,25 +232,20 @@ classdef prtClassRvm < prtClass
                 if iteration == 1
                     % Initial estimates
                     % Estimate Sigma, mu etc.
+                    alpha(relevantIndices) = kernelEnergies(relevantIndices)./(kernelCorrs(relevantIndices) - Obj.sigma2);
                     
-                    % Make up a mu (least squares?) and an alpha (made up)
-                    cPhi = prtKernelGrammMatrix(DataSet,trainedKernels(relevantIndices));
-                    %cPhi = bsxfun(@rdivide,cPhi,sqrt(sum(cPhi.^2)));
-                    
-                    logOut = (ym11*0.9+1)/2;
-                    mu = cPhi \ log(logOut./(1-logOut));
-                    %mu = cPhi \ y;
-                    alpha(relevantIndices) = 1./mu.^2;
-                    
-                    % Laplacian approx. IRLS
                     A = diag(alpha(relevantIndices));
+                    cPhi = prtKernelGrammMatrix(DataSet,trainedKernels(relevantIndices));
                     
-                    [mu, SigmaInvChol, obsNoiseVar] = prtUtilPenalizedIrls(y,cPhi,mu,A);
+                    sigma2Inv = (Obj.sigma2^-1);
                     
+                    SigmaInvChol = chol(A + sigma2Inv*(cPhi'*cPhi));
                     SigmaChol = inv(SigmaInvChol);
                     Obj.Sigma = SigmaChol*SigmaChol';
                     
-                    yHat = 1 ./ (1+exp(-cPhi*mu));
+                    mu = sigma2Inv*(Obj.Sigma*(cPhi'*y)); %mu = sigma2Inv*(SigmaInv\(cPhi'*y));
+                    
+                    yHat = cPhi*mu;
                 end
                 
                 % Eval additions and subtractions
@@ -306,17 +253,21 @@ classdef prtClassRvm < prtClass
                 Qm = zeros(nBasis,1);
                 cError = y-yHat;
                 
-                cPhiProduct = bsxfun(@times,cPhi,obsNoiseVar);
+ %               cPhiProduct = cPhi*sigma2Inv;
                 for iKernel = 1:nBasis
                     
                     PhiM = prtKernelGrammMatrix(DataSet,trainedKernels(iKernel));
                     %PhiM = bsxfun(@rdivide,PhiM,sqrt(sum(PhiM.^2)));
                     
-                    cPhiMProduct = bsxfun(@times,PhiM,obsNoiseVar);
+%                    cPhiMProduct = PhiM*sigma2Inv;
                     
-                    Sm(iKernel) = cPhiMProduct'*PhiM - sum((PhiM'*cPhiProduct*SigmaChol).^2,2);
-                    
-                    Qm(iKernel) = PhiM'*cError; % According to vector anomaly code.
+%                     Sm(iKernel) = cPhiMProduct'*PhiM - sum((PhiM'*cPhiProduct*SigmaChol).^2,2);
+%                     
+%                     Qm(iKernel) = PhiM'*cError; % According to vector anomaly code.
+                    cProduct = sigma2Inv*(PhiM'*cPhi);
+                    Sm(iKernel) = sigma2Inv*(PhiM'*PhiM) - sum((cProduct*SigmaChol).^2,2);
+                    %Qm(iKernel) = sigma2Inv*(PhiM'*y) - cProduct*(Obj.Sigma*cPhi')*y*sigma2Inv;
+                    Qm(iKernel) = sigma2Inv*PhiM'*cError;
                 end
                 
                 % Find little sm and qm (these are different for relevant vectors)
@@ -350,6 +301,7 @@ classdef prtClassRvm < prtClass
                 [remChange, bestRemInd] = max(removeLogLikelihoodChanges);
                 [modChange, bestModInd] = max(modifyLogLikelihoodChanges);
                 
+                
                 if iteration == 1
                     % On the first iteration we don't allow removal
                     [maxChangeVal, actionInd] = max([addChange, nan, modChange]);
@@ -360,7 +312,6 @@ classdef prtClassRvm < prtClass
                         % options, actually remove that sample or modify that
                         % sample if that is better
                         [maxChangeVal, actionInd] = max([nan remChange, modifyLogLikelihoodChanges(bestRemInd)]);
-                        
                     else
                         % Not going to remove, so we would be allowed to modify
                         [maxChangeVal, actionInd] = max([addChange, remChange, modChange]);
@@ -378,94 +329,75 @@ classdef prtClassRvm < prtClass
                 
                 switch actionInd
                     case 1 % Add
-                        
                         relevantIndices(bestAddInd) = true;
                         selectedInds = cat(1,selectedInds,bestAddInd);
-                        
                         alpha(bestAddInd) = updatedAlpha(bestAddInd);
-                        % Modify Mu
-                        % (Penalized IRLS will fix it soon but we need good initialization)
-                        
-                        newPhi = prtKernelGrammMatrix(DataSet,trainedKernels(bestAddInd));
-                        
-                        cFactor = (Obj.Sigma*(cPhi)'*(newPhi.*obsNoiseVar));
-                        Sigmaii = 1./(updatedAlpha(bestAddInd) + Sm(bestAddInd));
-                        newMu = Sigmaii*Qm(bestAddInd);
-                        
-                        updatedOldMu = mu - newMu*cFactor;
-                        sortedSelected = sort(selectedInds);
-                        newMuLocation = find(sortedSelected==bestAddInd);
-                        
-                        mu = zeros(length(mu)+1,1);
-                        mu(setdiff(1:length(mu),newMuLocation)) = updatedOldMu;
-                        mu(newMuLocation) = newMu;
                         
                     case 2 % Remove
-                        
-                        removingInd = sort(selectedInds)==bestRemInd;
-                        
-                        mu = mu + mu(removingInd) .* Obj.Sigma(:,removingInd) ./ Obj.Sigma(removingInd,removingInd);
-                        mu(removingInd) = [];
-                        
                         relevantIndices(bestRemInd) = false;
                         selectedInds(selectedInds==bestRemInd) = [];
                         alpha(bestRemInd) = inf;
                         
                     case 3 % Modify
-                        modifyInd = sort(selectedInds)==bestModInd;
-                        
-                        alphaChangeInv = 1/(updatedAlpha(bestModInd) - alpha(bestModInd));
-                        kappa = 1/(Obj.Sigma(modifyInd,modifyInd) + alphaChangeInv);
-                        mu = mu - mu(modifyInd)*kappa*Obj.Sigma(:,modifyInd);
-                        
                         alpha(bestModInd) = updatedAlpha(bestModInd);
+                end
+                
+                
+                if Obj.LearningPlot
+                    subplot(1,2,1);
+                    
+                    stem(DataSet.getObservations(~isnan(addLogLikelihoodChanges(2:end))), addLogLikelihoodChanges([false; ~isnan(addLogLikelihoodChanges(2:end))]),'b')
+                    hold on
+                    stem(DataSet.getObservations(~isnan(removeLogLikelihoodChanges(2:end))), removeLogLikelihoodChanges([false; ~isnan(removeLogLikelihoodChanges(2:end))]),'r')
+                    stem(DataSet.getObservations(~isnan(modifyLogLikelihoodChanges(2:end))), modifyLogLikelihoodChanges([false; ~isnan(modifyLogLikelihoodChanges(2:end))]),'g')
+                    hold off
+                    legend('Add','Remove','Modify')
+                    ylabel('Change in Log Likelihood')
+                    ylim([-5 20])
                 end
                 
                 % At this point relevantIndices and alpha have changes.
                 % Now we re-estimate Sigma, mu, and sigma2
-                cPhi = prtKernelGrammMatrix(DataSet,trainedKernels(relevantIndices));
-                %cPhi = bsxfun(@rdivide,cPhi,sqrt(sum(cPhi.^2)));
-                
-                % Laplacian approx. IRLS
                 A = diag(alpha(relevantIndices));
+                cPhi = prtKernelGrammMatrix(DataSet,trainedKernels(relevantIndices));
                 
-                [mu, SigmaInvChol, obsNoiseVar] = prtUtilPenalizedIrls(y,cPhi,mu,A);
+                % Re-estimate Sigma, mu
+                sigma2Inv = 1./Obj.sigma2;
                 
+                SigmaInvChol = chol(A + sigma2Inv*(cPhi'*cPhi));
                 SigmaChol = inv(SigmaInvChol);
                 Obj.Sigma = SigmaChol*SigmaChol';
                 
-                yHat = 1 ./ (1+exp(-cPhi*mu));
+                mu = sigma2Inv*(Obj.Sigma*(cPhi'*y)); %mu = sigma2Inv*(SigmaInv\(cPhi'*y));
+                
+                % Find the current prediction
+                yHat = cPhi*mu;
+                
+                % Re-estimate noise
+                Obj.sigma2 = sum((y-yHat).^2)./(length(yHat) - sum(relevantIndices) + sum(alpha(relevantIndices).*diag(Obj.Sigma)));
                 
                 % Store beta
                 Obj.beta = zeros(nBasis,1);
                 Obj.beta(relevantIndices) = mu;
                 
-                if Obj.LearningPlot && DataSet.nFeatures == 2
-                    figure(101)
-                    DsSummary = DataSet.summarize;
+                if Obj.LearningPlot
+                    subplot(1,2,2);
+                    [sortedObs,sortingInds] = sort(DataSet.getObservations());
                     
-                    [linGrid, gridSize,xx,yy] = prtPlotUtilGenerateGrid(DsSummary.lowerBounds, DsSummary.upperBounds, Obj.PlotOptions);
-                    cPhiPlot = prtKernelGrammMatrix(prtDataSet(linGrid),trainedKernels(relevantIndices));
-                    
-                    confMap = reshape(normcdf(cPhiPlot*Obj.beta(relevantIndices)),gridSize);
-                    imagesc(xx(1,:),yy(:,1),confMap,[0 1])
-                    colormap(Obj.PlotOptions.twoClassColorMapFunction());
-                    axis xy
+                    plot(sortedObs,yHat(sortingInds));
                     hold on
-                    plot(DataSet);
-                    relevantIndicesFind = find(relevantIndices);
-                    for iRel = 1:length(relevantIndicesFind)
-                        trainedKernels{relevantIndicesFind(iRel)}.classifierPlot();
-                    end
-                    
+                    plot(DataSet.getObservations(),y,'.k')
+                    % Here we assumed we have a bias;
+                    plot(DataSet.getObservations(relevantIndices(2:end)),y(relevantIndices(2:end)),'ro')
                     hold off
                     actionStrings = {'Add','Remove','Update'};
-                    title(sprintf('%d - %s',iteration,actionStrings{actionInd}))
+                    subplot_title(sprintf('%d - %s',iteration,actionStrings{actionInd}))
                     set(gcf,'color',[1 1 1])
                     drawnow;
                     
                     Obj.UserData.movieFrames(iteration) = getframe(gcf);
                 end
+                
                 
                 % Check tolerance
                 TOL = abs(log(alpha)-logAlphaOld);
@@ -478,11 +410,9 @@ classdef prtClassRvm < prtClass
                 end
             end
             
-            
             % Make sparse represenation
             Obj.sparseBeta = Obj.beta(relevantIndices,1);
             Obj.sparseKernels = trainedKernels(relevantIndices);
         end
-        
     end
 end

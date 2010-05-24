@@ -1,12 +1,14 @@
-function cMap = prtPlotUtilTwoClassColorMap(n)
+function cMap = prtPlotUtilTwoClassColorMap(n,colors)
 % cMap = prtPlotUtilTwoClassColorMap(n=256)
 
 if nargin < 1 || isempty(n)
     n = 256;
 end
 
-PlotOptions = optionsDprtPlot;
-colors = feval(PlotOptions.colorsFunction,2);
+if nargin < 2 || isempty(colors)
+    PlotOptions = prtClassPlotOpt;
+    colors = feval(PlotOptions.colorsFunction,2);
+end
 
 % Lighten the colors
 colors = prtPlotUtilLightenColors(colors);
