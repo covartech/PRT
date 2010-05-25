@@ -48,13 +48,14 @@ classdef prtKernelRbf < prtKernelBinary
             if d ~= nin
                 error('size(x,2) must equal size(y,2)');
             end
-            
-            dist2 = repmat(sum((x.^2)', 1), [n2 1])' + ...
-                repmat(sum((y.^2)',1), [n1 1]) - ...
-                2*x*(y');
-            
-            %gramm = exp(-dist2/(c.^2));
-            gramm = exp(-bsxfun(@rdivide,dist2,2*c.^2));
+
+            dist2 = repmat(sum((x.^2), 2), [1 n2]) + repmat(sum((y.^2),2), [1 n1]).' - 2*x*(y.');
+
+            if numel(c) == 1
+                gramm = exp(-dist2/(c.^2));
+            else
+                gramm = exp(-bsxfun(@rdivide,dist2,2*c.^2));
+            end
         end
     end
 end

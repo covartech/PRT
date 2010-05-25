@@ -3,6 +3,10 @@ classdef prtDataSetBaseInMemory
     properties (SetAccess = 'protected') %public... for now... this is controversial :); this can be changed to protected without breaking anything
         data = [];                       % matrix, doubles, features
     end
+
+	properties
+        DataDependentUserData
+    end
     
     methods (Access = 'protected',Static = true);
         function [err,errorID,errorMsg] = checkIndices(indices,maxVal,boolError)
@@ -76,6 +80,10 @@ classdef prtDataSetBaseInMemory
             
             prtDataSetBaseInMemory.checkIndices(retainedIndices,obj.nObservations);
             obj.data = obj.data(retainedIndices,:);
+            
+            if ~isempty(obj.DataDependentUserData)
+                obj.DataDependentUserData = obj.DataDependentUserData(retainedIndices);
+            end
         end
         
         function obj = replaceObservations(obj,data,indices)
@@ -91,6 +99,12 @@ classdef prtDataSetBaseInMemory
         
         %Return the data by indices
         function data = getObservations(obj,indices1,indices2)
+            if nargin == 1
+                % No indicies identified. Quick exit
+                data = obj.data;
+                return
+            end
+            
             if nargin < 2 || isempty(indices1) || strcmpi(indices1,':')
                 indices1 = 1:obj.nObservations;
             end
@@ -138,10 +152,6 @@ classdef prtDataSetBaseInMemory
             return;
         end
         
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %% Set Methods %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        % These just provide sanity error checking
         function obj = set.data(obj, data)
             obj.data = data;
         end
@@ -152,6 +162,14 @@ classdef prtDataSetBaseInMemory
                 error('prt:prtDataSetBaseInMemeoryLabeled:invalidData','data must be a 2-Dimensional double array');
             end
             obj.data = data;
+        end
+        
+        function obj = set.DataDependentUserData(obj,Struct)
+            errorMsg = 'DataDependentUserData must be an nObservations x 1 structure array';
+            assert(isa(Struct,'struct'),errorMsg);
+            assert(numel(Struct)==obj.nObservations,errorMsg);
+            
+            obj.DataDependentUserData = Struct;
         end
         
         function data = get.data(obj)
