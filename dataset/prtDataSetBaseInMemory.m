@@ -71,7 +71,6 @@ classdef prtDataSetBaseInMemory
         end
         
         function [obj,retainedIndices] = removeObservations(obj,indices)
-            
             prtDataSetBaseInMemory.checkIndices(indices,obj.nObservations);
             [obj,retainedIndices] = retainObservations(obj,setdiff(1:obj.nObservations,indices));
         end

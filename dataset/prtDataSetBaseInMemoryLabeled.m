@@ -66,7 +66,11 @@ classdef prtDataSetBaseInMemoryLabeled < prtDataSetBaseInMemory
         
         %Required by prtDataSetBase:
         function [obj,retainedInds] = removeObservations(obj,indices)
-            [obj,retainedInds] = retainObservations(obj,setdiff(1:obj.nObservations,indices));
+            if islogical(indices)
+                [obj,retainedInds] = retainObservations(obj,~indices);
+            else
+                [obj,retainedInds] = retainObservations(obj,setdiff(1:obj.nObservations,indices));
+            end
             %fprintf('need to check to see if we removed any labels which will change uniqueTargetNames, etc')
         end
         

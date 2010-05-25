@@ -47,6 +47,7 @@ classdef prtClassRvm < prtClass
         LearningBetaRelevantTolerance = 1e-3;
         LearningLikelihoodIncreaseThreshold = 1e-6;
         LearningSequentialBlockSize = 1000;
+        LearningCorrelationRemovalThreshold = 0.99;
         LearningResults
     end
     
@@ -268,12 +269,13 @@ classdef prtClassRvm < prtClass
             
             relevantIndices = false(nBasis,1); % Nobody!
             alpha = inf(nBasis,1); % Nobody!
+            forbidden = zeros(nBasis,1); % Will hold who is forbidding you from joining
             
             % Find first kernel
             kernelCorrs = zeros(size(trainedKernels));
-            nBlocks = ceil(DataSet.nObservations./ Obj.LearningSequentialBlockSize);
+            nBlocks = ceil(length(trainedKernels)./ Obj.LearningSequentialBlockSize);
             for iBlock = 1:nBlocks
-                cInds = ((iBlock-1)*Obj.LearningSequentialBlockSize+1):min([iBlock*Obj.LearningSequentialBlockSize DataSet.nObservations]);
+                cInds = ((iBlock-1)*Obj.LearningSequentialBlockSize+1):min([iBlock*Obj.LearningSequentialBlockSize nBasis]);
                 cPhi = prtKernelGrammMatrix(DataSet, trainedKernels(cInds));
                 cPhi = bsxfun(@rdivide,cPhi,sqrt(sum(cPhi.*cPhi))); % We have to normalize here
                 kernelCorrs(cInds) = abs(cPhi'*ym11);
@@ -283,8 +285,23 @@ classdef prtClassRvm < prtClass
             % Make this ind relevant
             relevantIndices(maxInd) = true;
             selectedInds = maxInd;
-            % Start the actual Process
             
+            % Add things to forbidden list
+            newPhi = prtKernelGrammMatrix(DataSet, trainedKernels(maxInd));
+            newPhi = newPhi - mean(newPhi);
+            newPhi = newPhi./sqrt(sum(newPhi.^2));
+            phiCorrs = zeros(size(trainedKernels));
+            for iBlock = 1:nBlocks
+                cInds = ((iBlock-1)*Obj.LearningSequentialBlockSize+1):min([iBlock*Obj.LearningSequentialBlockSize nBasis]);
+                cPhi = prtKernelGrammMatrix(DataSet, trainedKernels(cInds));
+                cPhi = bsxfun(@minus,cPhi,mean(cPhi));
+                cPhi = bsxfun(@rdivide,cPhi,sqrt(sum(cPhi.*cPhi))); % We have to normalize here
+                
+                phiCorrs(cInds) = cPhi'*newPhi;
+            end
+            forbidden(phiCorrs > Obj.LearningCorrelationRemovalThreshold) = maxInd;
+           
+            % Start the actual Process
             if Obj.LearningText
                 %fprintf('Sequential RVM training with %d possible vectors.\n', length(trainedKernels));
                 fprintf('\t Iteration 0: Intialized with vector %d.\n', maxInd);
@@ -330,12 +347,21 @@ classdef prtClassRvm < prtClass
                 
                 cPhiProduct = bsxfun(@times,cPhi,obsNoiseVar);
                 for iBlock = 1:nBlocks
-                    cInds = ((iBlock-1)*Obj.LearningSequentialBlockSize+1):min([iBlock*Obj.LearningSequentialBlockSize DataSet.nObservations]);
+                    cInds = ((iBlock-1)*Obj.LearningSequentialBlockSize+1):min([iBlock*Obj.LearningSequentialBlockSize nBasis]);
                     PhiM = prtKernelGrammMatrix(DataSet, trainedKernels(cInds));
                     
-                    Sm(cInds) = (obsNoiseVar'*(PhiM.^2))' - sum((PhiM'*cPhiProduct*SigmaChol).^2,2);
-                    Qm(cInds) = PhiM'*cError;
+                    Sm(cInds) = (obsNoiseVar'*(PhiM.^2)).' - sum((PhiM.'*cPhiProduct*SigmaChol).^2,2);
+                    Qm(cInds) = PhiM.'*cError;
                 end
+                
+%                 % One at a time method
+%                 for iKernel = 1:nBasis
+%                     PhiM = prtKernelGrammMatrix(DataSet,trainedKernels(iKernel));
+%                     cPhiMProduct = bsxfun(@times,PhiM,obsNoiseVar);
+%                     
+%                     Sm(iKernel) = cPhiMProduct'*PhiM - sum((PhiM'*cPhiProduct*SigmaChol).^2,2);
+%                     Qm(iKernel) = PhiM'*cError; % According to vector anomaly code.
+%                 end
                 
                 % Find little sm and qm (these are different for relevant vectors)
                 sm = Sm;
@@ -352,6 +378,7 @@ classdef prtClassRvm < prtClass
                 addLogLikelihoodChanges = 0.5*( theta./Sm + log(Sm ./ Qm.^2) ); % Eq (27)
                 addLogLikelihoodChanges(cantBeRelevent) = 0; % Can't add things that are disallowed by theta
                 addLogLikelihoodChanges(relevantIndices) = 0; % Can't add things already in
+                addLogLikelihoodChanges(forbidden > 0) = 0; % Can't add things that are forbidden
                 
                 % Removal
                 removeLogLikelihoodChanges = -0.5*( qm.^2./(sm + alpha) - log(1 + sm./alpha) ); % Eq (37) (I think this is wrong in the paper. The one in the paper uses Si and Qi, I got this based on si and qi (or S and Q in their code), from corrected from analyzing code from http://www.vectoranomaly.com/downloads/downloads.htm)
@@ -383,6 +410,10 @@ classdef prtClassRvm < prtClass
                         % Not going to remove, so we would be allowed to modify
                         [maxChangeVal, actionInd] = max([addChange, remChange, modChange]);
                     end
+                end
+                
+                if maxChangeVal > 1e4
+                    keyboard
                 end
                 
                 if maxChangeVal < Obj.LearningLikelihoodIncreaseThreshold
@@ -430,6 +461,23 @@ classdef prtClassRvm < prtClass
                         mu(setdiff(1:length(mu),newMuLocation)) = updatedOldMu;
                         mu(newMuLocation) = newMu;
                         
+                        
+                        % Add things to forbidden list
+                        newPhi = prtKernelGrammMatrix(DataSet, trainedKernels(bestAddInd));
+                        newPhi = newPhi - mean(newPhi);
+                        newPhi = newPhi./sqrt(sum(newPhi.^2));
+                        phiCorrs = zeros(size(trainedKernels));
+                        for iBlock = 1:nBlocks
+                            cInds = ((iBlock-1)*Obj.LearningSequentialBlockSize+1):min([iBlock*Obj.LearningSequentialBlockSize nBasis]);
+                            cPhi = prtKernelGrammMatrix(DataSet, trainedKernels(cInds));
+                            cPhi = bsxfun(@minus,cPhi,mean(cPhi));
+                            cPhi = bsxfun(@rdivide,cPhi,sqrt(sum(cPhi.*cPhi))); % We have to normalize here
+                            
+                            phiCorrs(cInds) = cPhi'*newPhi;
+                        end
+                        forbidden(phiCorrs > Obj.LearningCorrelationRemovalThreshold) = bestAddInd;
+                        
+                        
                     case 2 % Remove
                         
                         removingInd = sort(selectedInds)==bestRemInd;
@@ -440,6 +488,10 @@ classdef prtClassRvm < prtClass
                         relevantIndices(bestRemInd) = false;
                         selectedInds(selectedInds==bestRemInd) = [];
                         alpha(bestRemInd) = inf;
+                        
+                        % Anything this guy said is forbidden is now
+                        % allowed.
+                        forbidden(forbidden == bestRemInd) = 0;
                         
                     case 3 % Modify
                         modifyInd = sort(selectedInds)==bestModInd;
