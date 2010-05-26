@@ -164,6 +164,12 @@ classdef prtDataSetBaseInMemory
         end
         
         function obj = set.DataDependentUserData(obj,Struct)
+            if isempty(Struct)
+                % Empty is ok.
+                % It has to be for loading and saving. 
+                return
+            end
+            
             errorMsg = 'DataDependentUserData must be an nObservations x 1 structure array';
             assert(isa(Struct,'struct'),errorMsg);
             assert(numel(Struct)==obj.nObservations,errorMsg);

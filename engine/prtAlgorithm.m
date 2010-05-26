@@ -57,6 +57,7 @@ classdef prtAlgorithm < prtAction
                     Obj.actionCell{iAction} = train(Obj.actionCell{iAction},DataSet);
                     
                     DataSetOut = run(Obj.actionCell{iAction},DataSet);
+                    
                     DataSet = DataSet.setObservations(DataSetOut.getObservations());
                     
                 else
