@@ -7,7 +7,7 @@ pd = pd(:);
 [pf,sortInd] = sort(pf,'ascend');
 pd = pd(sortInd);
 
-pf(end+1) = maxPfVal + eps;
+pf(end+1) = maxPfVal + eps(maxPfVal);
 pd(end+1) = pd(end);
 
 firstInd = find(pf > maxPfVal,1,'first');
