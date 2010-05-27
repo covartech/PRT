@@ -10,8 +10,8 @@ classdef prtClassTreeBaggingCap < prtClass
     
     properties (SetAccess=private)
         % Required by prtAction
-        name = 'Central Axis Projection'
-        nameAbbreviation = 'CAP'
+        name = 'Tree Bagging Central Axis Projection'
+        nameAbbreviation = 'TBCAP'
         isSupervised = true;
         
         % Required by prtClass

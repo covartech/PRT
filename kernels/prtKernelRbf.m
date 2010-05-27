@@ -20,7 +20,7 @@ classdef prtKernelRbf < prtKernelBinary
                 case 2
                     h = plot(obj.kernelCenter(1),obj.kernelCenter(2),'ko','MarkerSize',8,'LineWidth',2);
                 case 3
-                    h = plot3(obj.kernelCenter(1),obj.kernelCenter(2),'ko','MarkerSize',8,'LineWidth',2);
+                    h = plot3(obj.kernelCenter(1),obj.kernelCenter(2), obj.kernelCenter(3),'ko','MarkerSize',8,'LineWidth',2);
                 otherwise
                     h = nan;
             end

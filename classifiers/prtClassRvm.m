@@ -48,6 +48,7 @@ classdef prtClassRvm < prtClass
         LearningLikelihoodIncreaseThreshold = 1e-6;
         LearningSequentialBlockSize = 1000;
         LearningCorrelationRemovalThreshold = 0.99;
+        LearningSequentialFavorRemove = true;
         LearningResults
     end
     
@@ -407,13 +408,12 @@ classdef prtClassRvm < prtClass
                     % On the first iteration we don't allow removal
                     [maxChangeVal, actionInd] = max([addChange, nan, modChange]);
                 else
-                    if remChange > 0
+                    if remChange > 0 && Obj.LearningSequentialFavorRemove
                         % Removing is top priority.
                         % If removing increases the likelihood, we have two
                         % options, actually remove that sample or modify that
                         % sample if that is better
                         [maxChangeVal, actionInd] = max([nan remChange, modifyLogLikelihoodChanges(bestRemInd)]);
-                        
                     else
                         % Not going to remove, so we would be allowed to modify
                         [maxChangeVal, actionInd] = max([addChange, remChange, modChange]);
@@ -710,7 +710,7 @@ classdef prtClassRvm < prtClass
                     % On the first iteration we don't allow removal
                     [maxChangeVal, actionInd] = max([addChange, nan, modChange]);
                 else
-                    if remChange > 0
+                    if remChange > 0 && Obj.LearningSequentialFavorRemove
                         % Removing is top priority.
                         % If removing increases the likelihood, we have two
                         % options, actually remove that sample or modify that

@@ -163,7 +163,7 @@ classdef prtRvMvn < prtRv
                 weights = ones(size(X,1),1);
             end
             
-            kmMembership = kmeans(bsxfun(@times,X,sqrt(weights)),length(Rs));
+            kmMembership = kmeans(bsxfun(@times,X,sqrt(weights)),length(Rs),'emptyaction','singleton');
             
             initMembershipMat = zeros(size(X,1),length(Rs));
             for iComp = 1:length(Rs)

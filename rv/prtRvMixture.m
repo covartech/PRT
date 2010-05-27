@@ -76,7 +76,9 @@ classdef prtRvMixture < prtRv
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         function R = set.mixingWeights(R,weights)
-            assert(abs(sum(weights)-1) < R.learningApproximatelyEqualThreshold,'Mixing weights must sum to 1!')
+            if ~isempty(weights) % For loading and saving
+                assert(abs(sum(weights)-1) < R.learningApproximatelyEqualThreshold,'Mixing weights must sum to 1!')
+            end
             R.mixingWeights = weights;
         end % function set.mixingWeights
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

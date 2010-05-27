@@ -49,9 +49,15 @@ classdef prtDataSetBaseInMemory
         
         %Required by prtDataSetBase:
         function [obj,retainedFeatures] = removeFeatures(obj,indices)
-            
             prtDataSetBaseInMemory.checkIndices(indices,obj.nFeatures);
-            [obj,retainedFeatures] = retainFeatures(obj,setdiff(1:obj.nFeatures,indices));
+            
+            if islogical(indices)
+                keepFeatures = ~indices;
+            else
+                keepFeatures = setdiff(1:obj.nFeatures,indices);
+            end
+            
+            [obj,retainedFeatures] = retainFeatures(obj,keepFeatures);
         end
         function [obj,retainedFeatures] = retainFeatures(obj,retainedFeatures)
             
@@ -72,7 +78,14 @@ classdef prtDataSetBaseInMemory
         
         function [obj,retainedIndices] = removeObservations(obj,indices)
             prtDataSetBaseInMemory.checkIndices(indices,obj.nObservations);
-            [obj,retainedIndices] = retainObservations(obj,setdiff(1:obj.nObservations,indices));
+            
+            if islogical(indices)
+                keepObservations = ~indices;
+            else
+                keepObservations = setdiff(1:obj.nObservations,indices);
+            end
+            
+            [obj,retainedIndices] = retainObservations(obj,keepObservations);
         end
         
         function [obj,retainedIndices] = retainObservations(obj,retainedIndices)
