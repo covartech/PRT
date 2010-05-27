@@ -142,7 +142,7 @@ classdef prtClassLogisticDiscriminant < prtClass
                 %using the rCond of rVec or any nans in rVec
                 if rCondDiag(rVec) < eps*2 || any(isnan(rVec))
                     %Numerical instability options are normalize, exit, or stepsize.
-                    switch lower(Options.handleNonPosDefR)
+                    switch lower(Obj.handleNonPosDefR)
                         case 'regularize'
                             warning('prt:generateLogDisc:stepSize','rcond(R) < eps; attempting to diagonally load R');
                             diagAdd = 1e-5*max(rVec);
