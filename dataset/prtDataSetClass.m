@@ -134,7 +134,7 @@ classdef prtDataSetClass < prtDataSetInMemoryLabeled & prtDataSetBaseClass
         %% Set Methods %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         function obj = set.classNames(obj, newClassNames)
-            if isempty(newClassNames)
+            if isempty(newClassNames) || obj.nClasses == 0
                 obj.classNames = newClassNames;
                 return;
             end
