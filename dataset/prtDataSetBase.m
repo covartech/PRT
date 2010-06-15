@@ -77,7 +77,7 @@ classdef prtDataSetBase
             %   called or the 'observationNames' field was not set at construction,
             %   default behavior is to return sprintf('Observation %d',i) for all
             %   observations.
-            %
+            %   
             %   featNames = getObservationNames(obj,indices) Return the observation
             %   names for only the specified indices.
             

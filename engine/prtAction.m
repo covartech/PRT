@@ -118,7 +118,7 @@ classdef prtAction
             % [OutputDataSet, TrainedActions] = crossValidate(Obj, DataSet, validationKeys)
             
             if length(validationKeys) ~= DataSet.nObservations;
-                error('Number of validation keys (%d) must match number of data points (%d)',length(validationKeys),PrtDataSet.nObservations);
+                error('Number of validation keys (%d) must match number of data points (%d)',length(validationKeys),DataSet.nObservations);
             end
             
             uKeys = unique(validationKeys);

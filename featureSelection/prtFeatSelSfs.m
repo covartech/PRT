@@ -1,7 +1,6 @@
 %
 classdef prtFeatSelSfs < prtFeatSel %
     
-    
     properties (SetAccess=private) 
         % Required by prtAction
         name = 'Sequentual Feature Selection'
