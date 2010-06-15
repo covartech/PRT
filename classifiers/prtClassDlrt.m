@@ -57,7 +57,7 @@ classdef prtClassDlrt < prtClass
             n = TestDataSet.nObservations;
 
             uClasses = Obj.DataSet.uniqueClasses;
-            classCounts = histc(Obj.DataSet.targets,uClasses);
+            classCounts = histc(double(Obj.DataSet.targets),double(uClasses));
             n0 = classCounts(1);
             n1 = classCounts(2);
             
