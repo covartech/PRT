@@ -229,7 +229,7 @@ classdef prtClass < prtAction
             nDims = size(linGrid,2);
             switch nDims
                 case 1
-                    imageHandle = imagesc(linGrid(:,1),linGrid(:,2),DS);
+                    imageHandle = imagesc(linGrid,ones(size(linGrid)),DS);
                     set(gca,'YTickLabel',[])
                     colormap(cMap)
                 case 2

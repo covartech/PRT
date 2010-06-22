@@ -87,6 +87,8 @@ classdef prtClassFld < prtClass
             if Obj.plotBasis
                 hold on
                 switch nDims
+                    case 1
+                        % Nothing
                     case 2
                         distances = zeros(4,1);
                         distances(1) = sqrt(sum([limits(2); limits(4)].^2));
@@ -98,6 +100,7 @@ classdef prtClassFld < prtClass
                         lowPoint =  -max(distances).*W;
                 
                         h = plot([lowPoint(1),highPoint(1)],[lowPoint(2),highPoint(2)],'k');
+                        set(h,'linewidth',3);
                     case 3
                         distances = zeros(8,1);
                         distances(1) = sqrt(sum([limits(1); limits(3); limits(5)].^2));
@@ -113,10 +116,10 @@ classdef prtClassFld < prtClass
                         lowPoint =  -max(distances).*W;
                 
                         h = plot3([lowPoint(1),highPoint(1)],[lowPoint(2),highPoint(2)],[lowPoint(3), highPoint(3)],'k');
+                        set(h,'linewidth',3);
                     otherwise
                         error('prt:prtClassFld:tooManyDimensions','Too many dimensions for plotting.')
                 end
-                set(h,'linewidth',3);
             end
 
             if Obj.plotProjections && ~isempty(Obj.DataSet)
