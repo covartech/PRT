@@ -138,7 +138,7 @@ classdef prtAction
                 else
                     trainDataSet = DataSet.removeObservations(cTestLogical);
                 end
-                
+                fprintf('Original: %d, Train: %d, Test: %d\n',DataSet.nObservations,trainDataSet.nObservations,testDataSet.nObservations);
                 classOut = Obj.train(trainDataSet);
                 currResults = classOut.run(testDataSet);
                 
@@ -201,7 +201,7 @@ classdef prtAction
             %   Called by train(). Can be overloaded by prtActions to
             %   store specific information about the DataSet or Classifier
             %   prior to training.
-            %
+            %   
             %   ClassObj = preTrainProcessing(ClassObj,DataSet)
         end
         
@@ -210,7 +210,7 @@ classdef prtAction
             %   Called by run(). Can be overloaded by prtActions to alter
             %   the results of run() to modify outputs using parameters of
             %   the prtAction.
-            %
+            %   
             %   DataSet = postRunProcessing(ClassObj, DataSet)
         end
     end

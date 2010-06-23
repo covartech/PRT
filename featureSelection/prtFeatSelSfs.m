@@ -1,5 +1,21 @@
-%
 classdef prtFeatSelSfs < prtFeatSel %
+    % prtFeatSelSfs
+    %  Sequential forward feature selection object.
+    %
+    %   % Example usage:
+    %   nNoiseFeatures = 10;
+    %   DS = prtDataBimodal;
+    %   DS = DS.setObservations(cat(2,DS.getObservations,randn(DS.nObservations,nNoiseFeatures)));
+    %
+    %   WrapperClassifier = prtClassRvm;
+    %   
+    %   Sfs = prtFeatSelSfs;
+    %   Sfs.nFeatures = 2;
+    %   Sfs.EvaluationMetric = @(DS)prtScoreAucKfolds(DS,WrapperClassifier,3);
+    %   Sfs = Sfs.train(DS);
+    %   
+    %   DataSetDownSelected = Sfs.run(DS);
+    %   explore(DataSetDownSelected);
     
     properties (SetAccess=private) 
         % Required by prtAction

@@ -6,27 +6,13 @@ classdef prtDataSetBaseInMemoryLabeled < prtDataSetBaseInMemory
     
     methods
         %Set the observations to a new set
-        function obj = setObservations(obj,data,indices1,indices2)
-            %check sizes:
-            if nargin == 2
-                if size(data,1) ~= size(obj.targets,1)
-                    error('Cannot change the size of prtDataSetBaseInMemoryLabeled observations; use obj = setDataAndTargets(obj,data,targets)');
-                else
-                    obj.data = data;
-                end
-                return;
+        function obj = setObservations(obj,data,varargin)
+            %obj = setObservations(obj,data,varargin)
+            
+            obj = setObservations@prtDataSetBaseInMemory(obj,data,varargin{:});
+            if size(obj.data,1) ~= size(obj.targets,1)
+                error('Cannot change the size of prtDataSetBaseInMemoryLabeled observations; use obj = setDataAndTargets(obj,data,targets)');
             end
-            if nargin < 3 || isempty(indices1)
-                indices1 = 1:obj.nObservations;
-            end
-            if nargin < 4 || isempty(indices2)
-                indices2 = 1:obj.nFeatures;
-            end
-            if ~isequal([length(indices1),length(indices2)],size(data))
-                error('setObservations sizes not commensurate');
-            end
-            obj.data(indices1,indices2) = data;
-            return;
         end
         
         function obj = removeTargetDimensions(obj,indices)
