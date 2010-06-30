@@ -138,7 +138,8 @@ classdef prtAction
                 else
                     trainDataSet = DataSet.removeObservations(cTestLogical);
                 end
-                fprintf('Original: %d, Train: %d, Test: %d\n',DataSet.nObservations,trainDataSet.nObservations,testDataSet.nObservations);
+                %fprintf('Original: %d, Train: %d, Test: %d\n',DataSet.nObservations,trainDataSet.nObservations,testDataSet.nObservations);
+                
                 classOut = Obj.train(trainDataSet);
                 currResults = classOut.run(testDataSet);
                 

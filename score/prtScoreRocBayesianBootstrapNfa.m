@@ -64,8 +64,8 @@ function varargout = prtScoreRocBayesianBootstrapNfa(varargin)
 
 [pfSamples, pdMean, pdConfRegion, bootStrappedPds] = prtScoreRocBayesianBootstrap(varargin{:});
 
-%%
-% Clean up y (just in case)
+
+%% Clean up y (just in case)
 y = varargin{2};
 uY = unique(y(:));
 newY = y;
@@ -74,9 +74,11 @@ newY(y==uY(2)) = 1;
 y = newY;
 y = y(:); % Make sure y is a column
 
+
+%% Transform pfSamples to nFA
 nH0 = sum(y==0);
 
-nFaSamples = pfSamples*nH0;
+nFaSamples = pfSamples*nH0; 
 
 
 %% Package Outputs
