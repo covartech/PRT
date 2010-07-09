@@ -11,8 +11,16 @@ function colors = prtPlotUtilClassColorsBW(nClasses)
 %           247 129 191; % Pink
 %           ]/255;
 
-colors = gray(5);
-colors = colors(1:4,:);
+
+colors = [215,  25,  28;
+          253, 174,  97;
+          255, 255, 191;
+          171, 221, 164;
+           43, 131, 186;]/255;
+
+
+% colors = gray(5);
+% colors = colors(1:4,:);
 
 
 colorMapInd = repmat((1:size(colors,1))',ceil(nClasses/size(colors,1)),1);
