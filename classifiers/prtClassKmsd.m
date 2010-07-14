@@ -18,11 +18,21 @@ classdef prtClassKmsd < prtClass
         
         % Required by prtClass
         isNativeMary = false;
-        
-                % Target libaray
+    end
+    properties (Access = private)
+        % Target libaray
         Zt = [];
         % Background library
         Zb = [];
+        
+        Ztb   = [];
+        Delta = [];
+        Beta  = [];
+        Tau   = [];
+        Kb_t  = [];
+        Kt_b  = [];
+        Kt_t  = [];
+        Kb_b  = [];
     end
     
     properties
@@ -53,6 +63,48 @@ classdef prtClassKmsd < prtClass
             Obj.Zt = DataSet.getObservationsByClass(1);
             Obj.Zb = DataSet.getObservationsByClass(0);
             
+            Obj.Ztb = [Obj.Zt; Obj.Zb];
+            
+            % Compute Delta
+            Ktb_tb = rbfKernel(Obj.Ztb,Obj.Ztb,Obj.sigma);
+            [Obj.Delta eigD] = eig(Ktb_tb);
+           
+            eigD = diag(eigD);
+            sumD = sum(eigD);
+            eigNorm = eigD/sumD;
+            eigPow = cumsum(flipud(eigNorm));
+            idx = find(eigPow>.9);   % 90% eigenvectors works well
+            Obj.Delta = Obj.Delta(:,end-idx:end);
+            
+            
+            % Compute Tau
+            Obj.Kt_t = rbfKernel(Obj.Zt,Obj.Zt,Obj.sigma);
+            [Obj.Tau, eigT] = eig(Obj.Kt_t);
+            eigT = diag(eigT);
+            sumT = sum(eigT);
+            eigNorm = eigD/sumT;
+            eigPow = cumsum(flipud(eigNorm));
+            idx = find(eigPow>.9);
+            Obj.Tau = Obj.Tau(:,end-idx:end);
+            
+            
+            % Compute Beta
+            Obj.Kb_b = rbfKernel(Obj.Zb,Obj.Zb,Obj.sigma);
+            [Obj.Beta, eigB] = eig(Obj.Kb_b);
+            %Use eigenvectors that correspond to 90 of the information
+            eigB = diag(eigB);
+            sumB = sum(eigB);
+            eigNorm = eigB/sumB;
+            eigPow = cumsum(flipud(eigNorm));
+            idx = find(eigPow>.90);
+            Obj.Beta = Obj.Beta(:,end-idx:end);
+            
+            % Compute these too just for fun
+            Obj.Kb_t = rbfKernel(Obj.Zb,Obj.Zt,Obj.sigma);
+            Obj.Kt_b = rbfKernel(Obj.Zt,Obj.Zb,Obj.sigma);
+            
+            
+            
             
         end
         
@@ -61,7 +113,7 @@ classdef prtClassKmsd < prtClass
             y = DataSet.getObservations();
             memLimSamples = 1000;
             if size(y,1) < memLimSamples
-                dataOut = diag(prtClassKmsd.prtClassRunKMSD(y, Obj.Zt, Obj.Zb, Obj.sigma));
+                dataOut = diag(prtClassKmsd.prtClassRunKMSD(Obj,y));
                 ClassifierResults = prtDataSet(dataOut);
             else
                 dataOut = [];
@@ -70,7 +122,7 @@ classdef prtClassKmsd < prtClass
                 while currInd <= maxSamples
                     currIndices = currInd:min([currInd+memLimSamples-1,maxSamples]);
                     currData = y(currIndices,:);
-                    dataOut = cat(1,dataOut,diag(prtClassKmsd.prtClassRunKMSD(currData, Obj.Zt, Obj.Zb, Obj.sigma)));
+                    dataOut = cat(1,dataOut,diag(prtClassKmsd.prtClassRunKMSD(Obj,currData)));
                     currInd = currInd + memLimSamples;
                 end
                 ClassifierResults = prtDataSet(dataOut);
@@ -79,63 +131,25 @@ classdef prtClassKmsd < prtClass
         
     end
     methods (Static)
-        function LRT = prtClassRunKMSD(y, Zt, Zb ,sigma)
+        function LRT = prtClassRunKMSD(Obj,y)
             % Performs kmsd Classification on samples y. Zt is the target library. Zb is the
             % background library Sigma is the RBF parameter.
             
-            Ztb = [Zt; Zb];
-            
-            % Compute Delta
-            Ktb_tb = rbfKernel(Ztb,Ztb,sigma);
-            [Delta eigD] = eig(Ktb_tb);
-            %Delta = Delta(:,end);
-            eigD = diag(eigD);
-            sumD = sum(eigD);
-            eigNorm = eigD/sumD;
-            eigPow = cumsum(flipud(eigNorm));
-            idx = find(eigPow>.9);
-            Delta = Delta(:,end-idx:end);
-            
-            
-            % Compute Tau
-            Kt_t = rbfKernel(Zt,Zt,sigma);
-            [Tau, eigT] = eig(Kt_t);
-            eigT = diag(eigT);
-            sumT = sum(eigT);
-            eigNorm = eigD/sumT;
-            eigPow = cumsum(flipud(eigNorm));
-            idx = find(eigPow>.9);
-            Tau = Tau(:,end-idx:end);
-            
-            
-            % Compute Beta
-            Kb_b = rbfKernel(Zb,Zb,sigma);
-            [Beta, eigB] = eig(Kb_b);
-            %Use eigenvectors that correspond to 90 of the information
-            eigB = diag(eigB);
-            sumB = sum(eigB);
-            eigNorm = eigB/sumB;
-            eigPow = cumsum(flipud(eigNorm));
-            idx = find(eigPow>.90);
-            Beta = Beta(:,end-idx:end);
-            
-            % Compute these too just for fun
-            Kb_t = rbfKernel(Zb,Zt,sigma);
-            Kt_b = rbfKernel(Zt,Zb,sigma);
-            
+ 
             % Compute the emperical kernel maps
-            Ktb_y = rbfKernel(Ztb,y,sigma);
-            Kb_y  = rbfKernel(Zb,y,sigma);
-            Kt_y  = rbfKernel(Zt,y,sigma);
+            Ktb_y = rbfKernel(Obj.Ztb,y,Obj.sigma);
+            Kb_y  = rbfKernel(Obj.Zb,y,Obj.sigma);
+            Kt_y  = rbfKernel(Obj.Zt,y,Obj.sigma);
             
             % Compute the numerator of eq 32
-            Num = Ktb_y'*(Delta*Delta')* Ktb_y - Kb_y'*(Beta*Beta')*Kb_y;
+            Num = Ktb_y'*(Obj.Delta*Obj.Delta')* Ktb_y - Kb_y'*(Obj.Beta*Obj.Beta')*Kb_y;
             
             % Compute Gamma1
-            Gamma = [Tau'*Kt_t*Tau Tau'*Kt_b*Beta; Beta'*Kb_t*Tau Beta'*Kb_b*Beta];
+            Gamma = [Obj.Tau'*Obj.Kt_t*Obj.Tau Obj.Tau'*Obj.Kt_b*Obj.Beta; Obj.Beta'*Obj.Kb_t*Obj.Tau Obj.Beta'*Obj.Kb_b*Obj.Beta];
             
             % Compute the denominator of eq 32
-            Den = Ktb_y'*(Delta*Delta')*Ktb_y - [Kt_y'*Tau Kb_y'*Beta] * inv(Gamma) * [Tau'*Kt_y;Beta'*Kb_y];
+            %Den = Ktb_y'*(Obj.Delta*Obj.Delta')*Ktb_y - [Kt_y'*Obj.Tau Kb_y'*Obj.Beta] * inv(Gamma) * [Obj.Tau'*Kt_y;Obj.Beta'*Kb_y];
+            Den = Ktb_y'*(Obj.Delta*Obj.Delta')*Ktb_y - [Kt_y'*Obj.Tau Kb_y'*Obj.Beta] /(Gamma) * [Obj.Tau'*Kt_y;Obj.Beta'*Kb_y];
             
             LRT = Num./Den;
         end
