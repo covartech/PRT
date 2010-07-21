@@ -183,7 +183,7 @@ classdef prtRvHmm < prtRv
             assert(size(X,2) == R.nDimensions,sprintf('Incorrect data dimensionality for this %s.',R.displayName));
             logy = zeros(size(X,1),1);
             for iComp = 1:R.nComponents;
-                logy = addexp(logy,logPdf(R.Components(iComp),X)+log(R.mixingWeights(iComp)));
+                logy = prtUtilAddExp(logy,logPdf(R.Components(iComp),X)+log(R.mixingWeights(iComp)));
             end
         end % function pdf
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

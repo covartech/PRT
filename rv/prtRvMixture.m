@@ -25,7 +25,7 @@ classdef prtRvMixture < prtRv
         mixingWeights
     end
     
-    properties (Hidden = true, Dependent = true)
+    properties (Hidden = false, Dependent = true)
         nComponents
         nDimensions
         isPlottable
@@ -192,7 +192,7 @@ classdef prtRvMixture < prtRv
             for iComp = 1:R.nComponents;
                 componentLogPdf(:,iComp) = logPdf(R.Components(iComp),X)+log(R.mixingWeights(iComp));
             end
-            logy = addexp(componentLogPdf')';
+            logy = prtUtilAddExp(componentLogPdf')';
         end % function pdf
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         
