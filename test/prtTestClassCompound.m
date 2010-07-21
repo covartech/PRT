@@ -3,13 +3,14 @@ function result = prtTestClassCompound
 %%
 result = true;
 %%
-opt{1} = prtPreProcOptZmuv;
-opt{2} = {prtFeatSelOptExhaustive,prtClassOptFld};
-opt{3} = prtClassOptRvmJeffreys;
-
 DS = prtDataUnimodal;
 DS = DS.setObservations([DS.getObservations,DS.getObservations + randn(size(DS.getObservations))]);
 
-Algo = prtGenerate(DS,opt);
+opt{1} = prtPreProcZmuv;
+opt{2} = {prtFeatSelExhaustive,prtClassFld};
+opt{3} = prtClassRvm;
 
-R = prtRun(Algo,DS);
+Algo = prtAlgorithm(opt);
+Algo = Algo.train(DS);
+
+yOut = Algo.run(DS);
