@@ -1,5 +1,24 @@
 classdef prtClassMap < prtClass
-    
+ %prtClassMap  Maximum a Posteriori classifier
+ % 
+ %    CLASSIFIER = prtClassMap returns a Maximum a Posteriori classifier
+ %
+ %    CLASSIFIER = prtClassMap(PROPERTY1, VALUE1, ...) constructs a
+ %    prtClassMAP object CLASSIFIER with properties as specified by
+ %    PROPERTY/VALUE pairs.
+ %
+ %    A prtClassMap object inherits all properties from the abstract class
+ %    prtClass. In addition is has the following property:
+ %
+ %    rvs    - A multivariate normal random variable. This property must be of
+ %             type prtRvMvn. This property describes the mean and covariance
+ %             matrix required for Maximum a Posteriori classification. It is
+ %             writable, or can be set using the Train method.
+ %
+ %    A prtClassMap object inherits the TRAIN and RUN methods from prtClass.
+ %  
+ %    See also prtClass, prtClass.train, prtClass.run, prtClass.plot, prtClass.plotDecision, prtRvMvn
+ 
     properties (SetAccess=private)
         % Required by prtAction
         name = 'Maximum a Posteriori'
@@ -16,12 +35,19 @@ classdef prtClassMap < prtClass
     end
     
     methods
-        
+        % Constructor
         function Obj = prtClassMap(varargin)
             % Allow for string, value pairs
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
         end
-        
+        % Set function
+        function Obj = set.rvs(Obj,val)
+            if(~ isa(val, 'prtRvMvn'))
+                error('prtClassMAP:rvs','Rvs parameter must be of class prtRvMvn');
+            else
+                Obj.rvs = val;
+            end
+        end
     end
     
     methods (Access = protected)
