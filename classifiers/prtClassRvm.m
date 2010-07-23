@@ -156,7 +156,7 @@ classdef prtClassRvm < prtClass
             memChunkSize = 1000; % Should this be moved somewhere?
             n = DataSet.nObservations;
             
-            DataSetOut = prtDataSetUnLabeled(zeros(n,1));
+            DataSetOut = prtDataSetClass(zeros(n,1));
             for i = 1:memChunkSize:n;
                 cI = i:min(i+memChunkSize,n);
                 cDataSet = prtDataSetClass(DataSet.getObservations(cI,:));

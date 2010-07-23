@@ -28,6 +28,8 @@ classdef prtDataSetInMemory < prtDataSetBase
     %   retainFeatures - Remove features (remove all others) from a data set
     %   replaceFeatures - Replace features in a data set
     %
+    %   bootstrap
+    %
     %   export - 
     %   plot - 
     %   summarize - 
@@ -55,6 +57,20 @@ classdef prtDataSetInMemory < prtDataSetBase
             % This should only be called when initializing a sub-class
         end
         
+        function obj = bootstrap(obj,nSamples)
+            sampleIndices = ceil(rand(1,nSamples).*obj.nObservations);
+            
+            newData = obj.getObservations(sampleIndices,:);
+            
+            if obj.isLabeled
+                newTargets = obj.getTargets(sampleIndices,:);
+                obj.data = newData;
+                obj.targets = newTargets;
+            else
+                obj.data = newData;
+            end
+        end
+        
         function targets = getTargets(obj,indices1,indices2)
             if isempty(obj.targets)
                 targets = [];
@@ -65,10 +81,10 @@ classdef prtDataSetInMemory < prtDataSetBase
             else
                 indices1 = 1:obj.nObservations;
             end
-            if nargin > 2
-                prtDataSetInMemory.checkIndices(indices2,obj.nFeatures);
-            else
+            if nargin < 2 || strcmpi(indices2,':')
                 indices2 = 1:obj.nTargetDimensions;
+            else
+                prtDataSetInMemory.checkIndices(indices2,obj.nTargetDimensions);
             end
             targets = obj.targets(indices1,indices2);
         end
