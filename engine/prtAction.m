@@ -144,9 +144,9 @@ classdef prtAction
                 currResults = classOut.run(testDataSet);
                 
                 if uInd == 1
-                    OutputDataSet = prtDataSetUnLabeled(nan(DataSet.nObservations,currResults.nFeatures));
+                    InternalOutputDataSet = prtDataSetClass(nan(DataSet.nObservations,currResults.nFeatures));
                 end
-                OutputDataSet = OutputDataSet.setObservations(currResults.getObservations(), cTestLogical);
+                InternalOutputDataSet = InternalOutputDataSet.setObservations(currResults.getObservations(), cTestLogical);
                 
                 %only do this if the output is requested; otherwise this cell of
                 %classifiers can get very large, and slow things down.
@@ -159,6 +159,8 @@ classdef prtAction
                     end
                 end
             end
+            OutputDataSet = DataSet;
+            OutputDataSet = OutputDataSet.setObservations(InternalOutputDataSet.getObservations);
         end
         
         function varargout = kfolds(Obj,DataSet,K)

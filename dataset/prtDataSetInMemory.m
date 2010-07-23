@@ -39,7 +39,7 @@ classdef prtDataSetInMemory < prtDataSetBase
     end
     
     properties
-        ObservationDependentUserData = struct;
+        ObservationDependentUserData = [];
     end
     
     properties (SetAccess='protected',GetAccess ='protected')
@@ -74,7 +74,7 @@ classdef prtDataSetInMemory < prtDataSetBase
         end
         
         function obj = setTargets(obj,targets,indices1,indices2)
-            warning('Need to check sizes');
+            warning('prt:Fixable','Need to check sizes');
             if nargin > 2
                 prtDataSetInMemory.checkIndices(indices1,obj.nObservations);
             else
@@ -104,7 +104,7 @@ classdef prtDataSetInMemory < prtDataSetBase
         
         %Required by prtDataSetBase:
         function [obj,retainedFeatures] = removeFeatures(obj,indices)
-            warning('Does not handle feature names');
+            warning('prt:Fixable','Does not handle feature names');
             prtDataSetInMemory.checkIndices(indices,obj.nFeatures);
             
             if islogical(indices)
@@ -116,13 +116,13 @@ classdef prtDataSetInMemory < prtDataSetBase
         end
         
         function [obj,retainedFeatures] = retainFeatures(obj,retainedFeatures)
-            warning('Does not handle feature names');
+            warning('prt:Fixable','Does not handle feature names');
             prtDataSetInMemory.checkIndices(retainedFeatures,obj.nFeatures);
             obj.data = obj.data(:,retainedFeatures);
         end
         
         function obj = replaceFeatures(obj,data,indices)
-            warning('Does not handle feature names');
+            warning('prt:Fixable','Does not handle feature names');
             prtDataSetInMemory.checkIndices(indices,obj.nFeatures);
             indices = indices(:);
             if size(indices,1) ~= size(data,2)
@@ -133,7 +133,7 @@ classdef prtDataSetInMemory < prtDataSetBase
         end
         
         function [obj,retainedIndices] = removeObservations(obj,indices)
-            warning('Does not handle observation names');
+            warning('prt:Fixable','Does not handle observation names');
             prtDataSetInMemory.checkIndices(indices,obj.nObservations);
             
             if islogical(indices)
@@ -146,7 +146,7 @@ classdef prtDataSetInMemory < prtDataSetBase
         end
         
         function [obj,retainedIndices] = retainObservations(obj,retainedIndices)
-            warning('Does not handle observation names');
+            warning('prt:Fixable','Does not handle observation names');
             prtDataSetInMemory.checkIndices(retainedIndices,obj.nObservations);
             obj.data = obj.data(retainedIndices,:);
             
@@ -156,7 +156,7 @@ classdef prtDataSetInMemory < prtDataSetBase
         end
         
         function obj = replaceObservations(obj,data,indices)
-            warning('Does not handle observation names');
+            warning('prt:Fixable','Does not handle observation names');
             prtDataSetInMemory.checkIndices(indices,obj.nObservations);
             if size(indices,1) ~= size(data,1)
                 indices = indices(:);
@@ -188,7 +188,7 @@ classdef prtDataSetInMemory < prtDataSetBase
         
         %Set the observations to a new set
         function obj = setObservations(obj,data,indices1,indices2)
-            warning('Need to check that resulting data size is not > target size');
+            warning('prt:Fixable','Need to check that resulting data size is not > target size');
             %check sizes:
             if nargin == 2
                 obj.data = data;
@@ -253,14 +253,14 @@ classdef prtDataSetInMemory < prtDataSetBase
         %         end
         
         function obj = joinObservations(obj, varargin)
-            warning('Does not handle observation names');
+            warning('prt:Fixable','Does not handle observation names');
             for iCat = 1:length(varargin)
                 obj = catObservations(obj, varargin{iCat}.getObservations);
             end
         end
         
         function obj = joinFeatures(obj, varargin)
-            warning('Does not handle feature names');
+            warning('prt:Fixable','Does not handle feature names');
             for iCat = 1:length(varargin)
                 obj = catFeatures(obj, varargin{iCat}.getObservations);
             end
@@ -271,7 +271,7 @@ classdef prtDataSetInMemory < prtDataSetBase
         end
         
         function obj = catObservations(obj, newData, newTargets)
-            warning('Check for labeled, sizes');
+            warning('prt:Fixable','Check for labeled, sizes');
             obj.data = cat(1,obj.data, newData);
             if nargin > 2
                 obj.targets = cat(1,obj.targets, newTargets);
