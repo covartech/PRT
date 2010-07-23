@@ -8,4 +8,4 @@ x = randsample(t,nSamples)';
 t = sinc(x/pi);
 y = t + noiseVar*randn(size(x));
 
-DataSet = prtDataSetClass(x,y,'name','Noisy Sync');
+DataSet = prtDataSetRegress(x,y,'name','Noisy Sync');

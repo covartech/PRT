@@ -22,12 +22,16 @@ close
 
 %% Other Data Sets
 
-%prtDataProstate
-%prtDataSwissRoll
-%prtDataSpiral3
-%prtDataImageSeg
-%prtDataSparseFactors
-%prtDataManual
+prtDataProstate;
+prtDataSwissRoll;
+prtDataSpiral3;
+prtDataImageSeg;
+prtDataSparseFactors;
+prtDataManual;
+prtDataFeatureSelection;
+prtDataOldFaithful;
+prtDataNoisySync;
+prtDataXor;
 
 %% Test Catting of prtDataSetInMemory
 DS = prtDataUnimodal;

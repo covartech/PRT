@@ -87,7 +87,8 @@ classdef prtDataSetClass  < prtDataSetInMemory
             if isa(varargin{1},'double')
                 obj = obj.setObservations(varargin{1});
                 varargin = varargin(2:end);
-                if nargin == 2 && (isa(varargin{1},'double') || isa(varargin{1},'logical'))
+                
+                if nargin >= 2 && (isa(varargin{1},'double') || isa(varargin{1},'logical'))
                     obj = obj.setTargets(varargin{1});
                 end
                 varargin = varargin(2:end);
