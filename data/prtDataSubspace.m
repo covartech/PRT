@@ -26,4 +26,4 @@ end
 X = cat(1,X0,X1);
 Y = prtUtilY(N,N);
 
-DataSet = prtDataSet(X,Y,'dataSetName','prtDataSubspace');
+DataSet = prtDataSetClass(X,Y,'dataSetName','prtDataSubspace');

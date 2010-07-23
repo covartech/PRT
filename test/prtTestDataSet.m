@@ -31,9 +31,9 @@ close
 
 %% Test Catting of prtDataSetInMemory
 DS = prtDataUnimodal;
-UDS = prtDataSet(DS.getObservations);
+UDS = prtDataSetClass(DS.getObservations);
 DS = prtDataSpiral;
-UDS2 = prtDataSet(DS.getObservations);
+UDS2 = prtDataSetClass(DS.getObservations);
 CatDS = joinObservations(UDS,UDS2);
 CatDS = joinFeatures(UDS,UDS2);
 

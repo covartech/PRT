@@ -52,4 +52,4 @@ rv(2) = prtRvMvn(mu1,sigma1);
 X = cat(1,draw(rv(1),nSamples),draw(rv(2),nSamples));
 Y = prtUtilY(nSamples,nSamples);
 
-DataSet = prtDataSet(X,Y);
+DataSet = prtDataSetClass(X,Y);

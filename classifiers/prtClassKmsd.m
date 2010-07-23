@@ -114,7 +114,7 @@ classdef prtClassKmsd < prtClass
             memLimSamples = 1000;
             if size(y,1) < memLimSamples
                 dataOut = diag(prtClassKmsd.prtClassRunKMSD(Obj,y));
-                ClassifierResults = prtDataSet(dataOut);
+                ClassifierResults = prtDataSetClass(dataOut);
             else
                 dataOut = [];
                 maxSamples = size(y,1);
@@ -125,7 +125,7 @@ classdef prtClassKmsd < prtClass
                     dataOut = cat(1,dataOut,diag(prtClassKmsd.prtClassRunKMSD(Obj,currData)));
                     currInd = currInd + memLimSamples;
                 end
-                ClassifierResults = prtDataSet(dataOut);
+                ClassifierResults = prtDataSetClass(dataOut);
             end
         end
         

@@ -46,7 +46,7 @@ classdef prtClassMaryEmulateOneVsAll < prtClass
         end
 
         function DataSetOut = runAction(Obj,DataSet)
-            DataSetOut = prtDataSet(zeros(DataSet.nObservations, length(Obj.Classifiers)));
+            DataSetOut = prtDataSetClass(zeros(DataSet.nObservations, length(Obj.Classifiers)));
             
             for iY = 1:length(Obj.Classifiers)
                 cOutput = run(Obj.Classifiers(iY), DataSet);

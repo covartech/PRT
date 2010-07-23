@@ -17,7 +17,7 @@ end
 sigmaFn = @(x) 1./(1 + exp(-x));
 kappaFn = @(sigmaSquaredVar) (1 + pi*sigmaSquaredVar/8).^(-1/2);
 
-ClassifierResults = prtDataSet(sigmaFn(kappaFn(sigmaSquared).*mu));
+ClassifierResults = prtDataSetClass(sigmaFn(kappaFn(sigmaSquared).*mu));
 
 
 end

@@ -3,7 +3,7 @@ classdef prtKernelBinary < prtKernel
     methods
         function objectArray = initializeKernelArray(obj,DataSet)
             if isa(DataSet,'double')
-                DataSet = prtDataSet(DataSet);
+                DataSet = prtDataSetClass(DataSet);
             end
             
             for i = 1:DataSet.nObservations

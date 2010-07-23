@@ -56,7 +56,7 @@ classdef prtClassGlrt < prtClass
             
             logLikelihoodH0 = logPdf(Obj.rvH0, DataSet.getObservations());
             logLikelihoodH1 = logPdf(Obj.rvH1, DataSet.getObservations());
-            ClassifierResults = prtDataSet(logLikelihoodH1 - logLikelihoodH0);
+            ClassifierResults = prtDataSetClass(logLikelihoodH1 - logLikelihoodH0);
         end
         
     end

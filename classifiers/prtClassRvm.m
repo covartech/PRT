@@ -159,7 +159,7 @@ classdef prtClassRvm < prtClass
             DataSetOut = prtDataSetUnLabeled(zeros(n,1));
             for i = 1:memChunkSize:n;
                 cI = i:min(i+memChunkSize,n);
-                cDataSet = prtDataSet(DataSet.getObservations(cI,:));
+                cDataSet = prtDataSetClass(DataSet.getObservations(cI,:));
                 gramm = prtKernelGrammMatrix(cDataSet,Obj.sparseKernels);
                 
                 DataSetOut = DataSetOut.setObservations(normcdf(gramm*Obj.sparseBeta), cI);
@@ -223,7 +223,7 @@ classdef prtClassRvm < prtClass
                     DsSummary = DataSet.summarize;
                     
                     [linGrid, gridSize,xx,yy] = prtPlotUtilGenerateGrid(DsSummary.lowerBounds, DsSummary.upperBounds, Obj.PlotOptions);
-                    cPhi = prtKernelGrammMatrix(prtDataSet(linGrid),trainedKernels(relevantIndices));
+                    cPhi = prtKernelGrammMatrix(prtDataSetClass(linGrid),trainedKernels(relevantIndices));
                     
                     confMap = reshape(normcdf(cPhi*Obj.beta(relevantIndices)),gridSize);
                     imagesc(xx(1,:),yy(:,1),confMap,[0,1])
@@ -541,7 +541,7 @@ classdef prtClassRvm < prtClass
                     DsSummary = DataSet.summarize;
                     
                     [linGrid, gridSize,xx,yy] = prtPlotUtilGenerateGrid(DsSummary.lowerBounds, DsSummary.upperBounds, Obj.PlotOptions);
-                    cPhiPlot = prtKernelGrammMatrix(prtDataSet(linGrid),trainedKernels(relevantIndices));
+                    cPhiPlot = prtKernelGrammMatrix(prtDataSetClass(linGrid),trainedKernels(relevantIndices));
                     
                     confMap = reshape(normcdf(cPhiPlot*Obj.beta(relevantIndices)),gridSize);
                     imagesc(xx(1,:),yy(:,1),confMap,[0 1])
@@ -835,7 +835,7 @@ classdef prtClassRvm < prtClass
                     DsSummary = DataSet.summarize;
                     
                     [linGrid, gridSize,xx,yy] = prtPlotUtilGenerateGrid(DsSummary.lowerBounds, DsSummary.upperBounds, Obj.PlotOptions);
-                    cPhiPlot = prtKernelGrammMatrix(prtDataSet(linGrid),trainedKernels(relevantIndices));
+                    cPhiPlot = prtKernelGrammMatrix(prtDataSetClass(linGrid),trainedKernels(relevantIndices));
                     
                     confMap = reshape(normcdf(cPhiPlot*Obj.beta(relevantIndices)),gridSize);
                     imagesc(xx(1,:),yy(:,1),confMap,[0 1])

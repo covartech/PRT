@@ -72,7 +72,7 @@ classdef prtClassFld < prtClass
         end
         
         function DataSet = runAction(Obj,DataSet)
-            DataSet = prtDataSet((Obj.w'*DataSet.getObservations()')');
+            DataSet = prtDataSetClass((Obj.w'*DataSet.getObservations()')');
         end
         
         function imageHandle = plotGriddedEvaledClassifier(Obj, DS, linGrid, gridSize, cMap)

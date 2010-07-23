@@ -100,7 +100,7 @@ classdef prtClassCap < prtClass
             y(y >= 0) = 1;
             y(y < 0) = 0;
 
-            ClassifierResults = prtDataSet(y);
+            ClassifierResults = prtDataSetClass(y);
             
         end
         

@@ -1,5 +1,5 @@
-classdef prt2DataSetBase
-    % prt2DataSetBase
+classdef prtDataSetBase
+    % prtDataSetBase
     %   Base class for all prt DataSets.  
     %
     % prtDataSetBase Properties: 
@@ -155,7 +155,7 @@ classdef prt2DataSetBase
             for i = 1:length(indices1)
                 obsNames{indices1(i)} = obj.observationNames.get(indices1(i));
                 if isempty(obsNames{indices1(i)})
-                    obsNames{indices1(i)} = prt2DataSetBase.generateDefaultObservationNames(indices1(i));
+                    obsNames{indices1(i)} = prtDataSetBase.generateDefaultObservationNames(indices1(i));
                 end
             end
         end
@@ -208,7 +208,7 @@ classdef prt2DataSetBase
             for i = 1:length(indices2)
                 featNames{indices2(i)} = obj.featureNames.get(indices2(i));
                 if isempty(featNames{indices2(i)})
-                    featNames{indices2(i)} = prt2DataSetBase.generateDefaultFeatureNames(indices2(i));
+                    featNames(indices2(i)) = prtDataSetBase.generateDefaultFeatureNames(indices2(i));
                 end
             end
         end
@@ -275,9 +275,9 @@ classdef prt2DataSetBase
         %                 %don't worry about it
         %                 return;
         %             elseif ~isempty(obj.featureNames) && isempty(newFeatureNames)
-        %                 obj.featureNames = cat(1,obj.featureNames,prt2DataSetBase.generateDefaultFeatureNames((length(obj.featureNames)+1:obj.nFeatures)'));
+        %                 obj.featureNames = cat(1,obj.featureNames,prtDataSetBase.generateDefaultFeatureNames((length(obj.featureNames)+1:obj.nFeatures)'));
         %             elseif isempty(obj.featureNames) && ~isempty(newFeatureNames)
-        %                 obj.featureNames = cat(1,prt2DataSetBase.generateDefaultFeatureNames(1:prevDim),newFeatureNames(:));
+        %                 obj.featureNames = cat(1,prtDataSetBase.generateDefaultFeatureNames(1:prevDim),newFeatureNames(:));
         %             else
         %                 obj.featureNames = cat(1,obj.featureNames,newFeatureNames);
         %             end
@@ -288,9 +288,9 @@ classdef prt2DataSetBase
         %                 %don't worry about it
         %                 return;
         %             elseif ~isempty(obj.observationNames) && isempty(newObservationNames)
-        %                 obj.observationNames = cat(1,obj.observationNames,prt2DataSetBase.generateDefaultObservationNames((length(obj.observationNames)+1:obj.nObservations)'));
+        %                 obj.observationNames = cat(1,obj.observationNames,prtDataSetBase.generateDefaultObservationNames((length(obj.observationNames)+1:obj.nObservations)'));
         %             elseif isempty(obj.observationNames) && ~isempty(newObservationNames)
-        %                 obj.observationNames = cat(1,prt2DataSetBase.generateDefaultObservationNames(1:prevDim),newObservationNames(:));
+        %                 obj.observationNames = cat(1,prtDataSetBase.generateDefaultObservationNames(1:prevDim),newObservationNames(:));
         %             else
         %                 obj.observationNames = cat(1,obj.observationNames,newObservationNames);
         %             end

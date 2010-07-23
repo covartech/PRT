@@ -72,7 +72,7 @@ classdef prtClassMap < prtClass
 
             % Change to posterior probabilities and package everything up in a
             % prtDataSet
-            DataSet = prtDataSet(exp(bsxfun(@minus, logLikelihoods, prtUtilSumExp(logLikelihoods.').')));
+            DataSet = prtDataSetClass(exp(bsxfun(@minus, logLikelihoods, prtUtilSumExp(logLikelihoods.').')));
             DataSet.UserData.logLikelihoods = logLikelihoods;
         end
         

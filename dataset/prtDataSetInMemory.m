@@ -1,10 +1,10 @@
-classdef prt2DataSetInMemory < prt2DataSetBase
-    % prt2DataSetInMemory < prt2DataSetBase
+classdef prtDataSetInMemory < prtDataSetBase
+    % prtDataSetInMemory < prtDataSetBase
     %   Base class for all prt DataSets that can be held in memory
     %
     % prtDataSetBase Properties: 
     %   ObservationDependentUserData - I think the gets and sets for this need to
-    %          be in prt2DataSetBase and be abstract; the current interface allows
+    %          be in prtDataSetBase and be abstract; the current interface allows
     %          people to see the struct...
     %
     % methods:
@@ -50,7 +50,7 @@ classdef prt2DataSetInMemory < prt2DataSetBase
     methods
         %% Constructor %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        function obj = prt2DataSetInMemory(varargin)
+        function obj = prtDataSetInMemory(varargin)
             % Nothing to do.
             % This should only be called when initializing a sub-class
         end
@@ -61,12 +61,12 @@ classdef prt2DataSetInMemory < prt2DataSetBase
                 return;
             end
             if nargin > 1
-                prt2DataSetInMemory.checkIndices(indices1,obj.nObservations);
+                prtDataSetInMemory.checkIndices(indices1,obj.nObservations);
             else
                 indices1 = 1:obj.nObservations;
             end
             if nargin > 2
-                prt2DataSetInMemory.checkIndices(indices2,obj.nFeatures);
+                prtDataSetInMemory.checkIndices(indices2,obj.nFeatures);
             else
                 indices2 = 1:obj.nTargetDimensions;
             end
@@ -76,12 +76,12 @@ classdef prt2DataSetInMemory < prt2DataSetBase
         function obj = setTargets(obj,targets,indices1,indices2)
             warning('Need to check sizes');
             if nargin > 2
-                prt2DataSetInMemory.checkIndices(indices1,obj.nObservations);
+                prtDataSetInMemory.checkIndices(indices1,obj.nObservations);
             else
                 indices1 = 1:obj.nObservations;
             end
             if nargin > 3
-                prt2DataSetInMemory.checkIndices(indices1,obj.nObservations);
+                prtDataSetInMemory.checkIndices(indices1,obj.nObservations);
             else
                 indices2 = 1:obj.nTargetDimensions;
                 %Allow setting targets when previous targets is empty
@@ -105,7 +105,7 @@ classdef prt2DataSetInMemory < prt2DataSetBase
         %Required by prtDataSetBase:
         function [obj,retainedFeatures] = removeFeatures(obj,indices)
             warning('Does not handle feature names');
-            prt2DataSetInMemory.checkIndices(indices,obj.nFeatures);
+            prtDataSetInMemory.checkIndices(indices,obj.nFeatures);
             
             if islogical(indices)
                 keepFeatures = ~indices;
@@ -117,16 +117,16 @@ classdef prt2DataSetInMemory < prt2DataSetBase
         
         function [obj,retainedFeatures] = retainFeatures(obj,retainedFeatures)
             warning('Does not handle feature names');
-            prt2DataSetInMemory.checkIndices(retainedFeatures,obj.nFeatures);
+            prtDataSetInMemory.checkIndices(retainedFeatures,obj.nFeatures);
             obj.data = obj.data(:,retainedFeatures);
         end
         
         function obj = replaceFeatures(obj,data,indices)
             warning('Does not handle feature names');
-            prt2DataSetInMemory.checkIndices(indices,obj.nFeatures);
+            prtDataSetInMemory.checkIndices(indices,obj.nFeatures);
             indices = indices(:);
             if size(indices,1) ~= size(data,2)
-                error('prt:prt2DataSetInMemory:invalidIndices','length(indices) (%d) ~= size(data,1) (%d)',length(indices),size(data,1));
+                error('prt:prtDataSetInMemory:invalidIndices','length(indices) (%d) ~= size(data,1) (%d)',length(indices),size(data,1));
             end
             
             obj.data(:,indices) = data;
@@ -134,7 +134,7 @@ classdef prt2DataSetInMemory < prt2DataSetBase
         
         function [obj,retainedIndices] = removeObservations(obj,indices)
             warning('Does not handle observation names');
-            prt2DataSetInMemory.checkIndices(indices,obj.nObservations);
+            prtDataSetInMemory.checkIndices(indices,obj.nObservations);
             
             if islogical(indices)
                 keepObservations = ~indices;
@@ -147,7 +147,7 @@ classdef prt2DataSetInMemory < prt2DataSetBase
         
         function [obj,retainedIndices] = retainObservations(obj,retainedIndices)
             warning('Does not handle observation names');
-            prt2DataSetInMemory.checkIndices(retainedIndices,obj.nObservations);
+            prtDataSetInMemory.checkIndices(retainedIndices,obj.nObservations);
             obj.data = obj.data(retainedIndices,:);
             
             if ~isempty(obj.ObservationDependentUserData)
@@ -157,10 +157,10 @@ classdef prt2DataSetInMemory < prt2DataSetBase
         
         function obj = replaceObservations(obj,data,indices)
             warning('Does not handle observation names');
-            prt2DataSetInMemory.checkIndices(indices,obj.nObservations);
+            prtDataSetInMemory.checkIndices(indices,obj.nObservations);
             if size(indices,1) ~= size(data,1)
                 indices = indices(:);
-                error('prt:prt2DataSetInMemory:invalidIndices','length(indices) (%d) ~= size(data,1) (%d)',length(indices),size(data,1));
+                error('prt:prtDataSetInMemory:invalidIndices','length(indices) (%d) ~= size(data,1) (%d)',length(indices),size(data,1));
             end
             
             obj.data(indices,:) = data;
@@ -181,8 +181,8 @@ classdef prt2DataSetInMemory < prt2DataSetBase
                 indices2 = 1:obj.nFeatures;
             end
             
-            prt2DataSetInMemory.checkIndices(indices1,obj.nObservations);
-            prt2DataSetInMemory.checkIndices(indices2,obj.nFeatures);
+            prtDataSetInMemory.checkIndices(indices1,obj.nObservations);
+            prtDataSetInMemory.checkIndices(indices2,obj.nFeatures);
             data = obj.data(indices1,indices2);
         end
         
@@ -270,8 +270,12 @@ classdef prt2DataSetInMemory < prt2DataSetBase
             obj.data = cat(2,obj.data, newData);
         end
         
-        function obj = catObservations(obj, newData)
+        function obj = catObservations(obj, newData, newTargets)
+            warning('Check for labeled, sizes');
             obj.data = cat(1,obj.data, newData);
+            if nargin > 2
+                obj.targets = cat(1,obj.targets, newTargets);
+            end
         end
         
         function export(obj,varargin) %#ok<MANU>
@@ -291,17 +295,17 @@ classdef prt2DataSetInMemory < prt2DataSetBase
             end
             err = 0;
             if ~isvector(indices)
-                errorID = 'prt:prt2DataSetInMemory:invalidIndices';
+                errorID = 'prt:prtDataSetInMemory:invalidIndices';
                 errorMsg = 'Indices must be a vector';
                 err = 3;
             end
             if any(indices < 1)
-                errorID = 'prt:prt2DataSetInMemory:indexOutOfRange';
+                errorID = 'prt:prtDataSetInMemory:indexOutOfRange';
                 errorMsg = sprintf('Some index elements (%d) are less than 1',min(indices));
                 err = 1;
             end
             if any(indices > maxVal)
-                errorID = 'prt:prt2DataSetInMemory:indexOutOfRange';
+                errorID = 'prt:prtDataSetInMemory:indexOutOfRange';
                 errorMsg = sprintf('Some index elements out of range (%d > %d)',max(indices),maxVal);
                 err = 2;
             end

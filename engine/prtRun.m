@@ -5,7 +5,7 @@ function PrtResults = prtRun(PrtObject,varargin)
 if isa(varargin{1},'prtDataSetBase')
     PrtDataSet = varargin{1};
 else
-    PrtDataSet = prtDataSet(varargin{1});
+    PrtDataSet = prtDataSetClass(varargin{1});
 end
 
 if isa(PrtObject,'prtAction')

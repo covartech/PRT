@@ -9,4 +9,4 @@ t = sort(t);
 X = [(13-0.5*t).*cos(t) -(13-0.5*t).*sin(t) t] + mvnrnd(zeros(3,1),0.5*eye(3),nSamples);
 Y = t;
 
-DataSet = prtDataSet(X,Y,'dataSetName','prtDataSpiral3');
+DataSet = prtDataSetClass(X,Y,'name','prtDataSpiral3');

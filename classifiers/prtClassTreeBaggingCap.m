@@ -177,7 +177,7 @@ classdef prtClassTreeBaggingCap < prtClass
                     end
                 end
             end
-            ClassifierResults = prtDataSet(mean(Yout,2));
+            ClassifierResults = prtDataSetClass(mean(Yout,2));
         end
         
         

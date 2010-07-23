@@ -100,7 +100,7 @@ classdef prtClass < prtAction
         function ClassObj = preTrainProcessing(ClassObj, DataSet)
             % Overload preTrainProcessing() so that we can determine mary
             % output status
-            assert(isa(DataSet,'prtDataSetBaseClass'),'DataSet must be a prtClass DataSet');
+            assert(isa(DataSet,'prtDataSetBase'),'DataSet must be a prtDataSetBase DataSet');
             
             ClassObj.yieldsMaryOutput = determineMaryOutput(ClassObj,DataSet);
             
@@ -167,7 +167,7 @@ classdef prtClass < prtAction
             
             [linGrid, gridSize] = prtPlotUtilGenerateGrid(upperBounds, lowerBounds, Obj.PlotOptions);
             
-            OutputDataSet = run(Obj,prtDataSet(linGrid));
+            OutputDataSet = run(Obj,prtDataSetClass(linGrid));
         end
         
         function HandleStructure = plotBinaryClassifierConfidence(Obj)

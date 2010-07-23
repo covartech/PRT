@@ -1,4 +1,4 @@
-classdef prt2DataSetRegress < prt2DataSetInMemory
+classdef prtDataSetRegress < prtDataSetInMemory
     % Standard prtDataSet for labeled training data.
     %
     % Inherited propeties from prtDataSetInMemory
@@ -19,7 +19,7 @@ classdef prt2DataSetRegress < prt2DataSetInMemory
     methods
         %% Constructor %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        function prtDataSet = prt2DataSetRegress(varargin)
+        function prtDataSet = prtDataSetRegress(varargin)
             % prtDataSet = prtDataSetRegress
             % prtDataSet = prtDataSetRegress(prtDataSetRegressIn, paramName1, paramVal2, ...)
             % prtDataSet = prtDataSetRegress(data, targets, paramName1, paramVal2, ...)

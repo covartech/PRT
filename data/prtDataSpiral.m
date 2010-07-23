@@ -48,4 +48,4 @@ Xspiral_H0 = generateSpiralCluster(t,f,theta0,mux0,muy0,dx,dy,std);
 X = cat(1,Xspiral_H0,Xspiral_H1);
 Y = cat(1,zeros(nSamples,1),ones(nSamples,1));
 
-DataSet = prtDataSet(X,Y,'name','prtDataSpiral');
+DataSet = prtDataSetClass(X,Y,'name','prtDataSpiral');

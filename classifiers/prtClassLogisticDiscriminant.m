@@ -222,7 +222,7 @@ classdef prtClassLogisticDiscriminant < prtClass
             
             x = cat(2,ones(size(DataSet.data,1),1),DataSet.data);
             y = sigmaFn((x*Obj.w)')';
-            ClassifierResults = prtDataSet(y);
+            ClassifierResults = prtDataSetClass(y);
         end
     end
     

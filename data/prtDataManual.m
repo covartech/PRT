@@ -8,7 +8,6 @@ function DataSet = prtDataManual
 %   on the bottom left of the figure.
 
 hF = figure;
-error('this is all broken');
 X = zeros(0,2);
 Y = zeros(0,1);
 currentLabel = 0;
@@ -19,7 +18,7 @@ set(hA,'buttondownfcn',@prtDataManualAxesButtonDownFcn);
 hB = uicontrol('style','pushbutton','string','Done','callback',@(o,e) close(hF),'units','normalized','Position',[0.05 0.05 0.05 0.05]);
 dataManualTitle;
 
-DataSet = prtDataSet(X,Y,'name','Manualy Defined DataSet');
+DataSet = prtDataSetClass(X,Y,'name','Manualy Defined DataSet');
 
 uiwait(hF);
 

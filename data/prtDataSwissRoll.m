@@ -5,4 +5,4 @@ swiss = load(swissRollFile);
 X = swiss.X_data';
 Y = swiss.Y_data';
 
-DataSet = prtDataSet(X,Y,'dataSetName','Standard Swiss Roll Data');
+DataSet = prtDataSetClass(X,Y,'name','Standard Swiss Roll Data');

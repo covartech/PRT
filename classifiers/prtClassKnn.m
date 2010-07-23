@@ -110,7 +110,7 @@ classdef prtClassKnn < prtClass
             
             [Etc.nVotes,Etc.MapGuessInd] = max(y,[],2);
             Etc.MapGuess = uClasses(Etc.MapGuessInd);
-            ClassifierResults = prtDataSet(y);
+            ClassifierResults = prtDataSetClass(y);
             
         end
         

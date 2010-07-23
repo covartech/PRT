@@ -1,5 +1,5 @@
-classdef prt2DataSetClass  < prt2DataSetInMemory
-    % prt2DataSetClass  < prt2DataSetInMemory
+classdef prtDataSetClass  < prtDataSetInMemory
+    % prtDataSetClass  < prtDataSetInMemory
     %
     % properties (Dependent)
     %       nClasses
@@ -76,6 +76,25 @@ classdef prt2DataSetClass  < prt2DataSetInMemory
     end
     methods
         
+        function obj = prtDataSetClass(varargin)
+            if nargin == 0
+                return;
+            end
+            if isa(varargin{1},'prtDataSetClass')
+                obj = prtDataSetClass;
+                varargin = varargin(2:end);
+            end
+            if isa(varargin{1},'double')
+                obj = obj.setObservations(varargin{1});
+                varargin = varargin(2:end);
+                if nargin == 2 && (isa(varargin{1},'double') || isa(varargin{1},'logical'))
+                    obj = obj.setTargets(varargin{1});
+                end
+                varargin = varargin(2:end);
+            end
+            obj = prtUtilAssignStringValuePairs(obj,varargin{:});
+        end
+        
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %% Set Methods %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -106,7 +125,7 @@ classdef prt2DataSetClass  < prt2DataSetInMemory
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         function tn = getClassNames(obj)
             if isempty(obj.classNames)
-                tn = prt2DataSetClass.generateDefaultClassNames(obj.uniqueClasses);
+                tn = prtDataSetClass.generateDefaultClassNames(obj.uniqueClasses);
             else
                 tn = obj.classNames;
             end
@@ -175,10 +194,10 @@ classdef prt2DataSetClass  < prt2DataSetInMemory
             end
             
             if max(indices1) > obj.nObservations
-                error('prt:prt2DataSetBase:incorrectInput','max(indices1) (%d) must be <= nObservations (%d)',max(indices1),obj.nObservations);
+                error('prt:prtDataSetBase:incorrectInput','max(indices1) (%d) must be <= nObservations (%d)',max(indices1),obj.nObservations);
             end
             if max(indices2) > obj.nClasses
-                error('prt:prt2DataSetBase:incorrectInput','max(indices2) (%d) must be <= nClasses (%d)',max(indices1),obj.nClasses);
+                error('prt:prtDataSetBase:incorrectInput','max(indices2) (%d) must be <= nClasses (%d)',max(indices1),obj.nClasses);
             end
             
             binaryMatTargets = binaryMatTargets(indices1,indices2);
@@ -186,7 +205,7 @@ classdef prt2DataSetClass  < prt2DataSetInMemory
         end
         
         function explore(obj)
-            prt2DataSetBase.makeExploreGui(obj,obj.getFeatureNames);
+            prtDataSetBase.makeExploreGui(obj,obj.getFeatureNames);
         end
         
         function varargout = plotAsTimeSeries(obj,featureIndices)
@@ -212,7 +231,7 @@ classdef prt2DataSetClass  < prt2DataSetInMemory
                 
                 xInd = 1:size(cX,2);
                 linewidth = .1;
-                h = prt2DataSetBase.plotLines(xInd,cX,classColors(i,:),linewidth);
+                h = prtDataSetBase.plotLines(xInd,cX,classColors(i,:),linewidth);
                 handleArray(i) = h(1);
                 if i == 1
                     hold on;
@@ -317,10 +336,10 @@ classdef prt2DataSetClass  < prt2DataSetInMemory
             for i = 1:nClasses
                 %Use "i" here because it's by uniquetargetIND
                 cX = obj.getObservationsByClassInd(i, featureIndices);
-                classEdgeColor = prt2DataSetBase.edgeColorMod(classColors(i,:));
+                classEdgeColor = prtDataSetBase.edgeColorMod(classColors(i,:));
                 
                 linewidth = .1;
-                handleArray(i) = prt2DataSetBase.plotPoints(cX,obj.getFeatureNames(featureIndices),classSymbols(i),classColors(i,:),classEdgeColor,linewidth);
+                handleArray(i) = prtDataSetBase.plotPoints(cX,obj.getFeatureNames(featureIndices),classSymbols(i),classColors(i,:),classEdgeColor,linewidth);
                 if i == 1
                     hold on;
                 end
@@ -369,10 +388,10 @@ classdef prt2DataSetClass  < prt2DataSetInMemory
             for i = 1:nClasses
                 %Use "i" here because it's by uniquetargetIND
                 cX = obj.getObservationsByClassInd(i, featureIndices);
-                %classEdgeColor = prt2DataSetBase.edgeColorMod(classColors(i,:));
+                %classEdgeColor = prtDataSetBase.edgeColorMod(classColors(i,:));
                 
                 linewidth = 1;
-                %handleArray(i) = prt2DataSetBase.plotPoints(cX,obj.getFeatureNames(featureIndices),classSymbols(i),classColors(i,:),classEdgeColor,linewidth);
+                %handleArray(i) = prtDataSetBase.plotPoints(cX,obj.getFeatureNames(featureIndices),classSymbols(i),classColors(i,:),classEdgeColor,linewidth);
                 switch size(cX,2)
                     case 1
                         handleArray(i) = plot(cX, ones(cX,1), classSymbols(i),'color',[0 0 0],'linewidth',linewidth,'markerfaceColor',classColors(i,:));

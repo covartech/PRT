@@ -36,4 +36,4 @@ rvH3 = prtRvMvn([1 0],0.25*eye(2));
 X = cat(1,draw(rvH1,100),draw(rvH2,100),draw(rvH3,100));
 Y = prtUtilY(0,100,100,100);
 
-DataSet = prtDataSet(X,Y,'name','prtDataMary2');
+DataSet = prtDataSetClass(X,Y,'name','prtDataMary2');
