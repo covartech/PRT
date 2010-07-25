@@ -151,6 +151,7 @@ classdef prtClass < prtAction
         function OutputDataSet = maryOutput2binaryOutput(ClassObj,OutputDataSet) %#ok
             % Default method to convert an Mary output to a Binary output %%%%%
             % Can/should be overloaded by classifiers %%%%%%%%%%%%%%%%%%%%%%%%%
+            keyboard
             OutputDataSet = OutputDataSet.setObservations(OutputDataSet.getObservations(:,end));
         end
                         

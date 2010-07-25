@@ -8,6 +8,10 @@ classdef prtKernelRbf < prtKernelBinary
         kernelCenter = nan;
     end
     methods 
+        function obj = prtKernelRbf(varargin)
+            
+            obj = prtUtilAssignStringValuePairs(obj,varargin{:});
+        end
         function obj = initializeBinaryKernel(obj,x)
             obj.kernelCenter = x;
             obj.fnHandle = @(y) prtKernelRbf.rbfEvalKernel(obj.kernelCenter,y,obj.c);
