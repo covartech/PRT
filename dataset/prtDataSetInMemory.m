@@ -164,7 +164,11 @@ classdef prtDataSetInMemory < prtDataSetBase
         function [obj,retainedIndices] = retainObservations(obj,retainedIndices)
             warning('prt:Fixable','Does not handle observation names');
             prtDataSetInMemory.checkIndices(retainedIndices,obj.nObservations);
+            
             obj.data = obj.data(retainedIndices,:);
+            if ~isempty(obj.targets)
+                obj.targets = obj.targets(retainedIndices,:);
+            end
             
             if ~isempty(obj.ObservationDependentUserData)
                 obj.ObservationDependentUserData = obj.ObservationDependentUserData(retainedIndices);
