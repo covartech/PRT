@@ -80,9 +80,9 @@ classdef prtDataSetBase
     % Only prtDataSetBase knows about these, use getObs... and getFeat.. to
     % get and set these, they handle the dirty stuff
     properties (GetAccess = 'protected',SetAccess = 'private')
-        observationNames = java.util.Hashtable;
-        featureNames = java.util.Hashtable;
-        targetNames = java.util.Hashtable;
+        observationNames
+        featureNames
+        targetNames
     end
     
     methods 
@@ -135,6 +135,12 @@ classdef prtDataSetBase
     
     %Methods for get, set, ObservationNames and FeatureNames
     methods 
+        function obj = prtDataSetBase
+            obj.observationNames = java.util.Hashtable;
+            obj.featureNames = java.util.Hashtable;
+            obj.targetNames = java.util.Hashtable;
+        end
+        
         function obsNames = getObservationNames(obj,indices1)
             % getObservationNames - Return DataSet's Observation Names
             %

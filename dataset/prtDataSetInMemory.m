@@ -81,7 +81,7 @@ classdef prtDataSetInMemory < prtDataSetBase
             else
                 indices1 = 1:obj.nObservations;
             end
-            if nargin < 2 || strcmpi(indices2,':')
+            if nargin < 3 || strcmpi(indices2,':')
                 indices2 = 1:obj.nTargetDimensions;
             else
                 prtDataSetInMemory.checkIndices(indices2,obj.nTargetDimensions);
