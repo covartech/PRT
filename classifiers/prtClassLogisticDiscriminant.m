@@ -220,9 +220,9 @@ classdef prtClassLogisticDiscriminant < prtClass
             
             sigmaFn = @(x) 1./(1 + exp(-x));
             
-            x = cat(2,ones(size(DataSet.data,1),1),DataSet.data);
+            x = cat(2,ones(size(DataSet.getX,1),1),DataSet.getX);
             y = sigmaFn((x*Obj.w)')';
-            ClassifierResults = prtDataSetClass(y);
+            ClassifierResults = DataSet.setObservations(y);
         end
     end
     

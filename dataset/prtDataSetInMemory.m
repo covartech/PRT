@@ -72,16 +72,18 @@ classdef prtDataSetInMemory < prtDataSetBase
         end
         
         function targets = getTargets(obj,indices1,indices2)
+            %targets = getTargets(obj,indices1,indices2)
             if isempty(obj.targets)
                 targets = [];
                 return;
             end
-            if nargin > 1
-                prtDataSetInMemory.checkIndices(indices1,obj.nObservations);
-            else
+            if nargin < 2 || prtUtilIsColon(indices1)
                 indices1 = 1:obj.nObservations;
+            elseif nargin > 1
+                prtDataSetInMemory.checkIndices(indices1,obj.nObservations);
             end
-            if nargin < 3 || strcmpi(indices2,':')
+            
+            if nargin < 3 || prtUtilIsColon(indices2)
                 indices2 = 1:obj.nTargetDimensions;
             else
                 prtDataSetInMemory.checkIndices(indices2,obj.nTargetDimensions);
@@ -90,7 +92,8 @@ classdef prtDataSetInMemory < prtDataSetBase
         end
         
         function obj = setTargets(obj,targets,indices1,indices2)
-            warning('prt:Fixable','Need to check sizes');
+            %obj = setTargets(obj,targets,indices1,indices2)
+            %warning('prt:Fixable','Need to check sizes');
             if nargin > 2
                 prtDataSetInMemory.checkIndices(indices1,obj.nObservations);
             else
@@ -115,11 +118,13 @@ classdef prtDataSetInMemory < prtDataSetBase
             nFeatures = size(obj.data,2);
         end
         function nTargetDimensions = get.nTargetDimensions(obj)
+            %nTargetDimensions = get.nTargetDimensions(obj)
             nTargetDimensions = size(obj.targets,2); %use InMem's .data field
         end
         
         %Required by prtDataSetBase:
         function [obj,retainedFeatures] = removeFeatures(obj,indices)
+            %[obj,retainedFeatures] = removeFeatures(obj,indices)
             warning('prt:Fixable','Does not handle feature names');
             prtDataSetInMemory.checkIndices(indices,obj.nFeatures);
             
@@ -132,12 +137,14 @@ classdef prtDataSetInMemory < prtDataSetBase
         end
         
         function [obj,retainedFeatures] = retainFeatures(obj,retainedFeatures)
+            %[obj,retainedFeatures] = retainFeatures(obj,retainedFeatures)
             warning('prt:Fixable','Does not handle feature names');
             prtDataSetInMemory.checkIndices(retainedFeatures,obj.nFeatures);
             obj.data = obj.data(:,retainedFeatures);
         end
         
         function obj = replaceFeatures(obj,data,indices)
+            %obj = replaceFeatures(obj,data,indices)
             warning('prt:Fixable','Does not handle feature names');
             prtDataSetInMemory.checkIndices(indices,obj.nFeatures);
             indices = indices(:);
@@ -149,6 +156,7 @@ classdef prtDataSetInMemory < prtDataSetBase
         end
         
         function [obj,retainedIndices] = removeObservations(obj,indices)
+            %[obj,retainedIndices] = removeObservations(obj,indices)
             warning('prt:Fixable','Does not handle observation names');
             prtDataSetInMemory.checkIndices(indices,obj.nObservations);
             
@@ -162,6 +170,7 @@ classdef prtDataSetInMemory < prtDataSetBase
         end
         
         function [obj,retainedIndices] = retainObservations(obj,retainedIndices)
+            %[obj,retainedIndices] = retainObservations(obj,retainedIndices)
             warning('prt:Fixable','Does not handle observation names');
             prtDataSetInMemory.checkIndices(retainedIndices,obj.nObservations);
             
@@ -176,6 +185,7 @@ classdef prtDataSetInMemory < prtDataSetBase
         end
         
         function obj = replaceObservations(obj,data,indices)
+            %obj = replaceObservations(obj,data,indices1,indices2)
             warning('prt:Fixable','Does not handle observation names');
             prtDataSetInMemory.checkIndices(indices,obj.nObservations);
             if size(indices,1) ~= size(data,1)
@@ -188,6 +198,9 @@ classdef prtDataSetInMemory < prtDataSetBase
         
         %Return the data by indices
         function data = getObservations(obj,indices1,indices2)
+            %data = getObservations(obj)
+            %data = getObservations(obj,indices1,indices2)
+            
             if nargin == 1
                 % No indicies identified. Quick exit
                 data = obj.data;
@@ -208,16 +221,18 @@ classdef prtDataSetInMemory < prtDataSetBase
         
         %Set the observations to a new set
         function obj = setObservations(obj,data,indices1,indices2)
-            warning('prt:Fixable','Need to check that resulting data size is not > target size');
+            %obj = setObservations(obj,data,indices1,indices2)
+            %warning('prt:Fixable','Need to check that resulting data size is not > target size');
             %check sizes:
+            
             if nargin == 2
                 obj.data = data;
                 return;
             end
-            if nargin < 3 || isempty(indices1) || isequal(indices1,':')
+            if nargin < 3 || isempty(indices1) || prtUtilIsColon(indices1)
                 indices1 = 1:obj.nObservations;
             end
-            if nargin < 4 || isempty(indices2) || isequal(indices2,':')
+            if nargin < 4 || isempty(indices2) || prtUtilIsColon(indices2)
                 indices2 = 1:obj.nFeatures;
             end
             if isnumeric(indices1)
@@ -225,23 +240,26 @@ classdef prtDataSetInMemory < prtDataSetBase
             elseif islogical(indices1)
                 nRefs1 = sum(indices1);
             else
-                error('setObservations invalid indices');
+                error('prt:prtDataSetInMemory:setObservations','Invalid indices');
             end
             if isnumeric(indices2)
                 nRefs2 = length(indices2);
             elseif islogical(indices2)
                 nRefs2 = sum(indices2);
             else
-                error('setObservations invalid indices');
+                error('prt:prtDataSetInMemory:setObservations','Invalid indices');
             end
             
             if ~isequal([nRefs1,nRefs2],size(data))
                 error('setObservations sizes not commensurate');
             end
             obj.data(indices1,indices2) = data;
+            
             return;
         end
         
+        
+            
         %Required by prtDataSetBase:
         function obj = setData(obj,data)
             if ~isa(data,'double') || ndims(data) ~= 2
@@ -304,8 +322,9 @@ classdef prtDataSetInMemory < prtDataSetBase
         
     end
     
-    
     methods (Access = 'protected',Static = true);
+        
+        
         function [err,errorID,errorMsg] = checkIndices(indices,maxVal,boolError)
             if islogical(indices)
                 indices = find(indices);
