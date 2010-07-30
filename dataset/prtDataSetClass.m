@@ -161,18 +161,6 @@ classdef prtDataSetClass  < prtDataSetInMemory
             
             d = obj.getObservations(obj.getTargets == obj.uniqueClasses(classInd),featureIndices);
         end
-        %         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %         function prtDataSet = setTargets(obj,targets)
-        %             %prtDataSet = setTargets(obj,targets)
-        %             if iscellstr(targets)
-        %                 [classes,uniqueClasses] = prtUtilStringsToClassNumbers(targets);
-        %             else
-        %                 classes = targets;
-        %                 uniqueClasses = {};
-        %             end
-        %             %prtDataSet = setTargets@prtDataSetInMemoryLabeled(obj,classes);
-        %             prtDataSet.classNames = uniqueClasses;
-        %         end
         
         function binaryMatTargets = getTargetsAsBinaryMatrix(obj,indices1,indices2)
             %binaryMatTargets = getTargetsAsBinaryMatrix(obj)
