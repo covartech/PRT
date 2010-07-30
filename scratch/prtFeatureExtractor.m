@@ -1,0 +1,3 @@
+classdef prtFeatureExtractor < prtAction
+    
+end
