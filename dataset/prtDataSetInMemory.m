@@ -14,9 +14,6 @@ classdef prtDataSetInMemory < prtDataSetBase
     %   getTargets - Return an array of targets (empty if unlabeled)
     %   setTargets - Set the array of targets
     %
-    %   joinFeatures - Combine the features from two or more data sets
-    %   joinObservations - Combine the observations from two or more data sets
-    %
     %   catFeatures - Combine the features from a data set with additional data
     %   catObservations - Combine the Observations from a data set with additional data
     %
@@ -57,125 +54,132 @@ classdef prtDataSetInMemory < prtDataSetBase
             % This should only be called when initializing a sub-class
         end
         
-        function obj = bootstrap(obj,nSamples)
-            sampleIndices = ceil(rand(1,nSamples).*obj.nObservations);
+        
+        %data = getObservations(obj,indices1,indices2)
+        function data = getObservations(obj,indices1,indices2)
+            %data = getObservations(obj)
+            %data = getObservations(obj,indices1,indices2)
             
-            newData = obj.getObservations(sampleIndices,:);
-            
-            if obj.isLabeled
-                newTargets = obj.getTargets(sampleIndices,:);
-                obj.data = newData;
-                obj.targets = newTargets;
-            else
-                obj.data = newData;
+            if nargin == 1
+                % No indicies identified. Quick exit
+                data = obj.data;
+                return
             end
+            
+            if nargin < 2 || strcmpi(indices1,':')
+                indices1 = 1:obj.nObservations;
+            end
+            if nargin < 3 || strcmpi(indices2,':')
+                indices2 = 1:obj.nFeatures;
+            end
+            
+            prtDataSetInMemory.checkIndices(indices1,obj.nObservations);
+            prtDataSetInMemory.checkIndices(indices2,obj.nFeatures);
+            data = obj.data(indices1,indices2);
         end
         
-        function targets = getTargets(obj,indices1,indices2)
-            %targets = getTargets(obj,indices1,indices2)
-            if isempty(obj.targets)
-                targets = [];
-                return;
+        %obj = setObservations(obj,data)
+        function obj = setObservations(obj,data)
+            %obj = setObservations(obj,data)
+                        
+            if obj.isLabeled && obj.nObservations ~= size(data,1)       
+                error('Attempt to change size of observations in a labeled data set; use setObservationsAndTargets to change both simultaneously');
             end
-            if nargin < 2 || prtUtilIsColon(indices1)
-                indices1 = 1:obj.nObservations;
-            elseif nargin > 1
-                prtDataSetInMemory.checkIndices(indices1,obj.nObservations);
+            obj.data = data;            
+        end
+        
+        %targets = getTargets(obj,indices1,indices2)
+        function targets = getTargets(obj,indices1,indices2)
+            %targets = getTargets(obj)
+            %targets = getTargets(obj,indices1,indices2)
+            
+            if nargin == 1
+                % No indicies identified. Quick exit
+                targets = obj.targets;
+                return
             end
             
-            if nargin < 3 || prtUtilIsColon(indices2)
-                indices2 = 1:obj.nTargetDimensions;
-            else
-                prtDataSetInMemory.checkIndices(indices2,obj.nTargetDimensions);
+            if nargin < 2 || strcmpi(indices1,':')
+                indices1 = 1:obj.nObservations;
             end
+            if nargin < 3 || strcmpi(indices2,':')
+                indices2 = 1:obj.nTargetDimensions;
+            end
+            
+            prtDataSetInMemory.checkIndices(indices1,obj.nObservations);
+            prtDataSetInMemory.checkIndices(indices2,obj.nTargetDimensions);
             targets = obj.targets(indices1,indices2);
         end
         
-        function obj = setTargets(obj,targets,indices1,indices2)
-            %obj = setTargets(obj,targets,indices1,indices2)
-            %warning('prt:Fixable','Need to check sizes');
-            if nargin > 2
-                prtDataSetInMemory.checkIndices(indices1,obj.nObservations);
-            else
-                indices1 = 1:obj.nObservations;
+        %obj = setTargets(obj,targets)
+        function obj = setTargets(obj,targets)
+            %obj = setTargets(obj,targets)
+            
+            if ~isempty(targets) && obj.nObservations ~= size(targets,1)       
+                error('Attempt to change size of targets for a labeled data set; use setObservationsAndTargets to change both simultaneously');
             end
-            if nargin > 3
-                prtDataSetInMemory.checkIndices(indices1,obj.nObservations);
-            else
-                indices2 = 1:obj.nTargetDimensions;
-                %Allow setting targets when previous targets is empty
-                if isequal(obj.nTargetDimensions,0)
-                    indices2 = 1:size(targets,2);
+            obj.targets = targets;
+        end
+        
+        %obj = catFeatures(obj, dataArray1, dataArray2,...)
+        %obj = catFeatures(obj, dataSet1, dataSet2,...)
+        function obj = catFeatures(obj, varargin)
+            %obj = catFeatures(obj, dataArray1, dataArray2,...)
+            %obj = catFeatures(obj, dataSet1, dataSet2,...)
+            warning('doesn''t handle feature names');
+            if nargin == 1
+                return;
+            end
+            for argin = 1:length(varargin)
+                currInput = varargin{argin};
+                if isa(currInput,class(obj.data))                    
+                    obj.data = cat(2,obj.data, newData);
+                elseif isa(currInput,prtDataSetInMemory)
+                    obj.data = cat(2,obj.data,currInput.getObservations);
                 end
             end
-            obj.targets(indices1,indices2) = targets;
         end
         
-        function nObservations = get.nObservations(obj)
-            nObservations = size(obj.data,1); %use InMem's .data field
-        end
-        function nFeatures = get.nFeatures(obj)
-            nFeatures = size(obj.data,2);
-        end
-        function nTargetDimensions = get.nTargetDimensions(obj)
-            %nTargetDimensions = get.nTargetDimensions(obj)
-            nTargetDimensions = size(obj.targets,2); %use InMem's .data field
-        end
-        
-        %Required by prtDataSetBase:
-        function [obj,retainedFeatures] = removeFeatures(obj,indices)
-            %[obj,retainedFeatures] = removeFeatures(obj,indices)
-            warning('prt:Fixable','Does not handle feature names');
-            prtDataSetInMemory.checkIndices(indices,obj.nFeatures);
-            
-            if islogical(indices)
-                keepFeatures = ~indices;
-            else
-                keepFeatures = setdiff(1:obj.nFeatures,indices);
+        %obj = catObservations(obj, dataSet1, dataSet1, ...)
+        function obj = catObservations(obj, varargin)
+            %obj = catObservations(obj, dataSet1, dataSet1, ...)
+            if nargin == 1
+                return;
             end
-            [obj,retainedFeatures] = retainFeatures(obj,keepFeatures);
-        end
-        
-        function [obj,retainedFeatures] = retainFeatures(obj,retainedFeatures)
-            %[obj,retainedFeatures] = retainFeatures(obj,retainedFeatures)
-            warning('prt:Fixable','Does not handle feature names');
-            prtDataSetInMemory.checkIndices(retainedFeatures,obj.nFeatures);
-            obj.data = obj.data(:,retainedFeatures);
-        end
-        
-        function obj = replaceFeatures(obj,data,indices)
-            %obj = replaceFeatures(obj,data,indices)
-            warning('prt:Fixable','Does not handle feature names');
-            prtDataSetInMemory.checkIndices(indices,obj.nFeatures);
-            indices = indices(:);
-            if size(indices,1) ~= size(data,2)
-                error('prt:prtDataSetInMemory:invalidIndices','length(indices) (%d) ~= size(data,1) (%d)',length(indices),size(data,1));
-            end
+            warning('doesn''t handle observations names');
             
-            obj.data(:,indices) = data;
+            for argin = 1:length(varargin)
+                currInput = varargin{argin};
+                if currInput.isLabeled ~= obj.isLabeled
+                    error('Attempt to combine labeled and unlabeled data sets in cat Observations');
+                end
+                obj.data = cat(2,obj.data,currInput.getObservations);
+            end
         end
         
-        function [obj,retainedIndices] = removeObservations(obj,indices)
-            %[obj,retainedIndices] = removeObservations(obj,indices)
+        %[obj,retainedIndices] = removeObservations(obj,removeIndices)
+        function [obj,retainedIndices] = removeObservations(obj,removeIndices)
+            %[obj,retainedremoveIndices] = removeObservations(obj,removeIndices)
             warning('prt:Fixable','Does not handle observation names');
-            prtDataSetInMemory.checkIndices(indices,obj.nObservations);
+            prtDataSetInMemory.checkIndices(removeIndices,obj.nObservations);
             
-            if islogical(indices)
-                keepObservations = ~indices;
+            if islogical(removeIndices)
+                keepObservations = ~removeIndices;
             else
-                keepObservations = setdiff(1:obj.nObservations,indices);
+                keepObservations = setdiff(1:obj.nObservations,removeIndices);
             end
             
             [obj,retainedIndices] = retainObservations(obj,keepObservations);
         end
         
+        %[obj,retainedIndices] = retainObservations(obj,retainedIndices)
         function [obj,retainedIndices] = retainObservations(obj,retainedIndices)
             %[obj,retainedIndices] = retainObservations(obj,retainedIndices)
             warning('prt:Fixable','Does not handle observation names');
             prtDataSetInMemory.checkIndices(retainedIndices,obj.nObservations);
             
             obj.data = obj.data(retainedIndices,:);
-            if ~isempty(obj.targets)
+            if obj.isLabeled
                 obj.targets = obj.targets(retainedIndices,:);
             end
             
@@ -196,77 +200,71 @@ classdef prtDataSetInMemory < prtDataSetBase
             obj.data(indices,:) = data;
         end
         
-        %Return the data by indices
-        function data = getObservations(obj,indices1,indices2)
-            %data = getObservations(obj)
-            %data = getObservations(obj,indices1,indices2)
+        %[obj,retainedFeatures] = removeFeatures(obj,removeIndices)
+        function [obj,retainedFeatures] = removeFeatures(obj,removeIndices)
+            %[obj,retainedFeatures] = removeFeatures(obj,removeIndices)
+            warning('prt:Fixable','Does not handle feature names');
+            prtDataSetInMemory.checkIndices(removeIndices,obj.nFeatures);
             
-            if nargin == 1
-                % No indicies identified. Quick exit
-                data = obj.data;
-                return
-            end
-            
-            if nargin < 2 || isempty(indices1) || strcmpi(indices1,':')
-                indices1 = 1:obj.nObservations;
-            end
-            if nargin < 3 || isempty(indices2) || strcmpi(indices2,':')
-                indices2 = 1:obj.nFeatures;
-            end
-            
-            prtDataSetInMemory.checkIndices(indices1,obj.nObservations);
-            prtDataSetInMemory.checkIndices(indices2,obj.nFeatures);
-            data = obj.data(indices1,indices2);
-        end
-        
-        %Set the observations to a new set
-        function obj = setObservations(obj,data,indices1,indices2)
-            %obj = setObservations(obj,data,indices1,indices2)
-            %warning('prt:Fixable','Need to check that resulting data size is not > target size');
-            %check sizes:
-            
-            if nargin == 2
-                obj.data = data;
-                return;
-            end
-            if nargin < 3 || isempty(indices1) || prtUtilIsColon(indices1)
-                indices1 = 1:obj.nObservations;
-            end
-            if nargin < 4 || isempty(indices2) || prtUtilIsColon(indices2)
-                indices2 = 1:obj.nFeatures;
-            end
-            if isnumeric(indices1)
-                nRefs1 = length(indices1);
-            elseif islogical(indices1)
-                nRefs1 = sum(indices1);
+            if islogical(removeIndices)
+                keepFeatures = ~removeIndices;
             else
-                error('prt:prtDataSetInMemory:setObservations','Invalid indices');
+                keepFeatures = setdiff(1:obj.nFeatures,removeIndices);
             end
-            if isnumeric(indices2)
-                nRefs2 = length(indices2);
-            elseif islogical(indices2)
-                nRefs2 = sum(indices2);
+            [obj,retainedFeatures] = retainFeatures(obj,keepFeatures);
+        end
+        
+        %[obj,retainedFeatures] = retainFeatures(obj,retainedFeatures)
+        function [obj,retainedFeatures] = retainFeatures(obj,retainedFeatures)
+            %[obj,retainedFeatures] = retainFeatures(obj,retainedFeatures)
+            warning('prt:Fixable','Does not handle feature names');
+            prtDataSetInMemory.checkIndices(retainedFeatures,obj.nFeatures);
+            obj.data = obj.data(:,retainedFeatures);
+        end
+        
+        %obj = replaceFeatures(obj,data,indices)
+        function obj = replaceFeatures(obj,data,indices)
+            %obj = replaceFeatures(obj,data,indices)
+            warning('prt:Fixable','Does not handle feature names');
+            prtDataSetInMemory.checkIndices(indices,obj.nFeatures);
+            indices = indices(:);
+            if size(indices,1) ~= size(data,2)
+                error('prt:prtDataSetInMemory:invalidIndices','length(indices) (%d) ~= size(data,2) (%d)',length(indices),size(data,1));
+            elseif size(data,1) ~= size(obj.data,1)
+                error('prt:prtDataSetInMemory:invalidData','size(data,1) (%d) ~= size(obj.data,1) (%d)',size(data,1),size(obj.data,1));
+            end
+            
+            obj.data(:,indices) = data;
+        end
+        
+        function obj = bootstrap(obj,nSamples)
+            %obj = bootstrap(obj,nSamples)
+            sampleIndices = ceil(rand(1,nSamples).*obj.nObservations);
+            
+            newData = obj.getObservations(sampleIndices,:);
+            
+            if obj.isLabeled
+                newTargets = obj.getTargets(sampleIndices,:);
+                obj.data = newData;
+                obj.targets = newTargets;
             else
-                error('prt:prtDataSetInMemory:setObservations','Invalid indices');
+                obj.data = newData;
             end
-            
-            if ~isequal([nRefs1,nRefs2],size(data))
-                error('setObservations sizes not commensurate');
-            end
-            obj.data(indices1,indices2) = data;
-            
-            return;
         end
         
-        
-            
-        %Required by prtDataSetBase:
-        function obj = setData(obj,data)
-            if ~isa(data,'double') || ndims(data) ~= 2
-                error('prt:prtDataSetBaseInMemeoryLabeled:invalidData','data must be a 2-Dimensional double array');
-            end
-            obj.data = data;
+        function nObservations = get.nObservations(obj)
+            nObservations = size(obj.data,1); %use InMem's .data field
         end
+        
+        function nFeatures = get.nFeatures(obj)
+            nFeatures = size(obj.data,2);
+        end
+        
+        function nTargetDimensions = get.nTargetDimensions(obj)
+            %nTargetDimensions = get.nTargetDimensions(obj)
+            nTargetDimensions = size(obj.targets,2); %use InMem's .data field
+        end
+        
         
         function obj = set.ObservationDependentUserData(obj,Struct)
             if isempty(Struct)
@@ -280,40 +278,6 @@ classdef prtDataSetInMemory < prtDataSetBase
             assert(numel(Struct)==obj.nObservations,errorMsg);
             
             obj.ObservationDependentUserData = Struct;
-        end
-        
-        %         function obj = set.data(obj, data)
-        %             obj.data = data;
-        %         end
-        %
-        %         function data = get.data(obj)
-        %             data = obj.data;
-        %         end
-        
-        function obj = joinObservations(obj, varargin)
-            warning('prt:Fixable','Does not handle observation names');
-            for iCat = 1:length(varargin)
-                obj = catObservations(obj, varargin{iCat}.getObservations);
-            end
-        end
-        
-        function obj = joinFeatures(obj, varargin)
-            warning('prt:Fixable','Does not handle feature names');
-            for iCat = 1:length(varargin)
-                obj = catFeatures(obj, varargin{iCat}.getObservations);
-            end
-        end
-        
-        function obj = catFeatures(obj, newData)
-            obj.data = cat(2,obj.data, newData);
-        end
-        
-        function obj = catObservations(obj, newData, newTargets)
-            warning('prt:Fixable','Check for labeled, sizes');
-            obj.data = cat(1,obj.data, newData);
-            if nargin > 2
-                obj.targets = cat(1,obj.targets, newTargets);
-            end
         end
         
         function export(obj,varargin) %#ok<MANU>

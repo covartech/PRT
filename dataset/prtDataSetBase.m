@@ -37,11 +37,10 @@ classdef prtDataSetBase
     %   getTargets - Return an array of targets (empty if unlabeled)
     %   setTargets - Set the array of targets
     %
-    %   joinFeatures - Combine the features from two or more data sets
-    %   joinObservations - Combine the observations from two or more data sets
-    %
-    %   catFeatures - Combine the features from a data set with additional data
-    %   catObservations - Combine the Observations from a data set with additional data
+    %   catFeatures - Combine the features from a data set with another
+    %       data set
+    %   catObservations - Combine the Observations from a data set with
+    %       another data set
     %
     %   removeObservations - Remove observations from a data set
     %   retainObservations - Retain observatons (remove all others) from a data set
@@ -435,9 +434,6 @@ classdef prtDataSetBase
         
         targets = getTargets(obj,indices1,indices2)
         obj = setTargets(obj,targets,indices)
-        
-        obj = joinFeatures(obj1,obj2)
-        obj = joinObservations(obj1,obj2)
         
         obj = catFeatures(obj1,newFeatures)
         obj = catObservations(obj1,newObservations)
