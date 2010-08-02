@@ -19,6 +19,7 @@ classdef prtClassTreeBaggingCap < prtClass
         
         % Central axis projection weights
         root = [];
+        
         % Decision threshold
         threshold = [];
     end
@@ -32,8 +33,8 @@ classdef prtClassTreeBaggingCap < prtClass
         nFeatures = 2;
         featureSelectWithReplacement = 1;
         
-        bootStrapDataAtNodes = 0;
-        bootStrapDataAtRoots = 0;
+        bootStrapDataAtNodes = true;
+        bootStrapDataAtRoots = true;
         
         nProcessors = 1;
         
@@ -47,10 +48,7 @@ classdef prtClassTreeBaggingCap < prtClass
         function Obj = prtClassTreeBaggingCap(varargin)
             %Cap = prtClassTreeBaggingCap(varargin)
             %   The Tree bagging CAP constructor allows the user to use
-            % name/property pairs to set public fields of the KNN classifier.
-            %
-            %   For example:
-            %
+            % name/property pairs
             
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
         end

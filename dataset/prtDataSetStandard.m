@@ -57,20 +57,23 @@ classdef prtDataSetStandard < prtDataSetBase
         
         function [data,targets] = getObservationsAndTargets(obj,varargin)
             %[data,targets] = getObservationsAndTargets(obj,indices1)
-            data = obj.getObservations(varargin{:});
-            targets = obj.getObservations(varargin{:});
+            
+            [indices1, indices2, indices3] = prtDataSetBase.parseIndices([obj.nObservations, obj.nFeatures obj.nTargetDimensions],varargin{:});
+            
+            data = obj.getObservations(indices1, indices2);
+            targets = obj.getTargets(indices1, indices3);
         end
         
         function obj = setObservationsAndTargets(obj,data,targets)
             if ~isempty(targets) && size(data,1) ~= size(targets,1)
-                error('incompatible data/targets sizes');
+                error('prtDataSet:invalidDataTargetSet','Incompatible data/targets sizes');
             end
             obj.data = data;
             obj.targets = targets;
         end
         
         %data = getObservations(obj,indices1,indices2)
-        function data = getObservations(obj,indices1,indices2)
+        function data = getObservations(obj,varargin)
             %data = getObservations(obj)
             %data = getObservations(obj,indices1,indices2)
             
@@ -80,30 +83,31 @@ classdef prtDataSetStandard < prtDataSetBase
                 return
             end
             
-            if nargin < 2 || strcmpi(indices1,':')
-                indices1 = 1:obj.nObservations;
-            end
-            if nargin < 3 || strcmpi(indices2,':')
-                indices2 = 1:obj.nFeatures;
-            end
+            [indices1, indices2] = prtDataSetBase.parseIndices([obj.nObservations, obj.nFeatures],varargin{:});
             
-            prtDataSetStandard.checkIndices(indices1,obj.nObservations);
-            prtDataSetStandard.checkIndices(indices2,obj.nFeatures);
             data = obj.data(indices1,indices2);
         end
         
         %obj = setObservations(obj,data)
-        function obj = setObservations(obj,data)
+        function obj = setObservations(obj, data, varargin)
             %obj = setObservations(obj,data)
-                        
-            if obj.isLabeled && obj.nObservations ~= size(data,1)       
-                error('Attempt to change size of observations in a labeled data set; use setObservationsAndTargets to change both simultaneously');
+
+            if nargin < 3
+                % Setting the entire data matrix
+                if obj.isLabeled && obj.nObservations ~= size(data,1)       
+                    error('prtDataSet:invalidDataTargetSet','Attempt to change size of observations in a labeled data set; use setObservationsAndTargets to change both simultaneously');
+                end
+                obj.data = data;            
+            else
+                % Setting only specified entries of the matrix
+                [indices1, indices2] = prtDataSetBase.parseIndices([obj.nObservations, obj.nFeatures],varargin{:});
+                
+                obj.data(indices1,indices2) = data;
             end
-            obj.data = data;            
         end
         
         %targets = getTargets(obj,indices1,indices2)
-        function targets = getTargets(obj,indices1,indices2)
+        function targets = getTargets(obj,varargin)
             %targets = getTargets(obj)
             %targets = getTargets(obj,indices1,indices2)
             
@@ -113,26 +117,33 @@ classdef prtDataSetStandard < prtDataSetBase
                 return
             end
             
-            if nargin < 2 || strcmpi(indices1,':')
-                indices1 = 1:obj.nObservations;
-            end
-            if nargin < 3 || strcmpi(indices2,':')
-                indices2 = 1:obj.nTargetDimensions;
-            end
+            if obj.isLabeled
+                [indices1, indices2] = prtDataSetBase.parseIndices([obj.nObservations, obj.nTargetDimensions],varargin{:});
             
-            prtDataSetStandard.checkIndices(indices1,obj.nObservations);
-            prtDataSetStandard.checkIndices(indices2,obj.nTargetDimensions);
-            targets = obj.targets(indices1,indices2);
+                targets = obj.targets(indices1,indices2);
+            else
+                targets = [];
+            end
         end
         
         %obj = setTargets(obj,targets)
-        function obj = setTargets(obj,targets)
+        function obj = setTargets(obj,targets,varargin)
             %obj = setTargets(obj,targets)
             
-            if ~isempty(targets) && obj.nObservations ~= size(targets,1)       
-                error('Attempt to change size of targets for a labeled data set; use setObservationsAndTargets to change both simultaneously');
+            if nargin < 3
+                % Setting the entire data matrix
+                if ~isempty(targets) && obj.nObservations ~= size(targets,1)       
+                    error('prtDataSet:invalidDataTargetSet','Attempt to change size of targets for a labeled data set; use setObservationsAndTargets to change both simultaneously');
+                end
+                obj.targets = targets;           
+            else
+                % Setting only specified entries of the matrix
+                [indices1, indices2] = prtDataSetBase.parseIndices([obj.nObservations, obj.nTargetDimensions],varargin{:});
+                
+                obj.targets(indices1,indices2) = targets;
             end
-            obj.targets = targets;
+            
+            
         end
         
         %obj = catObservations(obj, dataSet1, dataSet1, ...)
@@ -141,12 +152,12 @@ classdef prtDataSetStandard < prtDataSetBase
             if nargin == 1
                 return;
             end
-            warning('doesn''t handle observations names');
+            warning('prt:Fixable','Doesn''t handle observations names');
             
             for argin = 1:length(varargin)
                 currInput = varargin{argin};
                 if currInput.isLabeled ~= obj.isLabeled
-                    error('Attempt to combine labeled and unlabeled data sets in cat Observations');
+                    error('prtDataSet:invalidConcatenation','Attempt to combine labeled and unlabeled data sets in cat Observations');
                 end
                 obj.data = cat(1,obj.data,currInput.getObservations);
                 obj.targets = cat(1,obj.targets,currInput.getTargets);
@@ -157,13 +168,15 @@ classdef prtDataSetStandard < prtDataSetBase
         function [obj,retainedIndices] = removeObservations(obj,removeIndices)
             %[obj,retainedremoveIndices] = removeObservations(obj,removeIndices)
             warning('prt:Fixable','Does not handle observation names');
-            prtDataSetStandard.checkIndices(removeIndices,obj.nObservations);
+            
+            removeIndices = prtDataSetBase.parseIndices(obj.nObservations ,removeIndices);
             
             if islogical(removeIndices)
                 keepObservations = ~removeIndices;
             else
                 keepObservations = setdiff(1:obj.nObservations,removeIndices);
             end
+            
             
             [obj,retainedIndices] = retainObservations(obj,keepObservations);
         end
@@ -172,7 +185,8 @@ classdef prtDataSetStandard < prtDataSetBase
         function [obj,retainedIndices] = retainObservations(obj,retainedIndices)
             %[obj,retainedIndices] = retainObservations(obj,retainedIndices)
             warning('prt:Fixable','Does not handle observation names');
-            prtDataSetStandard.checkIndices(retainedIndices,obj.nObservations);
+            
+            retainedIndices = prtDataSetBase.parseIndices(obj.nObservations ,retainedIndices);
             
             obj.data = obj.data(retainedIndices,:);
             if obj.isLabeled
@@ -188,7 +202,8 @@ classdef prtDataSetStandard < prtDataSetBase
         function [obj,retainedFeatures] = removeFeatures(obj,removeIndices)
             %[obj,retainedFeatures] = removeFeatures(obj,removeIndices)
             warning('prt:Fixable','Does not handle feature names');
-            prtDataSetStandard.checkIndices(removeIndices,obj.nFeatures);
+            
+            removeIndices = prtDataSetBase.parseIndices(obj.nFeatures ,removeIndices);
             
             if islogical(removeIndices)
                 keepFeatures = ~removeIndices;
@@ -202,18 +217,20 @@ classdef prtDataSetStandard < prtDataSetBase
         function [obj,retainedFeatures] = retainFeatures(obj,retainedFeatures)
             %[obj,retainedFeatures] = retainFeatures(obj,retainedFeatures)
             warning('prt:Fixable','Does not handle feature names');
-            prtDataSetStandard.checkIndices(retainedFeatures,obj.nFeatures);
+            
+            retainedFeatures = prtDataSetBase.parseIndices(obj.nFeatures ,retainedFeatures);
+            
             obj.data = obj.data(:,retainedFeatures);
         end
         
-        function data = getFeatures(obj,indices2)
+        function data = getFeatures(obj,varargin)
             warning('prt:Fixable','Does not handle feature names');
-            data = obj.getObservations(:,indices2);
+            data = obj.getObservations(varargin{:});
         end
         
-        function obj = setFeatures(obj,data,indices2)
+        function obj = setFeatures(obj,data,varargin)
             warning('prt:Fixable','Does not handle feature names');
-            obj = obj.setObservations(data,:,indices2);
+            obj = obj.setObservations(data,varargin{:});
         end
         
         %obj = catFeatures(obj, dataArray1, dataArray2,...)
@@ -221,7 +238,8 @@ classdef prtDataSetStandard < prtDataSetBase
         function obj = catFeatures(obj, varargin)
             %obj = catFeatures(obj, dataArray1, dataArray2,...)
             %obj = catFeatures(obj, dataSet1, dataSet2,...)
-            warning('doesn''t handle feature names');
+            warning('prt:Fixable','Does not handle feature names');
+            
             if nargin == 1
                 return;
             end
@@ -279,52 +297,18 @@ classdef prtDataSetStandard < prtDataSetBase
         end
         
         function export(obj,varargin) %#ok<MANU>
-            error('Not Done Yet');
+            error('prt:Fixable','Not yet implemented');
         end
         
         function obj = catTargets(obj,dataSet)
-            error('does nothing');
+            error('prt:Fixable','Not yet implemented');
         end
-        function obj = removeTargets(obj,indices)
-            error('does nothing');
+        function obj = removeTargets(obj,varargin)
+            error('prt:Fixable','Not yet implemented');
         end
-        function obj = retainTargets(obj,indices)
-            error('does nothing');
+        function obj = retainTargets(obj,varargin)
+            error('prt:Fixable','Not yet implemented');
         end
         
     end
-    
-    methods (Access = 'protected',Static = true);
-        
-        
-        function [err,errorID,errorMsg] = checkIndices(indices,maxVal,boolError)
-            if islogical(indices)
-                indices = find(indices);
-            end
-            if nargin < 3
-                boolError = true;
-            end
-            err = 0;
-            if ~isvector(indices)
-                errorID = 'prt:prtDataSetStandard:invalidIndices';
-                errorMsg = 'Indices must be a vector';
-                err = 3;
-            end
-            if any(indices < 1)
-                errorID = 'prt:prtDataSetStandard:indexOutOfRange';
-                errorMsg = sprintf('Some index elements (%d) are less than 1',min(indices));
-                err = 1;
-            end
-            if any(indices > maxVal)
-                errorID = 'prt:prtDataSetStandard:indexOutOfRange';
-                errorMsg = sprintf('Some index elements out of range (%d > %d)',max(indices),maxVal);
-                err = 2;
-            end
-
-            if err ~= 0 && boolError
-                error(errorID,errorMsg);
-            end
-        end
-    end
-    
 end

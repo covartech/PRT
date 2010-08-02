@@ -265,7 +265,8 @@ classdef prtDataSetBase
         end
         
     end
-
+    
+    
     %Private static functions for generating feature and observation names
     methods (Access = 'private', Static = true)
         function featNames = generateDefaultFeatureNames(indices2)
@@ -284,6 +285,62 @@ classdef prtDataSetBase
         function color = edgeColorMod(classColors)
             color = min(classColors + 0.2,[0.8 0.8 0.8]);
         end
+        
+        function checkIndices(sz,varargin)
+            
+            nDims = numel(sz);
+            if nDims ~= length(varargin)
+                error('prt:prtDataSetStandard:invalidIndices','Specified indicies do not match te referenced dimensionality');
+            end
+                
+            
+            for iDim = 1:nDims
+                cIndices = varargin{iDim};
+                
+                % No matter how you slize it the indices must be a vector
+                if ~isvector(cIndices)
+                    error('prt:prtDataSetStandard:invalidIndices','Indices must be a vector');
+                end
+                
+                if islogical(cIndices)
+                    if numel(cIndices) ~= sz(iDim)
+                        error('prt:prtDataSetStandard:indexOutOfRange','Index size (%d) does not match the size of the reference (%d).',numel(cIndices),sz(iDim));
+                    end
+                else
+                    % Numeric (ie integer) referencing
+                    if any(cIndices < 1)
+                        error('prt:prtDataSetStandard:indexOutOfRange','Some index elements (%d) are less than 1',min(cIndices));
+                    end
+                    
+                    if any(cIndices > sz(iDim))
+                        error('prt:prtDataSetStandard:indexOutOfRange','Some index elements out of range (%d > %d)',max(cIndices),sz(iDim));
+                    end
+                end
+            end
+            
+        end
+        
+        function varargout = parseIndices(sz, varargin)
+            
+            nDims = numel(sz);
+            indicesCell = cell(nDims,1);
+            for iDim = 1:nDims
+                if iDim > length(varargin)
+                    indicesCell{iDim} = true(sz(iDim),1);
+                else
+                    indicesCell{iDim} = varargin{iDim};
+                end
+                
+                if strcmpi(indicesCell{iDim},':')
+                    indicesCell{iDim} = true(sz(iDim),1);
+                end
+            end
+            
+            prtDataSetBase.checkIndices(sz,indicesCell{:});
+            
+            varargout = indicesCell;
+        end
+        
     end
     
     %I don't think we need these anymore - addFeatureNames and
