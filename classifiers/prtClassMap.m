@@ -42,7 +42,7 @@ classdef prtClassMap < prtClass
         end
         % Set function
         function Obj = set.rvs(Obj,val)
-            if(~ isa(val, 'prtRvMvn'))
+            if(~ isa(val, 'prtRv'))
                 error('prtClassMAP:rvs','Rvs parameter must be of class prtRvMvn');
             else
                 Obj.rvs = val;

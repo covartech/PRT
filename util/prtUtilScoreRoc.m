@@ -179,7 +179,7 @@ elseif ~isempty(NROCsamples)
 elseif ~isempty(NPFsamples);
     %NPF code samples PF uniformly by sampling sorted DS_H0 uniformly
     DS_H0_sort = sort(DS_H0);
-    pfvalsIndices = linspace(1,length(DS_H0_sort),NPFsamples);
+    pfvalsIndices = linspace(1,length(DS_H0_sort),NPFsamples-2); % Need min and max
     THRESH = DS_H0_sort(round(pfvalsIndices));
     THRESH = [min(DS);THRESH;max(DS)];
     NROCsamples = length(THRESH);
