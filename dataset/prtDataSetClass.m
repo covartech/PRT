@@ -1,5 +1,5 @@
-classdef prtDataSetClass  < prtDataSetInMemory
-    % prtDataSetClass  < prtDataSetInMemory
+classdef prtDataSetClass  < prtDataSetStandard
+    % prtDataSetClass  < prtDataSetStandard
     %
     % properties (Dependent)
     %       nClasses
@@ -175,10 +175,10 @@ classdef prtDataSetClass  < prtDataSetInMemory
             
             % Else select only some of the matrix
             
-            if nargin < 2 || isempty(indices1) || strcmpi(indices1,':')
+            if nargin < 2 || strcmpi(indices1,':')
                 indices1 = 1:obj.nObservations;
             end
-            if nargin < 3 || isempty(indices2) || strcmpi(indices2,':')
+            if nargin < 3 || strcmpi(indices2,':')
                 indices2 = 1:obj.nClasses;
             end
             

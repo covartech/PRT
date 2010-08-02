@@ -30,6 +30,8 @@ classdef prtDataSetBase
     %   getY - Wrapper for getTargets
     %   setY - Wrapper for setTargets
     %
+    %   setXY - Wrapper for setObservationsAndTargets
+    %
     %  prtDataSetBase Methods: (Abstract)
     %   getObservations - Return an array of observations
     %   setObservations - Set the array of observations
@@ -37,18 +39,24 @@ classdef prtDataSetBase
     %   getTargets - Return an array of targets (empty if unlabeled)
     %   setTargets - Set the array of targets
     %
+    %   setObservationsAndTargets - Set the array of observations and
+    %      targets
+    %
     %   catFeatures - Combine the features from a data set with another
     %       data set
     %   catObservations - Combine the Observations from a data set with
-    %       another data set
+    %       another data set (also combines targets for labeled data sets)
+    %   catTargets - Combine the targets from a data set with another data
+    %      set (note, this operates along the columns of targets)
     %
     %   removeObservations - Remove observations from a data set
     %   retainObservations - Retain observatons (remove all others) from a data set
-    %   replaceObservations - Replace observatons in a data set
     %
     %   removeFeatures - Remove features from a data set
-    %   retainFeatures - Remove features (remove all others) from a data set
-    %   replaceFeatures - Replace features in a data set
+    %   retainFeatures - Retain features (remove all others) from a data set
+    %
+    %   removeTargets - Remove columns of targets from a data set
+    %   retainTargets - Retain columns of targets from a data set
     %
     %   export - 
     %   plot - 
@@ -102,11 +110,18 @@ classdef prtDataSetBase
     
     %Wrappers - getX, setX, getY, setY
     methods 
+        function [observations,targets] = getXY(obj,varargin)
+            observations = obj.getObservations(varargin{:});
+            targets = obj.getTargets(varargin{:});
+        end
         function observations = getX(obj,varargin)
             observations = obj.getObservations(varargin{:});
         end
         function targets = getY(obj,varargin)
             targets = obj.getTargets(varargin{:});
+        end
+        function obj = setXY(obj,varargin)
+            obj = obj.setObservationsAndTargets(varargin{:});
         end
         function obj = setX(obj,varargin)
             obj = obj.setObservations(varargin{:});
@@ -429,30 +444,26 @@ classdef prtDataSetBase
         
         %Return the data by indices
         data = getObservations(obj,indices1,indices2)
-        %Set the observations to a new set
-        obj = setObservations(obj,data,indices1,indices2)
-        
         targets = getTargets(obj,indices1,indices2)
+        [data,targets] = getObservationsAndTargets(obj,indices1,indices2)
+        
+        
+        obj = setObservations(obj,data,indices1,indices2)
         obj = setTargets(obj,targets,indices)
-        
-        obj = catFeatures(obj1,newFeatures)
-        obj = catObservations(obj1,newObservations)
-        
-        handles = plot(obj)
+        obj = setObservationsAndTargets(obj,data,targets)
         
         obj = removeObservations(obj,indices)
+        obj = removeTargets(obj,indices)
+        
         obj = retainObservations(obj,indices)
-        obj = replaceObservations(obj,data,indices)
+        obj = retainTargets(obj,indices)
         
+        obj = catObservations(obj,dataSet)
+        obj = catTargets(obj,dataSet)
+        
+        handles = plot(obj)
         export(obj,prtExportObject)
-        
         Summary = summarize(obj)
-        
-        %Note: for BIG data sets, these have to be implemented "trickily" -
-        %I have an idea
-        obj = removeFeatures(obj,indices)
-        obj = retainFeatures(obj,indices)
-        obj = replaceFeatures(obj,data,indices)
 
     end
 end
