@@ -18,7 +18,7 @@ classdef prtDataSetAlarmSet < prtDataSetClass
         %generated; otherwise we will be forced to re-read entire files to
         %get their file lengths (as required by file reader) for every
         %alarm we use...  I haven't done this yet
-        assocArrayFileKeys  
+        assocArrayFileKeys  %Hash table
         alarmSet
     end
     
