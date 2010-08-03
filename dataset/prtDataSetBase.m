@@ -155,7 +155,7 @@ classdef prtDataSetBase
             obj.targetNames = java.util.Hashtable;
         end
         
-        function obsNames = getObservationNames(obj,indices1)
+        function obsNames = getObservationNames(obj,varargin)
             % getObservationNames - Return DataSet's Observation Names
             %
             %   featNames = getObservationNames(obj) Return a cell array of 
@@ -167,20 +167,43 @@ classdef prtDataSetBase
             %   featNames = getObservationNames(obj,indices) Return the observation
             %   names for only the specified indices.
             
-            if nargin == 1
-                indices1 = (1:obj.nObservations)';
+            indices1 = prtDataSetBase.parseIndices(obj.nObservations,varargin{:});
+            %parse returns logicals
+            if islogical(indices1)
+                indices1 = find(indices1);
             end
             
             obsNames = cell(length(indices1),1);
+            
             for i = 1:length(indices1)
-                obsNames{indices1(i)} = obj.observationNames.get(indices1(i));
-                if isempty(obsNames{indices1(i)})
-                    obsNames{indices1(i)} = prtDataSetBase.generateDefaultObservationNames(indices1(i));
+                obsNames{i} = obj.observationNames.get(indices1(i));
+                if isempty(obsNames{i})
+                    obsNames(i) = prtDataSetBase.generateDefaultObservationNames(indices1(i));
                 end
             end
         end
         
-        function obj = setObservationNames(obj,obsNames,indices1)
+        function targetNames = getTargetNames(obj,varargin)
+            % getTargetNames - Return DataSet's Target Names
+            %
+            
+            indices2 = prtDataSetBase.parseIndices(obj.nTargetDimensions,varargin{:});
+            %parse returns logicals
+            if islogical(indices2)
+                indices2 = find(indices2);
+            end
+            
+            targetNames = cell(length(indices2),1);
+            
+            for i = 1:length(indices2)
+                targetNames{i} = obj.targetNames.get(indices2(i));
+                if isempty(targetNames{i})
+                    targetNames(i) = prtDataSetBase.generateDefaultTargetNames(indices2(i));
+                end
+            end
+        end
+        
+        function obj = setObservationNames(obj,obsNames,varargin)
             % setObservationNames - Set DataSet's Observation Names
             %
             %  obj = setObservationNames(obj,obsNames) Set an object's 
@@ -195,21 +218,19 @@ classdef prtDataSetBase
             if ~iscell(obsNames)
                 obsNames = {obsNames};
             end
-            if nargin == 2
-                if length(obsNames) ~= obj.nObservations
-                    error('setObservationNames with one input requires length(obsNames) == obj.nObservations');
-                end
-                indices1 = (1:obj.nObservations)';
+            
+            indices1 = prtDataSetBase.parseIndices(obj.nObservations,varargin{:});
+            %parse returns logicals; find the indices
+            if islogical(indices1)
+                indices1 = find(indices1);
             end
             
-            %Put the default string names in there; otherwise we might end
-            %up with empty elements in the cell array 
             for i = 1:length(indices1)
                 obj.observationNames.put(indices1(i),obsNames{i});
             end
         end
         
-        function featNames = getFeatureNames(obj,indices2)
+        function featNames = getFeatureNames(obj,varargin)
             % getFeatureNames - Return DataSet's Feature Names
             %
             %   featNames = getFeatureNames(obj) Return a cell array of 
@@ -221,35 +242,52 @@ classdef prtDataSetBase
             %   featNames = getFeatureNames(obj,indices) Return the feature
             %   names for only the specified indices.
             
-            if nargin == 1
-                indices2 = (1:obj.nFeatures)';
+            indices2 = prtDataSetBase.parseIndices(obj.nFeatures,varargin{:});
+            %parse returns logicals
+            if islogical(indices2)
+                indices2 = find(indices2);
             end
+            
             featNames = cell(length(indices2),1);
             for i = 1:length(indices2)
-                featNames{indices2(i)} = obj.featureNames.get(indices2(i));
-                if isempty(featNames{indices2(i)})
-                    featNames(indices2(i)) = prtDataSetBase.generateDefaultFeatureNames(indices2(i));
+                featNames{i} = obj.featureNames.get(indices2(i));
+                if isempty(featNames{i})
+                    featNames(i) = prtDataSetBase.generateDefaultFeatureNames(indices2(i));
                 end
             end
         end
         
-        function obj = setFeatureNames(obj,featNames,indices2)
+        function obj = setFeatureNames(obj,featNames,varargin)
             % setFeatureNames - Set DataSet's Feature Names
-            %
-            if ~isvector(featNames)
-                error('setFeatureNames requires vector featNames');
-            end
-            if nargin == 2
-                if length(featNames) ~= obj.nFeatures
-                    error('setFeatureNames with one input requires length(featNames) == obj.nFeatures');
-                end
-                indices2 = (1:obj.nFeatures)';
+            %     obj = setFeatureNames(obj,featNames,indices2)
+            
+            indices2 = prtDataSetBase.parseIndices(obj.nFeatures,varargin{:});
+            %parse returns logicals
+            if islogical(indices2)
+                indices2 = find(indices2);
             end
             
             %Put the default string names in there; otherwise we might end
             %up with empty elements in the cell array 
             for i = 1:length(indices2)
                 obj.featureNames.put(indices2(i),featNames{i});
+            end
+        end
+        
+        function obj = setTargetNames(obj,targetNames,varargin)
+            % setTargetNames - Set DataSet's Target Names
+            %     obj = setTargetNames(obj,featNames,indices2)
+            
+            indices2 = prtDataSetBase.parseIndices(obj.nTargetDimensions,varargin{:});
+            %parse returns logicals
+            if islogical(indices2)
+                indices2 = find(indices2);
+            end
+            
+            %Put the default string names in there; otherwise we might end
+            %up with empty elements in the cell array
+            for i = 1:length(indices2)
+                obj.targetNames.put(indices2(i),targetNames{i});
             end
         end
     end
@@ -276,6 +314,10 @@ classdef prtDataSetBase
         function obsNames = generateDefaultObservationNames(indices2)
             obsNames = prtUtilCellPrintf('Observation %d',num2cell(indices2));
             obsNames = obsNames(:);
+        end
+        function targNames = generateDefaultTargetNames(indices2)
+            targNames = prtUtilCellPrintf('Target %d',num2cell(indices2));
+            targNames = targNames(:);
         end
     end
     
@@ -321,6 +363,7 @@ classdef prtDataSetBase
         end
         
         function varargout = parseIndices(sz, varargin)
+            %varargout = parseIndices(sz, varargin)
             
             nDims = numel(sz);
             indicesCell = cell(nDims,1);
@@ -347,31 +390,103 @@ classdef prtDataSetBase
     %addObservationNames...  we may need "remove feature names" and "remove
     %Observation Names"
     methods (Access = 'protected')
-        %         function obj = addFeatureNames(obj,newFeatureNames,prevDim)
-        %             if isempty(obj.featureNames) && isempty(newFeatureNames)
-        %                 %don't worry about it
-        %                 return;
-        %             elseif ~isempty(obj.featureNames) && isempty(newFeatureNames)
-        %                 obj.featureNames = cat(1,obj.featureNames,prtDataSetBase.generateDefaultFeatureNames((length(obj.featureNames)+1:obj.nFeatures)'));
-        %             elseif isempty(obj.featureNames) && ~isempty(newFeatureNames)
-        %                 obj.featureNames = cat(1,prtDataSetBase.generateDefaultFeatureNames(1:prevDim),newFeatureNames(:));
-        %             else
-        %                 obj.featureNames = cat(1,obj.featureNames,newFeatureNames);
-        %             end
-        %         end
-        %
-        %         function obj = addObservationNames(obj,newObservationNames,prevDim)
-        %             if isempty(obj.observationNames) && isempty(newObservationNames)
-        %                 %don't worry about it
-        %                 return;
-        %             elseif ~isempty(obj.observationNames) && isempty(newObservationNames)
-        %                 obj.observationNames = cat(1,obj.observationNames,prtDataSetBase.generateDefaultObservationNames((length(obj.observationNames)+1:obj.nObservations)'));
-        %             elseif isempty(obj.observationNames) && ~isempty(newObservationNames)
-        %                 obj.observationNames = cat(1,prtDataSetBase.generateDefaultObservationNames(1:prevDim),newObservationNames(:));
-        %             else
-        %                 obj.observationNames = cat(1,obj.observationNames,newObservationNames);
-        %             end
-        %         end
+        function obj = catObservationNames(obj,newDataSet)
+            
+            for i = 1:newDataSet.nObservations;
+                currObsName = newDataSet.observationNames.get(i);
+                if ~isempty(currObsName)
+                    obj.observationNames.put(i + obj.nObservations,currObsName);
+                end
+            end
+        end
+        
+        function obj = retainObservationNames(obj,varargin)
+            %obj = removeObservationNames(obj,varargin)
+            %   Note: only call this from within retainObservations
+            
+            retainIndices = prtDataSetBase.parseIndices(obj.nObservations,varargin{:});
+            %parse returns logicals
+            if islogical(retainIndices)
+                retainIndices = find(retainIndices);
+            end
+            if isempty(obj.observationNames)
+                return;
+            else
+                %copy the hash with new indices
+                newHash = java.util.Hashtable;
+                for retainInd = 1:length(retainIndices);
+                    if obj.observationNames.containsKey(retainIndices(retainInd));
+                        newHash.put(retainInd,obj.observationNames.get(retainIndices(retainInd)));
+                    end
+                end
+                obj.observationNames = newHash;
+            end
+        end
+        
+        function obj = catFeatureNames(obj,newDataSet)
+            for i = 1:newDataSet.nFeatures;
+                currFeatName = newDataSet.featureNames.get(i);
+                if ~isempty(currFeatName)
+                    obj.featureNames.put(i + obj.nFeatures,currFeatName);
+                end
+            end
+        end
+        
+        function obj = retainFeatureNames(obj,varargin)
+            %obj = retainFeatureNames(obj,varargin)
+            %   Note: only call this from within retainFeatures
+            
+            retainIndices = prtDataSetBase.parseIndices(obj.nFeatures,varargin{:});
+            %parse returns logicals
+            if islogical(retainIndices)
+                retainIndices = find(retainIndices);
+            end
+            if isempty(obj.featureNames)
+                return;
+            else
+                %copy the hash with new indices
+                newHash = java.util.Hashtable;
+                for retainInd = 1:length(retainIndices);
+                    if obj.featureNames.containsKey(retainIndices(retainInd));
+                        newHash.put(retainInd,obj.featureNames.get(retainIndices(retainInd)));
+                    end
+                end
+                obj.featureNames = newHash;
+            end
+        end
+        
+        function obj = catTargetNames(obj,newDataSet)
+            %obj = catTargetNames(obj,newDataSet)
+            for i = 1:newDataSet.nTargetDimensions;
+                currTargetName = newDataSet.targetNames.get(i);
+                if ~isempty(currTargetName)
+                    obj.targetNames.put(i + obj.nTargetDimensions,currTargetName);
+                end
+            end
+        end
+        
+        function obj = retainTargetNames(obj,varargin)
+            %obj = retainTargetNames(obj,varargin)
+            
+            retainIndices = prtDataSetBase.parseIndices(obj.nTargetDimensions,varargin{:});
+            %parse returns logicals
+            if islogical(retainIndices)
+                retainIndices = find(retainIndices);
+            end
+            if isempty(obj.targetNames)
+                return;
+            else
+                %copy the hash with new indices
+                newHash = java.util.Hashtable;
+                for retainInd = 1:length(retainIndices);
+                    if obj.targetNames.containsKey(retainIndices(retainInd));
+                        newHash.put(retainInd,obj.targetNames.get(retainIndices(retainInd)));
+                    end
+                end
+                obj.targetNames = newHash;
+            end
+        end
+        
     end
     
     %Static plotting aid functions - plotPoints, plotLines, makeExploreGui
