@@ -293,16 +293,16 @@ classdef prtDataSetBase
     end
     
     %isEmpty and size
-    methods
-        function bool = isempty(obj)
-            bool = obj.nObservations == 0 || obj.nFeatures == 0;
-        end
-        
-        function s = size(obj)
-            s = [obj.nObservations,obj.nFeatures];
-        end
-        
-    end
+%     methods
+%         function bool = isempty(obj)
+%             bool = obj.nObservations == 0 || obj.nFeatures == 0;
+%         end
+%         
+%         function s = size(obj)
+%             s = [obj.nObservations,obj.nFeatures];
+%         end
+%         
+%     end
     
     
     %Private static functions for generating feature and observation names

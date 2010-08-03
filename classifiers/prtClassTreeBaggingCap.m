@@ -93,7 +93,7 @@ classdef prtClassTreeBaggingCap < prtClass
             
             tree.father = 0;
             if Obj.bootStrapDataAtRoots
-                DataSet = DataSet.bootstrapByClass;
+                DataSet = DataSet.bootstrapByClass();
             end
             tree = recursiveCAPtree(Obj,tree,DataSet,1);
         end

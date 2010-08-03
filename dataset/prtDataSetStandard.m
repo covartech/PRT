@@ -150,6 +150,14 @@ classdef prtDataSetStandard < prtDataSetBase
             %obj = catObservations(obj, dataSet1)
             %obj = catObservations(obj, dataSet1, dataSet2, ...)
             if nargin == 1
+                
+                % Allow for an array of dataSets
+                if length(obj) > 1
+                    %otherObjCell = mat2cell(obj(2:end),ones(length(obj)-1,1),ones(length(obj)-1,1));
+                    otherObjCell = num2cell(obj(2:end));
+                    obj = obj(1).catObservations(otherObjCell{:});
+                end
+                
                 return;
             end
             
@@ -189,7 +197,7 @@ classdef prtDataSetStandard < prtDataSetBase
                 obj.targets = obj.targets(retainedIndices,:);
             end
             
-            if ~isempty(obj.ObservationDependentUserData)
+            if ~isempty(obj.ObservationDependentUserData) 
                 obj.ObservationDependentUserData = obj.ObservationDependentUserData(retainedIndices);
             end
             
@@ -242,14 +250,19 @@ classdef prtDataSetStandard < prtDataSetBase
             end
         end
         
-        function obj = bootstrap(obj,nSamples)
+        function [obj, sampleIndices] = bootstrap(obj,nSamples)
             %obj = bootstrap(obj,nSamples)
+            
+            if nargin < 2 || isempty(nSamples)
+                nSamples = obj.nObservations;
+            end
+            
             sampleIndices = ceil(rand(1,nSamples).*obj.nObservations);
             
-            newData = obj.getObservations(sampleIndices,:);
+            newData = obj.getObservations(sampleIndices);
             
             if obj.isLabeled
-                newTargets = obj.getTargets(sampleIndices,:);
+                newTargets = obj.getTargets(sampleIndices);
                 obj.data = newData;
                 obj.targets = newTargets;
             else

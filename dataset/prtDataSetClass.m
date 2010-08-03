@@ -28,6 +28,7 @@ classdef prtDataSetClass  < prtDataSetStandard
     properties (Dependent)
         nClasses
         uniqueClasses
+        nObservationsByClass
         
         isUnary                % logical, true if nClasses == 1
         isBinary               % logical, true if nClasses == 2
@@ -421,5 +422,54 @@ classdef prtDataSetClass  < prtDataSetStandard
             Summary.isMary = Obj.isMary;
         end
         
+        function Out = bootstrapByClass(Obj,N)
+            %   BOOTSTRAPBYCLASS Generate "bootstrap" samples from dataset
+            %       incorporating N samples from each class in
+            %
+            %   Out = bootstrapByClass(Obj,N) Bootstrap sample N data points
+            %       from each of the unique class labels in Y.  If N is a scalar, N
+            %       samples are drawn from each unique label in Y.  If N is a vector
+            %       of length length(unique(Y)), N(i) samples are drawn from the class
+            %       corresponding to the i'th unique element in Y (as determined by
+            %       unique.m)
+            %
+            %   Out = bootstrapByClass(Obj) Bootstrap sample data from
+            %       dataset extracting the same number of samples from each
+            %       class as there are in the input. 
+            %       If targets = [1 1 1 0 0 0 0 ]'; for example,
+            %       dprtBootstrapByClass(X,Y) will return 3 samples from
+            %       class 1 and 4 samples from class 0.
+            %
+            %     Inputs:
+            %         Obj ~ PRT Data Set Class
+            %         N ~ integer scalar or vector - number of bootstrap samples to
+            %           draw; if integer, draw equally from all classes, if vector,
+            %           draw N(i) from class corresponding to i'th element of unique(Y)
+
+            if nargin < 2 || isempty(N)
+                N = Obj.nObservationsByClass;
+            end
+            
+            nClasses = Obj.nClasses;
+            
+            if isscalar(N);
+                N = N*ones(nClasses,1);
+            end
+            
+            if length(N) ~= nClasses
+                error('Number of samples (N) must be either scalar or a vector of DS.nClasses (%d), N is %s',nClasses,mat2str(size(N)));
+            end
+            
+            OutputsByClass = repmat(prtDataSetClass(),[nClasses,1]);
+            for iClass = 1:nClasses
+                OutputsByClass(iClass) = bootstrap(retainObservations(Obj,Obj.getTargets==Obj.uniqueClasses(iClass)), N(iClass));
+            end
+            
+            Out = catObservations(OutputsByClass);
+            
+        end
+        function classHist = get.nObservationsByClass(Obj)
+            classHist = histc(Obj.getTargets, Obj.uniqueClasses);
+        end
     end
 end
