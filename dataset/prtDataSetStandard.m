@@ -190,9 +190,14 @@ classdef prtDataSetStandard < prtDataSetBase
             
             % Setting only specified entries of the matrix
             [indices1, indices2] = prtDataSetBase.parseIndices([obj.nObservations, obj.nTargetDimensions],varargin{:});
-            %Handle empty targets
+            
+            %Handle empty targets (2-D)
             if isempty(indices2) 
                 indices2 = 1:size(targets,2);
+            end
+            %Handle empty targets (1-D)
+            if isempty(indices1) && ~isempty(targets);
+                indices1 = 1:obj.nObservations;
             end
             
             obj.targets(indices1,indices2) = targets;

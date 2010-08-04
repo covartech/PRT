@@ -29,13 +29,17 @@ classdef prtDataSetFile < prtDataSetBase
                 obj = varargin{1};
                 varargin = varargin(2:end);
             end
+            targets = [];
             if isa(varargin{1},'cell')
                 obj.fileList = varargin{1}(:);
-                varargin = varargin(2:end);                
+                varargin = varargin(2:end);   
+                if nargin >= 2 && (isnumeric(varargin{1}) || islogical(varargin{1}))%targets!
+                    targets = varargin{1};
+                    varargin = varargin(2:end);
+                end
             end
             obj = prtUtilAssignStringValuePairs(obj,varargin{:});
-            
-            obj.internalStandardDataSet = prtDataSetStandard(nan(obj.nObservations,1));
+            obj.internalStandardDataSet = prtDataSetClass(nan(obj.nObservations,1),targets);
         end
         
         function fileList = getFiles(obj,varargin)
@@ -48,8 +52,8 @@ classdef prtDataSetFile < prtDataSetBase
             for i = 1:length(indices1)
                 obj.fileList{indices1(i)} = files{i};
             end
-            obj.internalStandardDataSet = prtDataSetStandard(nan(obj.nObservations,1));
-            
+            obj.internalStandardDataSet = prtDataSetClass(nan(obj.nObservations,1));
+            keyboard
         end
         
         function nObservations = get.nObservations(obj)
@@ -108,8 +112,9 @@ classdef prtDataSetFile < prtDataSetBase
             obj.internalStandardDataSet = obj.internalStandardDataSet.setTargets(targets);
         end
         
-        function [obj,retainedIndices] = removeObservations(obj,removeIndices)
-            prtDataSetStandard.checkIndices(removeIndices,obj.nObservations);
+        function [obj,retainedIndices] = removeObservations(obj,varargin)
+            %
+            removeIndices = prtDataSetBase.parseIndices(obj.nObservations,varargin{:});
             
             if islogical(removeIndices)
                 keepObservations = ~removeIndices;
@@ -123,10 +128,10 @@ classdef prtDataSetFile < prtDataSetBase
             obj.internalStandardDataSet = obj.internalStandardDataSet.removeTargets(obj,indices);
         end
         
-        function [obj,retainedIndices] = retainObservations(obj,retainedIndices)
+        function [obj,retainedIndices] = retainObservations(obj,varargin)
             %[obj,retainedIndices] = retainObservations(obj,retainedIndices)
             warning('prt:Fixable','Does not handle observation names');
-            prtDataSetStandard.checkIndices(retainedIndices,obj.nObservations);
+            retainedIndices = prtDataSetBase.parseIndices(obj.nObservations,varargin{:});
             
             obj.fileList = obj.fileList(retainedIndices);
             if obj.isLabeled
