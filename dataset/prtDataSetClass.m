@@ -24,7 +24,7 @@ classdef prtDataSetClass  < prtDataSetStandard
     %       plot
     %       plotbw
     %
-
+    
     properties (Dependent)
         nClasses
         uniqueClasses
@@ -36,8 +36,8 @@ classdef prtDataSetClass  < prtDataSetStandard
         isZeroOne              % true if isequal(uniqueClasses,[0 1])
     end
     
-    properties 
-        classNames = {};
+    properties (Access = 'private')
+        classNames
     end
     
     methods
@@ -78,6 +78,8 @@ classdef prtDataSetClass  < prtDataSetStandard
     methods
         
         function obj = prtDataSetClass(varargin)
+            
+            obj.classNames = java.util.Hashtable;
             if nargin == 0
                 return;
             end
@@ -98,44 +100,58 @@ classdef prtDataSetClass  < prtDataSetStandard
         end
         
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %% Set Methods %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        function obj = set.classNames(obj, newClassNames)
-            if isempty(newClassNames) || obj.nClasses == 0
-                obj.classNames = newClassNames;
-                return;
-            end
-            if  length(newClassNames) ~= obj.nClasses
-                error('prt:prtDataSetLabeled:ClassNamesInput','obj.nClasses (%d) must match length(newClassNames) (%d)', obj.nClasses, length(newClassNames));
-            end
-            if ~iscellstr(newClassNames)
-                error('prt:prtDataSetLabeled:ClassNamesInput','newClassNames must be a cell array of strings.');
-            end
-            obj.classNames = newClassNames;
-        end
-        
-        function tn = get.classNames(obj)
-            % We choose not to generate the default names here to save
-            % time. Because the GetAccess is protected we generate these in
-            % uniqueClassNames(). This means internally or in sub-classes
-            % you will sometimes get an {} if nothing has been set whereas
-            % uniqueClassNames() will generate the default feature names.
-            tn = obj.classNames;
-        end
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %% Access methods %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        function tn = getClassNames(obj)
-            if isempty(obj.classNames)
-                tn = prtDataSetClass.generateDefaultClassNames(obj.uniqueClasses);
-            else
-                tn = obj.classNames;
+        function tn = getClassNamesByClassInd(obj,varargin)
+            indices1 = prtDataSetBase.parseIndices(obj.nClasses, varargin{:});
+            uniqueClasses = obj.uniqueClasses;
+            
+            tn = cell(length(indices1),1);
+            for i = 1:length(indices1)
+                if obj.classNames.containsKey(uniqueClasses(indices1(i)))
+                    tn{i} = obj.classNames.get(uniqueClasses(indices1(i)));
+                else
+                    tn(i) = prtDataSetClass.generateDefaultClassNames(uniqueClasses(indices1(i)));
+                end
             end
         end
         
-        function obj = setClassNames(obj,names)
-            obj.classNames = names;
+        function obj = setClassNamesByClassInd(obj,names,varargin)
+            indices1 = prtDataSetBase.parseIndices(obj.nClasses, varargin{:});
+            uniqueClasses = obj.uniqueClasses;
+            
+            for i = 1:length(indices1)
+                obj.classNames.put(uniqueClasses(indices1(i)),names{i});
+            end
         end
+        
+        function tn = getClassNames(obj,classes)
+            
+            if nargin < 2
+                classes = obj.uniqueClasses;
+            end
+            uniqueClasses = obj.uniqueClasses;
+            if ~isempty(setdiff(classes,uniqueClasses))
+                error('Input classes array (%s) contains class numbers not in uniqueClasses (%s)',mat2str(classes),mat2str(uniqueClasses));
+            end
+            [~,~,ib] = intersect(classes,uniqueClasses);
+            tn = getClassNamesByClassInd(obj,ib);
+        end
+        
+        function obj = setClassNames(obj,names,classes)
+            
+            if nargin < 3
+                classes = obj.uniqueClasses;
+            end
+            uniqueClasses = obj.uniqueClasses;
+            
+            if ~isempty(setdiff(classes,uniqueClasses))
+                error('classes contains classes not in uniqueClasses');
+            end
+            [~,~,ib] = intersect(classes,uniqueClasses);
+            obj = setClassNamesByClassInd(obj,names,ib);
+        end
+        
         
         function d = getObservationsByClass(obj, class, featureIndices)
             if nargin < 3 || isempty(featureIndices)
@@ -153,6 +169,34 @@ classdef prtDataSetClass  < prtDataSetStandard
             % This can be slow, but we can't make this persistent.
             % We don't know when if labels have changed
             uT = unique(obj.targets);
+        end
+        
+        function obj = catObservations(obj,varargin)
+            for i = 1:length(varargin)
+                disp('catting');
+                if isa(varargin{i},'prtDataSetClass')
+                    obj = catClassNames(obj,varargin{i});
+                end
+            end
+            obj = catObservations@prtDataSetStandard(obj,varargin{:});
+        end
+        
+        function obj = catClassNames(obj,newDataSet)
+            
+            newUniqueClasses = newDataSet.uniqueClasses;
+            for i = 1:length(newUniqueClasses);
+                %if the current data set doesn't have this key, and the
+                %other data set does, well, use the other data set's name
+                %for this class
+                if ~obj.classNames.containsKey(newUniqueClasses(i)) && newDataSet.classNames.containsKey(newUniqueClasses(i));
+                    obj.classNames.put(newUniqueClasses(i),newDataSet.classNames.get(newUniqueClasses(i)));
+                    %If both the data sets have the key, and the strings
+                    %don't match...
+                elseif (obj.classNames.containsKey(newUniqueClasses(i)) && newDataSet.classNames.containsKey(newUniqueClasses(i))) && ...
+                        ~strcmpi(newDataSet.classNames.get(newUniqueClasses(i)),obj.classNames.get(newUniqueClasses(i)))
+                    warning('prt:prtDataSetClass:IncompatibleClassNames','Incompatible class names encountered; retaining original data sets class names');
+                end
+            end
         end
         
         function d = getObservationsByClassInd(obj, classInd, featureIndices)
@@ -175,7 +219,6 @@ classdef prtDataSetClass  < prtDataSetStandard
             end
             
             % Else select only some of the matrix
-            
             if nargin < 2 || strcmpi(indices1,':')
                 indices1 = 1:obj.nObservations;
             end
