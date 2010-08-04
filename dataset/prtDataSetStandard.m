@@ -8,6 +8,9 @@ classdef prtDataSetStandard < prtDataSetBase
     %          people to see the struct...
     %
     % methods:
+    %   getFeatureNames - get the feature names
+    %   setFeatureNames - set the feature names
+    %
     %   getObservations - Return an array of observations
     %   setObservations - Set the array of observations
     %   
@@ -37,6 +40,10 @@ classdef prtDataSetStandard < prtDataSetBase
         nTargetDimensions     % size(targets,2)
     end
     
+    properties (GetAccess = 'protected',SetAccess = 'private')
+        featureNames
+    end
+    
     properties
         ObservationDependentUserData = [];
     end
@@ -52,6 +59,51 @@ classdef prtDataSetStandard < prtDataSetBase
         function obj = prtDataSetStandard(varargin)
             % Nothing to do.
             % This should only be called when initializing a sub-class
+            obj.featureNames = java.util.Hashtable;
+        end
+        
+        function featNames = getFeatureNames(obj,varargin)
+            % getFeatureNames - Return DataSet's Feature Names
+            %
+            %   featNames = getFeatureNames(obj) Return a cell array of 
+            %   an object's feature names; if setFeatureNames has not been 
+            %   called or the 'featureNames' field was not set at construction,
+            %   default behavior is to return sprintf('Feature %d',i) for all
+            %   features.
+            %
+            %   featNames = getFeatureNames(obj,indices) Return the feature
+            %   names for only the specified indices.
+            
+            indices2 = prtDataSetBase.parseIndices(obj.nFeatures,varargin{:});
+            %parse returns logicals
+            if islogical(indices2)
+                indices2 = find(indices2);
+            end
+            
+            featNames = cell(length(indices2),1);
+            for i = 1:length(indices2)
+                featNames{i} = obj.featureNames.get(indices2(i));
+                if isempty(featNames{i})
+                    featNames(i) = prtDataSetBase.generateDefaultFeatureNames(indices2(i));
+                end
+            end
+        end
+        
+        function obj = setFeatureNames(obj,featNames,varargin)
+            % setFeatureNames - Set DataSet's Feature Names
+            %     obj = setFeatureNames(obj,featNames,indices2)
+            
+            indices2 = prtDataSetBase.parseIndices(obj.nFeatures,varargin{:});
+            %parse returns logicals
+            if islogical(indices2)
+                indices2 = find(indices2);
+            end
+            
+            %Put the default string names in there; otherwise we might end
+            %up with empty elements in the cell array 
+            for i = 1:length(indices2)
+                obj.featureNames.put(indices2(i),featNames{i});
+            end
         end
         
         
@@ -301,7 +353,12 @@ classdef prtDataSetStandard < prtDataSetBase
         function export(obj,varargin) %#ok<MANU>
             error('prt:Fixable','Not yet implemented');
         end
-        
+        function plot(obj,varargin)
+            error('prt:Fixable','Not yet');
+        end
+        function summarize(obj,varargin)
+            error('prt:Fixable','Not yet');
+        end
         
         function obj = catTargets(obj, varargin)
             %obj = catTargets(obj, targetArray1, targetArray2,...)

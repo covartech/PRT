@@ -12,7 +12,6 @@ classdef prtDataSetFile < prtDataSetBase
     
     properties (Dependent)
         nObservations         % Abstract, implement as size(data,1)
-        nFeatures             % Abstract, implement as size(data,2)
         nTargetDimensions     % Abstract, implement as size(targets,2)
     end
     
@@ -21,19 +20,45 @@ classdef prtDataSetFile < prtDataSetBase
     end
     
     methods
-        function fileList = getFiles(obj,indices)
-            fileList = obj.fileList(indices);
+        function obj = prtDataSetFile(varargin)
+            
+            if nargin == 0
+                return;
+            end
+            if isa(varargin{1},'prtDataSetFile')
+                obj = varargin{1};
+                varargin = varargin(2:end);
+            end
+            if isa(varargin{1},'cell')
+                obj.fileList = varargin{1}(:);
+                varargin = varargin(2:end);                
+            end
+            obj = prtUtilAssignStringValuePairs(obj,varargin{:});
+            
+            obj.internalStandardDataSet = prtDataSetStandard(nan(obj.nObservations,1));
         end
+        
+        function fileList = getFiles(obj,varargin)
+            indices1 = prtDataSetBase.parseIndices(obj.nObservations,varargin{:});
+            fileList = obj.fileList(indices1);
+        end
+        function obj = setFiles(obj,files,varargin)
+            
+            indices1 = prtDataSetBase.parseIndices(obj.nObservations,varargin{:});
+            for i = 1:length(indices1)
+                obj.fileList{indices1(i)} = files{i};
+            end
+            obj.internalStandardDataSet = prtDataSetStandard(nan(obj.nObservations,1));
+            
+        end
+        
         function nObservations = get.nObservations(obj)
             nObservations = size(obj.fileList,1);
         end
-        function nFeatures = get.nFeatures(obj)
-            nFeatures = nan;
-        end
+        
         function nTargetDimensions = get.nTargetDimensions(obj)
             nTargetDimensions = obj.internalStandardDataSet.nTargetDimensions;
         end
-        
         
         
         function data = getObservations(obj,indices1)

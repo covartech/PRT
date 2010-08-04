@@ -13,7 +13,6 @@ classdef prtDataSetBase
     %
     % prtDataSetBase Properties (Dependent, Abstract)
     %   nObservations - Number of observations in the data set
-    %   nFeatures - Dimensionality of the feature vectors
     %   nTargetDimensions - Dimensionality of the target vectors
     %
     % prtDataSetBase Properties (Dependent)
@@ -22,8 +21,9 @@ classdef prtDataSetBase
     % prtDataSetBase Methods:
     %   getObservationNames - get the observation names
     %   setObservationNames - set the observation names
-    %   getFeatureNames - get the feature names
-    %   setFeatureNames - set the feature names
+    %
+    %   getTargetNames - get the target names
+    %   setTargetNames - set the target names
     %   
     %   getX - Wrapper for getObservations
     %   setX - Wrapper for setObservations
@@ -52,9 +52,6 @@ classdef prtDataSetBase
     %   removeObservations - Remove observations from a data set
     %   retainObservations - Retain observatons (remove all others) from a data set
     %
-    %   removeFeatures - Remove features from a data set
-    %   retainFeatures - Retain features (remove all others) from a data set
-    %
     %   removeTargets - Remove columns of targets from a data set
     %   retainTargets - Retain columns of targets from a data set
     %
@@ -64,7 +61,6 @@ classdef prtDataSetBase
     
     properties (Abstract, Dependent)
         nObservations         % Abstract, implement as size(data,1)
-        nFeatures             % Abstract, implement as size(data,2)
         nTargetDimensions     % Abstract, implement as size(targets,2)
     end
     properties (Dependent)
@@ -88,7 +84,6 @@ classdef prtDataSetBase
     % get and set these, they handle the dirty stuff
     properties (GetAccess = 'protected',SetAccess = 'private')
         observationNames
-        featureNames
         targetNames
     end
     
@@ -151,7 +146,6 @@ classdef prtDataSetBase
     methods 
         function obj = prtDataSetBase
             obj.observationNames = java.util.Hashtable;
-            obj.featureNames = java.util.Hashtable;
             obj.targetNames = java.util.Hashtable;
         end
         
@@ -227,50 +221,6 @@ classdef prtDataSetBase
             
             for i = 1:length(indices1)
                 obj.observationNames.put(indices1(i),obsNames{i});
-            end
-        end
-        
-        function featNames = getFeatureNames(obj,varargin)
-            % getFeatureNames - Return DataSet's Feature Names
-            %
-            %   featNames = getFeatureNames(obj) Return a cell array of 
-            %   an object's feature names; if setFeatureNames has not been 
-            %   called or the 'featureNames' field was not set at construction,
-            %   default behavior is to return sprintf('Feature %d',i) for all
-            %   features.
-            %
-            %   featNames = getFeatureNames(obj,indices) Return the feature
-            %   names for only the specified indices.
-            
-            indices2 = prtDataSetBase.parseIndices(obj.nFeatures,varargin{:});
-            %parse returns logicals
-            if islogical(indices2)
-                indices2 = find(indices2);
-            end
-            
-            featNames = cell(length(indices2),1);
-            for i = 1:length(indices2)
-                featNames{i} = obj.featureNames.get(indices2(i));
-                if isempty(featNames{i})
-                    featNames(i) = prtDataSetBase.generateDefaultFeatureNames(indices2(i));
-                end
-            end
-        end
-        
-        function obj = setFeatureNames(obj,featNames,varargin)
-            % setFeatureNames - Set DataSet's Feature Names
-            %     obj = setFeatureNames(obj,featNames,indices2)
-            
-            indices2 = prtDataSetBase.parseIndices(obj.nFeatures,varargin{:});
-            %parse returns logicals
-            if islogical(indices2)
-                indices2 = find(indices2);
-            end
-            
-            %Put the default string names in there; otherwise we might end
-            %up with empty elements in the cell array 
-            for i = 1:length(indices2)
-                obj.featureNames.put(indices2(i),featNames{i});
             end
         end
         
