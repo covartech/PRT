@@ -156,7 +156,7 @@ classdef prtDataSetStandard < prtDataSetBase
             
             %disp('should this clear all the names?');
             if ~isempty(targets) && size(data,1) ~= size(targets,1)
-                error('prtDataSet:invalidDataTargetSet','Incompatible data/targets sizes');
+                error('prtDataSet:invalidDataTargetSet','Data and non-empty target matrices must have the same number of rows, but data is size %s and targets are size %s',mat2str(size(data)),mat2str(size(targets)));
             end
             obj.data = data;
             obj.targets = targets;
