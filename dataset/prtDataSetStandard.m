@@ -40,7 +40,7 @@ classdef prtDataSetStandard < prtDataSetBase
         nTargetDimensions     % size(targets,2)
     end
     
-    properties (GetAccess = 'protected',SetAccess = 'private')
+    properties (GetAccess = 'protected',SetAccess = 'protected')
         featureNames
     end
     
@@ -54,6 +54,36 @@ classdef prtDataSetStandard < prtDataSetBase
     end
     
     methods
+        
+        function obj = catFeatureNames(obj,newDataSet)
+            for i = 1:newDataSet.nFeatures;
+                currFeatName = newDataSet.featureNames.get(i);
+                if ~isempty(currFeatName)
+                    obj.featureNames.put(i + obj.nFeatures,currFeatName);
+                end
+            end
+        end
+        
+        function obj = retainFeatureNames(obj,varargin)
+            %obj = retainFeatureNames(obj,varargin)
+            %   Note: only call this from within retainFeatures
+            
+            retainIndices = prtDataSetBase.parseIndices(obj.nFeatures,varargin{:});
+            %parse returns logicals
+            if islogical(retainIndices)
+                retainIndices = find(retainIndices);
+            end
+
+            %copy the hash with new indices
+            newHash = java.util.Hashtable;
+            for retainInd = 1:length(retainIndices);
+                if obj.featureNames.containsKey(retainIndices(retainInd));
+                    newHash.put(retainInd,obj.featureNames.get(retainIndices(retainInd)));
+                end
+            end
+            obj.featureNames = newHash;
+        end
+        
         %% Constructor %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         function obj = prtDataSetStandard(varargin)
@@ -209,26 +239,20 @@ classdef prtDataSetStandard < prtDataSetBase
         function obj = catObservations(obj, varargin)
             %obj = catObservations(obj, dataSet1)
             %obj = catObservations(obj, dataSet1, dataSet2, ...)
+           
             if nargin == 1
-                
-                % Allow for an array of dataSets
-                if length(obj) > 1
-                    %otherObjCell = mat2cell(obj(2:end),ones(length(obj)-1,1),ones(length(obj)-1,1));
-                    otherObjCell = num2cell(obj(2:end));
-                    obj = obj(1).catObservations(otherObjCell{:});
-                end
-                
                 return;
             end
-            
+            disp('need to check target/data size agreement');
             for argin = 1:length(varargin)
                 currInput = varargin{argin};
-                if currInput.isLabeled ~= obj.isLabeled
-                    error('prtDataSet:invalidConcatenation','Attempt to combine labeled and unlabeled data sets in cat Observations');
+                if isa(currInput,class(obj.data))
+                    obj.data = cat(1,obj.data, currInput);
+                elseif isa(currInput,class(obj))
+                    obj = obj.catObservationNames(currInput);
+                    obj.data = cat(1,obj.data,currInput.getObservations);
+                    obj.targets = cat(1,obj.targets,currInput.getTargets);
                 end
-                obj = obj.catObservationNames(currInput);
-                obj.data = cat(1,obj.data,currInput.getObservations);
-                obj.targets = cat(1,obj.targets,currInput.getTargets);
             end
         end
         
@@ -302,7 +326,7 @@ classdef prtDataSetStandard < prtDataSetBase
             for argin = 1:length(varargin)
                 currInput = varargin{argin};
                 if isa(currInput,class(obj.data))
-                    obj.data = cat(2,obj.data, newData);
+                    obj.data = cat(2,obj.data, currInput);
                 elseif isa(currInput,class(obj))
                     obj = obj.catFeatureNames(currInput);
                     obj.data = cat(2,obj.data,currInput.getObservations);

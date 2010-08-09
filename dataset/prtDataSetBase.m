@@ -1,4 +1,4 @@
-classdef prtDataSetBase < handle
+classdef prtDataSetBase
     % prtDataSetBase
     %   Base class for all prt DataSets.  
     %
@@ -82,7 +82,7 @@ classdef prtDataSetBase < handle
     
     % Only prtDataSetBase knows about these, use getObs... and getFeat.. to
     % get and set these, they handle the dirty stuff
-    properties (GetAccess = 'protected',SetAccess = 'private')
+    properties (GetAccess = 'protected',SetAccess = 'protected')
         observationNames
         targetNames
     end
@@ -371,35 +371,6 @@ classdef prtDataSetBase < handle
                 end
                 obj.observationNames = newHash;
             end
-        end
-        
-        function obj = catFeatureNames(obj,newDataSet)
-            for i = 1:newDataSet.nFeatures;
-                currFeatName = newDataSet.featureNames.get(i);
-                if ~isempty(currFeatName)
-                    obj.featureNames.put(i + obj.nFeatures,currFeatName);
-                end
-            end
-        end
-        
-        function obj = retainFeatureNames(obj,varargin)
-            %obj = retainFeatureNames(obj,varargin)
-            %   Note: only call this from within retainFeatures
-            
-            retainIndices = prtDataSetBase.parseIndices(obj.nFeatures,varargin{:});
-            %parse returns logicals
-            if islogical(retainIndices)
-                retainIndices = find(retainIndices);
-            end
-
-            %copy the hash with new indices
-            newHash = java.util.Hashtable;
-            for retainInd = 1:length(retainIndices);
-                if obj.featureNames.containsKey(retainIndices(retainInd));
-                    newHash.put(retainInd,obj.featureNames.get(retainIndices(retainInd)));
-                end
-            end
-            obj.featureNames = newHash;
         end
         
         function obj = catTargetNames(obj,newDataSet)
