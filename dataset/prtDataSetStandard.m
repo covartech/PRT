@@ -223,7 +223,7 @@ classdef prtDataSetStandard < prtDataSetBase
             
             % Setting only specified entries of the matrix
             [indices1, indices2] = prtDataSetBase.parseIndices([obj.nObservations, obj.nTargetDimensions],varargin{:});
-            
+                
             %Handle empty targets (2-D)
             if isempty(indices2) 
                 indices2 = 1:size(targets,2);
@@ -233,7 +233,19 @@ classdef prtDataSetStandard < prtDataSetBase
                 indices1 = 1:obj.nObservations;
             end
             
-            obj.targets(indices1,indices2) = targets;
+            if ~isempty(targets)
+                if ~isequal([size(indices1),size(indices2)],targets)
+                    if isempty(obj.targets) && nargin < 3
+                        error('prtDataSetStandard:InvalidTargetSize','Attempt to set targets to matrix of size %s, but indices are of size [%d %d]',mat2str(size(targets)),length(indices1),length(indices2))
+                    else
+                        error('prtDataSetStandard:InvalidTargetSize','Attempt to set targets to matrix of size %s, but data is size %s',mat2str(size(targets)),mat2str(size(obj.data)));
+                    end
+                end
+                
+                obj.targets(indices1,indices2) = targets;
+            else
+                obj.targets = [];
+            end
         end
         
         function obj = catObservations(obj, varargin)
