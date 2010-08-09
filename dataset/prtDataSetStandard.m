@@ -429,7 +429,7 @@ classdef prtDataSetStandard < prtDataSetBase
             
             warning('prt:Fixable','Does not handle feature names');
             retainedTargets = prtDataSetBase.parseIndices(obj.nTargetDimensions ,retainedTargets);
-            obj.data = obj.data(:,retainedTargets);
+            obj.targets = obj.targets(:,retainedTargets);
         end
         
     end
