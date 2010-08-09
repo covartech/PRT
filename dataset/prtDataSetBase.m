@@ -1,4 +1,4 @@
-classdef prtDataSetBase
+classdef prtDataSetBase < handle
     % prtDataSetBase
     %   Base class for all prt DataSets.  
     %
@@ -256,7 +256,7 @@ classdef prtDataSetBase
     
     
     %Private static functions for generating feature and observation names
-    methods (Access = 'private', Static = true)
+    methods (Access = 'protected', Static = true)
         function featNames = generateDefaultFeatureNames(indices2)
             featNames = prtUtilCellPrintf('Feature %d',num2cell(indices2));
             featNames = featNames(:);
@@ -391,18 +391,15 @@ classdef prtDataSetBase
             if islogical(retainIndices)
                 retainIndices = find(retainIndices);
             end
-            if isempty(obj.featureNames)
-                return;
-            else
-                %copy the hash with new indices
-                newHash = java.util.Hashtable;
-                for retainInd = 1:length(retainIndices);
-                    if obj.featureNames.containsKey(retainIndices(retainInd));
-                        newHash.put(retainInd,obj.featureNames.get(retainIndices(retainInd)));
-                    end
+
+            %copy the hash with new indices
+            newHash = java.util.Hashtable;
+            for retainInd = 1:length(retainIndices);
+                if obj.featureNames.containsKey(retainIndices(retainInd));
+                    newHash.put(retainInd,obj.featureNames.get(retainIndices(retainInd)));
                 end
-                obj.featureNames = newHash;
             end
+            obj.featureNames = newHash;
         end
         
         function obj = catTargetNames(obj,newDataSet)

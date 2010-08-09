@@ -94,6 +94,9 @@ classdef prtDataSetStandard < prtDataSetBase
             %     obj = setFeatureNames(obj,featNames,indices2)
             
             indices2 = prtDataSetBase.parseIndices(obj.nFeatures,varargin{:});
+            if length(featNames) > obj.nFeatures
+                error('prtDataSetStandard:setFeatureNames','Attempt to set feature names for more features than exist \n%d feature names provided, but object only has %d features',length(featNames),obj.nFeatures);
+            end
             %parse returns logicals
             if islogical(indices2)
                 indices2 = find(indices2);
@@ -121,7 +124,7 @@ classdef prtDataSetStandard < prtDataSetBase
         function obj = setObservationsAndTargets(obj,data,targets)
             %obj = setObservationsAndTargets(obj,data,targets)
             
-            disp('should this clear all the names?');
+            %disp('should this clear all the names?');
             if ~isempty(targets) && size(data,1) ~= size(targets,1)
                 error('prtDataSet:invalidDataTargetSet','Incompatible data/targets sizes');
             end
