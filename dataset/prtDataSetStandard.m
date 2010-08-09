@@ -349,10 +349,12 @@ classdef prtDataSetStandard < prtDataSetBase
         function [obj, sampleIndices] = bootstrap(obj,nSamples)
             %obj = bootstrap(obj,nSamples)
             
+            if obj.nObservations == 0
+                error('prtDataSetStandard:BootstrapEmpty','Cannot bootstrap empty data set');
+            end
             if nargin < 2 || isempty(nSamples)
                 nSamples = obj.nObservations;
             end
-            
             sampleIndices = ceil(rand(1,nSamples).*obj.nObservations);
             
             newData = obj.getObservations(sampleIndices);
