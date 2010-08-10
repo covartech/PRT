@@ -188,8 +188,9 @@ classdef prtDataSetStandard < prtDataSetBase
             dataIndex = find(strcmpi(varargin(1:2:end),'observations'));
             targetIndex = find(strcmpi(varargin(1:2:end),'targets'));
             stringIndices = 1:2:length(varargin);
+            
             if ~isempty(dataIndex) && ~isempty(targetIndex)
-                obj = prtDataSetStandard(varargin{dataIndex+1},varargin{targetIndex+1});
+                obj = prtDataSetStandard(varargin{stringIndices(dataIndex)+1},varargin{stringIndices(targetIndex)+1});
                 newIndex = setdiff(1:length(varargin),[stringIndices(dataIndex),stringIndices(dataIndex)+1,stringIndices(targetIndex),stringIndices(targetIndex)+1]);
                 varargin = varargin(newIndex);
             elseif ~isempty(dataIndex)
