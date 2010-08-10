@@ -350,7 +350,7 @@ classdef prtDataSetStandard < prtDataSetBase
             %TARGETS = dataSet.getTargets(INDICES) Returns the targets of
             %the dataSet object at the specified INDICES. 
             %
-            %[data,targets] = getObservationsAndTargets(obj,indices1,indices2,targetIndices)
+            %[data,targets] = getTargets(obj,indices1,indices2)
             % XXX THIS MAKES NO SENSE      
             if nargin == 1
                 % No indicies identified. Quick exit
@@ -377,7 +377,7 @@ classdef prtDataSetStandard < prtDataSetBase
             % dataSet = dataSet.setTargets(TARGETS, INDICES), sets the
             % targets to TARGETS at the specified INDICES
             %
-            %obj = setObservations(obj,data,indices1,indices2)
+            %obj = setTargets(obj,targets,indices1,indices2)
             % MAKES NO SENSE XXX
                
             % Setting only specified entries of the matrix
