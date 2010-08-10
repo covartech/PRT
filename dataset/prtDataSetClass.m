@@ -96,6 +96,23 @@ classdef prtDataSetClass  < prtDataSetStandard
                 end
                 varargin = varargin(2:end);
             end
+            
+            %handle public access to observations and targets, via their
+            %pseudonyms.  If these were public, this would be simple... but
+            %they are not public.
+            dataIndex = find(strcmpi(varargin(1:2:end),'observations'));
+            targetIndex = find(strcmpi(varargin(1:2:end),'targets'));
+            stringIndices = 1:2:length(varargin);
+            if ~isempty(dataIndex) && ~isempty(targetIndex)
+                obj = prtDataSetStandard(varargin{dataIndex+1},varargin{targetIndex+1});
+                newIndex = setdiff(1:length(varargin),[stringIndices(dataIndex),stringIndices(dataIndex)+1,stringIndices(targetIndex),stringIndices(targetIndex)+1]);
+                varargin = varargin(newIndex);
+            elseif ~isempty(dataIndex)
+                obj = prtDataSetStandard(varargin{dataIndex+1});
+                newIndex = setdiff(1:length(varargin),[stringIndices(dataIndex),stringIndices(dataIndex)+1]);
+                varargin = varargin(newIndex);
+            end
+            
             obj = prtUtilAssignStringValuePairs(obj,varargin{:});
         end
         
