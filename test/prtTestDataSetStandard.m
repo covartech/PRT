@@ -1,86 +1,225 @@
-%% prtTestDataSetStandard
-clear all;
-close all;
-clear classes;
+function result = prtTestDataSetStandard
+result = true;
 
-nSamples = 100;
-nFeatures = 10;
-nTargetDims = 5;
-x = randn(nSamples,nFeatures);
-y = rand(nSamples,nTargetDims) > .5;
+% Check that we can instantiate a data set
+try
+    dataSet = prtDataSetStandard;
+    result = true;
+catch
+    result = false;
+end
 
-%% Get methods:
-DS = prtDataSetClass(x,y);
+% Check that we can set the observations and targets.
+try
+    dataSet = prtDataSetStandard;
+    dataSet =  dataSet.setObservationsAndTargets([1 2; 3 4; 5 6], [1; 2; 3]);
+    result = true;
+catch
+    result = false;
+end
 
-assert(isequal(DS.getFeatures,x),'getFeatures');
-assert(isequal(DS.getFeatures([3,5]),x(:,[3,5])),'getFeatures');
 
-assert(isequal(DS.getObservations,x),'getObservations');
-assert(isequal(DS.getObservations(:,[3,5]),x(:,[3,5])),'getObservations');
-assert(isequal(DS.getObservations(9:2:12,[3,5]),x(9:2:12,[3,5])),'getObservations');
+try
+    dataSet = prtDataSetStandard;
+    dataSet = dataSet.setX([1 2; 3 4; 5 6]);
+    dataSet = dataSet.setY([1  2 3]');
+    result = true;
+catch
+    result = false;
+end
 
-assert(isequal(DS.getTargets,y),'getTargets');
-assert(isequal(DS.getTargets(:,[3,5]),y(:,[3,5])),'getTargets');
-assert(isequal(DS.getTargets(9:2:12,[3,5]),y(9:2:12,[3,5])),'getTargets');
 
-[xx,yy] = DS.getObservationsAndTargets(1:3:12,1:2:5);
-assert(isequal(xx,x(1:3:12,1:2:5)) && isequal(yy,y(1:3:12,:)),'getObservationsAndTargets');
-[xx,yy] = DS.getObservationsAndTargets(1:3:12,1:2:5,1:3);
-assert(isequal(xx,x(1:3:12,1:2:5)) && isequal(yy,y(1:3:12,1:3)),'getObservationsAndTargets');
+dataSet = prtDataSetStandard('Observations',[1 2; 3 4; 5 6],'Targets', [1;2;3]);
+if ( ~isequal(dataSet.getX() ,[1 2; 3 4; 5 6]) ||( ~isequal(dataSet.getY(),[1;2;3])))
+    result = false;
+end
 
-%% Set observations methods:
 
-xxTemp = randn(10,10);
-xxTempX = x;
-xxTempX(1:2:20,:) = xxTemp;
-DStemp = DS;
-DStemp = DStemp.setObservations(xxTemp,1:2:20);
-assert(isequal(xxTempX,DStemp.getObservations),'getObservations');
-DStemp = DStemp.setObservations(xxTemp,1:2:20,:);
-assert(isequal(xxTempX,DStemp.getObservations),'getObservations');
 
-%% Set targets methods:
 
-yyTemp = rand(10,5) > .5;
-yyTempY = y;
-yyTempY(1:2:20,:) = yyTemp;
-DStemp = DS;
-DStemp = DStemp.setTargets(yyTemp,1:2:20);
-assert(isequal(yyTempY,DStemp.getTargets),'getTargets');
-DStemp = DStemp.setTargets(yyTemp,1:2:20,:);
-assert(isequal(yyTempY,DStemp.getTargets),'getTargets');
+dataSet = prtDataSetStandard;
+dataSet = dataSet.setObservationsAndTargets([1 2; 3 4; 5 6], [1; 2; 3]);
+% Check features and dims
+if (dataSet.nFeatures ~=2) || (dataSet.nObservations ~=3)
+    result = false;
+end
 
-%% Set targets methods:
 
-yyTemp = rand(10,5) > .5;
-yyTempY = y;
-yyTempY(1:2:20,:) = yyTemp;
-DStemp = DS;
-DStemp = DStemp.setTargets(yyTemp,1:2:20);
-assert(isequal(yyTempY,DStemp.getTargets),'getTargets');
-DStemp = DStemp.setTargets(yyTemp,1:2:20,:);
-assert(isequal(yyTempY,DStemp.getTargets),'getTargets');
+dataSet =  dataSet.setFeatureNames({'Sam';'Man'});
+if ( ~isequal(dataSet.getFeatureNames(), {'Sam';'Man'}))
+    result = false;
+end
 
+% XXX
+% dataSet = dataSet.setTargetNames({'Sam';'The';'Man'});
+% if ( ~isequal(dataSet.getTargetNames(),{'Sam';'The';'Man'}))
+%     result = false;
+% end
+
+% 
+dataSet = prtDataSetStandard;
+dataSet = dataSet.setObservationsAndTargets([1 2; 3 4; 5 6], [1; 2; 3]);
+dataSet1 = dataSet.catFeatures([ 7 8 9 ]');
+if ~isequal(dataSet1.getX, [ 1 2 7; 3 4 8; 5 6 9]) 
+    result = false;
+end
+
+dataSet = prtDataSetStandard;
+dataSet = dataSet.setObservationsAndTargets([1 2; 3 4; 5 6], [1; 2; 3]);
+dataSet1 = dataSet.catObservations([7 8]);
+if( ~isequal(dataSet1.getX, [1 2;3 4; 5 6; 7 8 ]))
+    result = false;
+end
+
+dataSet = prtDataSetStandard;
+dataSet = dataSet.setObservationsAndTargets([1 2; 3 4; 5 6], [1; 2; 3]);
+dataSet = dataSet.removeObservations(2);
+if ~isequal(dataSet.getX(), [1 2; 5 6])
+    result = false;
+end
+
+
+dataSet = prtDataSetStandard;
+dataSet = dataSet.setObservationsAndTargets([1 2; 3 4; 5 6], [1; 2; 3]);
+dataSet = dataSet.removeFeatures(2);
+if ~isequal(dataSet.getX(), [1;3;5])
+    result = false;
+end
+
+dataSet = prtDataSetStandard;
+dataSet = dataSet.setObservationsAndTargets([1 2; 3 4; 5 6], [1 2; 2 3; 3 4]);
+dataSet = dataSet.retainTargets(1);
+if ~isequal(dataSet.getY(), [1 2 3]')
+    result = false;
+end
+
+
+dataSet = prtDataSetStandard;
+dataSet = dataSet.setObservationsAndTargets([1 2; 3 4; 5 6], [1; 2; 3]);
+dataSet = dataSet.retainFeatures(1);
+if ~isequal(dataSet.getX(), [ 1 3 5]');
+    result = false;
+end
+
+dataSet = prtDataSetStandard;
+dataSet = dataSet.setObservationsAndTargets([1 2; 3 4; 5 6], [1; 2; 3]);
+data = dataSet.getFeatures(2);
+if  ~isequal(data,[2 4 6]')
+    result = false;
+end
+
+dataSet = prtDataSetStandard;
+dataSet = dataSet.setObservationsAndTargets([1 2; 3 4; 5 6], [1; 2; 3]);
+dataSet = dataSet.setFeatures([7 8 9]', 2);
+if  ~isequal(dataSet.getFeatures(2),[7 8 9]')
+    result = false;
+end
+
+
+dataSet = prtDataSetStandard;
+dataSet = dataSet.setObservationsAndTargets([1 2; 3 4; 5 6], [1; 2; 3]);
+dataSet = dataSet.retainObservations(1);
+if ~isequal(dataSet.getX(), [ 1 2]);
+    result = false;
+end
+
+dataSet = prtDataSetStandard;
+dataSet = dataSet.setObservationsAndTargets([1 2; 3 4; 5 6], [1 2; 2 3; 3 4]);
+dataSet1 = dataSet.retainTargets(1);
+if ~isequal(dataSet1.getY(), [ 1 2 3]');
+    result = false;
+end
+
+% Check setting higher dimension target data
+dataSet = prtDataSetStandard;
+dataSet = dataSet.setX([ 1 2]');
+dataSet = dataSet.setY([1 2; 3 4]);
+if (~isequal(dataSet.getY(), [1 2;3 4]) || ~isequal(dataSet.nTargetDimensions, 2))
+    result = false;
+end
+
+% XXX
+% dataSet = prtDataSetStandard;
+% dataSet = dataSet.setX([ 1 2]');
+% dataSet = dataSet.setY([1 2; 3 4]);
+% % Not sure what the desired behavior here is?
+% %dataSet = dataSet.setY([8; 8], [1 2])
+% 
+
+% Check indexing into X
+dataSet = prtDataSetStandard;
+dataSet = dataSet.setObservationsAndTargets([1 2; 3 4; 5 6], [1; 2; 3]);
+if( dataSet.getX(3,2) ~= 6)
+    result = false;
+end
+dataSet = dataSet.setObservations(8, 3,2);
+if( dataSet.getX(3,2) ~= 8)
+    result = false;
+end
+
+% XXX
+% % cat targets
+% dataSet = prtDataSetStandard;
+% dataSet = dataSet.setObservationsAndTargets([1 2; 3 4; ], [1; 2; ]);
+% dataSet = dataSet.catTargets([3;4]);
+% if ~isequal(dataSet.getTargets, [1 2;3 4]);
+%     result = false;
+% end
+
+% Test boostrap 
+dataSet = prtDataSetStandard;
+dataSet = dataSet.setObservationsAndTargets([1 2; 3 4; 5 6], [1; 2; 3]);
+dataSet = dataSet.bootstrap(2);
+if (dataSet.nObservations ~=2)
+    result = false;
+end
+
+
+% Check user data
+s = struct('Sam',{'Rules', 'Man'}, 'Man', 'Hot damn');
+dataSet = prtDataSetStandard;
+dataSet = dataSet.setObservationsAndTargets([1 2; 3 4; ], [1; 2; ]);
+try
+    dataSet.ObservationDependentUserData = s;
+    if ~isequal(dataSet.ObservationDependentUserData, s)
+        result = false;
+    end
+catch
+    result = false;
+end
+        
+ 
 %%
-obsNames = {'obs1','obs2','obs3','obs4'}';
-DSlocal = DS;
+%% Error checks
 
-DSlocal = DSlocal.setObservationNames(obsNames,1:4);
+error = true;  % We will want all these things to error
 
-assert(isequal(DSlocal.getObservationNames([1 3 4]),obsNames([1 3 4])),'setObservationNames');
-DSlocal = DSlocal.catObservations(DSlocal);
-assert(isequal(DSlocal.getObservationNames([101 103 104]),obsNames([1 3 4])),'setObservationNames');
-DSlocal = DSlocal.removeObservations(100:103);
-assert(isequal(DSlocal.getObservationNames([100]),obsNames([4])),'setObservationNames');
 
-%%
-featNames = {'feat1','feat2','feat3','feat4'}';
-DSlocal = DS;
+try  % Make sure we can't instantiate base class
+    dataSet = prtDataSet;
+    error = false;  % Set it to false if the preceding operation succeeded
+catch
+    % do nothing
+    % We can potentially catch and check the error string here
+    % For now, just be happy it is erroring out.
+end
 
-DSlocal = DSlocal.setFeatureNames(featNames,1:4);
+dataSet = prtDataSetStandard;
+try
+    dataSet = dataSet.setObservationsAndTargets([1 2; 3 4; 5 6], [1; 2; ]);
+    error = false;
+catch
+    
+end
 
-assert(isequal(DSlocal.getFeatureNames([1 3 4]),featNames([1 3 4])),'setFeatureNames');
-DSlocal = DSlocal.catFeatures(DSlocal);
-assert(isequal(DSlocal.getFeatureNames([11 13 14]),featNames([1 3 4])),'setFeatureNames');
-DSlocal = DSlocal.removeFeatures(1:2:20);
-assert(isequal(DSlocal.getFeatureNames(1:3),{'feat2';'feat4';'Feature 3'}),'setFeatureNames');
+dataSet = prtDataSetStandard;
+dataSet = dataSet.setX([1 2; 3 4; 5 6]);
+try
+    dataSet = dataSet.setY([1; 2]);
+    error = false;
+catch
+    
+end
+
+
+result = result & error;% & noerror;
