@@ -1,0 +1,2 @@
+classdef prtDecision < prtAction
+end
