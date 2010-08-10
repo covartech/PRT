@@ -84,7 +84,7 @@ classdef prtDataSetClass  < prtDataSetStandard
                 return;
             end
             if isa(varargin{1},'prtDataSetClass')
-                obj = prtDataSetClass;
+                obj = varargin{1};
                 varargin = varargin(2:end);
             end
             if isa(varargin{1},'double')

@@ -90,6 +90,41 @@ classdef prtDataSetStandard < prtDataSetBase
             % Nothing to do.
             % This should only be called when initializing a sub-class
             obj.featureNames = java.util.Hashtable;
+            
+            if nargin == 0
+                return;
+            end
+            if isa(varargin{1},'prtDataSetStandard')
+                obj = varargin{1};
+                varargin = varargin(2:end);
+            end
+            if isa(varargin{1},'double')
+                obj = obj.setObservations(varargin{1});
+                varargin = varargin(2:end);
+                
+                if nargin >= 2 && (isa(varargin{1},'double') || isa(varargin{1},'logical'))
+                    obj = obj.setTargets(varargin{1});
+                end
+                varargin = varargin(2:end);
+            end
+            
+            %handle public access to observations and targets, via their
+            %pseudonyms.  If these were public, this would be simple... but
+            %they are not public.
+            dataIndex = find(strcmpi(varargin(1:2:end),'observations'));
+            targetIndex = find(strcmpi(varargin(1:2:end),'targets'));
+            stringIndices = 1:2:length(varargin);
+            if ~isempty(dataIndex) && ~isempty(targetIndex)
+                obj = prtDataSetStandard(varargin{dataIndex+1},varargin{targetIndex+1});
+                newIndex = setdiff(1:length(varargin),[stringIndices(dataIndex),stringIndices(dataIndex)+1,stringIndices(targetIndex),stringIndices(targetIndex)+1]);
+                varargin = varargin(newIndex);
+            elseif ~isempty(dataIndex)
+                obj = prtDataSetStandard(varargin{dataIndex+1});
+                newIndex = setdiff(1:length(varargin),[stringIndices(dataIndex),stringIndices(dataIndex)+1]);
+                varargin = varargin(newIndex);
+            end
+            
+            obj = prtUtilAssignStringValuePairs(obj,varargin{:});
         end
         
         function featNames = getFeatureNames(obj,varargin)
@@ -234,7 +269,7 @@ classdef prtDataSetStandard < prtDataSetBase
             end
             
             if ~isempty(targets)
-                if ~isequal([size(indices1),size(indices2)],targets)
+                if ~isequal([length(indices1),length(indices2)],targets)
                     if isempty(obj.targets) && nargin < 3
                         error('prtDataSetStandard:InvalidTargetSize','Attempt to set targets to matrix of size %s, but indices are of size [%d %d]',mat2str(size(targets)),length(indices1),length(indices2))
                     else
