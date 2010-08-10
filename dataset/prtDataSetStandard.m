@@ -392,7 +392,7 @@ classdef prtDataSetStandard < prtDataSetBase
             end
             
             if ~isempty(targets)
-                if ~isequal([length(indices1),length(indices2)],targets)
+                if ~isequal([length(indices1),length(indices2)],size(targets))
                     if isempty(obj.targets) && nargin < 3
                         error('prtDataSetStandard:InvalidTargetSize','Attempt to set targets to matrix of size %s, but indices are of size [%d %d]',mat2str(size(targets)),length(indices1),length(indices2))
                     else
