@@ -156,14 +156,17 @@ classdef prtClassRvm < prtClass
             memChunkSize = 1000; % Should this be moved somewhere?
             n = DataSet.nObservations;
             
-            DataSetOut = prtDataSetClass(zeros(n,1));
+            
+            
+            OutputMat = zeros(n,1);
             for i = 1:memChunkSize:n;
                 cI = i:min(i+memChunkSize,n);
                 cDataSet = prtDataSetClass(DataSet.getObservations(cI,:));
                 gramm = prtKernelGrammMatrix(cDataSet,Obj.sparseKernels);
                 
-                DataSetOut = DataSetOut.setObservations(normcdf(gramm*Obj.sparseBeta), cI);
+                OutputMat(cI) = normcdf(gramm*Obj.sparseBeta);
             end
+            DataSetOut = prtDataSetClass(OutputMat);
         end
     end
     methods (Access=private)
@@ -865,7 +868,7 @@ classdef prtClassRvm < prtClass
                     Obj.LearningResults.exitReason = 'Alpha Not Changing';
                     Obj.LearningResults.exitValue = TOL;
                     if Obj.LearningText
-                        fprintf('Exiting...Precisions no longer changine appreciably.\n');
+                        fprintf('Exiting...Precisions no longer changing appreciably.\n');
                     end
                     break;
                 end

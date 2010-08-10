@@ -33,4 +33,15 @@ function D = prtDistanceCityBlock(varargin)
 % Created: 17-December-2005
 % Last revision: 5-January-2006
 
-D = prtDistanceCustom(varargin{1},varargin{2},@(x1,x2)sum(abs(x1-x2)));
+%D = prtDistanceCustom(varargin{1},varargin{2},@(x1,x2)sum(abs(x1-x2)));
+
+nDims = size(varargin{1},2);
+
+for iDim = 1:nDims
+    cD = prtDistanceLNorm(varargin{1}(:,iDim),varargin{2}(:,iDim),1);
+    if iDim == 1
+        D = cD;
+    else
+        D = D + cD;
+    end
+end 

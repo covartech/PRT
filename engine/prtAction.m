@@ -146,7 +146,9 @@ classdef prtAction
                 if uInd == 1
                     InternalOutputDataSet = prtDataSetClass(nan(DataSet.nObservations,currResults.nFeatures));
                 end
-                InternalOutputDataSet = InternalOutputDataSet.setObservations(currResults.getObservations(), cTestLogical);
+                OutputMat(cTestLogical,:) = currResults.getObservations();
+                
+                %InternalOutputDataSet = InternalOutputDataSet.setObservations(currResults.getObservations(), cTestLogical);
                 
                 %only do this if the output is requested; otherwise this cell of
                 %classifiers can get very large, and slow things down.
@@ -159,6 +161,8 @@ classdef prtAction
                     end
                 end
             end
+            InternalOutputDataSet = InternalOutputDataSet.setObservations(OutputMat);
+            
             OutputDataSet = DataSet;
             OutputDataSet = OutputDataSet.setObservations(InternalOutputDataSet.getObservations);
         end

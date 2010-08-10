@@ -528,8 +528,20 @@ classdef prtDataSetClass  < prtDataSetStandard
             Out = catObservations(OutputsByClass);
             
         end
+        
         function classHist = get.nObservationsByClass(Obj)
             classHist = histc(Obj.getTargets, Obj.uniqueClasses);
         end
+        
+        function classInds = getTargetsClassInd(obj,varargin)
+            %targets = getTargetsClassInd(obj)
+            %targets = getTargetsClassInd(obj,indices1)
+            %targets = getTargetsClassInd(obj,indices1,indices2)
+            
+            targets = getTargets(obj,varargin{:});
+            
+            [~, classInds] = ismember(targets,obj.uniqueClasses);
+        end
+        
     end
 end

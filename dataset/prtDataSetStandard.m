@@ -224,7 +224,7 @@ classdef prtDataSetStandard < prtDataSetBase
             for i = 1:length(indices2)
                 featNames{i} = obj.featureNames.get(indices2(i));
                 if isempty(featNames{i})
-                    featNames(i) = prtDataSetBase.generateDefaultFeatureNames(indices2(i));
+                    featNames(i) = prtDataSetStandard.generateDefaultFeatureNames(indices2(i));
                 end
             end
         end

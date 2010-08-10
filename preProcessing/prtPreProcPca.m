@@ -18,7 +18,7 @@ classdef prtPreProcPca < prtPreProc
     
     methods
         
-        function Obj = prtPreProcZmuv(varargin)
+        function Obj = prtPreProcPca(varargin)
             % Allow for string, value pairs
             % There are no user settable options though.
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
