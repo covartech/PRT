@@ -28,7 +28,6 @@ classdef prtFeatureExtractorTfcmGpr < prtFeatureExtractor
                 while (size(data,3) < 31)
                     data = cat(3,data,data(:,:,end));
                 end
-                disp('not pre-processing');
                 data = obj.preprocFn(data);
                 
                 theImage = squeeze(data(:,Alarm.Info.crossTrack,:));
