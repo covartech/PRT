@@ -46,6 +46,7 @@ classdef prtDataSetFile < prtDataSetBase
             indices1 = prtDataSetBase.parseIndices(obj.nObservations,varargin{:});
             fileList = obj.fileList(indices1);
         end
+        
         function obj = setFiles(obj,files,varargin)
             
             indices1 = prtDataSetBase.parseIndices(obj.nObservations,varargin{:});

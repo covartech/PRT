@@ -22,7 +22,7 @@ end
 try
     dataSet = prtDataSetStandard;
     dataSet = dataSet.setX([1 2; 3 4; 5 6]);
-    dataSet = dataSet.setY([1  2 3]');
+    dataSet = dataSet.setY([1 2 3]');
     result = true;
 catch
     result = false;

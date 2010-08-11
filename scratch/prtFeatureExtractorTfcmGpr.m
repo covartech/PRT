@@ -1,6 +1,5 @@
 classdef prtFeatureExtractorTfcmGpr < prtFeatureExtractor
     
-    
     properties (SetAccess = private)
 
         name = 'Texture feature coding method';
