@@ -233,7 +233,13 @@ classdef prtDataSetBase
             if islogical(indices2)
                 indices2 = find(indices2);
             end
-            
+            if length(targetNames) ~= length(max(indices2))
+                if nargin == 2
+                    error('prt:prtDataSetStandard','Attempt to set target names for different number of targets (%d) than data set has (%d)',length(targetNames),length(max(indices2)));
+                else
+                    error('prt:prtDataSetStandard','Too many indices (%d) provided for number of target names provited (%d)',length(indices2),length(targetNames));
+                end
+            end
             %Put the default string names in there; otherwise we might end
             %up with empty elements in the cell array
             for i = 1:length(indices2)

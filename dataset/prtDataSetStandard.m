@@ -568,7 +568,6 @@ classdef prtDataSetStandard < prtDataSetBase
         function obj = catTargets(obj, varargin)
             %obj = catTargets(obj, targetArray1, targetArray2,...)
             %obj = catTargets(obj, dataSet1, dataSet2,...)
-            warning('prt:Fixable','Does not handle feature names');
             
             if nargin == 1
                 return;
@@ -576,8 +575,8 @@ classdef prtDataSetStandard < prtDataSetBase
             for argin = 1:length(varargin)
                 currInput = varargin{argin};
                 if isa(currInput,class(obj.targets))
-                    obj.targets = cat(2,obj.targets, newData);
-                elseif isa(currInput,prtDataSetStandard)
+                    obj.targets = cat(2,obj.targets, currInput);
+                elseif isa(currInput,'prtDataSetStandard')
                     obj = obj.catTargetNames(currInput);
                     obj.targets = cat(2,obj.targets,currInput.getTargets);
                 end

@@ -5,9 +5,11 @@ classdef prtFeatureExtractorTfcmGpr < prtFeatureExtractor
         name = 'Texture feature coding method';
     	nameAbbreviation = 'TFCM';
     	isSupervised = false;
-    
+    end
+    properties
         threshold = 1;
         distance = [1 1];
+        preprocFn = @(x)x;
     end
     
     methods (Access = protected)
@@ -18,17 +20,18 @@ classdef prtFeatureExtractorTfcmGpr < prtFeatureExtractor
         function prtDataSetOut = runAction(obj,prtDataSet)
             %[Features,y,ASLinked] = nfAraProcessAlarmSet(obj,AS,OS,GprPreProcessOptions)
             
+            textureFeats = nan(prtDataSet.nObservations,12);
             for iAlarm = 1:prtDataSet.nObservations
                 
                 data = prtDataSet.getObservations(iAlarm);
                 Alarm = prtDataSet.getAlarms(iAlarm);
-                while (size(data,3) < 61)
+                while (size(data,3) < 31)
                     data = cat(3,data,data(:,:,end));
                 end
                 disp('not pre-processing');
-                %dataPreProc = GprPreProcessOptions.preProcessingFunction(data);
-                theImage = squeeze(data(:,Alarm.Info.crossTrack,:));
+                data = obj.preprocFn(data);
                 
+                theImage = squeeze(data(:,Alarm.Info.crossTrack,:));
                 textureFeats(iAlarm,:) = obj.extractTfcm(theImage);
                 
                 disp(iAlarm);
