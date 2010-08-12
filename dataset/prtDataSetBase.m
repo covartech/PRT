@@ -1,38 +1,40 @@
 classdef prtDataSetBase
-    % prtDataSetBase
-    %   Base class for all prt DataSets.  
+    % prtDataSetBase    Base class for all prt data sets.
     %
-    % prtDataSetBase Properties: 
-    %   name - Data set descriptive name
-    %   description - Description of the data set
-    %   UserData - Structure for holding additional data
-    %   ActionData - Structure for prtActions to place additional data
-    %   ObservationDependentUserData - Structure array of size nObservations x 1
-    %          to hold data-specific user data.  This array is split along
-    %          with the data in cross-validation
+    % This is an abstract class from which all prt data sets inherit from.
+    % It can not be instantiated. It contains the following properties:
     %
-    % prtDataSetBase Properties (Dependent, Abstract)
-    %   nObservations - Number of observations in the data set
-    %   nTargetDimensions - Dimensionality of the target vectors
+    %   name           - Data set descriptive name
+    %   description    - Description of the data set
+    %   UserData       - Structure for holding additional related to the
+    %                    data set
+    %   ActionData     - Structure for prtActions to place additional data
     %
-    % prtDataSetBase Properties (Dependent)
-    %   isLabeled - returns isempty(obj.getY);
+    %   ObservationDependentUserData - Structure array holding additional
+    %                                  data per related to each observation
     %
-    % prtDataSetBase Methods:
+    %   nObservations     - Number of observations in the data set
+    %   nTargetDimensions - Number of target dimensions
+    %   isLabeled         - Whether or not the data set is labeled
+    %
+    % The prtDataSetBase class has the following methods
+    %
     %   getObservationNames - get the observation names
     %   setObservationNames - set the observation names
     %
-    %   getTargetNames - get the target names
-    %   setTargetNames - set the target names
-    %   
-    %   getX - Wrapper for getObservations
-    %   setX - Wrapper for setObservations
-    %   getY - Wrapper for getTargets
-    %   setY - Wrapper for setTargets
+    %   getTargetNames      - get the target names
+    %   setTargetNames      - set the target names
     %
-    %   setXY - Wrapper for setObservationsAndTargets
+    %   getX - Shortcut for getObservations
+    %   setX - Shortcut for setObservations
+    %   getY - Shortcut for getTargets
+    %   setY - Shortcut for setTargets
     %
-    %  prtDataSetBase Methods: (Abstract)
+    %   setXY - Shortcut for setObservationsAndTargets
+    %
+    % The prtDataSetBase class also specifies the following abstract
+    % functions, which are implemented by all derived classes:
+    %
     %   getObservations - Return an array of observations
     %   setObservations - Set the array of observations
     %
@@ -40,38 +42,37 @@ classdef prtDataSetBase
     %   setTargets - Set the array of targets
     %
     %   setObservationsAndTargets - Set the array of observations and
-    %      targets
-    %
-    %   catFeatures - Combine the features from a data set with another
-    %       data set
-    %   catObservations - Combine the Observations from a data set with
-    %       another data set (also combines targets for labeled data sets)
-    %   catTargets - Combine the targets from a data set with another data
-    %      set (note, this operates along the columns of targets)
-    %
-    %   removeObservations - Remove observations from a data set
-    %   retainObservations - Retain observatons (remove all others) from a data set
+    %                               targets
+    %   catFeatures               - Combine the features from a data set
+    %                               with another data set
+    %   catObservations           - Combine the Observations from a data
+    %                               set with another data set
+    %   catTargets                - Combine the targets from a data set
+    %                               with another data set
+    %   removeObservations        - Remove observations from a data set
+    %   retainObservations        - Retain observatons (remove all others)
+    %                               from a data set
     %
     %   removeTargets - Remove columns of targets from a data set
     %   retainTargets - Retain columns of targets from a data set
     %
-    %   export - 
-    %   plot - 
-    %   summarize - 
+    %   export -
+    %   plot -
+    %   summarize -
     
     properties (Abstract, Dependent)
-        nObservations         % Abstract, implement as size(data,1)
-        nTargetDimensions     % Abstract, implement as size(targets,2)
+        nObservations         % The number of observations
+        nTargetDimensions     % The number of target dimensions
     end
     properties (Dependent)
-        isLabeled
+        isLabeled           % Whether or not the data has target labels
     end
     
     properties  %public, for now
-        name = ''             % char
-        description = ''      % char
-        UserData = struct;         % Additional data
-        ActionData = struct;
+        name = ''             % A string naming the data set
+        description = ''      % A string with a verbose description of the data set
+        UserData = struct;         % Additional data per data set
+        ActionData = struct;      %Will someone please explain to me ActionData XXXX
     end
     
     properties (Dependent, Hidden)
@@ -83,18 +84,18 @@ classdef prtDataSetBase
     % Only prtDataSetBase knows about these, use getObs... and getFeat.. to
     % get and set these, they handle the dirty stuff
     properties (GetAccess = 'protected',SetAccess = 'protected')
-        observationNames
-        targetNames
+        observationNames    % The observations names
+        targetNames         % The target names.
     end
     
-    methods 
+    methods
         function isLabeled = get.isLabeled(obj)
             isLabeled = ~isempty(obj.getY);
         end
     end
     
     %Replace this with an object! prtDataPlottingOptions object?
-    methods 
+    methods
         function colors = get.plottingColors(obj)
             colors = prtPlotUtilClassColors(obj.nClasses);
         end
@@ -104,24 +105,30 @@ classdef prtDataSetBase
     end
     
     %Wrappers - getX, setX, getY, setY
-    methods 
+    methods
         function [observations,targets] = getXY(obj,varargin)
+            % getXY  Shortcut for getObservationsAndTargets
             observations = obj.getObservations(varargin{:});
             targets = obj.getTargets(varargin{:});
         end
         function observations = getX(obj,varargin)
+            % getX Shortcut for GetObservations
             observations = obj.getObservations(varargin{:});
         end
         function targets = getY(obj,varargin)
+            % getY Shortcut for getTargets
             targets = obj.getTargets(varargin{:});
         end
         function obj = setXY(obj,varargin)
+            % setXY Shortcut for setObservationsAndTargets
             obj = obj.setObservationsAndTargets(varargin{:});
         end
         function obj = setX(obj,varargin)
+            % setX Shortcut for setObservations
             obj = obj.setObservations(varargin{:});
         end
         function obj = setY(obj,varargin)
+            % setY Shortcut for setTargets
             obj = obj.setTargets(varargin{:});
         end
     end
@@ -143,7 +150,7 @@ classdef prtDataSetBase
     end
     
     %Methods for get, set, ObservationNames and FeatureNames
-    methods 
+    methods
         function obj = prtDataSetBase
             obj.observationNames = java.util.Hashtable;
             obj.targetNames = java.util.Hashtable;
@@ -152,12 +159,12 @@ classdef prtDataSetBase
         function obsNames = getObservationNames(obj,varargin)
             % getObservationNames - Return DataSet's Observation Names
             %
-            %   featNames = getObservationNames(obj) Return a cell array of 
-            %   an object's observation names; if setObservationNames has not been 
+            %   featNames = getObservationNames(obj) Return a cell array of
+            %   an object's observation names; if setObservationNames has not been
             %   called or the 'observationNames' field was not set at construction,
             %   default behavior is to return sprintf('Observation %d',i) for all
             %   observations.
-            %   
+            %
             %   featNames = getObservationNames(obj,indices) Return the observation
             %   names for only the specified indices.
             
@@ -178,7 +185,7 @@ classdef prtDataSetBase
         end
         
         function targetNames = getTargetNames(obj,varargin)
-            % getTargetNames - Return DataSet's Target Names
+            % getTargetNames  Return the target names of a dataset
             %
             
             indices2 = prtDataSetBase.parseIndices(obj.nTargetDimensions,varargin{:});
@@ -198,16 +205,16 @@ classdef prtDataSetBase
         end
         
         function obj = setObservationNames(obj,obsNames,varargin)
-            % setObservationNames - Set DataSet's Observation Names
+            % setObservationNames  Set the observation names of a data set
             %
-            %  obj = setObservationNames(obj,obsNames) Set an object's 
-            %   observation names.
-            %   
-            %  obj = setObservationNames(obj,obsNames,indices1) Return the observation
-            %   names for only the specified indices.
+            %  dataSet = dataSet.setObservationNames(NAMES) Set an object's
+            %  observation names to NAMES.
+            %
+            %  dataSet = dataSet.setObservationNames(NAMES, INDICES) Set the observation
+            %  names for only the specified INDICES.
             
             if ~isvector(obsNames)
-                error('setObservationNames requires vector obsNames');
+                error('setObservationNames requires vector NAMES');
             end
             if ~iscell(obsNames)
                 obsNames = {obsNames};
@@ -225,9 +232,14 @@ classdef prtDataSetBase
         end
         
         function obj = setTargetNames(obj,targetNames,varargin)
-            % setTargetNames - Set DataSet's Target Names
-            %     obj = setTargetNames(obj,featNames,indices2)
-            
+            % setTargetNames  Set the data set target names
+            %
+            %  dataSet = dataSet.setTargetNames(NAMES) Set an object's
+            %  target names to NAMES.
+            %
+            %  dataSet = dataSet.setTargetNames(NAMES, INDICES) Set the
+            %  target names for only the specified INDICES.
+                        
             indices2 = prtDataSetBase.parseIndices(obj.nTargetDimensions,varargin{:});
             %parse returns logicals
             if islogical(indices2)
@@ -249,16 +261,16 @@ classdef prtDataSetBase
     end
     
     %isEmpty and size
-%     methods
-%         function bool = isempty(obj)
-%             bool = obj.nObservations == 0 || obj.nFeatures == 0;
-%         end
-%         
-%         function s = size(obj)
-%             s = [obj.nObservations,obj.nFeatures];
-%         end
-%         
-%     end
+    %     methods
+    %         function bool = isempty(obj)
+    %             bool = obj.nObservations == 0 || obj.nFeatures == 0;
+    %         end
+    %
+    %         function s = size(obj)
+    %             s = [obj.nObservations,obj.nFeatures];
+    %         end
+    %
+    %     end
     
     
     %Private static functions for generating feature and observation names
@@ -290,7 +302,7 @@ classdef prtDataSetBase
             if nDims ~= length(varargin)
                 error('prt:prtDataSetStandard:invalidIndices','Specified indicies do not match te referenced dimensionality');
             end
-                
+            
             
             for iDim = 1:nDims
                 cIndices = varargin{iDim};
@@ -319,7 +331,6 @@ classdef prtDataSetBase
         end
         
         function varargout = parseIndices(sz, varargin)
-            %varargout = parseIndices(sz, varargin)
             
             nDims = numel(sz);
             indicesCell = cell(nDims,1);
@@ -356,9 +367,9 @@ classdef prtDataSetBase
             end
         end
         
+        %   Note: only call this from within retainObservations
         function obj = retainObservationNames(obj,varargin)
-            %obj = removeObservationNames(obj,varargin)
-            %   Note: only call this from within retainObservations
+            
             
             retainIndices = prtDataSetBase.parseIndices(obj.nObservations,varargin{:});
             %parse returns logicals
@@ -379,8 +390,9 @@ classdef prtDataSetBase
             end
         end
         
+        %obj = catTargetNames(obj,newDataSet)
         function obj = catTargetNames(obj,newDataSet)
-            %obj = catTargetNames(obj,newDataSet)
+            
             for i = 1:newDataSet.nTargetDimensions;
                 currTargetName = newDataSet.targetNames.get(i);
                 if ~isempty(currTargetName)
@@ -388,9 +400,9 @@ classdef prtDataSetBase
                 end
             end
         end
-        
+ 
+        % Only call from retain tartets
         function obj = retainTargetNames(obj,varargin)
-            %obj = retainTargetNames(obj,varargin)
             
             retainIndices = prtDataSetBase.parseIndices(obj.nTargetDimensions,varargin{:});
             %parse returns logicals
@@ -447,9 +459,9 @@ classdef prtDataSetBase
         function h = plotLines(xInd,cY,linecolor,linewidth)
             h = plot(xInd,cY,'color',linecolor,'linewidth',linewidth);
         end
-        
+
+       % Get the window position and pick/set a figure size.
         function makeExploreGui(theObject,theFeatures)
-            % Get the window position and pick/set a figure size.
             ss = get(0,'screensize');
             
             windowSize = [754 600];
@@ -560,6 +572,6 @@ classdef prtDataSetBase
         handles = plot(obj)
         export(obj,prtExportObject)
         Summary = summarize(obj)
-
+        
     end
 end
