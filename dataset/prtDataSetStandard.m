@@ -35,96 +35,25 @@ classdef prtDataSetStandard < prtDataSetBase
 %   prtDataSetStandard.getFeatureNames, 
 %   prtDataSetStandard.setFeatureNames
 
-%% Another option for denoting functions, but no hyperlinks
-%   A prtDataSetStandard object inherits all methods from the
-%   prtDataSetBase class. In addtion, it provides the following methods:
 
-%   getFeatureNames()        - Get the feature names
-%   setFeatureNames(NAMES) - Set the feature names to the values in NAMES.
-%                            NAMES must be a cell array of strings, and 
-%                            must contain the same number of elements as
-%                            the data set has features.
-%
-%   getObservations()        - Return an array of observations
-%   setObservations(OBS)   - Set the observations to the values in OBS. OBS
-%   must be a matrix
-%
-
-%% Old help
-%   getTargets - Return an array of targets (empty if unlabeled)
-%   setTargets - Set the array of targets
-%
-%   catFeatures - Combine the features from a data set with additional data
-%   catObservations - Combine the Observations from a data set with additional data
-%
-%   removeObservations - Remove observations from a data set
-%   retainObservations - Retain observatons (remove all others) from a data set
-%   replaceObservations - Replace observatons in a data set
-%
-%   removeFeatures - Remove features from a data set
-%   retainFeatures - Remove features (remove all others) from a data set
-%   replaceFeatures - Replace features in a data set
-%
-%   bootstrap
-%
-%   export -
-%   plot -
-%   summarize -
-%
-    
-    % OLD HELP
-    % prtDataSetStandard < prtDataSetBase
-    %   Base class for all prt DataSets that can be held in memory
-    %
-    % prtDataSetBase Properties: 
-    %   ObservationDependentUserData - I think the gets and sets for this need to
-    %          be in prtDataSetBase and be abstract; the current interface allows
-    %          people to see the struct...
-    %
-    % methods:
-    %   getFeatureNames - get the feature names
-    %   setFeatureNames - set the feature names
-    %
-    %   getObservations - Return an array of observations
-    %   setObservations - Set the array of observations
-    %   
-    %   getTargets - Return an array of targets (empty if unlabeled)
-    %   setTargets - Set the array of targets
-    %
-    %   catFeatures - Combine the features from a data set with additional data
-    %   catObservations - Combine the Observations from a data set with additional data
-    %
-    %   removeObservations - Remove observations from a data set
-    %   retainObservations - Retain observatons (remove all others) from a data set
-    %   replaceObservations - Replace observatons in a data set
-    %
-    %   removeFeatures - Remove features from a data set
-    %   retainFeatures - Remove features (remove all others) from a data set
-    %   replaceFeatures - Replace features in a data set
-    %
-    %   bootstrap
-    %
-    %   export - 
-    %   plot - 
-    %   summarize - 
     
     properties (Dependent)
-        nObservations         % size(data,1)
-        nFeatures             % size(data,2)
-        nTargetDimensions     % size(targets,2)
+        nObservations         % The number of observations
+        nFeatures             % The number of features
+        nTargetDimensions     % The number of dimensions of the target data
     end
     
     properties (GetAccess = 'protected',SetAccess = 'protected')
-        featureNames
+        featureNames         % The feature names
     end
     
     properties
-        ObservationDependentUserData = [];
+        ObservationDependentUserData = [];  % Additional data per observation
     end
     
     properties (SetAccess='protected',GetAccess ='protected')
-        data = [];
-        targets = [];
+        data = [];          % The observations
+        targets = [];       % The targets
     end
     
     methods
@@ -139,9 +68,7 @@ classdef prtDataSetStandard < prtDataSetBase
         end
         
         function obj = retainFeatureNames(obj,varargin)
-            %obj = retainFeatureNames(obj,varargin)
-            %   Note: only call this from within retainFeatures
-            
+      
             retainIndices = prtDataSetBase.parseIndices(obj.nFeatures,varargin{:});
             %parse returns logicals
             if islogical(retainIndices)
@@ -161,8 +88,7 @@ classdef prtDataSetStandard < prtDataSetBase
         %% Constructor %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         function obj = prtDataSetStandard(varargin)
-            % Nothing to do.
-            % This should only be called when initializing a sub-class
+            
             obj.featureNames = java.util.Hashtable;
             
             if nargin == 0
@@ -203,7 +129,7 @@ classdef prtDataSetStandard < prtDataSetBase
         end
         
         function featNames = getFeatureNames(obj,varargin)
-            % prtDataSetStandard/getFeatureNames  Return a prtDataSetStandard feature names
+            % getFeatureNames  Return the prtDataSetStandard feature names
             %
             %   featNames = dataSet.getFeatureNames() Return a cell array of 
             %   the dataSet object feature names. If setFeatureNames has not been 
@@ -230,7 +156,7 @@ classdef prtDataSetStandard < prtDataSetBase
         end
         
         function obj = setFeatureNames(obj,featNames,varargin)
-            % prtDataSetStandard/setFeatureNames  Set a prtDataSetStandard feature names
+            % setFeatureNames  Set the prtDataSetStandard feature names
             % 
             %   dataSet = dataSet.setFeatureNames(FEATNAMES) sets the
             %   feature names of the dataSet object. FEATNAMES must be a
@@ -259,8 +185,8 @@ classdef prtDataSetStandard < prtDataSetBase
         
         
         function [data,targets] = getObservationsAndTargets(obj,varargin)
-            % prtDataSetStandard/getObservationsAndTargets  Get the
-            % observations and targets of a prtDataSetStandard object.
+            % getObservationsAndTargets  Get the observations and targets
+            % of a prtDataSetStandard object.
             %
             %[DATA,TARGETS] = dataSet.getObservationsAndTargets() Returns
             %the observations and targets of the dataSet object.
@@ -268,9 +194,9 @@ classdef prtDataSetStandard < prtDataSetBase
             %[DATA,TARGETS] = dataSet.getObservationsAndTargets(INDICES) Returns
             %the observations and targets of the dataSet object at the
             %specified INDICES. 
-            %
+            
             %[data,targets] = getObservationsAndTargets(obj,indices1,indices2,targetIndices)
-            % XXX THIS MAKES NO SENSE 
+            % XXX Not doc'ing for the time being
             [indices1, indices2, indices3] = prtDataSetBase.parseIndices([obj.nObservations, obj.nFeatures obj.nTargetDimensions],varargin{:});
             
             data = obj.getObservations(indices1, indices2);
@@ -278,8 +204,8 @@ classdef prtDataSetStandard < prtDataSetBase
         end
         
         function obj = setObservationsAndTargets(obj,data,targets)
-            % prtDataSetStandard/SetObservationsAndTargets  Set the
-            % observations and targets of a prtDataSetStandard object.
+            % setObservationsAndTargets  Set the observations and targets
+            % of a prtDataSetStandard object.
             %
             % dataSet = dataSet.setObservationsAndTargets(DATA, TARGETS)
             % sets the observations and targets to the DATA and TARGETS.
@@ -295,13 +221,13 @@ classdef prtDataSetStandard < prtDataSetBase
         end
         
         function data = getObservations(obj,varargin)        
-            % prtDataSetStandard/getObservations  Get the
-            % observations of a prtDataSetStandard object.
+            % getObservations  Get the observations of a prtDataSetStandard
+            % object.
             %
-            %[DATA] = dataSet.getObservationsAndTargets() Returns
+            %DATA = dataSet.getObservations() Returns
             %the observations of the dataSet object.
             %
-            %[DATA,TARGETS] = dataSet.getObservationsAndTargets(INDICES) Returns
+            %DATA = dataSet.getObservations(INDICES) Returns
             %the observations of the dataSet object at the specified INDICES. 
             
             if nargin == 1
@@ -315,17 +241,17 @@ classdef prtDataSetStandard < prtDataSetBase
         end
         
         function obj = setObservations(obj, data, varargin)
-            % prtDataSetStandard/SetObservations  Set the observations
-            % prtDataSetStandard object.
+            % SetObservations  Set the observations prtDataSetStandard
+            % object.
             %
             % dataSet = dataSet.setObservations(DATA) sets the observations
             % to DATA.
             %
             % dataSet = dataSet.setObservations(DATA, INDICES), sets the
             % observations to DATA at the specified INDICES
-            %
+            
             %obj = setObservations(obj,data,indices1,indices2)
-            % MAKES NO SENSE XXX
+            % XXX Leaving un-doc'd for now
             
             if nargin < 3
                 % Setting the entire data matrix
@@ -342,16 +268,16 @@ classdef prtDataSetStandard < prtDataSetBase
         end
         
         function targets = getTargets(obj,varargin)
-            % prtDataSetStandard/getTargets  Get the targets of a prtDataSetStandard object.
+            % getTargets  Get the targets of a prtDataSetStandard object.
             %
             %TARGETS = dataSet.getTargets() Returns the targets of the
             %dataSet object.
             %
             %TARGETS = dataSet.getTargets(INDICES) Returns the targets of
             %the dataSet object at the specified INDICES. 
-            %
+            
             %[data,targets] = getTargets(obj,indices1,indices2)
-            % XXX THIS MAKES NO SENSE      
+            % XXX Leaving un-doc'd for now   
             if nargin == 1
                 % No indicies identified. Quick exit
                 targets = obj.targets;
@@ -368,17 +294,16 @@ classdef prtDataSetStandard < prtDataSetBase
         end
         
         function obj = setTargets(obj,targets,varargin)
-            % prtDataSetStandard/SetTargets  Set the Targets
-            % prtDataSetStandard object.
+            % setTargets  Set the Targets prtDataSetStandard object.
             %
             % dataSet = dataSet.setTargets(TARGETS) sets the targets
             % to DATA.
             %
             % dataSet = dataSet.setTargets(TARGETS, INDICES), sets the
             % targets to TARGETS at the specified INDICES
-            %
+            
             %obj = setTargets(obj,targets,indices1,indices2)
-            % MAKES NO SENSE XXX
+            % XXX leaving un-doc'd for now
                
             % Setting only specified entries of the matrix
             [indices1, indices2] = prtDataSetBase.parseIndices([obj.nObservations, obj.nTargetDimensions],varargin{:});
@@ -408,9 +333,14 @@ classdef prtDataSetStandard < prtDataSetBase
         end
         
         function obj = catObservations(obj, varargin)
-            %obj = catObservations(obj, dataSet1)
-            %obj = catObservations(obj, dataSet1, dataSet2, ...)
-           
+            %catObservations  Concatenate to the observations of a
+            %prtDataSetStandard object
+            % 
+            % dataSet = dataSet.catObservation(OBSERVATIONS) concatenates
+            % OBSERVATIONS the observations of a prtDataSetStandard object.
+            % OBSERVATIONS must have the same number of features as the
+            % dataSet object.
+            
             if nargin == 1
                 return;
             end
@@ -428,7 +358,10 @@ classdef prtDataSetStandard < prtDataSetBase
         end
         
         function [obj,retainedIndices] = removeObservations(obj,removeIndices)
-            %[obj,retainedremoveIndices] = removeObservations(obj,removeIndices)
+            % removeObservations  Remove observations from a prtDataSetStandard object
+            % 
+            % dataSet = dataSet.removeObservations(INDICES) removes the
+            % observations at the specified INDICES 
             
             removeIndices = prtDataSetBase.parseIndices(obj.nObservations ,removeIndices);
             
@@ -442,7 +375,11 @@ classdef prtDataSetStandard < prtDataSetBase
         end
         
         function [obj,retainedIndices] = retainObservations(obj,retainedIndices)
-            %[obj,retainedIndices] = retainObservations(obj,retainedIndices)
+            % retainObservations   Retain observations from a prtDataSetStandard object
+            %
+            % dataSet = dataSet.retainObservations(INDICES) removes all
+            % observations from the dataSet object except those specified
+            % by INDICES
             
             retainedIndices = prtDataSetBase.parseIndices(obj.nObservations ,retainedIndices);
             
@@ -459,7 +396,11 @@ classdef prtDataSetStandard < prtDataSetBase
         end
         
         function [obj,retainedFeatures] = removeFeatures(obj,removeIndices)
-            %[obj,retainedFeatures] = removeFeatures(obj,removeIndices)
+            % retainFeatures   Retain the features of a prtDataSetStandard object.
+            %
+            % dataSet = dataSet.retainFeatures(INDICES) removes all
+            % features from the dataSet object except those specified by
+            % INDICES
             
             removeIndices = prtDataSetBase.parseIndices(obj.nFeatures ,removeIndices);
             if islogical(removeIndices)
@@ -471,7 +412,12 @@ classdef prtDataSetStandard < prtDataSetBase
         end
         
         function [obj,retainedFeatures] = retainFeatures(obj,retainedFeatures)
-            %[obj,retainedFeatures] = retainFeatures(obj,retainedFeatures)
+            % retainFeatures   Retain the features of a prtDataSetStandard
+            % object
+            % 
+            % dataSet = dataSet.retainFeatures(INDICES) removes all
+            % features from the dataSet object except those specified by
+            % INDICES
             
             retainedFeatures = prtDataSetBase.parseIndices(obj.nFeatures ,retainedFeatures);
             obj = obj.retainFeatureNames(retainedFeatures);
@@ -479,17 +425,37 @@ classdef prtDataSetStandard < prtDataSetBase
         end
         
         function data = getFeatures(obj,varargin)
+            % getFeatures   Return the features of a prtDataSetStandard
+            % object
+            %
+            % FEATURES = dataSet.getFeatures() returns the features of the
+            % dataSet object
+            %
+            % FEATURES = dataSet.getFeatures(INDICES) returns only the
+            % features of the dataSet object specified by INDICES
+            
             featureIndices = prtDataSetBase.parseIndices(obj.nFeatures ,varargin{:});
             data = obj.getObservations(:,featureIndices);
         end
         
         function obj = setFeatures(obj,data,varargin)
+            % setFeatures   Set the features of a prtDataSetStandard object
+            %
+            % dataSet = dataSet.setFeatures(FEATURES) set the features of
+            % the dataSet object to FEATURES
+            % 
+            % dataSet = dataSet.setFeatures(FEATURES, INDICES) set the features of
+            % the dataSet object to FEATURES at the specified INDICES
+            
             obj = obj.setObservations(data,:,varargin{:});
         end
         
         function obj = catFeatures(obj, varargin)
-            %obj = catFeatures(obj, dataArray1, dataArray2,...)
-            %obj = catFeatures(obj, dataSet1, dataSet2,...)
+            % catFeatures   Concatenate the features of a prtDataSetStandard object
+            %
+            % dataSet = dataSet.catFeatures(FEATURES) concatenates the
+            % FEATURES to the features of the dataSet object. FEATURES must
+            % have the same number of observations as the dataSet object.
 
             if nargin == 1
                 return;
@@ -506,7 +472,11 @@ classdef prtDataSetStandard < prtDataSetBase
         end
         
         function [obj, sampleIndices] = bootstrap(obj,nSamples)
-            %obj = bootstrap(obj,nSamples)
+            % bootstrap  boostrap a prtDataSetStandard object
+            %
+            % dataSet = dataSet.boostrap(NSAMPLES) returns a dataSet object
+            % consisting of NSAMPLES randomly selected samples from the
+            % original dataSet object.
             
             if obj.nObservations == 0
                 error('prtDataSetStandard:BootstrapEmpty','Cannot bootstrap empty data set');
@@ -528,10 +498,20 @@ classdef prtDataSetStandard < prtDataSetBase
         end
         
         function nObservations = get.nObservations(obj)
+            % nObservations  Return the number of observations from a
+            % prtDataSetStandard object
+            %
+            % nObjervations = dataSet.nObservations() returns the number of
+            % observations from the dataSet object.
             nObservations = size(obj.data,1); %use InMem's .data field
         end
         
         function nFeatures = get.nFeatures(obj)
+            % nFeatures  Return the number of features from a
+            % prtDataSetStandard object
+            %
+            % nObjervations = dataSet.nObservations() returns the number of
+            % observations from the dataSet object.
             nFeatures = size(obj.data,2);
         end
         
@@ -542,6 +522,7 @@ classdef prtDataSetStandard < prtDataSetBase
         
         
         function obj = set.ObservationDependentUserData(obj,Struct)
+        
             if isempty(Struct)
                 % Empty is ok.
                 % It has to be for loading and saving. 
@@ -566,8 +547,12 @@ classdef prtDataSetStandard < prtDataSetBase
         end
         
         function obj = catTargets(obj, varargin)
-            %obj = catTargets(obj, targetArray1, targetArray2,...)
-            %obj = catTargets(obj, dataSet1, dataSet2,...)
+            % catTargets  Concatenate the targets of a prtDataSetStandard
+            % object
+            %
+            % dataSet = dataSet.catTargets(TARGETS) concatenates the
+            % targets with TARGETS. TARGETS must have the same number of
+            % observations as dataSet.
             
             if nargin == 1
                 return;
@@ -584,7 +569,12 @@ classdef prtDataSetStandard < prtDataSetBase
         end
         
         function [obj,retainedTargets] = removeTargets(obj,removeIndices)
-            %[obj,retainedTargets] = removeTargets(obj,removeIndices)
+            % removeTargets  Remove targets from a prtDataSetStandard
+            % object.
+            %
+            % dataSet = dataSet.retainTargets(INDICES) removes the targets
+            % from the dataSet object specified by INDICES
+            
             warning('prt:Fixable','Does not handle feature names');
             
             removeIndices = prtDataSetBase.parseIndices(obj.nTargetDimensions,removeIndices);
@@ -598,8 +588,13 @@ classdef prtDataSetStandard < prtDataSetBase
         end
         
         function [obj,retainedTargets] = retainTargets(obj,retainedTargets)
-            
+            % retainTargets  Retain targets from a prtDataSetStandard
+            % object.
+            %
+            % dataSet = dataSet.retainTargets(INDICES) removes all targets
+            % from the dataSet object except those specified by INDICES
             warning('prt:Fixable','Does not handle feature names');
+            
             retainedTargets = prtDataSetBase.parseIndices(obj.nTargetDimensions ,retainedTargets);
             obj.targets = obj.targets(:,retainedTargets);
         end
