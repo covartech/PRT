@@ -7,7 +7,7 @@ result = true;
 
 
 %%
-% This should not error out.
+% Check basic operation
 try
 dataSet = prtDataCircles;
 featSel = prtFeatSelExhaustive; 
