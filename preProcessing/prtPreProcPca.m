@@ -1,4 +1,29 @@
 classdef prtPreProcPca < prtPreProc
+    % prtPreProcPca   Principle Component Analysis
+    %
+    %   PCA = prtPreProcPca creates a Principle Component Analysis object.
+    %
+    %   PCA = prtPreProcPca('nComponents',N) constructs a
+    %   prtPreProcPCP object PCA with nComponents set to the value N.
+    %
+    %   A prtPreProcPca object has the following properites:
+    % 
+    %   nComponenets    - The number of principle componenets
+    %
+    %   A prtPreProcPca object also inherits all properties and functions from
+    %   the prtAction class
+    %
+    %   Example:
+    %
+    %   dataSet = prtDataProstate;     % Load a data set.
+    %   pca = prtPreProcPca;           % Create the Principle Component
+    %                                  % Analysis object.
+    %   pca.nComponents = 4;           % Set the number of components to 4
+    %   pca = pca.train(dataSet);      % Compute the Principle Components
+    %   dataSetNew = pca.run(dataSet); % Extract the Principle Components
+    %
+    %   See Also: prtPreProcLogDisc, preProcHistEq, preProcZmuv
+ 
     
     properties (SetAccess=private)
         % Required by prtAction
@@ -8,32 +33,29 @@ classdef prtPreProcPca < prtPreProc
     end
     
     properties
-        nComponents = 3;
+        nComponents = 3;   % The number of PCA components
     end
     properties (SetAccess=private)
         % General Classifier Properties
-        means = []; 
-        pcaVectors = [];
+        means = [];           % A vector of the means
+        pcaVectors = [];      % The PCA vectors.
     end
     
     methods
         
+          % Allow for string, value pairs
         function Obj = prtPreProcPca(varargin)
-            % Allow for string, value pairs
-            % There are no user settable options though.
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
         end
     end
     
     methods (Access = protected)
         
+        %NOTE: I think we can replace all this with one call to svds
         function Obj = trainAction(Obj,DataSet)
-            
-            
-            %NOTE: I think we can replace all this with one call to svds
+                       
             nSamplesEmThreshold = 1000;
-            
-            
+                       
             Obj.means = nanmean(DataSet.getObservations(),1);
             x = bsxfun(@minus,DataSet.getObservations(),Obj.means);
             
