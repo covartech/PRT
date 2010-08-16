@@ -1,18 +1,30 @@
 classdef prtFeatSelStatic < prtFeatSel %
-    % prtFeatSelStatic
-    %  Static feature selection object.
+    % prtFeatSelStatic  Static feature selection object.
     %
-    %   % Example usage:
-    %   nNoiseFeatures = 10;
-    %   DS = prtDataBimodal;
-    %   DS = DS.setObservations(cat(2,DS.getObservations,randn(DS.nObservations,nNoiseFeatures)));
+    %  FEATSEL = prtFeatSelStatic creates a static feature selection
+    %  object. 
+    %  
+    %  FEATSEL = prtFeatSelStatic('selectedFeatures', FEATURES) creates a
+    %  static feature selection object with the selectedFeatures parameter
+    %  set to FEATURES.
+    % 
+    %  A static feature selction object selects the features specified by
+    %  the selectedFeatures parameter.
+    %
+    %   Example:
     %   
-    %   StaticFeatSel = prtFeatSelStatic;
-    %   StaticFeatSel.selectedFeatures = [1 2];
-    %   StaticFeatSel = StaticFeatSel.train(DS);  %this is pro-forma only; training does nothing
+    %   dataSet = prtDataIris;            % Load a data set with 4 features
+    %   StaticFeatSel = prtFeatSelStatic; % Create a static feature
+    %                                     % selection object.
+    %   StaticFeatSel.selectedFeatures = [1 3];   % Choose the first and
+    %                                             % third feature
+    %   % Training is not necessary for a static feature selection object,
+    %   % the following command has no effect.
+    %   StaticFeatSel = StaticFeatSel.train(dataSet);  
     %   
-    %   DataSetDownSelected = StaticFeatSel.run(DS);
-    %   explore(DataSetDownSelected);
+    %   dataSetReduced = StaticFeatSel.run(dataSet);   %Run the feature
+    %                                                  %selection
+    %   explore(dataSetReduced);
     
     properties (SetAccess=private) 
         % Required by prtAction
@@ -23,42 +35,34 @@ classdef prtFeatSelStatic < prtFeatSel %
     
     properties 
         % General Classifier Properties
-        selectedFeatures = nan;
+        selectedFeatures = nan   % The selected features
     end
-    
-    
     
     methods 
                 
         % Constructor %%
-        
+        % Allow for string, value pairs
         function Obj = prtFeatSelStatic(varargin) 
-            % Allow for string, value pairs
+            
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
         end
-        
         
     end
     methods (Access = protected)
         
         % Train %%
-        
         function Obj = trainAction(Obj,~)
             if isnan(Obj.selectedFeatures)
                 error('Manually set selectedFeatures field of prtFeatSelStatic to succesfully train and run');
             end
         end
         
-        % Run %
-                
+        % Run %               
         function DataSet = runAction(Obj,DataSet) %%
             if isnan(Obj.selectedFeatures)
                 error('Manually set selectedFeatures field of prtFeatSelStatic to succesfully train and run');
             end
             DataSet = DataSet.retainFeatures(Obj.selectedFeatures);
         end
-        
     end
-    
-    
 end
