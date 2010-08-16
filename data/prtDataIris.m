@@ -18,4 +18,5 @@ end
 X = cat(2,f1,f2,f3,f4);
 classNames = unique(class);
 Y = prtUtilStringsToClassNumbers(class);
-DataSet = prtDataSetClass(X,Y,'classNames',classNames,'name','UCI Iris Data');
+DataSet = prtDataSetClass(X,Y,'name','UCI Iris Data');
+DataSet = DataSet.setClassNames(classNames);
