@@ -31,6 +31,7 @@ classdef prtFeatureExtractorTfcmGpr < prtFeatureExtractor
                 data = obj.preprocFn(data);
                 
                 theImage = squeeze(data(:,Alarm.Info.crossTrack,:));
+                figure(1); imagesc(theImage,[-4 4]);
                 textureFeats(iAlarm,:) = obj.extractTfcm(theImage);
                 
                 disp(iAlarm);
