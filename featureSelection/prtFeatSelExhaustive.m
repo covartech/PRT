@@ -17,9 +17,10 @@ classdef prtFeatSelExhaustive < prtFeatSel %
 %                            features are selected. EvaluationMetric must
 %                            be a function handle. The function handle must
 %                            be in the form @(dataSet)prtScore(dataSet,
-%                            prtClass), where prtScore is a prt scoring
-%                            object, and prtClass is a prt classifier
-%                            object.
+%                            prtClass, varargin), where prtScore is a prt scoring
+%                            object, prtClass is a prt classifier
+%                            object, and varargin represents optional input
+%                            arguments to a prtScoring object.
 %    Peformance            - The performance obtained by the using the
 %                            features selected.
 %    selectedFeatures      - The indices of the features selected that gave
@@ -34,7 +35,7 @@ classdef prtFeatSelExhaustive < prtFeatSel %
 %   featSel.nFeatures = 1;            % Select only one feature of the data
 %   featSel = featSel.train(dataSet); % Train the feature selection object
 %   outDataSet = featSel.run(dataSet);% Extract the data set with only the
-%                                       selected features
+%                                     %  selected features
 %
 %   %   Change the scoring function to prtScorePdAtPf, and change the
 %   %   classification method to prtClassMAP

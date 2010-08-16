@@ -1,50 +1,79 @@
 classdef prtFeatSelSfs < prtFeatSel %
-    % prtFeatSelSfs
-    %  Sequential forward feature selection object.
+    % prtFeatSelSfs   Sequential forward feature selection object.
     %
-    %   % Example usage:
-    %   nNoiseFeatures = 10;
-    %   DS = prtDataBimodal;
-    %   DS = DS.setObservations(cat(2,DS.getObservations,randn(DS.nObservations,nNoiseFeatures)));
+    %    FEATSEL = prtFeatSelSfs creates a sequental forward feature selection
+    %    object.
     %
-    %   WrapperClassifier = prtClassRvm;
-    %   
-    %   Sfs = prtFeatSelSfs;
-    %   Sfs.nFeatures = 2;
-    %   Sfs.EvaluationMetric = @(DS)prtScoreAucKfolds(DS,WrapperClassifier,3);
-    %   Sfs = Sfs.train(DS);
-    %   
-    %   DataSetDownSelected = Sfs.run(DS);
-    %   explore(DataSetDownSelected);
+    %    FEATSEL = prtFeatSelSfs(PROPERTY1, VALUE1, ...) constructs a
+    %    prttFeatSelSfs object FEATSEL with properties as specified by
+    %    PROPERTY/VALUE pair
+    %
+    %    A prtFeatSelSfsobject has the following properties:
+    %
+    %    nFeatures             - The number of features to be selected
+    %    showProgressBar       - Flag indicating whether or not to show the
+    %                            progress bar during feature selection.
+    %    EvaluationMetric      - The metric to be used to determine which
+    %                            features are selected. EvaluationMetric must
+    %                            be a function handle. The function handle must
+    %                            be in the form @(dataSet)prtScore(dataSet,
+    %                            prtClass, varargin), where prtScore is a prt scoring
+    %                            object, prtClass is a prt classifier
+    %                            object, and varargin represents optional input
+    %                            arguments to a prtScoring object.
     
-    properties (SetAccess=private) 
+    %    Peformance            - The performance obtained by the using the
+    %                            features selected.
+    %    selectedFeatures      - The indices of the features selected that gave
+    %                            the best performance.
+    %
+    %   A prtFeatSelExhaustive object inherits the TRAIN and RUN methods from prtClass.
+    %
+    %   Example:
+    %
+    %   dataSet = prtDataCircles;         % Generate a data set
+    %   featSel = prtFeatSelSfs;          % Create a feature selction object
+    %   featSel.nFeatures = 1;            % Select only one feature of the data
+    %   featSel = featSel.train(dataSet); % Train the feature selection object
+    %   outDataSet = featSel.run(dataSet);% Extract the data set with only the
+    %                                     % selected features
+    %
+    %   %   Change the scoring function to prtScorePdAtPf, and change the
+    %   %   classification method to prtClassMAP
+    %
+    %   featSel.EvaluationMetric = @(DS)prtScorePdAtPf(DS, prtClassMAP, .9);
+    %
+    %   featSel = featSel.train(dataSet);
+    %   outDataSet = featSel.run(dataSet);
+    %
+    % See Also:  prtFeatSelStatic, prtFeatSelExhaustive
+    
+    properties (SetAccess=private)
         % Required by prtAction
         name = 'Sequentual Feature Selection'
         nameAbbreviation = 'SFS'
         isSupervised = true;
-    end 
+    end
     
-    
-    
-    properties 
+    properties
         % General Classifier Properties
-        nFeatures = 3;
-        showProgressBar = true;
-        EvaluationMetric = @(DS)prtScoreAuc(DS,prtClassFld);
+        nFeatures = 3;                    % The number of features to be selected
+        showProgressBar = true;           % Whether or not the progress bar should be displayed
+        EvaluationMetric = @(DS)prtScoreAuc(DS,prtClassFld);   % The metric used to evaluate performance
         
-        performance = [];
+        performance = [];                 % The best performance achieved after training
         selectedFeatures = [];
     end
     
     
     
-    methods 
+    methods
         
         
         % Constructor %%
         
-        function Obj = prtFeatSelSfs(varargin) 
-            % Allow for string, value pairs
+        % Allow for string, value pairs
+        function Obj = prtFeatSelSfs(varargin)
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
         end
         
@@ -53,8 +82,7 @@ classdef prtFeatSelSfs < prtFeatSel %
     methods (Access = protected)
         
         % Train %%
-        
-        function Obj = trainAction(Obj,DS) 
+        function Obj = trainAction(Obj,DS)
             
             nFeatsTotal = DS.nFeatures;
             
@@ -109,7 +137,7 @@ classdef prtFeatSelSfs < prtFeatSel %
         
         
         % Run %
-                
+        
         function DataSet = runAction(Obj,DataSet) %%
             DataSet = DataSet.retainFeatures(Obj.selectedFeatures);
         end
