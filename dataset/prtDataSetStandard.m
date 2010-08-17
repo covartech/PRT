@@ -56,8 +56,7 @@ classdef prtDataSetStandard < prtDataSetBase
         targets = [];       % The targets
     end
     
-    methods
-        
+    methods (Access = 'protected')
         function obj = catFeatureNames(obj,newDataSet)
             for i = 1:newDataSet.nFeatures;
                 currFeatName = newDataSet.featureNames.get(i);
@@ -84,6 +83,8 @@ classdef prtDataSetStandard < prtDataSetBase
             end
             obj.featureNames = newHash;
         end
+    end
+    methods
         
         %% Constructor %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
