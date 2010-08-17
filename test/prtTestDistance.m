@@ -16,7 +16,7 @@ end
 
 if ~isequal(DIST, [1 2 3; 1 1 2])
     result = false;
-    disp('chebychev distacne not equal to baseline')
+    disp('chebychev distance not equal to baseline')
 end
 
 %% prtDistanceEarthMover  - completely broken at the moment
@@ -33,7 +33,7 @@ end
 
 if ~isequal(DIST, [1 4 6; 1 2 4])
     result = false;
-    disp('LNorm distacne not equal to baseline')
+    disp('LNorm distance not equal to baseline')
 end
 
 % Check that X and Y are correct dim
@@ -70,4 +70,25 @@ try
     result = false;
 catch
     % Do nothing
+end
+
+%% prtDistanceMahalanobis -- Broken
+
+%% prtDistanceBhattacharrya -- should it take prtDataSet as input?
+
+%% prtDistanceCityBlock
+
+try
+    X = [0 0; 1 1];
+    Y = [1 0; 2 2; 3 3;];
+    DIST = prtDistanceCityBlock(X,Y);
+catch
+    result = false;
+    disp('error in prtDistanceCityBlock')
+end
+
+
+if ~isequal(DIST, [1 4 6; 1 2 4])
+    result = false;
+    disp('CityBlock distance not equal to baseline')
 end
