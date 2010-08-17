@@ -141,6 +141,9 @@ classdef prtFeatSelExhaustive < prtFeatSel %
         
          % Run %        
         function DataSet = runAction(Obj,DataSet) %%
+            if ~Obj.isTrained
+                error('prt:prtFeatSelExhaustive','Attempt to run a prtFeatSel that is not trained');
+            end
             DataSet = DataSet.retainFeatures(Obj.selectedFeatures);
         end
      end

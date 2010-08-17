@@ -60,7 +60,7 @@ classdef prtFeatSelStatic < prtFeatSel %
         % Run %               
         function DataSet = runAction(Obj,DataSet) %%
             if isnan(Obj.selectedFeatures)
-                error('Manually set selectedFeatures field of prtFeatSelStatic to succesfully train and run');
+                error('prt:prtFeatSelStatic','Manually set selectedFeatures field of prtFeatSelStatic to succesfully train and run');
             end
             DataSet = DataSet.retainFeatures(Obj.selectedFeatures);
         end
