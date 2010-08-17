@@ -1,4 +1,4 @@
-classdef prtDataSetRegress < prtDataSetInMemory
+classdef prtDataSetRegress < prtDataSetStandard
     % Standard prtDataSet for labeled training data.
     %
     % Inherited propeties from prtDataSetInMemory
