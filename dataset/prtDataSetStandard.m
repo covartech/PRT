@@ -344,15 +344,23 @@ classdef prtDataSetStandard < prtDataSetBase
             if nargin == 1
                 return;
             end
-            disp('need to check target/data size agreement');
+            
             for argin = 1:length(varargin)
                 currInput = varargin{argin};
                 if isa(currInput,class(obj.data))
-                    obj.data = cat(1,obj.data, currInput);
+                    if isempty(obj.targets)
+                        obj.data = cat(1,obj.data, currInput);
+                    else
+                        error('prt:prtDataSetStandard:CatObservations','Attempt to cat observations using a double matrix to a prtDataSetStandard that has targets; this will result in target/observation mis-match');
+                    end
                 elseif isa(currInput,class(obj))
                     obj = obj.catObservationNames(currInput);
-                    obj.data = cat(1,obj.data,currInput.getObservations);
-                    obj.targets = cat(1,obj.targets,currInput.getTargets);
+                    if (isempty(obj.targets) && isempty(currInput.targets)) || (~isempty(obj.targets) && ~isempty(currInput.targets))
+                        obj.data = cat(1,obj.data,currInput.getObservations);
+                        obj.targets = cat(1,obj.targets,currInput.getTargets);
+                    else
+                        error('prt:prtDataSetStandard:CatObservations','Attempt to cat observations for data sets with different sized targets');
+                    end
                 end
             end
         end

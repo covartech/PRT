@@ -11,7 +11,7 @@ end
 disp(strtrim(results))
 
 
-emailList = {'pete@newfolderconsulting.com','kenny@newfolderconsulting.com','sandy@newfolderconsulting.com','lesli@newfolderconsulting.com','skeene@gmail.com'};
+emailList = {'pete@newfolderconsulting.com','kenny@newfolderconsulting.com','skeene@gmail.com'};
 
 % If we committed we should send an email to everyone
 if strcmpi(command,'commit') && status==0
