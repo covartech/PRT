@@ -69,6 +69,7 @@ classdef prtFeatSelExhaustive < prtFeatSel %
         % Constructor %%
         % Allow for string, value pairs
         function Obj = prtFeatSelExhaustive(varargin)     
+            Obj.isCrossValidateValid = false;
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
         end    
     end

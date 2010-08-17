@@ -52,6 +52,10 @@ classdef prtAction
         %   Only stored if prtAction.verboseStorage == true. Otherwise it
         %   is empty.
         DataSet = []; 
+        
+        % prtAction.isCrossValidateValid - Boolean value indicating if
+        %   cross-validate outputs a reasonable data set.
+        isCrossValidateValid = true;
     end
     
     properties
@@ -117,6 +121,10 @@ classdef prtAction
             %
             % [OutputDataSet, TrainedActions] = crossValidate(Obj, DataSet, validationKeys)
             
+            if ~Obj.isCrossValidateValid
+                %Should this error?
+                warning('prtAction:crossValidate','The input object of type %s has isCrossValidateValid set to false; the outputs of cross-validation may be meaningless',class(Obj));
+            end
             if length(validationKeys) ~= DataSet.nObservations;
                 error('Number of validation keys (%d) must match number of data points (%d)',length(validationKeys),DataSet.nObservations);
             end

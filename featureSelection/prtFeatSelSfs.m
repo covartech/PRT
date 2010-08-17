@@ -74,6 +74,7 @@ classdef prtFeatSelSfs < prtFeatSel %
         
         % Allow for string, value pairs
         function Obj = prtFeatSelSfs(varargin)
+            Obj.isCrossValidateValid = false;
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
         end
         

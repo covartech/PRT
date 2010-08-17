@@ -43,7 +43,7 @@ classdef prtFeatSelStatic < prtFeatSel %
         % Constructor %%
         % Allow for string, value pairs
         function Obj = prtFeatSelStatic(varargin) 
-            
+            Obj.isCrossValidateValid = false;
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
         end
         
