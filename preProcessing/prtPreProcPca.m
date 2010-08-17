@@ -49,6 +49,15 @@ classdef prtPreProcPca < prtPreProc
         end
     end
     
+    methods
+        function Obj = set.nComponents(Obj,nComp)
+            if ~isnumeric(nComp) || ~isscalar(nComp) || nComp < 1 || round(nComp) ~= nComp
+                error('prt:prtPreProcPca','nComponents (%s) must be a positive scalar integer',mat2str(nComp));
+            end
+            Obj.nComponents = nComp;
+        end
+    end
+    
     methods (Access = protected)
         
         %NOTE: I think we can replace all this with one call to svds
