@@ -42,8 +42,8 @@ mux1 = 0; muy1 = 0;
 theta0 = pi/2;
 mux0 = 0; muy0 = 0;
 
-Xspiral_H1 = generateSpiralCluster(t,f,theta1,mux1,muy1,dx,dy,std);
-Xspiral_H0 = generateSpiralCluster(t,f,theta0,mux0,muy0,dx,dy,std);
+Xspiral_H1 = prtUtilGenerateSpiralCluster(t,f,theta1,mux1,muy1,dx,dy,std);
+Xspiral_H0 = prtUtilGenerateSpiralCluster(t,f,theta0,mux0,muy0,dx,dy,std);
 
 X = cat(1,Xspiral_H0,Xspiral_H1);
 Y = cat(1,zeros(nSamples,1),ones(nSamples,1));
