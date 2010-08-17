@@ -1,31 +1,25 @@
 function D = prtDistanceLNorm(X1,X2,normMetric)
-% LNORM     Calculate the distance from all of the points in P1 to all
-%   of the points in P2 usuing the lnorm distance measure. The 
-%   lnorm distance is the lnorm of the vectors P1 and P2. See norm.m
+% prtDistanceLNorm   L Norm distance function.
+%  
+%   DIST = prtDistanceLNorm(X1,X2, NORMMETRIC) Calculate the distance from
+%   all of the points in P1 to all of the points in P2 usuing the L Norm
+%   distance measure. The L Norm distance is the L Norm of the vectors P1
+%   and P2. 
+% 
+%   X1 is a  NxM matrix of locations. N is the number of points and M is
+%   the dimensionality. X2 is a DxM matrix of locations. D is the number of
+%   points and M is the dimensionality. NORMMETRIC Is the value of L to use
+%   for the L Norm, and must be an integer. The output DIST - NxD matrix of
+%   distances.
 %
-% Syntax: D = lnorm(varargin)
-%
-% Inputs: 
-%   varargin{1} - double Mat - NxM matrix of locations. N is the number of 
-%       points and M is the dimensionality.
-%   varargin{2} - double Mat - DxM matrix of locations. D is the number of 
-%       points and M is the dimensionality.
-%   varargin{3} - int - The value of L to use for the lnorm.
-%
-% Outputs
-%   D - NxD matrix of distances.
-%
-% Example:
-%   X = [0 0; 1 1];
-%   Y = [1 0; 2 2; 3 3;];
-%   D = lnorm(X,Y,3)
+%    Example:
+%      X = [0 0; 1 1];
+%      Y = [1 0; 2 2; 3 3;];
+%      DIST = prtDistanceLNorm(X,Y,3)
 %   
-% Other m-files required: none
-% Subfunctions: none
-% MAT-files required: none
 %
-% See also: distance.m chebychev.m cityblock.m euclidean.m mahalanobis.m
-%   squaredist.m
+% See also: prtDistance, prtDistanceCityBlock, prtDistanceEuclidean,
+% prtDistanceMahalanobis, prtDistanceSquare, prtDistanceChebychev, norm
 
 % Author: Kenneth D. Morton Jr.
 % Duke University, Department of Electrical and Computer Engineering
