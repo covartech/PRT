@@ -1,31 +1,23 @@
 function D = prtDistanceChebychev(varargin)
-% CHEBYCHEV      Calculate the distance from all of the points in P1 to all
-%   of the points in P2 usuing the chebychev distance measure. The
-%   chebychev distance is the maximum absolute distance between any 
-%   dimension of P1 and the corresponding of P2.
+% prtDistanceChebychev    Chebychev distance
+% 
+%    DIST = prtDistanceChebychev(P1,P2) Calculates the distance from all of
+%    the points in P1 to all of the points in P2 usuing the Chebychev
+%    distance measure. The Chebychev distance is the maximum absolute
+%    distance between any dimension of P1 and the corresponding of P2.
 %
-% Syntax: D = chebychev(varargin)
-%
-% Inputs: 
-%   varargin{1} - double Mat - NxM matrix of locations. N is the number of 
-%       points and M is the dimensionality.
-%   varargin{2} - double Mat - DxM matrix of locations. D is the number of 
-%       points and M is the dimensionality.
-%
-% Outputs
-%   D - NxD matrix of distances.
+%    P1 should be an NxM matrix of locations, where N is the number of 
+%    points and M is the dimensionality. P2 should be an DxM matrix of
+%    locations. D is the number of points and M is the dimensionality. The
+%    output DIST is an NxD matrix of distances.
 %
 % Example:
 %   X = [0 0; 1 1];
 %   Y = [1 0; 2 2; 3 3;];
-%   D = prtDistanceChebychev(X,Y)
-%   
-% Other m-files required: none
-% Subfunctions: none
-% MAT-files required: none
+%   DIST = prtDistanceChebychev(X,Y)
 %
-% See also: distance.m cityblock.m euclidean.m lnorm.m mahalanobis.m
-%   squaredist.m
+% See also: prtDistance prtDistanceCityBlock prtDistanceEuclidean
+% prtDistanceMahalanobis prtDistanceSquare
 
 % Author: Kenneth D. Morton Jr.
 % Duke University, Department of Electrical and Computer Engineering
