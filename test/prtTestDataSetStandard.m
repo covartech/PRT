@@ -75,7 +75,7 @@ if ~isequal(dataSet1.getX, [ 1 2 7; 3 4 8; 5 6 9])
 end
 
 dataSet = prtDataSetStandard;
-dataSet = dataSet.setObservationsAndTargets([1 2; 3 4; 5 6], [1; 2; 3]);
+dataSet = dataSet.setObservations([1 2; 3 4; 5 6]);
 dataSet1 = dataSet.catObservations([7 8]);
 if( ~isequal(dataSet1.getX, [1 2;3 4; 5 6; 7 8 ]))
     result = false;
@@ -251,5 +251,14 @@ catch
     
 end
 
+
+
+dataSet = prtDataSetStandard
+dataSet = dataSet.setObservationsAndTargets([1 2; 3 4; 5 6], [1;2;3]);
+try
+    dataSet = dataSet.catObservations([4 5])
+    error = false;
+    disp('Failed test #28, trying to concat observations when targets present')
+end
 
 result = result & error;% & noerror;

@@ -53,11 +53,14 @@ try
     pca.nComponents = 9;           % Set the number of components to 4
     pca = pca.train(dataSet);      % Compute the Principle Components
     dataSetNew = pca.run(dataSet); % Extract the Principle Components
-    error = false;
-    disp('error#5, too many components')
+    
 catch
     
 end
-   
+if ~isequal(lastwarn, 'User specified # PCA components (9) is > number of data dimensions (8)')
+    error = false;
+    disp('error#5, too many components')
+end
+
 result = result && error
 

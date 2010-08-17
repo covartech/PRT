@@ -52,7 +52,6 @@ catch
 end
 %% Stuff that should error
 error = true;
-% This errors out messily if you don't train first, should error out clean.
 dataSet = prtDataSpiral3;
 featSel = prtFeatSelExhaustive; 
 featSel.nFeatures = 1;
