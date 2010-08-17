@@ -1,33 +1,25 @@
 function D = prtDistanceMahalanobis(varargin)
-% MAHALANOBIS    Calculate the distance from all of the points in P1 to all
-%   of the points in P2 usuing the mahalanobis distance measure. The 
-%   mahalanobis distance is the exponent of the multivariate gaussian 
+% prtDistanceMahalanobis   Mahalanobis distance.
+%
+%   DIST = prtDistanceMahalanobis(P1,P2, COV) Calculates the distance from all of the points in P1 to all
+%   of the points in P2 usuing the Mahalanobis distance measure. The 
+%   Mahalanobis distance is the exponent of the multivariate gaussian 
 %   density function evaluated at the distance between vectors P1 and P2. 
 %
-% Syntax: D = mahalanobis(varargin)
-%
-% Inputs: 
-%   varargin{1} - double Mat - NxM matrix of locations. N is the number of 
-%       points and M is the dimensionality.
-%   varargin{2} - double Mat - DxM matrix of locations. D is the number of 
-%       points and M is the dimensionality.
-%   varargin{3} - double Mat - MxM covariance matrix.
-%
-% Outputs
-%   D - NxD matrix of distances.
+%    P1 should be an NxM matrix of locations, where N is the number of 
+%    points and M is the dimensionality. P2 should be an DxM matrix of
+%    locations. D is the number of points and M is the dimensionality. COV
+%    is the MxM covariance matrix. The output DIST is an NxD matrix of
+%    distances.
 %
 % Example:
 %   X = [0 0; 1 1];
 %   Y = [1 0; 2 2; 3 3;];
 %   covMat = [1 0; 0 2;];
-%   D = mahalanobis(X,Y,covMat)
-% 
-% Other m-files required: none
-% Subfunctions: none
-% MAT-files required: none
+%   D = prtDistanceMahalanobis(X,Y,covMat)
 %
-% See also: distance.m chebychev.m cityblock.m euclidean.m lnorm.m
-%   squaredist.m
+% See also: prtDistance, prtDistanceCityBlock, prtDistanceLNorm,
+% prtDistanceEuclidean, prtDistanceSquare, prtDistanceChebychev
 
 % Author: Kenneth D. Morton Jr.
 % Duke University, Department of Electrical and Computer Engineering
