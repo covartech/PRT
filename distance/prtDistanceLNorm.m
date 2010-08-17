@@ -9,7 +9,7 @@ function D = prtDistanceLNorm(X1,X2,normMetric)
 %   X1 is a  NxM matrix of locations. N is the number of points and M is
 %   the dimensionality. X2 is a DxM matrix of locations. D is the number of
 %   points and M is the dimensionality. NORMMETRIC Is the value of L to use
-%   for the L Norm, and must be an integer. The output DIST - NxD matrix of
+%   for the L Norm, and must be an integer. The output DIST is a NxD matrix of
 %   distances.
 %
 %    Example:

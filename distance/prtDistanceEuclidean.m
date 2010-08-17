@@ -1,38 +1,26 @@
-function D = prtDistanceEuclidean(varargin)
-% EUCLIDEAN     Calculate the distance from all of the points in P1 to all
-%   of the points in P2 usuing the euclidean distance measure. The 
-%   euclidean distance is the same as the lnorm with parameter 2.
+function D = prtDistanceEuclidean(V1, V2)
+%prtDistanceEuclidean   Euclidean distance
+%   
+%   DIST = prtDistanceEuclidean(X1,X2) Calculates the Euclidean distance from all of the points in P1 to all
+%   of the points in P2.
 %
-% Syntax: D = euclidean(varargin)
-%
-% Inputs: 
-%   varargin{1} - double Mat - NxM matrix of locations. N is the number of 
-%       points and M is the dimensionality.
-%   varargin{2} - double Mat - DxM matrix of locations. D is the number of 
-%       points and M is the dimensionality.
-%
-% Outputs
-%   D - NxD matrix of distances.
+%   X1 is a  NxM matrix of locations. N is the number of points and M is
+%   the dimensionality. X2 is a DxM matrix of locations. D is the number of
+%   points and M is the dimensionality. The output DIST is a NxD matrix of
+%   distances.
 %
 % Example:
 %   X = [0 0; 1 1];
 %   Y = [1 0; 2 2; 3 3;];
-%   D = euclidean(X,Y)
+%   D = prtDistanceEuclidean(X,Y)
 %   
-% Other m-files required: lnorm
-% Subfunctions: none
-% MAT-files required: none
-%
-% See also: distance.m chebychev.m cityblock.m lnorm.m mahalanobis.m
-%   squaredist.m
+% See also: prtDistance, prtDistanceCityBlock, prtDistanceLNorm.
+% prtDistanceMahalanobis, prtDistanceSquare, prtDistanceChebychev
 
 % Author: Kenneth D. Morton Jr.
 % Duke University, Department of Electrical and Computer Engineering
 % Email Address: collinslab@gmail.com
 % Created: 17-December-2005
 % Last revision: 5-January-2006
-
-V1 = varargin{1};
-V2 = varargin{2};
 
 D = prtDistanceLNorm(V1,V2,2);
