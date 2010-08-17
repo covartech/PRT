@@ -16,8 +16,8 @@ function D = prtDistanceChebychev(varargin)
 %   Y = [1 0; 2 2; 3 3;];
 %   DIST = prtDistanceChebychev(X,Y)
 %
-% See also: prtDistance prtDistanceCityBlock prtDistanceEuclidean
-% prtDistanceMahalanobis prtDistanceSquare
+% See also: prtDistance, prtDistanceCityBlock, prtDistanceEuclidean,
+% prtDistanceMahalanobis, prtDistanceSquare, prtDistanceLnorm
 
 % Author: Kenneth D. Morton Jr.
 % Duke University, Department of Electrical and Computer Engineering
