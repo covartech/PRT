@@ -1,8 +1,8 @@
 function D = prtDistanceEuclidean(V1, V2)
 %prtDistanceEuclidean   Euclidean distance
 %   
-%   DIST = prtDistanceEuclidean(X1,X2) Calculates the Euclidean distance from all of the points in P1 to all
-%   of the points in P2.
+%   DIST = prtDistanceEuclidean(X1,X2) Calculates the Euclidean distance from all of the points in X1 to all
+%   of the points in X2.
 %
 %   X1 is a  NxM matrix of locations. N is the number of points and M is
 %   the dimensionality. X2 is a DxM matrix of locations. D is the number of

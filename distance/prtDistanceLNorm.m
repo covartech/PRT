@@ -2,9 +2,9 @@ function D = prtDistanceLNorm(X1,X2,normMetric)
 % prtDistanceLNorm   L Norm distance function.
 %  
 %   DIST = prtDistanceLNorm(X1,X2, NORMMETRIC) Calculate the distance from
-%   all of the points in P1 to all of the points in P2 usuing the L Norm
-%   distance measure. The L Norm distance is the L Norm of the vectors P1
-%   and P2. 
+%   all of the points in X1 to all of the points in X2 usuing the L Norm
+%   distance measure. The L Norm distance is the L Norm of the vectors X1
+%   and X2. 
 % 
 %   X1 is a  NxM matrix of locations. N is the number of points and M is
 %   the dimensionality. X2 is a DxM matrix of locations. D is the number of
