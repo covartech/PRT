@@ -99,44 +99,49 @@ classdef prtFeatSelExhaustive < prtFeatSel %
             
             notFinished = true;
             canceled = false;
-            while notFinished;
-                if Obj.showProgressBar
-                    prtUtilWaitbarWithCancel(iterationCount/maxIterations,h);
+            try
+                while notFinished;
+                    if Obj.showProgressBar
+                        prtUtilWaitbarWithCancel(iterationCount/maxIterations,h);
+                    end
+                    
+                    tempDataSet = DS.retainFeatures(currChoose);
+                    currPerformance = Obj.EvaluationMetric(tempDataSet);
+                    
+                    if any(currPerformance > bestPerformance) || isempty(bestChoose)
+                        bestChoose = currChoose;
+                        bestPerformance = currPerformance;
+                    elseif currPerformance == bestPerformance
+                        bestChoose = cat(1,bestChoose,currChoose);
+                        bestPerformance = cat(1,bestPerformance,currPerformance);
+                    end
+                    currChoose = nextChooseFn();
+                    notFinished = ~finishedFunction(currChoose);
+                    iterationCount = iterationCount + 1;
+                    
+                    if ~ishandle(h)
+                        canceled = true;
+                        break
+                    end
                 end
                 
-                tempDataSet = DS.retainFeatures(currChoose);
-                currPerformance = Obj.EvaluationMetric(tempDataSet);
-                
-                if any(currPerformance > bestPerformance) || isempty(bestChoose)
-                    bestChoose = currChoose;
-                    bestPerformance = currPerformance;
-                elseif currPerformance == bestPerformance
-                    bestChoose = cat(1,bestChoose,currChoose);
-                    bestPerformance = cat(1,bestPerformance,currPerformance);
+                if Obj.showProgressBar && ~canceled
+                    delete(h);
                 end
-                currChoose = nextChooseFn();
-                notFinished = ~finishedFunction(currChoose);
-                iterationCount = iterationCount + 1;
+                drawnow;
                 
-                if ~ishandle(h)
-                    canceled = true;
-                    break
+                if size(bestChoose,1) > 1
+                    warning('prt:exaustiveSetsTie','Multiple identical performing feature sets found with performance %f; randomly selecting one feature set for output',bestPerformance(1));
+                    index = max(ceil(rand*size(bestChoose,1)),1);
+                    bestChoose = bestChoose(index,:);
+                    bestPerformance = bestPerformance(index,:);
                 end
-            end
-            
-            if Obj.showProgressBar && ~canceled
+                Obj.performance = bestPerformance;
+                Obj.selectedFeatures = bestChoose;
+            catch ME
                 delete(h);
+                throw(ME);
             end
-            drawnow;
-            
-            if size(bestChoose,1) > 1
-                warning('prt:exaustiveSetsTie','Multiple identical performing feature sets found with performance %f; randomly selecting one feature set for output',bestPerformance(1));
-                index = max(ceil(rand*size(bestChoose,1)),1);
-                bestChoose = bestChoose(index,:);
-                bestPerformance = bestPerformance(index,:);
-            end
-            Obj.performance = bestPerformance;
-            Obj.selectedFeatures = bestChoose;
         end
         
          % Run %        
