@@ -1,19 +1,50 @@
 classdef prtFeatSelLlnn < prtFeatSel
-    % http://www.computer.org/portal/web/csdl/doi/10.1109/TPAMI.2009.190
+    % prtFeatSelLLnn  Local Learning based feature selection
     %
-    
-    % Example
-    %{
-    DS = prtDataSpiral;
-    
-    nNoiseFeatures = 1000;
-    DS = prtDataSetClass(cat(2,DS.getObservations,randn([DS.nObservations, nNoiseFeatures])), DS.getTargets);
-    
-    A = prtFeatSelLlnn('verbosePlot',true);
-    
-    A = A.train(DS);
-    %}
-    
+    %   FEATSEL = prtFeatSelLlnn returns a local learning based feature selection
+    %   object.
+    %
+    %    FEATSEL = prtFeatSelLlnn(PROPERTY1, VALUE1, ...) constructs a
+    %    prttFeatSelExhaustive object FEATSEL with properties as specified by
+    %    PROPERTY/VALUE pair
+    %
+    %    A prtFeatSelExhaustive object has the following properties:
+    %
+    %    selectedFeatures       - The indices of the features selected,
+    %                             a read-only parameter, found by training.  
+    %    verbosePlot            - Toggles plotting on/off during training
+    %    nMaxIterations         - The maximum number of iterations
+    %    normalizedWeightCutOff - The weight threshold for keeping a feature
+    %
+    %    The following features are settable, and are related to the
+    %    training algorithm. Please see reference for further information.
+    %
+    %    kernelSigma
+    %    sparsnessLambda
+    %    vGradNMaxSteps
+    %    vGradInitStepSize
+    %    vGradChangeThreshold
+    %    vGradNMaxStepSizeChanges
+    %    weightChangeThreshold
+    %
+    %   Reference:
+    %   http://www.computer.org/portal/web/csdl/doi/10.1109/TPAMI.2009.190
+    %
+    %   A prtFeatSelExhaustive object inherits the TRAIN and RUN methods from prtClass.
+    %
+    %   Example:
+    %
+    %   dataSet = prtDataSpiral;   % Create a 2 dimensional data set
+    %   nNoiseFeatures = 100;      % Append 100 irrelevant features
+    %   dataSet = prtDataSetClass(cat(2,dataSet.getObservations,randn([dataSet.nObservations, nNoiseFeatures])), dataSet.getTargets);
+    %   featSel = prtFeatSelLlnn('verbosePlot',true);  % Create the feature
+    %                                                  % selection object.
+    %   featSel.nMaxIterations = 10;                   % Set the max # of
+    %                                                  % iterations.
+    %   featSel = featSel.train(dataSet);              % Train 
+    %
+    %   See Also:  prtFeatSelStatic, prtFeatSelSfs, prtFeatSelExhaustive
+
     properties (SetAccess=private)
         % Required by prtAction
         name = 'Local Learning Nearest Neighbor'
@@ -25,43 +56,37 @@ classdef prtFeatSelLlnn < prtFeatSel
         
         kernelSigma = 1;
         sparsnessLambda = 2;
-        
         vGradNMaxSteps = 100;
         vGradInitStepSize = 1;
         vGradChangeThreshold = 1e-4;
         vGradNMaxStepSizeChanges = 12;
-        
-        nMaxIterations = 25;
         weightChangeThreshold = 0.01;
-        
-        normalizedWeightCutOff = 0.05;
+        nMaxIterations = 25;         % The maximum number of iterations
+        normalizedWeightCutOff = 0.05;  % The weight threshold to include a feature.
         
         % Learned 
-        weights = []
-        selectedFeatures = [];
+        weights = [] ;           % The weights of each feature
+        selectedFeatures = [];   % The selected features
         
-        verbosePlot = false;
+        verbosePlot = false;     % Toggles plotting on/off during training
     end
-    
-    
+     
     methods
         
         % Constructor %%
-        
+        % Allow for string, value pairs
         function Obj = prtFeatSelLlnn(varargin)
-            % Allow for string, value pairs
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
-        end
-        
+        end   
     end
     
     methods (Access = protected)
         
         % Train %%
-        
+            % Remove stuff from data set (too many calls to
+            % getObservations)
         function Obj = trainAction(Obj,DS)
             
-            % Remove stuff from data set (too many calls to getObservations)
             X = DS.getObservations();
             Y = DS.getTargetsClassInd();
             
@@ -167,8 +192,7 @@ classdef prtFeatSelLlnn < prtFeatSel
                 
                 %cWChange = norm(abs(w-wOld))/sqrt(length(w));
                 cWChange = norm(abs(w-wOld));
-                
-                
+                    
                 if Obj.verbosePlot
                     subplot(2,1,1)
                     stem(w./max(w));
@@ -196,16 +220,9 @@ classdef prtFeatSelLlnn < prtFeatSel
             Obj.selectedFeatures = find(w > Obj.normalizedWeightCutOff);
         end
         
-        
-        
         % Run %
-        
         function DataSet = runAction(Obj,DataSet) %%
             DataSet = DataSet.retainFeatures(Obj.selectedFeatures);
-        end
-        
-        
-    end
-    
-    
+        end       
+    end 
 end
