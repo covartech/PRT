@@ -74,8 +74,9 @@ classdef prtFeatSelLlnn < prtFeatSel
     methods
         
         % Constructor %%
-        % Allow for string, value pairs
         function Obj = prtFeatSelLlnn(varargin)
+            
+            % Allow for string, value pairs
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
         end   
     end
@@ -83,10 +84,9 @@ classdef prtFeatSelLlnn < prtFeatSel
     methods (Access = protected)
         
         % Train %%
-            % Remove stuff from data set (too many calls to
-            % getObservations)
         function Obj = trainAction(Obj,DS)
             
+            % Remove stuff from data set, too many calls to getObservations
             X = DS.getObservations();
             Y = DS.getTargetsClassInd();
             
@@ -96,6 +96,7 @@ classdef prtFeatSelLlnn < prtFeatSel
             
             w = ones(DS.nFeatures,1);
             wOld = w;
+            wChanges = nan(Obj.nMaxIterations,1);
             for iter = 1:Obj.nMaxIterations
                 
                 % Find zBar
@@ -107,7 +108,7 @@ classdef prtFeatSelLlnn < prtFeatSel
                 zBar = zeros(DS.nObservations, DS.nFeatures);
                 for iSamp = 1:DS.nObservations
                     
-                    % Distance from this point in each dim
+                    % L1 Distance from this point in each dim
                     cD = abs(bsxfun(@minus,X(iSamp,:),X));
                     cD(iSamp,:) = inf;
                     
@@ -157,7 +158,7 @@ classdef prtFeatSelLlnn < prtFeatSel
                     cChange = Obj.sparsnessLambda*ones(size(w)) - sum(bsxfun(@times,cExpDistance, zBar),1)';
                     
                     for iStepSize = 1:Obj.vGradNMaxStepSizeChanges
-                        cStepSize = cStepSize / 2; % Lower the step size, we get here if 1) first iteration (we multiplied the step size by 2 or 2) step size was too big so we need to shrink it.
+                        cStepSize = cStepSize / 2; % Lower the step size, we get here if 1) first iteration (we multiplied the step size by 2) or 2) step size was too big so we need to shrink it.
                         
                         vNew = v - cStepSize*cChange.*v; % Eq: 10
                         
@@ -176,7 +177,7 @@ classdef prtFeatSelLlnn < prtFeatSel
                             % We increased the fitness (bad) so the step
                             % size must be too big.
                             % Continue in the loop decrease the step size
-                            % by 1/2.
+                            % by 50%.
                         end
                     end
                     
@@ -190,21 +191,32 @@ classdef prtFeatSelLlnn < prtFeatSel
                 
                 w = v.^2;
                 
-                %cWChange = norm(abs(w-wOld))/sqrt(length(w));
                 cWChange = norm(abs(w-wOld));
-                    
+                
+                %%% Other ideas for exit criterion %%%
+                % cWChange = norm(abs(w-wOld))/sqrt(length(w));
+                % cWChange = mean(abs(w-wOld)./mean(cat(2,w,wOld),2)); % Average percent change
+                % wNorm = w ./ max(w);
+                % wOldNorm = wOld ./ max(wOld);
+                % cWChange = mean(abs(wNorm-wOldNorm)./mean(cat(2,wNorm,wOldNorm),2)); % Normalized Average percent change
+                % cWChange = mean(abs(wNorm-wOldNorm)); % Normalized Average change
+                
                 if Obj.verbosePlot
                     subplot(2,1,1)
                     stem(w./max(w));
-                    title('Feature Importance Weight ')
-                
+                    title('Feature Importance','FontSize',14)
+                    xlabel('Feature')
+                    ylabel('Normalized Feature Weight');
+                    xlim([1 length(w)]);
+                    
                     subplot(2,1,2)
                     wChanges(iter) = cWChange;
-                    plot(wChanges,'b-')
-                    hold on
-                    plot(wChanges,'rx')
-                    hold off
-                    title('Weight Change From Last Iteration')
+                    plot(1:iter,wChanges(1:iter),'b-',1:iter,wChanges(1:iter),'rx')
+                    title('Optimization Exit Criterion','FontSize',14)
+                    xlabel('Iteration')
+                    ylabel('Weight Change From Last Iteration')
+                    xlim([0.5 iter+0.5]);
+                    set(gca,'XTick',1:iter);
                     
                     drawnow;
                 end
@@ -221,7 +233,7 @@ classdef prtFeatSelLlnn < prtFeatSel
         end
         
         % Run %
-        function DataSet = runAction(Obj,DataSet) %%
+        function DataSet = runAction(Obj,DataSet)
             DataSet = DataSet.retainFeatures(Obj.selectedFeatures);
         end       
     end 
