@@ -90,17 +90,18 @@ classdef prtFeatSelSfs < prtFeatSel %
             sfsPerformance = zeros(min(nFeatsTotal,Obj.nFeatures),1);
             sfsSelectedFeatures = [];
             
-            if Obj.showProgressBar
-                h = prtUtilWaitbarWithCancel('SFS');
-            end
-            
             canceled = false;
             try
                 for j = 1:min(nFeatsTotal,Obj.nFeatures);
                     
+                    if Obj.showProgressBar
+                        h = prtUtilWaitbarWithCancel('SFS');
+                    end
+                    
                     availableFeatures = setdiff(1:nFeatsTotal,sfsSelectedFeatures);
                     performance = nan(size(availableFeatures));
                     for i = 1:length(availableFeatures)
+                        disp(i)
                         currentFeatureSet = cat(2,sfsSelectedFeatures,availableFeatures(i));
                         tempDataSet = DS.retainFeatures(currentFeatureSet);
                         performance(i) = Obj.EvaluationMetric(tempDataSet);
