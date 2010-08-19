@@ -50,6 +50,10 @@ classdef prtClassDlrt < prtClass
         function Obj = trainAction(Obj,~)
             %Do nothing; we've already specified "verboseStorage = true",
             %so the ".DataSet" field will be set when it comes time to test
+            
+            % Just one error check to make sure that we have enough
+            % training data for our value of k
+            assert(all(Obj.DataSet.nObservationsByClass >= Obj.k),'prtClassDlrt:trainAction','prtClassDlrt requires a training set with at least k observations from each class.');
         end
         
         function DataSetOut = runAction(Obj,TestDataSet)
