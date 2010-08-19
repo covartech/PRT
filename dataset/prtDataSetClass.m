@@ -87,14 +87,19 @@ classdef prtDataSetClass  < prtDataSetStandard
                 obj = varargin{1};
                 varargin = varargin(2:end);
             end
-            if isa(varargin{1},'double')
+            
+            if length(varargin) >= 1 && isa(varargin{1},'double')
                 obj = obj.setObservations(varargin{1});
                 varargin = varargin(2:end);
                 
-                if nargin >= 2 && (isa(varargin{1},'double') || isa(varargin{1},'logical'))
-                    obj = obj.setTargets(varargin{1});
+                if length(varargin) >= 1 && ~isa(varargin{1},'char')
+                    if (isa(varargin{1},'double') || isa(varargin{1},'logical'))
+                        obj = obj.setTargets(varargin{1});
+                        varargin = varargin(2:end);
+                    else
+                        error('prtDataSet:InvalidTargets','Targets must be a double or logical array; but targets provided is a %s',class(varargin{1}));
+                    end
                 end
-                varargin = varargin(2:end);
             end
             
             %handle public access to observations and targets, via their
@@ -103,13 +108,18 @@ classdef prtDataSetClass  < prtDataSetStandard
             dataIndex = find(strcmpi(varargin(1:2:end),'observations'));
             targetIndex = find(strcmpi(varargin(1:2:end),'targets'));
             stringIndices = 1:2:length(varargin);
+            
             if ~isempty(dataIndex) && ~isempty(targetIndex)
-                obj = prtDataSetStandard(varargin{dataIndex+1},varargin{targetIndex+1});
+                obj = prtDataSetClass(varargin{stringIndices(dataIndex)+1},varargin{stringIndices(targetIndex)+1});
                 newIndex = setdiff(1:length(varargin),[stringIndices(dataIndex),stringIndices(dataIndex)+1,stringIndices(targetIndex),stringIndices(targetIndex)+1]);
                 varargin = varargin(newIndex);
             elseif ~isempty(dataIndex)
-                obj = prtDataSetStandard(varargin{dataIndex+1});
+                obj = prtDataSetClass(varargin{dataIndex+1});
                 newIndex = setdiff(1:length(varargin),[stringIndices(dataIndex),stringIndices(dataIndex)+1]);
+                varargin = varargin(newIndex);
+            elseif ~isempty(targetIndex)
+                obj = obj.setTargets(varargin{stringIndices(targetIndex)+1});
+                newIndex = setdiff(1:length(varargin),[stringIndices(targetIndex),stringIndices(targetIndex)+1]);
                 varargin = varargin(newIndex);
             end
             
