@@ -113,7 +113,7 @@ classdef prtAction
         end
         
         function Obj = set.verboseStorage(Obj,val)
-            assert(numel(val)==1 && (islogical(val) || isnumeric(val) || val==0 || val==1),'prtAction:invalidVerboseStorage','verboseStorage must be a logical');
+            assert(numel(val)==1 && (islogical(val) || (isnumeric(val) && (val==0 || val==1))),'prtAction:invalidVerboseStorage','verboseStorage must be a logical');
             Obj.verboseStorage = logical(val);
         end
         
