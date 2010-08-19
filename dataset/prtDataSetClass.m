@@ -261,7 +261,7 @@ classdef prtDataSetClass  < prtDataSetStandard
         function varargout = plotAsTimeSeries(obj,featureIndices)
             
             if ~obj.isLabeled
-                obj = obj.setTargets(0);
+                obj = obj.setTargets(zeros(obj.nObservations,1));
                 obj = obj.setClassNames({'Unlabeled'});
             end
             
