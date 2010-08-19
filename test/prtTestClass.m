@@ -59,7 +59,7 @@ catch
     % do nothing
 end
 
-%% XXX This should error out
+% %% XXX This should error out
 % try
 %     classifier.verboseStorage = 'sam'; 
 %     error = false;  
