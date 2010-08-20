@@ -1,75 +1,84 @@
 classdef prtAction
-    % prtAction - Base class for PRT pattern classificaiton components.
-    %   Classification techniques, Regression techniques, Feature selection
-    %   techniques, etc. Are all sub-classes of prtAction.
+    % prtAction - Base class for PRT components.
     %
-    % prtAction Properties:
-    %   name - (Abstract) Descriptive name for prtAction
-    %   nameAbbreviation - (Abstract) Shortened name for prtAction name
-    %   isSupervised - (Abstract) Logical, Requires classifier training
-    %   isTrained - (Read only) Logical, current status of the object
-    %   verboseStorage - (Logical, store dataset with action object
-    %   DataSetSummary - Struct, output of summarize(DataSet)
-    %   DataSet - prtDataSet, only non-empty if verboseStorage == true
-    %   UserData - Struct, user specified data
+    %   Classification, regression and feature selection techniques are all
+    %   sub-classes of prtAction.
     %
-    % prtAction Methods:
-    %   train - Train prtAction using prtDataSet
-    %   run - Evaluate prtAction on prtDataSet
-    %   crossValidate - Cross-validate prtAction using prtDataSet and keys
-    %   kfolds - K-folds cross-validate a prtAction using prtDataSet
-    %   trainAction - (Abstract) Primary method for training a prtAction
-    %   runAction - (Abstract) Primary method for running a prtAction
-    %   preTrainProcessing - (Protected) Called by train() prior to trainAction()
-    %   postRunProcessing - (Protected) Called by run() after runAction()
+    %   All prtAction objects have the following properties:
     %
-    % See Also: prtClass, prtRegress, prtFeatSel, prtPreProc, prtDataSet
+    %   name                 - Descriptive name for prtAction object
+    %   nameAbbreviation     - Shortened name for prtAction object
+    %   isSupervised         - Indicates whether or not object requires
+    %                          training
+    %   isTrained            - Indicates whether the current prtAction 
+    %                          object has been trained                          
+    %   isCrossValidateValid - Flag indicating whether or not
+    %                          cross-validation is a valid operation on 
+    %                          this prtAction object.
+    %   verboseStorage       - Flag to allow or disallow verbose storage
+    %   DataSetSummary       - A struct, set during training, containing
+    %                          information about the training data set
+    %   DataSet              - A prtDataSet, containing the training data,
+    %                           only used if verboseStorage is true
+    %   UserData             - A struct containing user specified data
+    %
+    %   All prtAction objects have the following methods:
+    %
+    %   train          - Train the prtAction object using a prtDataSet
+    %   run            - Evaluate the prtAction object on a prtDataSet
+    %   crossValidate  - Cross-validate a prtAction object using a labeled 
+    %                    prtDataSet and cross-validation keys.
+    %   kfolds         - K-folds cross-validate a prtAction object using a
+    %                    labeled prtDataSet
+    %
+    % See Also: prtAction/train, prtAction/run, prtAction/crossValidate,
+    % prtAction/kfolds, prtClass, prtRegress, prtFeatSel, prtPreProc,
+    % prtDataSetBase
     
     properties (Abstract, SetAccess = private)
-        % prtAction.name - Descriptive name of classifier object.
+        % Descriptive name of prtAction object.
         name 
         
-        % prtAction.nameAbbreviation - Shortened name for the prtAction.
+        %  Shortened name for the prtAction object.
         nameAbbreviation 
         
-        % prtAction.isSupervised - Specifies if prtAction requires
-        % training.
+        % Specifies if prtAction requires training.
         isSupervised % Logical, requires training data to run
     end
     
     properties (SetAccess = protected)
-        % prtAction.isTrained - Specifies if prtAction has been trained.
-        %   Set automatically in prtAction.train().
+        % Specifies if prtAction has been trained.
         isTrained = false;
+        %   Set automatically in prtAction.train().
         
-        % prtAction.DataSetSummary - Structure that summarizes prtDataSet.
+        % Structure that summarizes prtDataSet.
+        DataSetSummary = [];
         %   Produced by prtDataSet.summarize() and stored in
         %   prtAction.train(). Used to characterize the dataset for
         %   plotting when prtAction.verboseStorage == false
-        DataSetSummary = [];
         
-        % prtAction.DataSet - Training prtDataSet. 
-        %   Only stored if prtAction.verboseStorage == true. Otherwise it
-        %   is empty.
+        %  The training prtDataSet, only stored if verboseStorage is true. 
         DataSet = []; 
+         %   Only stored if prtAction.verboseStorage == true. Otherwise it
+        %   is empty.
         
-        % prtAction.isCrossValidateValid - Boolean value indicating if
-        %   cross-validate outputs a reasonable data set.
+        % Indicates whether or not cross-validation is a valid operation
         isCrossValidateValid = true;
     end
     
     properties
-        % prtAction.verboseStorage - Specifies storage the training prtDataset.
-        % If true the prtDataSet is stored internally in prtAction.DataSet.
+        % Specifies whether or not to store the training prtDataset.
+        
+        % If true the training prtDataSet is stored internally prtAction.DataSet.
         verboseStorage = true;
         
-        % prtAction.UserData - User specified data. 
+        % User specified data
+        UserData = [];
         %   Some prtActions store additional information from
         %   prtAction.run() as a structure in prtAction.UserData()
-        UserData = [];
     end
     
-    methods (Abstract, Access = protected)
+    methods (Abstract, Access = protected, Hidden = true)
         % prtAction.trainAction() - Primary method for training a prtAction
         %   Obj = prtAction.trainAction(Obj,DataSet)
         Obj = trainAction(Obj, DataSet)
@@ -81,11 +90,11 @@ classdef prtAction
     
     methods
         function Obj = train(Obj, DataSet)
-            % train - Train prtAction using training a prtDataSet
-            %   Obj = train(Obj, DataSet)
+            % TRAIN  Train a prtAction object using training a prtDataSet object.
             %
-            % Obj.train() first calls Obj.preTrainProcessing() and then
-            % calls Obj.trainAction()
+            %   OBJ = OBJ.train(DataSet) trains the prtAction object using
+            %   the prtDataSet DataSet
+            
             
             % Default preTrainProcessing() stuff
             Obj.DataSetSummary = summarize(DataSet);
@@ -101,12 +110,11 @@ classdef prtAction
             Obj.isTrained = true;
         end
         
-        function DataSet = run(Obj, DataSet)
-            % run - Run a trained prtAction on test prtDataSet, DataSet
-            %   DataSet = run(Obj, DataSet)
+        function DataSet = run(Obj, DataSet)         
+            % RUN  Run a prtAction object on a prtDataSet object.
             %
-            % Obj.run() first calls Obj.runAction() and then calls
-            % Obj.postRunProcessing()
+            %   OUTPUT = OBJ.train(DataSet) runs the prtAction object using
+            %   the prtDataSet DataSet. OUTPUT will be a prtDataSet object.
             
             DataSet = runAction(Obj, DataSet);
             DataSet = postRunProcessing(Obj, DataSet);
@@ -118,13 +126,25 @@ classdef prtAction
         end
         
         function [OutputDataSet, TrainedActions] = crossValidate(Obj, DataSet, validationKeys)
-            % crossValidate - Cross-Validate prtAction using prtDataSet
-            %   and specified cross-validation keys. If the second output
-            %   is requested each of the trained prtActions is returned.
-            %   This will have a length equal to the number of unique
-            %   validation keys.
+            % CROSSVALIDATE  Cross validate prtAction using prtDataSet and cross validation keys.
             %
-            % [OutputDataSet, TrainedActions] = crossValidate(Obj, DataSet, validationKeys)
+            %  OUTPUTDATASET = OBJ.crossValidate(DATASET, KEYS) cross
+            %  validates the prtAction object OBJ using the prtDataSet
+            %  DATASET and the KEYS. DATASET must be a labeled prtDataSet.
+            %  KEYS must be a vector of integers with the same number of
+            %  elements as DataSet has observations.
+            %
+            %  The KEYS are are used to parition the input DataSet into
+            %  test and training data sets. For each unique key, a test set
+            %  will be created out of the corresponding observations of the
+            %  prtDataSet. The remaining observations will be used as
+            %  training data.
+            %
+            %  [OUTPUTDATASET, TRAINEDACTIONS] = OBJ.crossValidate(DATASET,
+            %  KEYS) outputs the trained prtAction objects TRAINEDACTIONS.
+            %  TRAINEDACTIONS will have a length equal to the number of
+            %  unique KEYS.
+            
             
             if ~Obj.isCrossValidateValid
                 %Should this error?
@@ -181,13 +201,21 @@ classdef prtAction
         end
         
         function varargout = kfolds(Obj,DataSet,K)
-            % kfolds - Perform k-folds cross validation of prtAction
-            %   on a prtDataSet. Generates cross validation keys by
-            %   patitioning the dataSet into K groups such that the number
-            %   of samples of each uniqut target type is attempted to be
-            %   held constant.
+            % KFOLDS  Perform K-folds cross validation of prtAction
+            % 
+            %    OUTPUTDATASET = Obj.KFOLDS(DATASET, K) performs K-folds
+            %    cross validation of the prtAction object OBJ using the
+            %    prtDataSet DATASET. DATASET must be a labeled prtDataSet,
+            %    and K must be a scalar interger, representing the number
+            %    of folds. KFOLDS Generates cross validation keys by
+            %    patitioning the dataSet into K groups such that the number
+            %    of samples of each uniqut target type is attempted to be
+            %    held constant.
             %
-            % [OutputDataSet, TrainedActions, crossValKeys] = kfolds(ActionObj, DataSet, K)
+            %    [OUTPUTDATASET, TRAINEDACTIONS, CROSSVALKEYS] =
+            %    Obj.KFOLDS(DATASET, K)  outputs the trained prtAction
+            %    objects TRAINEDACTIONS, and the generated cross-validation
+            %    keys CROSSVALKEYS.
             
             if nargin == 2 || isempty(K)
                 K = DataSet.nObservations;
@@ -215,7 +243,7 @@ classdef prtAction
         end
     end
     
-    methods (Access=protected)
+    methods (Access=protected, Hidden= true)
         function ClassObj = preTrainProcessing(ClassObj,DataSet)
             % preTrainProcessing - Processing done prior to train()
             %   Called by train(). Can be overloaded by prtActions to
