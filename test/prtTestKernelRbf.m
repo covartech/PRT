@@ -42,6 +42,18 @@ if kernOut ~=1
     result = false;
 end
 
+% check to string
+try
+    str = kern.toString;
+catch
+    disp('rbf kern toString fail')
+    result = false;
+end
+if ~isa(str, 'char')
+    disp('rbf kernel toString not a string')
+    result = false;
+end
+
 % check this kernel array nonsense
 kern = prtKernelRbf;
 dataSet = prtDataSetStandard;
@@ -52,6 +64,8 @@ if (kernCell{1}.run(1) ~=1) || (kernCell{2}.run(2) ~=1)
     disp('kernel array error')
     result = false;
 end
+
+
 
 %% Erorr checks
 error = true;
