@@ -28,12 +28,34 @@ TrainingDataSet = prtDataUniModal;
 classifier = prtClassMAP;
 classifier = classifier.train(TrainingDataSet);
 classified = run(classifier, TestDataSet);
-%classes  = classified.data > .5;
+
 classes  = classified.getX > .5;
 
 percentCorr = prtScorePercentCorrect(classes,TestDataSet.getTargets);
 
 result = result & (percentCorr > baselinePercentCorr);
+
+%% Check that cross-val and k-folds work
+
+TestDataSet = prtDataUniModal;
+classifier = prtClassMAP;
+
+% cross-val
+keys = mod(1:400,2);
+crossVal = classifier.crossValidate(TestDataSet,keys);
+classes  = crossVal.getX > .5;
+percentCorr = prtScorePercentCorrect(classes,TestDataSet.getTargets);
+
+result = result & (percentCorr > baselinePercentCorr);
+
+% k-folds
+
+crossVal = classifier.kfolds(TestDataSet,10);
+classes  = crossVal.getX > .5;
+percentCorr = prtScorePercentCorrect(classes,TestDataSet.getTargets);
+
+result = result & (percentCorr > baselinePercentCorr);
+
 
 %% Error checks
 
