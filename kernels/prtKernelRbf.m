@@ -19,7 +19,7 @@ classdef prtKernelRbf < prtKernelBinary
 %   initializeKernelArray functions from the prtKernelBinary class.
 %
 %   Example:
-%   kern = prtKernRbf;               % Create a prtKernRbf object;
+%   kern = prtKernelRbf;               % Create a prtKernRbf object;
 %   kern.c = 2;                      % Set the c parameter
 %   kern = kern.initializeRbf(2);    % Set the center of the kernel to 2.
 %   result = kern.run(4);            % Run the kernel with input 4
@@ -28,7 +28,8 @@ classdef prtKernelRbf < prtKernelBinary
 %                                    % evaluates.
 %
 %  See also  prtKernelRbfNdimensionScale, prtKernelPolynomial, prtKernelVoigt, prtKernelDc,
-%  prtKernelLaplacian,prtKernelQuadExpCovariance, 
+%  prtKernelLaplacian,prtKernelQuadExpCovariance
+
     properties
         c = 1;    % Inverse kernel width
     end
