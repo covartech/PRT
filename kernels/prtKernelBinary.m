@@ -2,6 +2,11 @@ classdef prtKernelBinary < prtKernel
     
     methods
         function objectArray = initializeKernelArray(obj,DataSet)
+            %INITIALIZEKERNELARRAY   Initialize an array of prtKernel objects
+            %
+            %   OBJARRAY = initializeKernelArray(DATASET) initializes an array of
+            %   prtKernel objects, centered at the values contained in the
+            %   prtDataSet DATASET.
             if isa(DataSet,'double')
                 DataSet = prtDataSetClass(DataSet);
             end
