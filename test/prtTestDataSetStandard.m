@@ -161,7 +161,7 @@ end
 dataSet = prtDataSetStandard;
 dataSet = dataSet.setX([ 1 2]');
 dataSet = dataSet.setY([1 2; 3 4]);
-dataSet = dataSet.setY([8; 8], :, [1])
+dataSet = dataSet.setY([8; 8], :, [1]);
 if ~isequal(dataSet.getY(:,1), [8;8])
     result = false;
     disp('failed test #19, set high dim target')
@@ -253,10 +253,10 @@ end
 
 
 
-dataSet = prtDataSetStandard
+dataSet = prtDataSetStandard;
 dataSet = dataSet.setObservationsAndTargets([1 2; 3 4; 5 6], [1;2;3]);
 try
-    dataSet = dataSet.catObservations([4 5])
+    dataSet = dataSet.catObservations([4 5]);
     error = false;
     disp('Failed test #28, trying to concat observations when targets present')
 end
