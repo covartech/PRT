@@ -104,10 +104,10 @@ classdef prtRegressRvm < prtRegress
             memChunkSize = 1000; % Should this be moved somewhere?
             n = DataSet.nObservations;
             
-            DataSetOut = prtDataSetUnLabeled(zeros(n,1));
+            DataSetOut = prtDataSetRegress(zeros(n,1));
             for i = 1:memChunkSize:n;
                 cI = i:min(i+memChunkSize,n);
-                cDataSet = prtDataSet(DataSet.getObservations(cI,:));
+                cDataSet = prtDataSetRegress(DataSet.getObservations(cI,:));
                 gramm = prtKernelGrammMatrix(cDataSet,Obj.sparseKernels);
                 
                 DataSetOut = DataSetOut.setObservations(gramm*Obj.sparseBeta, cI);

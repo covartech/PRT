@@ -24,32 +24,7 @@ classdef prtDataSetRegress < prtDataSetStandard
             % prtDataSet = prtDataSetRegress(prtDataSetRegressIn, paramName1, paramVal2, ...)
             % prtDataSet = prtDataSetRegress(data, targets, paramName1, paramVal2, ...)
             
-            if nargin == 0 % Empty constructor
-                % Nothing to do
-                return
-            end
-            
-            if isa(varargin{1},'prtDataSetRegress')
-                prtDataSet = varargin{1};
-                varargin = varargin(2:end);
-            else
-                if nargin < 2
-                    error('prt:prtDataSetRegress:invalidInputs','both data and labels must be specified.');
-                end
-                if size(varargin{1},1) ~= size(varargin{2},1)
-                    error('prt:prtDataSetRegress:dataLabelsMismatch','size(data,1) (%d) must match size(labels,1) (%d)',size(varargin{1},1), size(varargin{2},1));
-                end
-                prtDataSet.data = varargin{1};
-                prtDataSet.targets = varargin{2};
-                varargin = varargin(3:end);
-            end
-            
-            % Quick exit if no more inputs.
-            if isempty(varargin)
-                return
-            else
-                prtDataSet = prtUtilAssignStringValuePairs(prtDataSet,varargin{:});
-            end
+            prtDataSet = prtDataSet@prtDataSetStandard(varargin{:});
         end
         
         function varargout = plot(obj, featureIndices)
@@ -69,7 +44,7 @@ classdef prtDataSetRegress < prtDataSetStandard
             if nPlotDimensions < 1
                 warning('prt:plot:NoPlotDimensionality','No plot dimensions requested.');
                 return
-            elseif nPlotDimensions > 2
+            elseif nPlotDimensions >= 2
                 error('prt:plot:NoPlotDimensionality','Regression plots only for 1 dimensional data');
                 return
             end
