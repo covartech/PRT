@@ -1,33 +1,46 @@
 classdef prtClass < prtAction
-    % prtClass Properties:
-    %   isNativeMary - Logical, classifier natively produces an output for each unique class
-    %   PlotOptions - prtClassPlotOpt
-    %   twoClassParadigm - {'Binary','Mary')
+    % prtClass   Base class for prt Classification objects
     %
-    % prtClass Methods:
-    %   plot
-    %   plotDecision
+    % All prtClass objects inherit all properities and methods from the
+    % prtActoin object. prtClass objects have the following additional
+    % properties:
+    % 
+    %   isNativeMary - Whather or not the classifier natively produces an
+    %                  M-ary result.
+    %   PlotOptions -  prtClassPlotOpt object specifying the plotting
+    %                  options
+    %   twoClassParadigm - {'Binary','Mary')  XXXX What is this for?
+    %
+    %   prtClass objects have the following methods:
+    %
+    %   plot          - Plot the output confidence
+    %   plotDecision  - Plot the decision boundaries
     
     properties (SetAccess=private, Abstract)
         isNativeMary % Logical, classifier natively produces an output for each unique class
     end
     
-    properties (SetAccess=protected)
+    properties (SetAccess=protected, Hidden = true)
         yieldsMaryOutput = nan; % Determined in trainProcessing()
     end
     
     properties
         PlotOptions = prtClassPlotOpt; % Plotting Options
-        twoClassParadigm = 'binary'; % Two class paradigm
+        twoClassParadigm = 'binary';  %  Whether the classifier is binary or m-ary
     end
     
     methods
         
         function varargout = plot(Obj)
-            % plot - Plot output confidence of prtClass object
-            %   Works when dimensionality of dataset is 3 or less.
-            %   Can produce both M-ary and Binary decision surfaces
-            %   See also: Obj.plotDecision()
+            % PLOT  Plot the output confidence of a prtClass object
+            % 
+            %   OBJ.plot() plots the output confidence of a prtClass
+            %   object. This function only operates when the dimensionality
+            %   of dataset is 3 or less. When verboseStorage is set to
+            %   'true', the training data points are also displayed on the
+            %   plot.
+            %  
+            %   See also: prtClass\plotDecision
             
             assert(Obj.isTrained,'Classifier must be trained before it can be plotted.');
             assert(Obj.DataSetSummary.nFeatures < 4, 'nFeatures in the training dataset must be less than or equal to 3');
@@ -46,11 +59,16 @@ classdef prtClass < prtAction
             end
         end
         
-        function varargout = plotDecision(Obj)
-            % plotDecision - Plot output decision of prtClass object
-            %   Works when dimensionality of dataset is 3 or less.
-            %   Can produce both M-ary and Binary decision surfaces
-            %   See also: Obj.plot()
+        function varargout = plotDecision(Obj)         
+            % PLOTDECISION  Plot the decision boundaries of a prtClass object
+            % 
+            %   OBJ.plotDecision() plots the decision boundaries of a prtClass
+            %   object. This function only operates when the dimensionality
+            %   of dataset is 3 or less. When verboseStorage is set to
+            %   'true', the training data points are also displayed on the
+            %   plot. 
+            %  
+            %   See also: prtClass\plot
             
             assert(Obj.isTrained,'Classifier must be trained before it can be plotted.');
             assert(Obj.DataSetSummary.nFeatures < 4, 'nFeatures in the training dataset must be less than or equal to 3');
@@ -95,7 +113,7 @@ classdef prtClass < prtAction
         end
     end
     
-    methods (Access = protected)
+    methods (Access = protected, Hidden = true)
 
         function ClassObj = preTrainProcessing(ClassObj, DataSet)
             % Overload preTrainProcessing() so that we can determine mary

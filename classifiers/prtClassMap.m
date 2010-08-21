@@ -15,10 +15,14 @@ classdef prtClassMap < prtClass
  %             matrix required for Maximum a Posteriori classification. It is
  %             writable, or can be set using the Train method.
  %
- %    A prtClassMap object inherits the TRAIN and RUN methods from prtClass.
+ %    A prtClassMap object inherits inherits the TRAIN, RUN, CROSSVALIDATE
+ %    and KFOLDS methods from prtClass.
  %  
- %    See also prtClass, prtClass.train, prtClass.run, prtClass.plot, prtClass.plotDecision, prtRvMvn
- 
+ %    See also prtClass, prtClassLogisticDiscriminant, prtClassBagging,
+ %    prtClassMap, prtClassFld, prtClassMaryEmulateOneVsAll, prtClassDlrt,
+ %    prtClassPlsda, prtClassFld, prtClassRvm, prtClassGlrt,  prtClassSvm,
+ %    prtClassTreeBaggingCap, prtClassKmsd, prtClassKnn                   
+
     properties (SetAccess=private)
         % Required by prtAction
         name = 'Maximum a Posteriori'

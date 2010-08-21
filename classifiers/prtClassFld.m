@@ -1,45 +1,67 @@
 classdef prtClassFld < prtClass
-    % prtClassFld Properties: 
-    %   name - Fisher Linear Discriminant
-    %   nameAbbreviation - FLD
-    %   isSupervised - true
-    %   isNativeMary - false
-    %   w - regression weights - estimated during training
-    %   plotBasis - logical, plot the basis
-    %   plotProjections - logical, plot projections of points to basis
-    %
-    % prtClassFld Methods:
+ %prtClassFld Fischer linear discriminant classifier
+ % 
+ %    CLASSIFIER = prtClassFld returns a Fischer linear discriminant classifier
+ %
+ %    CLASSIFIER = prtClassFld(PROPERTY1, VALUE1, ...) constructs a
+ %    prtClassMAP object CLASSIFIER with properties as specified by
+ %    PROPERTY/VALUE pairs.
+ %
+ %    A prtClassFld object inherits all properties from the abstract class
+ %    prtClass. In addition is has the following properties:
+ %
+ %    w                  - regression weights, estimated during training
+ %    plotBasis          - Flag indicating whether to plot the basis
+ %                         functions when the PLOT function is called
+ %    plotProjections    - Flag indicating whether to plot the projection
+ %                         of points to the basis when the PLOT function is
+ %                         called
+ %
+ %    For information on the Fischer Linear Discriminant algorithm, please
+ %    refer to the following URL:
+ %
+ %    http://en.wikipedia.org/wiki/Linear_discriminant_analysis#Fisher.27s_linear_discriminant
+ %
+ %    A prtClassFld object inherits the TRAIN, RUN, CROSSVALIDATE and
+ %    KFOLDS methods from prtAction. It also inherits the PLOT and
+ %    PLOTDECISION classes from prtClass.
+ %  
+ %    See also prtClass, prtClassLogisticDiscriminant, prtClassBagging,
+ %    prtClassMap, prtClassCap, prtClassMaryEmulateOneVsAll, prtClassDlrt,
+ %    prtClassPlsda, prtClassFld, prtClassRvm, prtClassGlrt,  prtClassSvm,
+ %    prtClassTreeBaggingCap, prtClassKmsd, prtClassKnn                   
+
+ 
 
     properties (SetAccess=private)
-        % Required by prtAction
-        name = 'Fisher Linear Discriminant'
-        nameAbbreviation = 'FLD'
-        isSupervised = true;
         
-        % Required by prtClass
-        isNativeMary = false;
+        name = 'Fisher Linear Discriminant' % Fisher Linear Discriminant
+        nameAbbreviation = 'FLD'            % FLD
+        isSupervised = true;   % True
+        isNativeMary = false;  % False
     end
     
     properties
         % w is a DataSet.nDimensions x 1 vector of projection weights
         % learned during Fld.train(DataSet)
-        w = [];
+        
+        w = []; % The vector of weights, learned during training
         
         % plotting options
-        plotBasis = true; % logical
-        plotProjections = false; % true, false or int (plot every nth projection)
+        plotBasis = true; % Flag indicating whether or not to plot the basis
+        plotProjections = false; % Flag indicating whether or not to plot the projections
     end
     
     methods
-        
+     
+               % Allow for string, value pairs
         function Obj = prtClassFld(varargin)
-            % Allow for string, value pairs
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
         end
         
     end
     
-    methods (Access=protected)
+    methods (Access=protected, Hidden = true)
         
         function Obj = trainAction(Obj,DataSet)
             
