@@ -42,12 +42,12 @@ classdef prtAction
         %  Shortened name for the prtAction object.
         nameAbbreviation 
         
-        % Specifies if prtAction requires training.
+        % Specifies if prtAction object requires training.
         isSupervised % Logical, requires training data to run
     end
     
     properties (SetAccess = protected)
-        % Specifies if prtAction has been trained.
+        % Specifies if prtAction object has been trained.
         isTrained = false;
         %   Set automatically in prtAction.train().
         
