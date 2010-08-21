@@ -176,7 +176,7 @@ classdef prtDataSetStandard < prtDataSetBase
             %   dataSet = dataSet.setFeatureNames(FEATNAMES, INDICES) sets the
             %   feature names of the dataSet object at the corresponding
             %   INDICES.
-           
+            
             indices2 = prtDataSetBase.parseIndices(obj.nFeatures,varargin{:});
             if length(featNames) > obj.nFeatures
                 error('prtDataSetStandard:setFeatureNames','Attempt to set feature names for more features than exist \n%d feature names provided, but object only has %d features',length(featNames),obj.nFeatures);
@@ -238,16 +238,29 @@ classdef prtDataSetStandard < prtDataSetBase
             %the observations of the dataSet object.
             %
             %DATA = dataSet.getObservations(INDICES) Returns
-            %the observations of the dataSet object at the specified INDICES. 
+            %the observations of the dataSet object at the specified INDICES.
             
-            if nargin == 1
-                % No indicies identified. Quick exit
-                data = obj.data;
-                return
-            end
-            
-            [indices1, indices2] = prtDataSetBase.parseIndices([obj.nObservations, obj.nFeatures],varargin{:});
-            data = obj.data(indices1,indices2);
+            %Modified 8/21/2010 - assume the indices are all valid, and
+            %try/catch them.  If they're not valid, use
+            %prtDataSetBase.parseIndices to error gracefully.
+            try
+                switch nargin
+                    case 1
+                        % No indicies identified. Quick exit
+                        data = obj.data;
+                    case 2
+                        data = obj.data(varargin{1},:);
+                    case 3
+                        data = obj.data(varargin{1},varargin{2});
+                    otherwise
+                        error('prt:prtDataSetStandard:getObservations','getObservations expects 1 or 2 sets of indices; %d indices provided',nargin-1);
+                end
+            catch ME
+                %this should error with a meaningful message:
+                prtDataSetBase.parseIndices([obj.nObservations, obj.nFeatures],varargin{:});
+                %Otherwise, something else happened; show the user
+                throw(ME);
+            end 
         end
         
         function obj = setObservations(obj, data, varargin)
@@ -263,17 +276,31 @@ classdef prtDataSetStandard < prtDataSetBase
             %obj = setObservations(obj,data,indices1,indices2)
             % XXX Leaving un-doc'd for now
             
+            %Modified 8/21/2010 - assume the indices are all valid, and
+            %try/catch them.  If they're not valid, use
+            %prtDataSetBase.parseIndices to error gracefully.
             if nargin < 3
                 % Setting the entire data matrix
-                if obj.isLabeled && obj.nObservations ~= size(data,1)       
+                if obj.isLabeled && obj.nObservations ~= size(data,1)
                     error('prtDataSet:invalidDataTargetSet','Attempt to change size of observations in a labeled data set; use setObservationsAndTargets to change both simultaneously');
                 end
-                obj.data = data;            
+                obj.data = data;
             else
-                % Setting only specified entries of the matrix
-                [indices1, indices2] = prtDataSetBase.parseIndices([obj.nObservations, obj.nFeatures],varargin{:});
-                
-                obj.data(indices1,indices2) = data;
+                try
+                    switch nargin
+                        case 3
+                            obj.data(varargin{1},:) = data;
+                        case 4
+                            obj.data(varargin{1},varargin{2}) = data;
+                        otherwise
+                            error('prt:prtDataSetStandard:setObservations','setObservations expects 1 or 2 sets of indices; %d indices provided',nargin-2);
+                    end
+                catch ME
+                    %this should error with a meaningful message:
+                    prtDataSetBase.parseIndices([obj.nObservations, obj.nFeatures],varargin{:});
+                    %Otherwise, something else happened; show the user
+                    throw(ME);
+                end
             end
         end
         
@@ -287,7 +314,9 @@ classdef prtDataSetStandard < prtDataSetBase
             %the dataSet object at the specified INDICES. 
             
             %[data,targets] = getTargets(obj,indices1,indices2)
-            % XXX Leaving un-doc'd for now   
+            % XXX Leaving un-doc'd for now  
+            
+            
             if nargin == 1
                 % No indicies identified. Quick exit
                 targets = obj.targets;
@@ -295,9 +324,21 @@ classdef prtDataSetStandard < prtDataSetBase
             end
             
             if obj.isLabeled
-                [indices1, indices2] = prtDataSetBase.parseIndices([obj.nObservations, obj.nTargetDimensions],varargin{:});
-            
-                targets = obj.targets(indices1,indices2);
+                try
+                    switch nargin
+                        case 2
+                            targets = obj.targets(varargin{1},:);
+                        case 3
+                            targets = obj.targets(varargin{1},varargin{2});
+                        otherwise
+                            error('prt:prtDataSetStandard:getTargets','getTargets expects 1 or 2 sets of indices; %d indices provided',nargin-1);
+                    end
+                catch ME
+                    %this should error with a meaningful message:
+                    prtDataSetBase.parseIndices([obj.nObservations, obj.nTargetDimensions],varargin{:});
+                    %Otherwise, something else happened; show the user
+                    throw(ME);
+                end
             else
                 targets = [];
             end
@@ -314,10 +355,11 @@ classdef prtDataSetStandard < prtDataSetBase
             
             %obj = setTargets(obj,targets,indices1,indices2)
             % XXX leaving un-doc'd for now
-               
+             
+            
             % Setting only specified entries of the matrix
             [indices1, indices2] = prtDataSetBase.parseIndices([obj.nObservations, obj.nTargetDimensions],varargin{:});
-                
+            
             %Handle empty targets (2-D)
             if isempty(indices2) 
                 indices2 = 1:size(targets,2);
@@ -345,7 +387,7 @@ classdef prtDataSetStandard < prtDataSetBase
         function obj = catObservations(obj, varargin)
             %catObservations  Concatenate to the observations of a
             %prtDataSetStandard object
-            % 
+            %
             % dataSet = dataSet.catObservation(OBSERVATIONS) concatenates
             % OBSERVATIONS the observations of a prtDataSetStandard object.
             % OBSERVATIONS must have the same number of features as the
@@ -505,7 +547,6 @@ classdef prtDataSetStandard < prtDataSetBase
             sampleIndices = ceil(rand(1,nSamples).*obj.nObservations);
             
             newData = obj.getObservations(sampleIndices);
-            
             if obj.isLabeled
                 newTargets = obj.getTargets(sampleIndices);
                 obj.data = newData;

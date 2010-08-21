@@ -58,7 +58,13 @@ classdef prtClassFld < prtClass
         function Obj = prtClassFld(varargin)
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
         end
-        
+        function Obj = set.plotProjections(Obj,value)
+            if islogical(value) || (isnumeric(value) && (value == 1 || value == 0))
+                Obj.plotProjections = value;
+            else
+                error('prt:prtClassFld:plotProjections','plotProjections can only take true or false (boolean or 0/1) values; user speficied value %d',value);
+            end
+        end
     end
     
     methods (Access=protected, Hidden = true)

@@ -26,7 +26,7 @@ classdef prtClass < prtAction
     
     properties
         PlotOptions = prtClassPlotOpt; % Plotting Options
-        twoClassParadigm = 'binary';  %  Whether the classifier is binary or m-ary
+        twoClassParadigm = 'binary';   %  Whether the classifier is binary or m-ary
     end
     
     methods
