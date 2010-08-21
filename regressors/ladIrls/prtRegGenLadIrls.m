@@ -1,5 +1,5 @@
 function Regressor = prtRegGenLadIrls(PrtDataSet,PrtOptions)
-%Rvm = prtRegGenLslr(PrtDataSet,PrtOptions)
+%Rvm = prtRegGenLadIrls(PrtDataSet,PrtOptions)
 
 X = PrtDataSet.getObservations;
 Y = PrtDataSet.getTargets;
