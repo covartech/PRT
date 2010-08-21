@@ -1,7 +1,7 @@
 classdef prtClassFld < prtClass
- %prtClassFld Fischer linear discriminant classifier
+ %prtClassFld Fisher linear discriminant classifier
  % 
- %    CLASSIFIER = prtClassFld returns a Fischer linear discriminant classifier
+ %    CLASSIFIER = prtClassFld returns a Fisher linear discriminant classifier
  %
  %    CLASSIFIER = prtClassFld(PROPERTY1, VALUE1, ...) constructs a
  %    prtClassMAP object CLASSIFIER with properties as specified by
@@ -17,7 +17,7 @@ classdef prtClassFld < prtClass
  %                         of points to the basis when the PLOT function is
  %                         called
  %
- %    For information on the Fischer Linear Discriminant algorithm, please
+ %    For information on the Fisher Linear Discriminant algorithm, please
  %    refer to the following URL:
  %
  %    http://en.wikipedia.org/wiki/Linear_discriminant_analysis#Fisher.27s_linear_discriminant
