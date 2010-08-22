@@ -30,7 +30,7 @@ classdef prtDataSetRegress < prtDataSetStandard
         function varargout = plot(obj, featureIndices)
             
             if ~obj.isLabeled
-                obj = obj.setTargets(0);
+                obj = obj.setTargets(zeros(obj.nObservations,1));
             end
             
             if nargin < 2 || isempty(featureIndices)
