@@ -1,9 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 classdef prtRegress < prtAction %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% prtRegress is an abstract base class for all regression objects.
 
-    % PreProcessors are currently have no additional properties or methods
-    % This is a placeholder for consistency with other action types
-    
     properties
         PlotOptions = prtClassPlotOpt; % Plotting Options
     end

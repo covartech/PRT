@@ -1,41 +1,98 @@
 classdef prtRegressRvm < prtRegress
+    % prtRegressRvm  Relevance vector machine regression object
+    %
+    %   REGRESS = prtRegressRvm returns a prtRegressRvm object
+    %
+    %    REGRESS = prtRegressRVM(PROPERTY1, VALUE1, ...) constructs a
+    %    prtRegressRvm object REGRESS with properties as specified by
+    %    PROPERTY/VALUE pairs.
+    % 
+    %    A prtRegressRvm object inherits all properties from the prtRegress
+    %    class. In addition, it has the following properties:
+    %
+    %    kernels            - ???
+    %    algorithm          - Allowable algorithms arE 'JeffreysPrior' 
+    %                         or 'Sequential'
+    %    LearningConverged  - Flag indicating if the training converged
+    %    LearningPlot       - Flag indicating whether or not to plot during
+    %                         training
+    %
+    %    The following paremters are algorithm specific:
+    %
+    %    beta
+    %    Sigma
+    %    sigma2
+    %    sparseBeta
+    %    sparseKernels
+    %    LearningMaxIterations
+    %    LearningBetaConvergedTolerance 
+    %    LearningBetaRelevantTolerance
+    %    LearningLikelihoodIncreaseThreshold
+    %    LearningResults   - ???
+    % 
+    %    Need refernence for RVMs.
+    % 
+    %   A prtRegressionRvm object inherits the PLOT method from the
+    %   prtRegress object, and the TRAIN, RUN, CROSSVALIDATE and KFOLDS
+    %   methods from the prtAction object.
+    %
+    %   Example:
+    %   
+    %   dataSet = prtDataSinc;           % Load a prtDataRegress
+    %   dataSet.plot;                    % Display data
+    %   reg = prtRegressRvm;             % Create a prtRegressRvm object
+    %   reg = reg.train(dataSet);        % Train the prtRegressRvm object
+    %   reg.plot();                      % Plot the result
+    %
+    %   See also prtRegress, prtRegressGP, prtRegressLslr
+    
     
     properties (SetAccess=private)
-        % Required by prtAction
-        name = 'Relevance Vector Machine'
-        nameAbbreviation = 'RVM'
-        isSupervised = true;
+       
+        name = 'Relevance Vector Machine'  % Relevance Vector Machine
+        nameAbbreviation = 'RVM'           % RVM
+        isSupervised = true;               % True
     end
     
     properties
         kernels = {prtKernelDc, prtKernelRbfNdimensionScale};
-        algorithm = 'JefferysPrior';
+        algorithm = 'JefferysPrior';   %Allowable algorithms are 'JeffreysPrior' or 'Sequential'
         
-        % Estimated Parameters
-        sigma2 = [];
-        beta = [];
-        Sigma = [];
-        sparseBeta = [];
-        sparseKernels = {};
-        LearningConverged = [];
         
-        % Learning algorithm
-        LearningPlot = false;
-        LearningMaxIterations = 1000;
+        sigma2 = [];  % Estimated in training
+        beta = [];% Estimated in training
+        Sigma = [];% Estimated in training
+        sparseBeta = [];% Estimated in training
+        sparseKernels = {};% Estimated in training
+        LearningConverged = [];% Whether or not the training converged
+        
+        
+        LearningPlot = false;   % Whether or not to plot during training
+        LearningMaxIterations = 1000;  % Maximum number of iteratoins
         LearningBetaConvergedTolerance = 1e-6;
         LearningBetaRelevantTolerance = 1e-3;
         LearningLikelihoodIncreaseThreshold = 1e-2;
-        LearningResults
+        LearningResults % >????
     end
     
     methods
         
+         % Allow for string, value pairs
         function Obj = prtRegressRvm(varargin)
-            % Allow for string, value pairs
+           
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
         end
         
         function Obj = set.algorithm(Obj,newAlgo)
+            % ALGORITHM  Set the RVM algorithm.
+            %
+            % REGRESS = REGRESS.algorithm('JefferysPrior') sets the
+            % algorithm of the REGRESS object to the Jefferys Prior
+            % algorithm
+            %
+            % REGRESS = REGRESS.algorithm('Sequential') sets the
+            % algorithm of the REGRESS object to the Sequential
+            % algorithm
             possibleAlgorithms = {'Jefferys', 'Sequential'};
             
             possibleAlgorithmsStr = sprintf('%s, ',possibleAlgorithms{:});
@@ -50,7 +107,7 @@ classdef prtRegressRvm < prtRegress
         
     end
     
-    methods (Access = protected)
+    methods (Access = protected, Hidden = true)
         
         function Obj = trainAction(Obj,DataSet)
             %Rvm = trainAction(Rvm,DataSet) (Private; see prtClass\train)
