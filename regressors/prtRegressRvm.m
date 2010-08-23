@@ -42,7 +42,14 @@ classdef prtRegressRvm < prtRegress
     %   dataSet.plot;                    % Display data
     %   reg = prtRegressRvm;             % Create a prtRegressRvm object
     %   reg = reg.train(dataSet);        % Train the prtRegressRvm object
-    %   reg.plot();                      % Plot the result
+    %   reg.plot();                      % Plot the resulting curve
+    %   dataSetOut = reg.run(dataSet);   % Run the regressor on the data
+    %   hold on;
+    %   plot(dataSet.getX,dataSetOut.getX,'c.') % Plot, overlaying the
+    %                                           % fitted points with the 
+    %                                           % curve and original data
+    % legend('Regression curve','Original Points','Fitted points',o)
+    %
     %
     %   See also prtRegress, prtRegressGP, prtRegressLslr
     
