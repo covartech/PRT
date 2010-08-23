@@ -24,15 +24,19 @@ classdef prtRvMvn < prtRv
         covarianceStructure = 'full';
         mean
         covariance
+        
+    end
+    
+    properties (Hidden = true)
+        displayName = 'Multi-Variate Normal';
     end
     
     properties (Hidden = true, Dependent = true)
         nDimensions
         isPlottable
         isValid
-        plotLimits
-        displayName
     end 
+    
     
     properties (SetAccess = 'private', Hidden = true)
         covarianceCholDecomp
@@ -40,103 +44,40 @@ classdef prtRvMvn < prtRv
     end
 
     methods
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        % The Constructor %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         function R = prtRvMvn(varargin)
+            % R = prtRvMvn('covStructure');
+            % R = prtRvMvn(X);
+            % R = prtRvMvn(mu, Sigma);
+            % R = prtRvMvn(mu, Sigma, 'covStructure');
             switch nargin
                 case 0
                     % Supply the default object
                 case 1
                     if ischar(varargin{1})
-                        % R = rv.mvn(covarianceStructure);
+                        % R = prtRvMvn('covStructure');
                         R.covarianceStructure = varargin{1};
-                    else
-                        % R = rv.mvn(trainingData);
+                    elseif isnumeric(varargin{1})
+                        % R = prtRvMvn(X);
                         R = mle(prtRvMvn,varargin{1});
+                    else 
+                        error('prtRvMvn:invalidInput','Invalid input.');
                     end
                 case 2
-                    % R = rv.mvn(mu,Sigma)
+                    % R = prtRvMvn(mu, Sigma);
                     R.mean = varargin{1}(:)';
                     R.covariance = varargin{2};
                 case 3
-                    % R = rv.mvn(mu,Sigma,covarianceStructure)
+                    % R = prtRvMvn(mu, Sigma, 'covStructure');
                     R.mean = varargin{1}(:)';
                     R.covariance = varargin{2};
                     R.covarianceStructure = varargin{3};
                 otherwise
-                    error('Invalid number of input arguments')
-            end % switch nargin
-        end % function rv.mvn
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        % Set methods %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        function R = set.covarianceStructure(R,covarianceStructure)
-            % Limit the options for the covariance structure
-            if ~(strcmpi(covarianceStructure,'full') || ...
-                    strcmpi(covarianceStructure,'diagonal') || ...
-                    strcmpi(covarianceStructure,'spherical'))
-                error('%s is not a valid covariance structure. Possible types are, full, diagonal, and spherical',covarianceStructure);
+                    error('prtRvMvn:invalidInput','Invalid number of input arguments')
             end
-            R.covarianceStructure = covarianceStructure;
-
-            % Redo the covariance to reflect the updated covarianceStructure
-            if ~isempty(R.covariance)
-                R.covariance = R.trueCovariance;
-            end
-        end % function set.covarianceStructure
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        function R = set.mean(R,meanVal)
-            if ~isempty(R.covariance) && size(meanVal,2) ~= size(R.covariance,2)
-                error('prtRvMvn:dimensions','Dimensions mismatch between supplied mean and rv.mvn dimensionality');
-            end
-            R.mean = meanVal;
-        end % function set.mean
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        function R = set.covariance(R,covariance)
-            if size(covariance,1) ~= size(covariance,2)
-                error('Covariance matrix must be square.')
-            end
-
-            if ~isempty(R.mean) && size(covariance,1) ~= R.nDimensions
-                error('Dimensions mismatch between covariance and dprtRV dimensionality')
-            end
-
-            [cholCovR, posDefError] = cholcov(covariance,0);
-            if posDefError ~= 0
-                error('Covariance matrix must be positive definite.')
-            end
-
-            % Save this input as a true hidden covariance
-            R.trueCovariance = covariance;
-
-            % Enforce the covariance structure
-            switch R.covarianceStructure
-                case 'full'
-                    R.covariance = covariance;
-                case 'diagonal'
-                    R.covariance = eye(size(covariance)).*covariance;
-                case 'spherical'
-                    R.covariance = eye(size(covariance))*mean(diag(covariance)); %#ok
-            end
-
-            R.covarianceCholDecomp = cholcov(R.covariance,0);
-             
-        end % function set.covariance
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        % Actually useful methods %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        function R = mle(R,X)
+        end
+        
+        
+         function R = mle(R,X)
             if ~isempty(R.nDimensions)
                 warning('prtRvMvn:overwrite','A mean and/or covariance has already been specified for this rv.mvn object. These values have been over written and the dimensionality may have changed.');
             end
@@ -163,7 +104,7 @@ classdef prtRvMvn < prtRv
                 weights = ones(size(X,1),1);
             end
             
-            kmMembership = kmeans(bsxfun(@times,X,sqrt(weights)),length(Rs),'emptyaction','singleton');
+            kmMembership = kmeans(bsxfun(@times,X,sqrt(weights)),length(Rs),'emptyaction','singleton'); % requires stats toolbox
             
             initMembershipMat = zeros(size(X,1),length(Rs));
             for iComp = 1:length(Rs)
@@ -173,62 +114,57 @@ classdef prtRvMvn < prtRv
 
             % We should normalize this just in case the learningInitialMembershipFactor was set janky
             initMembershipMat = bsxfun(@rdivide,initMembershipMat,sum(initMembershipMat,2));
-        end % function initializeMixtureMembership
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%                
+        end
         
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         function vals = pdf(R,X)
             assert(R.isValid,'PDF cannot be evaluated because this RV object is not yet valid.')
             assert(size(X,2) == R.nDimensions,'Incorrect dimensionality for RV object.')
             vals = exp(prtRvUtilMvnLogPdf(X,R.mean,R.covariance));
-        end % function pdf
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        end
+        
         function vals = logPdf(R,X)
             assert(R.isValid,'LOGPDF cannot be evaluated be RV object is not yet valid.')
             assert(size(X,2) == R.nDimensions,'Incorrect dimensionality for RV object.')            
             vals = prtRvUtilMvnLogPdf(X,R.mean,R.covariance);
-        end % function pdf
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        end 
         
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         function vals = cdf(R,X)
             assert(R.isValid,'CDF cannot be evaluated be RV object is not yet valid.')
             assert(size(X,2) == R.nDimensions,'Incorrect dimensionality for RV object.')            
             vals = mvncdf(X,R.mean,R.covariance);
-        end % function cdf
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        function vals = draw(R,N)
-            vals = mvnrnd(R.mean,R.covariance,N);
-        end % function draw
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        end 
         
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        function vals = draw(R,N)
+            vals = mvnrnd(R.mean,R.covariance,N); % Uses stats toolbox
+        end 
+        
         function val = kld(R1,R2)
             if isa(R2,'prtRvMvn')
                 val = prtRvUtilMvnKLD(R1.mean,R1.covariance,R2.mean,R2.covariance);
             else
                 error('prtRvMvn:kld','Kullback Liebler divergence can only be calculated between similar RV objects. This limitation may be removed in a future relesase.')
             end
-        end % function kld
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        end
+    
+%         function display(R)
+%             display@prtRv(R,inputname(1));
+%             if numel(R) == 1
+%                 display(struct('mean',R.mean,'covariance',R.covariance))
+%             end
+%         end
+    
+    end
+    
+    % Get methods
+    methods
         function val = get.isValid(R)
             val = ~isempty(R.covariance) && ~isempty(R.mean);
-        end % function get.isValid
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        end
         
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         function val = get.isPlottable(R)
             val = ~isempty(R.nDimensions) && R.nDimensions < 4 && R.isValid;
-        end % function get.isPlottable
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        end
         
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         function val = get.nDimensions(R)
             if ~isempty(R.mean)
                 val = length(R.mean);
@@ -237,11 +173,9 @@ classdef prtRvMvn < prtRv
             else
                 val = [];
             end
-        end % function get.nDimensions
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        end
         
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        function val = get.plotLimits(R)
+        function val = plotLimits(R)
             if R.isValid
                 minX = min(R.mean, [], 1)' - 2*sqrt(diag(R.covariance));
                 maxX = max(R.mean, [], 1)' + 2*sqrt(diag(R.covariance));
@@ -252,24 +186,63 @@ classdef prtRvMvn < prtRv
             else
                 error('prtRvMvn:plotLimits','Plotting limits can no be determined for this RV because it is not yet valid.')
             end
-        end % function plotLimits
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        function display(R)
-            if numel(R) == 1
-                display(struct('mean',R.mean,'covariance',R.covariance))
-            else
-                display@prtRv(R,inputname(1));
+        end
+    end
+    
+    
+    % Set Methods
+    methods 
+        function R = set.covarianceStructure(R,covarianceStructure)
+            % Limit the options for the covariance structure
+            if ~(strcmpi(covarianceStructure,'full') || ...
+                    strcmpi(covarianceStructure,'diagonal') || ...
+                    strcmpi(covarianceStructure,'spherical'))
+                error('%s is not a valid covariance structure. Possible types are, full, diagonal, and spherical',covarianceStructure);
+            end
+            R.covarianceStructure = covarianceStructure;
+
+            % Redo the covariance to reflect the updated covarianceStructure
+            if ~isempty(R.covariance)
+                R.covariance = R.trueCovariance; % This will call set.covariance()
             end
         end
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        function val = get.displayName(R) %#ok
-            val = 'Multi-Variate Normal Random Variable';
+        function R = set.mean(R,meanVal)
+            if ~isempty(R.covariance) && size(meanVal,2) ~= size(R.covariance,2)
+                error('prtRvMvn:dimensions','Dimensions mismatch between supplied mean and prtRvMvn dimensionality');
+            end
+            R.mean = meanVal;
         end
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    end % methods
-end % classdef
+
+        function R = set.covariance(R,covariance)
+            if size(covariance,1) ~= size(covariance,2)
+                error('Covariance matrix must be square.')
+            end
+
+            if ~isempty(R.mean) && size(covariance,1) ~= R.nDimensions
+                error('prtRvMvn:dimensions','Dimensions mismatch between covariance and prtRvMvn dimensionality')
+            end
+
+            [cholCovR, posDefError] = cholcov(covariance,0);
+            if posDefError ~= 0
+                error('Covariance matrix must be positive definite.')
+            end
+
+            % Save this input as a true hidden covariance
+            R.trueCovariance = covariance;
+
+            % Enforce the covariance structure
+            switch R.covarianceStructure
+                case 'full'
+                    R.covariance = covariance;
+                case 'diagonal'
+                    R.covariance = eye(size(covariance)).*covariance;
+                case 'spherical'
+                    R.covariance = eye(size(covariance))*mean(diag(covariance)); %#ok
+            end
+
+            R.covarianceCholDecomp = cholcov(R.covariance,0);
+        end
+    end
+end
 

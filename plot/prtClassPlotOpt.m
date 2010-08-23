@@ -1,4 +1,4 @@
-% prtPlotOpt contains available options for plotting within the PRT
+% prtClassPlotOpt contains available options for plotting within the PRT
 % 
 % Properties
 %   nSamplesPerDim - 1x3 int array - number of samples to use for plotting 
@@ -27,60 +27,23 @@
 %   Obj = prtPlotOpt('paramName',paramVal,...) - Contructor
 %
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-classdef prtClassPlotOpt %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+classdef prtClassPlotOpt
     
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    properties %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    properties
         nSamplesPerDim = [500 100 20]; % Number of samples to use for plotting
         colorsFunction = @prtPlotUtilClassColors; % Colors function handle
         symbolsFunction = @prtPlotUtilClassSymbols; % Symbols function handle
         twoClassColorMapFunction = @prtPlotUtilTwoClassColorMap; % Two class colormap function handle
-        mappingFunction = []; % Confidence mapping function handle
-        additionalPlotFunction = []; % Additional plotting function function handle
     end
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    methods %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        % Constructor %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        function obj = prtPlotOpt(varargin) %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-            % prtPlotOpt - Constructor for prtPlotOpt
+    methods
+        function obj = prtClassPlotOpt(varargin)
+            % prtClassPlotOpt - Constructor for prtClassPlotOpt
             % 
-            % Obj = prtPlotOpt();
-            % Obj = prtPlotOpt('paramName',paramVal,...);
+            % Obj = prtClassPlotOpt();
+            % Obj = prtClassPlotOpt('paramName',paramVal,...);
             
-            if nargin == 0
-                % Nothing to do default object
-                return
-            end
-            
-            stringValuePairs = varargin;
-            % Check parameter string, value pairs
-            inputError = false;
-            if mod(length(stringValuePairs),2)
-                inputError = true;
-            end
-            
-            paramNames = varargin(1:2:(end-1));
-            if ~iscellstr(paramNames)
-                inputError = true;
-            end
-            paramValues = varargin(2:2:end);
-            if inputError
-                error('prt:prtPlotOpt:invalidInputs','Additional input arguments must be specified as parameter string, value pairs.')
-            end
-            
-            % Now we loop through and apply the properties
-            for iPair = 1:length(paramNames)
-                obj.(paramNames{iPair}) = paramValues{iPair};
-            end
+            obj = prtUtilAssignStringValuePairs(obj,varargin{:});
         end
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        
-    end
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    
+    end    
 end
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

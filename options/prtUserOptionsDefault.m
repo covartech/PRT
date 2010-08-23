@@ -1,5 +1,4 @@
 classdef prtUserOptionsDefault
-    properties
-        largestSquareMatrixSize = 1000;
-    end
+	% When all of the userOptions are finished we will copy and paste prtUserOptionsDefault and put it here.
+
 end

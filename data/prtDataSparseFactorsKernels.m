@@ -45,4 +45,4 @@ S = randn(nFactors,nSamples);
 X = A*S + normrnd(0,ones(dimensionality,nSamples));
 X = X';
 
-DataSet = prtDataSetRegress(X);
+DataSet = prtDataSetClass(X);

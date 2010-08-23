@@ -22,8 +22,8 @@ result = true;
 %% Classification correctness test.
 baselinePercentCorr = .9350;
 
-TestDataSet = prtDataUniModal;
-TrainingDataSet = prtDataUniModal;
+TestDataSet = prtDataUnimodal;
+TrainingDataSet = prtDataUnimodal;
 
 classifier = prtClassFld;
 %classifier.verboseStorage = false;
@@ -38,7 +38,7 @@ result = result & (percentCorr > baselinePercentCorr);
 
 %% Check that cross-val and k-folds work
 
-TestDataSet = prtDataUniModal;
+TestDataSet = prtDataUnimodal;
 classifier = prtClassFld;
 
 % cross-val

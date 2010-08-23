@@ -25,7 +25,7 @@ classdef prtClass < prtAction
     end
     
     properties
-        PlotOptions = prtClassPlotOpt; % Plotting Options
+        PlotOptions = prtClass.initializePlotOptions();
         twoClassParadigm = 'binary';   %  Whether the classifier is binary or m-ary
     end
     
@@ -89,7 +89,7 @@ classdef prtClass < prtAction
             cMap = cMap + 0.2;
             cMap(cMap > 1) = 1;
             
-            imageHandle = plotGriddedEvaledClassifier(Obj, reshape(OutputDataSet.getObservations(),gridSize), linGrid, gridSize, cMap);
+            imageHandle = prtPlotUtilPlotGriddedEvaledClassifier(reshape(OutputDataSet.getObservations(),gridSize), linGrid, gridSize, cMap);
             
             if ~isempty(Obj.DataSet)
                 hold on;
@@ -145,25 +145,22 @@ classdef prtClass < prtAction
                 error('prt:prtClass:determineMaryOutput:invalidInput','Invalid input.');
             end
             produceMaryOutput = false; % Default answer only do mary in special conditions
-            if isa(DataSet, 'prtDataSetBaseClass')
-                % You provided some form of Class DataSet which means you
-                % have dependent properties "isBinary", "isMary"
-                if DataSet.isMary
-                    % You have Mary data so you want an Mary output
-                    if ClassObj.isNativeMary
-                        % You have Mary data and an Mary Classifier
-                        % so you want an Mary output
-                        produceMaryOutput = true;
-                    else
-                        % Binary only classifier with Mary Data
-                        error('prt:prtClass:classifierDataSetMismatch','M-ary classification is not supported by this classifier. You will need to use prtClassMaryOneVsAll() or prtClassMaryPairWise()');
-                    end
-                elseif DataSet.isBinary && ClassObj.isNativeMary
-                    % You have binary data and an Mary Classifier
-                    % We must check twoClassParadigm to see what you want
-                    produceMaryOutput = ~strcmpi(ClassObj.twoClassParadigm, 'binary');
-                end % Unary Data -> false
-            end
+            
+            if DataSet.isMary
+                % You have Mary data so you want an Mary output
+                if ClassObj.isNativeMary
+                    % You have Mary data and an Mary Classifier
+                    % so you want an Mary output
+                    produceMaryOutput = true;
+                else
+                    % Binary only classifier with Mary Data
+                    error('prt:prtClass:classifierDataSetMismatch','M-ary classification is not supported by this classifier. You will need to use prtClassMaryOneVsAll() or prtClassMaryPairWise()');
+                end
+            elseif DataSet.isBinary && ClassObj.isNativeMary
+                % You have binary data and an Mary Classifier
+                % We must check twoClassParadigm to see what you want
+                produceMaryOutput = ~strcmpi(ClassObj.twoClassParadigm, 'binary');
+            end % Unary Data -> false
         end
                 
         function OutputDataSet = maryOutput2binaryOutput(ClassObj,OutputDataSet) %#ok
@@ -183,7 +180,7 @@ classdef prtClass < prtAction
                 upperBounds = Obj.DataSetSummary.upperBounds;
             end
             
-            [linGrid, gridSize] = prtPlotUtilGenerateGrid(upperBounds, lowerBounds, Obj.PlotOptions);
+            [linGrid, gridSize] = prtPlotUtilGenerateGrid(upperBounds, lowerBounds, Obj.PlotOptions.nSamplesPerDim);
             
             OutputDataSet = run(Obj,prtDataSetClass(linGrid));
         end
@@ -196,7 +193,7 @@ classdef prtClass < prtAction
                 OutputDataSet = OutputDataSet.setObservations(feval(OutputDataSet.PlotOptions.mappingFunction, OutputDataSet.getObservations()));
             end
             
-            imageHandle = plotGriddedEvaledClassifier(Obj, reshape(OutputDataSet.getObservations(),gridSize), linGrid, gridSize, Obj.PlotOptions.twoClassColorMapFunction());
+            imageHandle = prtPlotUtilPlotGriddedEvaledClassifier(reshape(OutputDataSet.getObservations(),gridSize), linGrid, gridSize, Obj.PlotOptions.twoClassColorMapFunction());
             
             if ~isempty(Obj.DataSet)
                 hold on;
@@ -223,7 +220,7 @@ classdef prtClass < prtAction
                 cMap = prtPlotUtilLinspaceColormap([1 1 1], classColors(subImage,:),256);
                 
                 cAxes = subplot(M,N,subImage);
-                imageHandle(subImage) = plotGriddedEvaledClassifier(Obj, reshape(OutputDataSet.getObservations(:,subImage),gridSize), linGrid, gridSize, cMap);
+                imageHandle(subImage) = prtPlotUtilPlotGriddedEvaledClassifier(reshape(OutputDataSet.getObservations(:,subImage),gridSize), linGrid, gridSize, cMap);
                 
                 prtPlotUtilFreezeColors(cAxes);
             end
@@ -243,29 +240,13 @@ classdef prtClass < prtAction
             end
         end
         
-        function imageHandle = plotGriddedEvaledClassifier(Obj, DS, linGrid, gridSize, cMap)
-            nDims = size(linGrid,2);
-            switch nDims
-                case 1
-                    imageHandle = imagesc(linGrid,ones(size(linGrid)),DS);
-                    set(gca,'YTickLabel',[])
-                    colormap(cMap)
-                case 2
-                    xx = reshape(linGrid(:,1),gridSize);
-                    yy = reshape(linGrid(:,2),gridSize);
-                    imageHandle = imagesc(xx(1,:),yy(:,1),DS);
-                    colormap(cMap)
-                case 3
-                    xx = reshape(linGrid(:,1),gridSize);
-                    yy = reshape(linGrid(:,2),gridSize);
-                    zz = reshape(linGrid(:,3),gridSize);
-                    imageHandle = slice(xx,yy,zz,DS,max(xx(:)),max(yy(:)),[min(zz(:)),mean(zz(:))]);
-                    view(3)
-                    colormap(cMap)
-                    imageHandle = imageHandle(1); % Sorry we need to throw the others away
-            end
-            axis tight;
-            axis xy;
+
+    end
+    
+    methods (Static, Hidden = true)
+        function PlotOptions =initializePlotOptions()
+            UserOptions = prtUserOptions;
+            PlotOptions = UserOptions.ClassifierPlotOptions;
         end
     end
 end
