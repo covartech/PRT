@@ -34,6 +34,7 @@ classdef prtClassPlotOpt
         colorsFunction = @prtPlotUtilClassColors; % Colors function handle
         symbolsFunction = @prtPlotUtilClassSymbols; % Symbols function handle
         twoClassColorMapFunction = @prtPlotUtilTwoClassColorMap; % Two class colormap function handle
+        mappingFunction = []; % @(x)(x); % Pass through
     end
     
     methods
