@@ -1,23 +1,54 @@
 classdef prtRegressLslr < prtRegress
-    % prtRegressLslr - Least-squares linear regression object.
-    %   Nomenclature taken from Hastie...
+    %prtRegresLslr  Least squares regression object
     %
-    % prtRegressLslr Properties: 
-    %   beta - regression weights  - estimated during training
-    %   t - measure of feature importance - estimated during training
-    %   rss - residual sum of squares - estimated during training
-    %   standardizedResiduals - estimated during training
+    %   REGRESS = prtRegressLslr returns a prtRegressLslr object
     %
-    % prtClassKnn Methods:
-    %   prtRegressLslr - Least-squares linear regression constructor
-    %   train - Least-squares linear regression training; see prtAction.train
-    %   run - Least-squares linear regression evaluation; see prtAction.run
+    %   REGRESS = prtRegressLslr(PROPERTY1, VALUE1, ...) constructs a
+    %   prtRegressGP object REGRESS with properties as specified by
+    %   PROPERTY/VALUE pairs.
+    % 
+    %   A prtRegressLslr object inherits all properties from the prtRegress
+    %   class. In addition, it has the following properties:
+    %
+    %   beta                   - The regression weights
+    %   t                      - A measure of feature importance
+    %   rss                    - The residual sum of squares
+    %   standardizedResiduals  -  The standardized residuals
+    %
+    % 
+    %   A prtRegressionLslr object inherits the PLOT method from the
+    %   prtRegress object, and the TRAIN, RUN, CROSSVALIDATE and KFOLDS
+    %   methods from the prtAction object.
+    %
+    %   Example:
+    %   
+    %   x = [1:.5:10]';                % Create a linear, noisy data set.
+    %   y = 2*x + 3 + randn(size(x));
+    %   dataSet = prtDataSetRegress;  % Create a prtDataSetRegress object
+    %   dataSet= dataSet.setX(x);
+    %   dataSet = dataSet.setY(y);
+    %   dataSet.plot;                    % Display data
+    %   reg = prtRegressLslr;            % Create a prtRegressRvm object
+    %   reg = reg.train(dataSet);        % Train the prtRegressRvm object
+    %   reg.plot();                      % Plot the resulting curve
+    %   dataSetOut = reg.run(dataSet);   % Run the regressor on the data
+    %   hold on;
+    %   plot(dataSet.getX,dataSetOut.getX,'k*') % Plot, overlaying the
+    %                                           % fitted points with the 
+    %                                           % curve and original data
+    % legend('Regression line','Original Points','Fitted points',0)
+    %
+    %
+    %   See also prtRegress, prtRegressRvm, prtRegressGP
     
+ 
+    %
     properties (SetAccess=private)
         % Required by prtAction
-        name = 'Least Squares Linear Regression'
-        nameAbbreviation = 'LSLR'
-        isSupervised = true;
+        
+        name = 'Least Squares Linear Regression' % Least Squares Linear Regression
+        nameAbbreviation = 'LSLR'                % LSLR
+        isSupervised = true;                     %True
     end
     
     properties (SetAccess = 'protected')
@@ -25,27 +56,36 @@ classdef prtRegressLslr < prtRegress
         % beta is a DataSet.nDimensions + 1 x 1 vector of regression
         % weights estimated via least-squares linear regression.  The first
         % element of beta corresponds to the DC bias weight.
-        beta = [];
+        
+        beta = [];  % Regression weights estimated via least squares linear regression
+        
         % t is a measure of the importance of each of the
         % DataSet.nDimensions + 1 (DC bias) weights.  The first element of
         % t corresponds to the DC bias term.  
-        t = [];
+        
+        t = []; % Measuer of the importance of each weight
+       
         % rss contains the residual sum of squared errors from the training
         % set.
-        rss = [];
+        
+        rss = [];  % Resisudal sum of the squared error
+        
         % standardizedResiduals are standardized residuals (see Hastie...)
-        standardizedResiduals = [];
+        
+        standardizedResiduals = []; % Standardized residuals
+        
     end
     
     methods
         
+          % Allow for string, value pairs
         function Obj = prtRegressLslr(varargin)
-            % Allow for string, value pairs
+          
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
         end
     end
     
-    methods (Access = protected)
+    methods (Access = protected, Hidden = true)
         
         function Obj = trainAction(Obj,DataSet)
             

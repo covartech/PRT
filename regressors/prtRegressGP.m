@@ -1,5 +1,5 @@
 classdef prtRegressGP < prtRegress
-    % prtRegresGp  GP ? regression object
+    % prtRegresGP  GP ? regression object
     %
     %   REGRESS = prtRegressGP returns a prtRegressGP object
     %
@@ -33,7 +33,7 @@ classdef prtRegressGP < prtRegress
     %   plot(dataSet.getX,dataSetOut.getX,'c.') % Plot, overlaying the
     %                                           % fitted points with the 
     %                                           % curve and original data
-    % legend('Regression curve','Original Points','Fitted points',o)
+    % legend('Regression curve','Original Points','Fitted points',0)
     %
     %
     %   See also prtRegress, prtRegressRvm, prtRegressLslr
