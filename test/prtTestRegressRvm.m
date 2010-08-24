@@ -1,6 +1,20 @@
 function result = prtTestRegressRvm
 result = true;
 
+
+% % Create a baseline rmse
+% numIter = 1000;
+% rmseResult = zeros(1,numIter);
+% for i = 1:numIter
+%     dataSet = prtDataSinc;
+%     reg = prtRegressRvm;
+%     reg = reg.train(dataSet);   
+%     dataOut = reg.run(dataSet);
+%     rmseResult(i) = prtScoreRmse(sinc(dataSet.getX), dataOut.getX);
+% end
+% rmseBase = max(rmseResult);
+% %
+rmseBase =  0.1143;
 % Check that basic operation works
 dataSet = prtDataSinc;           % Load a prtDataRegress
 try
@@ -28,6 +42,13 @@ catch
     disp('prtTestRegressRvn sequential basic fail')
 end
 
+% Check vs the baseline
+ rmse = prtScoreRmse(sinc(dataSet.getX), dataOut.getX);
+ if rmse > rmseBase
+     result = false;
+     disp('prtTestRegressRvm rmse greater than baseline')
+ end
+ 
 
 % Check param-val constuctor
 try

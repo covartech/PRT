@@ -1,6 +1,22 @@
 function result = prtTestRegressGP
 result = true;
 
+
+% % Create a baseline rmse
+% numIter = 1000;
+% rmseResult = zeros(1,numIter);
+% for i = 1:numIter
+%     dataSet = prtDataSinc;
+%     reg = prtRegressGP;
+%     reg = reg.train(dataSet);   
+%     dataOut = reg.run(dataSet);
+%     rmseResult(i) = prtScoreRmse(sinc(dataSet.getX), dataOut.getX);
+% end
+% rmseBase = max(rmseResult);
+% %
+
+ rmseBase = .0997;
+    
 % Check that basic operation works
 dataSet = prtDataSinc;           % Load a prtDataRegress
 try
@@ -11,12 +27,18 @@ try
     close
 catch
     result = false;
-    disp('prtTestRegressRvn basic fail')
+    disp('prtTestRegressGp basic fail')
 end
 
 
-
-% Check param-val constuctor
+% Check vs the baseline
+ rmse = prtScoreRmse(sinc(dataSet.getX), dataOut.getX);
+ if rmse > rmseBase
+     result = false;
+     disp('prtTestRegressGp rmse greater than baseline')
+ end
+ 
+ % Check param-val constuctor
 try
     reg = prtRegressGP('noiseVariance',.2);
 catch
