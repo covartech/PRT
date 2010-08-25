@@ -1,39 +1,48 @@
 classdef prtDataSetClass  < prtDataSetStandard
-    % prtDataSetClass  < prtDataSetStandard
+    % prtDataSetClass  Data set object for classification
     %
-    % properties (Dependent)
-    %       nClasses
-    %       uniqueClasses
+    %   DATASET = prtDataSetClass returns a standard data set object
     %
-    %       isUnary = nan          % logical, true if nClasses == 1
-    %       isBinary = nan         % logical, true if nClasses == 2
-    %       isMary = nan           % logical, true if nClasses > 2
-    %       isZeroOne = nan        % true if isequal(uniqueClasses,[0 1])
+    %   DATASET = prtDataSetClass(PROPERTY1, VALUE1, ...) constructs a
+    %   prtDataSetClass object DATASET with properties as specified by
+    %   PROPERTY/VALUE pairs.
     %
-    % properties
-    %       classNames - should this be a cell array?  not clear
+    %   A prtDataSetClass object inherits all properties from the
+    %   prtDataSetStandard class. In addition, it has the following properties:
     %
-    % methods
-    %       getObservationsByClass
-    %       getObservationsByClassInd
-    %       getTargetsAsBinaryMatrix
+    %   nClasses             - The number of classes
+    %   uniqueClasses        - An array of the integer class labels
+    %   isUnary              - True if the number of classes = 1
+    %   isBinary             - True if the number of classes = 2
+    %   isMary = nan         - True if the number of classes > 2
+    %   isZeroOne            - True if the unique classes are 0 and 1
+    %   nObservationsByClass - The number of observations per class.
     %
-    %       explore
-    %       plotAsTimeSeries
-    %       starPlot
-    %       plot
-    %       plotbw
+    %   A prtDataSetClass inherits all methods from the prtDataSetStandard
+    %   class. In addition, it has the following methods:
+    %
+    %   getObservationsByClass     - Return the observations per class
+    %   getObservationsByClassInd  - Return the observations by class and index
+    %   getTargetsAsBinaryMatrix   - Return a binary matrix of targets.
+    %   explore                    - Explore the prtDataSetClass object
+    %   plotAsTimeSeries           - Plot the prtDataSetClass object as a time
+    %                                series
+    %   starPlot                   - Create a star plot to visualize higher
+    %                                dimensional data
+    %   plot                       - Plot the data set
+    %   plotbw                     - Plot the data set in a manner that
+    %                                will remain clear in black and white
     %
     
     properties (Dependent)
-        nClasses
-        uniqueClasses
-        nObservationsByClass
+        nClasses     % The number of classes
+        uniqueClasses  % The unique class labels
+        nObservationsByClass %  The number of observations per class
         
-        isUnary                % logical, true if nClasses == 1
-        isBinary               % logical, true if nClasses == 2
-        isMary                 % logical, true if nClasses > 2
-        isZeroOne              % true if isequal(uniqueClasses,[0 1])
+        isUnary                % True if the number of classes = 1
+        isBinary               % True if the number of classes = 2
+        isMary                 % True if the number of classes > 2
+        isZeroOne              % True if the uniqueClasses are 0 and 1
     end
     
     properties (Access = 'private')
@@ -58,7 +67,7 @@ classdef prtDataSetClass  < prtDataSetStandard
         end
     end
     
-    methods (Access = 'private',Static = true);
+    methods (Access = 'private',Static = true, Hidden = true);
         function classNames = generateDefaultClassNames(uY)
             if isa(uY,'cell')
                 classNames = uY;
@@ -74,7 +83,25 @@ classdef prtDataSetClass  < prtDataSetStandard
             end
         end
         
+        function obj = catClassNames(obj,newDataSet)
+            
+            newUniqueClasses = newDataSet.uniqueClasses;
+            for i = 1:length(newUniqueClasses);
+                %if the current data set doesn't have this key, and the
+                %other data set does, well, use the other data set's name
+                %for this class
+                if ~obj.classNames.containsKey(newUniqueClasses(i)) && newDataSet.classNames.containsKey(newUniqueClasses(i));
+                    obj.classNames.put(newUniqueClasses(i),newDataSet.classNames.get(newUniqueClasses(i)));
+                    %If both the data sets have the key, and the strings
+                    %don't match...
+                elseif (obj.classNames.containsKey(newUniqueClasses(i)) && newDataSet.classNames.containsKey(newUniqueClasses(i))) && ...
+                        ~strcmpi(newDataSet.classNames.get(newUniqueClasses(i)),obj.classNames.get(newUniqueClasses(i)))
+                    warning('prt:prtDataSetClass:IncompatibleClassNames','Incompatible class names encountered; retaining original data sets class names');
+                end
+            end
+        end
     end
+    
     methods
         
         function obj = prtDataSetClass(varargin)
@@ -127,9 +154,14 @@ classdef prtDataSetClass  < prtDataSetStandard
         end
         
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %% Access methods %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        %                    Access methods                               %
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         function tn = getClassNamesByClassInd(obj,varargin)
+            % getClassNamesByClassInd  Return the class names 
+            %
+            %    NAMES = dataSet.getClassNamesByClassInd(IDX) returns the
+            %    class names corresponding to the index IDX.
+            
             indices1 = prtDataSetBase.parseIndices(obj.nClasses, varargin{:});
             uniqueClasses = obj.uniqueClasses;
             
@@ -144,6 +176,12 @@ classdef prtDataSetClass  < prtDataSetStandard
         end
         
         function obj = setClassNamesByClassInd(obj,names,varargin)
+            % setClassNamesByClassInd   Sets the class names
+            %
+            % dataSet = dataSet.setClassNamesByClassInd(NAMES, IDX) set the
+            % class names of dataSet to the strings contained in NAMES at
+            % the corresponding indices IDX.
+            
             indices1 = prtDataSetBase.parseIndices(obj.nClasses, varargin{:});
             uniqueClasses = obj.uniqueClasses;
             
@@ -153,6 +191,9 @@ classdef prtDataSetClass  < prtDataSetStandard
         end
         
         function tn = getClassNames(obj,classes)
+            % getClassNames  Returns the class names
+            %
+            % NAMES = dataSet.getClassNames() returns the class names.
             
             if nargin < 2
                 classes = obj.uniqueClasses;
@@ -166,6 +207,12 @@ classdef prtDataSetClass  < prtDataSetStandard
         end
         
         function obj = setClassNames(obj,names,classes)
+            % setClassNames  Sets the class names
+            %
+            %   dataSet = dataSet.setClassNames(NAMES) sets the class names
+            %   to the strings contained in NAMES. NAMES must be a cell
+            %   array of strings that has the same length as the number of
+            %   classes in the dataSet object.
             
             if nargin < 3
                 classes = obj.uniqueClasses;
@@ -181,6 +228,13 @@ classdef prtDataSetClass  < prtDataSetStandard
         
         
         function d = getObservationsByClass(obj, class, featureIndices)
+            % getObservationsByClass  Return the observations by class
+            %
+            %  OBS = dataSet.getObservationsByClass(CLASS) returns the
+            %  observations of the dataSet object correspoding to the class
+            %  CLASS. CLASS must be an integer index corresponding to one
+            %  of the values contained in dataSet.uniqueClasses
+            
             if nargin < 3 || isempty(featureIndices)
                 featureIndices = 1:obj.nFeatures;
             end
@@ -193,12 +247,24 @@ classdef prtDataSetClass  < prtDataSetStandard
         end
         
         function uT = get.uniqueClasses(obj)
+            % uniqueClasses  Return the unique classes
+            %
+            % CLASSES = dataSet.uniqueClasses returns the unique classes of
+            % a dataSet object.
+            
+            % 
             % This can be slow, but we can't make this persistent.
             % We don't know when if labels have changed
             uT = unique(obj.targets);
         end
         
         function obj = catObservations(obj,varargin)
+            % catObservations   Concatenate the observations of a prtDataSetClass object
+            %
+            %   dataSet = dataSet.catObservations(OBS) concatenates the
+            %   OBS to the observations of the dataSet object. OBS must
+            %   have the same number of features as the dataSet object.
+            %   dataSet must be an unlabled prtDataSetClass object.
             
             if isempty(varargin)
                 objIn = obj;
@@ -214,25 +280,14 @@ classdef prtDataSetClass  < prtDataSetStandard
             obj = catObservations@prtDataSetStandard(obj,varargin{:});
         end
         
-        function obj = catClassNames(obj,newDataSet)
-            
-            newUniqueClasses = newDataSet.uniqueClasses;
-            for i = 1:length(newUniqueClasses);
-                %if the current data set doesn't have this key, and the
-                %other data set does, well, use the other data set's name
-                %for this class
-                if ~obj.classNames.containsKey(newUniqueClasses(i)) && newDataSet.classNames.containsKey(newUniqueClasses(i));
-                    obj.classNames.put(newUniqueClasses(i),newDataSet.classNames.get(newUniqueClasses(i)));
-                    %If both the data sets have the key, and the strings
-                    %don't match...
-                elseif (obj.classNames.containsKey(newUniqueClasses(i)) && newDataSet.classNames.containsKey(newUniqueClasses(i))) && ...
-                        ~strcmpi(newDataSet.classNames.get(newUniqueClasses(i)),obj.classNames.get(newUniqueClasses(i)))
-                    warning('prt:prtDataSetClass:IncompatibleClassNames','Incompatible class names encountered; retaining original data sets class names');
-                end
-            end
-        end
         
         function d = getObservationsByClassInd(obj, classInd, featureIndices)
+            % getObservationsByClassInd   Return the observations by class index
+            %
+            %   OBS = dataSet.getObservationsByClassInd(IDX) returns the
+            %   observations OBS of the prtDataSetClass object specified by
+            %   the index IDX.
+            
             if nargin < 3 || isempty(featureIndices)
                 featureIndices = 1:obj.nFeatures;
             end
@@ -241,7 +296,13 @@ classdef prtDataSetClass  < prtDataSetStandard
         end
         
         function binaryMatTargets = getTargetsAsBinaryMatrix(obj,indices1,indices2)
-            %binaryMatTargets = getTargetsAsBinaryMatrix(obj)
+            % binaryMatTargets  Return the targets as a binary matrix
+            %
+            % MAT = dataSet.binaryMatTargets() returns the targets as a
+            % binary matrix instead of integer class labels. Each row
+            % corresponds to one observation. A 1 in the jth column
+            % indicates that the observation is a member of the jth class.
+            
             binaryMatTargets = zeros(obj.nObservations,obj.nClasses);
             for i = 1:obj.nClasses
                 binaryMatTargets(:,i) = obj.getTargets == obj.uniqueClasses(i);
@@ -271,6 +332,12 @@ classdef prtDataSetClass  < prtDataSetStandard
         end
         
         function explore(obj)
+            % explore  Explore the prtDataSetObject
+            %
+            %   dataSet.explore() opens the prtDataSetObject explorer. Only
+            %   functions when the number of features is less than or equal
+            %   to 3.
+            
             prtDataSetBase.makeExploreGui(obj,obj.getFeatureNames);
         end
         
@@ -319,7 +386,11 @@ classdef prtDataSetClass  < prtDataSetStandard
         end
         
         function varargout = starPlot(obj,featureIndices)
-            %varargout = starPlot(obj,featureIndices)
+            % starPlot   Create a star plot
+            %
+            %   dataSet.starPlot() creates a star plot of the data
+            %   contained in the prtDataSetClass dataSet. Star plots can be
+            %   useful in visulaizing higher dimensional data sets.
             
             if ~obj.isLabeled
                 obj = obj.setTargets(zeros(obj.nObservations,1));
@@ -374,6 +445,9 @@ classdef prtDataSetClass  < prtDataSetStandard
         
         %PLOT:
         function varargout = plot(obj, featureIndices)
+            % Plot   Plot the prtDataSetClass object
+            %
+            %   dataSet.plot() Plots the prtDataSetClass object.
             
             if ~obj.isLabeled
                 obj = obj.setTargets(zeros(obj.nObservations,1));
@@ -426,6 +500,11 @@ classdef prtDataSetClass  < prtDataSetStandard
         end
         %PLOTBW:
         function varargout = plotbw(obj, featureIndices)
+            % plotbw   Plots the prtDataSetClass object
+            %
+            %   dataSet.plotbw() Plots the prtDataSetClass object in a
+            %   manner that will display well when converted to black and
+            %   white.
             
             if ~obj.isLabeled
                 obj = obj.setTargets(0);
@@ -488,6 +567,11 @@ classdef prtDataSetClass  < prtDataSetStandard
         end
         
         function Summary = summarize(Obj)
+            % Summarize   Summarize the prtDataSetClass object
+            %
+            % SUMMARY = dataSet.summarize() Summarizes the dataSetClass
+            % object and returns the result in the struct SUMMARY.
+            
             Summary.upperBounds = max(Obj.getObservations());
             Summary.lowerBounds = min(Obj.getObservations());
             Summary.nFeatures = Obj.nFeatures;
@@ -499,19 +583,20 @@ classdef prtDataSetClass  < prtDataSetStandard
         end
         
         function Out = bootstrapByClass(Obj,N)
-            %   BOOTSTRAPBYCLASS Generate "bootstrap" samples from dataset
-            %       incorporating N samples from each class in
+            % BOOTSTRAPBYCLASS Generate bootstrap samples from prtDataSetClass object
+            %       
             %
-            %   Out = bootstrapByClass(Obj,N) Bootstrap sample N data points
-            %       from each of the unique class labels in Y.  If N is a scalar, N
-            %       samples are drawn from each unique label in Y.  If N is a vector
-            %       of length length(unique(Y)), N(i) samples are drawn from the class
-            %       corresponding to the i'th unique element in Y (as determined by
-            %       unique.m)
-            %
-            %   Out = bootstrapByClass(Obj) Bootstrap sample data from
+            %   OUT = dataSet.bootstrapByClass(N) Bootstrap sample N data
+            %   points from each of the unique class labels.  If N is a
+            %   scalar, N samples are drawn from each unique class in
+            %   dataSet.  If N is a vector of the same length as
+            %   uniqueClasses, the N(i) samples are drawn from the class
+            %   corresponding to the i'th unique element in dataSet.
+            
+            
+            %   OUT = dataSet.bootstrapByClass(OBJ) Bootstrap sample data from
             %       dataset extracting the same number of samples from each
-            %       class as there are in the input. 
+            %       class as there are in the input.
             %       If targets = [1 1 1 0 0 0 0 ]'; for example,
             %       dprtBootstrapByClass(X,Y) will return 3 samples from
             %       class 1 and 4 samples from class 0.
@@ -521,7 +606,7 @@ classdef prtDataSetClass  < prtDataSetStandard
             %         N ~ integer scalar or vector - number of bootstrap samples to
             %           draw; if integer, draw equally from all classes, if vector,
             %           draw N(i) from class corresponding to i'th element of unique(Y)
-
+            
             if nargin < 2 || isempty(N)
                 N = Obj.nObservationsByClass;
             end
@@ -546,13 +631,19 @@ classdef prtDataSetClass  < prtDataSetStandard
         end
         
         function classHist = get.nObservationsByClass(Obj)
+            % nObservationsByClass Return the number of observations per class
+            % 
+            %   N = dataSet.nObservationsByClass() returns a vector
+            %   consisting of the number of observations per class.
+            
             classHist = histc(Obj.getTargets, Obj.uniqueClasses);
         end
         
         function classInds = getTargetsClassInd(obj,varargin)
-            %targets = getTargetsClassInd(obj)
-            %targets = getTargetsClassInd(obj,indices1)
-            %targets = getTargetsClassInd(obj,indices1,indices2)
+            % getTargetsClassIndex  Return the targets by class index
+            %
+            %   TARGETS = dataSet.getTargetsClassInd(IDX) returns the
+            %   targets TARGETS as indexed IDX
             
             targets = getTargets(obj,varargin{:});
             
