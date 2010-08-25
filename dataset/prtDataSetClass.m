@@ -199,8 +199,14 @@ classdef prtDataSetClass  < prtDataSetStandard
         end
         
         function obj = catObservations(obj,varargin)
+            
+            if isempty(varargin)
+                objIn = obj;
+                obj = objIn(1);
+                varargin = num2cell(objIn(2:end));
+            end
+            
             for i = 1:length(varargin)
-                disp('catting');
                 if isa(varargin{i},'prtDataSetClass')
                     obj = catClassNames(obj,varargin{i});
                 end
