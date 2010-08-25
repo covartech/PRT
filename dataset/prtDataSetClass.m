@@ -613,12 +613,12 @@ classdef prtDataSetClass  < prtDataSetStandard
             
             nClasses = Obj.nClasses;
             
-            if isscalar(N);
+            if isscalar(N) && isnumeric(N)
                 N = N*ones(nClasses,1);
             end
             
             if length(N) ~= nClasses
-                error('Number of samples (N) must be either scalar or a vector of DS.nClasses (%d), N is %s',nClasses,mat2str(size(N)));
+                error('Number of samples (N) must be either scalar integer or a vector integer of DS.nClasses (%d), N is a %s %s',nClasses,mat2str(size(N)),class(N));
             end
             
             OutputsByClass = repmat(prtDataSetClass(),[nClasses,1]);
