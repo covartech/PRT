@@ -32,7 +32,9 @@ classdef prtDataSetClass  < prtDataSetStandard
     %   plot                       - Plot the data set
     %   plotbw                     - Plot the data set in a manner that
     %                                will remain clear in black and white
-    %
+    % 
+    %   See also, prtDataSetBase, prtDataSetStandard, prtDataSetRegress,
+    %   prtDataSetFile
     
     properties (Dependent)
         nClasses     % The number of classes

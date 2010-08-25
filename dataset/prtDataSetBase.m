@@ -55,10 +55,11 @@ classdef prtDataSetBase
     %
     %   removeTargets - Remove columns of targets from a data set
     %   retainTargets - Retain columns of targets from a data set
+    %   plot          - Plot the data set
+    %   summarize     - Output a summary of the data set
     %
-    %   export -
-    %   plot -
-    %   summarize -
+    %   See also: prtDataSetStandard, prtDataSetClass, prtDataSetRegress,
+    %   prtDataSetFile
     
     properties (Abstract, Dependent)
         nObservations         % The number of observations
@@ -72,13 +73,15 @@ classdef prtDataSetBase
         name = ''             % A string naming the data set
         description = ''      % A string with a verbose description of the data set
         UserData = struct;         % Additional data per data set
-        ActionData = struct;      %Will someone please explain to me ActionData XXXX
     end
     
     properties (Dependent, Hidden)
         % Additional properties for plotting
         plottingColors
         plottingSymbols
+    end
+    properties(Hidden)
+        ActionData = struct;      % Data stored by a prtAction
     end
     
     % Only prtDataSetBase knows about these, use getObs... and getFeat.. to
