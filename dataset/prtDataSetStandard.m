@@ -26,7 +26,7 @@ classdef prtDataSetStandard < prtDataSetBase
     %
     %
     %   See also: prtDataSetBase, prtDataSetClass, prtDataSetRegress,
-    %   prtDataSetFile
+    
     
     
     
@@ -589,12 +589,6 @@ classdef prtDataSetStandard < prtDataSetBase
         end
         
         
-        function plot(obj,varargin)
-            error('prt:Fixable','Not yet');
-        end
-        function summarize(obj,varargin)
-            error('prt:Fixable','Not yet');
-        end
         
         function obj = catTargets(obj, varargin)
             % catTargets  Concatenate the targets of a prtDataSetStandard
@@ -654,5 +648,13 @@ classdef prtDataSetStandard < prtDataSetBase
         function export(obj,varargin) %#ok<MANU>
             error('prt:Fixable','Not yet implemented');
         end
+        
+        function plot(obj,varargin)
+            error('prt:Fixable','Not yet');
+        end
+        function summarize(obj,varargin)
+            error('prt:Fixable','Not yet');
+        end
     end
+    
 end

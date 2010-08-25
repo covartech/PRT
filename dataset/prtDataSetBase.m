@@ -59,7 +59,7 @@ classdef prtDataSetBase
     %   summarize     - Output a summary of the data set
     %
     %   See also: prtDataSetStandard, prtDataSetClass, prtDataSetRegress,
-    %   prtDataSetFile
+    
     
     properties (Abstract, Dependent)
         nObservations         % The number of observations

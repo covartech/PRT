@@ -1,7 +1,7 @@
 classdef prtDataSetClass  < prtDataSetStandard
     % prtDataSetClass  Data set object for classification
     %
-    %   DATASET = prtDataSetClass returns a standard data set object
+    %   DATASET = prtDataSetClass returns a prtDataSetClass object
     %
     %   DATASET = prtDataSetClass(PROPERTY1, VALUE1, ...) constructs a
     %   prtDataSetClass object DATASET with properties as specified by

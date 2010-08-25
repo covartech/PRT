@@ -1,33 +1,36 @@
 classdef prtDataSetRegress < prtDataSetStandard
-    % Standard prtDataSet for labeled training data.
+    % prtDataSetRegress   Data set object for regression
     %
-    % Inherited propeties from prtDataSetInMemory
-    %   Dependent:
-    %    nFeatures   % scalar, number of dimensions (columns) of the data
-    %    nObservations % scalar, number of observations (rows) of the data
-    %   GetAccess = private
-    %    dataSetName = ''      % char
-    %    featureNames  = {}    % strcell, 1 x nFeatures
-    %    observationNames = {} % strcell, nObservations x 1
-    %    data = []             % matrix, doubles, features
+    %   DATASET = prtDataSetRegress returns a prtDataSetRegress object
     %
-    % Inherited methods from prtDataSetInMemory
-    %   
-    %   plot()
-    %   explore() 
+    %   DATASET = prtDataSetRegress(PROPERTY1, VALUE1, ...) constructs a
+    %   prtDataSetRegress object DATASET with properties as specified by
+    %   PROPERTY/VALUE pairs.
+    %
+    %   A prtDataSetRegress object inherits all properties from the
+    %   prtDataSetStandard class. 
+    %
+    %   A prtDataSetRegress inherits all methods from the
+    %   prtDataSetStandard object. In addition it overloads the following
+    %   functions:
+    %
+    %   plot      - Plot the prtDataSetRegress object
+    %   summarize - Summarize the prtDataSetRegress object.
+    % 
+    %   See also prtDataSetStandard, prtDataSetClass, prtDataSetBase
     
     methods
         %% Constructor %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         function prtDataSet = prtDataSetRegress(varargin)
-            % prtDataSet = prtDataSetRegress
-            % prtDataSet = prtDataSetRegress(prtDataSetRegressIn, paramName1, paramVal2, ...)
-            % prtDataSet = prtDataSetRegress(data, targets, paramName1, paramVal2, ...)
-            
+  
             prtDataSet = prtDataSet@prtDataSetStandard(varargin{:});
         end
         
         function varargout = plot(obj, featureIndices)
+            % Plot   Plot the prtDataSetRegress object
+            %
+            %   dataSet.plot() Plots the prtDataSetRegress object.
             
             if ~obj.isLabeled
                 obj = obj.setTargets(zeros(obj.nObservations,1));
@@ -63,6 +66,11 @@ classdef prtDataSetRegress < prtDataSetStandard
         end
         
         function Summary = summarize(Obj)
+            % Summarize   Summarize the prtDataSetRegress object
+            %
+            % SUMMARY = dataSet.summarize() Summarizes the dataSetRegress
+            % object and returns the result in the struct SUMMARY.
+            
             Summary.upperBounds = max(Obj.getObservations());
             Summary.lowerBounds = min(Obj.getObservations());
             Summary.nFeatures = Obj.nFeatures;
