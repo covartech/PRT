@@ -274,7 +274,7 @@ classdef prtDataSetBase
     
     
     %Private static functions for generating feature and observation names
-    methods (Access = 'protected', Static = true)
+    methods (Access = 'protected', Static = true, Hidden = true)
         function featNames = generateDefaultFeatureNames(indices2)
             featNames = prtUtilCellPrintf('Feature %d',num2cell(indices2));
             featNames = featNames(:);
@@ -291,7 +291,7 @@ classdef prtDataSetBase
     
     %Protected static functions for modifying edge colors from face colors
     %should be elsewhere
-    methods (Access = 'protected', Static = true)
+    methods (Access = 'protected', Static = true, Hidden = true)
         function color = edgeColorMod(classColors)
             color = min(classColors + 0.2,[0.8 0.8 0.8]);
         end
@@ -356,7 +356,7 @@ classdef prtDataSetBase
     %I don't think we need these anymore - addFeatureNames and
     %addObservationNames...  we may need "remove feature names" and "remove
     %Observation Names"
-    methods (Access = 'protected')
+    methods (Access = 'protected', Hidden = true)
         function obj = catObservationNames(obj,newDataSet)
             
             for i = 1:newDataSet.nObservations;
@@ -426,7 +426,7 @@ classdef prtDataSetBase
     end
     
     %Static plotting aid functions - plotPoints, plotLines, makeExploreGui
-    methods (Access = 'protected',Static = true)
+    methods (Access = 'protected',Static = true, Hidden  = true)
         function h = plotPoints(cX,featureNames,classSymbols,classColors,classEdgeColor,linewidth)
             nPlotDimensions = size(cX,2);
             if nPlotDimensions < 1

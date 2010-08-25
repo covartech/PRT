@@ -342,6 +342,10 @@ classdef prtDataSetClass  < prtDataSetStandard
         end
         
         function varargout = plotAsTimeSeries(obj,featureIndices)
+            % plotAsTimeSeries  Plot the data set as time series data
+            %
+            % dataSet.plotAsTimeSeries() plots the data contained in
+            % dataSet as if it were a time series.
             
             if ~obj.isLabeled
                 obj = obj.setTargets(zeros(obj.nObservations,1));
@@ -592,21 +596,15 @@ classdef prtDataSetClass  < prtDataSetStandard
             %   dataSet.  If N is a vector of the same length as
             %   uniqueClasses, the N(i) samples are drawn from the class
             %   corresponding to the i'th unique element in dataSet.
-            
-            
-            %   OUT = dataSet.bootstrapByClass(OBJ) Bootstrap sample data from
-            %       dataset extracting the same number of samples from each
-            %       class as there are in the input.
-            %       If targets = [1 1 1 0 0 0 0 ]'; for example,
-            %       dprtBootstrapByClass(X,Y) will return 3 samples from
-            %       class 1 and 4 samples from class 0.
             %
-            %     Inputs:
-            %         Obj ~ PRT Data Set Class
-            %         N ~ integer scalar or vector - number of bootstrap samples to
-            %           draw; if integer, draw equally from all classes, if vector,
-            %           draw N(i) from class corresponding to i'th element of unique(Y)
-            
+            %   OUT = dataSet.bootstrapByClass(TARGETS) Bootstrap sample
+            %   data from dataset extracting the same number of samples
+            %   from each class as there are in the TARGETS. TARGETS must
+            %   be a vector of class labels. For example, if targets = [1 1
+            %   1 0 0 0 0 ]', dataSet.boostrapByClass(TARGETS) will return
+            %   3 samples from class 1 and 4 samples from class 0.
+            %
+      
             if nargin < 2 || isempty(N)
                 N = Obj.nObservationsByClass;
             end
@@ -618,7 +616,7 @@ classdef prtDataSetClass  < prtDataSetStandard
             end
             
             if length(N) ~= nClasses
-                error('Number of samples (N) must be either scalar integer or a vector integer of DS.nClasses (%d), N is a %s %s',nClasses,mat2str(size(N)),class(N));
+                error('Number of samples (N) must be either scalar integer or a vector integer of dataSet.nClasses (%d), N is a %s %s',nClasses,mat2str(size(N)),class(N));
             end
             
             OutputsByClass = repmat(prtDataSetClass(),[nClasses,1]);

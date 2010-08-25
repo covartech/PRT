@@ -56,7 +56,7 @@ classdef prtDataSetStandard < prtDataSetBase
         targets = [];       % The targets
     end
     
-    methods (Access = 'protected')
+    methods (Access = 'protected', Hidden = true)
         function obj = catFeatureNames(obj,newDataSet)
             for i = 1:newDataSet.nFeatures;
                 currFeatName = newDataSet.featureNames.get(i);
