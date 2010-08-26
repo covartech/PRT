@@ -25,11 +25,22 @@ classdef prtClassFld < prtClass
  %    A prtClassFld object inherits the TRAIN, RUN, CROSSVALIDATE and
  %    KFOLDS methods from prtAction. It also inherits the PLOT and
  %    PLOTDECISION classes from prtClass.
- %  
- %    See also prtClass, prtClassLogisticDiscriminant, prtClassBagging,
- %    prtClassMap, prtClassCap, prtClassMaryEmulateOneVsAll, prtClassDlrt,
- %    prtClassPlsda, prtClassKnn, prtClassRvm, prtClassGlrt,  prtClassSvm,
- %    prtClassTreeBaggingCap, prtClassKmsd, prtClassKnn                   
+ %
+ %    Example:
+ %
+ %    TestDataSet = prtDataGenUniModal;       % Create some test and
+ %    TrainingDataSet = prtDataGenUniModal;   % training data
+ %    classifier = prtClassFld;           % Create a classifier
+ %    classifier = classifier.train(TrainingDataSet);    % Train
+ %    classified = run(classifier, TestDataSet);         % Test
+ %    classes  = classified.getX > .5;
+ %    percentCorr = prtScorePercentCorrect(classes,TestDataSet.getTargets);
+ %    classifier.plot;
+ %
+ %   See also prtClass, prtClassLogisticDiscriminant, prtClassBagging,
+ %   prtClassMap, prtClassCap, prtClassMaryEmulateOneVsAll, prtClassDlrt,
+ %   prtClassPlsda, prtClassKnn, prtClassRvm, prtClassGlrt,  prtClassSvm,
+ %   prtClassTreeBaggingCap, prtClassKmsd, prtClassKnn
 
  
 
