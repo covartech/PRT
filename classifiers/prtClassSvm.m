@@ -1,46 +1,73 @@
 classdef prtClassSvm < prtClass
-%     % prtClassFld Properties: 
-%     %   name - Fisher Linear Discriminant
-%     %   nameAbbreviation - FLD
-%     %   isSupervised - true
-%     %   isNativeMary - false
-%     %   w - regression weights - estimated during training
-%     %   plotBasis - logical, plot the basis
-%     %   plotProjections - logical, plot projections of points to basis
-%     %
-%     % prtClassFld Methods:
-
+       % prtClassSvm  Relevance vector machin classifier
+    %
+    %    CLASSIFIER = prtClassSvm returns a relevance vector machine classifier
+    %
+    %    CLASSIFIER = prtClassSvm(PROPERTY1, VALUE1, ...) constructs a
+    %    prtClassMAP object CLASSIFIER with properties as specified by
+    %    PROPERTY/VALUE pairs.
+    %
+    %    A prtClassSvm object inherits all properties from the abstract class
+    %    prtClass. In addition is has the following properties:
+    %
+    %    c      - Slack variable
+    %    alpha  -
+    %    beta   -
+    %    tol    - tolerance
+    %    For information on relevance vector machines, please
+    %    refer to the following URL:
+    %
+    %    http://en.wikipedia.org/wiki/Support_vector_machine
+    %
+    %    A prtClassSvm object inherits the TRAIN, RUN, CROSSVALIDATE and
+    %    KFOLDS methods from prtAction. It also inherits the PLOT and
+    %    PLOTDECISION classes from prtClass.
+    %
+    %    Example:
+    %
+    %     TestDataSet = prtDataUniModal;      % Create some test and
+    %     TrainingDataSet = prtDataUniModal;  % training data
+    %     classifier = prtClassSvm;           % Create a classifier
+    %     classifier = classifier.train(TrainingDataSet);    % Train
+    %     classified = run(classifier, TestDataSet);         % Test
+    %     classes  = classified.getX > .5;
+    %     percentCorr = prtScorePercentCorrect(classes,TestDataSet.getTargets);
+    %     classifier.plot;
+    %
+    %    See also prtClass, prtClassLogisticDiscriminant, prtClassBagging,
+    %    prtClassMap, prtClassCap, prtClassMaryEmulateOneVsAll, prtClassDlrt,
+    %    prtClassPlsda, prtClassFld, prtClassRvm, prtClassGlrt,  prtClass
+    
+    
     properties (SetAccess=private)
-        % Required by prtAction
-        name = 'Support Vector Machine'
-        nameAbbreviation = 'SVM'
-        isSupervised = true;
+        name = 'Support Vector Machine'  % Support Vector Machine
+        nameAbbreviation = 'SVM'         % SVM
+        isSupervised = true; % True
         
-        % Required by prtClass
-        isNativeMary = false;
+        isNativeMary = false;  % False
     end
     
     properties
         
-        c = 1;
-        tol = 0.00001;
+        c = 1; % Slack parameter
+        tol = 0.00001;  % Tolerance
         alpha
         beta
-        kernels = {prtKernelRbfNdimensionScale};
+        kernels = {prtKernelRbfNdimensionScale};  % Kernels
     end
     properties 
-        trainedKernels
+        trainedKernels   % Trained kernels
     end
     methods
         
         function Obj = prtClassSvm(varargin)
-            % Allow for string, value pairs
+           
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
         end
         
     end
     
-    methods (Access=protected)
+    methods (Access=protected, Hidden = true)
         
         function Obj = trainAction(Obj,DataSet)
             
@@ -76,10 +103,11 @@ classdef prtClassSvm < prtClass
     end
     methods
         function varargout = plot(Obj)
-            % plot - Plot output confidence of prtClass object
-            %   Works when dimensionality of dataset is 3 or less.
-            %   Can produce both M-ary and Binary decision surfaces
-            %   See also: Obj.plotDecision()
+            % plot - Plot output confidence of the prtClassSvm object
+            %
+            %   CLASS.plot plots the output confidence of the prtClassSvm
+            %   object. The dimensionality of the dataset must be 3 or
+            %   less, and verboseStorage must be true.
             
             HandleStructure = plot@prtClass(Obj);
             
