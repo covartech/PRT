@@ -11,7 +11,7 @@ classdef prtRegressRvm < prtRegress
     %    class. In addition, it has the following properties:
     %
     %    kernels            - ???
-    %    algorithm          - Allowable algorithms arE 'JeffreysPrior' 
+    %    algorithm          - Allowable algorithms are 'JeffreysPrior' 
     %                         or 'Sequential'
     %    LearningConverged  - Flag indicating if the training converged
     %    LearningPlot       - Flag indicating whether or not to plot during
