@@ -616,7 +616,10 @@ classdef prtDataSetClass  < prtDataSetStandard
             if isscalar(N) && isnumeric(N)
                 N = N*ones(nClasses,1);
             end
-            if any(N < 1) || any(N ~= round(N))
+            if ~isvector(N)
+                error('N must be a vector, but N is size %s',mat2str(size(N)));
+            end
+            if (any(N < 1) || any(N ~= round(N)))
                 error('All number of samples in N must be integers and greater than 0, N = %s',mat2str(N));
             end
             if length(N) ~= nClasses
