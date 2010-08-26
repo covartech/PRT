@@ -1,22 +1,54 @@
 classdef prtClassPlsda < prtClass
-    % prtClassPlsda Properties: 
-    %   name - Partial Least Squares Discriminant
-    %	nameAbbreviation - PLSDA
-    %	isSupervised - true
-    %	isNativeMary - true
+        % prtClassPlsda  Partial least squares discriminant classifier
     %
-    %   Bpls - regression weights - estimated during training
-    %   xMeans - 
-    %   yMeans -     
+    %    CLASSIFIER = prtClassPlsda returns a Partial least squares discriminant classifier
+    %
+    %    CLASSIFIER = prtClassPlsda(PROPERTY1, VALUE1, ...) constructs a
+    %    prtClassMAP object CLASSIFIER with properties as specified by
+    %    PROPERTY/VALUE pairs.
+    %
+    %    A prtClassPlsda object inherits all properties from the abstract class
+    %    prtClass. In addition is has the following properties:
+    %
+    %    nComponents  -  The number of components
+    %    Bpls         -  The regression weights, estimated during training
+    %    xMeans       -  The xMeans, estimated during training
+    %    yMeans       -  The yMeana, estimated during training   
+    %
+    %    For information on the partial least squares discriminant algorithm, please
+    %    refer to the following URL:
+    %
+    %    Need reference 
+    %
+    %    A prtClassPlsda object inherits the TRAIN, RUN, CROSSVALIDATE and
+    %    KFOLDS methods from prtAction. It also inherits the PLOT and
+    %    PLOTDECISION classes from prtClass.
+    %
+    %    Example:
+    %
+    %     TestDataSet = prtDataUniModal;      % Create some test and 
+    %     TrainingDataSet = prtDataUniModal;  % training data
+    %     classifier = prtClassPlsda;           % Create a classifier
+    %     classifier = classifier.train(TrainingDataSet);    % Train
+    %     classified = run(classifier, TestDataSet);         % Test
+    %     classes  = classified.getX > .5;
+    %     percentCorr = prtScorePercentCorrect(classes,TestDataSet.getTargets);
+    %     classifier.plot;
+    %
+    %    See also prtClass, prtClassLogisticDiscriminant, prtClassBagging,
+    %    prtClassMap, prtClassCap, prtClassMaryEmulateOneVsAll, prtClassDlrt,
+    %    prtClassKnn, prtClassFld, prtClassRvm, prtClassGlrt,  prtClass
+    
+    
+    
 
     properties (SetAccess=private)
-        % Required by prtAction
-        name = 'Partial Least Squares Discriminant'
-        nameAbbreviation = 'PLSDA'
-        isSupervised = true;
+       
+        name = 'Partial Least Squares Discriminant' % Partial Least Squares Discriminant
+        nameAbbreviation = 'PLSDA' % PLSDA
+        isSupervised = true;  % True
         
-        % Required by prtClass
-        isNativeMary = true;
+        isNativeMary = true;  % True
     end
     
     properties
@@ -25,21 +57,21 @@ classdef prtClassPlsda < prtClass
         nComponents = 2;
     end
     properties (SetAccess=protected)
-        xMeans
-        yMeans
-        Bpls
+        xMeans  % The xMeans
+        yMeans  % The yMeans
+        Bpls    % The regression weights
     end
     
     methods
         
         function Obj = prtClassPlsda(varargin)
-            % Allow for string, value pairs
+           
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
         end
         
     end
     
-    methods (Access=protected)
+    methods (Access=protected, Hidden = true)
         
         function Obj = trainAction(Obj,DataSet)
                                     
