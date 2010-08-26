@@ -44,7 +44,7 @@ classdef prtRegress < prtAction %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
                 upperBounds = Obj.DataSetSummary.upperBounds;
             end
             
-            [linGrid, gridSize] = prtPlotUtilGenerateGrid(upperBounds, lowerBounds, Obj.PlotOptions);
+            [linGrid, gridSize] = prtPlotUtilGenerateGrid(upperBounds, lowerBounds, Obj.PlotOptions.nSamplesPerDim);
             
             OutputDataSet = run(Obj,prtDataSetClass(linGrid));
         end

@@ -60,9 +60,16 @@ classdef prtRegressGP < prtRegress
     
     methods
         % Allow for string, value pairs
-        function Obj = prtRegressGp(varargin)
+        function Obj = prtRegressGP(varargin)
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
         end
+        function Obj = set.noiseVariance(Obj,value)
+            assert(isscalar(value) && value > 0,'Invalid noiseVariance specified; noise variance must be scalar and greater than 0, but specified value is %s',mat2str(value));
+        end
+        function Obj = set.covarianceFunction(Obj,value)
+            assert(isa(value,'function_handle'),'Invalid covarianceFunction specified; noise variance must be a function_handle, but specified value is a %s',class(value));
+        end
+
     end
     
     methods (Access = protected, Hidden = true)

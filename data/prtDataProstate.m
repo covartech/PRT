@@ -34,7 +34,7 @@ cellData{3} = cat(1,cellData{3}{:});
 targetInd = 5;
 featureInd = setdiff(2:length(cellData),targetInd);
 Y = cellData{targetInd};
-X = cat(2,cellData{featureInd});  %drop the counting var, and the Y
+X = double(cat(2,cellData{featureInd}));  %drop the counting var, and the Y
 colNames = varNames(featureInd);
 
 varNames = cellfun(@(c)c{1},varNames,'uniformoutput',false);

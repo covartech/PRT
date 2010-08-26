@@ -50,14 +50,14 @@ try
     dataSet = prtDataProstate;     % Load a data set.
     pca = prtPreProcPca;           % Create the Principle Component
     % Analysis object.
-    pca.nComponents = 9;           % Set the number of components to 4
+    pca.nComponents = 20;           % Set the number of components to 4
     pca = pca.train(dataSet);      % Compute the Principle Components
     dataSetNew = pca.run(dataSet); % Extract the Principle Components
     
 catch
     
 end
-if ~isequal(lastwarn, 'User specified # PCA components (9) is > number of data dimensions (8)')
+if ~isequal(lastwarn, 'User specified # PCA components (20) is > number of data dimensions (16)')
     error = false;
     disp('error#5, too many components')
 end

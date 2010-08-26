@@ -65,9 +65,8 @@ error = true;
 % Check the algorithm is set right
 reg = prtRegressGP;
 try
-    
-reg.covarianceFunction = 'sam';
-error = false;
+    reg.covarianceFunction = 'sam';
+    error = false;
     disp('prtRegressGP covar invalid')
 catch
     %% no-op
