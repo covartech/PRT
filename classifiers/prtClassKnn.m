@@ -1,62 +1,72 @@
 classdef prtClassKnn < prtClass
-    % prtClassKnn - Logistic discriminant classification
-    % object.
+    % prtClassKnn  K-nearest neighbors classifier
     %
-    % prtClassKnn Properties: 
-    %   k - number of neighbors to consider
-    %   distanceFunction - function handle specifying distance metric
+    %    CLASSIFIER = prtClassKnn returns a K-nearest neighbors classifier
     %
-    % prtClassKnn Methods:
-    %   prtClassKnn - Logistic Discrminant constructor
-    %   train - Logistic discriminant training; see prtAction.train
-    %   run - Logistic discriminant evaluation; see prtAction.run
+    %    CLASSIFIER = prtClassKnn(PROPERTY1, VALUE1, ...) constructs a
+    %    prtClassMAP object CLASSIFIER with properties as specified by
+    %    PROPERTY/VALUE pairs.
+    %
+    %    A prtClassKnn object inherits all properties from the abstract class
+    %    prtClass. In addition is has the following properties:
+    %
+    %    k                  - The number of neigbors to be considered
+    %    distanceFunction   - The function to be used to compute the
+    %                         distance from samples to cluster centers. 
+    %                         It must be a function handle of the form:
+    %                         @(x1,x2)distFun(x1,x2). Most prtDistance
+    %                         functions will work.
+    %
+    %    For information on the  K-nearest neighbors classifier algorithm, please
+    %    refer to the following URL:
+    %
+    %    http://en.wikipedia.org/wiki/K-nearest_neighbor_algorithm    
+    %
+    %    A prtClassKnn object inherits the TRAIN, RUN, CROSSVALIDATE and
+    %    KFOLDS methods from prtAction. It also inherits the PLOT and
+    %    PLOTDECISION classes from prtClass.
+    %
+    %    Example:
+    %
+    %     TestDataSet = prtDataUniModal;      % Create some test and 
+    %     TrainingDataSet = prtDataUniModal;  % training data
+    %     classifier = prtClassKnn;           % Create a classifier
+    %     classifier = classifier.train(TrainingDataSet);    % Train
+    %     classified = run(classifier, TestDataSet);         % Test
+    %     classes  = classified.getX > .5;
+    %     percentCorr = prtScorePercentCorrect(classes,TestDataSet.getTargets);
+    %     classifier.plot;
+    %
+    %    See also prtClass, prtClassLogisticDiscriminant, prtClassBagging,
+    %    prtClassMap, prtClassCap, prtClassMaryEmulateOneVsAll, prtClassDlrt,
+    %    prtClassPlsda, prtClassFld, prtClassRvm, prtClassGlrt,  prtClass
     
     properties (SetAccess=private)
-        % Required by prtAction
-        name = 'K-Nearest Neighbor'
-        nameAbbreviation = 'KNN'
-        isSupervised = true;
+       
+        name = 'K-Nearest Neighbor'   % K-Nearest Neighbor
+        nameAbbreviation = 'KNN'      % KNN  
+        isSupervised = true;          % True
         
-        % Required by prtClass
-        isNativeMary = false;
+        isNativeMary = false;         % False
         
-    end 
+    end
     
     properties
-        % k
-        %   K specifies the number of neighbors to consider in the
-        %   nearest-neighbor voting.
-        k = 3;
-        % distanceFunction
-        %   Specifies a function handle taking two vector-valued inputs x1
-        %   and x2 and outputing a matrix of distances of size size(x1,1) x
-        %   size(x2,1).  Most prtDistance* functions are valid here. 
-        distanceFunction = @(x1,x2)prtDistanceEuclidean(x1,x2);
+      
+        k = 3;   % The number of neighbors to consider in the voting
+        
+        distanceFunction = @(x1,x2)prtDistanceEuclidean(x1,x2);   % Function handle to compute distance
     end
     
     methods
         function Obj = prtClassKnn(varargin)
-            %Knn = prtClassKnn(varargin)
-            %   The KNN constructor allows the user to use name/property 
-            % pairs to set public fields of the KNN classifier.
-            %
-            %   For example:
-            %
-            %   ds = prtDataUnimodal;
-            %   Knn = prtClassKnn;
-            %   Knn = Knn.train(ds);
-            %   subplot(2,1,1); plot(Knn);
-            %
-            %   Knn11neighbors = prtClassKnn('k',11);
-            %   Knn11neighbors = Knn11neighbors.train(ds);
-            %   subplot(2,1,2); plot(Knn11neighbors)
             
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
             Obj.verboseStorage = true;
         end
     end
     
-    methods (Access=protected)
+    methods (Access=protected, Hidden = true)
         function Obj = preTrainProcessing(Obj,DataSet)
             if ~Obj.verboseStorage
                 warning('prtClassKnn:verboseStorage:false','prtClassKnn requires verboseStorage to be true; overriding manual settings');
