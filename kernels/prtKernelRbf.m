@@ -70,7 +70,7 @@ classdef prtKernelRbf < prtKernelBinary
         
     end
     
-    methods (Static)
+    methods (Static, Hidden = true)
         function gramm = rbfEvalKernel(x,y,c)
             [n1, d] = size(x);
             [n2, nin] = size(y);
