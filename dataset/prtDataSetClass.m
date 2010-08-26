@@ -117,7 +117,7 @@ classdef prtDataSetClass  < prtDataSetStandard
                 varargin = varargin(2:end);
             end
             
-            if length(varargin) >= 1 && isa(varargin{1},'double')
+            if length(varargin) >= 1 && isnumeric(varargin{1})
                 obj = obj.setObservations(varargin{1});
                 varargin = varargin(2:end);
                 

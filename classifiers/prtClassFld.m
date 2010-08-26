@@ -58,6 +58,7 @@ classdef prtClassFld < prtClass
         function Obj = prtClassFld(varargin)
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
         end
+        
         function Obj = set.plotProjections(Obj,value)
             if islogical(value) || (isnumeric(value) && (value == 1 || value == 0))
                 Obj.plotProjections = value;
