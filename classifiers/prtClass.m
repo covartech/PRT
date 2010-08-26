@@ -22,11 +22,12 @@ classdef prtClass < prtAction
     
     properties (SetAccess=protected, Hidden = true)
         yieldsMaryOutput = nan; % Determined in trainProcessing()
+          twoClassParadigm = 'binary';   %  Whether the classifier is binary or m-ary
     end
     
-    properties
-        PlotOptions = prtClass.initializePlotOptions();
-        twoClassParadigm = 'binary';   %  Whether the classifier is binary or m-ary
+    properties (Hidden = true)
+        PlotOptions = prtClass.initializePlotOptions();  % 
+      
     end
     
     methods

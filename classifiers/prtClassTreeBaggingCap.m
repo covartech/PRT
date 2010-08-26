@@ -1,4 +1,57 @@
 classdef prtClassTreeBaggingCap < prtClass
+% prtClassTreeBaggingCap  Tree bagging central axis projection classifier
+    %
+    %    CLASSIFIER = prtClassTreeBaggingCap Tree bagging central axis
+    %    projection classifier
+    %
+    %    CLASSIFIER = prtClassTreeBaggingCap(PROPERTY1, VALUE1, ...) constructs a
+    %    prtClassTreeBaggingCap object CLASSIFIER with properties as specified by
+    %    PROPERTY/VALUE pairs.
+    %
+    %    A prtClassTreeBaggingCap object inherits all properties from the abstract class
+    %    prtClass. In addition is has the following properties:
+    %
+    %    nTrees                       - The number of trees
+    %    nFeatures                    - The number of features
+    %    featureSelectWithReplacement - Flag indicating whether or not to
+    %                                   do feature selection with 
+    %                                   replacement
+    %    bootStrapDataAtNodes         - Flag indicating whether or not 
+    %                                   to bootstrap at nodes
+    %    bootStrapDataAtRoots         - Flag indicating whether or not
+    %                                   to bootstrap at roots
+    %    nProcessors                  - the number of processors available
+    %                                   on the local machine
+    %    useMex                       - flag indicating wheter or not to
+    %                                   use the Mex file for speedup.
+    %    Memory                       - XXX ?
+    %    CapClassifier                - The classifier used for central
+    %                                   axis projection
+    %
+    %   XXX NEED Refernece
+    %
+    %    A prtClassTreeBaggingCap object inherits the TRAIN, RUN, CROSSVALIDATE and
+    %    KFOLDS methods from prtAction. It also inherits the PLOT and
+    %    PLOTDECISION classes from prtClass.
+    %
+    %    Example:
+    %
+    %     TestDataSet = prtDataGenUniModal;      % Create some test and
+    %     TrainingDataSet = prtDataGenUniModal;  % training data
+    %     classifier = prtClassTreeBaggingCap;% Create a classifier
+    %     classifier = classifier.train(TrainingDataSet);    % Train
+    %     classified = run(classifier, TestDataSet);         % Test
+    %     classes  = classified.getX > .5;
+    %     percentCorr = prtScorePercentCorrect(classes,TestDataSet.getTargets);
+    %     classifier.plot;
+    %
+    %    See also prtClass, prtClassLogisticDiscriminant, prtClassBagging,
+    %    prtClassMap, prtClassCap, prtClassMaryEmulateOneVsAll, prtClassDlrt,
+    %    prtClassPlsda, prtClassFld, prtClassRvm, prtClassGlrt,  prtClass
+    
+    
+    
+    
     % prtClassTreeBaggingCap - Tree bagging CAP classifier
     %
     % prtClassTreeBaggingCap Properties:
@@ -9,13 +62,13 @@ classdef prtClassTreeBaggingCap < prtClass
     %   run -  Tree bagging CAP evaluation; see prtAction.run
     
     properties (SetAccess=private)
-        % Required by prtAction
-        name = 'Tree Bagging Central Axis Projection'
-        nameAbbreviation = 'TBCAP'
-        isSupervised = true;
+    
+        name = 'Tree Bagging Central Axis Projection'  %Tree Bagging Central Axis Projection
+        nameAbbreviation = 'TBCAP'  % TBCAP
+        isSupervised = true;   % True
         
-        % Required by prtClass
-        isNativeMary = false;
+       
+        isNativeMary = false;    % False
         
         % Central axis projection weights
         root = [];
@@ -25,36 +78,30 @@ classdef prtClassTreeBaggingCap < prtClass
     end
     
     properties
-        % thresholdSampling
-        %   thresholdSampling specifies the number of neighbors to consider in the
-        %   nearest-neighbor voting.
-        nTrees = 100;
+        nTrees = 100; % The number of trees
         
-        nFeatures = 2;
-        featureSelectWithReplacement = 1;
+        nFeatures = 2;  % The number of features
+        featureSelectWithReplacement = 1;  % Flag indicating whether or not to do feature selection with replacement
         
-        bootStrapDataAtNodes = true;
-        bootStrapDataAtRoots = true;
+        bootStrapDataAtNodes = true;  % Flag indicating whether or not to boostrap at nodes
+        bootStrapDataAtRoots = true; % Flag indicating whether or not to boostrap at roots
         
-        nProcessors = 1;
+        nProcessors = 1;  % The number of processors on this machine
         
-        useMex = 1;
-        Memory = struct('nAppend',1000);
+        useMex = 1;     % Flag indicating whether or not to use the Mex file
+        Memory = struct('nAppend',1000); % XXX ?
         
-        CapClassifier = prtClassCap;
+        CapClassifier = prtClassCap; %The classifier used for central axis projection
     end
     
     methods
         function Obj = prtClassTreeBaggingCap(varargin)
-            %Cap = prtClassTreeBaggingCap(varargin)
-            %   The Tree bagging CAP constructor allows the user to use
-            % name/property pairs
             
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
         end
     end
     
-    methods (Access=protected)
+    methods (Access=protected, Hidden = true)
         function Obj = trainAction(Obj,DataSet)
             
             if Obj.nProcessors>1

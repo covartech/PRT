@@ -1,10 +1,10 @@
 classdef prtClassSvm < prtClass
-       % prtClassSvm  Relevance vector machin classifier
+    % prtClassSvm  Support vector machine classifier
     %
-    %    CLASSIFIER = prtClassSvm returns a relevance vector machine classifier
+    %    CLASSIFIER = prtClassSvm returns a support vector machine classifier
     %
     %    CLASSIFIER = prtClassSvm(PROPERTY1, VALUE1, ...) constructs a
-    %    prtClassMAP object CLASSIFIER with properties as specified by
+    %    prtClassSvm object CLASSIFIER with properties as specified by
     %    PROPERTY/VALUE pairs.
     %
     %    A prtClassSvm object inherits all properties from the abstract class
@@ -25,8 +25,8 @@ classdef prtClassSvm < prtClass
     %
     %    Example:
     %
-    %     TestDataSet = prtDataGenUnimodal;      % Create some test and
-    %     TrainingDataSet = prtDataGenUnimodal;  % training data
+    %     TestDataSet = prtDataGenUniModal;      % Create some test and
+    %     TrainingDataSet = prtDataGenUniModal;  % training data
     %     classifier = prtClassSvm;           % Create a classifier
     %     classifier = classifier.train(TrainingDataSet);    % Train
     %     classified = run(classifier, TestDataSet);         % Test
