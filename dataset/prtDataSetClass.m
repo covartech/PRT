@@ -276,7 +276,7 @@ classdef prtDataSetClass  < prtDataSetStandard
             
             for i = 1:length(varargin)
                 if isa(varargin{i},'prtDataSetClass')
-                    obj = catClassNames(obj,varargin{i});
+                    obj = prtDataSetClass.catClassNames(obj,varargin{i});
                 end
             end
             obj = catObservations@prtDataSetStandard(obj,varargin{:});
@@ -616,7 +616,9 @@ classdef prtDataSetClass  < prtDataSetStandard
             if isscalar(N) && isnumeric(N)
                 N = N*ones(nClasses,1);
             end
-            
+            if any(N < 1) || any(N ~= round(N))
+                error('All number of samples in N must be integers and greater than 0, N = %s',mat2str(N));
+            end
             if length(N) ~= nClasses
                 error('Number of samples (N) must be either scalar integer or a vector integer of dataSet.nClasses (%d), N is a %s %s',nClasses,mat2str(size(N)),class(N));
             end
