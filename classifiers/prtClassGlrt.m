@@ -1,49 +1,71 @@
 classdef prtClassGlrt < prtClass
-    % prtClassGlrt - Generalized likelihood ratio classification
-    % object.
+    % prtClassGlrt  Generlized likelihood ratio test classifier
     %
-    % prtClassGlrt Properties: 
-    %   k - number of neighbors to consider
-    %   distanceFunction - function handle specifying distance metric
+    %    CLASSIFIER = prtClassGlrt returns a Glrt classifier
     %
-    % prtClassGlrt Methods:
-    %   prtClassGlrt - Logistic Discrminant constructor
-    %   train - Generalized likelihood ratio training; see prtAction.train
-    %   run - Generalized likelihood ratio evaluation; see prtAction.run
+    %    CLASSIFIER = prtClassGlrt(PROPERTY1, VALUE1, ...) constructs a
+    %    prtClassGlrt object CLASSIFIER with properties as specified by
+    %    PROPERTY/VALUE pairs.
+    %
+    %    A prtClassGlrt object inherits all properties from the abstract class
+    %    prtClass. In addition is has the following properties:
+    %
+    %    rvH0 - A prtRvMvn object representing the mean and variance of
+    %           hypothesis 0.
+    %    rvH1 - A prtRvMvn object representing the mean and variance of
+    %           hypothesis 0.
+    % 
+    %    For more information on Glrt classifiers, refer to the
+    %    following URL:
+    %  
+    %    XXX Need ref
+    %
+    %    A prtClassGlrt object inherits the TRAIN, RUN, CROSSVALIDATE and
+    %    KFOLDS methods from prtAction. It also inherits the PLOT and
+    %    PLOTDECISION classes from prtClass.
+    %
+    %    Example:
+    %
+    %     TestDataSet = prtDataGenUniModal;       % Create some test and
+    %     TrainingDataSet = prtDataGenUniModal;   % training data
+    %     classifier = prtClassGlrt;              % Create a classifier
+    %     classifier = classifier.train(TrainingDataSet);    % Train
+    %     classified = run(classifier, TestDataSet);         % Test
+    %     classes  = classified.getX > .5;
+    %     percentCorr = prtScorePercentCorrect(classes,TestDataSet.getTargets);
+    %     classifier.plot;
+    %
+    %    See also prtClass, prtClassLogisticDiscriminant, prtClassBagging,
+    %    prtClassMap, prtClassCap, prtClassMaryEmulateOneVsAll, prtClassDlrt,
+    %    prtClassPlsda, prtClassFld, prtClassRvm, prtClassGlrt,  prtClass
+    
     
     properties (SetAccess=private)
-        % Required by prtAction
-        name = 'Generalized likelihood ratio test'
-        nameAbbreviation = 'GLRT'
-        isSupervised = true;
+    
+        name = 'Generalized likelihood ratio test'  % Generalized likelihood ratio test
+        nameAbbreviation = 'GLRT'% GLRT
+        isSupervised = true;  % True
         
-        % Required by prtClass
-        isNativeMary = false;
+        isNativeMary = false;  % False
         
     end 
     
     properties
-        % rvH0
-        rvH0 = prtRvMvn;
-        % rvH1
-        rvH1 = prtRvMvn;
+       
+        rvH0 = prtRvMvn;  % Mean and variance of H0
+        
+        rvH1 = prtRvMvn;  % Mean and variance of H1
     end
     
     methods
         function Obj = prtClassGlrt(varargin)
-            %Glrt = prtClassGlrt(varargin)
-            %   The Glrt constructor allows the user to use name/property 
-            % pairs to set public fields of the Glrt classifier.
-            %
-            %   For example:
-            %
             
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
             %Obj.verboseStorage = false;
         end
     end
     
-    methods (Access=protected)
+    methods (Access=protected, Hidden = true)
        
         function Obj = trainAction(Obj,DataSet)
             
