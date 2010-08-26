@@ -25,23 +25,23 @@ classdef prtClassMap < prtClass
 
     properties (SetAccess=private)
         % Required by prtAction
-        name = 'Maximum a Posteriori'
-        nameAbbreviation = 'MAP'
-        isSupervised = true;
+        name = 'Maximum a Posteriori'   % Maximum a Posteriori
+        nameAbbreviation = 'MAP'        % MAP
+        isSupervised = true;            % True
         
-        % Required by prtClass
-        isNativeMary = true;
+        
+        isNativeMary = true;            % True
     end
     
     properties
-        % General Classifier Properties
-        rvs = prtRvMvn; % prtRv Objects (will be repmated as needed)
+      
+        rvs = prtRvMvn; % Random variable object containing mean and variance
     end
     
     methods
         % Constructor
         function Obj = prtClassMap(varargin)
-            % Allow for string, value pairs
+            
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
         end
         % Set function
@@ -54,7 +54,7 @@ classdef prtClassMap < prtClass
         end
     end
     
-    methods (Access = protected)
+    methods (Access = protected, Hidden = true)
         
         function Obj = trainAction(Obj,DataSet)
             % Repmat the rv objects to get one for each class

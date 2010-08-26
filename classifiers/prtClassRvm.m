@@ -4,7 +4,7 @@ classdef prtClassRvm < prtClass
     %    CLASSIFIER = prtClassRvm returns a relevance vector machine classifier
     %
     %    CLASSIFIER = prtClassRvm(PROPERTY1, VALUE1, ...) constructs a
-    %    prtClassMAP object CLASSIFIER with properties as specified by
+    %    prtClassRvm object CLASSIFIER with properties as specified by
     %    PROPERTY/VALUE pairs.
     %
     %    A prtClassRvm object inherits all properties from the abstract class
