@@ -1,44 +1,88 @@
 classdef prtClassRvm < prtClass
-    % prtClassRvm Properties:
-    %   name - Relevance Vector Machine
-    %   nameAbbreviation - RVM
-    %   isSupervised - true
-    %   isNativeMary - false
-    %   beta - regression weights - estimated during training
-    %   sparseBeta - sparse regression weights - estimated during training
-    %   sparseKernels - sparse regression kernels - estimated during
-    %      training
+    % prtClassRvm  Relevance vector machin classifier
     %
-    % prtClassRvm Methods:
-    %   trainAction (Private; see prtClass\train)
-    %   runAction (Private; see prtClass\run)
+    %    CLASSIFIER = prtClassRvm returns a relevance vector machine classifier
     %
-    % Example usage:
-    %   DataSet = prtDataUnimodal;
-    %   RVM = train(prtClassRVM, DataSet);
-    %   plot(RVM)
+    %    CLASSIFIER = prtClassRvm(PROPERTY1, VALUE1, ...) constructs a
+    %    prtClassMAP object CLASSIFIER with properties as specified by
+    %    PROPERTY/VALUE pairs.
+    %
+    %    A prtClassRvm object inherits all properties from the abstract class
+    %    prtClass. In addition is has the following properties:
+    %
+    %    algorithm          - The algorithm used, can be 'Figueiredo',
+    %                         'Sequential', or 'SequentialInMemory'
+    %    LearningConverged  - Flag indicating if the training converged
+    %    LearningPlot       - Flag indicating whether or not to plot during
+    %                         training
+    %    LearningMaxIterations  - The maximum number of iterations
+    %
+    %    beta          - The regression weights, estimated during training
+    %    sparseBeta    - The sparse regression weights, estimated during
+    %                    training
+    %    sparseKernels - The sparse regression kernels, estimated during
+    %                    training
+    %
+    %    The following paremters are algorithm specific:
+    %
+    %         LearningBetaConvergedTolerance
+    %         LearningBetaRelevantTolerance
+    %         LearningLikelihoodIncreaseThreshold
+    %         LearningSequentialBlockSize
+    %         LearningCorrelationRemovalThreshold
+    %         LearningSequentialFavorRemove
+    %         LearningResults ???
+    %
+    %    For information on relevance vector machines, please
+    %    refer to the following URL:
+    %
+    %    http://en.wikipedia.org/wiki/Relevance_vector_machine
+    %
+    %    A prtClassRvm object inherits the TRAIN, RUN, CROSSVALIDATE and
+    %    KFOLDS methods from prtAction. It also inherits the PLOT and
+    %    PLOTDECISION classes from prtClass.
+    %
+    %    Example:
+    %
+    %     TestDataSet = prtDataUniModal;      % Create some test and
+    %     TrainingDataSet = prtDataUniModal;  % training data
+    %     classifier = prtClassRvm;           % Create a classifier
+    %     classifier = classifier.train(TrainingDataSet);    % Train
+    %     classified = run(classifier, TestDataSet);         % Test
+    %     classes  = classified.getX > .5;
+    %     percentCorr = prtScorePercentCorrect(classes,TestDataSet.getTargets);
+    %     classifier.plot;
+    %
+    %    See also prtClass, prtClassLogisticDiscriminant, prtClassBagging,
+    %    prtClassMap, prtClassCap, prtClassMaryEmulateOneVsAll, prtClassDlrt,
+    %    prtClassPlsda, prtClassFld, prtClassRvm, prtClassGlrt,  prtClass
+    
+    
+   
     
     properties (SetAccess=private)
-        % Required by prtAction
-        name = 'Relevance Vector Machine'
-        nameAbbreviation = 'RVM'
-        isSupervised = true;
+       
+        name = 'Relevance Vector Machine'  % Relevance Vector Machine
+        nameAbbreviation = 'RVM'           % RVM
+        isSupervised = true;               % True
         
-        % Required by prtClass
-        isNativeMary = false;
+        
+        isNativeMary = false;  % False
     end
     
     properties
         kernels = {prtKernelDc, prtKernelRbfNdimensionScale};
-        algorithm = 'Figueiredo';
+        algorithm = 'Figueiredo';  % The training algorithm
         
         % Estimated Parameters
+        
         Sigma = [];
         beta = [];
         sparseBeta = [];
         sparseKernels = {};
         
         % Learning algorithm
+        
         LearningPlot = false;
         LearningText = false;
         LearningConverged = false;
@@ -55,7 +99,7 @@ classdef prtClassRvm < prtClass
     methods
         
         function Obj = prtClassRvm(varargin)
-            % Allow for string, value pairs
+            
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
         end
         
@@ -73,10 +117,11 @@ classdef prtClassRvm < prtClass
         end
         
         function varargout = plot(Obj)
-            % plot - Plot output confidence of prtClass object
-            %   Works when dimensionality of dataset is 3 or less.
-            %   Can produce both M-ary and Binary decision surfaces
-            %   See also: Obj.plotDecision()
+            % plot - Plot output confidence of the prtClassRvm object
+            %
+            %   CLASS.plot plots the output confidence of the prtClassRvm
+            %   object. The dimensionality of the dataset must be 3 or
+            %   less, and verboseStorage must be true.
             
             HandleStructure = plot@prtClass(Obj);
             
@@ -95,7 +140,7 @@ classdef prtClassRvm < prtClass
         
     end
     
-    methods (Access=protected)
+    methods (Access=protected, Hidden = true)
         
         function Obj = trainAction(Obj,DataSet)
             %Rvm = trainAction(Rvm,DataSet) (Private; see prtClass\train)
@@ -260,7 +305,7 @@ classdef prtClassRvm < prtClass
         end
         function Obj = trainActionSequential(Obj, DataSet, y, trainedKernels)
             
-            if size(trainedKernels,1) <= Obj.LearningSequentialBlockSize 
+            if size(trainedKernels,1) <= Obj.LearningSequentialBlockSize
                 Obj = trainActionSequentialInMemory(Obj, DataSet, y, trainedKernels);
                 return
             end
@@ -634,7 +679,7 @@ classdef prtClassRvm < prtClass
             newPhi = prtKernelGrammMatrix(DataSet, trainedKernels(maxInd));
             newPhi = newPhi - mean(newPhi);
             stds = sqrt(sum(newPhi.^2));
-            stds(stds==0) = 1; % Bias would turn in to nans 
+            stds(stds==0) = 1; % Bias would turn in to nans
             newPhi = newPhi./stds;
             
             phiCorrs = PhiMNorm'*newPhi;
