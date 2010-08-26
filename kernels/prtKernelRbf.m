@@ -20,8 +20,9 @@ classdef prtKernelRbf < prtKernelBinary
     %
     %   Example:
     %   kern = prtKernelRbf;             % Create a prtKernRbf object;
-    %   kern.sigma = 2;                      % Set the sigma parameter
-    %   kern = kern.initializeRbf(2);    % Set the center of the kernel to 2.
+    %   kern.sigma = 2;                  % Set the sigma parameter
+    %   % Set the center of the kernel to 2.
+    %   kern = kern.initializeBinaryKernel(2);
     %   result = kern.run(4);            % Run the kernel with input 4
     %   kern.toString;                   % Display a string showing the
     %                                    % equation that the run function
