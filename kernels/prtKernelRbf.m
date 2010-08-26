@@ -64,7 +64,7 @@ classdef prtKernelRbf < prtKernelBinary
             % STR = KERN.toString returns a string description of the
             % kernel function realized by the prtKernel objet KERN.
             
-            string = sprintf('  f(x) = exp(-(x - %s)./(2*%.2f^2))',mat2str(obj.kernelCenter,2),obj.c);
+            string = sprintf('  f(x) = exp(-(x - %s)./(%.2f^2))',mat2str(obj.kernelCenter,2),obj.c);
         end
         
         
@@ -83,7 +83,7 @@ classdef prtKernelRbf < prtKernelBinary
             if numel(c) == 1
                 gramm = exp(-dist2/(c.^2));
             else
-                gramm = exp(-bsxfun(@rdivide,dist2,2*c.^2));
+                gramm = exp(-bsxfun(@rdivide,dist2,c.^2));
             end
         end
     end
