@@ -13,7 +13,7 @@ classdef prtFeatSelStatic < prtFeatSel %
     %
     %   Example:
     %   
-    %   dataSet = prtDataIris;            % Load a data set with 4 features
+    %   dataSet = prtDataGenIris;            % Load a data set with 4 features
     %   StaticFeatSel = prtFeatSelStatic; % Create a static feature
     %                                     % selection object.
     %   StaticFeatSel.selectedFeatures = [1 3];   % Choose the first and

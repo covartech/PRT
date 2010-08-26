@@ -9,7 +9,7 @@ result = true;
 %%
 % Check basic operation
 try
-dataSet = prtDataCircles;
+dataSet = prtDataGenCircles;
 featSel = prtFeatSelStatic; 
 featSel.selectedFeatures = 1;
 featSel = featSel.train(dataSet);
@@ -42,7 +42,7 @@ end
 %% Stuff that should error
 error = true;
 % This errors out messily if you don't train first, should error out clean.
-dataSet = prtDataSpiral3;
+dataSet = prtDataGenSpiral3;
 featSel = prtFeatSelStatic; 
 
 

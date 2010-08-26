@@ -7,12 +7,12 @@ classdef prtKernelRbf < prtKernelBinary
     %   object KERN with properties as specified by PROPERTY/VALUE pairs.
     %
     %   When the KERN.run(X) is called on a prtKernalBinary object, the kernel
-    %   function evaluated is exp(-||x-kernelCenter||/c^2)
+    %   function evaluated is exp(-||x-kernelCenter||/sigma^2)
     %
     %   A prtKernelRbf object inherits all properties from the abstract class
     %   prtKernel. In addition is has the following property:
     %
-    %   c   - Inverse kernel width
+    %   sigma   - Inverse kernel width
     %
     %   A prtKernelRbf inherits the intializeBinaryKernel from the
     %   prtKernelBinary class. It also inherits the run, toString, and
@@ -20,7 +20,7 @@ classdef prtKernelRbf < prtKernelBinary
     %
     %   Example:
     %   kern = prtKernelRbf;             % Create a prtKernRbf object;
-    %   kern.c = 2;                      % Set the c parameter
+    %   kern.sigma = 2;                      % Set the sigma parameter
     %   kern = kern.initializeRbf(2);    % Set the center of the kernel to 2.
     %   result = kern.run(4);            % Run the kernel with input 4
     %   kern.toString;                   % Display a string showing the
@@ -31,13 +31,17 @@ classdef prtKernelRbf < prtKernelBinary
     %  prtKernelLaplacian,prtKernelQuadExpCovariance
     
     properties
-        c = 1;    % Inverse kernel width
+        sigma = 1;    % Inverse kernel width
     end
     properties (SetAccess = 'protected')
         fnHandle    % Function handle to the kernel
         kernelCenter = nan;   % The kernel center
     end
     methods
+        function obj = set.sigma(obj,value)
+            assert(isscalar(sigma) && sigma > 0,'sigma parameter must be scalar and > 0, value provided is %s',mat2str(value));
+            obj.sigma = value;
+        end
         function obj = prtKernelRbf(varargin)
             obj = prtUtilAssignStringValuePairs(obj,varargin{:});
         end
@@ -51,7 +55,7 @@ classdef prtKernelRbf < prtKernelBinary
             %    matrix, where N is the number of kernel functions, and M is the
             %    dimensionality.
             obj.kernelCenter = x;
-            obj.fnHandle = @(y) prtKernelRbf.rbfEvalKernel(obj.kernelCenter,y,obj.c);
+            obj.fnHandle = @(y) prtKernelRbf.rbfEvalKernel(obj.kernelCenter,y,obj.sigma);
             obj.isInitialized = true;
         end
         
@@ -64,14 +68,14 @@ classdef prtKernelRbf < prtKernelBinary
             % STR = KERN.toString returns a string description of the
             % kernel function realized by the prtKernel objet KERN.
             
-            string = sprintf('  f(x) = exp(-(x - %s)./(%.2f^2))',mat2str(obj.kernelCenter,2),obj.c);
+            string = sprintf('  f(x) = exp(-(x - %s)./(%.2f^2))',mat2str(obj.kernelCenter,2),obj.sigma);
         end
         
         
     end
     
     methods (Static, Hidden = true)
-        function gramm = rbfEvalKernel(x,y,c)
+        function gramm = rbfEvalKernel(x,y,sigma)
             [n1, d] = size(x);
             [n2, nin] = size(y);
             if d ~= nin
@@ -80,10 +84,10 @@ classdef prtKernelRbf < prtKernelBinary
             
             dist2 = repmat(sum((x.^2), 2), [1 n2]) + repmat(sum((y.^2),2), [1 n1]).' - 2*x*(y.');
             
-            if numel(c) == 1
-                gramm = exp(-dist2/(c.^2));
+            if numel(sigma) == 1
+                gramm = exp(-dist2/(sigma.^2));
             else
-                gramm = exp(-bsxfun(@rdivide,dist2,c.^2));
+                gramm = exp(-bsxfun(@rdivide,dist2,sigma.^2));
             end
         end
     end

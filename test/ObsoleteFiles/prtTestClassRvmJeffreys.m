@@ -2,9 +2,9 @@ function result = prtTestClassRvmJeffreys
 
 result = true; % Haven't screwed up yet
 
-%% Test default KNN options on prtDataUnimodal
-DS1 = prtDataUnimodal;
-DS2 = prtDataUnimodal;
+%% Test default KNN options on prtDataGenUnimodal
+DS1 = prtDataGenUnimodal;
+DS2 = prtDataGenUnimodal;
 
 C = prtGenerate(DS1,prtClassOptRvmJeffreys);
 [PrtClassOut,Etc] = prtRun(C,DS2);

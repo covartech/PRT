@@ -6,7 +6,7 @@ function auc = prtScoreAuc(DS,PrtClassObj)
 %   object. PRTCLASSOBJ must be a prtClass object.
 %
 %   Example:
-%   dataSet = prtDataSpiral;
+%   dataSet = prtDataGenSpiral;
 %   classifier = prtClassDlrt;
 %   prtScoreAuc(dataSet,classifier)
 %

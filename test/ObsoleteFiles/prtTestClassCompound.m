@@ -3,7 +3,7 @@ function result = prtTestClassCompound
 %%
 result = true;
 %%
-DS = prtDataUnimodal;
+DS = prtDataGenUnimodal;
 DS = DS.setObservations([DS.getObservations,DS.getObservations + randn(size(DS.getObservations))]);
 
 opt{1} = prtPreProcZmuv;

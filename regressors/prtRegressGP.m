@@ -23,7 +23,7 @@ classdef prtRegressGP < prtRegress
     %
     %   Example:
     %   
-    %   dataSet = prtDataSinc;           % Load a prtDataRegress
+    %   dataSet = prtDataGenSinc;           % Load a prtDataRegress
     %   dataSet.plot;                    % Display data
     %   reg = prtRegressGP;             % Create a prtRegressRvm object
     %   reg = reg.train(dataSet);        % Train the prtRegressRvm object

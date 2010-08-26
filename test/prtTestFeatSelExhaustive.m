@@ -9,7 +9,7 @@ result = true;
 %%
 % Check basic operation
 try
-dataSet = prtDataCircles;
+dataSet = prtDataGenCircles;
 featSel = prtFeatSelExhaustive; 
 featSel.nFeatures = 1;
 featSel = featSel.train(dataSet);
@@ -31,7 +31,7 @@ end
 
 
 % Check changing the Eval metric
-dataSet = prtDataCircles;
+dataSet = prtDataGenCircles;
 featSel = prtFeatSelExhaustive; 
 featSel.nFeatures = 1;
 try
@@ -52,7 +52,7 @@ catch
 end
 %% Stuff that should error
 error = true;
-dataSet = prtDataSpiral3;
+dataSet = prtDataGenSpiral3;
 featSel = prtFeatSelExhaustive; 
 featSel.nFeatures = 1;
 

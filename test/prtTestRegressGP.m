@@ -6,7 +6,7 @@ result = true;
 % numIter = 1000;
 % rmseResult = zeros(1,numIter);
 % for i = 1:numIter
-%     dataSet = prtDataSinc;
+%     dataSet = prtDataGenSinc;
 %     reg = prtRegressGP;
 %     reg = reg.train(dataSet);   
 %     dataOut = reg.run(dataSet);
@@ -18,7 +18,7 @@ result = true;
  rmseBase = .0997;
     
 % Check that basic operation works
-dataSet = prtDataSinc;           % Load a prtDataRegress
+dataSet = prtDataGenSinc;           % Load a prtDataRegress
 try
     reg = prtRegressGP;             % Create a prtRegressGP object
     reg = reg.train(dataSet);        % Train the prtRegressGP object
@@ -48,7 +48,7 @@ end
 
 
 % make sure k-folds works(kfolds will implicity test cross-val)
-dataSet = prtDataSinc;           % Load a prtDataRegress
+dataSet = prtDataGenSinc;           % Load a prtDataRegress
 try
     reg = prtRegressGP;             % Create a prtRegressGP object
     [dataOut, regOut] = reg.kfolds(dataSet,10);        % Train the prtRegressGP object

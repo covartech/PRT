@@ -3,7 +3,7 @@ function result = prtTestScoreAuc
 result = true;
 % Basic operation
 try
-    dataSet = prtDataSpiral;
+    dataSet = prtDataGenSpiral;
     classifier = prtClassDlrt;
     score = prtScoreAuc(dataSet,classifier);
 catch
@@ -21,7 +21,7 @@ end
 
 % Basic operation, kfolds
 try
-    dataSet = prtDataSpiral;
+    dataSet = prtDataGenSpiral;
     classifier = prtClassDlrt;
     score = prtScoreAucKfolds(dataSet,classifier, 10);
 catch
@@ -68,7 +68,7 @@ end
 
 % check k-folds without enough input args
 try
-    dataSet = prtDataSpiral;
+    dataSet = prtDataGenSpiral;
     classifier = prtClassDlrt;
     score = prtScoreAucKfolds(dataSet,classifier);
     error = false;

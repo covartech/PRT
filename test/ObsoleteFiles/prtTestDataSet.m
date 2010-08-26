@@ -4,50 +4,50 @@ result = true;
 
 %% Plot all Labeled data sets
 
-plot(prtDataUnimodal)
+plot(prtDataGenUnimodal)
 drawnow;
-plot(prtDataBimodal);
+plot(prtDataGenBimodal);
 drawnow;
-plot(prtDataMary)
+plot(prtDataGenMary)
 drawnow;
-plot(prtDataMary2)
+plot(prtDataGenMary2)
 drawnow;
-plot(prtDataSpiral)
+plot(prtDataGenSpiral)
 drawnow;
-plot(prtDataCircles)
+plot(prtDataGenCircles)
 drawnow;
-plot(prtDataIris,[1 3 4])
+plot(prtDataGenIris,[1 3 4])
 drawnow;
 close
 
 %% Other Data Sets
 
-prtDataProstate;
-prtDataSwissRoll;
-prtDataSpiral3;
-prtDataImageSeg;
-prtDataSparseFactors;
-prtDataManual;
-prtDataFeatureSelection;
-prtDataOldFaithful;
-prtDataNoisySync;
-prtDataXor;
+prtDataGenProstate;
+prtDataGenSwissRoll;
+prtDataGenSpiral3;
+prtDataGenImageSeg;
+prtDataGenSparseFactors;
+prtDataGenManual;
+prtDataGenFeatureSelection;
+prtDataGenOldFaithful;
+prtDataGenNoisySync;
+prtDataGenXor;
 
 %% Test Catting of prtDataSetInMemory
-DS = prtDataUnimodal;
+DS = prtDataGenUnimodal;
 UDS = prtDataSetClass(DS.getObservations);
-DS = prtDataSpiral;
+DS = prtDataGenSpiral;
 UDS2 = prtDataSetClass(DS.getObservations);
 CatDS = joinObservations(UDS,UDS2);
 CatDS = joinFeatures(UDS,UDS2);
 
 %% Test Catting of prtDataSetLabeled
-DS = prtDataUnimodal;
-DS2 = prtDataSpiral;
+DS = prtDataGenUnimodal;
+DS2 = prtDataGenSpiral;
 CatDS = joinObservations(DS, DS2);
 CatDS = joinFeatures(DS, DS2);
 
-DS3 = prtDataMary2;
+DS3 = prtDataGenMary2;
 
 CatDS = joinFeatures(DS, DS2);
 

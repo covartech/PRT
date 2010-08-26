@@ -91,7 +91,7 @@ end
 
 
 % Test bootstrap
-dataSet = prtDataMary;
+dataSet = prtDataGenMary;
 out = dataSet.bootstrap(2);
 if out.nObservations ~=2
     disp('dataSet bootstrap fail')

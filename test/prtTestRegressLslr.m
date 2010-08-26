@@ -6,7 +6,7 @@ result = true;
 % numIter = 1000;
 % rmseResult = zeros(1,numIter);
 % for i = 1:numIter
-%     dataSet = prtDataSinc;
+%     dataSet = prtDataGenSinc;
 %     x = [1:.5:10]';                % Create a linear, noisy data set.
 %     y = 2*x + 3 + randn(size(x));
 %     dataSet = prtDataSetRegress;  % Create a prtDataSetRegress object
@@ -56,7 +56,7 @@ catch
 end
 %
 % make sure k-folds works(kfolds will implicity test cross-val)
-dataSet = prtDataSinc;           % Load a prtDataRegress
+dataSet = prtDataGenSinc;           % Load a prtDataRegress
 try
     reg = prtRegressLslr;             % Create a prtRegressLslr object
     [dataOut, regOut] = reg.kfolds(dataSet,10);        % Train the prtRegressLslr object

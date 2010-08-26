@@ -7,6 +7,9 @@ zz = [];
 
 nDims = length(plotMins);
 
+if isa(nSamplesPerDim,'prtClassPlotOpt')
+    nSamplesPerDim = nSamplesPerDim.nSamplesPerDim;
+end
 switch nDims
     case 1
         xx = linspace(plotMins(1),plotMaxs(1),nSamplesPerDim(nDims));

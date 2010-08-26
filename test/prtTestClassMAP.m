@@ -7,8 +7,8 @@ result = true;
 % numIter = 1000;
 % percentCorr = zeros(1,numIter);
 % for i = 1:numIter
-%     TestDataSet = prtDataUniModal;
-%     TrainingDataSet = prtDataUniModal;
+%     TestDataSet = prtDataGenUnimodal;
+%     TrainingDataSet = prtDataGenUnimodal;
 %
 %     classifier = prtClassMAP;
 %     classifier = classifier.train(TrainingDataSet);
@@ -22,8 +22,8 @@ result = true;
 %% Classification correctness test.
 baselinePercentCorr = .9475;
 
-TestDataSet = prtDataUniModal;
-TrainingDataSet = prtDataUniModal;
+TestDataSet = prtDataGenUnimodal;
+TrainingDataSet = prtDataGenUnimodal;
 
 classifier = prtClassMAP;
 classifier = classifier.train(TrainingDataSet);
@@ -37,7 +37,7 @@ result = result & (percentCorr > baselinePercentCorr);
 
 %% Check that cross-val and k-folds work
 
-TestDataSet = prtDataUniModal;
+TestDataSet = prtDataGenUnimodal;
 classifier = prtClassMAP;
 
 % cross-val

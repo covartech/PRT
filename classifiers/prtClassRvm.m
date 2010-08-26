@@ -44,8 +44,8 @@ classdef prtClassRvm < prtClass
     %
     %    Example:
     %
-    %     TestDataSet = prtDataUniModal;      % Create some test and
-    %     TrainingDataSet = prtDataUniModal;  % training data
+    %     TestDataSet = prtDataGenUnimodal;      % Create some test and
+    %     TrainingDataSet = prtDataGenUnimodal;  % training data
     %     classifier = prtClassRvm;           % Create a classifier
     %     classifier = classifier.train(TrainingDataSet);    % Train
     %     classified = run(classifier, TestDataSet);         % Test

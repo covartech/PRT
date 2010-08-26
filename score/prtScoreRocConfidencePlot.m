@@ -18,7 +18,7 @@ function varargout = prtScoreRocConfidencePlot(varargin)
 %   columns 2.
 %
 % Example:
-%  DS = prtDataUnimodal;
+%  DS = prtDataGenUnimodal;
 %  Class = prtClassFld;
 %
 %  Output = kfolds(Class,DS);

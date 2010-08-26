@@ -1,7 +1,7 @@
 classdef prtDataSetMatFiles < prtDataSetClass
     %prtDataSetMatFile < prtDataSetClass
     %
-    % DS = prtDataBimodal;
+    % DS = prtDataGenBimodal;
     % for i = 1:DS.nObservations; 
     %   file{i} = sprintf('data_%s.mat',int2fixedWidthStr(i,3)); 
     %   x = DS.getX(i); 

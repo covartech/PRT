@@ -8,7 +8,7 @@ function auc = prtScoreAucKfolds(DS,PrtClass,nFolds)
 %   NFOLDS is the number of folds in the K-fold cross-validation.
 %
 %   Example:
-%   dataSet = prtDataSpiral;
+%   dataSet = prtDataGenSpiral;
 %   classifier = prtClassDlrt;
 %   prtScoreAucKfolds(dataSet,classifier,10)
 %

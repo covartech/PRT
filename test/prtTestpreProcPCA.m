@@ -4,7 +4,7 @@ result = true;
 
 % test from the help
 try
-    dataSet = prtDataProstate;     % Load a data set.
+    dataSet = prtDataGenProstate;     % Load a data set.
     pca = prtPreProcPca;           % Create the Principle Component
     % Analysis object.
     pca.nComponents = 4;           % Set the number of components to 4
@@ -47,7 +47,7 @@ end
 
 
 try
-    dataSet = prtDataProstate;     % Load a data set.
+    dataSet = prtDataGenProstate;     % Load a data set.
     pca = prtPreProcPca;           % Create the Principle Component
     % Analysis object.
     pca.nComponents = 20;           % Set the number of components to 4

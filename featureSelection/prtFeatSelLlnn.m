@@ -34,7 +34,7 @@ classdef prtFeatSelLlnn < prtFeatSel
     %
     %   Example:
     %
-    %   dataSet = prtDataSpiral;   % Create a 2 dimensional data set
+    %   dataSet = prtDataGenSpiral;   % Create a 2 dimensional data set
     %   nNoiseFeatures = 100;      % Append 100 irrelevant features
     %   dataSet = prtDataSetClass(cat(2,dataSet.getObservations,randn([dataSet.nObservations, nNoiseFeatures])), dataSet.getTargets);
     %   featSel = prtFeatSelLlnn('verbosePlot',true);  % Create the feature

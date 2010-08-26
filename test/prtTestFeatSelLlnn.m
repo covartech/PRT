@@ -9,7 +9,7 @@ result = true;
 %%
 % Check basic operation
 try
-dataSet = prtDataCircles;
+dataSet = prtDataGenCircles;
 featSel = prtFeatSelLlnn; 
 featSel = featSel.train(dataSet);
 outDataSet = featSel.run(dataSet);
@@ -41,7 +41,7 @@ catch
 end
 
 % check help example, should wind up with 2 features
-dataSet = prtDataSpiral;   % Create a 2 dimensional data set
+dataSet = prtDataGenSpiral;   % Create a 2 dimensional data set
 nNoiseFeatures = 100;      % Append 100 irrelevant features
 dataSet = prtDataSetClass(cat(2,dataSet.getObservations,randn([dataSet.nObservations, nNoiseFeatures])), dataSet.getTargets);
 featSel = prtFeatSelLlnn;  % Create the feature
@@ -57,7 +57,7 @@ end
 
 %% Stuff that should error
 error = true;
-dataSet = prtDataSpiral3;
+dataSet = prtDataGenSpiral3;
 featSel = prtFeatSelLlnn; 
 
 

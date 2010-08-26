@@ -1,7 +1,7 @@
 function result = prtTestPreProcZmuv
 result = true;
 try
-    dataSet = prtDataProstate;       % Load a data set.
+    dataSet = prtDataGenProstate;       % Load a data set.
     zmuv = prtPreProcZmuv;           %  Create a zero-mean unit variance
     %  object
     zmuv = zmuv.train(dataSet);      % Compute the mean and variance

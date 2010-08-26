@@ -26,8 +26,8 @@ classdef prtClassPlsda < prtClass
     %
     %    Example:
     %
-    %     TestDataSet = prtDataUniModal;      % Create some test and 
-    %     TrainingDataSet = prtDataUniModal;  % training data
+    %     TestDataSet = prtDataGenUnimodal;      % Create some test and 
+    %     TrainingDataSet = prtDataGenUnimodal;  % training data
     %     classifier = prtClassPlsda;           % Create a classifier
     %     classifier = classifier.train(TrainingDataSet);    % Train
     %     classified = run(classifier, TestDataSet);         % Test

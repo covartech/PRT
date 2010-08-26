@@ -4,7 +4,7 @@ clear all;
 close all;
 clear classes;
 
-DataSet = prtDataIris;
+DataSet = prtDataGenIris;
 
 DataSet3D = DataSet.setObservations(DataSet.getObservations(:,1:3));
 DataSet3DBinary = DataSet3D.setTargets(double(DataSet.getTargets > 2));

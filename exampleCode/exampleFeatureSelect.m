@@ -3,7 +3,7 @@ clear all;
 close all;
 clear classes;
 
-DataSet = prtDataIris;
+DataSet = prtDataGenIris;
 DataSetBinary = DataSet.setTargets(double(DataSet.getTargets > 2));
 
 Sfs = prtFeatSelSfs;
