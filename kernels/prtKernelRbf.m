@@ -39,7 +39,7 @@ classdef prtKernelRbf < prtKernelBinary
     end
     methods
         function obj = set.sigma(obj,value)
-            assert(isscalar(sigma) && sigma > 0,'sigma parameter must be scalar and > 0, value provided is %s',mat2str(value));
+            assert(isscalar(value) && value > 0,'sigma parameter must be scalar and > 0, value provided is %s',mat2str(value));
             obj.sigma = value;
         end
         function obj = prtKernelRbf(varargin)
