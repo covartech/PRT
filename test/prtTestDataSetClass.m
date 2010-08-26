@@ -99,11 +99,11 @@ if out.nObservations ~=2
 end
 
 dataSet = dataSet.setObservationsAndTargets([ 1 2; 3 4], [0 1]');
-% out = dataSet.bootstrapByClass(ones(dataSet.nObservations));
-% if out.nObservations ~=$ 
-%     disp('dataSet bootstrap fail')
-%     result = false;
-% end
+ out = dataSet.bootstrapByClass([1 1 ]);
+if out.nObservations ~=2  
+    disp('dataSet bootstrap fail')
+    result = false;
+end
 
 if ~isequal(dataSet.nObservationsByClass, [1 1]')
     disp('dataSetClass n Obs by class fail')
