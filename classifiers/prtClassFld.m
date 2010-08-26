@@ -4,7 +4,7 @@ classdef prtClassFld < prtClass
  %    CLASSIFIER = prtClassFld returns a Fisher linear discriminant classifier
  %
  %    CLASSIFIER = prtClassFld(PROPERTY1, VALUE1, ...) constructs a
- %    prtClassMAP object CLASSIFIER with properties as specified by
+ %    prtClassFld object CLASSIFIER with properties as specified by
  %    PROPERTY/VALUE pairs.
  %
  %    A prtClassFld object inherits all properties from the abstract class
@@ -28,7 +28,7 @@ classdef prtClassFld < prtClass
  %  
  %    See also prtClass, prtClassLogisticDiscriminant, prtClassBagging,
  %    prtClassMap, prtClassCap, prtClassMaryEmulateOneVsAll, prtClassDlrt,
- %    prtClassPlsda, prtClassFld, prtClassRvm, prtClassGlrt,  prtClassSvm,
+ %    prtClassPlsda, prtClassKnn, prtClassRvm, prtClassGlrt,  prtClassSvm,
  %    prtClassTreeBaggingCap, prtClassKmsd, prtClassKnn                   
 
  
