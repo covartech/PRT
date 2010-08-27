@@ -1,5 +1,5 @@
 classdef prtClassDlrt < prtClass
-        % prtClassDlrt  Distance likelihood ratio test classifier
+    % prtClassDlrt  Distance likelihood ratio test classifier
     %
     %    CLASSIFIER = prtClassDlrt returns a Dlrt classifier
     %

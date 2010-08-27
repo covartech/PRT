@@ -95,7 +95,10 @@ classdef prtAction
             %   OBJ = OBJ.train(DataSet) trains the prtAction object using
             %   the prtDataSet DataSet
             
-            
+            if Obj.isSupervised && ~DataSet.isLabeled
+                error('prt:prtAction:supervisedActionUnLabeledDataSet','The action of type %s is supervised, but the dataSet of type %s, is not labeled',class(Obj),class(DataSet));
+            end
+                
             % Default preTrainProcessing() stuff
             Obj.DataSetSummary = summarize(DataSet);
             
