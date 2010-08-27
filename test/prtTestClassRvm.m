@@ -86,8 +86,8 @@ end
 
 %check learning plot and learning text
 try
-    classifier.LearningPlot = true;
-    classifier.LearningText = true;
+    classifier.learningPlot = true;
+    classifier.learningVerbose = true;
     classifier.train(TestDataSet);
     classified = run(classifier, TestDataSet);
     close all;
