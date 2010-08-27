@@ -21,7 +21,7 @@ classdef prtClass < prtAction
     
     properties (SetAccess=protected, Hidden = true)
         yieldsMaryOutput = nan; % Determined in trainProcessing()
-          twoClassParadigm = 'binary';   %  Whether the classifier is binary or m-ary
+        twoClassParadigm = 'binary';   %  Whether the classifier is binary or m-ary
     end
     
     properties (Hidden = true)
@@ -88,6 +88,7 @@ classdef prtClass < prtAction
             end
             
             cMap = Obj.PlotOptions.colorsFunction(Obj.DataSetSummary.nClasses);
+            
             % Lighten the colors
             cMap = cMap + 0.2;
             cMap(cMap > 1) = 1;
@@ -132,17 +133,24 @@ classdef prtClass < prtAction
             % Overload postRunProcessing (from prtAction) so that we can
             % enforce twoClassParadigm
             
-            if (OutputDataSet.nFeatures~=1) && ~ClassObj.yieldsMaryOutput
-                % Run Function provided mary output but ClassObj knows not
-                % to supply this. We must run maryOutput2binaryOutput()
+            if ClassObj.yieldsMaryOutput
+                % Mary classifier output mary decision statistics
+                % enforce that it has output one for each class in the
+                % training data set.
+                assert(OutputDataSet.nFeatures == ClassObj.DataSetSummary.nClasses,'M-ary classifiers must yield observations with nFeatures equal to the number of unique classes in the training data set. This classifier must be modified to output observations with the proper dimensionality. If integer outputs are desired, output a binary matrix.');
+            else
+                % Run Function provided mary output but ClassObj knows
+                % not to supply this. We must run
+                % maryOutput2binaryOutput()
                 OutputDataSet = maryOutput2binaryOutput(ClassObj,OutputDataSet);
             end
+            
             OutputDataSet = postRunProcessing@prtAction(ClassObj, OutputDataSet);
         end
 
         function produceMaryOutput = determineMaryOutput(ClassObj,DataSet)
-            % Determine if an Mary output will be provided by the classifier %%
-            % Determined by the dataSet the classifier capabilities and the %%%
+            % Determine if an Mary output will be provided by the classifier
+            % Determined by the dataSet the classifier capabilities and the            
             % twoClassParadigm switch
             if nargin ~= 2 || ~isa(DataSet,'prtDataSetBase')
                 error('prt:prtClass:determineMaryOutput:invalidInput','Invalid input.');
@@ -167,8 +175,12 @@ classdef prtClass < prtAction
         end
                 
         function OutputDataSet = maryOutput2binaryOutput(ClassObj,OutputDataSet) %#ok
-            % Default method to convert an Mary output to a Binary output %%%%%
-            % Can/should be overloaded by classifiers %%%%%%%%%%%%%%%%%%%%%%%%%
+            % Default method to convert an Mary output to a Binary output 
+            % Can/should be overloaded by classifiers
+            
+            % The default just takes the last (right-most) output dimension
+            % In classifiers this will typically be the confidence of the
+            % class with the highest valued target index.
             OutputDataSet = OutputDataSet.setObservations(OutputDataSet.getObservations(:,end));
         end
                         
@@ -191,7 +203,6 @@ classdef prtClass < prtAction
         function HandleStructure = plotBinaryClassifierConfidence(Obj)
             
             [OutputDataSet, linGrid, gridSize] = runClassifierOnGrid(Obj);
-            % Map through PlotOptions.mappingFunction (ex. log)
             
             imageHandle = prtPlotUtilPlotGriddedEvaledClassifier(reshape(OutputDataSet.getObservations(),gridSize), linGrid, gridSize, Obj.PlotOptions.twoClassColorMapFunction());
             
@@ -208,16 +219,21 @@ classdef prtClass < prtAction
         function HandleStructure = plotMaryClassifierConfidence(Obj)
             
             [OutputDataSet, linGrid, gridSize] = runClassifierOnGrid(Obj);
-            % Map through PlotOptions.mappingFunction (ex. log)
-            if ~isempty(Obj.PlotOptions.mappingFunction)
-                OutputDataSet = OutputDataSet.setObservations(feval(OutputDataSet.PlotOptions.mappingFunction, OutputDataSet.getObservations()));
-            end
+            
+            % Mary plotting generates a series of subplots that show the
+            % confidence of each individual class.
             
             [M,N] = prtUtilGetSubplotDimensions(Obj.DataSetSummary.nClasses);
             imageHandle = zeros(M*N,1);
+            
+            % The confidences are displayed with class specific color maps
+            % These will be lightened up to have contrast with the points
             classColors = prtPlotUtilLightenColors(Obj.PlotOptions.colorsFunction(OutputDataSet.nFeatures));
+            
+            nColorMapSamples = 256;
+            
             for subImage = 1:M*N
-                cMap = prtPlotUtilLinspaceColormap([1 1 1], classColors(subImage,:),256);
+                cMap = prtPlotUtilLinspaceColormap([1 1 1], classColors(subImage,:),nColorMapSamples);
                 
                 cAxes = subplot(M,N,subImage);
                 imageHandle(subImage) = prtPlotUtilPlotGriddedEvaledClassifier(reshape(OutputDataSet.getObservations(:,subImage),gridSize), linGrid, gridSize, cMap);
