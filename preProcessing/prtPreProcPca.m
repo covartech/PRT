@@ -39,6 +39,7 @@ classdef prtPreProcPca < prtPreProc
         % General Classifier Properties
         means = [];           % A vector of the means
         pcaVectors = [];      % The PCA vectors.
+        pcaVectorsSvd = [];
     end
     
     methods
@@ -96,6 +97,17 @@ classdef prtPreProcPca < prtPreProc
                 Obj.pcaVectors = prtUtilPca(x,Obj.nComponents);
             end
             
+            %For debugging: if you want to compare to SVD decomposition.
+            %SVD is marginally faster for smaller matrices, but EM and HD
+            %are better for larger matrices.  We use the right ones at the
+            %right times.  SVD and PCA should give about the same PC's - V
+            %should be ~= Obj.pcaVectors
+            %             disp('svd')
+            %             tic;
+            %             [S,U,V] = svd(x,0);
+            %             Obj.pcaVectorsSvd = V(:,1:Obj.nComponents);
+            %             toc;
+                
         end
         
         function DataSet = runAction(Obj,DataSet)
