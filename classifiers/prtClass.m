@@ -133,16 +133,18 @@ classdef prtClass < prtAction
             % Overload postRunProcessing (from prtAction) so that we can
             % enforce twoClassParadigm
             
-            if ClassObj.yieldsMaryOutput
-                % Mary classifier output mary decision statistics
-                % enforce that it has output one for each class in the
-                % training data set.
-                assert(OutputDataSet.nFeatures == ClassObj.DataSetSummary.nClasses,'M-ary classifiers must yield observations with nFeatures equal to the number of unique classes in the training data set. This classifier must be modified to output observations with the proper dimensionality. If integer outputs are desired, output a binary matrix.');
-            else
-                % Run Function provided mary output but ClassObj knows
-                % not to supply this. We must run
-                % maryOutput2binaryOutput()
-                OutputDataSet = maryOutput2binaryOutput(ClassObj,OutputDataSet);
+            if ~isempty(ClassObj.yieldsMaryOutput) && ~isnan(ClassObj.yieldsMaryOutput)
+                if ClassObj.yieldsMaryOutput
+                    % Mary classifier output mary decision statistics
+                    % enforce that it has output one for each class in the
+                    % training data set.
+                    assert(OutputDataSet.nFeatures == ClassObj.DataSetSummary.nClasses,'M-ary classifiers must yield observations with nFeatures equal to the number of unique classes in the training data set. This classifier must be modified to output observations with the proper dimensionality. If integer outputs are desired, output a binary matrix.');
+                else
+                    % Run Function provided mary output but ClassObj knows
+                    % not to supply this. We must run
+                    % maryOutput2binaryOutput()
+                    OutputDataSet = maryOutput2binaryOutput(ClassObj,OutputDataSet);
+                end
             end
             
             OutputDataSet = postRunProcessing@prtAction(ClassObj, OutputDataSet);

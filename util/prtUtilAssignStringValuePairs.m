@@ -15,6 +15,26 @@ if ~iscellstr(paramStrs)
     error('prt:prtUtilAssignStringValuePairs:InvalidInput','Additional inputs must be supplied by as string/value pairs');
 end
 
+
+% Get available propert names
+% Note you cant just use
+% >> propNames = properties(Obj);
+% Because this does not include hidden properties
+ObjMeta = metaclass(Obj);
+propNames = cellfun(@(c)c.Name,ObjMeta.Properties,'uniformoutput',false);
+setAccesses = cellfun(@(c)c.SetAccess,ObjMeta.Properties,'uniformoutput',false);
+availableToBeSet = strcmpi(setAccesses,'public');
+propNames = propNames(availableToBeSet);
+
 for iPair = 1:length(paramStrs)
-    Obj.(paramStrs{iPair}) = paramVals{iPair};
+    cParamName = paramStrs{iPair};
+    
+    cParamNameRealInd = find(strcmpi(propNames,cParamName));
+    if isempty(cParamNameRealInd)
+        error('prt:prtUtilAssignStringValuePairs','No public field %s exists for class %d',cParamName, ObjMeta.Name);
+    end
+    
+    cParamNameReal = propNames{cParamNameRealInd};
+    
+    Obj.(cParamNameReal) = paramVals{iPair};
 end

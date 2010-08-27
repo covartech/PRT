@@ -93,7 +93,7 @@ try
     close all;
 catch
     disp('Rvm learning plot/text fail')
-    result = false
+    result = false;
 end
 
 

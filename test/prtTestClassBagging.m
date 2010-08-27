@@ -20,13 +20,15 @@ result = true;
 
 
 %% Classification correctness test.
-baselinePercentCorr =  0.9475
+baselinePercentCorr =  0.9475;
 
 
 TestDataSet = prtDataGenUnimodal;
 TrainingDataSet = prtDataGenUnimodal;
 
-classifier = prtClassBagging;
+nBags = 25; % For speed of testing
+
+classifier = prtClassBagging('nBags',nBags);
 %classifier.verboseStorage = false;
 classifier = classifier.train(TrainingDataSet);
 classified = run(classifier, TestDataSet);
@@ -51,7 +53,7 @@ end
 %% Check that cross-val and k-folds work
 
 TestDataSet = prtDataGenUnimodal;
-classifier = prtClassBagging;
+classifier = prtClassBagging('nBags',nBags);
 
 % cross-val
 keys = mod(1:400,2);
@@ -71,7 +73,7 @@ result = result & (percentCorr > baselinePercentCorr);
 
 % check that i can change the classifier
 try
-    classifier.prtClassifier = prtClassMap
+    classifier.prtClassifier = prtClassMap;
     classifier = classifier.train(TrainingDataSet);
     classified = run(classifier, TestDataSet);
     

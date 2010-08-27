@@ -26,7 +26,9 @@ TestDataSet = prtDataGenUnimodal;
 TrainingDataSet = prtDataGenUnimodal;
 %TrainingDataSet = .catFeatures(prtDataGenUnimodal,prtDataGenUnimodal);
 
-classifier = prtClassTreeBaggingCap;
+nTrees = 100;
+
+classifier = prtClassTreeBaggingCap('nTrees',nTrees); % 
 %classifier.verboseStorage = false;
 classifier = classifier.train(TrainingDataSet);
 classified = run(classifier, TestDataSet);
@@ -51,7 +53,7 @@ end
 %% Check that cross-val and k-folds work
 
 TestDataSet = prtDataGenUnimodal;
-classifier = prtClassTreeBaggingCap;
+classifier = prtClassTreeBaggingCap('nTrees',nTrees);
 
 % cross-val
 keys = mod(1:400,2);

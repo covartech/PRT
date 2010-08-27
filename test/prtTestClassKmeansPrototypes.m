@@ -13,8 +13,8 @@ result = true;
 %     classifier = prtClassKmeansPrototypes;
 %     classifier = classifier.train(TrainingDataSet);
 %     classified = run(classifier, TestDataSet);
-%      [~, classes] = max(classified.getX,[],2);
- %     percentCorr(i) = prtScorePercentCorrect(classes,TestDataSet.getTargets);
+%     classes  = classified.getX;
+%     percentCorr(i) = prtScorePercentCorrect(classes,TestDataSet.getTargets);
 % end
 % min(percentCorr)
 
@@ -30,8 +30,9 @@ classifier = prtClassKmeansPrototypes;
 classifier = classifier.train(TrainingDataSet);
 classified = run(classifier, TestDataSet);
 
- [~, classes] = max(classified.getX,[],2);
- 
+[~,classInds] = max(classified.getX(),[],2);
+classes = TestDataSet.uniqueClasses(classInds);
+
 percentCorr = prtScorePercentCorrect(classes,TestDataSet.getTargets);
 
 result = result & (percentCorr > baselinePercentCorr);
@@ -44,15 +45,15 @@ end
 %% Check that cross-val and k-folds work
 
 TestDataSet = prtDataGenMary;
-TrainingDataSet = prtDataGenMary;
 
 classifier = prtClassKmeansPrototypes;
 
 % cross-val
 keys = mod(1:300,2);
 crossVal = classifier.crossValidate(TestDataSet,keys);
- [~, classes] = max(classified.getX,[],2);
- percentCorr = prtScorePercentCorrect(classes,TestDataSet.getTargets);
+[~,classInds] = max(crossVal.getX(),[],2);
+classes = TestDataSet.uniqueClasses(classInds);
+percentCorr = prtScorePercentCorrect(classes,TestDataSet.getTargets);
 
 if (percentCorr < baselinePercentCorr)
     disp('prtClassKmeansPrototypes cross-val below baseline')
@@ -62,8 +63,10 @@ end
 % k-folds
 
 crossVal = classifier.kfolds(TestDataSet,10);
- [~, classes] = max(classified.getX,[],2);
- percentCorr = prtScorePercentCorrect(classes,TestDataSet.getTargets);
+[~,classInds] = max(crossVal.getX(),[],2);
+classes = TestDataSet.uniqueClasses(classInds);
+
+percentCorr = prtScorePercentCorrect(classes,TestDataSet.getTargets);
 if (percentCorr < baselinePercentCorr)
     disp('prtClassKmeansPrototypes kfolds below baseline')
     result = false;
