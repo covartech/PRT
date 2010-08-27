@@ -31,7 +31,8 @@ classdef prtClassKmeansPrototypes < prtClass
     %     classifier = prtClassKmeansPrototypes; % Create a classifier
     %     classifier = classifier.train(TrainingDataSet);    % Train
     %     classified = run(classifier, TestDataSet);         % Test
-    %     classes  = classified.getX;
+    %     [~, classes] = max(classified.getX,[],2);              % Select the
+    %                                                        % classes
     %     percentCorr = prtScorePercentCorrect(classes,TestDataSet.getTargets);
     %     classifier.plot;
     %
