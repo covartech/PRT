@@ -1,43 +1,80 @@
 classdef prtClassLogisticDiscriminant < prtClass
-    % prtClassLogisticDiscriminant - Logistic discriminant classification
-    % object.
+        % prtClassLogisticDiscriminant  Logistic Discriminant classifier
     %
-    % prtClassLogisticDiscriminant Properties: 
-    %   w - regression weights - estimated during training
-    %   irlsStepSize - Step size used in training
-    %   maxIter - maximum IRLS iterations
-    %   nIterations - number of iterations used (set during training)
-    %   wInitTechnique - Technique to initialize weights
-    %   wTolerance - Convergence tolerance on weight vector 
-    %   handleNonPosDefR - How to handle non positive definite matrix R
+    %    CLASSIFIER = prtClassLogisticDiscriminant returns a LogisticDiscriminant classifier
     %
-    % prtClassLogisticDiscriminant Methods:
-    %   prtClassLogisticDiscriminant - Logistic Discrminant constructor
-    %   train - Logistic discriminant training; see prtAction.train
-    %   run - Logistic discriminant evaluation; see prtAction.run
+    %    CLASSIFIER = prtClassLogisticDiscriminant(PROPERTY1, VALUE1, ...) constructs a
+    %    prtClassLogisticDiscriminant object CLASSIFIER with properties as specified by
+    %    PROPERTY/VALUE pairs.
+    %
+    %    A prtClassLogisticDiscriminant object inherits all properties from the abstract class
+    %    prtClass. In addition is has the following properties:
+    %
+    %   w                - The regression weights, estimated during training
+    %   wTolerance       - The convergance tolerance of the weights
+    %   irlsStepSize     - Step size used in training. Can be set to a
+    %                      double, or 'hessian'. If 'hessian', IRLS is 
+    %                      solved using the Hessian to estimate steps.
+    %   maxIter          - maximum IRLS iterations
+    %   nIterations      - number of iterations used, set during training
+    %   wInitTechnique   - Technique to initialize weights, can be set to
+    %                      'FLD', 'randn', and 'manual'
+    %   manualInitialW   - The values the weights are initialized to if 
+    %                      wInitTechnique is set to 'manual'
+    %   wTolerance       - Convergence tolerance on weight vector 
+    %   handleNonPosDefR - What to do when R is non-positive definte, can
+    %                      be set to 'regularize' or 'exit'. When set to 
+    %                      regularize, the classifier will attempt to
+    %                      regularize the matrix. When set to exit the 
+    %                      classifier will exit.
+    %
+    %    For more information on LogisticDiscriminant classifiers, refer to the
+    %    following URL:
+    %  
+    %    XXX Need ref
+    %
+    %    A prtClassLogisticDiscriminant object inherits the TRAIN, RUN, CROSSVALIDATE and
+    %    KFOLDS methods from prtAction. It also inherits the PLOT and
+    %    PLOTDECISION classes from prtClass.
+    %
+    %    Example:
+    %
+    %     TestDataSet = prtDataGenUniModal;           % Create some test and
+    %     TrainingDataSet = prtDataGenUniModal;       % training data
+    %     classifier = prtClassLogisticDiscriminant;  % Create a classifier
+    %     classifier = classifier.train(TrainingDataSet);       % Train
+    %     classified = run(classifier, TestDataSet);            % Test
+    %     classes  = classified.getX > .5;
+    %     percentCorr = prtScorePercentCorrect(classes,TestDataSet.getTargets);
+    %     classifier.plot;
+    %
+    %    See also prtClass, prtClassLogisticDiscriminant, prtClassBagging,
+    %    prtClassMap, prtClassCap, prtClassMaryEmulateOneVsAll,
+    %    prtClassDlrt, prtClassPlsda, prtClassFld, prtClassRvm,
+    %    prtClassLogisticDiscriminant,  prtClass
+    
+    
+    
+    
     %   
     
     properties (SetAccess=private)
-        % name
-        %   String value, required by prtAction
-        name = 'Logistic Discriminant'
-        % nameAbbreviation
-        %   String value, required by prtAction
-        nameAbbreviation = 'LogDisc'
-        % isSupervised
-        %   Boolean value, required by prtAction
-        isSupervised = true;
+        name = 'Logistic Discriminant'  % Logistic Discriminant
+     
+        nameAbbreviation = 'LogDisc'  % LogDisc
+     
+        isSupervised = true;   %  True
         
-        % isNativeMary
-        %   Boolean value, required by prtClass
-        isNativeMary = false;
+ 
+        isNativeMary = false;  % True
     end
     
     properties
         % w  
         %   w is a DataSet.nDimensions + 1 x 1 vector of projection weights
         %   learned during LogDisc.train(DataSet)
-        w = [];
+        
+        w = [];  % Regression weights
         
         % irlsStepSize 
         %   irlsStepSize can be the string 'hessian', or a double value
@@ -46,33 +83,39 @@ classdef prtClassLogisticDiscriminant < prtClass
         %   unstable.  Otherwise, training takes steps in the direction of 
         %   the gradient with a step size of irlsStepSize*gradient.  Default
         %   value is 0.05.
-        irlsStepSize = .05; %'hessian'
+        
+        irlsStepSize = .05; % The stepsize
 
         % maxIter
         %   Maximum number of iterations to allow before exiting without
         %   convergence.
-        maxIter = 500;
+        
+        maxIter = 500;  % Maxmimuum number of iterations
         
         % nIterations
         %   Number of iterations used in training.  This is set to a number
         %   between 1 and maxIter during training.
-        nIterations = nan;
+        
+        nIterations = nan;  % The number of iterations used in training
         
         % wInitTechnique 
         %   wInitTechnique specifies how training should initialize the w
         %   vector.  Possible values are 'FLD', 'randn', and 'manual'.
-        wInitTechnique = 'FLD';
+        
+        wInitTechnique = 'FLD';  % Weight initialization technique
         
         % manualInitialW
         %   manualInitialW is used to set the initial w value when
         %   wInitTechnique is 'manual'.  manualInitialW must be a vector
         %   and of length(TrainDataSet.nDimensions + 1)
-        manualInitialW = [];
+        
+        manualInitialW = []; % The value of the initial weights if initialized manually
         
         % wTolerance
         %   Convergence tolerance on w.  When norm(w - wOld) < wTolerance,
         %   convergence is reached, and training exits.
-        wTolerance = 1e-2;
+        
+        wTolerance = 1e-2;  % The convergance tolerance of the weights
         
         % handleNonPosDefR
         %   It is possible to obtain non-positive definite re-weighted
@@ -82,27 +125,19 @@ classdef prtClassLogisticDiscriminant < prtClass
         %   current weight vector, and 'regularize' attempts to
         %   diagonal-load the R matrix to acheive a well conditioned
         %   matrix.  Often regularizing is a losing battle.
-        handleNonPosDefR = 'exit';
+        
+        handleNonPosDefR = 'exit';  % The action taken when R is non-positive definite
     end
     
     methods
         
         function Obj = prtClassLogisticDiscriminant(varargin)
-            %LogDisc = prtClassLogisticDiscriminant(varargin)
-            %   The Logistic Discriminant constructor allows the user to
-            % use name/property pairs to set public fields of the Logistic
-            % Discriminant object.
-            %
-            %   For example:
-            %
-            %   LogDisc = prtClassLogisticDiscriminant;
-            %   LogDiscSmallStep = prtClassLogisticDiscriminant('irlsStepSize',.001);
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
         end
         
     end
     
-    methods (Access=protected)
+    methods (Access=protected, Hidden = true)
         
         function Obj = trainAction(Obj,DataSet)
             %Obj = trainAction(Obj,DataSet)
@@ -119,7 +154,8 @@ classdef prtClassLogisticDiscriminant < prtClass
                 case 'randn'
                     Obj.w = randn(DataSet.nFeatures+1,1);
                 case 'manual'
-                    assert(isvector(Obj.manualInitialW) & numel(Obj.manualInitialW) == DataSet.nDimensions + 1,'manualInitialW must be a vector and have %d elements',DataSet.nDimensions + 1);
+                    assert(isvector(Obj.manualInitialW) & numel(Obj.manualInitialW) == DataSet.nFeatures + 1,'manualInitialW must be a vector and have %d elements',DataSet.nFeatures + 1);
+                    assert(isequal(size(Obj.manualInitialW), [DataSet.nFeatures + 1,1]), 'manualInitialW must be a %d x 1 vector',DataSet.nFeatures + 1);
                     Obj.w = Obj.manualInitialW;
                 otherwise
                     error('Invalid value for Options.wInitTechnique; wInitTechnique must be one of {''FLD'',''randn'',''manual''}');
