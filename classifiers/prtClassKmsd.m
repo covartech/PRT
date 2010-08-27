@@ -1,25 +1,50 @@
 classdef prtClassKmsd < prtClass
-    % prtClassKmsd - Kernel matched subspace classification
-    % object.
+    % prtClassKmsd  Kernel matched subspace detector classifier
     %
-    % prtClassGlrt Properties:
-    %   sigma - sigma for guassian radial basis function
+    %    CLASSIFIER = prtClassKmsd returns a Kmsd classifier
     %
+    %    CLASSIFIER = prtClassKmsd(PROPERTY1, VALUE1, ...) constructs a
+    %    prtClassKmsd object CLASSIFIER with properties as specified by
+    %    PROPERTY/VALUE pairs.
     %
-    % prtClassGlrt Methods:
-    %   prtClassKmsd - Kmsd constructor
-    %   train - Kmsd training; see prtAction.train
-    %   run - Kmsd evaluation; see prtAction.run
+    %    A prtClassKmsd object inherits all properties from the abstract class
+    %    prtClass. In addition is has the following properties:
+    %
+    %    sigma  - Inverse kernel width for guassian radial basis function
+    % 
+    %    For more information on Kmsd classifiers, refer to the
+    %    following URL:
+    %  
+    %    http://ieeexplore.ieee.org/xpl/freeabs_all.jsp?arnumber=1561179
+    %
+    %    A prtClassKmsd object inherits the TRAIN, RUN, CROSSVALIDATE and
+    %    KFOLDS methods from prtAction. It also inherits the PLOT and
+    %    PLOTDECISION classes from prtClass.
+    %
+    %    Example:
+    %
+    %     TestDataSet = prtDataGenUniModal;       % Create some test and
+    %     TrainingDataSet = prtDataGenUniModal;   % training data
+    %     classifier = prtClassKmsd;              % Create a classifier
+    %     classifier = classifier.train(TrainingDataSet);    % Train
+    %     classified = run(classifier, TestDataSet);         % Test
+    %     classes  = classified.getX > .5;
+    %     percentCorr = prtScorePercentCorrect(classes,TestDataSet.getTargets);
+    %     classifier.plot;
+    %
+    %    See also prtClass, prtClassLogisticDiscriminant, prtClassBagging,
+    %    prtClassMap, prtClassCap, prtClassMaryEmulateOneVsAll, prtClassDlrt,
+    %    prtClassPlsda, prtClassFld, prtClassRvm, prtClassKmsd,  prtClass
+    
     properties (SetAccess=private)
         % Required by prtAction
-        name = 'Kernel Matched Subspace detector'
-        nameAbbreviation = 'KMSD'
-        isSupervised = true;
+        name = 'Kernel matched subspace detector'  % Kernel matched subspace detector
+        nameAbbreviation = 'KMSD'  % KMSD
+        isSupervised = true;  % True
         
-        % Required by prtClass
-        isNativeMary = false;
+        isNativeMary = false;   % False
     end
-    properties (Access = private)
+    properties (Access = private, Hidden = true)
         % Target libaray
         Zt = [];
         % Background library
@@ -36,27 +61,18 @@ classdef prtClassKmsd < prtClass
     end
     
     properties
- 
-        sigma = .01;
-        
-
+        sigma = .01;  % Kernel parameter for radial basis function   
     end
     
     methods
         function Obj = prtClassKMSD(varargin)
-            %Glrt = prtClassKMSD(varargin)
-            %   The KMSD constructor allows the user to use name/property
-            % pairs to set public fields of the KMSD classifier.
-            %
-            %   For example:
-            %
             
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
             %Obj.verboseStorage = false;
         end
     end
     
-    methods (Access=protected)
+    methods (Access=protected, Hidden = true)
         
         function Obj = trainAction(Obj,DataSet)
             
@@ -66,7 +82,7 @@ classdef prtClassKmsd < prtClass
             Obj.Ztb = [Obj.Zt; Obj.Zb];
             
             % Compute Delta
-            Ktb_tb = rbfKernel(Obj.Ztb,Obj.Ztb,Obj.sigma);
+            Ktb_tb = prtKernelRbf.rbfEvalKernel(Obj.Ztb,Obj.Ztb,Obj.sigma);
             [Obj.Delta eigD] = eig(Ktb_tb);
            
             eigD = diag(eigD);
@@ -78,7 +94,7 @@ classdef prtClassKmsd < prtClass
             
             
             % Compute Tau
-            Obj.Kt_t = rbfKernel(Obj.Zt,Obj.Zt,Obj.sigma);
+            Obj.Kt_t = prtKernelRbf.rbfEvalKernel(Obj.Zt,Obj.Zt,Obj.sigma);
             [Obj.Tau, eigT] = eig(Obj.Kt_t);
             eigT = diag(eigT);
             sumT = sum(eigT);
@@ -89,7 +105,7 @@ classdef prtClassKmsd < prtClass
             
             
             % Compute Beta
-            Obj.Kb_b = rbfKernel(Obj.Zb,Obj.Zb,Obj.sigma);
+            Obj.Kb_b = prtKernelRbf.rbfEvalKernel(Obj.Zb,Obj.Zb,Obj.sigma);
             [Obj.Beta, eigB] = eig(Obj.Kb_b);
             %Use eigenvectors that correspond to 90 of the information
             eigB = diag(eigB);
@@ -100,13 +116,10 @@ classdef prtClassKmsd < prtClass
             Obj.Beta = Obj.Beta(:,end-idx:end);
             
             % Compute these too just for fun
-            Obj.Kb_t = rbfKernel(Obj.Zb,Obj.Zt,Obj.sigma);
-            Obj.Kt_b = rbfKernel(Obj.Zt,Obj.Zb,Obj.sigma);
+            Obj.Kb_t = prtKernelRbf.rbfEvalKernel(Obj.Zb,Obj.Zt,Obj.sigma);
+            Obj.Kt_b = prtKernelRbf.rbfEvalKernel(Obj.Zt,Obj.Zb,Obj.sigma);
             
-            
-            
-            
-        end
+     end
         
         function ClassifierResults = runAction(Obj,DataSet)
             
@@ -130,16 +143,16 @@ classdef prtClassKmsd < prtClass
         end
         
     end
-    methods (Static)
+    methods (Static,Hidden = true)
         function LRT = prtClassRunKMSD(Obj,y)
             % Performs kmsd Classification on samples y. Zt is the target library. Zb is the
             % background library Sigma is the RBF parameter.
             
  
             % Compute the emperical kernel maps
-            Ktb_y = rbfKernel(Obj.Ztb,y,Obj.sigma);
-            Kb_y  = rbfKernel(Obj.Zb,y,Obj.sigma);
-            Kt_y  = rbfKernel(Obj.Zt,y,Obj.sigma);
+            Ktb_y = prtKernelRbf.rbfEvalKernel(Obj.Ztb,y,Obj.sigma);
+            Kb_y  = prtKernelRbf.rbfEvalKernel(Obj.Zb,y,Obj.sigma);
+            Kt_y  = prtKernelRbf.rbfEvalKernel(Obj.Zt,y,Obj.sigma);
             
             % Compute the numerator of eq 32
             Num = Ktb_y'*(Obj.Delta*Obj.Delta')* Ktb_y - Kb_y'*(Obj.Beta*Obj.Beta')*Kb_y;
