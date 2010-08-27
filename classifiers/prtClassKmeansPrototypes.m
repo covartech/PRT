@@ -99,7 +99,12 @@ classdef prtClassKmeansPrototypes < prtClass
             [~,ind] = min(distance,[],2);
             classes = Obj.uY(ind);  %note, use uY to get the correct label
             
-            DataSet = DataSet.setObservations(classes);
+            binaryMatrix = zeros(size(classes,1),length(Obj.uY));
+            for i = 1:length(Obj.uY)
+                currY = Obj.uY(i);
+                binaryMatrix(currY == classes,i) = 1;
+            end
+            DataSet = DataSet.setObservations(binaryMatrix);
         end
         
     end

@@ -50,6 +50,35 @@ classdef prtDataSetStandard < prtDataSetBase
     end
     
     methods (Access = 'protected', Hidden = true)
+        function obj = catTargetNames(obj,newDataSet)
+            for i = 1:newDataSet.nTargetDimensions;
+                currTargName = newDataSet.targetNames.get(i);
+                
+                if ~isempty(currTargName)
+                    obj.targetNames.put(i + obj.nTargetDimensions,currTargName);
+                end
+            end
+        end
+        
+        function obj = retainTargetNames(obj,varargin)
+            
+            retainIndices = prtDataSetBase.parseIndices(obj.nTargetDimensions,varargin{:});
+            %parse returns logicals
+            if islogical(retainIndices)
+                retainIndices = find(retainIndices);
+            end
+            
+            %copy the hash with new indices
+            newHash = java.util.Hashtable;
+            for retainInd = 1:length(retainIndices);
+                if obj.targetNames.containsKey(retainIndices(retainInd));
+                    newHash.put(retainInd,obj.targetNames.get(retainIndices(retainInd)));
+                end
+            end
+            
+            obj.targetNames = newHash;
+        end
+        
         function obj = catFeatureNames(obj,newDataSet)
             for i = 1:newDataSet.nFeatures;
                 currFeatName = newDataSet.featureNames.get(i);
@@ -642,10 +671,11 @@ classdef prtDataSetStandard < prtDataSetBase
             %
             % dataSet = dataSet.retainTargets(INDICES) removes all targets
             % from the dataSet object except those specified by INDICES
-            warning('prt:Fixable','Does not handle feature names');
             
             retainedTargets = prtDataSetBase.parseIndices(obj.nTargetDimensions ,retainedTargets);
+            obj = obj.retainTargetNames(retainedTargets);
             obj.targets = obj.targets(:,retainedTargets);
+            
         end
         
     end

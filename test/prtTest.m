@@ -10,7 +10,7 @@ function prtTest(functionNames)
 if nargin < 1 || isempty(functionNames)
     testMFiles = dir(fullfile(fileparts(which(mfilename)),'*.m'));
     functionNames = setdiff({testMFiles.name},{'prtTest.m'});
-    [dontNeed, functionNames] = cellfun(@(c)fileparts(c),functionNames,'uniformOutput',false);
+    [~, functionNames] = cellfun(@(c)fileparts(c),functionNames,'uniformOutput',false);
 end
 
 maxStrLength = max(cellfun(@(c)length(c),functionNames));
