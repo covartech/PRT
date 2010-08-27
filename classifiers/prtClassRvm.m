@@ -86,6 +86,8 @@ classdef prtClassRvm < prtClass
         LearningPlot = false;
         LearningText = false;
         LearningConverged = false;
+    end
+    properties (Hidden = true)
         LearningMaxIterations = 1000;
         LearningBetaConvergedTolerance = 1e-3;
         LearningBetaRelevantTolerance = 1e-3;

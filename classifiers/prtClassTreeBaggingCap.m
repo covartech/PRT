@@ -24,7 +24,6 @@ classdef prtClassTreeBaggingCap < prtClass
     %                                   on the local machine
     %    useMex                       - flag indicating wheter or not to
     %                                   use the Mex file for speedup.
-    %    Memory                       - XXX ?
     %    CapClassifier                - The classifier used for central
     %                                   axis projection
     %
@@ -89,14 +88,45 @@ classdef prtClassTreeBaggingCap < prtClass
         nProcessors = 1;  % The number of processors on this machine
         
         useMex = 1;     % Flag indicating whether or not to use the Mex file
-        Memory = struct('nAppend',1000); % XXX ?
         
         CapClassifier = prtClassCap; %The classifier used for central axis projection
     end
+    properties (Hidden = true)
+        Memory = struct('nAppend',1000); % XXX ?
+    end
     
     methods
+        function Obj = set.nTrees(Obj,val)
+            assert(isscalar(val) && isnumeric(val) && val > 0 && val == round(val),'prt:prtClassTreeBaggingCap:nTrees','nTrees must be a scalar integer greater than 0, but value provided is %s',mat2str(val));
+            Obj.nTrees = val;
+        end
+        function Obj = set.nFeatures(Obj,val)
+            assert(isscalar(val) && isnumeric(val) && val > 0 && val == round(val),'prt:prtClassTreeBaggingCap:nFeatures','nFeatures must be a scalar integer greater than 0, but value provided is %s',mat2str(val));
+            Obj.nFeatures = val;
+        end
+        function Obj = set.featureSelectWithReplacement(Obj,val)
+            assert(isscalar(val) && islogical(val),'prt:prtClassTreeBaggingCap:featureSelectWithReplacement','featureSelectWithReplacement must be a boolean value, but value provided is a %s',class(val));
+            Obj.featureSelectWithReplacement = val;
+        end
+        function Obj = set.bootStrapDataAtNodes(Obj,val)
+            assert(isscalar(val) && islogical(val),'prt:prtClassTreeBaggingCap:bootStrapDataAtNodes','bootStrapDataAtNodes must be a boolean value, but value provided is a %s',class(val));
+            Obj.bootStrapDataAtNodes = val;
+        end
+        function Obj = set.nProcessors(Obj,val)
+            assert(isscalar(val) && isnumeric(val) && val > 0 && val == round(val),'prt:prtClassTreeBaggingCap:nProcessors','nProcessors must be a scalar integer greater than 0, but value provided is %s',mat2str(val));
+            Obj.nProcessors = val;
+        end
+        function Obj = set.useMex(Obj,val)
+            assert(isscalar(val) && islogical(val),'prt:prtClassTreeBaggingCap:useMex','useMex must be a boolean value, but value provided is a %s',class(val));
+            Obj.useMex = val;
+        end
+        function Obj = set.CapClassifier(Obj,val)
+            assert(isa(val,'prtClassCap'),'prt:prtClassTreeBaggingCap:CapClassifier','CapClassifier must be a prtClassCap, but value provided is a %s',class(val));
+            Obj.CapClassifier = val;
+        end
+        
+        
         function Obj = prtClassTreeBaggingCap(varargin)
-            
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
         end
     end

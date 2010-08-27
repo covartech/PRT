@@ -2,7 +2,7 @@ function Options = prtUtilOptFuzzyKmeans
 %Options = prtUtilOptFuzzyKmeans
 
 Options.nClusters = 2;
-Options.distanceMeasure = @(x1,x2) distance(x1,x2);
+Options.distanceMeasure = @(x1,x2) prtDistanceEuclidean(x1,x2);
 
 Options.smoothFactor = 2; 
 Options.maxIterations = 100; 
