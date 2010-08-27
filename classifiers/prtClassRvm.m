@@ -10,14 +10,19 @@ classdef prtClassRvm < prtClass
     %    A prtClassRvm object inherits all properties from the abstract class
     %    prtClass. In addition is has the following properties:
     %
+    %   SetAccess = public:
+    %    kernels            - A cell array of prtKernel objects specifying
+    %                         the kernels to use
     %    algorithm          - The algorithm used, can be 'Figueiredo',
-    %                         'Sequential', or 'SequentialInMemory'
+    %                         'Sequential', or 'SequentialInMemory' (see
+    %                         below for more information)
     %    learningPlot       - Flag indicating whether or not to plot during
     %                         training
     %    learningVerbose       - Flag indicating whether or not to output
     %                         verbose updates during training
     %    learningMaxIterations  - The maximum number of iterations
     %
+    %   SetAccess = private/protected:
     %    learningConverged  - Flag indicating if the training converged
     %    beta          - The regression weights, estimated during training
     %    sparseBeta    - The sparse regression weights, estimated during
@@ -29,6 +34,18 @@ classdef prtClassRvm < prtClass
     %    refer to the following URL:
     %
     %    http://en.wikipedia.org/wiki/Relevance_vector_machine
+    %
+    %   When 'algorithm' is set to 'Figueiredo', the algorithm is based on
+    %   the work presented in:
+    %       M. Figueiredo, Adaptive sparseness for supervised learning, 
+    %   IEEE PAMI, vol. 25, no. 9 pp.1150-1159, September 2003.
+    %
+    %   When 'algorithm' is set to 'Sequential' or 'SequentialInMemory',
+    %   the algorithm is based on the work presented in:
+    %       Tipping, M. E. and A. C. Faul (2003). Fast marginal likelihood
+    %   maximisation for sparse Bayesian models. In C. M. Bishop and 
+    %   B. J. Frey (Eds.), Proceedings of the Ninth International Workshop
+    %   on Artificial Intelligence and Statistics, Key West, FL, Jan 3-6.
     %
     %    A prtClassRvm object inherits the TRAIN, RUN, CROSSVALIDATE and
     %    KFOLDS methods from prtAction. It also inherits the PLOT and

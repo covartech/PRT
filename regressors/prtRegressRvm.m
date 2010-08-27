@@ -10,27 +10,29 @@ classdef prtRegressRvm < prtRegress
     %    A prtRegressRvm object inherits all properties from the prtRegress
     %    class. In addition, it has the following properties:
     %
-    %    kernels            - ???
+    %   SetAccess = public:
+    %    kernels            - A cell array of prtKernel objects specifying
+    %                         the kernels to use
     %    algorithm          - Allowable algorithms are 'JeffreysPrior' 
     %                         or 'Sequential'
-    %    LearningConverged  - Flag indicating if the training converged
     %    LearningPlot       - Flag indicating whether or not to plot during
     %                         training
     %
-    %    The following paremters are algorithm specific:
+    %   SetAccess = private/protected:
+    %    LearningConverged  - Flag indicating if the training converged
+    %    LearningResults    - Struct with information about the convergence
+    %    beta               - The weights on each of the kernel elements;
+    %                         learned during training
+    %    Sigma              - The learned covariance
+    %    sparseBeta         - The weights on the retained kernel elements;
+    %                         learned durning training
+    %    sparseKernels      - The retained kernels
     %
-    %    beta
-    %    Sigma
-    %    sigma2
-    %    sparseBeta
-    %    sparseKernels
-    %    LearningMaxIterations
-    %    LearningBetaConvergedTolerance 
-    %    LearningBetaRelevantTolerance
-    %    LearningLikelihoodIncreaseThreshold
-    %    LearningResults   - ???
-    % 
-    %    Need refernence for RVMs.
+    %   This code is based on:
+    %       Michael E Tipping, Sparse bayesian learning and the relevance 
+    %   vector machine, The Journal of Machine Learning Research, Vol 1.
+    %
+    %   Also see http://en.wikipedia.org/wiki/Relevance_vector_machine
     % 
     %   A prtRegressionRvm object inherits the PLOT method from the
     %   prtRegress object, and the TRAIN, RUN, CROSSVALIDATE and KFOLDS
@@ -64,24 +66,29 @@ classdef prtRegressRvm < prtRegress
     properties
         kernels = {prtKernelDc, prtKernelRbfNdimensionScale};
         algorithm = 'JefferysPrior';   %Allowable algorithms are 'JeffreysPrior' or 'Sequential'
-        
-        
-        sigma2 = [];  % Estimated in training
-        beta = [];% Estimated in training
-        Sigma = [];% Estimated in training
-        sparseBeta = [];% Estimated in training
-        sparseKernels = {};% Estimated in training
-        LearningConverged = [];% Whether or not the training converged
-        
-        
+                
         LearningPlot = false;   % Whether or not to plot during training
+    end
+    
+    properties (Hidden = true)
         LearningMaxIterations = 1000;  % Maximum number of iteratoins
         LearningBetaConvergedTolerance = 1e-6;
         LearningBetaRelevantTolerance = 1e-3;
         LearningLikelihoodIncreaseThreshold = 1e-2;
-        LearningResults % >????
+        
+        sigma2 = [];    % Estimated in training
     end
-    
+    properties (SetAccess = 'private',GetAccess = 'public')
+        LearningResults % Struct with information about the convergence
+        
+        LearningConverged = [];% Whether or not the training converged
+        
+        beta = [];      % Estimated in training
+        Sigma = [];     % Estimated in training
+        
+        sparseBeta = [];% Estimated in training
+        sparseKernels = {};% Estimated in training 
+    end
     methods
         
          % Allow for string, value pairs

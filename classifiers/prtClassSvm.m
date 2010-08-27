@@ -10,9 +10,11 @@ classdef prtClassSvm < prtClass
     %    A prtClassSvm object inherits all properties from the abstract class
     %    prtClass. In addition is has the following properties:
     %
+    %   SetAccess = public:
     %    c      - Slack variable weight (see prtUtilSmo for reference)
     %    tol    - tolerance on learning updates (see prtUtilSmo for reference)
     %
+    %   SetAccess = private/protected:
     %    alpha  - vector of SVM weights
     %    beta   - SVM DC offset
     %
