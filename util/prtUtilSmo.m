@@ -13,7 +13,9 @@ function [alpha,beta] = prtUtilSmo(x,y,gramm,c,tol)
 % Created: 26-September-2005
 % Last revision: n/a
 
-rand('state',0)
+% For debugging:
+% rand('state',0) %randomness is used in randperm
+
 alpha = zeros(size(x,1),1);
 beta = 0;
 
