@@ -1,27 +1,67 @@
 classdef prtClassKmeansPrototypes < prtClass
+    % prtClassKmeansPrototypes  K-means prototypes classifier
+    %
+    %    CLASSIFIER = prtClassKmeansPrototypes returns a K-means prototypes
+    %    classifier
+    %
+    %    CLASSIFIER = prtClassKmeansPrototypes(PROPERTY1, VALUE1, ...)
+    %    constructs a prtClassMAP object CLASSIFIER with properties as
+    %    specified by PROPERTY/VALUE pairs.
+    %
+    %    A prtClassKmeansPrototypes object inherits all properties from the
+    %    abstract class prtClass. In addition is has the following
+    %    properties:
+    %
+    %    nClustersPerHypothesis -  The number of clusters per hypothesis
+    %    clusterCenters         -  The cluster centers 
+    % 
+    %    For information on the  K-nearest neighbors classifier
+    %    algorithm, please refer to the following URL:
+    %
+    %    XXX Need ref
+    %
+    %    A prtClassKmeansPrototypes object inherits the TRAIN, RUN,
+    %    CROSSVALIDATE and KFOLDS methods from prtAction. It also inherits
+    %    the PLOT and PLOTDECISION classes from prtClass.
+    %
+    %    Example:
+    %
+    %     TestDataSet = prtDataGenMary;      % Create some test and 
+    %     TrainingDataSet = prtDataGenMary;  % training data
+    %     classifier = prtClassKmeansPrototypes; % Create a classifier
+    %     classifier = classifier.train(TrainingDataSet);    % Train
+    %     classified = run(classifier, TestDataSet);         % Test
+    %     classes  = classified.getX;
+    %     percentCorr = prtScorePercentCorrect(classes,TestDataSet.getTargets);
+    %     classifier.plot;
+    %
+    %    See also prtClass, prtClassLogisticDiscriminant, prtClassBagging,
+    %    prtClassMap, prtClassCap, prtClassMaryEmulateOneVsAll, prtClassDlrt,
+    %    prtClassPlsda, prtClassFld, prtClassRvm, prtClassGlrt,  prtClass
+    
+    
     % prtClassKmeansPrototypes
     %   Unsupervised clustering on data in each hypothesis, then classify
     %   with closest prototype
     
     properties (SetAccess=private)
-        % Required by prtAction
-        name = 'K-Means Prototypes'
-        nameAbbreviation = 'K-MeansProto'
-        isSupervised = true;
+        
+        name = 'K-Means Prototypes' % K-Means Prototypes
+        nameAbbreviation = 'K-MeansProto' % K-MeansProto
+        isSupervised = true; % True
         
         % Required by prtClass
-        isNativeMary = true;
+        isNativeMary = true;  % True
     end
     
     properties
-        % w is a DataSet.nDimensions x 1 vector of projection weights
-        % learned during Fld.train(DataSet)
-        nClustersPerHypothesis = 2;
-        clusterCenters = {};
-        uY = [];
+        nClustersPerHypothesis = 2; % Number of clusters per hypothesis
+        clusterCenters = {};        % The cluster centers
+       % uY = [];                    % uY ?
     end
-    properties (SetAccess = private)
+    properties (SetAccess = private, Hidden = true)
         fuzzyKMeansOptions = prtUtilOptFuzzyKmeans;
+        uY = [];                    % uY ?
     end
     
     methods
@@ -33,7 +73,7 @@ classdef prtClassKmeansPrototypes < prtClass
         
     end
     
-    methods (Access=protected)
+    methods (Access=protected, Hidden = true)
         
         function Obj = trainAction(Obj,DataSet)
             

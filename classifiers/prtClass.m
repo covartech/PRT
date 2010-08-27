@@ -9,7 +9,6 @@ classdef prtClass < prtAction
     %                  M-ary result.
     %   PlotOptions -  prtClassPlotOpt object specifying the plotting
     %                  options
-    %   twoClassParadigm - {'Binary','Mary')  XXXX What is this for?
     %
     %   prtClass objects have the following methods:
     %
