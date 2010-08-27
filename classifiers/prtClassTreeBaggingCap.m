@@ -105,11 +105,11 @@ classdef prtClassTreeBaggingCap < prtClass
             Obj.nFeatures = val;
         end
         function Obj = set.featureSelectWithReplacement(Obj,val)
-            assert(isscalar(val) && islogical(val),'prt:prtClassTreeBaggingCap:featureSelectWithReplacement','featureSelectWithReplacement must be a boolean value, but value provided is a %s',class(val));
+            assert(isscalar(val) && islogical(val),'prt:prtClassTreeBaggingCap:featureSelectWithReplacement','featureSelectWithReplacement must be a logical value, but value provided is a %s',class(val));
             Obj.featureSelectWithReplacement = val;
         end
         function Obj = set.bootStrapDataAtNodes(Obj,val)
-            assert(isscalar(val) && islogical(val),'prt:prtClassTreeBaggingCap:bootStrapDataAtNodes','bootStrapDataAtNodes must be a boolean value, but value provided is a %s',class(val));
+            assert(isscalar(val) && islogical(val),'prt:prtClassTreeBaggingCap:bootStrapDataAtNodes','bootStrapDataAtNodes must be a logical value, but value provided is a %s',class(val));
             Obj.bootStrapDataAtNodes = val;
         end
         function Obj = set.nProcessors(Obj,val)
@@ -117,7 +117,7 @@ classdef prtClassTreeBaggingCap < prtClass
             Obj.nProcessors = val;
         end
         function Obj = set.useMex(Obj,val)
-            assert(isscalar(val) && islogical(val),'prt:prtClassTreeBaggingCap:useMex','useMex must be a boolean value, but value provided is a %s',class(val));
+            assert(isscalar(val) && islogical(val),'prt:prtClassTreeBaggingCap:useMex','useMex must be a logical value, but value provided is a %s',class(val));
             Obj.useMex = val;
         end
         function Obj = set.CapClassifier(Obj,val)

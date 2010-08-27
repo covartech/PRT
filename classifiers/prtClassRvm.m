@@ -12,26 +12,18 @@ classdef prtClassRvm < prtClass
     %
     %    algorithm          - The algorithm used, can be 'Figueiredo',
     %                         'Sequential', or 'SequentialInMemory'
-    %    LearningConverged  - Flag indicating if the training converged
-    %    LearningPlot       - Flag indicating whether or not to plot during
+    %    learningPlot       - Flag indicating whether or not to plot during
     %                         training
-    %    LearningMaxIterations  - The maximum number of iterations
+    %    learningVerbose       - Flag indicating whether or not to output
+    %                         verbose updates during training
+    %    learningMaxIterations  - The maximum number of iterations
     %
+    %    learningConverged  - Flag indicating if the training converged
     %    beta          - The regression weights, estimated during training
     %    sparseBeta    - The sparse regression weights, estimated during
     %                    training
     %    sparseKernels - The sparse regression kernels, estimated during
     %                    training
-    %
-    %    The following paremters are algorithm specific:
-    %
-    %         LearningBetaConvergedTolerance
-    %         LearningBetaRelevantTolerance
-    %         LearningLikelihoodIncreaseThreshold
-    %         LearningSequentialBlockSize
-    %         LearningCorrelationRemovalThreshold
-    %         LearningSequentialFavorRemove
-    %         LearningResults ???
     %
     %    For information on relevance vector machines, please
     %    refer to the following URL:
@@ -74,35 +66,52 @@ classdef prtClassRvm < prtClass
         kernels = {prtKernelDc, prtKernelRbfNdimensionScale};
         algorithm = 'Figueiredo';  % The training algorithm
         
-        % Estimated Parameters
-        
+        % learning algorithm
+        learningPlot = false;
+        learningVerbose = false;
+    end
+    
+    % Estimated Parameters
+    properties (GetAccess = public, SetAccess = private)
         Sigma = [];
         beta = [];
         sparseBeta = [];
         sparseKernels = {};
-        
-        % Learning algorithm
-        
-        LearningPlot = false;
-        LearningText = false;
-        LearningConverged = false;
+        learningConverged = false;
     end
     properties (Hidden = true)
-        LearningMaxIterations = 1000;
-        LearningBetaConvergedTolerance = 1e-3;
-        LearningBetaRelevantTolerance = 1e-3;
-        LearningLikelihoodIncreaseThreshold = 1e-6;
-        LearningSequentialBlockSize = 1000;
-        LearningCorrelationRemovalThreshold = 0.99;
-        LearningSequentialFavorRemove = true;
-        LearningResults
+        learningMaxIterations = 1000;
+        learningBetaConvergedTolerance = 1e-3;
+        learningBetaRelevantTolerance = 1e-3;
+        learningLikelihoodIncreaseThreshold = 1e-6;
+        learningSequentialBlockSize = 1000;
+        learningCorrelationRemovalThreshold = 0.99;
+        learningSequentialFavorRemove = true;
+        learningResults
     end
     
     methods
         
         function Obj = prtClassRvm(varargin)
-            
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
+        end
+        
+        function Obj = set.kernels(Obj,val)
+            if ~isa(val,'cell')
+                val = {val};
+            end
+            for i = 1:length(val)
+                assert(isa(val{i},'prtKernel'),'prt:prtClassRvm:setKernels','kernels must be a cell array of prtKernels, but value{%d} is a %s',i,class(val{i}));
+            end
+            Obj.kernels = val;
+        end
+        function Obj = set.learningPlot(Obj,val)
+            assert(isscalar(val) && islogical(val),'prt:prtClassRvm:learningPlot','learningPlot must be a logical value, but value provided is a %s',class(val));
+            Obj.learningPlot = val;
+        end
+        function Obj = set.learningVerbose(Obj,val)
+            assert(isscalar(val) && islogical(val),'prt:prtClassRvm:learningVerbose','learningVerbose must be a logical value, but value provided is a %s',class(val));
+            Obj.learningVerbose = val;
         end
         
         function Obj = set.algorithm(Obj,newAlgo)
@@ -242,10 +251,10 @@ classdef prtClassRvm < prtClass
             h1Ind = y == 1;
             h0Ind = y == -1;
             
-            for iteration = 1:Obj.LearningMaxIterations
+            for iteration = 1:Obj.learningMaxIterations
                 
                 %%%%
-                %%See: Figueiredo: "Adaptive Sparseness For Supervised Learning"
+                %%See: Figueiredo: "Adaptive Sparseness For Supervised learning"
                 %%%%
                 uK = u(relevantIndices,relevantIndices);
                 grammK = gramm(:,relevantIndices);
@@ -263,13 +272,13 @@ classdef prtClassRvm < prtClass
                 Obj.beta(relevantIndices,1) = uK*(A\B);
                 
                 % Remove irrelevant vectors
-                relevantIndices = find(abs(Obj.beta) > max(abs(Obj.beta))*Obj.LearningBetaRelevantTolerance);
-                irrelevantIndices = abs(Obj.beta) <= max(abs(Obj.beta))*Obj.LearningBetaRelevantTolerance;
+                relevantIndices = find(abs(Obj.beta) > max(abs(Obj.beta))*Obj.learningBetaRelevantTolerance);
+                irrelevantIndices = abs(Obj.beta) <= max(abs(Obj.beta))*Obj.learningBetaRelevantTolerance;
                 
                 Obj.beta(irrelevantIndices,1) = 0;
                 u = diag(abs(Obj.beta));
                 
-                if Obj.LearningPlot && DataSet.nFeatures == 2
+                if Obj.learningPlot && DataSet.nFeatures == 2
                     DsSummary = DataSet.summarize;
                     
                     [linGrid, gridSize,xx,yy] = prtPlotUtilGenerateGrid(DsSummary.lowerBounds, DsSummary.upperBounds, Obj.PlotOptions);
@@ -286,7 +295,8 @@ classdef prtClassRvm < prtClass
                     end
                     hold off
                     
-                    set(gcf,'color',[1 1 1])
+                    set(gcf,'color',[1 1 1]);
+                    title(sprintf('Iteration %d',iteration));
                     drawnow;
                     
                     Obj.UserData.movieFrames(iteration) = getframe(gcf);
@@ -294,8 +304,8 @@ classdef prtClassRvm < prtClass
                 
                 %check tolerance for basis removal
                 TOL = norm(Obj.beta-beta_OLD)/norm(beta_OLD);
-                if TOL < Obj.LearningBetaConvergedTolerance
-                    Obj.LearningConverged = true;
+                if TOL < Obj.learningBetaConvergedTolerance
+                    Obj.learningConverged = true;
                     break;
                 end
             end
@@ -307,12 +317,12 @@ classdef prtClassRvm < prtClass
         end
         function Obj = trainActionSequential(Obj, DataSet, y, trainedKernels)
             
-            if size(trainedKernels,1) <= Obj.LearningSequentialBlockSize
+            if size(trainedKernels,1) <= Obj.learningSequentialBlockSize
                 Obj = trainActionSequentialInMemory(Obj, DataSet, y, trainedKernels);
                 return
             end
             
-            if Obj.LearningText
+            if Obj.learningVerbose
                 fprintf('Sequential RVM training with %d possible vectors.\n', length(trainedKernels));
             end
             
@@ -329,9 +339,9 @@ classdef prtClassRvm < prtClass
             
             % Find first kernel
             kernelCorrs = zeros(size(trainedKernels));
-            nBlocks = ceil(length(trainedKernels)./ Obj.LearningSequentialBlockSize);
+            nBlocks = ceil(length(trainedKernels)./ Obj.learningSequentialBlockSize);
             for iBlock = 1:nBlocks
-                cInds = ((iBlock-1)*Obj.LearningSequentialBlockSize+1):min([iBlock*Obj.LearningSequentialBlockSize nBasis]);
+                cInds = ((iBlock-1)*Obj.learningSequentialBlockSize+1):min([iBlock*Obj.learningSequentialBlockSize nBasis]);
                 cPhi = prtKernelGrammMatrix(DataSet, trainedKernels(cInds));
                 cPhi = bsxfun(@rdivide,cPhi,sqrt(sum(cPhi.*cPhi))); % We have to normalize here
                 kernelCorrs(cInds) = abs(cPhi'*ym11);
@@ -348,17 +358,17 @@ classdef prtClassRvm < prtClass
             newPhi = newPhi./sqrt(sum(newPhi.^2));
             phiCorrs = zeros(size(trainedKernels));
             for iBlock = 1:nBlocks
-                cInds = ((iBlock-1)*Obj.LearningSequentialBlockSize+1):min([iBlock*Obj.LearningSequentialBlockSize nBasis]);
+                cInds = ((iBlock-1)*Obj.learningSequentialBlockSize+1):min([iBlock*Obj.learningSequentialBlockSize nBasis]);
                 cPhi = prtKernelGrammMatrix(DataSet, trainedKernels(cInds));
                 cPhi = bsxfun(@minus,cPhi,mean(cPhi));
                 cPhi = bsxfun(@rdivide,cPhi,sqrt(sum(cPhi.*cPhi))); % We have to normalize here
                 
                 phiCorrs(cInds) = cPhi'*newPhi;
             end
-            forbidden(phiCorrs > Obj.LearningCorrelationRemovalThreshold) = maxInd;
+            forbidden(phiCorrs > Obj.learningCorrelationRemovalThreshold) = maxInd;
             
             % Start the actual Process
-            if Obj.LearningText
+            if Obj.learningVerbose
                 %fprintf('Sequential RVM training with %d possible vectors.\n', length(trainedKernels));
                 fprintf('\t Iteration 0: Intialized with vector %d.\n', maxInd);
                 
@@ -367,7 +377,7 @@ classdef prtClassRvm < prtClass
             
             
             
-            for iteration = 1:Obj.LearningMaxIterations
+            for iteration = 1:Obj.learningMaxIterations
                 
                 % Store old log Alpha
                 logAlphaOld = log(alpha);
@@ -403,7 +413,7 @@ classdef prtClassRvm < prtClass
                 
                 cPhiProduct = bsxfun(@times,cPhi,obsNoiseVar);
                 for iBlock = 1:nBlocks
-                    cInds = ((iBlock-1)*Obj.LearningSequentialBlockSize+1):min([iBlock*Obj.LearningSequentialBlockSize nBasis]);
+                    cInds = ((iBlock-1)*Obj.learningSequentialBlockSize+1):min([iBlock*Obj.learningSequentialBlockSize nBasis]);
                     PhiM = prtKernelGrammMatrix(DataSet, trainedKernels(cInds));
                     %PhiM = bsxfun(@rdivide,PhiM,sqrt(sum(PhiM.^2)));
                     
@@ -458,7 +468,7 @@ classdef prtClassRvm < prtClass
                     % On the first iteration we don't allow removal
                     [maxChangeVal, actionInd] = max([addChange, nan, modChange]);
                 else
-                    if remChange > 0 && Obj.LearningSequentialFavorRemove
+                    if remChange > 0 && Obj.learningSequentialFavorRemove
                         % Removing is top priority.
                         % If removing increases the likelihood, we have two
                         % options, actually remove that sample or modify that
@@ -475,20 +485,20 @@ classdef prtClassRvm < prtClass
                     keyboard
                 end
                 
-                if maxChangeVal < Obj.LearningLikelihoodIncreaseThreshold
+                if maxChangeVal < Obj.learningLikelihoodIncreaseThreshold
                     % There are no good options right now. Therefore we
                     % should exit with the previous iteration stats.
-                    Obj.LearningConverged = true;
-                    Obj.LearningResults.exitReason = 'No Good Actions';
-                    Obj.LearningResults.exitValue = maxChangeVal;
-                    if Obj.LearningText
+                    Obj.learningConverged = true;
+                    Obj.learningResults.exitReason = 'No Good Actions';
+                    Obj.learningResults.exitValue = maxChangeVal;
+                    if Obj.learningVerbose
                         fprintf('Exiting...no necessary actions remaining, maximal change in log-likelihood %g\n',maxChangeVal);
                     end
                     
                     break;
                 end
                 
-                if Obj.LearningText
+                if Obj.learningVerbose
                     actionStrings = {sprintf('Addition: Vector %s has been added.  ', sprintf(sprintf('%%%dd',nVectorsStringLength),bestAddInd));
                         sprintf('Removal:  Vector %s has been removed.', sprintf(sprintf('%%%dd',nVectorsStringLength), bestRemInd));
                         sprintf('Update:   Vector %s has been updated.', sprintf(sprintf('%%%dd',nVectorsStringLength), bestModInd));};
@@ -528,14 +538,14 @@ classdef prtClassRvm < prtClass
                         newPhi = newPhi./sqrt(sum(newPhi.^2));
                         phiCorrs = zeros(size(trainedKernels));
                         for iBlock = 1:nBlocks
-                            cInds = ((iBlock-1)*Obj.LearningSequentialBlockSize+1):min([iBlock*Obj.LearningSequentialBlockSize nBasis]);
+                            cInds = ((iBlock-1)*Obj.learningSequentialBlockSize+1):min([iBlock*Obj.learningSequentialBlockSize nBasis]);
                             cPhi = prtKernelGrammMatrix(DataSet, trainedKernels(cInds));
                             cPhi = bsxfun(@minus,cPhi,mean(cPhi));
                             cPhi = bsxfun(@rdivide,cPhi,sqrt(sum(cPhi.*cPhi))); % We have to normalize here
                             
                             phiCorrs(cInds) = cPhi'*newPhi;
                         end
-                        forbidden(phiCorrs > Obj.LearningCorrelationRemovalThreshold) = bestAddInd;
+                        forbidden(phiCorrs > Obj.learningCorrelationRemovalThreshold) = bestAddInd;
                         
                         
                     case 2 % Remove
@@ -586,7 +596,7 @@ classdef prtClassRvm < prtClass
                 Obj.beta = zeros(nBasis,1);
                 Obj.beta(relevantIndices) = mu;
                 
-                if Obj.LearningPlot && DataSet.nFeatures == 2
+                if Obj.learningPlot && DataSet.nFeatures == 2
                     figure(101)
                     DsSummary = DataSet.summarize;
                     
@@ -616,11 +626,11 @@ classdef prtClassRvm < prtClass
                 % Check tolerance
                 TOL = abs(log(alpha)-logAlphaOld);
                 TOL(isnan(TOL)) = 0; % inf-inf = nan
-                if all(TOL < Obj.LearningBetaConvergedTolerance) && iteration > 1
-                    Obj.LearningConverged = true;
-                    Obj.LearningResults.exitReason = 'Alpha Not Changing';
-                    Obj.LearningResults.exitValue = TOL;
-                    if Obj.LearningText
+                if all(TOL < Obj.learningBetaConvergedTolerance) && iteration > 1
+                    Obj.learningConverged = true;
+                    Obj.learningResults.exitReason = 'Alpha Not Changing';
+                    Obj.learningResults.exitValue = TOL;
+                    if Obj.learningVerbose
                         fprintf('Exiting...Precisions no longer changine appreciably.\n');
                     end
                     break;
@@ -628,7 +638,7 @@ classdef prtClassRvm < prtClass
             end
             
             
-            if Obj.LearningText && iteration == Obj.LearningMaxIterations
+            if Obj.learningVerbose && iteration == Obj.learningMaxIterations
                 fprintf('Exiting...Convergence not reached before the maximum allowed iterations was reached.\n');
             end
             
@@ -638,7 +648,7 @@ classdef prtClassRvm < prtClass
         end
         function Obj = trainActionSequentialInMemory(Obj, DataSet, y, trainedKernels)
             
-            if Obj.LearningText
+            if Obj.learningVerbose
                 fprintf('Sequential RVM training with %d possible vectors.\n', length(trainedKernels));
             end
             
@@ -670,7 +680,7 @@ classdef prtClassRvm < prtClass
             selectedInds = maxInd;
             % Start the actual Process
             
-            if Obj.LearningText
+            if Obj.learningVerbose
                 %fprintf('Sequential RVM training with %d possible vectors.\n', length(trainedKernels));
                 fprintf('\t Iteration 0: Intialized with vector %d.\n', maxInd);
                 
@@ -686,10 +696,10 @@ classdef prtClassRvm < prtClass
             
             phiCorrs = PhiMNorm'*newPhi;
             
-            forbidden(phiCorrs > Obj.LearningCorrelationRemovalThreshold) = maxInd;
+            forbidden(phiCorrs > Obj.learningCorrelationRemovalThreshold) = maxInd;
             
             
-            for iteration = 1:Obj.LearningMaxIterations
+            for iteration = 1:Obj.learningMaxIterations
                 
                 % Store old log Alpha
                 logAlphaOld = log(alpha);
@@ -761,7 +771,7 @@ classdef prtClassRvm < prtClass
                     % On the first iteration we don't allow removal
                     [maxChangeVal, actionInd] = max([addChange, nan, modChange]);
                 else
-                    if remChange > 0 && Obj.LearningSequentialFavorRemove
+                    if remChange > 0 && Obj.learningSequentialFavorRemove
                         % Removing is top priority.
                         % If removing increases the likelihood, we have two
                         % options, actually remove that sample or modify that
@@ -774,13 +784,13 @@ classdef prtClassRvm < prtClass
                     end
                 end
                 
-                if maxChangeVal < Obj.LearningLikelihoodIncreaseThreshold
+                if maxChangeVal < Obj.learningLikelihoodIncreaseThreshold
                     % There are no good options right now. Therefore we
                     % should exit with the previous iteration stats.
-                    Obj.LearningConverged = true;
-                    Obj.LearningResults.exitReason = 'No Good Actions';
-                    Obj.LearningResults.exitValue = maxChangeVal;
-                    if Obj.LearningText
+                    Obj.learningConverged = true;
+                    Obj.learningResults.exitReason = 'No Good Actions';
+                    Obj.learningResults.exitValue = maxChangeVal;
+                    if Obj.learningVerbose
                         fprintf('Exiting...no necessary actions remaining, maximal change in log-likelihood %g\n',maxChangeVal);
                     end
                     
@@ -791,7 +801,7 @@ classdef prtClassRvm < prtClass
                     warning('prtClassRvm:BadKernelMatrix','Kernel matrix is poorly conditioned. Consider modifying your kernels' );
                 end
                 
-                if Obj.LearningText
+                if Obj.learningVerbose
                     actionStrings = {sprintf('Addition: Vector %s has been added.  ', sprintf(sprintf('%%%dd',nVectorsStringLength),bestAddInd));
                         sprintf('Removal:  Vector %s has been removed.', sprintf(sprintf('%%%dd',nVectorsStringLength), bestRemInd));
                         sprintf('Update:   Vector %s has been updated.', sprintf(sprintf('%%%dd',nVectorsStringLength), bestModInd));};
@@ -833,7 +843,7 @@ classdef prtClassRvm < prtClass
                         newPhi = newPhi./stds;
                         
                         phiCorrs = PhiMNorm'*newPhi;
-                        forbidden(phiCorrs > Obj.LearningCorrelationRemovalThreshold) = bestAddInd;
+                        forbidden(phiCorrs > Obj.learningCorrelationRemovalThreshold) = bestAddInd;
                         
                         
                     case 2 % Remove
@@ -880,7 +890,7 @@ classdef prtClassRvm < prtClass
                 Obj.beta = zeros(nBasis,1);
                 Obj.beta(relevantIndices) = mu;
                 
-                if Obj.LearningPlot && DataSet.nFeatures == 2
+                if Obj.learningPlot && DataSet.nFeatures == 2
                     figure(101)
                     DsSummary = DataSet.summarize;
                     
@@ -910,11 +920,11 @@ classdef prtClassRvm < prtClass
                 % Check tolerance
                 TOL = abs(log(alpha)-logAlphaOld);
                 TOL(isnan(TOL)) = 0; % inf-inf = nan
-                if all(TOL < Obj.LearningBetaConvergedTolerance) && iteration > 1
-                    Obj.LearningConverged = true;
-                    Obj.LearningResults.exitReason = 'Alpha Not Changing';
-                    Obj.LearningResults.exitValue = TOL;
-                    if Obj.LearningText
+                if all(TOL < Obj.learningBetaConvergedTolerance) && iteration > 1
+                    Obj.learningConverged = true;
+                    Obj.learningResults.exitReason = 'Alpha Not Changing';
+                    Obj.learningResults.exitValue = TOL;
+                    if Obj.learningVerbose
                         fprintf('Exiting...Precisions no longer changing appreciably.\n');
                     end
                     break;
@@ -922,7 +932,7 @@ classdef prtClassRvm < prtClass
             end
             
             
-            if Obj.LearningText && iteration == Obj.LearningMaxIterations
+            if Obj.learningVerbose && iteration == Obj.learningMaxIterations
                 fprintf('Exiting...Convergence not reached before the maximum allowed iterations was reached.\n');
             end
             
