@@ -75,18 +75,14 @@ classdef prtClassGlrt < prtClass
     methods (Access=protected, Hidden = true)
        
         function Obj = trainAction(Obj,DataSet)
-            
             Obj.rvH0 = mle(Obj.rvH0, DataSet.getObservationsByClass(0));
             Obj.rvH1 = mle(Obj.rvH1, DataSet.getObservationsByClass(1));
-            
         end
         
-        function ClassifierResults = runAction(Obj,DataSet)
-            
+        function ClassifierResults = runAction(Obj,DataSet) 
             logLikelihoodH0 = logPdf(Obj.rvH0, DataSet.getObservations());
             logLikelihoodH1 = logPdf(Obj.rvH1, DataSet.getObservations());
             ClassifierResults = prtDataSetClass(logLikelihoodH1 - logLikelihoodH0);
-        end
-        
+        end        
     end
 end

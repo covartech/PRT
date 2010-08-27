@@ -192,9 +192,6 @@ classdef prtClass < prtAction
             
             [OutputDataSet, linGrid, gridSize] = runClassifierOnGrid(Obj);
             % Map through PlotOptions.mappingFunction (ex. log)
-            if ~isempty(Obj.PlotOptions.mappingFunction)
-                OutputDataSet = OutputDataSet.setObservations(feval(OutputDataSet.PlotOptions.mappingFunction, OutputDataSet.getObservations()));
-            end
             
             imageHandle = prtPlotUtilPlotGriddedEvaledClassifier(reshape(OutputDataSet.getObservations(),gridSize), linGrid, gridSize, Obj.PlotOptions.twoClassColorMapFunction());
             

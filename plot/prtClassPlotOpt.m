@@ -33,8 +33,7 @@ classdef prtClassPlotOpt
         nSamplesPerDim = [500 100 20]; % Number of samples to use for plotting
         colorsFunction = @prtPlotUtilClassColors; % Colors function handle
         symbolsFunction = @prtPlotUtilClassSymbols; % Symbols function handle
-        twoClassColorMapFunction = @prtPlotUtilTwoClassColorMap; % Two class colormap function handle
-        mappingFunction = []; % @(x)(x); % Pass through
+        twoClassColorMapFunction = @prtPlotUtilTwoClassColorMap; % Two class colormap function handle        
     end
     
     methods

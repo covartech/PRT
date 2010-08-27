@@ -12,8 +12,6 @@ classdef prtUserOptions
             obj = prtUtilAssignStringValuePairs(obj,varargin{:});
             % Change default options here.
             
-            
-            
         end
     end
 end
