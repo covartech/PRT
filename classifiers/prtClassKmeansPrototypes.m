@@ -15,10 +15,10 @@ classdef prtClassKmeansPrototypes < prtClass
     %    nClustersPerHypothesis -  The number of clusters per hypothesis
     %    clusterCenters         -  The cluster centers 
     % 
-    %    For information on the  K-nearest neighbors classifier
-    %    algorithm, please refer to the following URL:
+    %    For information on the  K-means prototype classifier
+    %    algorithm, please refer to:
     %
-    %    XXX Need ref
+    %    Hastie, Tibshirani, Friedman, The Elements of Statistical Learning
     %
     %    A prtClassKmeansPrototypes object inherits the TRAIN, RUN,
     %    CROSSVALIDATE and KFOLDS methods from prtAction. It also inherits
@@ -41,8 +41,8 @@ classdef prtClassKmeansPrototypes < prtClass
     
     
     % prtClassKmeansPrototypes
-    %   Unsupervised clustering on data in each hypothesis, then classify
-    %   with closest prototype
+    %   Unsupervised clustering on data in each hypothesis, then supervised
+    %   classify with closest prototype
     
     properties (SetAccess=private)
         
