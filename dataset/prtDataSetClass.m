@@ -177,6 +177,10 @@ classdef prtDataSetClass  < prtDataSetStandard
             end
         end
         
+        function obj = setTargets(obj,targets,varargin)
+            assert(size(targets,2) == 1,'prt:prtDataSetClass:setTargets','targets for prtDataSetClass must be size n x 1, but targets are size n x %d',size(targets,2));
+            obj = setTargets@prtDataSetStandard(obj,targets,varargin{:});
+        end
         function obj = setClassNamesByClassInd(obj,names,varargin)
             % setClassNamesByClassInd   Sets the class names
             %
