@@ -8,9 +8,9 @@ Results = run(PrtClassObj.train(DS),DS);
 [pd,sortInd] = sort(pd(:),'ascend');
 pf = pf(sortInd);
 
-[~,ind] = find(pd >= pdDesired);
-if ~isempty(ind(1))
-    pf = pf(ind);
+ind = find(pd >= pdDesired);
+if ~isempty(ind)
+    pf = pf(ind(1));
 else
     pf = nan;
 end
