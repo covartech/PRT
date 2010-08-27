@@ -14,7 +14,7 @@ classdef prtClassKnn < prtClass
     %    distanceFunction   - The function to be used to compute the
     %                         distance from samples to cluster centers. 
     %                         It must be a function handle of the form:
-    %                         @(x1,x2)distFun(x1,x2). Most prtDistance
+    %                         @(x1,x2)distFun(x1,x2). Most prtDistance*
     %                         functions will work.
     %
     %    For information on the  K-nearest neighbors classifier algorithm, please

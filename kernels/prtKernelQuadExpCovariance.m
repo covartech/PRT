@@ -21,4 +21,4 @@ if nargin < 3 || isempty(theta0)
     theta0 = 1;
 end
 
-K = theta0 * exp(-theta1/2 * prtDistance(x1,x2).^2) + theta2 + theta3*x1*x2';
+K = theta0 * exp(-theta1/2 * prtDistanceEuclidean(x1,x2).^2) + theta2 + theta3*x1*x2';
