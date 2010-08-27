@@ -48,7 +48,7 @@ classdef prtDataSetRegress < prtDataSetStandard
                 warning('prt:plot:NoPlotDimensionality','No plot dimensions requested.');
                 return
             elseif nPlotDimensions >= 2
-                error('prt:plot:NoPlotDimensionality','Regression plots only for 1 dimensional data');
+                error('prt:plot:NoPlotDimensionality','Regression plots are currently only valid for 1 dimensional data, but DataSet has %d dimensions',obj.nFeatures);
                 return
             end
             

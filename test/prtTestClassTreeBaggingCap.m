@@ -24,6 +24,7 @@ baselinePercentCorr =  0.9325;
 
 TestDataSet = prtDataGenUnimodal;
 TrainingDataSet = prtDataGenUnimodal;
+%TrainingDataSet = .catFeatures(prtDataGenUnimodal,prtDataGenUnimodal);
 
 classifier = prtClassTreeBaggingCap;
 %classifier.verboseStorage = false;
