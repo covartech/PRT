@@ -1,23 +1,58 @@
 classdef prtClassCap < prtClass
-    % prtClassCap - Central axis projection classifier
+        % prtClassCap  Central Axis projection classifier
     %
-    % prtClassCap Properties: 
-    %   w - Central axis projection weights - set during training
-    %   threshold - Decision threshold - set during training
+    %    CLASSIFIER = prtClassCap returns a Cap classifier
     %
-    % prtClassCap Methods:
-    %   prtClassCap - Central axis projection constructor
-    %   train - Central axis projection training; see prtAction.train
-    %   run - Central axis projection evaluation; see prtAction.run
+    %    CLASSIFIER = prtClassCap(PROPERTY1, VALUE1, ...) constructs a
+    %    prtClassCap object CLASSIFIER with properties as specified by
+    %    PROPERTY/VALUE pairs.
+    %
+    %    A prtClassCap object inherits all properties from the abstract class
+    %    prtClass. In addition is has the following properties:
+    %
+    %        
+    %    w                 -  Central axis projection weights, set during
+    %                         training
+    %    threshold         -  Decision threshold, set during training
+    %    thresholdSampling -  The number of neighbors to consider in the
+    %                         nearest-neighbor voting.
+    % 
+    %    For more information on Cap classifiers, refer to the
+    %    following URL:
+    %  
+    %    XXX Need ref
+    %
+    %    A prtClassCap object inherits the TRAIN, RUN, CROSSVALIDATE and
+    %    KFOLDS methods from prtAction. It also inherits the PLOT and
+    %    PLOTDECISION classes from prtClass.
+    %
+    %    Example:
+    %
+    %     TestDataSet = prtDataGenUniModal;       % Create some test and
+    %     TrainingDataSet = prtDataGenUniModal;   % training data
+    %     classifier = prtClassCap;              % Create a classifier
+    %     classifier = classifier.train(TrainingDataSet);    % Train
+    %     classified = run(classifier, TestDataSet);         % Test
+    %     classes  = classified.getX > .5;
+    %     percentCorr = prtScorePercentCorrect(classes,TestDataSet.getTargets);
+    %     classifier.plot;
+    %
+    %    See also prtClass, prtClassLogisticDiscriminant, prtClassBagging,
+    %    prtClassMap, prtClassCap, prtClassMaryEmulateOneVsAll, prtClassDlrt,
+    %    prtClassPlsda, prtClassFld, prtClassRvm, prtClassDlrt,  prtClass
+    
+    
+    
+    
     
     properties (SetAccess=private)
-        % Required by prtAction
-        name = 'Central Axis Projection'
-        nameAbbreviation = 'CAP'
-        isSupervised = true;
+    
+        name = 'Central Axis Projection' % Central Axis Projection
+        nameAbbreviation = 'CAP' % CAP
+        isSupervised = true; % True
         
-        % Required by prtClass
-        isNativeMary = false;
+       
+        isNativeMary = false; % False
         
         % Central axis projection weights
         w = [];
@@ -26,26 +61,18 @@ classdef prtClassCap < prtClass
     end 
     
     properties
-        % thresholdSampling
-        %   thresholdSampling specifies the number of neighbors to consider in the
-        %   nearest-neighbor voting.
-        thresholdSampling = 100;
+       
+        thresholdSampling = 100; % The number of neighbors to consider in the nearest-neighbor voting.
     end
     
     methods
         function Obj = prtClassCap(varargin)
-            %Cap = prtClassCap(varargin)
-            %   The KNN constructor allows the user to use name/property 
-            % pairs to set public fields of the KNN classifier.
-            %
-            %   For example:
-            %
-            
+          
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
         end
     end
     
-    methods (Access=protected)
+    methods (Access=protected, Hidden = true)
         function Obj = trainAction(Obj,DataSet)
             
             y = DataSet.getTargets;
