@@ -257,7 +257,7 @@ classdef prtRegressRvm < prtRegress
                     % Here we assumed we have a bias;
                     plot(DataSet.getObservations(relevantIndices(2:end)),y(relevantIndices(2:end)),'ro')
                     hold off
-                    subplot_title(sprintf('Iteration %d',iteration));
+                    prtUtilSubplotTitle(sprintf('Iteration %d',iteration));
                     set(gcf,'color',[1 1 1])
                     drawnow;
                     
@@ -462,7 +462,7 @@ classdef prtRegressRvm < prtRegress
                     plot(DataSet.getObservations(relevantIndices(2:end)),y(relevantIndices(2:end)),'ro')
                     hold off
                     actionStrings = {'Add','Remove','Update'};
-                    subplot_title(sprintf('%d - %s',iteration,actionStrings{actionInd}))
+                    prtUtilSubplotTitle(sprintf('%d - %s',iteration,actionStrings{actionInd}))
                     set(gcf,'color',[1 1 1])
                     drawnow;
                     

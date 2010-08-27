@@ -13,7 +13,7 @@ end
 Results = prtRun(PrtClassifier,linGrid);
 
 % So now we got this huge linear grid of data values.
-[M,N] = getSubplotDimensions(Results.nFeatures);
+[M,N] = prtUtilGetSubplotDimensions(Results.nFeatures);
 
 classColors = feval(PrtClassifier.PlotOptions.colorsFunction, Results.nFeatures);
 

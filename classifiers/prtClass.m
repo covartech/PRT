@@ -214,7 +214,7 @@ classdef prtClass < prtAction
                 OutputDataSet = OutputDataSet.setObservations(feval(OutputDataSet.PlotOptions.mappingFunction, OutputDataSet.getObservations()));
             end
             
-            [M,N] = getSubplotDimensions(Obj.DataSetSummary.nClasses);
+            [M,N] = prtUtilGetSubplotDimensions(Obj.DataSetSummary.nClasses);
             imageHandle = zeros(M*N,1);
             classColors = prtPlotUtilLightenColors(Obj.PlotOptions.colorsFunction(OutputDataSet.nFeatures));
             for subImage = 1:M*N
