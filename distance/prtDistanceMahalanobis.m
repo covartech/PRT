@@ -1,4 +1,4 @@
-function D = prtDistanceMahalanobis(varargin)
+function D = prtDistanceMahalanobis(x,y,cov)
 % prtDistanceMahalanobis   Mahalanobis distance.
 %
 %   DIST = prtDistanceMahalanobis(P1,P2, COV) Calculates the distance from all of the points in P1 to all
@@ -27,5 +27,4 @@ function D = prtDistanceMahalanobis(varargin)
 % Created: 17-December-2005
 % Last revision: 5-January-2006
 
-invCovMat = inv(varargin{3});
-D = prtDistanceCustom(varargin{1},varargin{2},@(x1,x2)(x1-x2)*invCovMat*(x1-x2));
+D = prtDistanceCustom(x,y,@(x1,x2)(x1-x2)*(cov\(x1-x2)'));
