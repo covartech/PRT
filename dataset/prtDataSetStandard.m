@@ -363,6 +363,11 @@ classdef prtDataSetStandard < prtDataSetBase
             end
             
             if ~isempty(targets)
+                if nargin < 3
+                    if ~isequal(obj.nObservations,size(targets,1))
+                        error('prt:prtDataSetStandard:InvalidTargetSize','nObservations is %d, but targets are of size %s, corresponding to %d observations',obj.nObservations,mat2str(size(targets)),size(targets,1));
+                    end
+                end
                 if ~isequal([length(indices1),length(indices2)],size(targets))
                     if isempty(obj.targets) && nargin < 3
                         error('prtDataSetStandard:InvalidTargetSize','Attempt to set targets to matrix of size %s, but indices are of size [%d %d]',mat2str(size(targets)),length(indices1),length(indices2))
@@ -645,15 +650,23 @@ classdef prtDataSetStandard < prtDataSetBase
         
     end
     methods (Hidden = true)
-        function export(obj,varargin) %#ok<MANU>
+        function v = export(obj,varargin) %#ok<MANU>
             error('prt:Fixable','Not yet implemented');
         end
         
-        function plot(obj,varargin)
-            error('prt:Fixable','Not yet');
+        function h = plot(obj,varargin)
+            error('prt:prtDataSetStandard:plot','prtDataSetStandard does not implement a plot() function; did you mean to use a prtDataSetClass or prtDataSetRegress?');
         end
-        function summarize(obj,varargin)
-            error('prt:Fixable','Not yet');
+        function s = summarize(obj,varargin)
+            error('prt:prtDataSetStandard:summarize','prtDataSetStandard does not implement a summarize() function; did you mean to use a prtDataSetClass or prtDataSetRegress?');
+            %             Summary.upperBounds = max(Obj.getObservations());
+            %             Summary.lowerBounds = min(Obj.getObservations());
+            %             Summary.nFeatures = Obj.nFeatures;
+            %             Summary.nTargetDimensions = Obj.nTargetDimensions;
+            %             Summary.nObservations = Obj.nObservations;
+            %
+            %             Summary.nClasses = Obj.nClasses;
+            %             Summary.isMary = Obj.isMary;
         end
     end
     

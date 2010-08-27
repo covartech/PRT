@@ -95,6 +95,9 @@ classdef prtAction
             %   OBJ = OBJ.train(DataSet) trains the prtAction object using
             %   the prtDataSet DataSet
             
+            if ~isa(DataSet,'prtDataSetBase')
+                error('prt:prtAction:prtDataSetBase','DataSet provided to prtAction %s''s train() is not a prtDataSetBase, DataSet is a %s',class(Obj),class(DataSet));
+            end
             if Obj.isSupervised && ~DataSet.isLabeled
                 error('prt:prtAction:supervisedActionUnLabeledDataSet','The action of type %s is supervised, but the dataSet of type %s, is not labeled',class(Obj),class(DataSet));
             end
@@ -118,6 +121,9 @@ classdef prtAction
             %
             %   OUTPUT = OBJ.train(DataSet) runs the prtAction object using
             %   the prtDataSet DataSet. OUTPUT will be a prtDataSet object.
+            if ~isa(DataSet,'prtDataSetBase')
+                error('prt:prtAction:prtDataSetBase','DataSet provided to prtAction %s''s run() was is a prtDataSetBase, DataSet is a %s',class(Obj),class(DataSet));
+            end
             
             DataSet = runAction(Obj, DataSet);
             DataSet = postRunProcessing(Obj, DataSet);

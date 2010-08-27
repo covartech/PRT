@@ -32,6 +32,9 @@ classdef prtClass < prtAction
     
     methods
         
+        %         function Obj = train(Obj, DataSet)
+        %
+        %         end
         function varargout = plot(Obj)
             % PLOT  Plot the output confidence of a prtClass object
             % 
