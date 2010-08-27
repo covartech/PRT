@@ -51,13 +51,20 @@ classdef prtClassGlrt < prtClass
     end 
     
     properties
-       
         rvH0 = prtRvMvn;  % Mean and variance of H0
-        
         rvH1 = prtRvMvn;  % Mean and variance of H1
     end
     
     methods
+        function Obj = set.rvH0(Obj,val)
+            assert(isa(val,'prtRv'),'prt:prtClassGlrt:setrvH0','rvH0 must be a subclass of prtRv, but value provided is a %s',class(val));
+            Obj.rvH0 = val;
+        end
+        function Obj = set.rvH1(Obj,val)
+            assert(isa(val,'prtRv'),'prt:prtClassGlrt:setrvH1','rvH1 must be a subclass of prtRv, but value provided is a %s',class(val));
+            Obj.rvH1 = val;
+        end
+        
         function Obj = prtClassGlrt(varargin)
             
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
