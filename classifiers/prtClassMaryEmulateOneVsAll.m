@@ -1,18 +1,58 @@
 classdef prtClassMaryEmulateOneVsAll < prtClass
+    % prtClassMaryEmulateOneVsAll  K-means prototypes classifier
+    %
+    %    CLASSIFIER = prtClassMaryEmulateOneVsAll returns a M-ary one
+    %    versus all classifier. A one versus all classifier utilizes a
+    %    binary classifier to make M-ary decisions. For all M classes, it
+    %    selects one class, and makes a binary comparison to all the
+    %    others.
+    %
+    %    CLASSIFIER = prtClassMaryEmulateOneVsAll(PROPERTY1, VALUE1, ...)
+    %    constructs a prtClassMAP object CLASSIFIER with properties as
+    %    specified by PROPERTY/VALUE pairs.
+    %
+    %    A prtClassMaryEmulateOneVsAll object inherits all properties from the
+    %    abstract class prtClass. In addition is has the following
+    %    properties:
+    %
+    %    Classifiers - The classifier to be used to make the binary
+    %                  decisions. Must be a prtClass object, and defaults 
+    %                  to a prtClassFld classifier.
+    % 
+    %    A prtClassMaryEmulateOneVsAll object inherits the TRAIN, RUN,
+    %    CROSSVALIDATE and KFOLDS methods from prtAction. It also inherits
+    %    the PLOT and PLOTDECISION classes from prtClass.
+    %
+    %    Example:
+    %
+    %     TestDataSet = prtDataGenMary;      % Create some test and 
+    %     TrainingDataSet = prtDataGenMary;  % training data
+    %     classifier = prtClassMaryEmulateOneVsAll; % Create a classifier
+    %     classifier.Classifiers = prtClassGlrt;    % Set the binary 
+    %                                               % Classifier
+    %     classifier = classifier.train(TrainingDataSet);    % Train
+    %     classified = run(classifier, TestDataSet);         % Test
+    %     [~, classes] = max(classified.getX,[],2);          % Select the
+    %                                                        % classes
+    %     percentCorr = prtScorePercentCorrect(classes,TestDataSet.getTargets);
+    %     classifier.plot;
+    %
+    %    See also prtClass, prtClassLogisticDiscriminant, prtClassBagging,
+    %    prtClassMap, prtClassCap, prtClassMaryEmulateOneVsAll, prtClassDlrt,
+    %    prtClassPlsda, prtClassFld, prtClassRvm, prtClassGlrt,  prtClass
     
     properties (SetAccess=private)
-        % Required by prtAction
-        name = 'M-Ary Emaulation One vs. All'
-        nameAbbreviation = 'OVA'
-        isSupervised = true;
         
-        % Required by prtClass
-        isNativeMary = true;
+        name = 'M-Ary Emaulation One vs. All'  % M-Ary Emaulation One vs. All
+        nameAbbreviation = 'OVA'  % OVA
+        isSupervised = true;  % True
+        
+        isNativeMary = true;  % True
     end
     
     properties
-        % General Classifier Properties
-        Classifiers = prtClassFld; % will be repmated as needed
+       
+        Classifiers = prtClassFld; % The classifier to be used
     end
     
     methods
@@ -24,7 +64,7 @@ classdef prtClassMaryEmulateOneVsAll < prtClass
         end
     end
     
-    methods (Access = protected)
+    methods (Access = protected,Hidden = true)
         
         function Obj = trainAction(Obj,DataSet)
             % Repmat the Classifier objects to get one for each class
