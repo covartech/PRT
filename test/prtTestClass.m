@@ -6,7 +6,7 @@ result = true;
 %% Object contruction error checks
 error = true;  % We will want all these things to error
 
-classifier = prtClassMAP;
+classifier = prtClassMap;
 
 try
     classifier.name = 'sam';

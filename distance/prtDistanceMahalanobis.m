@@ -1,22 +1,28 @@
-function D = prtDistanceMahalanobis(x,y,cov)
+function D = prtDistanceMahalanobis(dataSet1,dataSet2,covar)
 % prtDistanceMahalanobis   Mahalanobis distance.
 %
-%   DIST = prtDistanceMahalanobis(P1,P2, COV) Calculates the distance from all of the points in P1 to all
-%   of the points in P2 usuing the Mahalanobis distance measure. The 
-%   Mahalanobis distance is the exponent of the multivariate gaussian 
-%   density function evaluated at the distance between vectors P1 and P2. 
+%   dist = prtDistanceMahalanobis(d1,d2) for data sets or double matrices d1
+%   and d2 calculates the Mahalanobis distance from all the observations in
+%   d1 to d2, and ouputs a distance matrix of size d1.nObservations x
+%   d2.nObservations (size(d1,1) x size(d2,1) for double matrices).  The
+%   covariance matrix in the Mahalanobis is estimated from both the data in
+%   dataSet1 and dataSet2.
+%  
+%   d1 and d2 should have the same dimensionality, i.e. d1.nFeatures ==
+%   d2.nFeatures (size(d1,2) == size(d2,2) for double matrices).
 %
-%    P1 should be an NxM matrix of locations, where N is the number of 
-%    points and M is the dimensionality. P2 should be an DxM matrix of
-%    locations. D is the number of points and M is the dimensionality. COV
-%    is the MxM covariance matrix. The output DIST is an NxD matrix of
-%    distances.
-%
+%   dist = prtDistanceMahalanobis(d1,d2,covar) specifies the covariance
+%   matrix to use.
+%   
 % Example:
+%   
 %   X = [0 0; 1 1];
 %   Y = [1 0; 2 2; 3 3;];
 %   covMat = [1 0; 0 2;];
 %   D = prtDistanceMahalanobis(X,Y,covMat)
+%
+%   For more information, see:
+%   http://en.wikipedia.org/wiki/Mahalanobis_distance
 %
 % See also: prtDistance, prtDistanceCityBlock, prtDistanceLNorm,
 % prtDistanceEuclidean, prtDistanceSquare, prtDistanceChebychev
@@ -27,4 +33,8 @@ function D = prtDistanceMahalanobis(x,y,cov)
 % Created: 17-December-2005
 % Last revision: 5-January-2006
 
-D = prtDistanceCustom(x,y,@(x1,x2)(x1-x2)*(cov\(x1-x2)'));
+[data1,data2] = prtUtilDistanceParseInputs(dataSet1,dataSet2);
+if nargin < 3
+    covar = cov(cat(1,data1,data2));
+end
+D = prtDistanceCustom(data1,data2,@(x1,x2)(x1-x2)*(covar\(x1-x2)'));

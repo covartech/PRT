@@ -1,28 +1,25 @@
-function D = prtDistanceChebychev(varargin)
+function D = prtDistanceChebychev(dataSet1,dataSet2)
 % prtDistanceChebychev    Chebychev distance
 % 
-%    DIST = prtDistanceChebychev(P1,P2) Calculates the distance from all of
-%    the points in P1 to all of the points in P2 usuing the Chebychev
-%    distance measure. The Chebychev distance is the maximum absolute
-%    distance between any dimension of P1 and the corresponding of P2.
-%
-%    P1 should be an NxM matrix of locations, where N is the number of 
-%    points and M is the dimensionality. P2 should be an DxM matrix of
-%    locations. D is the number of points and M is the dimensionality. The
-%    output DIST is an NxD matrix of distances.
+%   dist = prtDistanceChebychev(d1,d2) for data sets or double matrices d1
+%   and d2 calculates the Chebychev distance from all the observations in
+%   d1 to d2, and ouputs a distance matrix of size d1.nObservations x
+%   d2.nObservations (size(d1,1) x size(d2,1) for double matrices).
+%  
+%   d1 and d2 should have the same dimensionality, i.e. d1.nFeatures ==
+%   d2.nFeatures (size(d1,2) == size(d2,2) for double matrices).
+%   
+%   For more information, see:
+%   
+%   http://en.wikipedia.org/wiki/Chebyshev_distance
 %
 % Example:
 %   X = [0 0; 1 1];
 %   Y = [1 0; 2 2; 3 3;];
-%   DIST = prtDistanceChebychev(X,Y)
+%   dist = prtDistanceChebychev(X,Y)
 %
 % See also: prtDistance, prtDistanceCityBlock, prtDistanceEuclidean,
 % prtDistanceMahalanobis, prtDistanceSquare, prtDistanceLnorm
 
-% Author: Kenneth D. Morton Jr.
-% Duke University, Department of Electrical and Computer Engineering
-% Email Address: collinslab@gmail.com
-% Created: 17-December-2005
-% Last revision: 5-January-2006
-
-D = prtDistanceCustom(varargin{1},varargin{2},@(x1,x2)max(abs(x1-x2)));
+[data1,data2] = prtUtilDistanceParseInputs(dataSet1,dataSet2);
+D = prtDistanceCustom(data1,data2,@(x1,x2)max(abs(x1-x2)));

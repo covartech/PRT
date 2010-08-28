@@ -1,47 +1,72 @@
-function D = prtDistanceEarthMover(varargin)
-%D = prtDistanceEarthMover(x1,w1,x2,w2)
-%   Reuturn the earth mover distance from points in x1 with weights w1 to
-%   points in x2 with weights w2. 
+function distance = prtDistanceEarthMover(dataSet1,dataSet2,X1,X2)
+% prtDistanceEarthMover   Earth mover distance
 %
-%       x1 (n1 x nDimensions)
-%       w1 (n1 x 1)
-%       x2 (n2 x nDimensions)
-%       w2 (n2 x 1)
-%
-%D = prtDistanceEarthMover(w1,w2)
-%   Return the earth mover distance from w1 to w2.  x1 and x2 are assumed
-%   to be [1:n1]' and [1:n2]' respectively
+%   dist = prtDistanceEarthMover(d1,d2) for data sets or double matrices d1
+%   and d2 calculates the earth mover distance from all the observations in
+%   d1 to d2, and ouputs a distance matrix of size d1.nObservations x
+%   d2.nObservations (size(d1,1) x size(d2,1) for double matrices).  With
+%   two input arguments, prtDistanceEarthMover assumes that columns
+%   represent weights for equally spaced points at locations
+%   1:dataSet.nFeatures.
+%  
+%   d1 and d2 should have the same dimensionality, i.e. d1.nFeatures ==
+%   d2.nFeatures (size(d1,2) == size(d2,2) for double matrices).
 %   
+%   Earth mover's distance requires that the values in d1 and d2 are
+%   positive, and they should have constant row sums for the distance to be
+%   meaningful.
 %
-%   See: Rubner, Tomasi, Guibas.  The Earth Mover's Distance as a Metric
+%   distance = prtDistanceEarthMover(dataSet1,dataSet2,X1,X2) where X1 and 
+%   X2 are double matrices of size dataSet1.nObservations x
+%   dataSet1.nFeatures and dataSet2.nObservations x dataSet2.nFeatures
+%   allows the user to specify the locations of the points in each of the
+%   data sets.
+%
+%   Example:
+%       d = rand(20,3);
+%       d = bsxfun(@rdivide,d,sum(d,2));
+%       distance = prtDistanceEarthMover(d,d);
+%
+%   For more information, see:
+%   
+%   http://en.wikipedia.org/wiki/Earth_mover's_distance
+%
+%   See also: Rubner, Tomasi, Guibas.  The Earth Mover's Distance as a Metric
 %   for Image Retrieval. 
 
-switch nargin 
-    case 2
-        w1 = varargin{1};
-        x1 = (1:size(w1,1))';
-        
-        w2 = varargin{2};
-        x2 = (1:size(w2,1))';
-    case 4
-        x1 = varargin{1};
-        w1 = varargin{2};
-        
-        x2 = varargin{3};
-        w2 = varargin{4};
-    otherwise
-        error('prtDistanceEarthMover requires 2 or 4 inputs');
+[data1,data2] = prtUtilDistanceParseInputs(dataSet1,dataSet2);
+if nargin < 4
+    X1 = repmat(1:size(data1,2),size(data1,1),1);
+    X2 = repmat(1:size(data2,2),size(data2,1),1);
+end
+if any(data1(:)) < 0 || any(data2(:)) < 0
+    error('prt:prtDistanceEarthMover:InvalidWeights','prtDistanceEarthMover is only defined for data with values > 0');
+end
+if length(unique(sum(data1,2))) ~= 1 || length(unique(sum(data2,2))) ~= 1
+    warning('prt:prtDistanceEarthMover:InvalidWeights','prtDistanceEarthMover best defined for data whose rows sum to a constant value - length(unique(sum(data,2))) should be 1 (i.e. normalized histograms)');
 end
 
-f = distance(x1,x2);
-f = f';
-f = f(:);
+opts1= optimset('display','off');
 
-A = kron(eye(size(x1,1)),ones(1,size(x2,1)));
-A = cat(1,A,kron(ones(1,size(x1,1)),eye(size(x2,1))));
-b = [w1(:); w2(:)];
-
-Aeq = ones(size(f));
-beq = min([sum(w1),sum(w2)]);
-
-[x,D] = linprog(f,A,b,Aeq',beq,zeros(size(f)));
+distance = zeros(size(data1,1),size(data2,2));
+for i = 1:size(data1,1)
+    for j = 1:size(data2,1)
+        x1 = X1(i,:)';
+        x2 = X2(j,:)';
+        w1 = data1(i,:)';
+        w2 = data2(j,:)';
+        
+        f = prtDistanceEuclidean(x1,x2);
+        f = f';
+        f = f(:);
+        
+        A = kron(eye(size(x1,1)),ones(1,size(x2,1)));
+        A = cat(1,A,kron(ones(1,size(x1,1)),eye(size(x2,1))));
+        b = [w1(:); w2(:)];
+        
+        Aeq = ones(size(f));
+        beq = min([sum(w1),sum(w2)]);
+        
+        [~,distance(i,j)] = linprog(f,A,b,Aeq',beq,zeros(size(f)),[],[],opts1);
+    end
+end

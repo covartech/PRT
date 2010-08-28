@@ -1,13 +1,17 @@
-function D = prtDistanceEuclidean(V1, V2)
+function D = prtDistanceEuclidean(dataSet1,dataSet2)
 %prtDistanceEuclidean   Euclidean distance
 %   
-%   DIST = prtDistanceEuclidean(X1,X2) Calculates the Euclidean distance from all of the points in X1 to all
-%   of the points in X2.
-%
-%   X1 is a  NxM matrix of locations. N is the number of points and M is
-%   the dimensionality. X2 is a DxM matrix of locations. D is the number of
-%   points and M is the dimensionality. The output DIST is a NxD matrix of
-%   distances.
+%   dist = prtDistanceEuclidean(d1,d2) for data sets or double matrices d1
+%   and d2 calculates the Euclidean distance from all the observations in
+%   d1 to d2, and ouputs a distance matrix of size d1.nObservations x
+%   d2.nObservations (size(d1,1) x size(d2,1) for double matrices).
+%  
+%   d1 and d2 should have the same dimensionality, i.e. d1.nFeatures ==
+%   d2.nFeatures (size(d1,2) == size(d2,2) for double matrices).
+%   
+%   For more information, see:
+%   
+%   http://en.wikipedia.org/wiki/Euclidean_distance
 %
 % Example:
 %   X = [0 0; 1 1];
@@ -17,10 +21,5 @@ function D = prtDistanceEuclidean(V1, V2)
 % See also: prtDistance, prtDistanceCityBlock, prtDistanceLNorm.
 % prtDistanceMahalanobis, prtDistanceSquare, prtDistanceChebychev
 
-% Author: Kenneth D. Morton Jr.
-% Duke University, Department of Electrical and Computer Engineering
-% Email Address: collinslab@gmail.com
-% Created: 17-December-2005
-% Last revision: 5-January-2006
-
-D = prtDistanceLNorm(V1,V2,2);
+[data1,data2] = prtUtilDistanceParseInputs(dataSet1,dataSet2);
+D = prtDistanceLNorm(data1,data2,2);

@@ -1,16 +1,17 @@
-function D = prtDistanceCityBlock(p1,p2)
+function D = prtDistanceCityBlock(dataSet1,dataSet2)
 % prtDistanceCityBlock   City block distance
 % 
-%    DIST = prtDistanceCityBlock(P1,P2) Calculate the distance from all of
-%    the points in P1 to all of the points in P2 usuing the cityblock
-%    distance measure. The cityblock distance is the sum of the absolute
-%    distances between each of the dimensions of P1 and P2.
-% 
-%   P1 is a  NxM matrix of locations. N is the number of points and M is
-%   the dimensionality. P2 is a DxM matrix of locations. D is the number of
-%   points and M is the dimensionality. The output DIST is a NxD matrix of
-%   distances.
-%
+%   dist = prtDistanceCityBlock(d1,d2) for data sets or double matrices d1
+%   and d2 calculates the City block distance from all the observations in
+%   d1 to d2, and ouputs a distance matrix of size d1.nObservations x
+%   d2.nObservations (size(d1,1) x size(d2,1) for double matrices).
+%  
+%   d1 and d2 should have the same dimensionality, i.e. d1.nFeatures ==
+%   d2.nFeatures (size(d1,2) == size(d2,2) for double matrices).
+%   
+%   For more information, see:
+%   
+%   http://en.wikipedia.org/wiki/Taxicab_geometry
 %
 %    Example:
 %      X = [0 0; 1 1];
@@ -20,19 +21,13 @@ function D = prtDistanceCityBlock(p1,p2)
 % See also: prtDistance, prtDistanceMahalanobis, prtDistanceLNorm.
 % prtDistanceEuclidean, prtDistanceSquare, prtDistanceChebychev
 
+[data1,data2] = prtUtilDistanceParseInputs(dataSet1,dataSet2);
+D = prtDistanceCustom(data1,data2,@(x1,x2)sum(abs(x1-x2)));
 
-% Author: Kenneth D. Morton Jr.
-% Duke University, Department of Electrical and Computer Engineering
-% Email Address: collinslab@gmail.com
-% Created: 17-December-2005
-% Last revision: 5-January-2006
-
-D = prtDistanceCustom(p1,p2,@(x1,x2)sum(abs(x1-x2)));
-
-nDims = size(p1,2);
+nDims = size(data1,2);
 
 for iDim = 1:nDims
-    cD = prtDistanceLNorm(p1(:,iDim),p2(:,iDim),1);
+    cD = prtDistanceLNorm(data1(:,iDim),data2(:,iDim),1);
     if iDim == 1
         D = cD;
     else
