@@ -16,7 +16,7 @@ if(dataSet.nClasses ~= 2)
     result = false;
 end
 
-if(dataSet.isZeroOne == 1)
+if(dataSet.isZeroOne == 0)
     disp('isZeroOne fail')
     result = false;
 end

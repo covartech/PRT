@@ -62,7 +62,7 @@ classdef prtDataSetClass  < prtDataSetStandard
             isMary = obj.nClasses > 2;
         end
         function isZO = get.isZeroOne(obj)
-            isZO = isequal(obj.uniqueClasses,[0 1]);
+            isZO = isequal(obj.uniqueClasses,[0 1]');
         end
         function nUT = get.nClasses(obj)
             nUT = length(obj.uniqueClasses);
