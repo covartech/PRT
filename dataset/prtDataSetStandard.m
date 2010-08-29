@@ -40,8 +40,8 @@ classdef prtDataSetStandard < prtDataSetBase
         featureNames         % The feature names
     end
     
-    properties
-        ObservationDependentUserData = [];  % Additional data per observation
+    properties 
+        ObservationInfo = [];  % Additional data per observation
     end
     
     properties (SetAccess='protected',GetAccess ='protected')
@@ -476,8 +476,8 @@ classdef prtDataSetStandard < prtDataSetBase
                 obj.targets = obj.targets(retainedIndices,:);
             end
             
-            if ~isempty(obj.ObservationDependentUserData)
-                obj.ObservationDependentUserData = obj.ObservationDependentUserData(retainedIndices);
+            if ~isempty(obj.ObservationInfo)
+                obj.ObservationInfo = obj.ObservationInfo(retainedIndices);
             end
             
         end
@@ -607,7 +607,7 @@ classdef prtDataSetStandard < prtDataSetBase
         end
         
         
-        function obj = set.ObservationDependentUserData(obj,Struct)
+        function obj = set.ObservationInfo(obj,Struct)
             
             if isempty(Struct)
                 % Empty is ok.
@@ -615,13 +615,101 @@ classdef prtDataSetStandard < prtDataSetBase
                 return
             end
             
-            errorMsg = 'ObservationDependentUserData must be an nObservations x 1 structure array';
+            errorMsg = 'ObservationInfo must be an nObservations x 1 structure array';
             assert(isa(Struct,'struct'),errorMsg);
             assert(numel(Struct)==obj.nObservations,errorMsg);
             
-            obj.ObservationDependentUserData = Struct;
+            obj.ObservationInfo = Struct(:);
         end
         
+        function obj = select(obj, selectFunction)
+            % Select Observations to retain by specifying a function that
+            % is evaluated on each obesrvation Info structure
+            % selectFunction must accepts one input, the
+            % ObservationInfo structure of a single observation
+            % selectionFunction must supply one output, a 1x1 logical
+            %
+            % DS = prtDataGenIris;
+            % DS = DS.setObservationInfo('asdf',randn(DS.nObservations,1),'qwer',randn(DS.nObservations,1),'poiu',randn(DS.nObservations,10),'lkjh',mat2cell(randn(DS.nObservations,1),ones(DS.nObservations,1),1),'mnbv',mat2cell(randn(DS.nObservations,10),ones(DS.nObservations,1),10));
+            % DS2 = DS.select(@(I)I.asdf > 0.5);
+            
+            if isempty(obj.ObservationInfo)
+                error('prt:prtDataSetStandardSelect','select requires ObservationInfo. This data set object does not contain ObservationInfo.')
+            end
+            
+            keep = false(obj.nObservations,1);
+            for iObs = 1:obj.nObservations
+                switch nargin(selectFunction)
+                    case 1
+                        cOut = selectFunction(obj.ObservationInfo(iObs));
+                    case 2
+                        cOut = selectFunction(obj.ObservationInfo(iObs),obj);
+                    otherwise
+                        error('prt:prtDataSetStandardSelect','selectFunction must be a function that accepts either one or two inputs.')
+                end
+                
+                assert(numel(cOut)==1 && (islogical(cOut) || (isnumeric(cOut) && (cOut==0 || cOut==1))),'selectionFunction must output a 1x1 logical');
+                
+                keep(iObs) = cOut;
+            end
+            
+            obj = obj.retainObservations(keep);
+            
+        end
+        
+        function obj = setObservationInfo(obj,varargin)
+            % Allow setting of observation info by specifying string value
+            % pairs
+            % 
+            % DS = prtDataGenIris;
+            % DS = DS.setObservationInfo('asdf',randn(DS.nObservations,1),'qwer',randn(DS.nObservations,1),'poiu',randn(DS.nObservations,10),'lkjh',mat2cell(randn(DS.nObservations,1),ones(DS.nObservations,1),1),'mnbv',mat2cell(randn(DS.nObservations,10),ones(DS.nObservations,1),10));
+            
+            nIn = length(varargin);
+            if nIn == 1
+                % should be a struct. if it isn't will just
+                % let set.ObservationInfo() spit the error
+                obj.ObservationInfo = varargin{1};
+                return
+            end
+            
+            errorMsg = 'If more than one input is specified, the inputs must be string value pairs.';
+            assert(mod(length(varargin),2)==0, errorMsg)
+            paramNames = varargin(1:2:end);
+            params = varargin(2:2:end);
+            
+            assert(iscellstr(paramNames), errorMsg)
+            
+            cStruct = obj.ObservationInfo;
+            if isempty(cStruct)
+                startingFieldNames = {};
+            else
+                startingFieldNames = fieldNames(cStruct);
+            end
+            
+            for iParam = 1:length(paramNames)
+                
+                cVal = params{iParam};
+                cName = paramNames{iParam};
+                assert(isvarname(cName),'ObservationInfo fields must be valid MATLAB variable names. %s is not.',cName);
+                
+                if ismember(cName,startingFieldNames)
+                    warining('prt:observationInfoNameCollision','An ObservationInfo field named %s already exists. The data is now overwritten.', cName)
+                end
+                assert(size(cVal,1) == obj.nObservations,'ObservationInfo values must have nObservations rows.');
+                
+                cValSet = mat2cell(cVal,ones(size(cVal,1),1),size(cVal,2));
+                
+                if isempty(cStruct)
+                    cStruct = struct(cName,cValSet);
+                else
+                    for iObs = 1:obj.nObservations
+                        cStruct(iObs).(cName) = cValSet{iObs,:};
+                    end
+                end
+            end
+            
+            obj.ObservationInfo = cStruct;
+        end
         
         
         function obj = catTargets(obj, varargin)

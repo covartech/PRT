@@ -201,12 +201,12 @@ end
 
 
 % Check user data
-s = struct('Sam',{'Rules', 'Man'}, 'Man', 'Hot damn');
+s = struct('Sam',{'Rules', 'Man'}, 'Man', {'Hot' 'damn'});
 dataSet = prtDataSetStandard;
 dataSet = dataSet.setObservationsAndTargets([1 2; 3 4; ], [1; 2; ]);
 try
-    dataSet.ObservationDependentUserData = s;
-    if ~isequal(dataSet.ObservationDependentUserData, s)
+    dataSet.ObservationInfo = s;
+    if ~isequal(dataSet.ObservationInfo, s(:))
         result = false;
         disp('failed test #24, Userdata')
     end

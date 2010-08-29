@@ -457,7 +457,6 @@ classdef prtDataSetClass  < prtDataSetStandard
             
             % Plot axes
             axesLength = .6;
-            
             plot(axesLength*cat(1,zeros(1,length(cT)),cT),axesLength*cat(1,zeros(1,length(sT)),sT),'color',[0 0 0],'lineWidth',2)
             
             fNames = obj.getFeatureNames();
@@ -470,7 +469,6 @@ classdef prtDataSetClass  < prtDataSetStandard
                 text(textRadius*cT(iAxes),textRadius*sT(iAxes), fNames{iAxes}, 'rotation', textRotationAngles(iAxes),'HorizontalAlignment','Center','VerticalAlignment','Middle');
             end
             axis([-1 1 -1 1]*(axesLength + 0.2));
-            
             
             set(gca,'Visible','off')
             handleArray = zeros(obj.nClasses,1);
@@ -486,10 +484,8 @@ classdef prtDataSetClass  < prtDataSetStandard
             cP = get(legendHandle,'position');
 
             set(legendHandle,'position',[0.01 0.01 cP(3) cP(4)]);
-            
+
             set(legendHandle,'units',origUnits);
-            
-            
             
             set(gca,'nextPlot',holdState);
             
