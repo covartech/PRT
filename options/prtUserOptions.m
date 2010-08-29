@@ -1,6 +1,9 @@
 classdef prtUserOptions
     properties
+        DataSetClassPlotOptions = prtDataSetClassPlotOpt;
+        DataSetRegressPlotOptions = prtDataSetRegressPlotOpt;
         ClassifierPlotOptions = prtClassPlotOpt;
+        RegressionPlotOptions = prtRegressPlotOpt;
         RvPlotOptions = prtRvPlotOpt;
         
         largestMatrixSize = 1e6; % Total number of elements in the matrix
@@ -11,7 +14,6 @@ classdef prtUserOptions
         function obj = prtUserOptions(varargin)
             obj = prtUtilAssignStringValuePairs(obj,varargin{:});
             % Change default options here.
-            
         end
     end
 end

@@ -19,6 +19,10 @@ classdef prtDataSetRegress < prtDataSetStandard
     % 
     %   See also prtDataSetStandard, prtDataSetClass, prtDataSetBase
     
+    properties (Hidden = true)
+        PlotOptions = prtDataSetRegress.initializePlotOptions()
+    end
+    
     methods
         %% Constructor %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -49,14 +53,31 @@ classdef prtDataSetRegress < prtDataSetStandard
                 return
             elseif nPlotDimensions >= 2
                 error('prt:plot:NoPlotDimensionality','Regression plots are currently only valid for 1 dimensional data, but DataSet has %d dimensions',obj.nFeatures);
-                return
             end
             
             holdState = get(gca,'nextPlot');
-            h = plot(obj.getObservations,obj.getTargets,'b.');
+            
+            classColors = obj.PlotOptions.colorsFunction(1);
+            markerSize = obj.PlotOptions.symbolSize;
+            lineWidth = obj.PlotOptions.symbolLineWidth;
+            classSymbols = obj.PlotOptions.symbolsFunction(1);
+            
+            iPlot = 1;
+            classEdgeColor = obj.PlotOptions.symbolEdgeModificationFunction(classColors(iPlot,:));
+            
+            h = plot(obj.getObservations,obj.getTargets, classSymbols(iPlot), 'MarkerFaceColor', classColors(iPlot,:), 'MarkerEdgeColor', classEdgeColor,'linewidth',lineWidth,'MarkerSize',markerSize);
+            
             set(gca,'nextPlot',holdState);
+            
             % Set title
             title(obj.name);
+            switch nPlotDimensions
+                case 1
+                    xlabel(obj.getFeatureNames());
+                    ylabel(obj.getTargetNames());
+                otherwise
+                    error('prt:plot:NoPlotDimensionality','Regression plots are currently only valid for 1 dimensional data, but DataSet has %d dimensions',obj.nFeatures);
+            end
             
             % Handle Outputs
             varargout = {};
@@ -76,6 +97,12 @@ classdef prtDataSetRegress < prtDataSetStandard
             Summary.nFeatures = Obj.nFeatures;
             Summary.nTargetDimensions = Obj.nTargetDimensions;
             Summary.nObservations = Obj.nObservations;
+        end
+    end
+    methods (Static, Hidden = true)
+        function PlotOptions = initializePlotOptions()
+            UserOptions = prtUserOptions;
+            PlotOptions = UserOptions.DataSetRegressPlotOptions;
         end
     end
 end

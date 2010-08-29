@@ -75,11 +75,6 @@ classdef prtDataSetBase
         UserData = struct;         % Additional data per data set
     end
     
-    properties (Dependent, Hidden)
-        % Additional properties for plotting
-        plottingColors
-        plottingSymbols
-    end
     properties(Hidden)
         ActionData = struct;      % Data stored by a prtAction
     end
@@ -94,16 +89,6 @@ classdef prtDataSetBase
     methods
         function isLabeled = get.isLabeled(obj)
             isLabeled = ~isempty(obj.getY);
-        end
-    end
-    
-    %Replace this with an object! prtDataPlottingOptions object?
-    methods
-        function colors = get.plottingColors(obj)
-            colors = prtPlotUtilClassColors(obj.nClasses);
-        end
-        function symbols = get.plottingSymbols(obj)
-            symbols = prtPlotUtilClassSymbols(obj.nClasses);
         end
     end
     
@@ -295,10 +280,6 @@ classdef prtDataSetBase
     %Protected static functions for modifying edge colors from face colors
     %should be elsewhere
     methods (Access = 'protected', Static = true, Hidden = true)
-        function color = edgeColorMod(classColors)
-            color = min(classColors + 0.2,[0.8 0.8 0.8]);
-        end
-        
         function checkIndices(sz,varargin)
             
             nDims = numel(sz);
@@ -426,127 +407,6 @@ classdef prtDataSetBase
             end
         end
         
-    end
-    
-    %Static plotting aid functions - plotPoints, plotLines, makeExploreGui
-    methods (Access = 'protected',Static = true, Hidden  = true)
-        function h = plotPoints(cX,featureNames,classSymbols,classColors,classEdgeColor,linewidth)
-            nPlotDimensions = size(cX,2);
-            if nPlotDimensions < 1
-                warning('prt:plot:NoPlotDimensionality','No plot dimensions requested.');
-                return
-            end
-            if nPlotDimensions > 3
-                error('prt:plot:plotDimensionality','The number of requested plot dimensions (%d) is greater than 3. You may want to use explore() to selet and visualize a subset of the features.',nPlotDimensions);
-            end
-            
-            switch nPlotDimensions
-                case 1
-                    h = plot(cX,ones(size(cX)),classSymbols,'MarkerFaceColor',classColors,'MarkerEdgeColor',classEdgeColor,'linewidth',linewidth);
-                    xlabel(featureNames{1});
-                    grid on
-                case 2
-                    h = plot(cX(:,1),cX(:,2),classSymbols,'MarkerFaceColor',classColors,'MarkerEdgeColor',classEdgeColor,'linewidth',linewidth);
-                    xlabel(featureNames{1});
-                    ylabel(featureNames{2});
-                    grid on
-                case 3
-                    h = plot3(cX(:,1),cX(:,2),cX(:,3),classSymbols,'MarkerFaceColor',classColors,'MarkerEdgeColor',classEdgeColor,'linewidth',linewidth);
-                    xlabel(featureNames{1});
-                    ylabel(featureNames{2});
-                    zlabel(featureNames{3});
-                    grid on;
-            end
-        end
-        
-        function h = plotLines(xInd,cY,linecolor,linewidth)
-            h = plot(xInd,cY,'color',linecolor,'linewidth',linewidth);
-        end
-
-       % Get the window position and pick/set a figure size.
-        function makeExploreGui(theObject,theFeatures)
-            ss = get(0,'screensize');
-            
-            windowSize = [754 600];
-            % Center the window
-            sizePads = round((ss(3:4)-windowSize));
-            sizePads(1) = sizePads(1)/2; % We should use 2 right?
-            sizePads(2) = sizePads(2)/2;
-            pos = cat(2,sizePads,windowSize);
-            
-            % Create the figure an UIControls
-            figH = figure('Number','Off','Name','PRT Data Set Explorer','Menu','none','toolbar','figure','units','pixels','position',pos,'DockControls','off');
-            
-            % Trim the toolbar down to just the zooming controls
-            Toolbar.handle = findall(figH,'Type','uitoolbar');
-            Toolbar.Children = findall(figH,'Parent',Toolbar.handle,'HandleVisibility','off');
-            
-            
-            % Delete a bunch of things we dont need
-            delete(findobj(Toolbar.Children,'TooltipString','New Figure',...
-                '-or','TooltipString','Open File','-or','TooltipString','Save Figure',...
-                '-or','TooltipString','Print Figure','-or','TooltipString','Edit Plot',...
-                '-or','TooltipString','Data Cursor','-or','TooltipString','Brush/Select Data',...
-                '-or','TooltipString','Link Plot','-or','TooltipString','Insert Colorbar',...
-                '-or','TooltipString','Insert Legend','-or','TooltipString','Show Plot Tools and Dock Figure',...
-                '-or','TooltipString','Hide Plot Tools'))
-            
-            popUpStrs = theFeatures;
-            
-            bgc = get(figH,'Color');
-            popX = uicontrol(figH,'Style','popup','units','normalized','FontUnits','Normalized','FontSize',0.6,'position',[0.15 0.01 0.19 0.04],'string',popUpStrs,'callback',{@plotSelectPopupCallback 1});
-            popXHead = uicontrol(figH,'Style','text','units','normalized','FontUnits','Normalized','FontSize',0.75,'position',[0.05 0.01 0.09 0.04],'string','X-Axis:','BackgroundColor',bgc,'HorizontalAlignment','Right'); %#ok
-            
-            popY = uicontrol(figH,'Style','popup','units','normalized','FontUnits','Normalized','FontSize',0.6,'position',[0.45 0.01 0.19 0.04],'string',popUpStrs,'callback',{@plotSelectPopupCallback 2});
-            popYHead = uicontrol(figH,'Style','text','units','normalized','FontUnits','Normalized','FontSize',0.75,'position',[0.35 0.01 0.09 0.04],'string','Y-Axis:','BackgroundColor',bgc,'HorizontalAlignment','Right'); %#ok
-            
-            popZ = uicontrol(figH,'Style','popup','units','normalized','FontUnits','Normalized','FontSize',0.6,'position',[0.75 0.01 0.19 0.04],'string',[{'None'}; popUpStrs],'callback',{@plotSelectPopupCallback 3});
-            popZHead = uicontrol(figH,'Style','text','units','normalized','FontUnits','Normalized','FontSize',0.75,'position',[0.65 0.01 0.09 0.04],'string','Z-Axis:','BackgroundColor',bgc,'HorizontalAlignment','Right'); %#ok
-            
-            axisH = axes('Units','Normalized','outerPosition',[0.05 0.07 0.9 0.9]);
-            
-            % Setup the PopOut Option
-            hcmenu = uicontextmenu;
-            hcmenuPopoutItem = uimenu(hcmenu, 'Label', 'Popout', 'Callback', @explorerPopOut); %#ok
-            set(axisH,'UIContextMenu',hcmenu);
-            
-            if theObject.nFeatures > 1
-                plotDims = [1 2 0];
-                
-                set(popX,'value',1); % Becase we have dont have a none;
-                set(popY,'value',2); % Becase we have dont have a none;
-                set(popZ,'value',1); % Becase we have a none;
-            else
-                plotDims = [1 1 0];
-                
-                set(popX,'value',1); % Becase we have dont hvae a none;
-                set(popY,'value',1); % Becase we have a none;
-                set(popZ,'value',1); % Becase we have a none;
-            end
-            updatePlot;
-            
-            function plotSelectPopupCallback(myHandle, eventData, varargin) %#ok
-                cVal = get(myHandle,'value');
-                axisInd = varargin{1};
-                if axisInd == 3
-                    % Z-axis we have a None option
-                    cVal = cVal - 1;
-                end
-                plotDims(axisInd) = cVal;
-                updatePlot;
-            end
-            
-            function updatePlot
-                actualPlotDims = plotDims(plotDims>=1);
-                axes(axisH); %#ok
-                plot(theObject,actualPlotDims)
-            end
-            function explorerPopOut(myHandle,eventData) %#ok
-                figure;
-                actualPlotDims = plotDims(plotDims>=1);
-                plot(theObject,actualPlotDims);
-            end
-        end
     end
     
     methods (Abstract)

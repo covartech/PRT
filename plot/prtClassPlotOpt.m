@@ -32,17 +32,12 @@ classdef prtClassPlotOpt
     properties
         nSamplesPerDim = [500 100 20]; % Number of samples to use for plotting
         colorsFunction = @prtPlotUtilClassColors; % Colors function handle
-        symbolsFunction = @prtPlotUtilClassSymbols; % Symbols function handle
+
         twoClassColorMapFunction = @prtPlotUtilTwoClassColorMap; % Two class colormap function handle        
     end
     
     methods
         function obj = prtClassPlotOpt(varargin)
-            % prtClassPlotOpt - Constructor for prtClassPlotOpt
-            % 
-            % Obj = prtClassPlotOpt();
-            % Obj = prtClassPlotOpt('paramName',paramVal,...);
-            
             obj = prtUtilAssignStringValuePairs(obj,varargin{:});
         end
     end    

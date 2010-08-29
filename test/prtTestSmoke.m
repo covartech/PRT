@@ -3,7 +3,7 @@ function prtTestSmoke
 % to wait for all of the tests to run but want to make sure you haven't
 % broken the entire product
 
-functionNames = {'prtTestDistance','prtTestClass', 'prtTestFeatSelExhaustive', 'prtTestClassFLD',' prtTestFeatSelSfs', 'prtTestClassKnn','prtTestKernelRbf','prtTestPreProcZmuv','prtTestRegressGP','prtTestScoreAuc','prtTestDataSetClass','prtTestDataSetRegress','prtTestDataSetStandard'}
+functionNames = {'prtTestDistance','prtTestClass', 'prtTestFeatSelExhaustive', 'prtTestClassFLD',' prtTestFeatSelSfs', 'prtTestClassKnn','prtTestKernelRbf','prtTestPreProcZmuv','prtTestRegressGP','prtTestScoreAuc','prtTestDataSetClass','prtTestDataSetRegress','prtTestDataSetStandard'};
 
 prtTest(functionNames);
                                    

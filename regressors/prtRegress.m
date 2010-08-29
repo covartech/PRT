@@ -1,9 +1,8 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 classdef prtRegress < prtAction %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % prtRegress is an abstract base class for all regression objects.
 
     properties
-        PlotOptions = prtClassPlotOpt; % Plotting Options
+        PlotOptions = prtRegress.initializePlotOptions(); % Plotting Options
     end
     
     methods
@@ -15,19 +14,27 @@ classdef prtRegress < prtAction %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             %   of dataset is 3 or less. When verboseStorage is set to
             %   'true', the training data points are also displayed on the
             %   plot.
-            %
-            %   See also: prtClass\plotDecision
+            
             
             assert(Obj.isTrained,'Regressor must be trained before it can be plotted.');
             assert(Obj.DataSetSummary.nFeatures < 2, 'nFeatures in the training dataset must be 1');
             
             [OutputDataSet, linGrid] = runRegressorOnGrid(Obj);
-            HandleStructure.regressorPlotHandle = plot(linGrid,OutputDataSet.getObservations,'r');
+            iPlot = 1;
+            
+            colors = Obj.PlotOptions.colorsFunction(Obj.DataSetSummary.nTargetDimensions);
+            lineWidth = Obj.PlotOptions.lineWidth;
+            HandleStructure.regressorPlotHandle = plot(linGrid,OutputDataSet.getObservations,'color',colors(1,:),'lineWidth',lineWidth);
+            
+            holdState = get(gca,'nextPlot');
             if ~isempty(Obj.DataSet)
-                hold on;
+                hold on
                 HandleStructure.dataSetPlotHandle = plot(Obj.DataSet);
-                hold off;
             end
+            set(gca,'nextPlot',holdState);
+            
+            axis tight;
+            title(Obj.name)
             
             varargout = {};
             if nargout > 0
@@ -47,6 +54,12 @@ classdef prtRegress < prtAction %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             [linGrid, gridSize] = prtPlotUtilGenerateGrid(upperBounds, lowerBounds, Obj.PlotOptions.nSamplesPerDim);
             
             OutputDataSet = run(Obj,prtDataSetClass(linGrid));
+        end
+    end
+    methods (Static, Hidden = true)
+        function PlotOptions = initializePlotOptions()
+            UserOptions = prtUserOptions;
+            PlotOptions = UserOptions.RegressionPlotOptions;
         end
     end
 end

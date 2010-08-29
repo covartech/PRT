@@ -15,7 +15,7 @@ result = true;
 % rmseBase = max(rmseResult);
 % %
 
- rmseBase = .0997;
+rmseBase = .0997;
     
 % Check that basic operation works
 dataSet = prtDataGenSinc;           % Load a prtDataRegress

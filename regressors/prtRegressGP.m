@@ -1,9 +1,9 @@
 classdef prtRegressGP < prtRegress
-    % prtRegresGP  GP ? regression object
+    % prtRegresGP  Gaussian Process regression object
     %
     %   REGRESS = prtRegressGP returns a prtRegressGP object
     %
-    %    REGRESS = prtRegressRVM(PROPERTY1, VALUE1, ...) constructs a
+    %    REGRESS = prtRegressGP(PROPERTY1, VALUE1, ...) constructs a
     %    prtRegressGP object REGRESS with properties as specified by
     %    PROPERTY/VALUE pairs.
     % 
@@ -40,8 +40,8 @@ classdef prtRegressGP < prtRegress
     
     properties (SetAccess=private)
         % Required by prtAction
-        name = 'Maximum a Posteriori'
-        nameAbbreviation = 'MAP'
+        name = 'Gaussian Process'
+        nameAbbreviation = 'GP'
         isSupervised = true;
     end
     
