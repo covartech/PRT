@@ -17,10 +17,7 @@ function [pC, pCConf] = prtScorePercentCorrect(guess,truth,alpha)
 % Subfunctions: none
 % MAT-files required: none
 
-% Author: Kenneth D. Morton Jr.
-% Duke University, Department of Electrical and Computer Engineering
-% Email Address: collinslab@gmail.com
-% Created: 16-Dec-2006 13:29:07
+% Copyright 2010, New Folder Consulting, L.L.C.
 
 [guess,truth] = prtUtilScoreParseFirstTwoInputs(guess,truth);
 

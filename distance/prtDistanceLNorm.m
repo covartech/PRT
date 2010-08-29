@@ -21,11 +21,7 @@ function D = prtDistanceLNorm(dataSet1,dataSet2,Lnorm)
 % See also: prtDistance, prtDistanceCityBlock, prtDistanceEuclidean,
 % prtDistanceMahalanobis, prtDistanceSquare, prtDistanceChebychev, norm
 
-% Author: Kenneth D. Morton Jr.
-% Duke University, Department of Electrical and Computer Engineering
-% Email Address: collinslab@gmail.com
-% Created: 17-December-2005
-% Last revision: 5-January-2006
+% Copyright 2010, New Folder Consulting, L.L.C.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % A subsection of IPDM %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -20,9 +20,6 @@ function prtDir = prtRoot
 %
 % See also: PRT
 
-% Author: Kenneth D. Morton Jr.
-% Duke University, Department of Electrical and Computer Engineering
-% Email Address: collinslab@gmail.com
-% Created: 07-Mar-2007
+% Copyright 2010, New Folder Consulting, L.L.C.
 
 prtDir = fileparts(mfilename('fullpath'));

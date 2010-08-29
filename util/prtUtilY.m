@@ -1,4 +1,4 @@
-function Y = dprtY(varargin)
+function Y = prtUtilY(varargin)
 % DPRTY     Quickly generate class labels for the DPRT.
 %
 % Syntax: Y = dprtY(nH0,nH1,nH2,...)
@@ -22,10 +22,7 @@ function Y = dprtY(varargin)
 %
 % See also: dprtData*
 
-% Author: Kenneth D. Morton Jr.
-% Duke University, Department of Electrical and Computer Engineering
-% Email Address: collinslab@gmail.com
-% Created: 06-Apr-2007
+% Copyright 2010, New Folder Consulting, L.L.C.
 
 Y = [];
 

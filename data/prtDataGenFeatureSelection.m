@@ -25,10 +25,7 @@ function DataSet = prtDataGenFeatureSelection(N)
 %
 % See also: prtDataGenUnimodal
 
-% Author: Peter Torrione
-% Duke University, Department of Electrical and Computer Engineering
-% Email Address: collinslab@gmail.com
-% Created: 27-Mar-2007
+% Copyright 2010, New Folder Consulting, L.L.C.
 
 if nargin == 0
     nSamples = 200;

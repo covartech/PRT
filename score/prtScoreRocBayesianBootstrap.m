@@ -43,11 +43,8 @@ function varargout = prtScoreRocBayesianBootstrap(ds, y, nBootStrapSamples, nPfS
 %   y = cat(1,ones(nSamplesEachHyp,1),zeros(nSamplesEachHyp,1));
 %   ds = x.^2;
 %   prtScoreRocBayesianBootstrap(ds, y)
-%   
-% Author: Kenneth D. Morton Jr.
-% Duke University, Department of Electrical and Computer Engineering
-% Email Address: kdm@ee.duke.edu
-% Created: 09-May-2010
+
+% Copyright 2010, New Folder Consulting, L.L.C.
 
 %% Default arguments
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

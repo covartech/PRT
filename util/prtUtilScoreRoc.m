@@ -74,22 +74,7 @@ function [PF,PD,AUC,THRESH] = prtUtilScoreRoc(DS,Y,NROCsamples,NPFsamples,NPDsam
 %
 % See also: DPRT
 
-% Author: Peter Torrione
-% Revised by: Kenneth D. Morton Jr.
-% Duke University, Department of Electrical and Computer Engineering
-% Email Address: collinslab@gmail.com
-% Created: unknown
-% Last revision: 17-April-2006
-
-% Revision: 17-April-2006
-%   Added NPFsamples and NPDsamples to allow linear sampling along those
-%   spaces as well as along the ROC space.  Also added long example
-%   detailing how to use each to the help entry. Have not incorporated in a
-%   new DPRT release; awaiting responses
-
-% Revision: 27-June-2007
-%   Change the calculation of AUC to the proposed by Hand and Till, 2001
-%   Don't ask me why I did this.
+% Copyright 2010, New Folder Consulting, L.L.C.
 
 if ~isreal(DS(:))
     error('ROC requires input DS to be real');

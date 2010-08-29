@@ -27,11 +27,7 @@ function varargout = prtScoreRocConfidencePlot(varargin)
 %  [pfSamples, pdMean, pdConfRegion, pds] = prtScoreRocBayesianBootstrap(Output.getObservations() ,Output.getTargets());
 %  prtScoreRocConfidencePlot(pfSamples,pdMean,pdConfRegion)
 
-% Author: Kenneth D. Morton Jr.
-% Revised by: Pete Torrione
-% Duke University, Department of Electrical and Computer Engineering
-% Email Address: collinslab@gmail.com
-% Created: 05-Apr-2007
+% Copyright 2010, New Folder Consulting, L.L.C.
 
 faceAlphaValue = 0.4;
 

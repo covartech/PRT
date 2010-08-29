@@ -25,10 +25,7 @@ function DataSet = prtDataGenMary
 %
 % See also: prtDataGenUnimodal, prtDataGenBimodal
 
-% Author: Kenneth D. Morton Jr.
-% Duke University, Department of Electrical and Computer Engineering
-% Email Address: collinslab@gmail.com
-% Created: 06-Apr-2007
+% Copyright 2010, New Folder Consulting, L.L.C.
 
 rvH1 = prtRvMvn([0 0],0.5*eye(2));
 rvH2 = prtRvMvn([0.5 0.5],0.1*eye(2));

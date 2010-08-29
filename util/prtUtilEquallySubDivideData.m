@@ -37,10 +37,7 @@ function groupAssignment = prtUtilEquallySubDivideData(Y,nDivisions)
 %
 % See also: dprtKFolds.m
 
-% Author: Kenneth D. Morton Jr.
-% Duke University, Department of Electrical and Computer Engineering
-% Email Address: collinslab@gmail.com
-% Created: 23-Feb-2007
+% Copyright 2010, New Folder Consulting, L.L.C.
 
 
 if nDivisions > length(Y)

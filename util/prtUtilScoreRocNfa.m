@@ -18,12 +18,7 @@ function [NF,PD] = prtUtilScoreRocNfa(varargin)
 %     DS = dprtKFolds(X,Y,optionsGLRT,200);
 %     prtUtilScoreRocNfa(DS,Y)
 
-% Author: Peter Torrione
-% Revised by: 
-% Duke University, Department of Electrical and Computer Engineering
-% Email Address: collinslab@gmail.com
-% Created: 07-16-07
-% Last revision: 
+% Copyright 2010, New Folder Consulting, L.L.C.
 
 [PF,PD] = prtUtilScoreRoc(varargin{:});
 Nmiss = length(find(varargin{2} == 0));

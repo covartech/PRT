@@ -21,10 +21,7 @@ function DataSet = prtDataGenCircles
 %
 % See also: prtDataGenUnimodal, prtDataGenBimodal, prtDataGenSpiral
 
-% Author: Kenneth D. Morton Jr.
-% Duke University, Department of Electrical and Computer Engineering
-% Email Address: collinslab@gmail.com
-% Created: 28-Mar-2007
+% Copyright 2010, New Folder Consulting, L.L.C.
 
 nSamplesEachHypothesis = 200;
 noiseStd = 0.05;

@@ -42,13 +42,13 @@ end
 if any(data1(:)) < 0 || any(data2(:)) < 0
     error('prt:prtDistanceEarthMover:InvalidWeights','prtDistanceEarthMover is only defined for data with values > 0');
 end
-if length(unique(sum(data1,2))) ~= 1 || length(unique(sum(data2,2))) ~= 1
+if length(unique(sum(cat(1,data1,data2),2))) ~= 1
     warning('prt:prtDistanceEarthMover:InvalidWeights','prtDistanceEarthMover best defined for data whose rows sum to a constant value - length(unique(sum(data,2))) should be 1 (i.e. normalized histograms)');
 end
 
 opts1= optimset('display','off');
 
-distance = zeros(size(data1,1),size(data2,2));
+distance = zeros(size(data1,1),size(data2,1));
 for i = 1:size(data1,1)
     for j = 1:size(data2,1)
         x1 = X1(i,:)';

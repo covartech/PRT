@@ -34,7 +34,7 @@ function C = prtNextPerm(N,K)
 % returned.
 %
 % See also,  nchoosek, perms, combinator, npermutek (both on the FEX)
-%
+
 % Author:   Matt Fig
 % Contact:  popkenai@yahoo.com
 % Date: 6/9/2009

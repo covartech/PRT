@@ -34,13 +34,7 @@ function varargout = prtUtilSubplotTitle(varargin)
 %   This function is part of froi, available from http://froi.sourceforge.net,
 %   and is governed under the terms of the Artistic License.
 
-% Re-written by Peter Torrione to work for more general cases
-
-% Author: Peter Torrione (Mod from FROI)
-% Duke University, Department of Electrical and Computer Engineering
-% Email Address: collinslab@gmail.com
-% Created: 23-March-2006
-% Modified: n/a
+% Copyright 2010, New Folder Consulting, L.L.C.
 
 %Mod History:
 ax = gca;

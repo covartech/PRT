@@ -54,12 +54,8 @@ function varargout = prtScoreRocBayesianBootstrapNfa(varargin)
 %   totalArea = 1000;
 %   [nFaSamples, pdMean, pdConfRegion] = prtScoreRocBayesianBootstrapNfa(ds, y);
 %   prtScoreRocConfidencePlot(nFaSamples./totalArea, pdMean, pdConfRegion)
-%   
-% Author: Kenneth D. Morton Jr.
-% Duke University, Department of Electrical and Computer Engineering
-% Email Address: kdm@ee.duke.edu
-% Created: 09-May-2010
 
+% Copyright 2010, New Folder Consulting, L.L.C.
 %% Call the non Nfa version
 
 [pfSamples, pdMean, pdConfRegion, bootStrappedPds] = prtScoreRocBayesianBootstrap(varargin{:});

@@ -26,10 +26,7 @@ function [Bpls, R, P, Q, T, U] = prtUtilSimpls(X,Y,nComponents)
 % Subfunctions: none
 % MAT-files required: none
 
-% Author: Kenneth D. Morton Jr.
-% Duke University, Department of Electrical and Computer Engineering
-% Email Address: collinslab@gmail.com
-% Created: 12-Nov-2009
+% Copyright 2010, New Folder Consulting, L.L.C.
 
 [nSamples, nDimensions] = size(X);
 
