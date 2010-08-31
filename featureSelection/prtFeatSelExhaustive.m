@@ -58,7 +58,7 @@ classdef prtFeatSelExhaustive < prtFeatSel %
         % General Classifier Properties
         nFeatures = 3;                    % The number of features to be selected
         showProgressBar = true;           % Whether or not the progress bar should be displayed
-        EvaluationMetric = @(DS)prtEvalAuc(DS,prtClassFld);   % The metric used to evaluate performance
+        EvaluationMetric = @(DS)prtEvalAuc(prtClassFld,DS);   % The metric used to evaluate performance
         
         performance = [];                 % The best performance achieved after training
         selectedFeatures = [];            % The indices of the features selected by the training
