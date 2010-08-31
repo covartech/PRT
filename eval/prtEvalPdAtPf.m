@@ -1,4 +1,27 @@
 function pd = prtEvalPdAtPf(classifier,dataSet,pfDesired,nFolds)
+% prtEvalPfAtPd   Returns the probability of false alarm at a desired
+% probability of detection on the receiver operating curve.
+%
+%   PF = prtEvalPfAtPd(CLASSIFIER, DATASET,PD) returns the probabilty of false
+%   alarm PF.  DATASET must be a labeled, binary prtDataSetStandard object.
+%   CLASSIFIER must be a prtClass object. PD is the desired probability of
+%   detection and must be between 0 and 1.
+%
+%   PF = prtScorePfAtPdKfolds(CLASSIFIER, DATASET,PD, NFOLDS) returns the
+%   probabilty of false alarm PF on the receiver operating curve with
+%   K-fold cross-validation.  DATASET must be a labeled, binary
+%   prtDataSetStandard object. CLASSIFIER must be a prtClass object. PD is
+%   the desired probability of detection and must be between 0 and 1.
+%   NFOLDS is the number of folds in the K-fold cross-validation.
+%
+%   Example:
+%   dataSet = prtDataGenSpiral;
+%   classifier = prtClassDlrt;
+%   pf =  prtEvalPfAtPd(classifier, dataSet,.9)
+%
+%   See Also: prtEvalAuc, prtEvalAucKfolds, prtEvalPdAtPfKfolds,
+%   prtEvalPfAtPd, prtEvalPfAtPdKfolds, prtEvalRoc
+
 %pd = prtEvalPdAtPf(classifier,dataSet,pfDesired)
 %pd = prtEvalPdAtPf(classifier,dataSet,pfDesired,nFolds)
 
