@@ -65,10 +65,9 @@ classdef prtClassKmsd < prtClass
     end
     
     methods
-        function Obj = prtClassKMSD(varargin)
+        function Obj = prtClassKmsd(varargin)
             
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
-            %Obj.verboseStorage = false;
         end
     end
     
@@ -82,7 +81,8 @@ classdef prtClassKmsd < prtClass
             Obj.Ztb = [Obj.Zt; Obj.Zb];
             
             % Compute Delta
-            Ktb_tb = prtKernelRbf.rbfEvalKernel(Obj.Ztb,Obj.Ztb,Obj.sigma);
+           % Ktb_tb = prtKernelRbfNdimensionScale.rbfEvalKernel(Obj.Ztb,Obj.Ztb,sqrt(Obj.sigma));
+            Ktb_tb = Obj.rbfKernel(Obj.Ztb,Obj.Ztb,Obj.sigma);
             [Obj.Delta eigD] = eig(Ktb_tb);
            
             eigD = diag(eigD);
@@ -94,7 +94,8 @@ classdef prtClassKmsd < prtClass
             
             
             % Compute Tau
-            Obj.Kt_t = prtKernelRbf.rbfEvalKernel(Obj.Zt,Obj.Zt,Obj.sigma);
+            %Obj.Kt_t = prtKernelRbfNdimensionScale.rbfEvalKernel(Obj.Zt,Obj.Zt,sqrt(Obj.sigma));
+            Obj.Kt_t = Obj.rbfKernel(Obj.Zt,Obj.Zt,Obj.sigma);
             [Obj.Tau, eigT] = eig(Obj.Kt_t);
             eigT = diag(eigT);
             sumT = sum(eigT);
@@ -105,7 +106,8 @@ classdef prtClassKmsd < prtClass
             
             
             % Compute Beta
-            Obj.Kb_b = prtKernelRbf.rbfEvalKernel(Obj.Zb,Obj.Zb,Obj.sigma);
+            %Obj.Kb_b = prtKernelRbfNdimensionScale.rbfEvalKernel(Obj.Zb,Obj.Zb,sqrt(Obj.sigma));
+            Obj.Kb_b = Obj.rbfKernel(Obj.Zb,Obj.Zb,Obj.sigma);
             [Obj.Beta, eigB] = eig(Obj.Kb_b);
             %Use eigenvectors that correspond to 90 of the information
             eigB = diag(eigB);
@@ -116,8 +118,10 @@ classdef prtClassKmsd < prtClass
             Obj.Beta = Obj.Beta(:,end-idx:end);
             
             % Compute these too just for fun
-            Obj.Kb_t = prtKernelRbf.rbfEvalKernel(Obj.Zb,Obj.Zt,Obj.sigma);
-            Obj.Kt_b = prtKernelRbf.rbfEvalKernel(Obj.Zt,Obj.Zb,Obj.sigma);
+            %Obj.Kb_t = prtKernelRbfNdimensionScale.rbfEvalKernel(Obj.Zb,Obj.Zt,sqrt(Obj.sigma));
+            Obj.Kb_t = Obj.rbfKernel(Obj.Zb,Obj.Zt,Obj.sigma);
+            %Obj.Kt_b = prtKernelRbfNdimensionScale.rbfEvalKernel(Obj.Zt,Obj.Zb,sqrt(Obj.sigma));
+            Obj.Kt_b = Obj.rbfKernel(Obj.Zt,Obj.Zb,Obj.sigma);
             
      end
         
@@ -150,10 +154,12 @@ classdef prtClassKmsd < prtClass
             
  
             % Compute the emperical kernel maps
-            Ktb_y = prtKernelRbf.rbfEvalKernel(Obj.Ztb,y,Obj.sigma);
-            Kb_y  = prtKernelRbf.rbfEvalKernel(Obj.Zb,y,Obj.sigma);
-            Kt_y  = prtKernelRbf.rbfEvalKernel(Obj.Zt,y,Obj.sigma);
-            
+            %Ktb_y = prtKernelRbfNdimensionScale.rbfEvalKernel(Obj.Ztb,y,sqrt(Obj.sigma));
+            Ktb_y = Obj.rbfKernel(Obj.Ztb,y,Obj.sigma);
+            %Kb_y  = prtKernelRbfNdimensionScale.rbfEvalKernel(Obj.Zb,y,sqrt(Obj.sigma));
+            Kb_y  = Obj.rbfKernel(Obj.Zb,y,Obj.sigma);
+            %Kt_y  = prtKernelRbfNdimensionScale.rbfEvalKernel(Obj.Zt,y,sqrt(Obj.sigma));
+            Kt_y  = Obj.rbfKernel(Obj.Zt,y,Obj.sigma);
             % Compute the numerator of eq 32
             Num = Ktb_y'*(Obj.Delta*Obj.Delta')* Ktb_y - Kb_y'*(Obj.Beta*Obj.Beta')*Kb_y;
             
@@ -166,5 +172,21 @@ classdef prtClassKmsd < prtClass
             
             LRT = Num./Den;
         end
+        function [GRAMM,NBASIS] = rbfKernel(X1,X2,SIGMA)
+            
+            [N1, d] = size(X1);
+            [N2, nin] = size(X2);
+            if d ~= nin
+                error('size(X1,2) must equal size(X2,2)');
+            end
+            dist2 = repmat(sum((X1.^2)', 1), [N2 1])' + ...
+                repmat(sum((X2.^2)',1), [N1 1]) - ...
+                2*X1*(X2');
+            GRAMM = exp(-dist2/(nin*SIGMA));
+            
+            NBASIS = size(GRAMM,2);
+            
+        end
     end
+    
 end
