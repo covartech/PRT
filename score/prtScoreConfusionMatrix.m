@@ -1,20 +1,22 @@
-function varargout = prtScoreConfusionMatrix(guess,truth,nClass)
-%[confMat,occurances,labels] = prtScoreConfusionMatrix(guess,truth,nClass)
-
-disp('Note - input arguments in scoreconfusionmatrix have changed');
+function varargout = prtScoreConfusionMatrix(guess,truth,nClasses)
+%[confMat,occurances,labels] = prtScoreConfusionMatrix(guess,truth,nClasses)
+%
+%   guess and truth should be either n x 1 doubles, or dataSets with proper
+%   observations and targets
 
 [guess,truth,labels] = prtUtilScoreParseFirstTwoInputs(guess,truth);
+
 guess = guess(:);
 if nargin == 2
-    nClass = length(unique(cat(1,truth(:),guess(:))));
+    nClasses = length(unique(cat(1,truth(:),guess(:))));
 end
 
 if length(truth) ~= length(guess)
     error('Truth and response inputs must be the same length')
 end
 
-confusionMat = zeros(nClass);
-occurances = zeros(nClass);
+confusionMat = zeros(nClasses);
+occurances = zeros(nClasses);
 classes = sort(unique(cat(1,truth(:),guess(:))));
 
 for iTruthNum = 1:length(classes)
@@ -24,7 +26,7 @@ for iTruthNum = 1:length(classes)
         jResp = classes(jRespNum);
         confusionMat(iTruthNum,jRespNum) = sum(guess(iTruthLocs) == jResp);
     end
-    occurances(iTruthNum,:) = repmat(sum(iTruthLocs),nClass,1);
+    occurances(iTruthNum,:) = repmat(sum(iTruthLocs),nClasses,1);
 end
 
 varargout = {};
