@@ -16,7 +16,7 @@ function varargout = prtScoreRocBayesianBootstrap(ds, y, nBootStrapSamples, nPfS
 %         [pfSamples, pdMean, pdConfRegion, bootStrappedPds] = prtScoreRocBayesianBootstrap(...)
 %
 %         Note: If no output arguments are requested the mean and credible 
-%               interval are plotted using prtScoreRocConfidencePlot()
+%               interval are plotted using prtUtilPlotRocConfidence()
 %
 % Inputs:
 %   ds - Decision statistics of detection algorithm
@@ -45,6 +45,8 @@ function varargout = prtScoreRocBayesianBootstrap(ds, y, nBootStrapSamples, nPfS
 %   prtScoreRocBayesianBootstrap(ds, y)
 
 % Copyright 2010, New Folder Consulting, L.L.C.
+
+[ds,y,classLabels] = prtUtilScoreParseFirstTwoInputs(ds,y);
 
 %% Default arguments
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -181,7 +183,7 @@ pdConfRegion = inverseLogistic(bsxfun(@plus,prctile(eta,100*[alpha/2, 1-alpha/2]
 
 %% Package Outputs
 if nargout == 0
-    prtScoreRocConfidencePlot(pfSamples,pdMean,pdConfRegion)
+    prtUtilPlotRocConfidence(pfSamples,pdMean,pdConfRegion)
 else
     varargout = {pfSamples, pdMean, pdConfRegion, pds};
 end

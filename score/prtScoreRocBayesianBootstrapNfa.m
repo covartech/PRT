@@ -21,7 +21,7 @@ function varargout = prtScoreRocBayesianBootstrapNfa(varargin)
 %         [nFaSamples, pdMean, pdConfRegion, bootStrappedPds] = prtScoreRocBayesianBootstrapNfa(...)
 %
 %         Note: If no output arguments are requested the mean and credible 
-%               interval are plotted using prtScoreRocConfidencePlot()
+%               interval are plotted using prtUtilPlotRocConfidence()
 %
 % Inputs:
 %   ds - Decision statistics of detection algorithm
@@ -53,7 +53,7 @@ function varargout = prtScoreRocBayesianBootstrapNfa(varargin)
 %   % and make the plot ourselves
 %   totalArea = 1000;
 %   [nFaSamples, pdMean, pdConfRegion] = prtScoreRocBayesianBootstrapNfa(ds, y);
-%   prtScoreRocConfidencePlot(nFaSamples./totalArea, pdMean, pdConfRegion)
+%   prtUtilPlotRocConfidence(nFaSamples./totalArea, pdMean, pdConfRegion)
 
 % Copyright 2010, New Folder Consulting, L.L.C.
 %% Call the non Nfa version
@@ -79,7 +79,7 @@ nFaSamples = pfSamples*nH0;
 
 %% Package Outputs
 if nargout == 0
-    prtScoreRocConfidencePlot(nFaSamples,pdMean,pdConfRegion)
+    prtUtilPlotRocConfidence(nFaSamples,pdMean,pdConfRegion)
 else
     varargout = {nFaSamples, pdMean, pdConfRegion, bootStrappedPds};
 end

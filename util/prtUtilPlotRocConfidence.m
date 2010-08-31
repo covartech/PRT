@@ -1,10 +1,10 @@
-function varargout = prtScoreRocConfidencePlot(varargin)
+function varargout = prtUtilPlotRocConfidence(varargin)
 % PRSCOREROCCONFIDENCEPLOT Plot ROCs with confidence
 %
-% Syntax: prtScoreRocConfidencePlot(PF1,PD1,edgePds1,PF2,PD2,edgePds2,...)
-%         prtScoreRocConfidencePlot(PF1,PD1,edgePds1,'b',PF2,PD2,edgePds2,'r',...)
+% Syntax: prtUtilPlotRocConfidence(PF1,PD1,edgePds1,PF2,PD2,edgePds2,...)
+%         prtUtilPlotRocConfidence(PF1,PD1,edgePds1,'b',PF2,PD2,edgePds2,'r',...)
 %
-%   This is a little nieve in that you cannot mix and match these two
+%   This is a little naive in that you cannot mix and match these two
 %   input styles.
 %
 % Inputs:
@@ -25,7 +25,7 @@ function varargout = prtScoreRocConfidencePlot(varargin)
 %  Output = prtDataSetClass(Output,DS);
 %
 %  [pfSamples, pdMean, pdConfRegion, pds] = prtScoreRocBayesianBootstrap(Output.getObservations() ,Output.getTargets());
-%  prtScoreRocConfidencePlot(pfSamples,pdMean,pdConfRegion)
+%  prtUtilPlotRocConfidence(pfSamples,pdMean,pdConfRegion)
 
 % Copyright 2010, New Folder Consulting, L.L.C.
 

@@ -15,7 +15,6 @@ function [nf,pd,auc,thresholds,classLabels] = prtScoreRocNfa(ds,y,varargin)
 
 % Copyright 2010, New Folder Consulting, L.L.C.
 
-
 [pf,pd,auc,thresholds,classLabels] = prtScoreRoc(ds,y,varargin{:});
 nMiss = length(find(y == 0));
 nf = pf*nMiss;
