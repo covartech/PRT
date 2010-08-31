@@ -23,7 +23,7 @@ end
 try
     dataSet = prtDataGenSpiral;
     classifier = prtClassDlrt;
-    score = prtScoreAucKfolds(dataSet,classifier, 10);
+    score = prtEvalAuc(classifier,dataSet,10);
 catch
     disp('error #2, prtScoreAucKfolds failed basic operation')
     result = false;
@@ -59,7 +59,7 @@ dataSet = dataSet.setX(rand(2,2));
 classifier = prtClassDlrt;
 
 try
-    score = prtScoreAucKfolds(dataSet,classifier);
+    score = prtEvalAuc(classifier,dataSet,dataSet.nObservations);
     error = false;
     disp('Error #4a, unlabeled data set')
 catch
@@ -67,14 +67,14 @@ catch
 end
 
 % check k-folds without enough input args
-try
-    dataSet = prtDataGenSpiral;
-    classifier = prtClassDlrt;
-    score = prtScoreAucKfolds(dataSet,classifier);
-    error = false;
-    disp('prtScoreAucKfolds, not enough input args')
-catch
-    % no-op
-end
+% try
+%     dataSet = prtDataGenSpiral;
+%     classifier = prtClassDlrt;
+%     score = prtEvalAuc(classifier,dataSet,dataSet.nObservations);
+%     error = false;
+%     disp('prtScoreAucKfolds, not enough input args')
+% catch
+%     % no-op
+% end
 
 result = result & error;

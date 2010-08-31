@@ -9,11 +9,11 @@ result = true;
 %%
 % Check basic operation
 try
-dataSet = prtDataGenCircles;
-featSel = prtFeatSelSfs; 
-featSel.nFeatures = 1;
-featSel = featSel.train(dataSet);
-outDataSet = featSel.run(dataSet);
+    dataSet = prtDataGenCircles;
+    featSel = prtFeatSelSfs;
+    featSel.nFeatures = 1;
+    featSel = featSel.train(dataSet);
+    outDataSet = featSel.run(dataSet);
 catch
     disp('Error #1, basic feature selection fail')
     result = false;
@@ -32,12 +32,12 @@ end
 
 % Check changing the Eval metric
 dataSet = prtDataGenCircles;
-featSel = prtFeatSelSfs; 
+featSel = prtFeatSelSfs;
 featSel.nFeatures = 1;
 try
-featSel.EvaluationMetric = @(DS)prtScorePdAtPf(DS, prtClassMAP, .9);
-featSel = featSel.train(dataSet);
-outDataSet = featSel.run(dataSet);
+    featSel.EvaluationMetric = @(DS)prtEvalPdAtPf(prtClassMAP, DS, .9);
+    featSel = featSel.train(dataSet);
+    outDataSet = featSel.run(dataSet);
 catch
     disp('Error #3, change eval metric')
     result = false;
@@ -54,7 +54,7 @@ end
 error = true;
 % This errors out messily if you don't train first, should error out clean.
 dataSet = prtDataGenSpiral3;
-featSel = prtFeatSelSfs; 
+featSel = prtFeatSelSfs;
 featSel.nFeatures = 1;
 
 try
