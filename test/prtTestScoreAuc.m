@@ -1,20 +1,20 @@
 function result = prtTestScoreAuc
-% This function tests prtScoreAuc and prtScoreAucKfolds
+% This function tests prtEvalAuc and prtScoreAucKfolds
 result = true;
 % Basic operation
 try
     dataSet = prtDataGenSpiral;
     classifier = prtClassDlrt;
-    score = prtScoreAuc(dataSet,classifier);
+    score = prtEvalAuc(classifier,dataSet);
 catch
-    disp('error #1, prtScoreAuc failed basic operation')
+    disp('error #1, prtEvalAuc failed basic operation')
     result = false;
 end
 
 % check score
 % Should be around .99 for the above run
 if( abs(score - .99) > .01) 
-    disp('error #2, prtScoreAuc wrong score')
+    disp('error #2, prtEvalAuc wrong score')
     result = false;
 end
 
@@ -45,7 +45,7 @@ dataSet = dataSet.setX(rand(2,2));
 classifier = prtClassDlrt;
 
 try
-    score = prtScoreAuc(dataSet,classifier);
+    score = prtEvalAuc(classifier,dataSet);
     error = false;
     disp('Error #4, unlabeled data set')
 catch

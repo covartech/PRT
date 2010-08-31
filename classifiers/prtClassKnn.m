@@ -47,7 +47,7 @@ classdef prtClassKnn < prtClass
         nameAbbreviation = 'KNN'      % KNN  
         isSupervised = true;          % True
         
-        isNativeMary = false;         % False
+        isNativeMary = true;         % False
         
     end
     

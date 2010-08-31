@@ -39,7 +39,6 @@ function groupAssignment = prtUtilEquallySubDivideData(Y,nDivisions)
 
 % Copyright 2010, New Folder Consulting, L.L.C.
 
-
 if nDivisions > length(Y)
    warning('The number of requested divisions is larger than the amount of data. The number of divisions was changed to the length of the data.')
    nDivisions = length(Y);

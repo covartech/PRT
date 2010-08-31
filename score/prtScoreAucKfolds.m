@@ -12,7 +12,7 @@ function auc = prtScoreAucKfolds(DS,PrtClass,nFolds)
 %   classifier = prtClassDlrt;
 %   prtScoreAucKfolds(dataSet,classifier,10)
 %
-%   See Also: prtScoreAuc, prtScorePdAtPf, prtScorePdAtPfKfolds,
+%   See Also: prtEvalAuc, prtScorePdAtPf, prtScorePdAtPfKfolds,
 %   prtScorePfAtPd, prtScorePfAtPdKfolds, prtScoreRoc
 
 Results = kfolds(PrtClass,DS,nFolds);

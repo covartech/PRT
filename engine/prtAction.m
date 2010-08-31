@@ -122,7 +122,7 @@ classdef prtAction
             %   OUTPUT = OBJ.train(DataSet) runs the prtAction object using
             %   the prtDataSet DataSet. OUTPUT will be a prtDataSet object.
             if ~isa(DataSet,'prtDataSetBase')
-                error('prt:prtAction:prtDataSetBase','DataSet provided to prtAction %s''s run() was is a prtDataSetBase, DataSet is a %s',class(Obj),class(DataSet));
+                error('prt:prtAction:prtDataSetBase','DataSet provided to prtAction %s''s run() was a prtDataSetBase, DataSet is a %s',class(Obj),class(DataSet));
             end
             
             DataSet = runAction(Obj, DataSet);
@@ -239,7 +239,12 @@ classdef prtAction
                 K = 1;
             end
             
-            keys = prtUtilEquallySubDivideData(DataSet.getTargets(),K);
+            if DataSet.isLabeled
+                keys = prtUtilEquallySubDivideData(DataSet.getTargets(),K);
+            else
+                %can cross-val on unlabeled data, too!
+                keys = prtUtilEquallySubDivideData(ones(DataSet.nObservations,1),K);
+            end
             
             outputs = cell(1,min(max(nargout,1),2));
             [outputs{:}] = Obj.crossValidate(DataSet,keys);
@@ -269,6 +274,7 @@ classdef prtAction
             %   the prtAction.
             %   
             %   DataSet = postRunProcessing(ClassObj, DataSet)
+            
         end
     end
 end
