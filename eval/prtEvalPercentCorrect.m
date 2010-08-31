@@ -19,6 +19,9 @@ function percentCorrect = prtEvalPercentCorrect(classifier,dataSet,nFolds)
 
 % Copyright 2010, New Folder Consulting, L.L.C.
 
+assert(nargin >= 2,'prt:prtEvalPercentCorrect:BadInputs','prtEvalPercentCorrect requires two input arguments');
+assert(isa(classifier,'prtClass') && isa(dataSet,'prtDataSetBase'),'prt:prtEvalPercentCorrect:BadInputs','prtEvalPercentCorrect inputs must be sublcasses of prtClass and prtDataSetBase, but input one was a %s, and input 2 was a %s',class(classifier),class(dataSet));
+
 if nargin < 3 || isempty(nFolds)
     nFolds = 1;
 end
