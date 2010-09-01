@@ -37,7 +37,7 @@ if nargin < 4 || isempty(nFolds)
 end
 
 results = kfolds(classifier,dataSet,nFolds);
-
-[pf,pd] = prtScoreRoc(results.getObservations,dataSet.getTargets);
-cost = prtUtilPfPd2Cost(pf,pd,costMatrix);
-cost = min(cost);
+[cost,pf,pd] = prtScoreCost(results,dataSet,costMatrix);
+[cost,minCostInd] = min(cost);
+pf = pf(minCostInd);
+pd = pd(minCostInd);
