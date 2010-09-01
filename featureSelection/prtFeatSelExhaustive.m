@@ -16,11 +16,12 @@ classdef prtFeatSelExhaustive < prtFeatSel %
 %    EvaluationMetric      - The metric to be used to determine which
 %                            features are selected. EvaluationMetric must
 %                            be a function handle. The function handle must
-%                            be in the form @(dataSet)prtScore(dataSet,
-%                            prtClass, varargin), where prtScore is a prt scoring
-%                            object, prtClass is a prt classifier
-%                            object, and varargin represents optional input
-%                            arguments to a prtScoring object.
+%                            be in the form:
+%                            @(dataSet)prtEval(prtClass, dataSet, varargin)
+%                            where prtEvak is a prtEval function, prtClass
+%                            is a prt classifier object, and varargin 
+%                            represents optional input arguments to a 
+%                            prtEval function.
 %    Peformance            - The performance obtained by the using the
 %                            features selected.
 %    selectedFeatures      - The indices of the features selected that gave
@@ -30,17 +31,17 @@ classdef prtFeatSelExhaustive < prtFeatSel %
 %
 %   Example:
 % 
-%   dataSet = prtDataGenCircles;         % Generate a data set
+%   dataSet = prtDataGenCircles;      % Generate a data set
 %   featSel = prtFeatSelExhaustive;   % Create a feature selction object
 %   featSel.nFeatures = 1;            % Select only one feature of the data
 %   featSel = featSel.train(dataSet); % Train the feature selection object
 %   outDataSet = featSel.run(dataSet);% Extract the data set with only the
-%                                     %  selected features
+%                                     % selected features
 %
 %   %   Change the scoring function to prtScorePdAtPf, and change the
 %   %   classification method to prtClassMAP
 %
-%   featSel.EvaluationMetric = @(DS)prtScorePdAtPf(DS, prtClassMAP, .9);
+%   featSel.EvaluationMetric = @(DS)prtEvalPdAtPf( prtClassMap, DS, .9);
 %
 %   featSel = featSel.train(dataSet); 
 %   outDataSet = featSel.run(dataSet);

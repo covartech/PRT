@@ -30,7 +30,8 @@ classdef prtFeatSelLlnn < prtFeatSel
     %   Reference:
     %   http://www.computer.org/portal/web/csdl/doi/10.1109/TPAMI.2009.190
     %
-    %   A prtFeatSelExhaustive object inherits the TRAIN and RUN methods from prtClass.
+    %   A prtFeatSelExhaustive object inherits the TRAIN and RUN methods
+    %   from prtClass.
     %
     %   Example:
     %
