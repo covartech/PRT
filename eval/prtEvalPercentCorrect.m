@@ -1,21 +1,26 @@
 function percentCorrect = prtEvalPercentCorrect(classifier,dataSet,nFolds)
-% PERCENTCORRECT    Calculate percent correct of two classifications guess, truth
+% PERCENTCORRECT    Calculate percent correct of a classification operation
 % 
-% Syntax: pC = percentCorrect(guess,truth,alpha = 0.05)
+%   PERCENTCORRECT = prtEvalAuc(CLASSIFIER, DATASET) returns the percentage
+%   of correctly classified elements of DATASET when classifier by
+%   CLASSIFIER. DATASET must be a labeled, prtDataSetStandard
+%   object. CLASSIFIER must be a prtClass object. 
 %
-% Inputs:
-%   guess - Guess classification
-%   truth - True classification
-%   alpha - Confidence region (default 0.05)
+%   PF = prtScoreAucKfolds(CLASSIFIER, DATASET, NFOLDS)  returns the
+%   percentage of correctly classified elements of DATASET when classifier
+%   by CLASSIFIER with K-fold cross-validation. DATASET must be a labeled,
+%   prtDataSetStandard object. CLASSIFIER must be a prtClass object.
+%   NFOLDS is the number of folds in the K-fold cross-validation.
 %
-% Outputs:
-%   pC - Percent correct
-%   pCConf - Confidence Bounds on percent correct
+%   Example:
+%   dataSet = prtDataGenSpiral;
+%   classifier = prtClassDlrt;
+%   pc =  prtEvalPercentCorrect(classifier, dataSet)
 %
-%
-% Other m-files required: none
-% Subfunctions: none
-% MAT-files required: none
+%   See Also: prtEvalPdAtPf, prtEvalPfAtPd, prtEvalAuc,
+%   prtEvalMinCost
+
+
 
 % Copyright 2010, New Folder Consulting, L.L.C.
 
