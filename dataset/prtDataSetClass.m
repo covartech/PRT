@@ -464,13 +464,16 @@ classdef prtDataSetClass  < prtDataSetStandard
             textOffSet = 0.1;
             textRadius = axesLength+textOffSet;
             
-            textRotationAngles = rem(theta-pi/2,2*pi)/pi*180;
+            %textRotationAngles = rem(theta-pi/2,2*pi)/pi*180;
+            textRotationAngles = zeros(size(theta));
             for iAxes = 1:length(cT)
                 text(textRadius*cT(iAxes),textRadius*sT(iAxes), fNames{iAxes}, 'rotation', textRotationAngles(iAxes),'HorizontalAlignment','Center','VerticalAlignment','Middle');
             end
             axis([-1 1 -1 1]*(axesLength + 0.2));
             
             set(gca,'Visible','off')
+            %             set(gca,'xtick',[])
+            %             set(gca,'ytick',[])
             handleArray = zeros(obj.nClasses,1);
             for iClass = 1:obj.nClasses
                 handleArray(iClass) = plot(nan,nan,'color',classColors(iClass,:));
