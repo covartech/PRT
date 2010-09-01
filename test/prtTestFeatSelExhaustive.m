@@ -9,11 +9,11 @@ result = true;
 %%
 % Check basic operation
 try
-dataSet = prtDataGenCircles;
-featSel = prtFeatSelExhaustive; 
-featSel.nFeatures = 1;
-featSel = featSel.train(dataSet);
-outDataSet = featSel.run(dataSet);
+    dataSet = prtDataGenCircles;
+    featSel = prtFeatSelExhaustive;
+    featSel.nFeatures = 1;
+    featSel = featSel.train(dataSet);
+    outDataSet = featSel.run(dataSet);
 catch
     disp('Error #1, basic feature selection fail')
     result = false;
@@ -32,12 +32,12 @@ end
 
 % Check changing the Eval metric
 dataSet = prtDataGenCircles;
-featSel = prtFeatSelExhaustive; 
+featSel = prtFeatSelExhaustive;
 featSel.nFeatures = 1;
 try
-featSel.EvaluationMetric = @(DS)prtEvalPdAtPf(prtClassMAP, DS, .9);
-featSel = featSel.train(dataSet);
-outDataSet = featSel.run(dataSet);
+    featSel.EvaluationMetric = @(DS)prtEvalPdAtPf(prtClassMap, DS, .9);
+    featSel = featSel.train(dataSet);
+    outDataSet = featSel.run(dataSet);
 catch
     disp('Error #3, change eval metric')
     result = false;
@@ -45,7 +45,7 @@ end
 
 % check param/value constructor
 try
-    featSel = prtFeatSelExhaustive('nFeatures',2, 'EvaluationMetric', @(DS)prtEvalPdAtPf(prtClassMAP,DS,.9));
+    featSel = prtFeatSelExhaustive('nFeatures',2, 'EvaluationMetric', @(DS)prtEvalPdAtPf(prtClassMap,DS,.9));
 catch
     disp('Error #4, param/val constructor fail')
     result = false;
@@ -53,7 +53,7 @@ end
 %% Stuff that should error
 error = true;
 dataSet = prtDataGenSpiral3;
-featSel = prtFeatSelExhaustive; 
+featSel = prtFeatSelExhaustive;
 featSel.nFeatures = 1;
 
 try
