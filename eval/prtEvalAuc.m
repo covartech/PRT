@@ -1,4 +1,24 @@
 function auc = prtEvalAuc(classifier,dataSet,nFolds)
+% prtEvalPfAtPd   Returns the area under the receiver operating curve.
+%
+%   PF = prtEvalAuc(CLASSIFIER, DATASET) returns the area under the
+%   receiver operating curve. DATASET must be a labeled, binary
+%   prtDataSetStandard object. CLASSIFIER must be a prtClass object. 
+%
+%   PF = prtScoreAucKfolds(CLASSIFIER, DATASET, NFOLDS) returns the area
+%   under the receiver operating curve with K-fold cross-validation.
+%   DATASET must be a labeled, binary prtDataSetStandard object. CLASSIFIER
+%   must be a prtClass object. NFOLDS is the number of folds in the K-fold
+%   cross-validation.
+%
+%   Example:
+%   dataSet = prtDataGenSpiral;
+%   classifier = prtClassDlrt;
+%   pf =  prtEvalAuc(classifier, dataSet)
+%
+%   See Also: prtEvalPdAtPf, prtEvalPfAtPd, prtEvalPercentCorrect,
+%   prtEvalMinCost
+
 %prtEvalAuc   Score by the area under curve method
 %
 %   auc = prtEvalAuc(class,dataSet)

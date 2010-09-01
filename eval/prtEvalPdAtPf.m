@@ -19,8 +19,8 @@ function pd = prtEvalPdAtPf(classifier,dataSet,pfDesired,nFolds)
 %   classifier = prtClassDlrt;
 %   pf =  prtEvalPfAtPd(classifier, dataSet,.9)
 %
-%   See Also: prtEvalAuc, prtEvalAucKfolds, prtEvalPdAtPfKfolds,
-%   prtEvalPfAtPd, prtEvalPfAtPdKfolds, prtEvalRoc
+%   See Also: prtEvalAuc, prtEvalPfAtPd, prtEvalPercentCorrect,
+%   prtEvalMinCost
 
 %pd = prtEvalPdAtPf(classifier,dataSet,pfDesired)
 %pd = prtEvalPdAtPf(classifier,dataSet,pfDesired,nFolds)
