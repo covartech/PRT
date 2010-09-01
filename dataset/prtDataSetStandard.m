@@ -647,9 +647,7 @@ classdef prtDataSetStandard < prtDataSetBase
                     otherwise
                         error('prt:prtDataSetStandardSelect','selectFunction must be a function that accepts either one or two inputs.')
                 end
-                
                 assert(numel(cOut)==1 && (islogical(cOut) || (isnumeric(cOut) && (cOut==0 || cOut==1))),'selectionFunction must output a 1x1 logical');
-                
                 keep(iObs) = cOut;
             end
             
