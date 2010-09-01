@@ -1,12 +1,12 @@
 function percentCorrect = prtEvalPercentCorrect(classifier,dataSet,nFolds)
 % PERCENTCORRECT    Calculate percent correct of a classification operation
 % 
-%   PERCENTCORRECT = prtEvalAuc(CLASSIFIER, DATASET) returns the percentage
+%   PERCENTCORRECT = prtEvalPercentCorrect(CLASSIFIER, DATASET) returns the percentage
 %   of correctly classified elements of DATASET when classifier by
 %   CLASSIFIER. DATASET must be a labeled, prtDataSetStandard
 %   object. CLASSIFIER must be a prtClass object. 
 %
-%   PF = prtScoreAucKfolds(CLASSIFIER, DATASET, NFOLDS)  returns the
+%   PF = prtScorePercentCorrect(CLASSIFIER, DATASET, NFOLDS)  returns the
 %   percentage of correctly classified elements of DATASET when classifier
 %   by CLASSIFIER with K-fold cross-validation. DATASET must be a labeled,
 %   prtDataSetStandard object. CLASSIFIER must be a prtClass object.

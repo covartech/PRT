@@ -7,7 +7,7 @@ function pd = prtEvalPdAtPf(classifier,dataSet,pfDesired,nFolds)
 %   CLASSIFIER must be a prtClass object. PD is the desired probability of
 %   detection and must be between 0 and 1.
 %
-%   PF = prtScorePfAtPdKfolds(CLASSIFIER, DATASET,PD, NFOLDS) returns the
+%   PF = prtScorePfAtPd(CLASSIFIER, DATASET,PD, NFOLDS) returns the
 %   probabilty of false alarm PF on the receiver operating curve with
 %   K-fold cross-validation.  DATASET must be a labeled, binary
 %   prtDataSetStandard object. CLASSIFIER must be a prtClass object. PD is
