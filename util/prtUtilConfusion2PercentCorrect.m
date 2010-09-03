@@ -29,12 +29,17 @@ function pC = prtUtilConfusion2PercentCorrect(confusionMat)
 % MAT-files required: none
 %
 
-if max(confusionMat(:)) > 1
+if any(confusionMat(:) > 1) || any(sum(confusionMat,2) > 1.5)
     % The confusion matrix lists the number of responses not percentages.
     % We must change the matrix to a percentage matrix.
     occurances = repmat(sum(confusionMat,2),1,length(confusionMat));
-    confusionMat = confusionMat./occurances;
-
+    
+    %For normalization, set 0 --> inf; this discounts rows where we had no
+    %examples in truth
+    normOccurances = occurances;
+    normOccurances(occurances == 0) = inf;
+    confusionMat = confusionMat./normOccurances;
+    
     pC = sum(diag(confusionMat).*occurances(:,1))./sum(occurances(:,1));
 else
     pC = mean(diag(confusionMat));
