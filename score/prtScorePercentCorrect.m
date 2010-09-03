@@ -1,10 +1,22 @@
 function percentCorrect = prtScorePercentCorrect(dataSet1,dataSet2)
-% prtScorePercentCorrect(dataSet1,dataSet2)
-% prtScorePercentCorrect(x,y)
+% PERCENTCORRECT = prtScorePercentCorrect(GUESS, TRUTH)
 %
-%   x or dataSet1 should contain a n x 1 vector of class guesses, that
-%   hopefully match the data in dataSet2
-
+%   PERCENTCORRECT = prtSCOREPERCENTCORRECT(GUESS, TRUTH) returns the
+%   percent of correct guesses in GUESS as compared to the truth in TRUTH.
+%   GUESS and TRUTH should both be Nx1 vectors. The elements of both
+%   TRUTH and GUESS should be binary or interger class labels.
+%
+%   Example:
+%   TestDataSet = prtDataGenUniModal;       % Create some test and
+%   TrainingDataSet = prtDataGenUniModal;   % training data
+%   classifier = prtClassMap;           % Create a classifier
+%   classifier = classifier.train(TrainingDataSet);    % Train
+%   classified = run(classifier, TestDataSet);         % Test
+%   classes  = classified.getX > .5;
+%   percentCorr = prtScorePercentCorrect(classes,TestDataSet.getTargets)
+%
+%   See also prtScoreAuc, prtScoreConfusionMatrix, prtScoreRoc,
+%   prtScoreRocBayesianBootstrap, prtScoreRocBayesianBootstrapNfa
 [guesses,targets] = prtUtilScoreParseFirstTwoInputs(dataSet1,dataSet2);
 
 if size(guesses,2) ~= 1 
