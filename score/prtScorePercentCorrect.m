@@ -23,7 +23,6 @@ if size(guesses,2) ~= 1
     error('prt:prtScorePercentCorrect','Requires dataSet1 to be a n x 1 integer vector of class guesses');
 else
     confusionMatrix = prtScoreConfusionMatrix(guesses,targets);
-    confusionMatrix
     percentCorrect = prtUtilConfusion2PercentCorrect(confusionMatrix);
 end
   
