@@ -6,7 +6,7 @@ function [gramm,nBasis] = prtKernelVoigt(x1,x2,sigma,gamma)
 % Sample Usage:
 %
 
-N = 10; %number of terms in cef estimate in voigtProfile
+N = 12; %number of terms in cef estimate in voigtProfile
 
 [n1, d] = size(x1);
 [n2, nin] = size(x2);

@@ -1,4 +1,4 @@
-function [DataSet,Asparse,A,S] = prtDataGenSparseFactorsKernels(dimensionality,nSamples,nFactors,nFeatures)
+function [DataSet,Asparse,A,S,V] = prtDataGenSparseFactorsKernels(dimensionality,nSamples,nFactors,nFeatures)
 %   prtDataGenSparseFactors Generate data with sparse underlying factors
 %
 %[DataSet,A,S] = prtDataGenSparseFactors(dimensionality = 1000,nSamples = 100,nFactors = 3,nFeatures = 5) 
@@ -39,7 +39,8 @@ for fact = 1:nFactors
     A(importantFeatures,fact) = randn(nFeatures,1) * 5;
 end
 Asparse = A;
-A = imfilter(A,5*prtKernelVoigt([1:size(A,1)]',size(A,1)/2,2,2));
+V = 5*prtKernelVoigt((1:size(A,1))',size(A,1)/2,2,2);
+A = imfilter(A,V);
 S = randn(nFactors,nSamples);
 
 X = A*S + normrnd(0,ones(dimensionality,nSamples));
