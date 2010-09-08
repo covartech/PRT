@@ -29,8 +29,10 @@ classdef prtFeatureExtractorTfcmGpr < prtFeatureExtractor
                     data = cat(3,data,data(:,:,end));
                 end
                 data = obj.preprocFn(data);
-                
-                theImage = squeeze(data(:,Alarm.Info.crossTrack,:));
+                if size(data,3) > 21
+                    data = squeeze(data(:,:,ceil(end/2)-10:ceil(end/2)+10));
+                end
+                theImage = squeeze(data(:,Alarm.Info.gprCrossTrack,:));
                 figure(1); imagesc(theImage,[-4 4]);
                 textureFeats(iAlarm,:) = obj.extractTfcm(theImage);
                 
