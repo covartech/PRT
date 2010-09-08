@@ -65,7 +65,7 @@ classdef prtDataSetRegress < prtDataSetStandard
             iPlot = 1;
             classEdgeColor = obj.PlotOptions.symbolEdgeModificationFunction(classColors(iPlot,:));
             
-            h = plot(obj.getObservations,obj.getTargets, classSymbols(iPlot), 'MarkerFaceColor', classColors(iPlot,:), 'MarkerEdgeColor', classEdgeColor,'linewidth',lineWidth,'MarkerSize',markerSize);
+            h = plot(obj.getObservations(:,featureIndices),obj.getTargets, classSymbols(iPlot), 'MarkerFaceColor', classColors(iPlot,:), 'MarkerEdgeColor', classEdgeColor,'linewidth',lineWidth,'MarkerSize',markerSize);
             
             set(gca,'nextPlot',holdState);
             
@@ -73,8 +73,8 @@ classdef prtDataSetRegress < prtDataSetStandard
             title(obj.name);
             switch nPlotDimensions
                 case 1
-                    xlabel(obj.getFeatureNames());
-                    ylabel(obj.getTargetNames());
+                    xlabel(obj.getFeatureNames(featureIndices));
+                    ylabel(obj.getTargetNames(1));
                 otherwise
                     error('prt:plot:NoPlotDimensionality','Regression plots are currently only valid for 1 dimensional data, but DataSet has %d dimensions',obj.nFeatures);
             end
