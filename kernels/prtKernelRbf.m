@@ -43,6 +43,7 @@ classdef prtKernelRbf < prtKernelBinary
             assert(isscalar(value) && value > 0,'sigma parameter must be scalar and > 0, value provided is %s',mat2str(value));
             obj.sigma = value;
         end
+        
         function obj = prtKernelRbf(varargin)
             obj = prtUtilAssignStringValuePairs(obj,varargin{:});
         end
