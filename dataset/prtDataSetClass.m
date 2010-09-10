@@ -112,7 +112,7 @@ classdef prtDataSetClass  < prtDataSetStandard
         
         function obj = prtDataSetClass(varargin)
             
-            obj.classNames = java.util.Hashtable;
+            obj.classNames = java.util.Hashtable;            
             if nargin == 0
                 return;
             end

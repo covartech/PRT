@@ -121,9 +121,16 @@ classdef prtAction
             %
             %   OUTPUT = OBJ.train(DataSet) runs the prtAction object using
             %   the prtDataSet DataSet. OUTPUT will be a prtDataSet object.
-            if ~isa(DataSet,'prtDataSetBase')
+            if isnumeric(DataSet)
+                try
+                   DataSet = prtDataSetStandard(DataSet); 
+                catch
+                    error('prt:prtAction:prtDataSetBase','DataSet provided to prtAction %s''s run() was a prtDataSetBase, DataSet is a %s',class(Obj),class(DataSet));
+                end
+            elseif ~isa(DataSet,'prtDataSetBase')
                 error('prt:prtAction:prtDataSetBase','DataSet provided to prtAction %s''s run() was a prtDataSetBase, DataSet is a %s',class(Obj),class(DataSet));
             end
+                
             
             DataSet = runAction(Obj, DataSet);
             DataSet = postRunProcessing(Obj, DataSet);

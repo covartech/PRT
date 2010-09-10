@@ -205,5 +205,7 @@ end
 %if there are no outputs; plot the ROC;
 if nargout == 0
     plot(pf,pd);
+    xlabel('Pf');
+    ylabel('Pd');
     clear pf pd auc
 end

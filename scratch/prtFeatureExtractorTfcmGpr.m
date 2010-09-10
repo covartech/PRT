@@ -30,6 +30,7 @@ classdef prtFeatureExtractorTfcmGpr < prtFeatureExtractor
                 end
                 data = obj.preprocFn(data);
                 if size(data,3) > 21
+                    fprintf('Tfcm re-sizing');
                     data = squeeze(data(:,:,ceil(end/2)-10:ceil(end/2)+10));
                 end
                 theImage = squeeze(data(:,Alarm.Info.gprCrossTrack,:));
