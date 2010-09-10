@@ -18,7 +18,7 @@ end
 % Try m-ary
 guess = [0 1 2 3 ]';
 truth = [0 1 4 3]';
-if(prtScorePercentCorrect(guess, truth) ~= .5)
+if(prtScorePercentCorrect(guess, truth) ~= .75)
     result = false;
     disp('prtScorePercentM-ary correct wrong answer')
 end
