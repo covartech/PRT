@@ -1,9 +1,25 @@
 function rmse = prtScoreRmse(dataSet1,dataSet2)
-% prtScoreRmse(dataSet1,dataSet2)
-% prtScoreRmse(x,y)
+% RMSE = prtScoreRmse(GUESS, TRUTH)
 %
-%   x or dataSet1 should contain a n x 1 vector of values, that
-%   hopefully match the data in dataSet2
+%   RMSE = prtScoreRmse(GUESS, TRUTH) returns the
+%   root mean squared error between the guesses in GUESS as compared to the truth in TRUTH.
+%   GUESS and TRUTH should both be Nx1 vectors. 
+%
+%   Example:
+%   dataSet = prtDataGenSinc;        % Load a prtDataRegress data set, a
+%                                    % noisy Sinc function
+%   reg = prtRegressRvm;             % Create a prtRegressRvm object
+%   reg = reg.train(dataSet);        % Train the prtRegressRvm object
+%   dataSetOut = reg.run(dataSet);   % Run the regressor on the data
+%
+%   truth = sinc(dataSet.getX);
+%   guess = dataSetOut.getX;
+%   prtScoreRmse(truth, guess)
+%
+%     
+%   See also prtScoreConfusionMatrix, prtScoreRoc,
+%   prtScoreRocBayesianBootstrap, prtScoreRocBayesianBootstrapNfa,
+%   prtScorePercentCorrect
 
 [guesses,targets] = prtUtilScoreParseFirstTwoInputs(dataSet1,dataSet2);
 
