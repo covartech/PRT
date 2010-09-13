@@ -140,8 +140,8 @@ classdef prtDataSetBase
     %Methods for get, set, ObservationNames and FeatureNames
     methods
         function obj = prtDataSetBase
-            obj.observationNames = java.util.Hashtable;
-            obj.targetNames = java.util.Hashtable;
+            obj.observationNames = prtUtilIntegerAssociativeArray;
+            obj.targetNames = prtUtilIntegerAssociativeArray;
         end
         
         function obsNames = getObservationNames(obj,varargin)
@@ -215,7 +215,7 @@ classdef prtDataSetBase
             end
             
             for i = 1:length(indices1)
-                obj.observationNames.put(indices1(i),obsNames{i});
+                obj.observationNames = obj.observationNames.put(indices1(i),obsNames{i});
             end
         end
         
@@ -243,7 +243,7 @@ classdef prtDataSetBase
             %Put the default string names in there; otherwise we might end
             %up with empty elements in the cell array
             for i = 1:length(indices2)
-                obj.targetNames.put(indices2(i),targetNames{i});
+                obj.targetNames = obj.targetNames.put(indices2(i),targetNames{i});
             end
         end
     end
@@ -346,7 +346,7 @@ classdef prtDataSetBase
             for i = 1:newDataSet.nObservations;
                 currObsName = newDataSet.observationNames.get(i);
                 if ~isempty(currObsName)
-                    obj.observationNames.put(i + obj.nObservations,currObsName);
+                    obj.observationNames = obj.observationNames.put(i + obj.nObservations,currObsName);
                 end
             end
         end
@@ -364,10 +364,10 @@ classdef prtDataSetBase
                 return;
             else
                 %copy the hash with new indices
-                newHash = java.util.Hashtable;
+                newHash = prtUtilIntegerAssociativeArray;
                 for retainInd = 1:length(retainIndices);
                     if obj.observationNames.containsKey(retainIndices(retainInd));
-                        newHash.put(retainInd,obj.observationNames.get(retainIndices(retainInd)));
+                        newHash = newHash.put(retainInd,obj.observationNames.get(retainIndices(retainInd)));
                     end
                 end
                 obj.observationNames = newHash;
@@ -380,7 +380,7 @@ classdef prtDataSetBase
             for i = 1:newDataSet.nTargetDimensions;
                 currTargetName = newDataSet.targetNames.get(i);
                 if ~isempty(currTargetName)
-                    obj.targetNames.put(i + obj.nTargetDimensions,currTargetName);
+                    obj.targetNames = obj.targetNames.put(i + obj.nTargetDimensions,currTargetName);
                 end
             end
         end
@@ -397,10 +397,10 @@ classdef prtDataSetBase
                 return;
             else
                 %copy the hash with new indices
-                newHash = java.util.Hashtable;
+                newHash = prtUtilIntegerAssociativeArray;
                 for retainInd = 1:length(retainIndices);
                     if obj.targetNames.containsKey(retainIndices(retainInd));
-                        newHash.put(retainInd,obj.targetNames.get(retainIndices(retainInd)));
+                        newHash = newHash.put(retainInd,obj.targetNames.get(retainIndices(retainInd)));
                     end
                 end
                 obj.targetNames = newHash;

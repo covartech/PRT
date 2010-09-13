@@ -97,7 +97,7 @@ classdef prtDataSetClass  < prtDataSetStandard
                 %other data set does, well, use the other data set's name
                 %for this class
                 if ~obj.classNames.containsKey(newUniqueClasses(i)) && newDataSet.classNames.containsKey(newUniqueClasses(i));
-                    obj.classNames.put(newUniqueClasses(i),newDataSet.classNames.get(newUniqueClasses(i)));
+                    obj.classNames = obj.classNames.put(newUniqueClasses(i),newDataSet.classNames.get(newUniqueClasses(i)));
                     %If both the data sets have the key, and the strings
                     %don't match...
                 elseif (obj.classNames.containsKey(newUniqueClasses(i)) && newDataSet.classNames.containsKey(newUniqueClasses(i))) && ...
@@ -112,7 +112,8 @@ classdef prtDataSetClass  < prtDataSetStandard
         
         function obj = prtDataSetClass(varargin)
             
-            obj.classNames = java.util.Hashtable;            
+            %obj.classNames = java.util.Hashtable;            
+            obj.classNames = prtUtilIntegerAssociativeArray;
             if nargin == 0
                 return;
             end
@@ -196,7 +197,7 @@ classdef prtDataSetClass  < prtDataSetStandard
             uniqueClasses = obj.uniqueClasses;
             
             for i = 1:length(indices1)
-                obj.classNames.put(uniqueClasses(indices1(i)),names{i});
+                obj.classNames = obj.classNames.put(uniqueClasses(indices1(i)),names{i});
             end
         end
         

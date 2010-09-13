@@ -6,7 +6,7 @@ function [gramm,nBasis] = prtKernelVoigt(x1,x2,sigma,gamma)
 % Sample Usage:
 %
 
-error('This is the old kernel format.  we require new kerne;s');
+%error('This is the old kernel format.  we require new kerne;s');
 N = 12; %number of terms in cef estimate in voigtProfile
 
 [n1, d] = size(x1);

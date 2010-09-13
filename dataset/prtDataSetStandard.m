@@ -69,10 +69,11 @@ classdef prtDataSetStandard < prtDataSetBase
             end
             
             %copy the hash with new indices
-            newHash = java.util.Hashtable;
+            %newHash = java.util.Hashtable;
+            newHash = prtUtilIntegerAssociativeArray;
             for retainInd = 1:length(retainIndices);
                 if obj.targetNames.containsKey(retainIndices(retainInd));
-                    newHash.put(retainInd,obj.targetNames.get(retainIndices(retainInd)));
+                    newHash = newHash.put(retainInd,obj.targetNames.get(retainIndices(retainInd)));
                 end
             end
             
@@ -83,7 +84,7 @@ classdef prtDataSetStandard < prtDataSetBase
             for i = 1:newDataSet.nFeatures;
                 currFeatName = newDataSet.featureNames.get(i);
                 if ~isempty(currFeatName)
-                    obj.featureNames.put(i + obj.nFeatures,currFeatName);
+                    obj.featureNames = obj.featureNames.put(i + obj.nFeatures,currFeatName);
                 end
             end
         end
@@ -97,10 +98,10 @@ classdef prtDataSetStandard < prtDataSetBase
             end
             
             %copy the hash with new indices
-            newHash = java.util.Hashtable;
+            newHash = prtUtilIntegerAssociativeArray;
             for retainInd = 1:length(retainIndices);
                 if obj.featureNames.containsKey(retainIndices(retainInd));
-                    newHash.put(retainInd,obj.featureNames.get(retainIndices(retainInd)));
+                    newHash = newHash.put(retainInd,obj.featureNames.get(retainIndices(retainInd)));
                 end
             end
             obj.featureNames = newHash;
@@ -112,7 +113,8 @@ classdef prtDataSetStandard < prtDataSetBase
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         function obj = prtDataSetStandard(varargin)
             
-            obj.featureNames = java.util.Hashtable;
+            %obj.featureNames = java.util.Hashtable;
+            obj.featureNames = prtUtilIntegerAssociativeArray;
             
             if nargin == 0
                 return;
@@ -211,7 +213,7 @@ classdef prtDataSetStandard < prtDataSetBase
             %Put the default string names in there; otherwise we might end
             %up with empty elements in the cell array
             for i = 1:length(indices2)
-                obj.featureNames.put(indices2(i),featNames{i});
+                obj.featureNames = obj.featureNames.put(indices2(i),featNames{i});
             end
         end
         

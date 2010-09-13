@@ -21,7 +21,7 @@ classdef prtClassMatlabTreeBagger < prtClass
         % forest
         nTrees = 50;
         forest
-        treeBaggerParamValuePairs
+        treeBaggerParamValuePairs = {};
     end
 
     methods 
