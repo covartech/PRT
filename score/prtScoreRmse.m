@@ -1,9 +1,10 @@
-function rmse = prtScoreRmse(dataSet1,dataSet2)
+function rmse = prtScoreRmse(varargin)
 % RMSE = prtScoreRmse(GUESS, TRUTH)
 %
 %   RMSE = prtScoreRmse(GUESS, TRUTH) returns the
 %   root mean squared error between the guesses in GUESS as compared to the truth in TRUTH.
-%   GUESS and TRUTH should both be Nx1 vectors. 
+%   GUESS and TRUTH should both be Nx1 vectors, or both be prtDataSets.  If
+%   they are prtDataSets, TRUTH.isLabeled must be true.
 %
 %   Example:
 %   dataSet = prtDataGenSinc;        % Load a prtDataRegress data set, a
@@ -21,7 +22,7 @@ function rmse = prtScoreRmse(dataSet1,dataSet2)
 %   prtScoreRocBayesianBootstrap, prtScoreRocBayesianBootstrapNfa,
 %   prtScorePercentCorrect
 
-[guesses,targets] = prtUtilScoreParseFirstTwoInputs(dataSet1,dataSet2);
+[guesses,targets] = prtUtilScoreParseFirstTwoInputs(varargin{:});
 
 if size(guesses,2) == 1
     rmse = sqrt(mean((guesses-targets).^2));

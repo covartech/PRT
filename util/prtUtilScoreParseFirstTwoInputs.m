@@ -8,8 +8,8 @@ if (isnumeric(arg1) || islogical(arg1)) && (isnumeric(arg2) || islogical(arg2))
     truth = arg2;
     tempDs = prtDataSetClass(guess,truth);
     classNames = tempDs.getClassNames;
-elseif isa(arg1,'prtDataSetBase')
-    assert(arg1.isLabeled,'prtScore functions with one input requires a labeled data set');
+elseif isa(arg1,'prtDataSetBase') && isa(arg2,'prtDataSetBase')
+    assert(arg2.isLabeled,'prtScore functions with one input requires a labeled data set');
     guess = arg1.getObservations;
     truth = arg2.getTargets;
     classNames = arg2.getClassNames;
