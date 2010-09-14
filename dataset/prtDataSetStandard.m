@@ -200,8 +200,20 @@ classdef prtDataSetStandard < prtDataSetBase
             %   dataSet = dataSet.setFeatureNames(FEATNAMES, INDICES) sets the
             %   feature names of the dataSet object at the corresponding
             %   INDICES.
+            if ~isa(featNames,'cell') || ~isa(featNames{1},'char')
+                error('prt:dataSetStandard:setFeatureNames','Input feature names must be a cell array of characters');
+            end
+            if ~isvector(featNames)
+                error('prt:dataSetStandard:setFeatureNames','setFeatureNames requires first input to be a n x 1 cell array');
+            end
+            featNames = featNames(:);
             
             indices2 = prtDataSetBase.parseIndices(obj.nFeatures,varargin{:});
+            if nargin < 3
+                if size(featNames,1) ~= length(indices2)
+                    error('prt:dataSetStandard:setFeatureNames','setFeatureNames with one input requires that size(names,1) (%d) equals number of features (%d)',size(featNames,1),obj.nFeatures);
+                end
+            end
             if length(featNames) > obj.nFeatures
                 error('prtDataSetStandard:setFeatureNames','Attempt to set feature names for more features than exist \n%d feature names provided, but object only has %d features',length(featNames),obj.nFeatures);
             end

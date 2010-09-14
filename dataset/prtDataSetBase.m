@@ -201,12 +201,13 @@ classdef prtDataSetBase
             %  dataSet = dataSet.setObservationNames(NAMES, INDICES) Set the observation
             %  names for only the specified INDICES.
             
+            if ~isa(obsNames,'cell') || ~isa(obsNames{1},'char')
+                error('prt:dataSetStandard:setObservationNames','Input observation names must be a cell array of characters');
+            end
             if ~isvector(obsNames)
-                error('setObservationNames requires vector NAMES');
+                error('prt:dataSetStandard:setObservationNames','setObservationNames requires first input to be a n x 1 cell array');
             end
-            if ~iscell(obsNames)
-                obsNames = {obsNames};
-            end
+            obsNames = obsNames(:);
             
             indices1 = prtDataSetBase.parseIndices(obj.nObservations,varargin{:});
             %parse returns logicals; find the indices
@@ -221,12 +222,20 @@ classdef prtDataSetBase
         
         function obj = setTargetNames(obj,targetNames,varargin)
             % setTargetNames  Set the data set target names
-            %
+            % 
             %  dataSet = dataSet.setTargetNames(NAMES) Set an object's
             %  target names to NAMES.
             %
             %  dataSet = dataSet.setTargetNames(NAMES, INDICES) Set the
             %  target names for only the specified INDICES.
+            
+            if ~isa(targetNames,'cell') || ~isa(targetNames{1},'char')
+                error('prt:dataSetStandard:setTargetNames','Input target names must be a cell array of characters');
+            end
+            if ~isvector(targetNames)
+                error('prt:dataSetStandard:setTargetNames','setTargetNames requires first input to be a n x 1 cell array');
+            end
+            targetNames = targetNames(:);
                         
             indices2 = prtDataSetBase.parseIndices(obj.nTargetDimensions,varargin{:});
             %parse returns logicals

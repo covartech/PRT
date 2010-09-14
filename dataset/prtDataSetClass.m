@@ -186,18 +186,25 @@ classdef prtDataSetClass  < prtDataSetStandard
             assert(size(targets,2) == 1,'prt:prtDataSetClass:setTargets','targets for prtDataSetClass must be size n x 1, but targets are size n x %d',size(targets,2));
             obj = setTargets@prtDataSetStandard(obj,targets,varargin{:});
         end
-        function obj = setClassNamesByClassInd(obj,names,varargin)
+        function obj = setClassNamesByClassInd(obj,classNames,varargin)
             % setClassNamesByClassInd   Sets the class names
             %
             % dataSet = dataSet.setClassNamesByClassInd(NAMES, IDX) set the
             % class names of dataSet to the strings contained in NAMES at
             % the corresponding indices IDX.
             
+            if ~isa(classNames,'cell') || ~isa(classNames{1},'char')
+                error('prt:dataSetStandard:setClassNamesByClassInd','Input class names must be a cell array of characters');
+            end
+            if ~isvector(classNames)
+                error('prt:dataSetStandard:setClassNamesByClassInd','setClassNamesByClassInd requires first input to be a n x 1 cell array');
+            end
+            
             indices1 = prtDataSetBase.parseIndices(obj.nClasses, varargin{:});
             uniqueClasses = obj.uniqueClasses;
             
             for i = 1:length(indices1)
-                obj.classNames = obj.classNames.put(uniqueClasses(indices1(i)),names{i});
+                obj.classNames = obj.classNames.put(uniqueClasses(indices1(i)),classNames{i});
             end
         end
         
@@ -225,8 +232,18 @@ classdef prtDataSetClass  < prtDataSetStandard
             %   array of strings that has the same length as the number of
             %   classes in the dataSet object.
             
+            if ~isa(names,'cell') || ~isa(names{1},'char')
+                error('prt:dataSetClass:setClassNames','Input class names must be a cell array of characters');
+            end
+            if ~isvector(names)
+                error('prt:dataSetClass:setClassNames','setClassNamesByClassInd requires first input to be a n x 1 cell array');
+            end
+            names = names(:);
             if nargin < 3
                 classes = obj.uniqueClasses;
+                if size(names,1) ~= length(classes)
+                    error('prt:dataSetClass:setClassNames','setClassNames with one input requires that size(names,1) (%d) equals number of unique classes (%d)',size(names,1),length(classes));
+                end
             end
             uniqueClasses = obj.uniqueClasses;
             
@@ -234,6 +251,7 @@ classdef prtDataSetClass  < prtDataSetStandard
                 error('classes contains classes not in uniqueClasses');
             end
             [~,~,ib] = intersect(classes,uniqueClasses);
+            
             obj = setClassNamesByClassInd(obj,names,ib);
         end
         
