@@ -402,6 +402,86 @@ classdef prtDataSetClass  < prtDataSetStandard
             end
         end
         
+        function varargout = plotPairs(obj)
+            
+            N = obj.nFeatures;
+            
+            Summary = obj.summarize();
+            
+            nClasses = obj.nClasses;
+            
+            colors = obj.PlotOptions.colorsFunction(nClasses);
+            fNames = obj.getFeatureNames();
+            
+            hs = cell(N);
+            for iFeature = 1:N
+                for jFeature = 1:N
+                    
+                    subplot(N, N, (iFeature-1)*N + jFeature)
+                    
+                    if iFeature == jFeature
+                        
+                        nKSDsamples = 500;
+                        xLoc = linspace(Summary.lowerBounds(iFeature), Summary.upperBounds(iFeature), nKSDsamples);
+                        
+                        F = zeros([nKSDsamples, nClasses]);
+                        for cY = 1:nClasses;
+                            F(:,cY) = ksdensity(obj.getObservationsByClassInd(cY,iFeature),xLoc);
+                        end
+                        
+                        hs{iFeature,jFeature} = plot(xLoc,F);
+                        for iLine = 1:length(hs{iFeature,jFeature})
+                            set(hs{iFeature,jFeature}(iLine),'color',colors(iLine,:));
+                        end
+                        xlim([Summary.lowerBounds(iFeature), Summary.upperBounds(iFeature)]);
+                    else
+                        hs{iFeature,jFeature} = obj.plot([iFeature jFeature]);
+                        axis([Summary.lowerBounds(iFeature), Summary.upperBounds(iFeature) Summary.lowerBounds(jFeature), Summary.upperBounds(jFeature)])
+                    end
+                    
+                    ylabel('');
+                    xlabel('');
+                    title('');
+                    
+                    legend('off')
+                    grid on;
+                    if jFeature == 1
+                        ylabel(fNames{iFeature})
+                    end
+                    if iFeature == N
+                        xlabel(fNames{jFeature})
+                    end
+                    
+                    if (iFeature==N && jFeature==N)
+                        legendStrings = getClassNames(obj);
+                        legendHandle = legend(hs{iFeature,jFeature},legendStrings,'Location','SouthEast');
+                    end
+                    
+%                     if iFeature~=N
+%                         set(gca,'XTick',[]);
+%                     end
+%                     if jFeature ~= 1
+%                         set(gca,'YTick',[]);
+%                     end
+%                     cP = get(gca,'position');
+%                     cOp = get(gca,'outerposition');
+%                     
+%                     newP = cOp;
+%                     if iFeature == N
+%                         newP = [cOp(1) cP(2) cOp(3) cOp(4)-(cP(3)-cOp(3))];
+%                     end
+%                     
+%                     if jFeature == 1
+%                         newP = [cP(1) cOp(2) cOp(3)-(cP(1)-cOp(1)) cOp(4)];
+%                     end
+%                     set(gca,'position',newP)
+                end
+            end
+            
+            if nargout
+                varargout = {hs,legendHandle};
+            end
+        end
          function varargout = starPlot(obj,featureIndices)
             % starPlot   Create a star plot
             %
@@ -427,7 +507,7 @@ classdef prtDataSetClass  < prtDataSetStandard
                 return
             end
             
-            M = ceil(sqrt(obj.nObservations));
+            %M = ceil(sqrt(obj.nObservations));
             
             theta = linspace(0,2*pi,length(featureIndices)+1);
             theta = theta(1:end-1);

@@ -1,4 +1,4 @@
-classdef prtFeatSelSfs < prtFeatSel %
+classdef prtFeatSelSfs < prtFeatSel
 % prtFeatSelSfs   Sequential forward feature selection object.
 %
 %    FEATSEL = prtFeatSelSfs creates a sequental forward feature selection
@@ -136,6 +136,7 @@ classdef prtFeatSelSfs < prtFeatSel %
                 end
                 Obj.performance = sfsPerformance;
                 Obj.selectedFeatures = sfsSelectedFeatures;
+                
             catch ME
                 close(h);
                 throw(ME);

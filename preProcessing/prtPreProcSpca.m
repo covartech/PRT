@@ -96,17 +96,16 @@ classdef prtPreProcSpca < prtPreProc
                 end
                 prevB = B;
                 
-%                 verbosePlot = false;
-%                 if ~mod(iter-1,verbosePlot) && verbosePlot;
-%                     Bplot = B;
-%                     for k = 1:Obj.nComponents
-%                         Bplot(:,k) = Bplot(:,k)./norm(Bplot(:,k));
-%                     end
-%                     subplot(2,1,1); plot(Bplot);
-%                     subplot(2,1,2); plot(prtDataSetClass(X*B));
-%                     title(iter);
-%                     drawnow;
-%                 end
+                 verbosePlot = true;
+                if ~mod(iter-1,verbosePlot) && verbosePlot;
+                    Bplot = B;
+                    for k = 1:Obj.nComponents
+                        Bplot(:,k) = Bplot(:,k)./norm(Bplot(:,k));
+                    end
+                    plot(Bplot);
+                    title(iter);
+                    drawnow;
+                end
                 
             end
             
