@@ -27,9 +27,9 @@ function DataSet = prtDataGenMary2
 
 % Copyright 2010, New Folder Consulting, L.L.C.
 
-rvH1 = prtRvMvn([-1 0],0.5*eye(2));
-rvH2 = prtRvMvn([0 1],0.1*eye(2));
-rvH3 = prtRvMvn([1 0],0.25*eye(2));
+rvH1 = prtRvMvn('Mean',[-1 0],'Covariance',0.5*eye(2));
+rvH2 = prtRvMvn('Mean',[0 1],'Covariance',0.1*eye(2));
+rvH3 = prtRvMvn('Mean',[1 0],'Covariance',0.25*eye(2));
 X = cat(1,draw(rvH1,100),draw(rvH2,100),draw(rvH3,100));
 Y = prtUtilY(0,100,100,100);
 

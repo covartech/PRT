@@ -56,7 +56,7 @@ title('GMM')
 
 R = prtRvUniform('upperBounds',[2 3],'lowerBounds',[0 2]);
 
-plotCdf(R,[-2 0 4 5])
+plotCdf(R,[-2 4 0 5])
 
 %%
 

@@ -21,7 +21,7 @@ end
 nSamples = N;
 
 covMat = [1 .9; .9 1];
-R(1,1) = prtRvMvn([0 0],covMat);
+R(1,1) = prtRvMvn('Mean',[0 0],'Covariance',covMat);
 
 [v,e] = eig([1 .9; .9 1]);
 [~,sortInds] = sort(diag(e),'descend');

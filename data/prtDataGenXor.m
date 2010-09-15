@@ -43,8 +43,8 @@ if nargin < 5
     mu12 = [0 0];
     sigma12 = eye(2)/3;
 end
-rv(1) = prtRvMvn(mu01,sigma01);
-rv(2) = prtRvMvn(mu02,sigma02);
+rv(1) = prtRvMvn('Mean',mu01,'Covariance',sigma01);
+rv(2) = prtRvMvn('Mean',mu02,'Covariance',sigma02);
 
 rv(3) = prtRvMvn(mu11,sigma11);
 rv(4) = prtRvMvn(mu12,sigma12);

@@ -4,7 +4,7 @@ result = true; % Haven't screwed up yet
 
 %% Test if we can draw from an MVN RV and then estimate the same mean
 trueMean = -2;
-N = prtRvMvn(trueMean,1);
+N = prtRvMvn('Mean',trueMean,'Covariance',1);
 X = N.draw(1000);
 
 NL = prtRvMvn(X);
