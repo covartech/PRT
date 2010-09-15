@@ -29,7 +29,10 @@ switch nDims
         box on;
         imageHandle = imageHandle(1); % Sorry we need to throw the others away
 end
-axis tight;
+
+if ~all(DS==DS(1))
+    axis tight;
+end
 axis xy;
 
 end

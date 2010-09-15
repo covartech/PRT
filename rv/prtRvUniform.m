@@ -42,7 +42,7 @@ classdef prtRvUniform < prtRv
         end
         
         function vals = cdf(R,X)
-            vals = prod(max(bsxfun(@rdivide,bsxfun(@minus,bsxfun(@min,X,R.upperBounds),R.lowerBounds),R.upperBounds-R.lowerBounds),0),2);
+            vals = prod(max(bsxfun(@minus,bsxfun(@min,X,R.upperBounds),R.lowerBounds),0),2)./R.area();
         end
         
         function a = area(R)

@@ -54,12 +54,18 @@ plotPdf(LGMM2)
 title('GMM')
 %%
 
-R = prtRvUniform('upperBounds',[2 3],'lowerBounds',[0 2]);
+R = prtRvUniform('lowerBounds',[0 0],'upperBounds',[1 1]);
 
 plotCdf(R,[-2 4 0 5])
 
 %%
 
-R = prtRvUniform(draw(prtRvMvn('Mean',1,'Covariance',1),100));
+R = prtRvUniform(draw(prtRvMvn('Mean',[1 2],'Covariance',2*eye(2)),100));
+
+plotPdf(R)
+%%
+
+
+R = prtRvUniformImproper(draw(prtRvMvn('Mean',[1 2],'Covariance',2*eye(2)),100));
 
 plotPdf(R)
