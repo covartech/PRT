@@ -47,6 +47,7 @@ classdef prtAction
     end
     
     properties (Hidden = true)
+        %note: this should be a user specified field from userOptions
         verboseFeatureNames = true;
     end
     

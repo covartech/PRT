@@ -3,12 +3,22 @@ classdef prtAlgorithm < prtAction
     properties (SetAccess=private)
         % Required by prtAction
         name = 'PRT Algorithm'
-        nameAbbreviation = 'ALGO'
+        nameAbbreviation = 'ALGO';
         isSupervised = true; % We say true even though we don't know
     end
     
     properties
         actionCell = {};
+    end
+    
+    
+    methods (Hidden = true)
+        function dataSet = updateDataSetFeatureNames(obj,dataSet)
+            %Algorithms do not have to do this; since they are composed of
+            %class objects, we can just rely on the dataSet to have the
+            %right feature names already.
+            %At least this is true for sing-stream Algorithm
+        end
     end
     
     methods

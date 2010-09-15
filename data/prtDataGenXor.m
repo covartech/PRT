@@ -52,4 +52,4 @@ rv(4) = prtRvMvn(mu12,sigma12);
 X = cat(1,draw(rv(1),nSamples/2),draw(rv(2),nSamples/2),draw(rv(3),nSamples/2),draw(rv(4),nSamples/2));
 Y = prtUtilY(nSamples,nSamples);
 
-DataSet = prtDataSetClass(X,Y);
+DataSet = prtDataSetClass(X,Y,'name','XOR Data');
