@@ -418,6 +418,28 @@ classdef prtDataSetBase
         
     end
     
+    methods (Hidden = true)
+        
+        function obj = copyDescriptionFieldsFrom(obj,dataSet)
+            if dataSet.hasObservationNames
+                obj = obj.setObservationNames(dataSet.getObservationNames);
+            end
+            if dataSet.hasTargetNames
+                obj = obj.setTargetNames(dataSet.getTargetNames);
+            end
+            obj.name = dataSet.name;
+            obj.UserData = dataSet.UserData;
+        end
+        
+        
+        function has = hasObservationNames(obj)
+            has = ~isempty(obj.observationNames);
+        end
+        function has = hasTargetNames(obj)
+            has = ~isempty(obj.targetNames);
+        end
+    end
+    
     methods (Abstract)
         %all sub-classes must define these behaviors, this is the contract
         %that all "data sets" must follow

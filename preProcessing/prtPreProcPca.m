@@ -59,6 +59,14 @@ classdef prtPreProcPca < prtPreProc
         end
     end
     
+    methods (Hidden = true)
+        function featureNames = updateFeatureNames(obj,featureNames) %#ok<MANU>
+            for i = 1:length(featureNames)
+                featureNames{i} = sprintf('PC Score %d',i);
+            end
+        end
+    end
+    
     methods (Access = protected)
         
         %NOTE: I think we can replace all this with one call to svds

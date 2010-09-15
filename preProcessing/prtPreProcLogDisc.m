@@ -21,9 +21,21 @@ classdef prtPreProcLogDisc < prtPreProc
         end
     end
     
+    %
+    %     methods (Hidden = true)
+    %         function featureNames = updateFeatureNames(obj,featureNames) %#ok<MANU>
+    %             for i = 1:length(featureNames)
+    %                 featureNames{i} = sprintf('LogisticDiscrimant %d',i);
+    %             end
+    %         end
+    %     end
+    
     methods (Access = protected)
         
         function Obj = trainAction(Obj,DataSet)
+            if ~DataSet.isBinary
+                error('prt:prtPreProcLogDisc:MaryDataNotSupported','prtPreProcLogDisc requires binary labeled data, but dataSet.nClasses is %d',DataSet.nClasses);
+            end
             LogDisc = prtClassLogisticDiscriminant;
             for iFeature = 1:DataSet.nFeatures
                 cLogDisc = LogDisc.train(DataSet.retainFeatures(iFeature));
@@ -31,9 +43,6 @@ classdef prtPreProcLogDisc < prtPreProc
                 Obj.logDiscWeights(iFeature) = cLogDisc.w(2);
             end
             
-            %Obj.logDiscWeights
-            %Obj.stds = nanstd(DataSet.getObservations(),0,1);
-            %Obj.means = nanmean(DataSet.getObservations(),1);
         end
         
         function DataSet = runAction(Obj,DataSet)

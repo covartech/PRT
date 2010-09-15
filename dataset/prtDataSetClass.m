@@ -183,7 +183,7 @@ classdef prtDataSetClass  < prtDataSetStandard
         end
         
         function obj = setTargets(obj,targets,varargin)
-            assert(size(targets,2) == 1,'prt:prtDataSetClass:setTargets','targets for prtDataSetClass must be size n x 1, but targets are size n x %d',size(targets,2));
+            assert(isempty(targets) || size(targets,2) == 1,'prt:prtDataSetClass:setTargets','targets for prtDataSetClass must be size n x 1, but targets are size n x %d',size(targets,2));
             obj = setTargets@prtDataSetStandard(obj,targets,varargin{:});
         end
         function obj = setClassNamesByClassInd(obj,classNames,varargin)
@@ -865,6 +865,17 @@ classdef prtDataSetClass  < prtDataSetStandard
         function PlotOptions = initializePlotOptions()
             UserOptions = prtUserOptions;
             PlotOptions = UserOptions.DataSetClassPlotOptions;
+        end
+    end
+    methods (Hidden = true)
+        function obj = copyDescriptionFieldsFrom(obj,dataSet)
+            if dataSet.hasClassNames && obj.isLabeled
+                obj = obj.setClassNames(dataSet.getClassNames);
+            end
+            obj = copyDescriptionFieldsFrom@prtDataSetStandard(obj,dataSet);
+        end
+        function has = hasClassNames(obj)
+            has = ~isempty(obj.classNames);
         end
     end
 end

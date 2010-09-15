@@ -17,6 +17,7 @@ classdef prtPreProcSharpen < prtPreProc
         function Obj = prtPreProcSharpen(varargin)
             % Allow for string, value pairs
             % There are no user settable options though.
+            Obj.isCrossValidateValid = false; %changes data size
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
             Obj.verboseStorage = true;
         end
@@ -45,17 +46,16 @@ classdef prtPreProcSharpen < prtPreProc
                     
                     distanceMat = feval(Obj.distanceFunction, Obj.DataSet.getObservations, DataSet.getObservations(indices));
                     
-                    [~,I] = sort(distanceMat,2,'ascend');
-                    nearestNeighborInds(indices) = I(Obj.k,:);
-                    
+                    [~,I] = sort(distanceMat,1,'ascend');
+                    nearestNeighborInds(indices) = I(Obj.k+1,:); %+1 to remove self-reference
                 end
             else
                 distanceMat = feval(Obj.distanceFunction, Obj.DataSet.getObservations(), DataSet.getObservations());
                 
-                [~,I] = sort(distanceMat,2,'ascend');
-                nearestNeighborInds = I(Obj.k,:);
+                [~,I] = sort(distanceMat,1,'ascend');
+                nearestNeighborInds = I(Obj.k+1,:); %+1 to remove self-reference
             end
-            
+
             DataSet = DataSet.retainObservations(nearestNeighborInds);
         end
     end

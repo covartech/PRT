@@ -25,6 +25,14 @@ classdef prtPreProcLda < prtPreProc
         end
     end
     
+    methods (Hidden = true)
+        function featureNames = updateFeatureNames(obj,featureNames) %#ok<MANU>
+            for i = 1:length(featureNames)
+                featureNames{i} = sprintf('LDA Score %d',i);
+            end
+        end
+    end
+    
     methods
         function Obj = set.nComponents(Obj,nComp)
             if ~isnumeric(nComp) || ~isscalar(nComp) || nComp < 1 || round(nComp) ~= nComp

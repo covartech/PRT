@@ -38,6 +38,9 @@ classdef prtUtilIntegerAssociativeArray
                 value = obj.cellValues{ind};
             end
         end
+        function empty = isempty(obj)
+            empty = isempty(obj.integerKeys);
+        end
     end
 end
             

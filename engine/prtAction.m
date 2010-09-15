@@ -46,6 +46,26 @@ classdef prtAction
         isSupervised % Logical, requires training data to run
     end
     
+    properties (Hidden = true)
+        verboseFeatureNames = true;
+    end
+    
+    methods (Hidden = true)
+        function dataSet = updateDataSetFeatureNames(obj,dataSet)
+            if isa(dataSet,'prtDataSetStandard') && (dataSet.hasFeatureNames || obj.verboseFeatureNames)
+                fNames = dataSet.getFeatureNames;
+                fNames = obj.updateFeatureNames(fNames);
+                dataSet = dataSet.setFeatureNames(fNames);
+            end
+        end
+    end
+    
+    methods (Hidden = true)
+        function featureNames = updateFeatureNames(obj,featureNames) %#ok<MANU>
+            %Default: do nothing
+        end
+    end
+    
     properties (SetAccess = protected)
         % Specifies if prtAction object has been trained.
         isTrained = false;
@@ -116,24 +136,24 @@ classdef prtAction
             Obj.isTrained = true;
         end
         
-        function DataSet = run(Obj, DataSet)         
+        function DataSetOut = run(Obj, DataSetIn)         
             % RUN  Run a prtAction object on a prtDataSet object.
             %
             %   OUTPUT = OBJ.train(DataSet) runs the prtAction object using
             %   the prtDataSet DataSet. OUTPUT will be a prtDataSet object.
-            if isnumeric(DataSet)
+            if isnumeric(DataSetIn)
                 try
-                   DataSet = prtDataSetStandard(DataSet); 
+                   DataSetIn = prtDataSetStandard(DataSetIn); 
                 catch
-                    error('prt:prtAction:prtDataSetBase','DataSet provided to prtAction %s''s run() was a prtDataSetBase, DataSet is a %s',class(Obj),class(DataSet));
+                    error('prt:prtAction:prtDataSetBase','DataSet provided to prtAction %s''s run() was a prtDataSetBase, DataSet is a %s',class(Obj),class(DataSetIn));
                 end
-            elseif ~isa(DataSet,'prtDataSetBase')
-                error('prt:prtAction:prtDataSetBase','DataSet provided to prtAction %s''s run() was a prtDataSetBase, DataSet is a %s',class(Obj),class(DataSet));
+            elseif ~isa(DataSetIn,'prtDataSetBase')
+                error('prt:prtAction:prtDataSetBase','DataSet provided to prtAction %s''s run() was a prtDataSetBase, DataSet is a %s',class(Obj),class(DataSetIn));
             end
                 
             
-            DataSet = runAction(Obj, DataSet);
-            DataSet = postRunProcessing(Obj, DataSet);
+            DataSetOut = runAction(Obj, DataSetIn);
+            DataSetOut = postRunProcessing(Obj, DataSetIn, DataSetOut);
         end
         
         function Obj = set.verboseStorage(Obj,val)
@@ -274,7 +294,7 @@ classdef prtAction
             %   ClassObj = preTrainProcessing(ClassObj,DataSet)
         end
         
-        function DataSet = postRunProcessing(ClassObj, DataSet)
+        function DataSetOut = postRunProcessing(ClassObj, DataSetIn, DataSetOut)
             % postRunProcessing - Processing done after run()
             %   Called by run(). Can be overloaded by prtActions to alter
             %   the results of run() to modify outputs using parameters of
@@ -282,6 +302,11 @@ classdef prtAction
             %   
             %   DataSet = postRunProcessing(ClassObj, DataSet)
             
+            if ClassObj.isCrossValidateValid
+                DataSetOut = DataSetOut.setTargets(DataSetIn.getTargets);
+                DataSetOut = DataSetOut.copyDescriptionFieldsFrom(DataSetIn);
+            end
+            DataSetOut = ClassObj.updateDataSetFeatureNames(DataSetOut);
         end
     end
 end

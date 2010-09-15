@@ -124,7 +124,7 @@ classdef prtClass < prtAction
             ClassObj = preTrainProcessing@prtAction(ClassObj,DataSet);
         end
         
-        function OutputDataSet = postRunProcessing(ClassObj, OutputDataSet)
+        function OutputDataSet = postRunProcessing(ClassObj, InputDataSet, OutputDataSet)
             % Overload postRunProcessing (from prtAction) so that we can
             % enforce twoClassParadigm
             
@@ -142,7 +142,7 @@ classdef prtClass < prtAction
                 end
             end
             
-            OutputDataSet = postRunProcessing@prtAction(ClassObj, OutputDataSet);
+            OutputDataSet = postRunProcessing@prtAction(ClassObj, InputDataSet, OutputDataSet);
         end
 
         function produceMaryOutput = determineMaryOutput(ClassObj,DataSet)

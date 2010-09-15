@@ -50,6 +50,7 @@ classdef prtDataSetStandard < prtDataSetBase
     end
     
     methods (Access = 'protected', Hidden = true)
+        
         function obj = catTargetNames(obj,newDataSet)
             for i = 1:newDataSet.nTargetDimensions;
                 currTargName = newDataSet.targetNames.get(i);
@@ -780,6 +781,26 @@ classdef prtDataSetStandard < prtDataSetBase
         
     end
     methods (Hidden = true)
+        
+        function obj = copyDescriptionFieldsFrom(obj,dataSet)
+            %obj = copyDescriptionFieldsFrom(obj,dataSet)
+            
+            %No; do not copy featureNames; featureNames must be set by
+            %Actions; the outputs of a Action are not guaranteed to have
+            %the same number of features!
+            
+            %             if dataSet.hasFeatureNames
+            %                 obj = obj.setFeatureNames(dataSet.getFeatureNames);
+            %             end
+            
+            obj.ObservationInfo = dataSet.ObservationInfo;
+            obj = copyDescriptionFieldsFrom@prtDataSetBase(obj,dataSet);
+        end
+        
+        function has = hasFeatureNames(obj)
+            has = ~isempty(obj.featureNames);
+        end
+        
         function v = export(obj,varargin) %#ok<MANU>
             error('prt:Fixable','Not yet implemented');
         end
