@@ -209,7 +209,7 @@ classdef prtClass < prtAction
             
             [OutputDataSet, linGrid, gridSize] = runClassifierOnGrid(Obj);
             
-            imageHandle = prtPlotUtilPlotGriddedEvaledClassifier(reshape(OutputDataSet.getObservations(),gridSize), linGrid, gridSize, Obj.PlotOptions.twoClassColorMapFunction());
+            imageHandle = prtPlotUtilPlotGriddedEvaledClassifier(OutputDataSet.getObservations(), linGrid, gridSize, Obj.PlotOptions.twoClassColorMapFunction());
             
             if ~isempty(Obj.DataSet)
                 hold on;
@@ -241,7 +241,7 @@ classdef prtClass < prtAction
                 cMap = prtPlotUtilLinspaceColormap([1 1 1], classColors(subImage,:),nColorMapSamples);
                 
                 cAxes = subplot(M,N,subImage);
-                imageHandle(subImage) = prtPlotUtilPlotGriddedEvaledClassifier(reshape(OutputDataSet.getObservations(:,subImage),gridSize), linGrid, gridSize, cMap);
+                imageHandle(subImage) = prtPlotUtilPlotGriddedEvaledClassifier(OutputDataSet.getObservations(:,subImage), linGrid, gridSize, cMap);
                 
                 prtPlotUtilFreezeColors(cAxes);
             end
@@ -271,4 +271,3 @@ classdef prtClass < prtAction
         end
     end
 end
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

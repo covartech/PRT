@@ -3,59 +3,164 @@
 % Abstract class for prtRv Objects
 
 classdef prtRv
+    properties (Hidden = true)
+        name        % The name displayed
+        UserData    % UserData
+    end
     properties (Abstract = true, Hidden = true, Dependent = true)
         nDimensions % The number of dimensions
-        isValid     % XXX ?
-        isPlottable % Whether or not the Random variable is plottable
-        displayName % The name displayed
-    end % properties (Abstract = true, Hidden = true, Dependent = true)
-methods
+    end
+    methods (Abstract, Hidden=true)
+        bool = isValid(R)
+    end
+    methods
         % These functions are default "error" functions incase a
         % subclass has not specified these standard methods.
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%        
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         function vals = pdf(R,X) %#ok
             missingMethodError(R,'pdf');
-        end % function pdf
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        end
 
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%        
         function vals = logPdf(R,X) %#ok
             missingMethodError(R,'logPdf');
-        end % function logPdf
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%        
+        end
+        
         function vals = cdf(R,X) %#ok
             missingMethodError(R,'cdf');
-        end % function cdf
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%        
+        end
+        
         function vals = draw(R,N) %#ok
             missingMethodError(R,'draw');
-        end % function draw
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        end
 
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         function vals = mle(R,X) %#ok
             % Maximum likelihood estimate
             missingMethodError(R,'mle');
-        end % function mle
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        end
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        % These functions are default plotting functions
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        function varargout = plotPdf(R,varargin)
+            varargout = {};
+            if R.isPlottable
+                
+                if nargin > 1 % Calculate appropriate limits from covariance
+                    plotLims = varargin{1};
+                else
+                    plotLims = plotLimits(R);
+                end
+                
+                UserOptions = prtUserOptions;
+                
+                [linGrid,gridSize] = prtPlotUtilGenerateGrid(plotLims(1:2:end), plotLims(2:2:end), UserOptions.RvPlotOptions.nSamplesPerDim);
+                
+                imageHandle = prtPlotUtilPlotGriddedEvaledFunction(R.pdf(linGrid), linGrid, gridSize, UserOptions.RvPlotOptions.colorMapFunction(UserOptions.RvPlotOptions.nColorMapSamples));
+                
+                if nargout
+                    varargout = {imageHandle};
+                end
+            else
+                if R.isValid
+                    error('prt:prtRv:plot','This RV object cannont be plotted because it has too many dimensions for plotting.')
+                else
+                    error('prt:prtRv:plot','This RV object cannot be plotted because it is not yet valid.');
+                end
+            end
+        end
+        
+        function varargout = plotCdf(R,varargin)
+            varargout = {};
+            if R.isPlottable
+                
+                if nargin > 1 % Calculate appropriate limits from covariance
+                    plotLims = varargin{1};
+                else
+                    plotLims = plotLimits(R);
+                end
+                
+                UserOptions = prtUserOptions;
+                [linGrid,gridSize] = prtPlotUtilGenerateGrid(plotLims(1:2:end), plotLims(2:2:end), UserOptions.RvPlotOptions.nSamplesPerDim);
+                
+                imageHandle = prtPlotUtilPlotGriddedEvaledFunction(R.cdf(linGrid), linGrid, gridSize, UserOptions.RvPlotOptions.colorMapFunction(UserOptions.RvPlotOptions.nColorMapSamples));
+                
+                if nargout
+                    varargout = {imageHandle};
+                end
+            else
+                if R.isValid
+                    error('prt:prtRv:plot','This RV object cannont be plotted because it has too many dimensions for plotting.')
+                else
+                    error('prt:prtRv:plot','This RV object cannot be plotted because it is not yet valid.');
+                end
+            end
+        end
+    end
+    
+    methods (Hidden = true)
+        % As a default we just use the monte carlo limits.
+        % If a sub-class implements plotLimits ezPdfPlot or ezCdfPlot
+        % should use that.
+        function limits = plotLimits(R)
+            limits = monteCarloPlotLimits(R);
+        end
         function vals = weightedMle(R,X,weights) %#ok
+            % Maximum likelihood estimate using membership weighted samples
+            % This is necessary for mixtures and other hierarchical models
             missingMethodError(R,'weightedMle');
-        end % function mle
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%        
-        function vals = kld(R1,R2) %#ok
-            missingMethodError(R1,'kld');
-        end % function kld
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        end
         
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        function initMembershipMat = initializeMixtureMembership(Rs,X,weights) %#ok
+            % Initialize a mixture assumes all Rs are the same.
+            % This is necessary for mixtures and other hierarchical models
+            missingMethodError(R,'initializeMixtureMembership');
+        end        
+        
+        function val = isPlottable(R)
+            val = ~isempty(R.nDimensions) && R.nDimensions < 4 && R.isValid;
+        end
+    end
+    
+    methods (Access = 'private', Hidden = true)
+        function missingMethodError(R,methodName)
+            error('The method %s is not defined for this prtRv object',methodName);
+        end
+    end
+    methods (Access = 'protected', Hidden = true)
+        function R = constructorInputParse(R,varargin)
+            
+            nIn = length(varargin);
+
+            % Quick Exit for the zero input constructor
+            if nIn == 0
+                return
+            end
+            
+            runMleAfter = false;
+            if mod(nIn,2)
+                % Odd number of extra inputs supplied must run mle after
+                % the assignment of the other string value pairs
+                runMleAfter = true;
+                
+                % We must make sure that varargin{1} is a valid X
+                X = varargin{1};
+                assert(isnumeric(varargin{1}), 'If an odd number of inputs are supplied the first input must be numeric matrix.')
+                
+                if length(varargin) > 1
+                    varargin = varargin(2:end);
+                else
+                    varargin = {};
+                end
+            end
+            
+            R = prtUtilAssignStringValuePairs(R,varargin{:});
+            
+            if runMleAfter
+                R = R.mle(X);
+            end
+        end
+        
+        
         function val = monteCarloCovariance(R,nSamples)
             % Calculates the sample covariance of drawn data
             if nargin < 2 || isempty(nSamples)
@@ -63,9 +168,7 @@ methods
             end
             val = cov(draw(R,nSamples));
         end
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
         function val = monteCarloMean(R,nSamples)
             % Calculates the sample mean of drawn data
             if nargin < 2 || isempty(nSamples)
@@ -73,17 +176,7 @@ methods
             end
             val = mean(draw(R,nSamples));
         end
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        % As a default we just use the monte carlo limits.
-        % If a sub-class implements plotLimits ezPdfPlot or ezCdfPlot
-        % should use that.
-        function limits = plotLimits(R)
-   
-            limits = monteCarloPlotLimits(R);
-        end
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        
         function limits = monteCarloPlotLimits(R,nStds,nSamples)
             % Calculate plotting limits
             if nargin < 2 || isempty(nStds)
@@ -104,118 +197,6 @@ methods
             limits(1:2:end) = minX;
             limits(2:2:end) = maxX;
         end
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        
-        % These functions are default plotting functions
-        % They determine plotting limits automatically using monte carlo
-        % estimates of the mean and covariance
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%        
-        function ezPdfPlot(R,varargin)
-            if R.isPlottable
-                userDefinedLimits = true;
-                if nargin > 1 % Calculate appropriate limits from covariance
-                    limits = plotLimits(R);
-                    userDefinedLimits = false;
-                end
-                
-                switch R.nDimensions
-                    case 1
-                        if userDefinedLimits
-                            ezplot(@(x)R.pdf(x),varargin{:});
-                        else
-                            ezplot(@(x)R.pdf(x),limits);
-                        end
-                        title('');
-                        xlabel('');
-                    case 2
-                        % This is a little bit of a hack so that we don't
-                        % have to pick the limits
-                        if userDefinedLimits
-                            ezsurf(@(x,y)R.pdf([x,y]),varargin{:});
-                        else
-                            ezsurf(@(x,y)R.pdf([x,y]),limits);
-                        end
-                        xData = get(get(gca,'Children'),'xdata');
-                        yData = get(get(gca,'Children'),'ydata');
-                        zData = get(get(gca,'Children'),'zdata');
-                        imagesc(xData(1,:),yData(:,1),zData)
-                        axis xy;
-%                     case 3 % Maybe later
-                end
-            else
-                if R.isValid
-                    error('prtRv object has too many dimensions for plotting.')
-                else
-                    error('prtRv object is not yet a valid random variable.');
-                end
-            end
-        end % function ezPdfPlot
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%        
-        function ezCdfPlot(R,varargin)
-            if R.isPlottable
-                userDefinedLimits = true;
-                if nargin > 1 % Calculate appropriate limits from covariance
-                    limits = plotLimits(R);
-                    userDefinedLimits = false;
-                end
-                switch R.nDimensions
-                    case 1
-                        if userDefinedLimits
-                            ezplot(@(x)R.cdf(x),varargin{:});
-                        else
-                            ezplot(@(x)R.cdf(x),limits);
-                        end
-                        ylim([0 1]);
-                        title('');
-                        xlabel('');
-                    case 2
-                        if userDefinedLimits
-                            ezsurf(@(x,y)R.cdf([x,y]),varargin{:});
-                        else
-                            ezsurf(@(x,y)R.cdf([x,y]),limits);
-                        end
-                        xData = get(get(gca,'Children'),'xdata');
-                        yData = get(get(gca,'Children'),'ydata');
-                        zData = get(get(gca,'Children'),'zdata');
-                        imagesc(xData(1,:),yData(:,1),zData)
-                        axis xy;
-                     % case 3 % Maybe later
-                end
-            else
-                if R.isValid
-                    error('This RV object has too many dimensions for plotting.')
-                else
-                    error('This RV object is not yet valid.');
-                end
-            end
-        end % function ezCdfPlot
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        function display(R,inName)
-            if nargin < 2 || isempty(inName)
-                inName = inputname(1);
-            end
-            
-            fprintf('%s = \n',inName)
-            if numel(R) > 1
-                dimString = sprintf('%dx',size(R)');
-                dimString = dimString(1:end-1);
-
-                fprintf('\t%s array of %s objects \n',dimString,R(1).displayName)
-            else
-                fprintf('\tA %s \n',R.displayName)
-            end
-        end
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        
-    end % methods
-    methods (Access = 'private', Hidden = true)
-        function missingMethodError(R,methodName)
-            error('The method %s is not defined for %s objects',methodName,R.displayName);
-        end
     end
-end % classdef
+end
 

@@ -18,10 +18,15 @@ suppliedDir = false;
 if nargin == 0
     directory = pwd;
     suppliedDir = true;
-elseif ischar(classNamesStrCell) && isdir(classNamesStrCell)
-    directory = classNamesStrCell;
-    suppliedDir = true;
+elseif ischar(classNamesStrCell)
+    if isdir(classNamesStrCell)
+        directory = classNamesStrCell;
+        suppliedDir = true;
+    else
+        classNamesStrCell = {classNamesStrCell};
+    end
 end
+
 
 if suppliedDir
     %fileNames = what(directory);
@@ -59,6 +64,10 @@ end
 
 matrix = matrix(keepClass,keepClass);
 allClasses = allClasses(keepClass);
+
+if isscalar(matrix)
+    matrix = 1;
+end
 h = biograph(matrix',allClasses);
 
 % Nodes = get(h,'Nodes');
