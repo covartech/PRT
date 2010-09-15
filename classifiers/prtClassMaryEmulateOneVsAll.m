@@ -44,7 +44,7 @@ classdef prtClassMaryEmulateOneVsAll < prtClass
     properties (SetAccess=private)
         
         name = 'M-Ary Emaulation One vs. All'  % M-Ary Emaulation One vs. All
-        nameAbbreviation = 'OVA'  % OVA
+        nameAbbreviation = 'OneVsAll'  % OVA
         isSupervised = true;  % True
         
         isNativeMary = true;  % True
@@ -68,6 +68,7 @@ classdef prtClassMaryEmulateOneVsAll < prtClass
         
         function Obj = trainAction(Obj,DataSet)
             % Repmat the Classifier objects to get one for each class
+            Obj.nameAbbreviation = sprintf('OneVsAll_{%s}',Obj.Classifiers(1).nameAbbreviation);
             Obj.Classifiers = repmat(Obj.Classifiers(:), (DataSet.nClasses - length(Obj.Classifiers)+1),1);
             Obj.Classifiers = Obj.Classifiers(1:DataSet.nClasses);
             

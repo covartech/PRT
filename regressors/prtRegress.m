@@ -5,6 +5,14 @@ classdef prtRegress < prtAction %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         PlotOptions = prtRegress.initializePlotOptions(); % Plotting Options
     end
     
+    methods (Hidden = true)
+        function featureNames = updateFeatureNames(obj,featureNames) %#ok<MANU>
+            for i = 1:length(featureNames)
+                featureNames{i} = sprintf('%s Output_{%d}',obj.nameAbbreviation,i);
+            end
+        end
+    end    
+    
     methods
         function varargout = plot(Obj)
             % PLOT  Plot the output confidence of a prtClass object

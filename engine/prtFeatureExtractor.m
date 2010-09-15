@@ -1,3 +1,10 @@
 classdef prtFeatureExtractor < prtAction
-    
+
+    methods (Hidden = true)
+        function featureNames = updateFeatureNames(obj,featureNames) %#ok<MANU>
+            for i = 1:length(featureNames)
+                featureNames{i} = sprintf('%s_{%d}',obj.nameAbbreviation);
+            end
+        end
+    end    
 end

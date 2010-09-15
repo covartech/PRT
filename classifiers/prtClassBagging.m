@@ -1,5 +1,5 @@
 classdef prtClassBagging < prtClass
-     % prtClassBagging  Bagging classifier
+    % prtClassBagging  Bagging classifier
     %
     %    CLASSIFIER = prtClassBagging returns a bagging classifier
     %
@@ -71,6 +71,7 @@ classdef prtClassBagging < prtClass
         
         function Obj = trainAction(Obj,DataSet)
 
+            Obj.nameAbbreviation = sprintf('Bagging_{%s}',Obj.prtClassifier.nameAbbreviation);
             for i = 1:Obj.nBags
                 if i == 1
                     Obj.Classifiers = train(Obj.prtClassifier,DataSet.bootstrap(DataSet.nObservations));

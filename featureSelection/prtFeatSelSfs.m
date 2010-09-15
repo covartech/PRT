@@ -146,7 +146,6 @@ classdef prtFeatSelSfs < prtFeatSel
         
         
         % Run %
-        
         function DataSet = runAction(Obj,DataSet) %%
             if ~Obj.isTrained
                 error('prt:prtFeatSelSfs','Attempt to run a prtFeatSel that is not trained');
