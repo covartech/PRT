@@ -1,24 +1,45 @@
-% PRTRVMVN  PRT Random Variable Object - Multi-Variate Normal
-%
-% Syntax:
-%   R = prtRvMvn;
-%   R = prtRvMvn(X)
-%   R = prtRvMvn(X,paramName1,paramVal1,...)
-%   R = prtRvMvn(paramName1,paramVal1,...)
-%
-% Methods:
-%   mle
-%   pdf
-%   logPdf
-%   cdf
-%   draw
-%
-% Inherited Methods
-%   plotPdf
-%   plotCdf
-
-
 classdef prtRvMvn < prtRv
+    % prtRvMvn  Multivariate normal random variable
+    %
+    %   rv = prtRvMvn; generates the default prt multivariate normal random
+    %      variable.
+    %
+    %   rv = prtRvMvn(X); generates a multivariate normal random variable
+    %   using maximum likelihood estimation (mle) based on the data in the
+    %   matrix X.  X should be size nObservations x nDimensions.
+    %
+    %   rv = prtRvMvn(X,paramName1,paramVal1,...) generates a multivariate 
+    %   normal random variable using maximum likelihood estimation (mle) 
+    %   based on the data in the matrix X.  X should be size 
+    %   nObservations x nDimensions. MLE estimation is applied after the
+    %   parameter name / value pairs have been parsed.  See below for valid
+    %   parameter value pairs.
+    %
+    %   rv = prtRvMvn(paramName1,paramVal1,...) generates a multivariate 
+    %   normal random variable using the parameter name / value pairs have 
+    %   specified.  See below for valid parameter / value pairs.
+    %
+    % Fields (valid parameter names):
+    %   covarianceStructure - A string specifying the structure of the
+    %   covariance matrix to estimate or enforce; one of 'full',
+    %   'spherical', 'diagonal'
+    %
+    %   mean - The mean of the distribution; a 1 x nDimensions vector.
+    %
+    %   covariance - The covariance of the distribution - a nDimensions x
+    %   nDimensions matrix.
+    %   
+    % Methods:
+    %   mle
+    %   pdf
+    %   logPdf
+    %   cdf
+    %   draw
+    %
+    % Inherited Methods
+    %   plotPdf
+    %   plotCdf
+    
     properties
         covarianceStructure = 'full';
         mean

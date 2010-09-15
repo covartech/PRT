@@ -1,9 +1,44 @@
-%% prtRv
-%
-% Abstract class for prtRv Objects
-
 classdef prtRv
-    properties (Hidden = true)
+    % prtRv    Base class for all prt random variables
+    %
+    % This is an abstract class from which all prt random variables
+    % inherit. It can not be instantiated. prtRv contains the following 
+    % properties:
+    %
+    %   name           - Name of random variable
+    %   UserData       - Structure for holding additional related to the
+    %                    random variable
+    %
+    %   nDimensions    - Number of dimensions of the vector space
+    %       represented by the random variable.
+    %
+    % The prtRv class has the following methods
+    %
+    %   plotPdf - Plot the pdf of the random variable
+    %   plotCdf - Plot the cdf of the random variable
+    %
+    % The prtRv class has the following methods which should be overloaded
+    % to provide functionality.  These functions are not abstract, because
+    % some sub-classes of prtRv may not be able to implement some subset of
+    % these.
+    %   pdf - Output the pdf of the random variable evaluated at the points
+    %       specified
+    %
+    %   logPdf - Output the log-pdf of the random variable evaluated at the
+    %       points specified (for many distributions, this can be calculated
+    %       more easily than simply log(pdf(R,X))
+    %
+    %   cdf - Output the cdf of the random variable evaluated at the
+    %   points specified
+    %
+    %   draw - Draw samples from the random variable
+    %
+    %   mle - Perform maximum likelihood estimation using the specified
+    %      data
+    %
+    %   See also: prtRvMvn, prtRvGmm, prtRvMultinomial
+    
+    properties
         name        % The name displayed
         UserData    % UserData
     end
@@ -22,7 +57,7 @@ classdef prtRv
         end
 
         function vals = logPdf(R,X) %#ok
-            missingMethodError(R,'logPdf');
+            vals = log(R.pdf(X));
         end
         
         function vals = cdf(R,X) %#ok
