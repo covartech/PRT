@@ -58,10 +58,10 @@ classdef prtClassKmeansPrototypes < prtClass
     properties
         nClustersPerHypothesis = 2; % Number of clusters per hypothesis
         clusterCenters = {};        % The cluster centers
+        distanceMetricFn = @prtDistanceEuclidean;
        % uY = [];                    % uY ?
     end
     properties (SetAccess = private, Hidden = true)
-        fuzzyKMeansOptions = prtUtilOptFuzzyKmeans;
         uY = [];                    % uY ?
     end
     
@@ -79,17 +79,17 @@ classdef prtClassKmeansPrototypes < prtClass
         function Obj = trainAction(Obj,DataSet)
             
             Obj.uY = unique(DataSet.getTargets);
-            Obj.fuzzyKMeansOptions.nClusters = Obj.nClustersPerHypothesis;
+            nClusters = Obj.nClustersPerHypothesis;
             %For each class, extract the Fuzzy K-Means class centers:
             Obj.clusterCenters = cell(1,length(Obj.uY));
             for i = 1:length(Obj.uY)
-                Obj.clusterCenters{i} = prtUtilFuzzyKmeans(DataSet.getObservationsByClass(Obj.uY(i)),Obj.fuzzyKMeansOptions);
+                Obj.clusterCenters{i} = prtUtilKmeans(DataSet.getObservationsByClass(Obj.uY(i)),nClusters,'distanceMetricFn',Obj.distanceMetricFn);
             end
         end
         
         function DataSet = runAction(Obj,DataSet)
             
-            fn = Obj.fuzzyKMeansOptions.distanceMeasure;
+            fn = Obj.distanceMetricFn;
             distance = nan(DataSet.nObservations,length(Obj.clusterCenters));
             for i = 1:length(Obj.clusterCenters)
                 d = fn(DataSet.getObservations,Obj.clusterCenters{i});
