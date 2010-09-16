@@ -573,12 +573,17 @@ classdef prtDataSetStandard < prtDataSetBase
             end
         end
         
-        function [obj, sampleIndices] = bootstrap(obj,nSamples)
+        function [obj, sampleIndices] = bootstrap(obj,nSamples,p)
             % bootstrap  boostrap a prtDataSetStandard object
             %
             % dataSet = dataSet.boostrap(NSAMPLES) returns a dataSet object
             % consisting of NSAMPLES randomly selected samples from the
             % original dataSet object.
+            
+            if nargin < 3
+                p = ones(obj.nObservations,1)./obj.nObservations;
+            end
+            assert(isvector(p) & all(p) <= 1 & all(p) >= 0 & prtUtilApproxEqual(sum(p),1,eps(obj.nObservations)) & length(p) == obj.nObservations,'prt:prtDataSetStandard:bootstrap','invalid input probability distribution; distribution must be a vector of size obj.nObservations x 1, and must sum to 1')
             
             if obj.nObservations == 0
                 error('prtDataSetStandard:BootstrapEmpty','Cannot bootstrap empty data set');
@@ -586,16 +591,18 @@ classdef prtDataSetStandard < prtDataSetBase
             if nargin < 2 || isempty(nSamples)
                 nSamples = obj.nObservations;
             end
-            sampleIndices = ceil(rand(1,nSamples).*obj.nObservations);
+            rv = prtRvDiscrete('symbols',[1:obj.nObservations]','probabilities',p(:));
+            sampleIndices = rv.draw(nSamples);
             
-            newData = obj.getObservations(sampleIndices);
-            if obj.isLabeled
-                newTargets = obj.getTargets(sampleIndices);
-                obj.data = newData;
-                obj.targets = newTargets;
-            else
-                obj.data = newData;
-            end
+            obj = obj.retainObservations(sampleIndices);
+            %             newData = obj.getObservations(sampleIndices);
+            %             if obj.isLabeled
+            %                 newTargets = obj.getTargets(sampleIndices);
+            %                 obj.data = newData;
+            %                 obj.targets = newTargets;
+            %             else
+            %                 obj.data = newData;
+            %             end
         end
         
         function nObservations = get.nObservations(obj)
