@@ -83,9 +83,10 @@ classdef prtRvMixture < prtRv
                 
                 membershipMat = expectedComponentMembership(R,X);
                 
-                [~, logPdfComponents] = logPdf(R,X);
+                %[~, logPdfComponents] = logPdf(R,X);
+                %cLogLikelihood = sum(prtUtilSumExp((logPdfComponents + log(membershipMat))')');
                 
-                cLogLikelihood = sum(prtUtilSumExp((logPdfComponents + log(membershipMat))')');
+                cLogLikelihood = sum(logPdf(R,X));
                 
                 R.learningResults.iterationLogLikelihood(end+1) = cLogLikelihood;
                 
@@ -138,9 +139,9 @@ classdef prtRvMixture < prtRv
         function [vals, components] = draw(R,N)
             assert(R.isValid,'prtRvMixture must be valid before it can be drawn from.')
             
-            %vals = zeros(N,R.nDimensions);
             components = drawIntegers(R.mixingProportions,N);
             
+            vals = zeros(N,R.nDimensions);
             for iComp = 1:R.nComponents
                 cSamples = components==iComp;
                 cNSamples = sum(cSamples);
@@ -209,11 +210,10 @@ classdef prtRvMixture < prtRv
         end
         
         function membershipMat = expectedComponentMembership(R,X)
-            membershipMat = nan(size(X,1),R.nComponents);
-            for iComp = 1:R.nComponents
-                membershipMat(:,iComp) = pdf(R.components(iComp),X);
-            end
-            membershipMat = bsxfun(@rdivide,membershipMat,sum(membershipMat,2));
+
+            [logy, membershipMat] = logPdf(R,X); %#ok
+            
+            membershipMat = exp(bsxfun(@minus,membershipMat,prtUtilSumExp(membershipMat')'));
         end
         
         function R = maximizeParameters(R,X,membershipMat)
@@ -223,6 +223,5 @@ classdef prtRvMixture < prtRv
             R.mixingProportions = R.mixingProportions.mle(membershipMat);
             
         end
-    end % methods (Access = 'private')
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-end % classdef
+    end 
+end

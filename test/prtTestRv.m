@@ -28,7 +28,11 @@ LGMM = prtRvMixture(X,'components',repmat(prtRvMvn,2,1));
 
 figure
 plotPdf(LGMM);
-title('Learned')
+title('Learned');
+hold on;
+plot(prtDataSetClass(X,Y));
+hold off;
+
 %% Mixture with MVN 1D
 
 N(1) = prtRvMvn('Mean',-19,'Covariance',2);
@@ -69,3 +73,29 @@ plotPdf(R)
 R = prtRvUniformImproper(draw(prtRvMvn('Mean',[1 2],'Covariance',2*eye(2)),100));
 
 plotPdf(R)
+
+%% 
+
+R = prtRvDiscrete('symbols',(10:12)','probabilities',[0.3 0.3 0.4]);
+
+R2 = R.mle(R.draw(100000));
+plotCdf(R2);
+
+%%
+
+R = prtRvDiscrete('symbols',(10:12)','probabilities',[0.3 0.3 0.4]);
+
+R2 = R.mle(R.draw(100000));
+plotCdf(R2);
+
+R.pdf(R.draw(100000))
+%%
+
+R = prtRvDiscrete('symbols',randn(3,10),'probabilities',[0.3 0.3 0.4]);
+
+R2 = R.mle(R.draw(100000));
+plotCdf(R2);
+
+R.pdf(R.draw(100000))
+%%
+

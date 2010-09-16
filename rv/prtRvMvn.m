@@ -75,6 +75,8 @@ classdef prtRvMvn < prtRv
         function vals = pdf(R,X)
             assert(R.isValid,'PDF cannot be evaluated because the RV object is not yet valid.')
             assert(size(X,2) == R.nDimensions,'Incorrect dimensionality for RV object.')
+            assert(isnumeric(X) && ndims(X)==2,'X must be a 2D numeric array.');
+            
             vals = exp(prtRvUtilMvnLogPdf(X,R.mean,R.covariance));
         end
         

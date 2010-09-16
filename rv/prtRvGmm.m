@@ -1,16 +1,18 @@
 classdef prtRvGmm < prtRv
-    properties
-        nComponents = 1;
-        covarianceStructure = 'full';
+    properties (Dependent = true)
+        nComponents
+        covarianceStructure 
+        components
+        mixingProportions        
+    end
+    
+    properties (SetAccess = 'private', GetAccess = 'private', Hidden=true)
+        nComponentsDepHelp = 1;
+        covarianceStructureDepHelp = 'full'; 
     end
     
     properties (SetAccess='private', Hidden=true)
         mixtureRv = prtRvMixture('components',prtRvMvn('covarianceStructure','full'),'mixingProportions',prtRvMultinomial('probabilities',1));
-    end
-    
-    properties
-        components
-        mixingProportions
     end
     
     properties (Hidden = true, Dependent = true)
@@ -34,6 +36,9 @@ classdef prtRvGmm < prtRv
         function val = get.mixingProportions(R)
             val = R.mixtureRv.mixingProportions;
         end
+        function val = get.nComponents(R)
+            val = R.nComponentsDepHelp;
+        end
     end
     
 	methods 
@@ -45,13 +50,14 @@ classdef prtRvGmm < prtRv
             end
             
             R.mixtureRv = prtRvMixture('components',repmat(prtRvMvn('covarianceStructure',R.covarianceStructure),N,1),'mixingProportions',prtRvMultinomial('probabilities',1/N*ones(1,N)));
-            R.nComponents = N;  
+            
+            R.nComponentsDepHelp = N;
         end
         function R = set.covarianceStructure(R,val)
             for iComp = 1:R.nComponents
                 R.mixtureRv.components(iComp).covarianceStructure = val;
             end
-            R.covarianceStructure = val;
+            R.covarianceStructureDepHelp = val;
         end
         function R = set.components(R,vals)
             R.mixtureRv.components = vals;
@@ -93,4 +99,4 @@ classdef prtRvGmm < prtRv
             val = plotLimits(R.mixtureRv);
         end
     end
-end % classdef
+end

@@ -31,6 +31,7 @@ classdef prtRvMultinomial < prtRv
         function vals = pdf(R,X)
             assert(R.isValid,'PDF cannot be evaluated because this RV object is not yet valid.')
             assert(size(X,2) == R.nCategories,'Incorrect dimensionality for RV object.')
+            assert(isnumeric(X) && ndims(X)==2,'X must be a 2D numeric array.');
             
             vals = sum(bsxfun(@times,X,R.probabilities),2);
         end
@@ -42,7 +43,6 @@ classdef prtRvMultinomial < prtRv
         end
         
         function vals = draw(R,N)
-            
             assert(numel(N)==1 && N==floor(N) && N > 0,'N must be a positive integer scalar.')
             
             vals = zeros(N,R.nCategories);
@@ -112,8 +112,7 @@ classdef prtRvMultinomial < prtRv
             else
                 error('multinomial:plotLimits','Plotting limits can no be determined for this RV because it is not yet valid.')
             end
-        end         
-        
+        end
         
         function val = isPlottable(R) %#ok
             val = true; % Always plottable
