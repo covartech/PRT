@@ -40,7 +40,6 @@ for iter = 1:maxIterations
         thetaMat = DS.*D;
     end
    
-    
     % Check for termination
     if iter > 1
         if norm(oldThetaMat - thetaMat(:)) < minProbChange
