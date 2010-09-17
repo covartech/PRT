@@ -112,14 +112,24 @@ classdef prtAction
     methods
         function Obj = plus(in1,in2)
             if isa(in2,'prtAlgorithm')
-                Obj = in2 + in1;
+                Obj = in2 - in1; %use prtAlgorithm (use MINUS to flip left/right)
             elseif isa(in2,'prtAction')
                 Obj = prtAlgorithm({in1,in2});
             else
                 error('prt:prtAction:plus','prtAction.plus is only defined for second inputs of type prtAlgorithm or prtAction, but the second input is a %s',class(in2));
             end
-                
         end
+        
+        function Obj = mrdivide(in1,in2)
+            if isa(in2,'prtAlgorithm')
+                Obj = in2 \ in1; %use prtAlgorithm(use MRDIVIDE to flip left/right)
+            elseif isa(in2,'prtAction')
+                Obj = prtAlgorithm({{in1,in2}});
+            else
+                error('prt:prtAction:mrdivide','prtAction.mrdivide is only defined for second inputs of type prtAlgorithm or prtAction, but the second input is a %s',class(in2));
+            end
+        end
+        
         function Obj = train(Obj, DataSet)
             % TRAIN  Train a prtAction object using training a prtDataSet object.
             %
