@@ -14,7 +14,7 @@ classdef prtAlgorithm < prtAction
     
     
     methods (Hidden = true)
-        function dataSet = updateDataSetFeatureNames(obj,dataSet)
+        function dataSet = updateDataSetFeatureNames(obj,dataSet) %#ok<MANU>
             %Algorithms do not have to do this; since they are composed of
             %class objects, we can just rely on the dataSet to have the
             %right feature names already.
@@ -87,7 +87,7 @@ classdef prtAlgorithm < prtAction
                 Obj1.actionCell = cat(1,Obj1.actionCell(:),Obj2.actionCell(:));
                 Obj1.connectivityMatrix = newConn;
             else
-                error('prt:prtAlgorithm:plus','prtAlgorithm.plus is only defined for second inputs of type prtAlgorithm or prtAction, but the second input is a %s',class(in2));
+                error('prt:prtAlgorithm:plus','prtAlgorithm.plus is only defined for second inputs of type prtAlgorithm or prtAction, but the second input is a %s',class(Obj2));
             end
         end
         
@@ -118,15 +118,7 @@ classdef prtAlgorithm < prtAction
                 tempCon2 = Obj2.connectivityMatrix;
                 tempCon2 = tempCon2(~(in2|out2),~(in2|out2));
                 
-                tempOutput1 = cat(2,all(tempCon1 == 0,1),false(1,size(tempCon2,2)));
-                tempInput2 = all(tempCon2 == 0,2);
-                tempInput2 = cat(2,false(1,size(tempCon1,2)),tempInput2');
-                %
-                %                 tempInput2 = cat(2,false,tempInput2,false);
-                %                 tempOutput1 = cat(2,false,tempOutput1,false);
-                %
                 newConn = prtUtilMatrixCornerCat(tempCon1,tempCon2,@false);
-                % newConn(tempInput2,tempOutput1) = true;
                 
                 newOutput = cat(2,false,all(newConn == 0,1),false);
                 newInput = cat(2,false,all(newConn == 0,2)',false);
@@ -142,14 +134,16 @@ classdef prtAlgorithm < prtAction
                 Obj1.connectivityMatrix = newConn;
                 
             else
-                error('prt:prtAlgorithm:plus','prtAlgorithm.plus is only defined for second inputs of type prtAlgorithm or prtAction, but the second input is a %s',class(in2));
+                error('prt:prtAlgorithm:plus','prtAlgorithm.plus is only defined for second inputs of type prtAlgorithm or prtAction, but the second input is a %s',class(Obj2));
             end
         end
         
         %this should be hidden
         function Obj1 = mldivide(Obj1,Obj2)
             if ~isa(Obj2,'prtAlgorithm')
-                Obj2 = prtAlgorithm(Obj2);
+                if isa(Obj2,'prtAction') || all(cellfun(@(x)isa(x,'prtAction'),{prtPreProcPca,1}))
+                    Obj2 = prtAlgorithm(Obj2);
+                end
             end
             if isa(Obj2,'prtAlgorithm')
                 Obj1 = Obj2 / Obj1;
@@ -158,24 +152,29 @@ classdef prtAlgorithm < prtAction
             end
         end
         
-        function Obj = prtAlgorithm(varargin)
+        function Obj = prtAlgorithm(actionCell,varargin)
             if nargin == 0
                 return
             end
-            if isa(varargin{1},'prtAction');
-                varargin{1} = {varargin{1}};
+            if ~isa(actionCell,'cell') && isa(actionCell,'prtAction')
+                actionCell = {actionCell};
             end
-            Obj.actionCell = varargin{1};
+            for i = 1:length(actionCell)
+               if ~isa(actionCell{i},'prtAction')
+                    error('prt:prtAlgorithm:invlaidInputs','prtAlgorithm requires input to be a cell of prtActions, but cell element %d was a %s',i,class(actionCell{i}));
+               end
+            end
+            
+            Obj.actionCell = actionCell;
             Obj.connectivityMatrix = false(length(Obj.actionCell)+2);
             for i = 2:length(Obj.actionCell)+1
                 Obj.connectivityMatrix(i,i-1) = true;
             end
-            terminalNodes = find(all(Obj.connectivityMatrix(:,1:end-1) == false));
+            terminalNodes = all(Obj.connectivityMatrix(:,1:end-1) == false);
             Obj.connectivityMatrix(end,terminalNodes) = true;
             
             if nargin > 1
-                extraInputs = varargin(2:end);
-                Obj = prtUtilAssignStringValuePairs(Obj,extraInputs{:});
+                Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
             end
         end
     end

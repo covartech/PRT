@@ -113,7 +113,7 @@ classdef prtAction
         function Obj = plus(in1,in2)
             if isa(in2,'prtAlgorithm')
                 Obj = in2 - in1; %use prtAlgorithm (use MINUS to flip left/right)
-            elseif isa(in2,'prtAction')
+            elseif isa(in2,'prtAction') && (isa(in2,'prtAction') || all(cellfun(@(x)isa(x,'prtAction'),in2)))
                 Obj = prtAlgorithm(in1) + prtAlgorithm(in2);
             else
                 error('prt:prtAction:plus','prtAction.plus is only defined for second inputs of type prtAlgorithm or prtAction, but the second input is a %s',class(in2));
