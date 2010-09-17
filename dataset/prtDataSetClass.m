@@ -27,7 +27,7 @@ classdef prtDataSetClass  < prtDataSetStandard
     %   explore                    - Explore the prtDataSetClass object
     %   plotAsTimeSeries           - Plot the prtDataSetClass object as a time
     %                                series
-    %   starPlot                   - Create a star plot to visualize higher
+    %   plotStar                   - Create a star plot to visualize higher
     %                                dimensional data
     %   plot                       - Plot the data set
     %   plotbw                     - Plot the data set in a manner that
@@ -500,10 +500,10 @@ classdef prtDataSetClass  < prtDataSetStandard
                 varargout = {hs,legendHandle};
             end
         end
-         function varargout = starPlot(obj,featureIndices)
-            % starPlot   Create a star plot
+         function varargout = plotStar(obj,featureIndices)
+            % plotStar   Create a star plot
             %
-            %   dataSet.starPlot() creates a star plot of the data
+            %   dataSet.plotStar() creates a star plot of the data
             %   contained in the prtDataSetClass dataSet. Star plots can be
             %   useful in visulaizing higher dimensional data sets.
             
@@ -548,7 +548,7 @@ classdef prtDataSetClass  < prtDataSetStandard
                 
                 ppoints = cat(2,points,points(:,1));
                 
-                h = plot([repmat(centerI,nFeats,1),points(1,:)']',[repmat(centerJ,nFeats,1),points(2,:)']',ppoints(1,:)',ppoints(2,:)','lineWidth',obj.PlotOptions.starPlotLineWidth);
+                h = plot([repmat(centerI,nFeats,1),points(1,:)']',[repmat(centerJ,nFeats,1),points(2,:)']',ppoints(1,:)',ppoints(2,:)','lineWidth',obj.PlotOptions.starLineWidth);
                 classInd = obj.getTargets(i) == uClasses;
                 set(h,'color',classColors(classInd,:));
             end
@@ -596,13 +596,13 @@ classdef prtDataSetClass  < prtDataSetStandard
             end
         end
         
-        function varargout = starPlotIndividual(obj,featureIndices)
-            % starPlot   Create a star plot
+        function varargout = plotStarIndividual(obj,featureIndices)
+            % plotStarIndividual   Create a star plot
             %
-            %   dataSet.starPlotIndividual() creates a star plot of the data
+            %   dataSet.plotStarIndividual() creates a star plot of the data
             %   contained in the prtDataSetClass dataSet. Star plots can be
             %   useful in visulaizing higher dimensional data sets.
-            %   starPlotIndividual plots each observation by itself.
+            %   plotStarIndividual plots each observation by itself.
             
             if ~obj.isLabeled
                 obj = obj.setTargets(zeros(obj.nObservations,1));
@@ -644,7 +644,7 @@ classdef prtDataSetClass  < prtDataSetStandard
                 
                 ppoints = cat(2,points,points(:,1));
                 
-                h = plot([repmat(centerI,nFeats,1),points(1,:)']',[repmat(centerJ,nFeats,1),points(2,:)']',ppoints(1,:)',ppoints(2,:)','lineWidth',obj.PlotOptions.starPlotLineWidth);
+                h = plot([repmat(centerI,nFeats,1),points(1,:)']',[repmat(centerJ,nFeats,1),points(2,:)']',ppoints(1,:)',ppoints(2,:)','lineWidth',obj.PlotOptions.starLineWidth);
                 classInd = obj.getTargets(i) == uClasses;
                 set(h,'color',classColors(classInd,:));
                 hold on;

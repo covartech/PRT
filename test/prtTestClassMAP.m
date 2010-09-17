@@ -25,7 +25,7 @@ baselinePercentCorr = .9475;
 TestDataSet = prtDataGenUnimodal;
 TrainingDataSet = prtDataGenUnimodal;
 
-classifier = prtClassMAP;
+classifier = prtClassMap;
 classifier = classifier.train(TrainingDataSet);
 classified = run(classifier, TestDataSet);
 

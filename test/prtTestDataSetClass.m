@@ -81,10 +81,19 @@ catch
 end
 
 try
-    dataSet.starPlot
+    dataSet.plotStar()
     close
 catch
-    disp('dataSetClass star plot as time series fail')
+    disp('dataSetClass star plot fail')
+    close;
+    result = false;
+end
+
+try
+    dataSet.plotStarIndividual()
+    close
+catch
+    disp('dataSetClass star plot individual fail')
     close;
     result = false;
 end

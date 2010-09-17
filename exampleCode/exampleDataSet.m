@@ -13,7 +13,7 @@ plot(DataSet3D);
 explore(DataSet);
 
 %%
-DataSet.starPlot;
+DataSet.plotStar;
 
 %%
 x = DataSet.getObservations;

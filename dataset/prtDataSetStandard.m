@@ -28,25 +28,21 @@ classdef prtDataSetStandard < prtDataSetBase
     %   See also: prtDataSetBase, prtDataSetClass, prtDataSetRegress,
     
     
-    
-    
     properties (Dependent)
         nObservations         % The number of observations
         nFeatures             % The number of features
         nTargetDimensions     % The number of dimensions of the target data
+        ObservationInfo       % Additional data per observation
     end
     
-    properties (GetAccess = 'protected',SetAccess = 'protected')
-        featureNames         % The feature names
-    end
-    
-    properties 
-        ObservationInfo = [];  % Additional data per observation
+    properties (GetAccess = 'private',SetAccess = 'private', Hidden=true)
+        ObservationInfoDepHelper
     end
     
     properties (SetAccess='protected',GetAccess ='protected')
-        data = [];          % The observations
-        targets = [];       % The targets
+        data                % The observations
+        targets             % The targets
+        featureNames        % The feature names
     end
     
     methods (Access = 'protected', Hidden = true)
@@ -110,11 +106,8 @@ classdef prtDataSetStandard < prtDataSetBase
     end
     methods
         
-        %% Constructor %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        % Constructor
         function obj = prtDataSetStandard(varargin)
-            
-            %obj.featureNames = java.util.Hashtable;
             obj.featureNames = prtUtilIntegerAssociativeArray;
             
             if nargin == 0
@@ -591,8 +584,9 @@ classdef prtDataSetStandard < prtDataSetBase
             if nargin < 2 || isempty(nSamples)
                 nSamples = obj.nObservations;
             end
-            rv = prtRvDiscrete('symbols',[1:obj.nObservations]','probabilities',p(:));
-            sampleIndices = rv.draw(nSamples);
+            %rv = prtRvDiscrete('symbols',(1:obj.nObservations)','probabilities',p(:));
+            rv = prtRvMultinomial('probabilities',p(:));
+            sampleIndices = rv.drawIntegers(nSamples);
             
             obj = obj.retainObservations(sampleIndices);
             %             newData = obj.getObservations(sampleIndices);
@@ -641,8 +635,12 @@ classdef prtDataSetStandard < prtDataSetBase
             assert(isa(Struct,'struct'),errorMsg);
             assert(numel(Struct)==obj.nObservations,errorMsg);
             
-            obj.ObservationInfo = Struct(:);
+            obj.ObservationInfoDepHelper = Struct(:);
         end
+        function val = get.ObservationInfo(obj)
+            val = obj.ObservationInfoDepHelper;
+        end
+        
         
         function obj = select(obj, selectFunction)
             % Select Observations to retain by specifying a function that
@@ -808,23 +806,15 @@ classdef prtDataSetStandard < prtDataSetBase
             has = ~isempty(obj.featureNames);
         end
         
-        function v = export(obj,varargin) %#ok<MANU>
-            error('prt:Fixable','Not yet implemented');
+        function v = export(obj,varargin) %#ok<STOUT,MANU>
+            error('prt:Fixable','prtDataSetStandard does not implement an export() function; did you mean to use a prtDataSetClass or prtDataSetRegress?');
         end
         
-        function h = plot(obj,varargin)
+        function h = plot(obj,varargin) %#ok<STOUT,MANU>
             error('prt:prtDataSetStandard:plot','prtDataSetStandard does not implement a plot() function; did you mean to use a prtDataSetClass or prtDataSetRegress?');
         end
-        function s = summarize(obj,varargin)
+        function s = summarize(obj,varargin) %#ok<STOUT,MANU>
             error('prt:prtDataSetStandard:summarize','prtDataSetStandard does not implement a summarize() function; did you mean to use a prtDataSetClass or prtDataSetRegress?');
-            %             Summary.upperBounds = max(Obj.getObservations());
-            %             Summary.lowerBounds = min(Obj.getObservations());
-            %             Summary.nFeatures = Obj.nFeatures;
-            %             Summary.nTargetDimensions = Obj.nTargetDimensions;
-            %             Summary.nObservations = Obj.nObservations;
-            %
-            %             Summary.nClasses = Obj.nClasses;
-            %             Summary.isMary = Obj.isMary;
         end
     end
     

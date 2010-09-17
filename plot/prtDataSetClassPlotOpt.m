@@ -12,7 +12,7 @@ classdef prtDataSetClassPlotOpt
         symbolLineWidth = 0.1;
         symbolSize = 8;
         
-        starPlotLineWidth = 0.5;
+        starLineWidth = 0.5;
     end
     
     methods
