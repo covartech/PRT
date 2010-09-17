@@ -1,9 +1,3 @@
-% Random Variable Object - GAMMA
-%
-% Syntax:
-%   R = rv.gamma
-%   R = rv.gamma(shape,inverseScale)
-
 classdef prtRvGamma < prtRv
     properties
         shape
@@ -12,61 +6,36 @@ classdef prtRvGamma < prtRv
     
     properties (Hidden = true, Dependent = true)
         nDimensions
-        isPlottable
-        isValid
-        plotLimits
-        displayName
+    end
         
+        
+    properties
         mean
         variance
     end 
 
     methods
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        % The Constructor %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         function R = prtRvGamma(varargin)
-            switch nargin
-                case 0
-                    % Supply the default object
-                case 2
-                    % R = prt.rv.gamma(shape,inverseScale)
-                    R.shape = varargin{1};
-                    R.inverseScale = varargin{2};
-                otherwise
-                    error('Invalide Number of input arguments')
-            end % switch nargin
-        end % function prt.rv.gamma
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            R.name = 'Gamma Random Variable';
+            
+            R = constructorInputParse(R,varargin{:});   
+        end
 
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        % Set methods %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         function R = set.shape(R,shapeNum)
             % Limit the options for the covariance structure
-            if shapeNum <= 0
-                error('shape property must be positive.');
-            end
-            R.shape = shapeNum;
-        end % function set.covarianceStructure
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        function R = set.inverseScale(R,invScaleNum)
-            if invScaleNum <= 0
-                error('inverseScale property must be positive.');
-            end
-            R.inverseScale = invScaleNum;
+            assert(shapeNum > 0,'shape must be positive.');
             
-        end % function set.mean
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            R.shape = shapeNum;
+        end
 
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        % Actually useful methods %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        function R = set.inverseScale(R,invScaleNum)
+            assert(invScal > 0,'inverseScale property must be positive.');
+            
+            R.inverseScale = invScaleNum;
+        end
+
         function R = mle(R,X)
+            assert(size(X,2) == R.nDimensions,'Incorrect dimensionality for this RV.')
             if size(X,2) > 1
                 error('Dimensionality must be equal to 1.')
             end
@@ -92,17 +61,14 @@ classdef prtRvGamma < prtRv
             
             R.shape = a;
             R.inverseScale = a/mu;
-        end % function mle
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        end
 
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         function vals = pdf(R,X)
-            assert(R.isValid,'PDF cannot be evaluated because the prt.rv.gamma object is not yet valid.')
-            assert(size(X,2) == R.nDimensions,'Incorrect dimensionality for prt.rv.gamma object.')
+            assert(R.isValid,'PDF cannot be evaluated because this RV is not yet valid.')
+            assert(size(X,2) == R.nDimensions,'Incorrect dimensionality for this RV.')
             
             vals = exp(logPdf(R,X));
-        end % function pdf
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        end 
 
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         function vals = logPdf(R,X)

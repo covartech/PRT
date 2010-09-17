@@ -40,11 +40,17 @@ classdef prtRvMvn < prtRv
     %   plotPdf
     %   plotCdf
     
-    properties
-        covarianceStructure = 'full';
+    properties (Dependent)
+        covarianceStructure
         mean
         covariance
     end
+    properties (SetAccess = 'private', GetAccess = 'private', Hidden = true)
+        meanDepHelper
+        covarianceDepHelper
+        covarianceStructureDepHelper = 'full';
+    end
+    
     properties (Hidden = true, Dependent = true)
         nDimensions
     end
@@ -68,7 +74,7 @@ classdef prtRvMvn < prtRv
             if ~isempty(R.nDimensions)
                 warning('prtRvMvn:overwrite','A mean and/or covariance has already been specified for this rv.mvn object. These values have been over written and the dimensionality may have changed.');
             end
-            R.mean = mean(X); %#ok
+            R.mean = mean(X);
             R.covariance = cov(X);
         end
         
@@ -133,7 +139,7 @@ classdef prtRvMvn < prtRv
             
             learningInitialMembershipFactor = 0.9;
             
-            kmMembership = kmeans(X,length(Rs),'emptyaction','singleton');
+            [classMeans,kmMembership] = prtUtilKmeans(X,length(Rs),'handleEmptyClusters','random'); %#ok<ASGLU>
             
             initMembershipMat = zeros(size(X,1),length(Rs));
             for iComp = 1:length(Rs)
@@ -158,18 +164,33 @@ classdef prtRvMvn < prtRv
                 val = [];
             end
         end
+        
+        function val = get.mean(R)
+            val = R.meanDepHelper;
+        end
+        function val = get.covariance(R)
+            val = R.covarianceDepHelper;
+        end
+        function val = get.covarianceStructure(R)
+            val = R.covarianceStructureDepHelper;
+        end
     end
     
     % Set Methods
     methods
         function R = set.covarianceStructure(R,covarianceStructure)
+            % Find and fix known abbreviations
+            if strcmpi(covarianceStructure,'diag')
+                covarianceStructure = 'diagonal';
+            end
+            
             % Limit the options for the covariance structure
             if ~(strcmpi(covarianceStructure,'full') || ...
                     strcmpi(covarianceStructure,'diagonal') || ...
                     strcmpi(covarianceStructure,'spherical'))
                 error('%s is not a valid covariance structure. Possible types are, full, diagonal, and spherical',covarianceStructure);
             end
-            R.covarianceStructure = covarianceStructure;
+            R.covarianceStructureDepHelper = covarianceStructure;
             
             % Redo the covariance to reflect the updated covarianceStructure
             if ~isempty(R.covariance)
@@ -181,7 +202,7 @@ classdef prtRvMvn < prtRv
             if ~isempty(R.covariance) && size(meanVal,2) ~= size(R.covariance,2)
                 error('prtRvMvn:dimensions','Dimensions mismatch between supplied mean and prtRvMvn dimensionality');
             end
-            R.mean = meanVal;
+            R.meanDepHelper = meanVal;
         end
         
         function R = set.covariance(R,covariance)
@@ -193,7 +214,7 @@ classdef prtRvMvn < prtRv
                 error('prtRvMvn:dimensions','Dimensions mismatch between covariance and prtRvMvn dimensionality')
             end
             
-            [cholCovR, posDefError] = cholcov(covariance,0);
+            [cholCovR, posDefError] = cholcov(covariance,0); %#ok<ASGLU>
             if posDefError ~= 0
                 error('Covariance matrix must be positive definite.')
             end
@@ -204,11 +225,11 @@ classdef prtRvMvn < prtRv
             % Enforce the covariance structure
             switch R.covarianceStructure
                 case 'full'
-                    R.covariance = covariance;
+                    R.covarianceDepHelper = covariance;
                 case 'diagonal'
-                    R.covariance = eye(size(covariance)).*covariance;
+                    R.covarianceDepHelper = eye(size(covariance)).*covariance;
                 case 'spherical'
-                    R.covariance = eye(size(covariance))*mean(diag(covariance)); %#ok
+                    R.covarianceDepHelper = eye(size(covariance))*mean(diag(covariance));
             end
             
             R.covarianceCholDecomp = cholcov(R.covariance,0);

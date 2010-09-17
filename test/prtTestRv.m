@@ -2,7 +2,7 @@
 R = prtRvMvn;
 R = prtRvMvn(randn(10,2));
 R = prtRvMvn('covarianceStructure','diagonal');
-R = prtRvMvn(bsxfun(@plus,randn(100,2),[10 5]),'covarianceStructure','spherical');
+R = prtRvMvn(bsxfun(@plus,mvnrnd([0 1],[1 0.2; 0.2 2],100),[10 5]),'covarianceStructure','spherical');
 
 plotPdf(R)
 %% Multinomial (Discrete)
@@ -40,7 +40,7 @@ N(2) = prtRvMvn('Mean',1,'Covariance',1);
 
 GMM = prtRvMixture('components',N,'mixingProportions',prtRvMultinomial('probabilities',[0.7 0.3]));
 
-plotPdf(GMM)
+plotCdf(GMM)
 title('Truth')
 
 [X,Y] = GMM.draw(1000);
@@ -69,33 +69,66 @@ R = prtRvUniform(draw(prtRvMvn('Mean',[1 2],'Covariance',2*eye(2)),100));
 plotPdf(R)
 %%
 
-
 R = prtRvUniformImproper(draw(prtRvMvn('Mean',[1 2],'Covariance',2*eye(2)),100));
-
 plotPdf(R)
 
 %% 
 
 R = prtRvDiscrete('symbols',(10:12)','probabilities',[0.3 0.3 0.4]);
 
-R2 = R.mle(R.draw(100000));
+R2 = R.mle(R.draw(1000));
 plotCdf(R2);
 
 %%
 
 R = prtRvDiscrete('symbols',(10:12)','probabilities',[0.3 0.3 0.4]);
 
-R2 = R.mle(R.draw(100000));
+R2 = R.mle(R.draw(1000));
 plotCdf(R2);
 
-R.pdf(R.draw(100000))
+R.pdf(R.draw(1000))
 %%
 
 R = prtRvDiscrete('symbols',randn(3,10),'probabilities',[0.3 0.3 0.4]);
 
-R2 = R.mle(R.draw(100000));
+R2 = R.mle(R.draw(1000));
 plotCdf(R2);
 
-R.pdf(R.draw(100000))
+R.pdf(R.draw(1000))
 %%
 
+N(1) = prtRvMvn('Mean',1*[-1 -1],'Covariance',[2 -0.9; -0.9 1]);
+N(2) = prtRvMvn('Mean',1*[1 1],'Covariance',[1 0.2; 0.2 2]);
+
+GMM = prtRvMixture('components',N,'mixingProportions',prtRvMultinomial('probabilities',[0.4 0.6]));
+
+plotPdf(GMM)
+title('Truth')
+
+[X,Y] = GMM.draw(1000);
+
+
+LGMM2 = prtRvGmm(X,'nComponents',2,'covariancePool',true,'covarianceStructure','diag');
+
+plotPdf(LGMM2)
+title('GMM')
+hold on;
+plot(prtDataSetClass(X,Y));
+hold off;
+%%
+
+
+N(1) = prtRvMvn('Mean',1*[-1 -1],'Covariance',[2 -0.9; -0.9 1]);
+N(2) = prtRvMvn('Mean',1*[1 1],'Covariance',[1 0.2; 0.2 2]);
+
+GMM = prtRvMixture('components',N,'mixingProportions',prtRvMultinomial('probabilities',[0.4 0.6]));
+
+plotPdf(GMM)
+title('Truth')
+
+[X,Y] = GMM.draw(1000);
+%%
+
+R = prtRvVq(X,'nCategories',100);
+
+R.pdf(R.draw(10))

@@ -1,10 +1,14 @@
 classdef prtRvMultinomial < prtRv
-    properties
+    properties (Dependent)
         probabilities
     end
     
     properties (Dependent = true)
         nCategories
+    end
+    
+    properties (Hidden = true, SetAccess='private', GetAccess='private')
+        probabilitiesDepHelper
     end
     
     properties (Hidden = true, Dependent = true)
@@ -87,12 +91,16 @@ classdef prtRvMultinomial < prtRv
     methods
         function R = set.probabilities(R,probs)
             assert(abs(sum(probs)-1) < R.approximatelyEqualThreshold,'Probability vector must must sum to 1.')
-            R.probabilities = probs;
+            
+            R.probabilitiesDepHelper = probs(:)';
         end
     end
     
     % Get methods
     methods
+        function val = get.probabilities(R)
+            val = R.probabilitiesDepHelper;
+        end
         function val = get.nCategories(R)
             if ~isempty(R.probabilities)
                 val = length(R.probabilities);

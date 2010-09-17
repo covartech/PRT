@@ -34,6 +34,8 @@ classdef prtRvMixture < prtRv
     end
     
     properties (Hidden = true)
+        postMaximizationFunction = @(R)R;
+        
         learningResults
         learningMaxIterations = 1000;
         learningConvergenceThreshold = 1e-6;
@@ -81,10 +83,9 @@ classdef prtRvMixture < prtRv
                 
                 R = maximizeParameters(R,X,membershipMat);
                 
-                membershipMat = expectedComponentMembership(R,X);
+                R = R.postMaximizationFunction(R);
                 
-                %[~, logPdfComponents] = logPdf(R,X);
-                %cLogLikelihood = sum(prtUtilSumExp((logPdfComponents + log(membershipMat))')');
+                membershipMat = expectedComponentMembership(R,X);
                 
                 cLogLikelihood = sum(logPdf(R,X));
                 

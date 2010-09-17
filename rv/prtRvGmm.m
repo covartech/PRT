@@ -2,6 +2,7 @@ classdef prtRvGmm < prtRv
     properties (Dependent = true)
         nComponents
         covarianceStructure 
+        covariancePool
         components
         mixingProportions        
     end
@@ -9,6 +10,7 @@ classdef prtRvGmm < prtRv
     properties (SetAccess = 'private', GetAccess = 'private', Hidden=true)
         nComponentsDepHelp = 1;
         covarianceStructureDepHelp = 'full'; 
+        covariancePoolDepHelp = false;
     end
     
     properties (SetAccess='private', Hidden=true)
@@ -39,6 +41,12 @@ classdef prtRvGmm < prtRv
         function val = get.nComponents(R)
             val = R.nComponentsDepHelp;
         end
+        function val = get.covarianceStructure(R)
+            val = R.covarianceStructureDepHelp;
+        end
+        function val = get.covariancePool(R)
+            val = R.covariancePoolDepHelp;
+        end
     end
     
 	methods 
@@ -64,6 +72,16 @@ classdef prtRvGmm < prtRv
         end
         function R = set.mixingProportions(R,vals)
             R.mixtureRv.mixingProportions = vals;
+        end
+        function R = set.covariancePool(R,val)
+            assert(numel(val) == 1 && islogical(val),'covariancePool must be a scalar logical');
+            
+            R.covariancePoolDepHelp = true;
+            
+            if R.covariancePoolDepHelp
+                R.mixtureRv.postMaximizationFunction = @(RMix)R.postMaximizationFunction(RMix);
+            end
+            
         end
     end
         
@@ -97,6 +115,21 @@ classdef prtRvGmm < prtRv
         end
         function val = plotLimits(R)
             val = plotLimits(R.mixtureRv);
+        end
+        
+        function RMix = postMaximizationFunction(R,RMix)
+            if ~R.covariancePool
+                return
+            end
+            
+            % Pool covariances
+            meanCov = zeros(size(RMix.components(1).covariance));
+            for iComp = 1:RMix.nComponents
+                meanCov = meanCov + RMix.mixingProportions.probabilities(iComp)*RMix.components(iComp).covariance;
+            end
+            for iComp = 1:RMix.nComponents
+                RMix.components(iComp).covariance = meanCov;
+            end
         end
     end
 end

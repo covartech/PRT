@@ -42,7 +42,10 @@ classdef prtRvDiscrete < prtRv
             R.InternalMultinomial.nCategories = val;
         end
         function R = set.probabilities(R,val)
-            R.InternalMultinomial.probabilities = val;
+            if ~isempty(R.symbols)
+                assert(size(R.symbols,1) == numel(val),'size mismatch between probabilities and symbols')
+            end
+            R.InternalMultinomial.probabilities = val(:);
         end
 
         function val = get.nDimensions(R)
@@ -84,7 +87,13 @@ classdef prtRvDiscrete < prtRv
         end
         
         function vals = draw(R,N)
+            if nargin < 2 || isempty(N)
+                N = 1;
+            end
+            
             assert(numel(N)==1 && N==floor(N) && N > 0,'N must be a positive integer scalar.')
+            
+            
             
             vals = R.symbols(drawIntegers(R.InternalMultinomial,N),:);
         end
@@ -139,7 +148,6 @@ classdef prtRvDiscrete < prtRv
         
         function R = weightedMle(R,X,weights)
             assert(numel(weights)==size(X,1),'The number of weights must mach the number of observations.');
-            assert(size(X,2) == R.nDimensions,'Incorrect dimensionality for this prtRv');
             
             [symbols, dontNeed, symbolInd] = unique(X,'rows'); %#ok
             

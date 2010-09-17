@@ -58,6 +58,7 @@ classdef prtClassKmeansPrototypes < prtClass
     properties
         nClustersPerHypothesis = 2; % Number of clusters per hypothesis
         clusterCenters = {};        % The cluster centers
+        kmeansHandleEmptyClusters = 'remove';
         distanceMetricFn = @prtDistanceEuclidean;
        % uY = [];                    % uY ?
     end
@@ -80,10 +81,10 @@ classdef prtClassKmeansPrototypes < prtClass
             
             Obj.uY = unique(DataSet.getTargets);
             nClusters = Obj.nClustersPerHypothesis;
-            %For each class, extract the Fuzzy K-Means class centers:
+            %For each class, extract the class centers:
             Obj.clusterCenters = cell(1,length(Obj.uY));
             for i = 1:length(Obj.uY)
-                Obj.clusterCenters{i} = prtUtilKmeans(DataSet.getObservationsByClass(Obj.uY(i)),nClusters,'distanceMetricFn',Obj.distanceMetricFn);
+                Obj.clusterCenters{i} = prtUtilKmeans(DataSet.getObservationsByClass(Obj.uY(i)),nClusters,'distanceMetricFn',Obj.distanceMetricFn,'handleEmptyClusters',Obj.kmeansHandleEmptyClusters);
             end
         end
         
@@ -91,13 +92,14 @@ classdef prtClassKmeansPrototypes < prtClass
             
             fn = Obj.distanceMetricFn;
             distance = nan(DataSet.nObservations,length(Obj.clusterCenters));
+            selectedIndexes = nan(DataSet.nObservations,length(Obj.clusterCenters));
             for i = 1:length(Obj.clusterCenters)
                 d = fn(DataSet.getObservations,Obj.clusterCenters{i});
-                distance(:,i) = min(d,[],2);
+                [distance(:,i), selectedKMeansIndexes(:,i)] = min(d,[],2);
             end
             
             %The smallest distance is the expected class:
-            [~,ind] = min(distance,[],2);
+            [dontNeed,ind] = min(distance,[],2);  %#ok<ASGLU>
             classes = Obj.uY(ind);  %note, use uY to get the correct label
             
             binaryMatrix = zeros(size(classes,1),length(Obj.uY));
@@ -106,8 +108,8 @@ classdef prtClassKmeansPrototypes < prtClass
                 binaryMatrix(currY == classes,i) = 1;
             end
             DataSet = DataSet.setObservations(binaryMatrix);
+            
+            DataSet.ActionData.selectedKMeansIndexes = selectedKMeansIndexes;
         end
-        
     end
-    
 end

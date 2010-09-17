@@ -179,7 +179,7 @@ classdef prtRv
                 
                 % We must make sure that varargin{1} is a valid X
                 X = varargin{1};
-                assert(isnumeric(varargin{1}), 'If an odd number of inputs are supplied the first input must be numeric matrix.')
+                assert(isnumeric(varargin{1}), 'If an odd number of inputs are supplied the first input must be numeric matrix. and the remaining must be string value pairs.')
                 
                 if length(varargin) > 1
                     varargin = varargin(2:end);
