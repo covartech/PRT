@@ -24,12 +24,27 @@ classdef prtAlgorithm < prtAction
     
     methods
         
+        function plot(Obj)
+            %temp: this requires biograph.
+            cM = Obj.connectivityMatrix(2:end-1,2:end-1)';
+            algoStr = cellfun(@(c)c.nameAbbreviation,Obj.actionCell,'uniformoutput',false);
+            for i = 1:length(algoStr)
+                algoStr{i} = sprintf('%s_%d',algoStr{i},i);
+            end
+            try
+                view(biograph(cM,algoStr));
+            catch ME
+                disp(ME);
+                error('prt:prtAlgorithm','error: you need bioinfo');
+            end
+        end
+        
         function in = inputNodes(Obj)
-            in = all(Obj.connectivityMatrix == 0,2);
+            in = all(Obj.connectivityMatrix == false,2);
             in = in(:);
         end
         function out = outputNodes(Obj)
-            out = all(Obj.connectivityMatrix == 0,1);
+            out = all(Obj.connectivityMatrix == false,1);
             out = out(:);
         end
         
@@ -62,7 +77,7 @@ classdef prtAlgorithm < prtAction
                 newOutput = cat(2,false,all(newConn == 0,1),false);
                 newInput = cat(2,false,all(newConn == 0,2)',false);
                 
-                tempNewConn = zeros(size(newConn)+2);
+                tempNewConn = false(size(newConn)+2);
                 tempNewConn(2:end-1,2:end-1) = newConn;
                 newConn = tempNewConn;
                 
@@ -71,7 +86,6 @@ classdef prtAlgorithm < prtAction
                 
                 Obj1.actionCell = cat(1,Obj1.actionCell(:),Obj2.actionCell(:));
                 Obj1.connectivityMatrix = newConn;
-                
             else
                 error('prt:prtAlgorithm:plus','prtAlgorithm.plus is only defined for second inputs of type prtAlgorithm or prtAction, but the second input is a %s',class(in2));
             end
@@ -152,12 +166,12 @@ classdef prtAlgorithm < prtAction
                 varargin{1} = {varargin{1}};
             end
             Obj.actionCell = varargin{1};
-            Obj.connectivityMatrix = zeros(length(Obj.actionCell)+2);
+            Obj.connectivityMatrix = false(length(Obj.actionCell)+2);
             for i = 2:length(Obj.actionCell)+1
-                Obj.connectivityMatrix(i,i-1) = 1;
+                Obj.connectivityMatrix(i,i-1) = true;
             end
-            terminalNodes = find(all(Obj.connectivityMatrix(:,1:end-1) == 0));
-            Obj.connectivityMatrix(end,terminalNodes) = 1;
+            terminalNodes = find(all(Obj.connectivityMatrix(:,1:end-1) == false));
+            Obj.connectivityMatrix(end,terminalNodes) = true;
             
             if nargin > 1
                 extraInputs = varargin(2:end);
@@ -170,58 +184,29 @@ classdef prtAlgorithm < prtAction
         
         function Obj = trainAction(Obj,DataSet)
             
-            for iAction = 1:length(Obj.actionCell)
-                %keyboard; %this is bbbbad
-                if iscell(Obj.actionCell{iAction})
-                    % Parallel
-                    %newAlgo = prtAlgorithm
-                    for jAction = 1:length(Obj.actionCell{iAction})
-                        if ~iscell(Obj.actionCell{iAction}{jAction})
-                            Obj.actionCell{iAction}{jAction}.verboseStorage = Obj.verboseStorage;
-                            tempAlgorithm = Obj.actionCell{iAction}{jAction};
-                        else
-                            tempAlgorithm = prtAlgorithm(Obj.actionCell{iAction}{jAction});
-                        end
-                        %                         Obj.actionCell{iAction}{jAction} = train(Obj.actionCell{iAction}{jAction}, DataSet);
-                        %                         ijDataSets{jAction} = run(Obj.actionCell{iAction}{jAction}, DataSet);
-                        Obj.actionCell{iAction}{jAction} = train(tempAlgorithm, DataSet);
-                        ijDataSets{jAction} = run(Obj.actionCell{iAction}{jAction}, DataSet);
-                        
-                    end
-                    DataSetOut = catFeatures(ijDataSets{:});
-                    DataSet = DataSet.setObservations(DataSetOut.getObservations());
-                elseif isa(Obj.actionCell{iAction},'prtAction')
-                    %Serial
-                    Obj.actionCell{iAction}.verboseStorage = Obj.verboseStorage;
-                    Obj.actionCell{iAction} = train(Obj.actionCell{iAction},DataSet);
-                    
-                    DataSetOut = run(Obj.actionCell{iAction},DataSet);
-                    
-                    DataSet = DataSet.setObservations(DataSetOut.getObservations());
-                    
-                else
-                    error('prt:prtAlgorithm:trainAction:invalidInput','Invalid prtAction.')
-                end
+            topoOrder = prtUtilTopographicalSort(Obj.connectivityMatrix');
+            input = cell(size(Obj.connectivityMatrix,1),1);
+            input{1} = DataSet;
+            
+            for i = 2:length(topoOrder)-1
+                currentInput = catFeatures(input{Obj.connectivityMatrix(i,:)});
+                Obj.actionCell{i-1} = train(Obj.actionCell{i-1},currentInput);
+                input{i} = run(Obj.actionCell{i-1},currentInput);
             end
         end
         
         function DataSet = runAction(Obj,DataSet)
             
-            for iAction = 1:length(Obj.actionCell)
-                if iscell(Obj.actionCell{iAction})
-                    % Parallel
-                    for jAction = 1:length(Obj.actionCell{iAction})
-                        ijDataSets{jAction} = run(Obj.actionCell{iAction}{jAction}, DataSet);
-                    end
-                    DataSetOut = catFeatures(ijDataSets{:});
-                    DataSet = DataSet.setObservations(DataSetOut.getObservations());
-                elseif isa(Obj.actionCell{iAction},'prtAction')
-                    % Serial
-                    DataSet = run(Obj.actionCell{iAction},DataSet);
-                else
-                    error('prt:prtAlgorithm:trainAction:invalidInput','Invalid prtAction.')
-                end
+            topoOrder = prtUtilTopographicalSort(Obj.connectivityMatrix');
+            input = cell(size(Obj.connectivityMatrix,1),1);
+            input{1} = DataSet;
+            
+            for i = 2:length(topoOrder)-1
+                currentInput = catFeatures(input{Obj.connectivityMatrix(i,:)});
+                input{i} = run(Obj.actionCell{i-1},currentInput);
             end
+            finalNodes = any(Obj.connectivityMatrix(Obj.outputNodes,:),1);
+            DataSet = catFeatures(input{finalNodes});
         end
         
     end
