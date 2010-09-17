@@ -44,11 +44,140 @@ classdef prtAlgorithm < prtAction
             end
         end
         
+        %Hidden?
+        function algoLen = getLength(Obj)
+            algoLen = 0;
+            for i = 1:size(Obj.actionCell,2)
+                if ~iscell(Obj.actionCell{i})
+                    algoLen = algoLen+1;
+                else
+                    maxLen = 0;
+                    for j = 1:length(Obj.actionCell{i})
+                        tempAlgo = prtAlgorithm(Obj.actionCell{i}{j});
+                        tempLen = tempAlgo.getLength;
+                        if tempLen > maxLen
+                            maxLen = tempLen;
+                        end
+                    end
+                    algoLen = algoLen + maxLen;
+                end
+            end
+        end
+        
+        %Hidden?
+        function algoHeight = getHeight(Obj)
+            algoHeight = 0;
+            for i = 1:size(Obj.actionCell,2)
+                tempAlgoHeight = 0;
+                if ~iscell(Obj.actionCell{i})
+                    tempAlgoHeight = 1;
+                else
+                    for j = 1:size(Obj.actionCell{i},2)
+                        if iscell(Obj.actionCell{i}{j})
+                            tempAlgo = prtAlgorithm(Obj.actionCell{i}{j});
+                            tempAlgoHeight = tempAlgoHeight + tempAlgo.getHeight + 1;
+                        else
+                            tempAlgoHeight = 1;
+                        end
+                    end
+                end
+                if tempAlgoHeight > algoHeight
+                    algoHeight = tempAlgoHeight;
+                end
+            end
+        end
+        
+        %hidden / broken
+        %         function algoNesting = getNesting(Obj)
+        %             algoNesting = 0;
+        %             for i = 1:size(Obj.actionCell,2)
+        %                 tempAlgoNesting = 0;
+        %                 if iscell(Obj.actionCell{i})
+        %                     tempAlgoNesting = 1;
+        %                     for j = 1:length(Obj.actionCell{i})
+        %                         tempAlgo = prtAlgorithm(Obj.actionCell{i}{j});
+        %                         tempAlgoNesting = tempAlgoNesting + tempAlgo.getNesting;
+        %                     end
+        %                     if tempAlgoNesting > algoNesting
+        %                         algoNesting = tempAlgoNesting;
+        %                     end
+        %                 end
+        %             end
+        %         end
+        
+        function [g,pi,pj] = toCellArray(Obj,parentI,parentJ)
+            
+            h = Obj.getHeight;
+            l = Obj.getLength;
+            g = cell(h,l);
+            
+            if nargin < 3
+                parentI = 0;
+                parentJ = 0;
+            end
+            pi = nan(size(g)); %not 3.1415
+            pj = nan(size(g));
+            
+            if ~mod(h,2)
+                c = h/2;
+            else
+                c = ceil(h/2);
+            end
+            
+            %             error('calculating the parents is.. busted');
+            cellI = 1;
+            parentJ = c;
+            for i = 1:size(Obj.actionCell,2)
+                if ~isa(Obj.actionCell{i},'cell')
+                    g{c,cellI} = Obj.actionCell{i}.nameAbbreviation;
+                    pi(c,cellI) = cellI-1;
+                    pj(c,cellI) = c;
+                    parentJ = c;
+                    cellI = cellI + 1;
+                else
+                    
+                    maxLen = 1;
+                    for j = 1:length(Obj.actionCell{i})
+                        if ~isa(Obj.actionCell{i}{j},'cell')
+                            disp('non-cell');
+                            g{j,cellI} = Obj.actionCell{i}{j}.nameAbbreviation;
+                            pi(j,cellI) = cellI-1;
+                            pj(j,cellI) = parentJ;
+                            
+                            tempLen = 1;
+                        else
+                            disp('recurse');
+                            innerTempAlgo = prtAlgorithm(Obj.actionCell{i}{j});
+                            
+                            innerLocalHeight = innerTempAlgo.getHeight;
+                            innerLocalLength = innerTempAlgo.getLength;
+                            innerLocalStart = floor((h + j-1 - innerLocalHeight)/2 + 1);
+                            indI = innerLocalStart+j-1:innerLocalStart+innerLocalHeight+j-2;
+                            indJ = cellI:cellI+innerLocalLength-1;
+                            [g(indI,indJ),ppi,ppj] = innerTempAlgo.toCellArray(j,i);
+                            
+                            pi(indI,indJ) = ppi + indJ(1)-1;
+                            pj(indI,indJ) = ppj + indI(1)-1;
+                            tempLen = innerLocalLength;
+                        end
+                        if tempLen > maxLen
+                            maxLen = tempLen;
+                        end
+                    end
+                    cellI = cellI + maxLen;
+                end
+                %                 parentI = newParentI;
+                %                 parentJ = newParentJ;
+                %keyboard
+            end
+        end
+               
+        
         function in1 = mrdivide(in1,in2)
             if isa(in2,'prtAlgorithm')
-                in1.actionCell = {{in1.actionCell,in2.actionCell}};
+                in1.actionCell = {{in1.actionCell},{in2.actionCell}};
             elseif isa(in2,'prtAction')
-                in1.actionCell = {{in1.actionCell,in2}};
+                in1.actionCell = {{in1.actionCell},{in2}};
             else
                 error('prt:prtAlgorithm:mrdivide','prtAlgorithm.mrdivide is only defined for second inputs of type prtAlgorithm or prtAction, but the second input is a %s',class(in2));
             end
@@ -57,9 +186,9 @@ classdef prtAlgorithm < prtAction
         %this should be hidden
         function in1 = mldivide(in1,in2)
             if isa(in2,'prtAlgorithm')
-                in1.actionCell = {in2.actionCell,in1.actionCell};
+                in1.actionCell = {{in2.actionCell},{in1.actionCell}};
             elseif isa(in2,'prtAction')
-                in1.actionCell = {{in2,in1.actionCell}};
+                in1.actionCell = {{in2},{in1.actionCell}};
             else
                 error('prt:prtAlgorithm:mrdivide','prtAlgorithm.mrdivide is only defined for second inputs of type prtAlgorithm or prtAction, but the second input is a %s',class(in2));
             end
@@ -69,7 +198,9 @@ classdef prtAlgorithm < prtAction
             if nargin == 0
                 return
             end
-            
+            if isa(varargin{1},'prtAction');
+                varargin{1} = {varargin{1}};
+            end
             if ~ischar(varargin{1})
                 if ~iscell(varargin{1})
                     error('prt:prtAlgorith:invalidInput','Invalid input. First input must be a cell of prtActions.');
