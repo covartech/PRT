@@ -12,7 +12,6 @@ classdef prtAlgorithm < prtAction
         connectivityMatrix = [];
     end
     
-    
     methods (Hidden = true)
         function dataSet = updateDataSetFeatureNames(obj,dataSet) %#ok<MANU>
             %Algorithms do not have to do this; since they are composed of
