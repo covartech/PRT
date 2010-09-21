@@ -440,11 +440,12 @@ classdef prtDataSetClass  < prtDataSetStandard
                     if iFeature == jFeature
                         
                         nKSDsamples = 500;
-                        xLoc = linspace(Summary.lowerBounds(iFeature), Summary.upperBounds(iFeature), nKSDsamples);
+                        xLoc = linspace(Summary.lowerBounds(iFeature), Summary.upperBounds(iFeature), nKDsamples);
                         
                         F = zeros([nKSDsamples, nClasses]);
                         for cY = 1:nClasses;
-                            F(:,cY) = ksdensity(obj.getObservationsByClassInd(cY,iFeature),xLoc);
+                            %F(:,cY) = ksdensity(obj.getObservationsByClassInd(cY,iFeature),xLoc);
+                            
                         end
                         
                         hs{iFeature,jFeature} = plot(xLoc,F);
@@ -560,7 +561,7 @@ classdef prtDataSetClass  < prtDataSetStandard
             
             fNames = obj.getFeatureNames();
             
-            textOffSet = 0.1;
+            textOffSet = 0.2;
             textRadius = axesLength+textOffSet;
             
             %textRotationAngles = rem(theta-pi/2,2*pi)/pi*180;
@@ -568,26 +569,16 @@ classdef prtDataSetClass  < prtDataSetStandard
             for iAxes = 1:length(cT)
                 text(textRadius*cT(iAxes),textRadius*sT(iAxes), fNames{iAxes}, 'rotation', textRotationAngles(iAxes),'HorizontalAlignment','Center','VerticalAlignment','Middle');
             end
-            axis([-1 1 -1 1]*(axesLength + 0.2));
+            axis([-1 1 -1 1]*(axesLength + 0.4));
             
-            set(gca,'Visible','off')
-            %             set(gca,'xtick',[])
-            %             set(gca,'ytick',[])
             handleArray = zeros(obj.nClasses,1);
             for iClass = 1:obj.nClasses
                 handleArray(iClass) = plot(nan,nan,'color',classColors(iClass,:));
             end
             
             legendStrings = getClassNames(obj);
-            legendHandle = legend(handleArray,legendStrings,'Location','SouthEast');
-            
-            origUnits = get(legendHandle,'units');
-            set(legendHandle,'units','normalized');
-            cP = get(legendHandle,'position');
-
-            set(legendHandle,'position',[0.01 0.01 cP(3) cP(4)]);
-
-            set(legendHandle,'units',origUnits);
+            legendHandle = legend(handleArray,legendStrings,'Location','SouthEast'); %#ok<NASGU>
+            set(gca,'XTick',[],'YTick',[],'Box','on')
             
             set(gca,'nextPlot',holdState);
             

@@ -24,18 +24,9 @@ classdef prtAlgorithm < prtAction
     methods
         
         function plot(Obj)
-            %temp: this requires biograph.
-            cM = Obj.connectivityMatrix(2:end-1,2:end-1)';
-            algoStr = cellfun(@(c)c.nameAbbreviation,Obj.actionCell,'uniformoutput',false);
-            for i = 1:length(algoStr)
-                algoStr{i} = sprintf('%s_%d',algoStr{i},i);
-            end
-            try
-                view(biograph(cM,algoStr));
-            catch ME
-                disp(ME);
-                error('prt:prtAlgorithm','error: you need bioinfo');
-            end
+            % Plots a block diagram of the algorithm 
+            % Requires graphviz
+            prtPlotUtilAlgorithmGui(Obj.connectivityMatrix, Obj.actionCell);
         end
         
         function in = inputNodes(Obj)
@@ -207,6 +198,13 @@ classdef prtAlgorithm < prtAction
             DataSet = catFeatures(input{finalNodes});
         end
         
+    end
+    
+    methods (Static)
+        function plotHelper(actionObj)
+            figure
+            plot(actionObj)
+        end
     end
     
 end

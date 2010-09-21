@@ -11,10 +11,9 @@ function colors = prtPlotUtilClassColorsBW(nClasses)
 %           247 129 191; % Pink
 %           ]/255;
 
-
+%255, 255, 191;
 colors = [215,  25,  28;
           253, 174,  97;
-          255, 255, 191;
           171, 221, 164;
            43, 131, 186;]/255;
 

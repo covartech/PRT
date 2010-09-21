@@ -8,7 +8,7 @@ function [Bpls, R, P, Q, T, U] = prtUtilSimpls(X,Y,nComponents)
 %
 % http://www.sciencedirect.com/science?_ob=ArticleURL&_udi=B6TFP-44GGKFD-89&_user=38557&_rdoc=1&_fmt=&_orig=search&_sort=d&_docanchor=&view=c&_searchStrId=1090189883&_rerunOrigin=google&_acct=C000004358&_version=1&_urlVersion=0&_userid=38557&md5=ea492b3c33a94f652d43d04707199e68
 %
-% Syntax: [Bpls, R, P, Q, T, U] = partialLeastSquares(X,Y)
+% Syntax: [Bpls, R, P, Q, T, U] = prtUtilSimpls(X,Y,nComponents)
 %
 % Inputs:
 %   X - Predictors data matrix - Assumed to be demeaned
@@ -62,7 +62,8 @@ for iVec = 1:nVectors
     u = Y*q; % the current scores for Y
 
     % To deflate S project onto the normalized V 
-    % We also need to make sure that V is really orthogonal
+    % We need to make sure that V is really orthogonal
+    % This is simple Gram-Schimdt
     v = p;
     if iVec > 1
         v = v - V(:,1:(iVec-1))*(V(:,1:(iVec-1)).'*v);
