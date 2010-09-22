@@ -47,7 +47,7 @@ switch lower(S.style)
         if isfield(S,'Children')
             S = rmfield(S,'Children');
         end
-        cslCell = struct2cslCell(S);
+        cslCell = prtUtilStruct2cslCell(S);
         h = figure(cslCell{:});
 
     case 'panel'
@@ -57,10 +57,10 @@ switch lower(S.style)
         end
         if isfield(S,'parent')
             parent = S.parent;
-            cslCell = struct2cslCell(rmfield(S,'parent'));
+            cslCell = prtUtilStruct2cslCell(rmfield(S,'parent'));
             h = uipanel(parent,cslCell{:});
         else
-            cslCell = struct2cslCell(S);
+            cslCell = prtUtilStruct2cslCell(S);
             h = uipanel(cslCell{:});
         end
     case 'axes'
@@ -72,23 +72,23 @@ switch lower(S.style)
 %             S = rmfield(S,'parent');
 %         end
  
-        cslCell = struct2cslCell(S);
+        cslCell = prtUtilStruct2cslCell(S);
         h = axes(cslCell{:});
     case 'table'
         S = rmfield(S,'style');
         if isfield(S,'Children')
             S = rmfield(S,'Children');
         end
-        cslCell = struct2cslCell(S);
+        cslCell = prtUtilStruct2cslCell(S);
         h = uitable(cslCell{:});
 
     otherwise % A uicontrol, if not then let uicontrol spit the error
         if isfield(S,'parent')
             parent = S.parent;
-            cslCell = struct2cslCell(rmfield(S,'parent'));
+            cslCell = prtUtilStruct2cslCell(rmfield(S,'parent'));
             h = uicontrol(parent,cslCell{:});
         else
-            cslCell = struct2cslCell(S);
+            cslCell = prtUtilStruct2cslCell(S);
             h = uicontrol(cslCell{:});
         end
 end
