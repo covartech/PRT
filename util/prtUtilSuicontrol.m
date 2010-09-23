@@ -25,7 +25,7 @@ function h = prtUtilSuicontrol(S)
 %   MainFigure.Children.MainPanel.Children.closeButton.units = 'normalized';
 %   MainFigure.Children.MainPanel.Children.closeButton.position = [0.25 0.25 0.5 0.5];
 %
-%   H = suicontrol(MainFigure);
+%   H = prtUtilSuicontrol(MainFigure);
 %
 % Author: Kenneth D. Morton Jr.
 % Date Created: 05-Aug-2008
@@ -102,7 +102,7 @@ if isfield(inS,'Children')
     for iChild = 1:length(childrenNames)
         cS = inS.Children.(childrenNames{iChild});
         cS.parent = h.handle;
-        h.(childrenNames{iChild}) = suicontrol(cS);
+        h.(childrenNames{iChild}) = prtUtilSuicontrol(cS);
     end
 end
 
