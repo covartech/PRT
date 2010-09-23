@@ -440,7 +440,7 @@ classdef prtDataSetClass  < prtDataSetStandard
                     if iFeature == jFeature
                         
                         nKSDsamples = 500;
-                        xLoc = linspace(Summary.lowerBounds(iFeature), Summary.upperBounds(iFeature), nKDsamples);
+                        xLoc = linspace(Summary.lowerBounds(iFeature), Summary.upperBounds(iFeature), nKSDsamples);
                         
                         F = zeros([nKSDsamples, nClasses]);
                         for cY = 1:nClasses;

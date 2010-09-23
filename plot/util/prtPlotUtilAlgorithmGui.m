@@ -10,6 +10,8 @@ nodePosMat = cat(1,GraphLayoutInfo.Nodes.pos);
 nodePosMat = bsxfun(@minus,nodePosMat,min(nodePosMat));
 nodePosMat = bsxfun(@rdivide,nodePosMat,max(nodePosMat));
 
+nodePosMat(isnan(nodePosMat))=0;
+
 minDistBetweenBlocks = min(min(prtDistanceLNorm(nodePosMat,nodePosMat,2) + realmax*eye(size(connectivityMatrix))));
 
 blockSize = minDistBetweenBlocks*1/2;
@@ -35,9 +37,6 @@ for iBlockOuter = 1:Layout.nBlocks
     placeBlockFunction([], [], actionCell{iBlockOuter}, nodePosMat(iBlockOuter,:), iBlockOuter, algoStr{iBlockOuter});
 end
 
-axis(Options.initialCanvasLimits)
-
-
 for iEdge = 1:length(GraphLayoutInfo.Edges)
     startLoc = cat(2,nodePosMat(GraphLayoutInfo.Edges(iEdge).startIndex,1)+blockSize,nodePosMat(GraphLayoutInfo.Edges(iEdge).startIndex,2)+blockSize/2);
     stopLoc = cat(2,nodePosMat(GraphLayoutInfo.Edges(iEdge).stopIndex,1),nodePosMat(GraphLayoutInfo.Edges(iEdge).stopIndex,2)+blockSize/2);
@@ -46,6 +45,10 @@ for iEdge = 1:length(GraphLayoutInfo.Edges)
     set(Layout.edges(iEdge),'facecolor',[0 0 0],'edgecolor',[0 0 0])
     
 end
+
+[xlims, ylims] = centerBlocks();
+
+axis(cat(2,xlims, ylims));
 
 %% Begin Functions
 
