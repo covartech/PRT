@@ -10,7 +10,7 @@ classdef prtDataSetClassPlotOpt
         symbolEdgeModificationFunction = @(color)prtPlotUtilSymbolEdgeColorModification(color);
         
         symbolLineWidth = 0.1;
-        symbolSize = 4;
+        symbolSize = 8;
         
         starLineWidth = 0.5;
     end
