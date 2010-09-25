@@ -444,8 +444,9 @@ classdef prtDataSetClass  < prtDataSetStandard
                         
                         F = zeros([nKSDsamples, nClasses]);
                         for cY = 1:nClasses;
-                            %F(:,cY) = ksdensity(obj.getObservationsByClassInd(cY,iFeature),xLoc);
-                            
+                            F(:,cY) = ksdensity(obj.getObservationsByClassInd(cY,iFeature),xLoc);
+                            %This errors
+                            %F(:,cY) = pdf(prtRvKsd(obj.getObservationsByClassInd(cY,iFeature),xLoc));
                         end
                         
                         hs{iFeature,jFeature} = plot(xLoc,F);

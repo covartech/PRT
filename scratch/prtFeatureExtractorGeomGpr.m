@@ -38,8 +38,8 @@ classdef prtFeatureExtractorGeomGpr < prtFeatureExtractor
                 
                 depthSegments = depthSegment3dData(data,20,10);
                 
-                mu = mean(data(:).^2);
-                sigma = std(data(:).^2);
+                %                 mu = mean(data(:).^2);
+                %                 sigma = std(data(:).^2);
                 for depthSegmentInd = 1:length(depthSegments);
                     depthSegments{depthSegmentInd} = squeeze(sum(depthSegments{depthSegmentInd}.^2));
                     data = depthSegments{depthSegmentInd};

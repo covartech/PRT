@@ -116,6 +116,8 @@ axis(cat(2,xlims, ylims));
             blockColor = Options.BlockColors.featureSelector;
         elseif isa(BlockObject,'prtClass')
             blockColor = Options.BlockColors.classifier;
+        elseif isa(BlockObject,'prtDecision')
+            blockColor = Options.BlockColors.decision;
         else
             error('Unsupported Block Type');
         end
@@ -416,6 +418,7 @@ axis(cat(2,xlims, ylims));
         Options.BlockColors.preProcessor = [1 0.8 0.6];
         Options.BlockColors.featureSelector = [0.6 1 0.8];
         Options.BlockColors.classifier = [0.7 0.7 1];
+        Options.BlockColors.decision = [0.3 0.3 0.3];
     end
 
 

@@ -1,4 +1,4 @@
-%% prtPublishATaste
+%% prtPublishGettingStarted
 % Let's get started by generating and visualizing data in MATLAB.  All data
 % that the PRT can utilize is stored in MATLAB objects called prtDataSets.
 % When we call any function that starts with prtDataGen... the output will
