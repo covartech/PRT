@@ -1,6 +1,6 @@
 function DataSet = prtDataGenNoisySinc
 % DataSet = prtDataGenNoisySync
-%
+% 
 % 
 
 nSamples = 100;
@@ -11,4 +11,4 @@ x = randsample(t,nSamples)';
 t = sinc(x/pi);
 y = t + noiseVar*randn(size(x));
 
-DataSet = prtDataSetRegress(x,y,'name','Noisy Sync');
+DataSet = prtDataSetRegress(x,y,'name','Noisy Sinc');

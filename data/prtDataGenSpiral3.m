@@ -1,6 +1,9 @@
 function DataSet = prtDataGenSpiral3
-% This is a spiral data set usex in Ueda et al. 2000
-% It has a 1 dimensional manifold in 3 dimensions with noise
+% prtDataGenSpiral3 - Generate a 3-D spiral data set from a 1-D manifold
+%
+% dataSet = prtDataGenSpiral3; Generates the spiral data set used in Ueda 
+% et al. 2000.  It consists of a 1 dimensional manifold in 3 dimensions 
+% with additive noise.
 
 nSamples = 800;
 t = rand(nSamples,1)*4*pi;
