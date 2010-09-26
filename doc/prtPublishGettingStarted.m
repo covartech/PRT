@@ -186,16 +186,57 @@ yOutKfolds = knnClassifier.kfolds(dsPca,10); %10-Fold cross-validation
 %most votes!
 [nVotes,guess] = max(yOutKfolds.getObservations,[],2);
 
+subplot(1,1,1); %don't plot in the last figure window.
 prtScoreConfusionMatrix(guess,truth,dsPca.nClasses,dsPca.getClassNames);
 title('Iris Classification Confusion Matrix');
 
+%%
+% These results show pretty good performance for separating Iris-setosa
+% from the other two classes, and less separation between versicolor and
+% virginica (your results may vary depending on the random folds chosen in
+% kfolds.
+%
+% So far so good.  At this point you're pretty ready to start playing with
+% the PRT.  Definitely check out the rest of the documentation, which is
+% extensive, and make sure to check the help entries for specific M-files
+% using the built-in MATLAB help command.  Oh... 
+
 %% One More Thing...
+% Above, we had to do a bunch of work after we ran our classification to
+% turn the outputs of a classification algorithm into a set of decisions.
+% Luckily, the PRT provides some utilities to automatically do this for
+% you, including one object prtDecisionMap, which performs maximum
+% a-posteriori decision making.  
+%
+% But now, you might be thinking "Wait, I have to keep track of a PCA
+% object, a KNN object, and a MAP Decision object all at once, and make
+% sure to run K-folds at the right places?  What if I wanted to include PCA
+% in the k-folds cross validation, and not worry about running the MAP
+% after everything else?"
+%
+% The PRT has a solution for you.  Basically, you'd like to be able to
+% string together a set of prtActions into one long action that you can
+% treat as one entity.  The PRT has overloaded the MATLAB operator "+" to
+% do this for you.  So, you can write:
+%
+% myAlgo = prtPreProcPca + prtClassKnn;
+%
+% To string together PCA and KNN into one object (we refer to combinations
+% of prtActions like this as "algorithms", since they are implemented in a
+% M-file called prtAlgorithm, which you actually never have to call).
+% Let's see how this affects our development from our last set of code:
 
 dsIris = prtDataGenIris;
 algo = prtPreProcPca('nComponents',2) + prtClassKnn + prtDecisionMap;
-plot(algo);
-%%
-yOutAlgoKfolds = algo.kfolds(dsIris,10);
-prtScoreConfusionMatrix(yOutAlgoKfolds,dsIris);
+plot(algo);  %Note: this plots a block diagram of the algorithm!
 
+%%
+% Now, running the algorithm and scoring it is very simple:
+close all;
+yOutAlgoKfolds = algo.kfolds(dsIris,10);
+
+prtScoreConfusionMatrix(yOutAlgoKfolds,dsIris);
 title('Iris Classification Confusion Matrix');
+
+%%
+% You can learn more about... 
