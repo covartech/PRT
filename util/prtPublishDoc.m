@@ -9,3 +9,4 @@ mfilelist = subDir(docDir,'prtPublish*.m');
 for i = 1:length(mfilelist)
     publish(mfilelist{i});
 end
+close all;
