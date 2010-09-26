@@ -46,8 +46,8 @@ end
 rv(1) = prtRvMvn('Mean',mu01,'Covariance',sigma01);
 rv(2) = prtRvMvn('Mean',mu02,'Covariance',sigma02);
 
-rv(3) = prtRvMvn(mu11,sigma11);
-rv(4) = prtRvMvn(mu12,sigma12);
+rv(3) = prtRvMvn('Mean',mu11,'Covariance',sigma11);
+rv(4) = prtRvMvn('Mean',mu12,'Covariance',sigma12);
 
 X = cat(1,draw(rv(1),nSamples/2),draw(rv(2),nSamples/2),draw(rv(3),nSamples/2),draw(rv(4),nSamples/2));
 Y = prtUtilY(nSamples,nSamples);
