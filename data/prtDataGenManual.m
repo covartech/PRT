@@ -32,7 +32,7 @@ uiwait(hF);
         point = get(gca,'CurrentPoint');
         switch sType
             case 'normal'
-                DataSet = catObservations(DataSet,point(2,1:2),currentLabel);
+                DataSet = catObservations(DataSet,prtDataSetClass(point(2,1:2),currentLabel));
                 V = axis;
                 hP = plot(DataSet);
                 set(hP,'hittest','off');

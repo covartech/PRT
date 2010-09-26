@@ -30,7 +30,7 @@ prtDataGenSparseFactors;
 prtDataGenManual;
 prtDataGenFeatureSelection;
 prtDataGenOldFaithful;
-prtDataGenNoisySync;
+prtDataGenNoisySinc;
 prtDataGenXor;
 
 %% Test Catting of prtDataSetInMemory

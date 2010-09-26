@@ -442,7 +442,10 @@ classdef prtDataSetStandard < prtDataSetBase
                     end
                 elseif isa(currInput,class(obj))
                     obj = obj.catObservationNames(currInput);
-                    if (isempty(obj.targets) && isempty(currInput.targets)) || (~isempty(obj.targets) && ~isempty(currInput.targets))
+                    if isempty(obj.data) %handle empty data set
+                        obj.data = currInput.data;
+                        obj.targets = currInput.targets;
+                    elseif (isempty(obj.targets) && isempty(currInput.targets)) || (~isempty(obj.targets) && ~isempty(currInput.targets))
                         obj.data = cat(1,obj.data,currInput.getObservations);
                         obj.targets = cat(1,obj.targets,currInput.getTargets);
                     else
