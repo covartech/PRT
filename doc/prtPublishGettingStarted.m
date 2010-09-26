@@ -64,7 +64,7 @@ ds = prtDataGenIris;
 ds = ds.retainFeatures(1:3);
 plot(ds);  % See note below
 
-%%
+%% A Little Object Oriented Programming
 % Those last commands make the plot you can see directly above.  Note what
 % happened here - the prtDataSet ds knows what the name of the data set is,
 % and uses that as the title of the figure.  It knows the names of the
@@ -85,7 +85,7 @@ plot(ds);  % See note below
 % plot(ds), and MATLAB knows what to do.
 %
 
-%%
+%% plotPairs
 % When we wanted to plot the data in the Iris data set, we had to 
 % artificially reduce the dimensionality of the data using retainFeatures.
 % That's because the prtDataSetClass plot command doesn't work for data
@@ -96,7 +96,7 @@ plot(ds);  % See note below
 ds = prtDataGenIris; %4-dimensional data
 ds.plotPairs;
 
-%%
+%% plotStar
 % As you can see, the plotPairs method of the prtDataGenIris enables us to
 % visualize higher dimensional data by plotting all of the pair-wise
 % combinations of the features in a grid.  The diagonal elements of the
@@ -111,9 +111,9 @@ ds.plotPairs;
 % understand way.
 
 close all;
-ds.starPlot;
+ds.plotStar;
 
-%%
+%% Explore
 % Finally, the explore method of the prtDataSets enables interactive
 % visualization of different dimensions of the data sets using GUI
 % controls.  You can start the explore GUI using the command below, and
@@ -138,8 +138,9 @@ explore(ds);
 close all;
 % Generate a data set and a PCA pre-processing function:
 ds = prtDataGenIris;
-ds = ds.retainFeatures(1:3); %retain the first 3 dimensions of the PCA
+ds = ds.retainFeatures(1:3); %retain the first 3 dimensions of the Iris data
 myPca = prtPreProcPca;
+myPca.nComponents = 2;  %I'd like to use the first 2 principal components
 
 % Train the PCA to learn the principal components of the data:
 myPca = myPca.train(ds);
@@ -149,3 +150,52 @@ dsPca = myPca.run(ds);   %Run the PCA analysis on the data
 figure(1); plot(ds);
 figure(2); plot(dsPca);
 
+%% Building a Classifier
+% Let's continue processing our new data set in PCA space.  Let's say we'd
+% like to generate a classifier that can tell the difference between the
+% types of flowers in the Iris data set.  Since the Iris data set has
+% multiple classes (types of flowers, you can tell this is the case since
+% ds.nClasses > 2), we need to use a classifier that can handle multiple
+% hypothesis data.  KNN classification algorithms are a decent choice in
+% this case.  Let's build and visualize a KNN classifier on the 3-PC
+% projected Iris data.
+
+knnClassifier = prtClassKnn;
+knnClassifier = knnClassifier.train(dsPca);
+plot(knnClassifier)
+
+%%
+% The plot command shows the results of classification for each hypothesis
+% in three separate axes.  Dark colors represent certainty in each
+% respective class.  The multiple-axis view is the default way of displaying 
+% decision contours for multiple-hypothesis data.  For binary classification
+% problems, in contrast, the results are plotted on a single axis.
+
+%% Evaluating the Classifier
+% Now that we have a classifier, and are comfortable with the decision
+% boundaries, we can evaluate our classifier.  Let's use k-folds
+% cross-validation to see how well our classifier would perform in a
+% realistic test scenario.
+
+truth = dsPca.getTargets; %the true class labels
+
+yOutKfolds = knnClassifier.kfolds(dsPca,10); %10-Fold cross-validation
+
+%We need to parse the output of the KNN classifier to turn vote counts into
+%class guesses - for each observation, our guess is the column with the
+%most votes!
+[nVotes,guess] = max(yOutKfolds.getObservations,[],2);
+
+prtScoreConfusionMatrix(guess,truth,dsPca.nClasses,dsPca.getClassNames);
+title('Iris Classification Confusion Matrix');
+
+%% One More Thing...
+
+dsIris = prtDataGenIris;
+algo = prtPreProcPca('nComponents',2) + prtClassKnn + prtDecisionMap;
+plot(algo);
+%%
+yOutAlgoKfolds = algo.kfolds(dsIris,10);
+prtScoreConfusionMatrix(yOutAlgoKfolds,dsIris);
+
+title('Iris Classification Confusion Matrix');
