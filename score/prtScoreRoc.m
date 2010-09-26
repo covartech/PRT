@@ -1,6 +1,28 @@
 function [pf,pd,auc,thresholds,classLabels] = prtScoreRoc(ds,y,nRocSamples,nPfSamples,nPdSamples)
 % prtScoreRoc   Generate a reciever operator characteristic curve
 %
+%    prtScoreRoc(DECSTATS,LABELS) plots the receiver operator
+%    characteristic curve for the decision statistics DECSTATS and the
+%    corresponding labels LABELS. DECSTATS must be a Nx1 vector of decision
+%    statistics. LABELS must be a Nx1 vector of binary class labels.
+%
+%    [PF, PD, AUC] = prtScoreRoc(DECSTATS,LABELS) outputs the probability
+%    of false alarm PF, the probability of detection PD, and the area under
+%    the ROC curve AUC.
+%
+%    Example:     
+%    TestDataSet = prtDataGenSpiral;       % Create some test and
+%    TrainingDataSet = prtDataGenSpiral;   % training data
+%    classifier = prtClassSvm;             % Create a classifier
+%    classifier = classifier.train(TrainingDataSet);    % Train
+%    classified = run(classifier, TestDataSet);     
+%    %  Plot the ROC
+%    prtScoreRoc(classified.getX, TestDataSet.getY);
+%
+%   See also prtScoreConfusionMatrix, prtScoreRmse,
+%   prtScoreRocBayesianBootstrap, prtScoreRocBayesianBootstrapNfa,
+%   prtScorePercentCorrect
+
 % Syntax: 
 %       [pf,pd,auc,thresholds] = roc(ds,y);
 %       [pf,pd,auc,thresholds] = roc(ds,y,nRocSamples)
@@ -51,10 +73,10 @@ function [pf,pd,auc,thresholds,classLabels] = prtScoreRoc(ds,y,nRocSamples,nPfSa
 %       X = cat(1,randn(NdataSamp,1),randn(NdataSamp,1)+2);
 %       X = exp(X);     %highly non-linear ds
 %       y = cat(1,zeros(NdataSamp,1), ones(NdataSamp,1));
-%       [pffull,pdfull] = roc(X,y,[],[],[]); 
-%       [pf1,pd1] = roc(X,y,NrocSamp,[],[]); 
-%       [pf2,pd2] = roc(X,y,[],NrocSamp,[]); 
-%       [pf3,pd3] = roc(X,y,[],[],NrocSamp);
+%       [pffull,pdfull] = prtScoreRoc(X,y,[],[],[]); 
+%       [pf1,pd1] = prtScoreRoc(X,y,NrocSamp,[],[]); 
+%       [pf2,pd2] = prtScoreRoc(X,y,[],NrocSamp,[]); 
+%       [pf3,pd3] = prtScoreRoc(X,y,[],[],NrocSamp);
 %       figure(1);
 %       h = plot(pffull,pdfull,pf1,pd1,pf2,pd2,pf3,pd3);
 %       legend(h,{'Full','Linear ds','Linear pf','Linear pd'},4);
