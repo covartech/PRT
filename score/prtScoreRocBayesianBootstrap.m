@@ -1,5 +1,56 @@
-function varargout = prtScoreRocBayesianBootstrap(ds, y, nBootStrapSamples, nPfSamples, alpha)
-% prtScoreRocBayesianBootstrap - Bayesian Boot strap an ROC curve
+function varargout = prtScoreRocBayesianBootstrapBayesianBootstrap(ds, y, nBootStrapSamples, nPfSamples, alpha)
+% prtScoreRocBayesianBootstrap   Generate a reciever operator characteristic curve with Bayesian Boostrapping
+%
+%   prtScoreRocBayesianBootstrap(DECSTATS,LABELS) plots the receiver operator
+%   characteristic curve for the decision statistics DECSTATS and the
+%   corresponding labels LABELS. DECSTATS must be a Nx1 vector of decision
+%   statistics. LABELS must be a Nx1 vector of binary class labels.
+%
+%   prtScoreRocBayesianBootstrap performs Bayesian boot strap sampling of
+%   an ROC curve and generates the 100*(1-alpha) percent percentile uniform
+%   credible band. The default alpha is .05, corresponding to a 95%
+%   credible band. This is done following the methodology in:
+%
+%   Non-parametric estimation of ROC curve
+%   J. Gu, S. Ghosal, and A. Roy
+%   Statistics in Medicine, Vol. 27, 5407—5420, 2008.
+%   http://www4.stat.ncsu.edu/~ghosal/papers/ROCBB.pdf
+%
+%   prtScoreRocBayesianBootstrapBayesianBootstrap(DECSTATS,LABELS, NBOOTSAMP)
+%   Specifies the nummber of boostrap samples NBOOTSAMP. The default value
+%   is 1000.
+%
+%   prtScoreRocBayesianBootstrapBayesianBootstrap(DECSTATS,LABELS, [], NPFSAMP)
+%   Specfies the number of samples of probability of false alarm at with
+%   which to sample the ROC curve. The default is 500.
+%
+%   prtScoreRocBayesianBootstrapBayesianBootstrap(DECSTATS,LABELS, [], [], ALPHA)
+%   Specifies ALPHA, the size of the credible interval 100*(1-alpha). The
+%   default is 0.05, corresponding to a 95% credible band
+%
+%   [PFSAMPLES, PDMEAN,PDCONFREGION, BOOTSTRAPPEDPDS] =
+%   prtScoreRocBayesianBootstrapBayesianBootstrap(...) outputs PFSAMPLES,
+%   the False alarm probabilities at which the bootstrapped ROC curves are
+%   evaluated. PDMEAN, the mean of the bootstrapped ROC curves,
+%   PDCONFREGION, the 100*(1-alpha) percent percentile uniform credible
+%   band reported as the upper and lower Pd curves. BOOTSTRAPPEDPDS, all
+%   samples of the bootstrapped ROC curves
+%
+%    Example:     
+%    TestDataSet = prtDataGenSpiral;       % Create some test and
+%    TrainingDataSet = prtDataGenSpiral;   % training data
+%    classifier = prtClassSvm;             % Create a classifier
+%    classifier = classifier.train(TrainingDataSet);    % Train
+%    classified = run(classifier, TestDataSet);     
+%    %  Plot the ROC
+%    prtScoreRocBayesianBootstrap(classified.getX, TestDataSet.getY);
+%
+%   See also prtScoreConfusionMatrix, prtScoreRmse, prtScoreRoc,
+%   prtScoreRocNfa, prtScorePercentCorrect
+
+
+
+% prtScoreRocBayesianBootstrapBayesianBootstrap - Bayesian Boot strap an ROC curve
 %   Performs Bayesian boot strap sampling of an ROC curve and generates the
 %   100*(1-alpha) percent percentile uniform credible band. This is done
 %   following the methodology in:
@@ -9,11 +60,11 @@ function varargout = prtScoreRocBayesianBootstrap(ds, y, nBootStrapSamples, nPfS
 %   Statistics in Medicine, Vol. 27, 5407—5420, 2008.
 %   http://www4.stat.ncsu.edu/~ghosal/papers/ROCBB.pdf
 %
-% Syntax: prtScoreRocBayesianBootstrap(ds, y)
-%         prtScoreRocBayesianBootstrap(ds, y, nBootStrapSamples)
-%         prtScoreRocBayesianBootstrap(ds, y, nBootStrapSamples, nPfSamples)
-%         prtScoreRocBayesianBootstrap(ds, y, nBootStrapSamples, nPfSamples, alpha)
-%         [pfSamples, pdMean, pdConfRegion, bootStrappedPds] = prtScoreRocBayesianBootstrap(...)
+% Syntax: prtScoreRocBayesianBootstrapBayesianBootstrap(ds, y)
+%         prtScoreRocBayesianBootstrapBayesianBootstrap(ds, y, nBootStrapSamples)
+%         prtScoreRocBayesianBootstrapBayesianBootstrap(ds, y, nBootStrapSamples, nPfSamples)
+%         prtScoreRocBayesianBootstrapBayesianBootstrap(ds, y, nBootStrapSamples, nPfSamples, alpha)
+%         [pfSamples, pdMean, pdConfRegion, bootStrappedPds] = prtScoreRocBayesianBootstrapBayesianBootstrap(...)
 %
 %         Note: If no output arguments are requested the mean and credible 
 %               interval are plotted using prtUtilPlotRocConfidence()
@@ -42,7 +93,7 @@ function varargout = prtScoreRocBayesianBootstrap(ds, y, nBootStrapSamples, nPfS
 %   x = cat(1,2*randn(nSamplesEachHyp,1),randn(nSamplesEachHyp,1));
 %   y = cat(1,ones(nSamplesEachHyp,1),zeros(nSamplesEachHyp,1));
 %   ds = x.^2;
-%   prtScoreRocBayesianBootstrap(ds, y)
+%   prtScoreRocBayesianBootstrapBayesianBootstrap(ds, y)
 
 % Copyright 2010, New Folder Consulting, L.L.C.
 
@@ -65,16 +116,16 @@ end
 %% Error Checks
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 if ~isreal(ds(:))
-    error('prtScoreRocBayesianBootstrap requires input ds to be real');
+    error('prtScoreRocBayesianBootstrapBayesianBootstrap requires input ds to be real');
 end
 
 if any(isnan(ds(:)))
-    warning('prt:rocBayesianBootstrap:dsContainsNans','ds input to prtScoreRocBayesianBootstrap function contains NaNs; these are interpreted as "missing data".  \n The resulting ROC curve may not acheive Pd or Pfa = 1')
+    warning('prt:rocBayesianBootstrap:dsContainsNans','ds input to prtScoreRocBayesianBootstrapBayesianBootstrap function contains NaNs; these are interpreted as "missing data".  \n The resulting ROC curve may not acheive Pd or Pfa = 1')
 end
 
 uY = unique(y(:));
 if length(uY) ~= 2  
-    error('prtScoreRocBayesianBootstrap requires only 2 unique classes; unique(y(:)) = %s\n',mat2str(unique(y(:))));
+    error('prtScoreRocBayesianBootstrapBayesianBootstrap requires only 2 unique classes; unique(y(:)) = %s\n',mat2str(unique(y(:))));
 end
 
 if length(ds) ~= length(y);
