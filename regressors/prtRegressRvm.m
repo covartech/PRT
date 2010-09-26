@@ -40,7 +40,7 @@ classdef prtRegressRvm < prtRegress
     %
     %   Example:
     %   
-    %   dataSet = prtDataGenSinc;           % Load a prtDataRegress
+    %   dataSet = prtDataGenNoisySinc;           % Load a prtDataRegress
     %   dataSet.plot;                    % Display data
     %   reg = prtRegressRvm;             % Create a prtRegressRvm object
     %   reg = reg.train(dataSet);        % Train the prtRegressRvm object

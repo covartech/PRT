@@ -7,7 +7,7 @@ function rmse = prtScoreRmse(varargin)
 %   they are prtDataSets, TRUTH.isLabeled must be true.
 %
 %   Example:
-%   dataSet = prtDataGenSinc;        % Load a prtDataRegress data set, a
+%   dataSet = prtDataGenNoisySinc;        % Load a prtDataRegress data set, a
 %                                    % noisy Sinc function
 %   reg = prtRegressRvm;             % Create a prtRegressRvm object
 %   reg = reg.train(dataSet);        % Train the prtRegressRvm object

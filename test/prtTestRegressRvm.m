@@ -6,7 +6,7 @@ result = true;
 % numIter = 1000;
 % rmseResult = zeros(1,numIter);
 % for i = 1:numIter
-%     dataSet = prtDataGenSinc;
+%     dataSet = prtDataGenNoisySinc;
 %     reg = prtRegressRvm;
 %     reg = reg.train(dataSet);   
 %     dataOut = reg.run(dataSet);
@@ -14,9 +14,9 @@ result = true;
 % end
 % rmseBase = max(rmseResult);
 % %
-rmseBase =  0.1143;
+rmseBase =  0.3382;
 % Check that basic operation works
-dataSet = prtDataGenSinc;           % Load a prtDataRegress
+dataSet = prtDataGenNoisySinc;           % Load a prtDataRegress
 try
     reg = prtRegressRvm;             % Create a prtRegressRvm object
     reg = reg.train(dataSet);        % Train the prtRegressRvm object
@@ -29,7 +29,7 @@ catch
 end
 
 % Check that the non-default algo  works
-dataSet = prtDataGenSinc;           % Load a prtDataRegress
+dataSet = prtDataGenNoisySinc;           % Load a prtDataRegress
 try
     reg = prtRegressRvm;             % Create a prtRegressRvm object
     reg.algorithm = 'Sequential';
@@ -59,7 +59,7 @@ catch
 end
 %
 % % check that plotting the training works
-% dataSet = prtDataGenSinc;           % Load a prtDataRegress
+% dataSet = prtDataGenNoisySinc;           % Load a prtDataRegress
 % try
 %     reg = prtRegressRvm;             % Create a prtRegressRvm object
 %     reg.LearningPlot = true;
@@ -73,7 +73,7 @@ end
 % end
 
 % make sure k-folds works(kfolds will implicity test cross-val)
-dataSet = prtDataGenSinc;           % Load a prtDataRegress
+dataSet = prtDataGenNoisySinc;           % Load a prtDataRegress
 try
     reg = prtRegressRvm;             % Create a prtRegressRvm object
     [dataOut, regOut] = reg.kfolds(dataSet,10);        % Train the prtRegressRvm object
