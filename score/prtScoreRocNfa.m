@@ -18,3 +18,10 @@ function [nf,pd,auc,thresholds,classLabels] = prtScoreRocNfa(ds,y,varargin)
 [pf,pd,auc,thresholds,classLabels] = prtScoreRoc(ds,y,varargin{:});
 nMiss = length(find(y == 0));
 nf = pf*nMiss;
+
+if nargout == 0
+    plot(nf,pd);
+    xlabel('#FA');
+    ylabel('Pd');
+    clear pf pd auc thresholds classLabels
+end
