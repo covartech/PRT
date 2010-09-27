@@ -94,6 +94,7 @@ classdef prtFeatSelSfs < prtFeatSel
             
             canceled = false;
             try
+                h = [];
                 for j = 1:min(nFeatsTotal,Obj.nFeatures);
                     
                     if Obj.showProgressBar
@@ -105,6 +106,7 @@ classdef prtFeatSelSfs < prtFeatSel
                     for i = 1:length(availableFeatures)
                         currentFeatureSet = cat(2,sfsSelectedFeatures,availableFeatures(i));
                         tempDataSet = DS.retainFeatures(currentFeatureSet);
+                        
                         performance(i) = Obj.EvaluationMetric(tempDataSet);
                         
                         if Obj.showProgressBar
@@ -138,7 +140,9 @@ classdef prtFeatSelSfs < prtFeatSel
                 Obj.selectedFeatures = sfsSelectedFeatures;
                 
             catch ME
-                close(h);
+                if ~isempty(h)
+                    close(h);
+                end
                 throw(ME);
             end
         end

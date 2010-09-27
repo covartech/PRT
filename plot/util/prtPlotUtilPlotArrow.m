@@ -7,7 +7,7 @@ if nargin < 3 || isempty(arrowSize)
     arrowSize = [abs(x(end)-x(1))*0.05 get(0,'DefaultLineLineWidth')];
 end
 
-h = arrow('start',[x(1) y(1)],'stop',[x(end) y(end)],'length',arrowSize(1),'width',arrowSize(2));
+h = arrow('start',[x(1) y(1)],'stop',[x(end) y(end)],'length',arrowSize(1),'width',arrowSize(2),'TipAngle',25);
 
 varargout = {};
 if nargout

@@ -367,7 +367,7 @@ classdef prtDataSetClass  < prtDataSetStandard
             %   functions when the number of features is less than or equal
             %   to 3.
             
-            prtPlotUtilDataSetExploreGui(obj);
+            prtPlotUtilDataSetExplore(obj);
         end
         
         function varargout = plotAsTimeSeries(obj,featureIndices)

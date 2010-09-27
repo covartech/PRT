@@ -92,7 +92,7 @@ classdef prtClassKmeansPrototypes < prtClass
             
             fn = Obj.distanceMetricFn;
             distance = nan(DataSet.nObservations,length(Obj.clusterCenters));
-            selectedIndexes = nan(DataSet.nObservations,length(Obj.clusterCenters));
+            selectedKMeansIndexes = nan(DataSet.nObservations,length(Obj.clusterCenters));
             for i = 1:length(Obj.clusterCenters)
                 d = fn(DataSet.getObservations,Obj.clusterCenters{i});
                 [distance(:,i), selectedKMeansIndexes(:,i)] = min(d,[],2);

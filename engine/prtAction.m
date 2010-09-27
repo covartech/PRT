@@ -89,9 +89,12 @@ classdef prtAction
     
     properties
         % Specifies whether or not to store the training prtDataset.
-        
         % If true the training prtDataSet is stored internally prtAction.DataSet.
         verboseStorage = true;
+        
+        % A tag that can be used to reference a specific action within a
+        % prtAlgorithm
+        tag = '';
         
         % User specified data
         UserData = [];
@@ -301,7 +304,6 @@ classdef prtAction
             if nargout > 2
                 varargout = [varargout; {keys}];
             end
-            
         end
     end
     

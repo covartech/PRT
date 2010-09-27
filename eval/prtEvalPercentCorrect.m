@@ -32,6 +32,10 @@ if nargin < 3 || isempty(nFolds)
 end
 results = classifier.kfolds(dataSet,nFolds);
 
+if any(isnan(results.getObservations()))
+    keyboard
+end
+
 if results.nFeatures == 1 %binary classifier
     [pf,pd] = prtUtilScoreRoc(results.getObservations,dataSet.getTargets);
     pe = prtUtilPfPd2Pe(pf,pd);

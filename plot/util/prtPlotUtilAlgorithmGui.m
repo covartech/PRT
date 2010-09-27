@@ -1,23 +1,38 @@
 function prtPlotUtilAlgorithmGui(connectivityMatrix, actionCell)
 
+% Given the algorithms action cell extract the names of each of the blocks
+% Also add in Input and Output blocks
 algoStr = cellfun(@(c)c.nameAbbreviation,actionCell,'uniformoutput',false);
 algoStr = cat(1,{'Input'}, algoStr(:), {'Output'});
 actionCell = cat(1,{[]},actionCell(:),{[]});
 
+% Call GraphViz to get a good initial layout
 GraphLayoutInfo = prtPlotUtilGraphVizRun(connectivityMatrix');
 
+% Scale the GraphViz layout to get something reasonable
 nodePosMat = cat(1,GraphLayoutInfo.Nodes.pos);
 nodePosMat = bsxfun(@minus,nodePosMat,min(nodePosMat));
 nodePosMat = bsxfun(@rdivide,nodePosMat,max(nodePosMat));
-
 nodePosMat(isnan(nodePosMat))=0;
 
+% Decide how big the blocks can reasonably be given the number of blocks
+% we have to put in the unit box
 minDistBetweenBlocks = min(min(prtDistanceLNorm(nodePosMat,nodePosMat,2) + realmax*eye(size(connectivityMatrix))));
+blockSize = minDistBetweenBlocks*2/3;
 
-blockSize = minDistBetweenBlocks*1/2;
-
+% Because nodePosMat gives us the left corner we have to modify the block
+% size a little
 nodePosMat = bsxfun(@rdivide,nodePosMat,max(nodePosMat)+[blockSize blockSize]);
 
+strLengths = cellfun(@(s)length(s),algoStr);
+
+textSizes = blockSize./(strLengths+1)/0.7;
+textSizes = ones(size(textSizes))*min(textSizes);
+originalTextSizes = textSizes;
+% Add one character for the sides
+% 0.8 is an approximate to the aspect ratio of fonts.
+
+% Get the block drawing options
 Options = localGetOptions();
 
 Handles = localMakeFigure();
@@ -34,33 +49,35 @@ Gui.status = '';
 Gui.previous_point = [];
 
 for iBlockOuter = 1:Layout.nBlocks
-    placeBlockFunction([], [], actionCell{iBlockOuter}, nodePosMat(iBlockOuter,:), iBlockOuter, algoStr{iBlockOuter});
+    placeBlockFunction([], [], actionCell{iBlockOuter}, nodePosMat(iBlockOuter,:), iBlockOuter, algoStr{iBlockOuter}, textSizes(iBlockOuter));
 end
 
 for iEdge = 1:length(GraphLayoutInfo.Edges)
     startLoc = cat(2,nodePosMat(GraphLayoutInfo.Edges(iEdge).startIndex,1)+blockSize,nodePosMat(GraphLayoutInfo.Edges(iEdge).startIndex,2)+blockSize/2);
     stopLoc = cat(2,nodePosMat(GraphLayoutInfo.Edges(iEdge).stopIndex,1),nodePosMat(GraphLayoutInfo.Edges(iEdge).stopIndex,2)+blockSize/2);
     
-    Layout.edges(iEdge) = prtPlotUtilPlotArrow(cat(1,startLoc(1),stopLoc(1)),cat(1,startLoc(2),stopLoc(2)),[15 2]);
+    Layout.edges(iEdge) = prtPlotUtilPlotArrow(cat(1,startLoc(1),stopLoc(1)),cat(1,startLoc(2),stopLoc(2)),[20 4]);
     set(Layout.edges(iEdge),'facecolor',[0 0 0],'edgecolor',[0 0 0])
     
 end
 
-[xlims, ylims] = centerBlocks();
+centerBlocks();
 
-axis(cat(2,xlims, ylims));
+set(gcf,'NextPlot','replace')
 
 %% Begin Functions
 
     function patchWindowButtonMotion(hObject, eventData, blockIndex) %#ok
         cp = get(Handles.AxesPanel.mainAxes,'currentPoint');
         
-        newX = Options.blockSize(1)/2*[-1 -1 1 1 -1] + cp(1,1);
-        newY = Options.blockSize(2)/2*[-1 1 1 -1 -1] + cp(1,2);
-        Layout.Blocks(blockIndex).polygonNodes = cat(2,newX(:), newY(:));
+        oldBlockPosition = get(Layout.Blocks(blockIndex).handle,'position');
         
-        set(Layout.Blocks(blockIndex).handle,'XData',newX, 'YData', newY);
-        set(Layout.Blocks(blockIndex).textHandle,'Position',[cp(1,1) cp(1,2)+Options.blockSize(2)/2 0]);
+        cp = cp - blockSize/2;
+        
+        Layout.Blocks(blockIndex).polygonPosition = cp(1,1:2);
+        
+        set(Layout.Blocks(blockIndex).handle,'position',cat(2,cp(1,1:2),oldBlockPosition(3:4)));
+        set(Layout.Blocks(blockIndex).textHandle,'Position',[cp(1,1)+Options.blockSize(2)/2 cp(1,2)+Options.blockSize(2)/2 0]);
         
         %Move Edges
         for jEdge = 1:length(GraphLayoutInfo.Edges)
@@ -70,110 +87,116 @@ axis(cat(2,xlims, ylims));
                 startInd = GraphLayoutInfo.Edges(jEdge).startIndex;
                 stopInd = GraphLayoutInfo.Edges(jEdge).stopIndex;
                 
-                cStartX = get(Layout.Blocks(startInd).handle,'XData');
-                cStartY = get(Layout.Blocks(startInd).handle,'YData');
+                cStart = get(Layout.Blocks(startInd).handle,'position');
+                cStop = get(Layout.Blocks(stopInd).handle,'position');
                 
-                cStopX = get(Layout.Blocks(stopInd).handle,'XData');
-                cStopY = get(Layout.Blocks(stopInd).handle,'YData');
-                
-                startLoc = cat(2,max(cStartX), mean(unique(cStartY)));
-                stopLoc = cat(2,min(cStopX), mean(unique(cStopY)));
+                startLoc = cStart(1:2) + [blockSize blockSize/2];
+                stopLoc = cStop(1:2) + [0 blockSize/2];
     
-                try
+                try  %#ok<TRYNC>
                     delete(Layout.edges(jEdge));
                 end
-                Layout.edges(jEdge) = prtPlotUtilPlotArrow(cat(1,startLoc(1),stopLoc(1)),cat(1,startLoc(2),stopLoc(2)),[15 2]);
+                
+                Layout.edges(jEdge) = prtPlotUtilPlotArrow(cat(1,startLoc(1),stopLoc(1)),cat(1,startLoc(2),stopLoc(2)),[20 4]);
                 set(Layout.edges(jEdge),'facecolor',[0 0 0],'edgecolor',[0 0 0])
             end
         end
-                
     end
 
     function patchButtonDownFunction(hObject, eventData, blockIndex) %#ok<INUSL>
         
-        set(Handles.handle,'WindowButtonMotionFcn',@(h,E)patchWindowButtonMotion(h,E, blockIndex));
-        set(Handles.handle,'WindowButtonUpFcn',@(h,E)patchButtonUpFunction(h,E, blockIndex));
+        switch lower(get(Handles.handle, 'selectiontype'))
+            case 'open'
+                % % disp('Double Click Block')
+                % Nothing for now
+            otherwise % case 'normal'
+                set(Handles.handle,'WindowButtonMotionFcn',@(h,E)patchWindowButtonMotion(h,E, blockIndex));
+                set(Handles.handle,'WindowButtonUpFcn',@(h,E)patchButtonUpFunction(h,E, blockIndex));
+                set(Layout.Blocks(blockIndex).handle,'Selected','off')
+        end
     end
 
     function patchButtonUpFunction(hObject, eventData, blockIndex)   %#ok<INUSL>
-        
-        set(Handles.handle,'WindowButtonMotionFcn',@pan_motion,...
-                           'WindowButtonDownFcn'  , @pan_click,...
-                           'WindowButtonUpFcn'    , @pan_release);
+        set(Handles.handle,'WindowButtonMotionFcn',@mouseControlWindowButtonMotionFcn,...
+                           'WindowButtonDownFcn'  , @mouseControlWindowButtonDownFcn,...
+                           'WindowButtonUpFcn'    , @mouseControlWindowButtonUpFcn);
         Gui.status = '';
         
         set(Layout.Blocks(blockIndex).handle,'Selected','off')
     end
 
-    function placeBlockFunction(hObject, eventData, BlockObject, position, iBlock, blockStr)  %#ok<INUSL>
+    function placeBlockFunction(hObject, eventData, BlockObject, position, iBlock, blockStr, textSize)  %#ok<INUSL>
         
         % Extract stuff from the options so that the GUI can use it
         if isempty(BlockObject)
             blockColor = Options.BlockColors.dataSet;
+            textColor = Options.BlockTextColors.dataSet;
         elseif isa(BlockObject,'prtPreProc')
             blockColor = Options.BlockColors.preProcessor;
+            textColor = Options.BlockTextColors.preProcessor;
         elseif isa(BlockObject,'prtFeatSel')
             blockColor = Options.BlockColors.featureSelector;
+            textColor = Options.BlockTextColors.featureSelector;
         elseif isa(BlockObject,'prtClass')
             blockColor = Options.BlockColors.classifier;
+            textColor = Options.BlockTextColors.classifier;
         elseif isa(BlockObject,'prtDecision')
             blockColor = Options.BlockColors.decision;
+            textColor = Options.BlockTextColors.decision;
         else
             error('Unsupported Block Type');
         end
         
-        newPolygonNodes = [position(1) position(2);
-                           position(1)+blockSize position(2);
-                           position(1)+blockSize position(2)+blockSize;
-                           position(1) position(2)+blockSize;
-                           position(1) position(2)];
+                       
+        Layout.Blocks(iBlock).polygonPosition = position;
+        Layout.Blocks(iBlock).handle = rectangle('Position',[position,blockSize,blockSize],'Curvature',[0.25, 0.25],'FaceColor',blockColor,'LineWidth',2);
         
-        Layout.Blocks(iBlock).polygonNodes = newPolygonNodes;
-        Layout.Blocks(iBlock).handle = patch(newPolygonNodes(:,1), newPolygonNodes(:,2), blockColor);
-        Layout.Blocks(iBlock).textHandle = text(mean(newPolygonNodes(1:2,1)),max(newPolygonNodes(:,2)),blockStr,'VerticalAlignment','Top','HorizontalAlignment','Center','Color',[0 0 0],'FontUnits','Normalized','FontSize',Options.blockFontSizeNormalized);
+        Layout.Blocks(iBlock).textHandle = text(position(1)+blockSize/2,position(2)+blockSize/2,blockStr,'VerticalAlignment','Middle','HorizontalAlignment','Center','Color',textColor,'FontUnits','Normalized','FontSize',textSize,'FontWeight','Bold');
         
         set(Layout.Blocks(iBlock).handle,'ButtonDownFcn',@(h,E)patchButtonDownFunction(h,E,iBlock));
         set(Layout.Blocks(iBlock).textHandle,'ButtonDownFcn',@(h,E)patchButtonDownFunction(h,E,iBlock));
         
-        %set(Handles.AxesPanel.mainAxes,'XLim',Options.initialCanvasLimits(1:2),'YLim',Options.initialCanvasLimits(3:4));
         Layout.Blocks(iBlock).Object = BlockObject;
-        
-        % Turn off / cancel the button placement
-%         set(Handles.handle,'WindowScrollWheelFcn' , @scroll_zoom,...
-%             'WindowButtonDownFcn'  , @pan_click,...
-%             'WindowButtonUpFcn'    , @pan_release,...
-%             'WindowButtonMotionFcn', @pan_motion);
-%         set(Handles.Hover.plotHandle,'ButtonDownFcn',[]);
-%         set(Handles.Hover.plotHandle,'XData',nan(4,1),'YData',nan(4,1));
-%         set(Handles.Hover.textHandle,'color',[1 1 1]);
-%         
-%         set(Layout.Blocks(Layout.nBlocks).handle,'DeleteFcn',@(h,o)blockDeleteFcn(h,o),'HitTest','on');
-        %set(Layout.Blocks(Layout.nBlocks).textHandle,'DeleteFcn',@(h,o)blockTextDeleteFcn(h,o,Layout.nBlocks),'HitTest','on');
     end
 
-% zoom in to the current point with the mouse wheel
-% Stolen from mouse_figure  - Rody P.S. Oldenhuis
-    function scroll_zoom(varargin)
+    function mouseControlWindowScrollWheelZoomFcn(varargin)
+        scrollAmountFactor = 50;
+        
         if ~ishandle(Handles.handle)
             return
         end
-        % double check if these axes are indeed the current axes
-        if get(Handles.handle, 'currentaxes') ~= Handles.AxesPanel.mainAxes, return, end
+        
+        % current axes?
+        if get(Handles.handle, 'currentaxes') ~= Handles.AxesPanel.mainAxes
+            return
+        end
+        
         % get the amount of scolls
         scrolls = varargin{2}.VerticalScrollCount;
-        % get the axes' x- and y-limits
-        xlim = get(Handles.AxesPanel.mainAxes, 'xlim');  ylim = get(Handles.AxesPanel.mainAxes, 'ylim');
+        
+        % Get the axes' x- and y-limits
+        xlim = get(Handles.AxesPanel.mainAxes, 'xlim'); 
+        ylim = get(Handles.AxesPanel.mainAxes, 'ylim');
+        
         % get the current camera position, and save the [z]-value
-        cam_pos_Z = get(Handles.AxesPanel.mainAxes, 'cameraposition');  cam_pos_Z = cam_pos_Z(3);
+        cam_pos_Z = get(Handles.AxesPanel.mainAxes, 'cameraposition'); 
+        cam_pos_Z = cam_pos_Z(3);
+        
         % get the current point
-        old_position = get(Handles.AxesPanel.mainAxes, 'CurrentPoint'); old_position(1,3) = cam_pos_Z;
+        old_position = get(Handles.AxesPanel.mainAxes, 'CurrentPoint');
+        old_position(1,3) = cam_pos_Z;
+        
         % calculate zoom factor
-        zoomfactor = 1 - scrolls/50;
+        zoomfactor = 1 - scrolls/scrollAmountFactor; 
+        
         % adjust camera position
-        set(Handles.AxesPanel.mainAxes, 'cameratarget', [old_position(1, 1:2), 0],...
+        set(Handles.AxesPanel.mainAxes,...
+            'cameratarget', [old_position(1, 1:2), 0],...
             'cameraposition', old_position(1, 1:3));
+        
         % adjust the camera view angle (equal to zooming in)
         camzoom(zoomfactor);
+        
         % zooming with the camera has the side-effect of
         % NOT adjusting the axes limits. We have to correct for this:
         x_lim1 = (old_position(1,1) - min(xlim))/zoomfactor;
@@ -182,135 +205,99 @@ axis(cat(2,xlims, ylims));
         y_lim1 = (old_position(1,2) - min(ylim))/zoomfactor;
         y_lim2 = (max(ylim) - old_position(1,2))/zoomfactor;
         ylim   = [old_position(1,2) - y_lim1, old_position(1,2) + y_lim2];
-        set(Handles.AxesPanel.mainAxes, 'xlim', xlim), set(Handles.AxesPanel.mainAxes, 'ylim', ylim)
+        set(Handles.AxesPanel.mainAxes, 'xlim', xlim)
+        set(Handles.AxesPanel.mainAxes, 'ylim', ylim)
+        
         % set new camera position
         new_position = get(Handles.AxesPanel.mainAxes, 'CurrentPoint');
         old_camera_target =  get(Handles.AxesPanel.mainAxes, 'CameraTarget');
         old_camera_target(3) = cam_pos_Z;
         new_camera_position = old_camera_target - ...
             (new_position(1,1:3) - old_camera_target(1,1:3));
+        
         % adjust camera target and position
         set(Handles.AxesPanel.mainAxes, 'cameraposition', new_camera_position(1, 1:3),...
             'cameratarget', [new_camera_position(1, 1:2), 0]);
+        
         % we also have to re-set the axes to stretch-to-fill mode
         set(Handles.AxesPanel.mainAxes, 'cameraviewanglemode', 'auto',...
             'camerapositionmode', 'auto',...
             'cameratargetmode', 'auto');
         
+        % Resize the text since the block size has changed
         Options.blockFontSizeNormalized = Options.blockFontSizeNormalized .* zoomfactor;
-        % New Part by Kenny
         resizeText();
-        
-    end % scroll_zoom
+    end 
 
-% pan upon mouse click
-% Stolen from mouse_figure  - Rody P.S. Oldenhuis
-    function pan_click(varargin)
+
+    function mouseControlWindowButtonDownFcn(varargin)
+        % If we are not a handle get out of here
         if ~ishandle(Handles.handle)
             return
         end
-        % double check if these axes are indeed the current axes
-        if get(Handles.handle, 'currentaxes') ~= Handles.AxesPanel.mainAxes, return, end
+        
+        % current axes?
+        if get(Handles.handle, 'currentaxes') ~= Handles.AxesPanel.mainAxes
+            return
+        end
+        
         % perform appropriate action
         switch lower(get(Handles.handle, 'selectiontype'))
             % start panning on left click
             case 'normal'
-                %                 Gui.status = 'down';
-                %                 Gui.previous_point = get(Handles.AxesPanel.mainAxes, 'CurrentPoint');
                 cp = get(Handles.AxesPanel.mainAxes, 'CurrentPoint');
-                %% New Part from Kenny
                 
-                % From the current point we check and see if we are
-                % clicking on a block.
-                blockInd = findBlockClick(cp);
-                if ~isempty(blockInd)
-                    deselectEverything();
-                    set(Layout.Blocks(blockInd).handle,'Selected','on');
-                    Gui.status = 'block';
-                    Gui.blockInd = blockInd;
-                    Gui.previous_point = cp;
-                else
-                    deselectEverything();
-                    % Clicking on back canvas Allow dragging around
-                    Gui.status = 'down';
-                    Gui.previous_point = cp;
-                end
-                
-                
+                deselectEverything();
+                % Clicking on back canvas Allow dragging around
+                Gui.status = 'down';
+                Gui.previous_point = cp;
+
             case 'open' % double click (left or right)
-                cp = get(Handles.AxesPanel.mainAxes, 'CurrentPoint');
-                blockInd = findBlockClick(cp);
-                if ~isempty(blockInd)
-                    set(Handles.handle,'WindowButtonMotionFcn',@pan_motion,...
-                        'WindowButtonDownFcn'  , @pan_click,...
-                        'WindowButtonUpFcn'    , @pan_release);
-                    
-                    Gui.status = '';
-                    
-                    % Double clicking on a block
-                    %msgbox(sprintf('This would be a %s options editing GUI.',get(Layout.Blocks(blockInd).textHandle,'string')),'Options Edtior Placeholder','Modal');
-                    
-                    if ~isempty(actionCell{blockInd}) && ismethod(actionCell{blockInd},'plot') && actionCell{blockInd}.isTrained
-                        if actionCell{blockInd}.DataSetSummary.nFeatures > 1 && actionCell{blockInd}.DataSetSummary.nFeatures < 4
-                            figure
-                            plot(actionCell{blockInd})
-                        else
-                            %msgbox('This node has too many dimensions for plotting','Modal');
-                        end
-                    else
-                        % Do something else?
-                        
-                    end
-                        
-                else
-                    % Double clicking on back canvas.
-                    % center view
-                    [xlim, ylim] = centerBlocks;
-                    set(Handles.AxesPanel.mainAxes, 'Xlim', xlim, 'Ylim', ylim);
-                end
-                % right click - set new reset state
-            case 'alt'
-                % We probably want to disable this for context menu
-                %                 Gui.original_xlim = get(Handles.AxesPanel.mainAxes, 'xlim');
-                %                 Gui.original_ylim = get(Handles.AxesPanel.mainAxes, 'ylim');
+                centerBlocks();
+                Gui.status = '';
         end
     end
 
-% release mouse button
-% Stolen from mouse_figure  - Rody P.S. Oldenhuis
-    function pan_release(varargin)
+    function mouseControlWindowButtonUpFcn(varargin)
         % double check if these axes are indeed the current axes
-        if get(Handles.handle, 'currentaxes') ~= Handles.AxesPanel.mainAxes, return, end
-        
-        switch lower(Gui.status)
-            case 'down'
-            case 'block'
+        if get(Handles.handle, 'currentaxes') ~= Handles.AxesPanel.mainAxes
+            return
         end
+        
+        
         
         %deselectEverything();
         % reset Gui.status
         Gui.status = '';
     end
 
-% move the mouse (with button clicked)
-% Stolen from mouse_figure  - Rody P.S. Oldenhuis
-    function pan_motion(varargin)
+    % The primary mouse button controler
+    function mouseControlWindowButtonMotionFcn(varargin)
         if ~ishandle(Handles.handle)
             return
         end
+        
         % double check if these axes are indeed the current axes
-        if get(Handles.handle, 'currentaxes') ~= Handles.AxesPanel.mainAxes, return, end
+        if get(Handles.handle, 'currentaxes') ~= Handles.AxesPanel.mainAxes
+            return
+        end
         % return if there isn't a previous point
-        if isempty(Gui.previous_point), return, end
+        if isempty(Gui.previous_point)
+            return
+        end
         % return if mouse hasn't been clicked
-        if isempty(Gui.status), return, end
+        if isempty(Gui.status)
+            return
+        end
         % get current location (in pixels)
         current_point = get(Handles.AxesPanel.mainAxes, 'CurrentPoint');
         
         switch lower(Gui.status)
             case 'down'
                 % get current XY-limits
-                xlim = get(Handles.AxesPanel.mainAxes, 'xlim');  ylim = get(Handles.AxesPanel.mainAxes, 'ylim');
+                xlim = get(Handles.AxesPanel.mainAxes, 'xlim');
+                ylim = get(Handles.AxesPanel.mainAxes, 'ylim');
+                
                 % find change in position
                 delta_points = current_point - Gui.previous_point;
                 % adjust limits
@@ -320,36 +307,33 @@ axis(cat(2,xlims, ylims));
                 set(Handles.AxesPanel.mainAxes, 'Xlim', new_xlim); set(Handles.AxesPanel.mainAxes, 'Ylim', new_ylim);
                 % save new position
                 Gui.previous_point = get(Handles.AxesPanel.mainAxes, 'CurrentPoint');
-%             case 'block'
-%                 cX = Options.blockSize(1)/2*[-1 -1 1 1 -1] + current_point(1,1);
-%                 cY = Options.blockSize(2)/2*[-1 1 1 -1 -1] + current_point(1,2);
-%                 set(Layout.Blocks(Gui.blockInd).handle,'XData',cX, 'YData',cY);
-%                 set(Layout.Blocks(Gui.blockInd).textHandle,'Position',[current_point(1,1) current_point(1,2)+Options.blockSize(2)/2 0]);
-%                 Layout.Blocks(Gui.blockInd).polygonNodes = [cX(:) cY(:)];
-                
+            otherwise % Window motion without anything going on
         end
     end
 
-    function deselectEverything
-        % Blocks
+    function deselectEverything()
         for iBlock = 1:Layout.nBlocks
             set(Layout.Blocks(iBlock).handle,'Selected','off');
         end
     end
 
-    function [xLims, yLims] = centerBlocks
+    function centerBlocks()
         if Layout.nBlocks == 0
             xLims = Options.initialCanvasLimits(1:2);
             yLims = Options.initialCanvasLimits(3:4);
             Options.blockFontSizeNormalized = Options.initialBlockFontSizeNormalized;
+            
+            xlim(xLims)
+            ylim(yLims);
+            
             return
         end
         
         xLims = [inf -inf];
         yLims = [inf -inf];
         for iBlock = 1:Layout.nBlocks
-            maxPos = max(Layout.Blocks(iBlock).polygonNodes);
-            minPos = min(Layout.Blocks(iBlock).polygonNodes);
+            maxPos = Layout.Blocks(iBlock).polygonPosition + blockSize;
+            minPos = Layout.Blocks(iBlock).polygonPosition;
             xLims(1) = min(xLims(1),minPos(1));
             xLims(2) = max(xLims(2),maxPos(1));
             yLims(1) = min(yLims(1),minPos(2));
@@ -374,51 +358,54 @@ axis(cat(2,xlims, ylims));
             xRange = yRange;
         end
         
-        % Dont zoom in more than the original
-%         initRange = Options.initialCanvasLimits(2)-Options.initialCanvasLimits(1);
-%         if xRange < initRange
-%             xLims = (initRange-xRange)/2*[-1 1] + xLims;
-%             yLims = (initRange-xRange)/2*[-1 1] + yLims;
-%             xRange = initRange;
-%             yRange = initRange;
-%         end
-        
         zoomFactorFromOriginal = max(xRange,yRange) ./ (Options.initialCanvasLimits(2)-Options.initialCanvasLimits(1));
-        Options.blockFontSizeNormalized = 1./zoomFactorFromOriginal.*Options.initialBlockFontSizeNormalized;
+        textSizes = 1./zoomFactorFromOriginal.*originalTextSizes;
         resizeText();
+        
+        xlim(xLims)
+        ylim(yLims);
     end
+
     function resizeText
         for iBlock = 1:Layout.nBlocks
-            set(Layout.Blocks(iBlock).textHandle,'FontSize',Options.blockFontSizeNormalized);
-        end
-        set(Handles.Hover.textHandle,'FontSize',Options.blockFontSizeNormalized);
-    end
-    function blockInd = findBlockClick(cp)
-        blockInd = [];
-        for iBlock = 1:Layout.nBlocks
-            isInThisBlock = all(cp(1,1:2) < max(Layout.Blocks(iBlock).polygonNodes) & cp(1,1:2) > min(Layout.Blocks(iBlock).polygonNodes));
-            if isInThisBlock
-                blockInd = iBlock;
-                
-                return
-            end
+            set(Layout.Blocks(iBlock).textHandle,'FontSize',textSizes(iBlock));
         end
     end
+
+%     function blockInd = findBlockClick(cp)
+%         blockInd = [];
+%         for iBlock = 1:Layout.nBlocks
+%             isInThisBlock = all(cp(1,1:2) < max(Layout.Blocks(iBlock).polygonNodes) & cp(1,1:2) > min(Layout.Blocks(iBlock).polygonNodes));
+%             if isInThisBlock
+%                 blockInd = iBlock;
+%                 
+%                 return
+%             end
+%         end
+%     end
 
 
     function Options = localGetOptions()
+        
+        colors = prtPlotUtilClassColors(4);
         
         Options.initialCanvasLimits = [-0.1 1.1 -0.1 1.1];
         Options.blockSize = blockSize*[1 1];
         Options.initialBlockFontSizeNormalized = 0.03; %This is the default relative to the initialCanvas limits
         Options.blockFontSizeNormalized = Options.initialBlockFontSizeNormalized; %It can change as a function of the zoom level.
-        Options.blockHoverEdgeColor = [0.8 0.8 0.8];
-        Options.blockHoverTextColor = [0.8 0.8 0.8];
-        Options.BlockColors.dataSet = [1 1 1];
-        Options.BlockColors.preProcessor = [1 0.8 0.6];
-        Options.BlockColors.featureSelector = [0.6 1 0.8];
-        Options.BlockColors.classifier = [0.7 0.7 1];
-        Options.BlockColors.decision = [0.3 0.3 0.3];
+        
+        Options.BlockColors.dataSet = [0.8 0.8 0.8];
+        Options.BlockColors.preProcessor = colors(1,:);
+        Options.BlockColors.featureSelector = colors(2,:);
+        Options.BlockColors.classifier = colors(3,:);
+        Options.BlockColors.decision = colors(4,:);
+        
+        Options.BlockTextColors.dataSet = [0 0 0];
+        Options.BlockTextColors.preProcessor = [1 1 1];
+        Options.BlockTextColors.featureSelector = [1 1 1];
+        Options.BlockTextColors.classifier = [1 1 1];
+        Options.BlockTextColors.decision = [0 0 0];
+        
     end
 
 
@@ -441,7 +428,7 @@ axis(cat(2,xlims, ylims));
         MainFigure.name = 'PRT Algorithm';
         MainFigure.Number = 'Off';
         MainFigure.Menu = 'none';
-        MainFigure.toolbar = 'figure';
+        MainFigure.toolbar = 'none';
         MainFigure.DockControls = 'off';
         
         MainFigure.Children.AxesPanel.style = 'panel';
@@ -458,31 +445,12 @@ axis(cat(2,xlims, ylims));
         
         Handles = prtUtilSuicontrol(MainFigure);
         
-        Handles.Hover.plotHandle = patch(nan(4,1),nan(4,1),[0.95 0.95 0.95],'EdgeColor',Options.blockHoverEdgeColor);
-        Handles.Hover.textHandle = text(0,0,'NAME','color',Options.blockHoverTextColor,'VerticalAlignment','Top','HorizontalAlignment','Center','FontUnits','Normalized','FontSize',Options.blockFontSizeNormalized,'HitTest','off');
-        set(Handles.Hover.plotHandle,'visible','off');
-        set(Handles.Hover.textHandle,'visible','off');
-        
-        
-        % Trim the toolbar down to just the zooming controls
-        Handles.Toolbar.handle = findall(Handles.handle,'Type','uitoolbar');
-        Handles.Toolbar.Children = findall(Handles.handle,'Parent',Handles.Toolbar.handle,'HandleVisibility','off');
-        
-        % Delete a bunch of things we dont need
-        delete(findobj(Handles.Toolbar.Children,'TooltipString','New Figure',...
-            '-or','TooltipString','Open File','-or','TooltipString','Save Figure',...
-            '-or','TooltipString','Print Figure','-or','TooltipString','Edit Plot',...
-            '-or','TooltipString','Data Cursor','-or','TooltipString','Brush/Select Data',...
-            '-or','TooltipString','Link Plot','-or','TooltipString','Insert Colorbar',...
-            '-or','TooltipString','Insert Legend','-or','TooltipString','Show Plot Tools and Dock Figure',...
-            '-or','TooltipString','Hide Plot Tools'))
-        
         
         % define zooming with scrollwheel, and panning with mouseclicks
-        set(Handles.handle, 'WindowScrollWheelFcn' , @scroll_zoom,...
-            'WindowButtonDownFcn'  , @pan_click,...
-            'WindowButtonUpFcn'    , @pan_release,...
-            'WindowButtonMotionFcn', @pan_motion);
+        set(Handles.handle, 'WindowScrollWheelFcn' , @mouseControlWindowScrollWheelZoomFcn,...
+            'WindowButtonDownFcn'  , @mouseControlWindowButtonDownFcn,...
+            'WindowButtonUpFcn'    , @mouseControlWindowButtonUpFcn,...
+            'WindowButtonMotionFcn', @mouseControlWindowButtonMotionFcn);
         
     end
 end
