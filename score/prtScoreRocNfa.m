@@ -23,5 +23,6 @@ if nargout == 0
     plot(nf,pd);
     xlabel('#FA');
     ylabel('Pd');
-    clear pf pd auc thresholds classLabels
+    
+    clear nf pd auc thresholds classLabels
 end

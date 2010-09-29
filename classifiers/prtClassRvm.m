@@ -254,8 +254,9 @@ classdef prtClassRvm < prtClass
             %with changes to kernels, or by regularization
             G = gramm'*gramm;
             while rcond(G) < 1e-6
-                if sigmaSquared == eps
-                    warning('prt:prtClassRvm:illConditionedG','RVM initial G matrix ill-conditioned; regularizing diagonal of G to resolve; this can be modified by changing kernel parameters\n');
+                if sigmaSquared == eps && Obj.learningVerbose
+                    %warning('prt:prtClassRvm:illConditionedG','RVM initial G matrix ill-conditioned; regularizing diagonal of G to resolve; this can be modified by changing kernel parameters\n');
+                    disp('Regularizing Gramm matrix...');
                 end
                 G = (sigmaSquared*eye(nBasis) + gramm'*gramm);
                 sigmaSquared = sigmaSquared*2;
