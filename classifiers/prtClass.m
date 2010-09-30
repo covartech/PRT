@@ -23,6 +23,9 @@ classdef prtClass < prtAction
         yieldsMaryOutput = nan; % Determined in trainProcessing()
         twoClassParadigm = 'binary';   %  Whether the classifier is binary or m-ary
     end
+    properties
+        internalDecider = [];
+    end
     
     properties (Hidden = true)
         PlotOptions = prtClass.initializePlotOptions();  % 
@@ -122,6 +125,15 @@ classdef prtClass < prtAction
     
     methods (Access = protected, Hidden = true)
 
+        function Obj = postTrainProcessing(Obj,DataSet)
+            if ~isempty(Obj.internalDecider)
+                tempObj = Obj;
+                tempObj.internalDecider = [];
+                yOut = tempObj.run(DataSet);
+                Obj.internalDecider = Obj.internalDecider.train(yOut);
+            end
+        end
+        
         function ClassObj = preTrainProcessing(ClassObj, DataSet)
             % Overload preTrainProcessing() so that we can determine mary
             % output status
@@ -135,6 +147,10 @@ classdef prtClass < prtAction
         function OutputDataSet = postRunProcessing(ClassObj, InputDataSet, OutputDataSet)
             % Overload postRunProcessing (from prtAction) so that we can
             % enforce twoClassParadigm
+            
+            if ~isempty(ClassObj.internalDecider)
+                OutputDataSet = ClassObj.internalDecider.run(OutputDataSet);
+            end
             
             if ~isempty(ClassObj.yieldsMaryOutput) && ~isnan(ClassObj.yieldsMaryOutput)
                 if ClassObj.yieldsMaryOutput

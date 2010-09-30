@@ -158,6 +158,7 @@ classdef prtAction
             
             Obj = trainAction(Obj, DataSet);
             Obj.isTrained = true;
+            Obj = postTrainProcessing(Obj,DataSet);
         end
         
         function DataSetOut = run(Obj, DataSetIn)         
@@ -315,6 +316,15 @@ classdef prtAction
             %   prior to training.
             %   
             %   ClassObj = preTrainProcessing(ClassObj,DataSet)
+        end
+        
+        function ClassObj = postTrainProcessing(ClassObj,DataSet)
+            % postTrainProcessing - Processing done after train()
+            %   Called by train(). Can be overloaded by prtActions to
+            %   store specific information about the DataSet or Classifier
+            %   prior to training.
+            %   
+            %   ClassObj = postTrainProcessing(ClassObj,DataSet)
         end
         
         function DataSetOut = postRunProcessing(ClassObj, DataSetIn, DataSetOut)
