@@ -130,7 +130,10 @@ classdef prtClassLibSvm < prtClass
             training_instance_matrix = DataSet.getObservations;
             Obj.libSvmOptions = Obj.libSvmOptionString(DataSet);
             Obj.libSvmOptionsTest = Obj.libSvmOptionStringTest(DataSet);
+            
             Obj.trainedSvm = svmtrain(training_label_vector, training_instance_matrix, Obj.libSvmOptions);
+            
+            %Need to figure out whether to flip SVM outputs:
             yOut = runAction(Obj,DataSet);
             [~,~,auc] = prtScoreRoc(yOut.getObservations,DataSet.getTargets,100);
             if auc < .5
@@ -144,6 +147,8 @@ classdef prtClassLibSvm < prtClass
             if isempty(testing_label_vector)
                 testing_label_vector = zeros(DataSet.nObservations,1);
                 disp('Ignore predicted accuracy:');
+            else
+                disp('Testing predicted accuracy:');
             end
             testing_instance_matrix = DataSet.getObservations;
             [~, ~, decision_values] = svmpredict(testing_label_vector, testing_instance_matrix, Obj.trainedSvm, Obj.libSvmOptionsTest);
