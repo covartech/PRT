@@ -12,7 +12,6 @@ classdef prtDecisionBinaryMinPe < prtDecisionBinary
         function Obj = trainAction(Obj,dataSet)
             [pf,pd,auc,thresh] = prtScoreRoc(dataSet.getObservations,dataSet.getTargets);
             pe = prtUtilPfPd2Pe(pf,pd);
-            keyboard
             [v,minPeIndex] = min(pe);
             Obj.threshold = thresh(minPeIndex);
             Obj.uniqueClasses = dataSet.uniqueClasses;

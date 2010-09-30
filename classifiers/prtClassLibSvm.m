@@ -51,7 +51,10 @@ classdef prtClassLibSvm < prtClass
         libSvmOptions = '';
     end
     properties (Hidden = true)
-        trainedSvm
+        %Note, the libSvm has different opinions of what classes 1 and 0
+        %mean than we do; gain takes care of the difference.
+        gain = 1; 
+        trainedSvm 
         libSvmOptionsTest
     end
     
@@ -128,6 +131,11 @@ classdef prtClassLibSvm < prtClass
             Obj.libSvmOptions = Obj.libSvmOptionString(DataSet);
             Obj.libSvmOptionsTest = Obj.libSvmOptionStringTest(DataSet);
             Obj.trainedSvm = svmtrain(training_label_vector, training_instance_matrix, Obj.libSvmOptions);
+            yOut = runAction(Obj,DataSet);
+            [~,~,auc] = prtScoreRoc(yOut.getObservations,DataSet.getTargets,100);
+            if auc < .5
+                Obj.gain = -1;
+            end
         end
         
         function DataSetOut = runAction(Obj,DataSet)
@@ -141,7 +149,7 @@ classdef prtClassLibSvm < prtClass
             [~, ~, decision_values] = svmpredict(testing_label_vector, testing_instance_matrix, Obj.trainedSvm, Obj.libSvmOptionsTest);
             
             DataSetOut = DataSet;
-            DataSetOut = DataSetOut.setObservations(decision_values);
+            DataSetOut = DataSetOut.setObservations(decision_values*Obj.gain);
         end
         
     end
