@@ -10,7 +10,7 @@ function [pf,pd,auc,thresholds,classLabels] = prtScoreRoc(ds,y,nRocSamples,nPfSa
 %    of false alarm PF, the probability of detection PD, and the area under
 %    the ROC curve AUC.
 %
-%    Example:     
+%    Example:
 %    TestDataSet = prtDataGenSpiral;       % Create some test and
 %    TrainingDataSet = prtDataGenSpiral;   % training data
 %    classifier = prtClassSvm;             % Create a classifier
