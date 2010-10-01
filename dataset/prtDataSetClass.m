@@ -187,6 +187,9 @@ classdef prtDataSetClass  < prtDataSetStandard
             
             indices1 = prtDataSetBase.parseIndices(obj.nClasses, varargin{:});
             uniqueClasses = obj.uniqueClasses;
+            if isa(indices1,'logical')
+                indices1 = find(indices1);
+            end
             
             tn = cell(length(indices1),1);
             for i = 1:length(indices1)
@@ -673,7 +676,6 @@ classdef prtDataSetClass  < prtDataSetStandard
             
             set(gca,'nextPlot',holdState);
             tickoff;
-            
             
             title(obj.name);
             if nargout > 0
