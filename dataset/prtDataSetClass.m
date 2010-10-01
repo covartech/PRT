@@ -157,6 +157,22 @@ classdef prtDataSetClass  < prtDataSetStandard
                 varargin = varargin(newIndex);
             end
             
+            removeInd = [];
+            for i = 1:2:length(varargin)
+                if strcmpi(varargin{i},'featureNames')
+                    obj = obj.setFeatureNames(varargin{i+1});
+                    removeInd = cat(2,removeInd,i,i+1);
+                elseif strcmpi(varargin{i},'classNames')
+                    obj = obj.setClassNames(varargin{i+1});
+                    removeInd = cat(2,removeInd,i,i+1);
+                elseif strcmpi(varargin{i},'observationNames')
+                    obj = obj.setObservationNames(varargin{i+1});
+                    removeInd = cat(2,removeInd,i,i+1);
+                end
+            end
+            keepInd = setdiff(1:length(varargin),removeInd);
+            varargin = varargin(keepInd);
+            
             obj = prtUtilAssignStringValuePairs(obj,varargin{:});
         end
         
@@ -526,6 +542,9 @@ classdef prtDataSetClass  < prtDataSetStandard
                 warning('prt:plot:NoPlotDimensionality','No plot dimensions requested.');
                 return
             end
+            if nPlotDimensions < 3
+                warning('prt:plotStar:TooFewDimensions','Star plots with fewer than 3 dimensions will look like lines or dots; star plots are best suited for data sets with > 2 features');
+            end
             
             %M = ceil(sqrt(obj.nObservations));
             
@@ -613,6 +632,9 @@ classdef prtDataSetClass  < prtDataSetStandard
                 warning('prt:plot:NoPlotDimensionality','No plot dimensions requested.');
                 return
             end
+            if nPlotDimensions < 3
+                warning('prt:plotStar:TooFewDimensions','Star plots with fewer than 3 dimensions will look like lines or dots; star plots are best suited for data sets with > 2 features');
+            end
             
             M = ceil(sqrt(obj.nObservations));
             
@@ -641,7 +663,17 @@ classdef prtDataSetClass  < prtDataSetStandard
                 set(h,'color',classColors(classInd,:));
                 hold on;
             end
+            handleArray = zeros(obj.nClasses,1);
+            for iClass = 1:obj.nClasses
+                handleArray(iClass) = plot(nan,nan,'color',classColors(iClass,:));
+            end
+            
+            legendStrings = getClassNames(obj);
+            legendHandle = legend(handleArray,legendStrings,'Location','SouthEast'); %#ok<NASGU>
+            
             set(gca,'nextPlot',holdState);
+            tickoff;
+            
             
             title(obj.name);
             if nargout > 0

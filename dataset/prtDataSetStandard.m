@@ -153,6 +153,21 @@ classdef prtDataSetStandard < prtDataSetBase
                 varargin = varargin(newIndex);
             end
             
+            removeInd = [];
+            for i = 1:2:length(varargin)
+                if strcmpi(varargin{i},'featureNames')
+                    obj = obj.setFeatureNames(varargin{i+1});
+                    removeInd = cat(2,removeInd,i,i+1);
+                    % % Not for prtDataSetStandard; prtDataSetClass Only
+                    %  elseif strcmpi(varargin{i},'classNames')
+                    %  obj = obj.setClassNames(varargin{i+1});
+                    %  removeInd = cat(2,removeInd,i,i+1);
+                elseif strcmpi(varargin{i},'observationNames')
+                    obj = obj.setObservationNames(varargin{i+1});
+                    removeInd = cat(2,removeInd,i,i+1);
+                end
+            end
+            
             obj = prtUtilAssignStringValuePairs(obj,varargin{:});
         end
         
@@ -286,6 +301,7 @@ classdef prtDataSetStandard < prtDataSetBase
                         error('prt:prtDataSetStandard:getObservations','getObservations expects 1 or 2 sets of indices; %d indices provided',nargin-1);
                 end
             catch ME
+                keyboard
                 %this should error with a meaningful message:
                 prtDataSetBase.parseIndices([obj.nObservations, obj.nFeatures],varargin{:});
                 %Otherwise, something else happened; show the user
