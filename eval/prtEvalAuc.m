@@ -1,4 +1,4 @@
-function auc = prtEvalAuc(classifier,dataSet,nFolds)
+function auc = prtEvalAuc(classifier,dataSet,nFolds,varargin)
 % prtEvalPfAtPd   Returns the area under the receiver operating curve.
 %
 %   PF = prtEvalAuc(CLASSIFIER, DATASET) returns the area under the
@@ -30,5 +30,6 @@ assert(isa(classifier,'prtAction') && isa(dataSet,'prtDataSetBase'),'prt:prtEval
 if nargin < 3 || isempty(nFolds)
     nFolds = 1;
 end
+
 Results = classifier.kfolds(dataSet,nFolds);
-[~,~,auc] = prtScoreRoc(Results.getObservations,dataSet.getTargets);
+[~,~,auc] = prtScoreRoc(Results.getObservations,dataSet.getTargets,varargin{:});

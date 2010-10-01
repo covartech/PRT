@@ -26,10 +26,27 @@ elseif nargin == 2
     end
 end
 
-m0 = mean(x0);
-m1 = mean(x1);
-c0 = cov(x0);
-c1 = cov(x1);
+if any(isnan(x0(:))) || any(isnan(x1(:)))
+    m0 = nanmean(x0);
+    m1 = nanmean(x1);
+    if size(x0,2) == 1
+        c0 = nanvar(x0);
+        c1 = nanvar(x1);
+    else
+        c0 = nancov(x0);
+        c1 = nancov(x1);
+    end
+else
+    m0 = mean(x0);
+    m1 = mean(x1);
+    if size(x0,2) == 1
+        c0 = nanvar(x0);
+        c1 = nanvar(x1);
+    else
+        c0 = cov(x0);
+        c1 = cov(x1);
+    end
+end
 
 %warning off
 logTerm = log( det((c1+c0)/2)./sqrt(det(c1)*det(c0)) );

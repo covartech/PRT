@@ -96,16 +96,12 @@ classdef prtClassFld < prtClass
             M0 = mean(dataH0,1);
             M1 = mean(dataH1,1);
             
-            % Following lines are equivalent to
-            %       (Hi - repmat(Mi,size(Hi,1))'*(Hi - repmat(Mi,size(Hi,1))'
-            %   because of some clever math tricks involving the fact that Mi is
-            %   defined as mean(Hi) (thanks Kenny!)
-            s0 = dataH0'*dataH0 - M0'*M0*n;
-            s1 = dataH1'*dataH1 - M1'*M1*p;
+            s0 = cov(dataH0);
+            s1 = cov(dataH1);
             
             Sw = s1 + s0;
             
-            Obj.w = Sw\(M1-M0)'; %w = Sw^-1 * (M0-M1)'; % But better
+            Obj.w = Sw\(M1-M0)'; %w = Sw^-1 * (M1-M0)'; % But better
             
             Obj.w = Obj.w./norm(Obj.w);
             
