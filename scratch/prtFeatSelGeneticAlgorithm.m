@@ -1,5 +1,5 @@
-classdef prtFeatSelGa < prtFeatSel
-% prtFeatSelGa   Genetic algorithm feature selection
+classdef prtFeatSelGeneticAlgorithm < prtFeatSel
+% prtFeatSelGeneticAlgorithm   Genetic algorithm feature selection
 %
     
     properties (SetAccess=private)
@@ -25,7 +25,7 @@ classdef prtFeatSelGa < prtFeatSel
         % Constructor %%
         
         % Allow for string, value pairs
-        function Obj = prtFeatSelSfs(varargin)
+        function Obj = prtFeatSelGeneticAlgorithm(varargin)
             Obj.isCrossValidateValid = false;
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
         end
