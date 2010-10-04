@@ -500,7 +500,7 @@ classdef prtClassRvm < prtClass
                 
                 if maxChangeVal > 1e3
                     warning('prtClassRvm:BadKernelMatrix','Kernel matrix is poorly conditioned. Consider modifying your kernels' );
-                    keyboard
+                    break
                 end
                 
                 if maxChangeVal < Obj.learningLikelihoodIncreaseThreshold

@@ -3,15 +3,15 @@ classdef prtClassAdaBoost < prtClass
 
     properties (SetAccess=private)
         % Required by prtAction
-        name = 'AdaBoost'   % Maximum a Posteriori
-        nameAbbreviation = 'AdaBoost'        % MAP
-        isSupervised = true;            % True
+        name = 'AdaBoost' 
+        nameAbbreviation = 'AdaBoost'
+        isSupervised = true;
         
-        isNativeMary = false;           % True
+        isNativeMary = false;
     end
     
     properties
-        baseClassifier = prtClassFLD;
+        baseClassifier = prtClassFld;
         nBoosts = 30;
         classifierArray = [];
         alpha = [];
@@ -48,7 +48,8 @@ classdef prtClassAdaBoost < prtClass
                 Obj.classifierArray{t} = train(Obj.baseClassifier + prtDecisionBinaryMinPe,dataSetBootstrap);
                 yOut = run(Obj.classifierArray{t},dataSet);
 
-                y = double(dataSet.getTargets);
+                y = double(dataSet.getTargetsAsBinaryMatrix);
+                y = y(:,2);
                 y(y == 0) = -1;
                 h = double(yOut.getObservations);
                 h(h == 0) = -1;
@@ -56,10 +57,10 @@ classdef prtClassAdaBoost < prtClass
                 
                 Obj.alpha(t) = 1/2*log((1-pe)/pe);
                 d = d.*exp(-Obj.alpha(t).*y.*h);
-                d = d./sum(d);
                 if sum(d) == 0
                     return;
                 end
+                d = d./sum(d);
                 
                 if pe > .5
                     return;

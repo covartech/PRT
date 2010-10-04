@@ -13,11 +13,11 @@ end
 updatePlot();
 
 axesMenu = uicontextmenu;
-axesMenuItem2D = uimenu(axesMenu, 'Label', '2D Plot', 'Callback', @switchTo2D); %#ok
-axesMenuItem3D = uimenu(axesMenu, 'Label', '3D Plot', 'Callback', @switchTo3D); %#ok
+axesMenuItem2D = uimenu(axesMenu, 'Label', '2D Plot', 'Callback', @switchTo2D); 
+axesMenuItem3D = uimenu(axesMenu, 'Label', '3D Plot', 'Callback', @switchTo3D); 
 set(gca,'UIContextMenu',axesMenu);
 
-    function switchTo3D(h,E)
+    function switchTo3D(h,E) %#ok<INUSD>
         set(axesMenuItem2D,'Checked','off');
         set(axesMenuItem3D,'Checked','on');
         
@@ -27,7 +27,7 @@ set(gca,'UIContextMenu',axesMenu);
         updatePlot();
     end
 
-    function switchTo2D(h,E)
+    function switchTo2D(h,E) %#ok<INUSD>
         set(axesMenuItem2D,'Checked','on')
         set(axesMenuItem3D,'Checked','off')
         plotDims(3) = 0;
@@ -42,7 +42,6 @@ set(gca,'UIContextMenu',axesMenu);
         xItems = zeros(nFeatures,1);
         
         yContext = uicontextmenu;
-        yItems = zeros(nFeatures,1);
         
         useZ = length(actualPlotDims) == 3;
         if useZ

@@ -92,8 +92,6 @@ classdef prtClassMaryEmulateOneVsAll < prtClass
             for iY = 1:length(Obj.Classifiers)
                 cOutput = run(Obj.Classifiers(iY), DataSet);
                 
-                % This is wacky looking because of the colon.
-                % setObservations() lets you set all rows or columns using :
                 DataSetOut = DataSetOut.setObservations(cOutput.getObservations(),:,iY);
             end
         end

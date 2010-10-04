@@ -107,6 +107,7 @@ classdef prtClassKmeansPrototypes < prtClass
                 currY = Obj.uY(i);
                 binaryMatrix(currY == classes,i) = 1;
             end
+            
             DataSet = DataSet.setObservations(binaryMatrix);
             
             DataSet.ActionData.selectedKMeansIndexes = selectedKMeansIndexes;
