@@ -193,19 +193,14 @@ classdef prtClassRvm < prtClass
             
             % Train (center) the kernels at the trianing data (if
             % necessary)
-            trainedKernels = cell(size(Obj.kernels));
-            for iKernel = 1:length(Obj.kernels);
-                trainedKernels{iKernel} = initializeKernelArray(Obj.kernels{iKernel},DataSet);
-            end
-            trainedKernels = cat(1,trainedKernels{:});
             
             switch Obj.algorithm
                 case 'Figueiredo'
-                    Obj = trainActionFigueiredo(Obj, DataSet, y, trainedKernels);
+                    Obj = trainActionFigueiredo(Obj, DataSet, y);
                 case 'Sequential'
-                    Obj = trainActionSequential(Obj, DataSet, y, trainedKernels);
+                    Obj = trainActionSequential(Obj, DataSet, y);
                 case 'SequentialInMemory'
-                    Obj = trainActionSequentialInMemory(Obj, DataSet, y, trainedKernels);
+                    Obj = trainActionSequentialInMemory(Obj, DataSet, y);
                     
             end
             
@@ -229,13 +224,12 @@ classdef prtClassRvm < prtClass
             memChunkSize = 1000; % Should this be moved somewhere?
             n = DataSet.nObservations;
             
-            
-            
             OutputMat = zeros(n,1);
             for i = 1:memChunkSize:n;
                 cI = i:min(i+memChunkSize,n);
                 cDataSet = prtDataSetClass(DataSet.getObservations(cI,:));
-                gramm = prtKernelGrammMatrix(cDataSet,Obj.sparseKernels);
+                %gramm = prtKernelGrammMatrix(cDataSet,Obj.sparseKernels);
+                gramm = prtKernel.runMultiKernel(Obj.sparseKernels,cDataSet);
                 
                 OutputMat(cI) = normcdf(gramm*Obj.sparseBeta);
             end
@@ -243,9 +237,9 @@ classdef prtClassRvm < prtClass
         end
     end
     methods (Access=private)
-        function Obj = trainActionFigueiredo(Obj, DataSet, y, trainedKernels)
+        function Obj = trainActionFigueiredo(Obj, DataSet, y)
             
-            gramm = prtKernelGrammMatrix(DataSet,trainedKernels);
+            gramm = prtKernel.evaluateMultiKernelGramm(Obj.kernels,DataSet,DataSet);
             nBasis = size(gramm,2);
             
             sigmaSquared = eps;
@@ -300,7 +294,9 @@ classdef prtClassRvm < prtClass
                     DsSummary = DataSet.summarize;
                     
                     [linGrid, gridSize,xx,yy] = prtPlotUtilGenerateGrid(DsSummary.lowerBounds, DsSummary.upperBounds, Obj.PlotOptions);
-                    cPhi = prtKernelGrammMatrix(prtDataSetClass(linGrid),trainedKernels(relevantIndices));
+                    
+                    trainedKernelCell = prtKernel.sparseKernelFactory(Obj.kernels,DataSet,relevantIndices);
+                    cPhi = prtKernel.runMultiKernel(trainedKernelCell,prtDataSetClass([xx(:),yy(:)]));
                     
                     confMap = reshape(normcdf(cPhi*Obj.beta(relevantIndices)),gridSize);
                     imagesc(xx(1,:),yy(:,1),confMap,[0,1])
@@ -308,8 +304,8 @@ classdef prtClassRvm < prtClass
                     axis xy
                     hold on
                     plot(DataSet);
-                    for iRel = 1:length(relevantIndices)
-                        trainedKernels{relevantIndices(iRel)}.classifierPlot();
+                    for iRel = 1:length(trainedKernelCell)
+                        trainedKernelCell{iRel}.classifierPlot();
                     end
                     hold off
                     
@@ -330,25 +326,26 @@ classdef prtClassRvm < prtClass
             
             % Make sparse represenation
             Obj.sparseBeta = Obj.beta(relevantIndices,1);
-            Obj.sparseKernels = trainedKernels(relevantIndices);
+            Obj.sparseKernels = prtKernel.sparseKernelFactory(Obj.kernels,DataSet,relevantIndices);
             
         end
-        function Obj = trainActionSequential(Obj, DataSet, y, trainedKernels)
+        function Obj = trainActionSequential(Obj, DataSet, y)
             
-            if size(trainedKernels,1) <= Obj.learningSequentialBlockSize
-                Obj = trainActionSequentialInMemory(Obj, DataSet, y, trainedKernels);
+            nBasisVec = prtKernel.nDimsMultiKernel(Obj.kernels,DataSet);
+            nBasis = sum(nBasisVec);
+            if false && nBasis <= Obj.learningSequentialBlockSize
+                Obj = trainActionSequentialInMemory(Obj, DataSet, y);
                 return
             end
             
             if Obj.learningVerbose
-                fprintf('Sequential RVM training with %d possible vectors.\n', length(trainedKernels));
+                fprintf('Sequential RVM training with %d possible vectors.\n', nBasis);
             end
             
             % The sometimes we want y [-1 1] but mostly not
             ym11 = y;
             y(y ==-1) = 0;
             
-            nBasis = size(trainedKernels,1);
             Obj.beta = zeros(nBasis,1);
             
             relevantIndices = false(nBasis,1); % Nobody!
@@ -356,11 +353,14 @@ classdef prtClassRvm < prtClass
             forbidden = zeros(nBasis,1); % Will hold who is forbidding you from joining
             
             % Find first kernel
-            kernelCorrs = zeros(size(trainedKernels));
-            nBlocks = ceil(length(trainedKernels)./ Obj.learningSequentialBlockSize);
+            kernelCorrs = zeros(nBasis,1);
+            nBlocks = ceil(nBasis./ Obj.learningSequentialBlockSize);
             for iBlock = 1:nBlocks
                 cInds = ((iBlock-1)*Obj.learningSequentialBlockSize+1):min([iBlock*Obj.learningSequentialBlockSize nBasis]);
-                cPhi = prtKernelGrammMatrix(DataSet, trainedKernels(cInds));
+                
+                trainedKernelCell = prtKernel.sparseKernelFactory(Obj.kernels,DataSet,cInds);
+                cPhi = prtKernel.runMultiKernel(trainedKernelCell,DataSet);
+                
                 cPhi = bsxfun(@rdivide,cPhi,sqrt(sum(cPhi.*cPhi))); % We have to normalize here
                 kernelCorrs(cInds) = abs(cPhi'*ym11);
             end
@@ -371,13 +371,18 @@ classdef prtClassRvm < prtClass
             selectedInds = maxInd;
             
             % Add things to forbidden list
-            newPhi = prtKernelGrammMatrix(DataSet, trainedKernels(maxInd));
+            %newPhi = prtKernelGrammMatrix(DataSet, trainedKernels(maxInd));
+            newPhi = prtKernel.runMultiKernel(trainedKernelCell(maxInd),DataSet);
             newPhi = newPhi - mean(newPhi);
             newPhi = newPhi./sqrt(sum(newPhi.^2));
-            phiCorrs = zeros(size(trainedKernels));
+            phiCorrs = zeros(nBasis,1);
             for iBlock = 1:nBlocks
                 cInds = ((iBlock-1)*Obj.learningSequentialBlockSize+1):min([iBlock*Obj.learningSequentialBlockSize nBasis]);
-                cPhi = prtKernelGrammMatrix(DataSet, trainedKernels(cInds));
+                
+                %cPhi = prtKernelGrammMatrix(DataSet, trainedKernels(cInds));
+                trainedKernelCell = prtKernel.sparseKernelFactory(Obj.kernels,DataSet,cInds);
+                cPhi = prtKernel.runMultiKernel(trainedKernelCell,DataSet);
+                
                 cPhi = bsxfun(@minus,cPhi,mean(cPhi));
                 cPhi = bsxfun(@rdivide,cPhi,sqrt(sum(cPhi.*cPhi))); % We have to normalize here
                 
@@ -390,7 +395,7 @@ classdef prtClassRvm < prtClass
                 %fprintf('Sequential RVM training with %d possible vectors.\n', length(trainedKernels));
                 fprintf('\t Iteration 0: Intialized with vector %d.\n', maxInd);
                 
-                nVectorsStringLength = ceil(log10(length(trainedKernels)))+1;
+                nVectorsStringLength = ceil(log10(length(nBasis)))+1;
             end
             
             
@@ -404,8 +409,10 @@ classdef prtClassRvm < prtClass
                     % Initial estimates
                     % Estimate Sigma, mu etc.
                     
+                    trainedKernelCell = prtKernel.sparseKernelFactory(Obj.kernels,DataSet,relevantIndices);
                     % Make up a mu (least squares?) and an alpha (made up)
-                    cPhi = prtKernelGrammMatrix(DataSet,trainedKernels(relevantIndices));
+                    %cPhi = prtKernelGrammMatrix(DataSet,trainedKernels(relevantIndices));
+                    cPhi = prtKernel.runMultiKernel(trainedKernelCell,DataSet);
                     %cPhi = bsxfun(@rdivide,cPhi,sqrt(sum(cPhi.^2)));
                     
                     logOut = (ym11*0.9+1)/2;
@@ -432,7 +439,10 @@ classdef prtClassRvm < prtClass
                 cPhiProduct = bsxfun(@times,cPhi,obsNoiseVar);
                 for iBlock = 1:nBlocks
                     cInds = ((iBlock-1)*Obj.learningSequentialBlockSize+1):min([iBlock*Obj.learningSequentialBlockSize nBasis]);
-                    PhiM = prtKernelGrammMatrix(DataSet, trainedKernels(cInds));
+                    
+                    trainedKernelCell = prtKernel.sparseKernelFactory(Obj.kernels,DataSet,cInds);
+                    PhiM = prtKernel.runMultiKernel(trainedKernelCell,DataSet);
+                    %PhiM = prtKernelGrammMatrix(DataSet, trainedKernels(cInds));
                     %PhiM = bsxfun(@rdivide,PhiM,sqrt(sum(PhiM.^2)));
                     
                     Sm(cInds) = (obsNoiseVar'*(PhiM.^2)).' - sum((PhiM.'*cPhiProduct*SigmaChol).^2,2);
@@ -523,7 +533,6 @@ classdef prtClassRvm < prtClass
                     fprintf('\t Iteration %d: %s Change in log-likelihood %g.\n',iteration, actionStrings{actionInd}, maxChangeVal);
                 end
                 
-                
                 switch actionInd
                     case 1 % Add
                         
@@ -534,7 +543,9 @@ classdef prtClassRvm < prtClass
                         % Modify Mu
                         % (Penalized IRLS will fix it soon but we need good initialization)
                         
-                        newPhi = prtKernelGrammMatrix(DataSet,trainedKernels(bestAddInd));
+                        trainedKernelCell = prtKernel.sparseKernelFactory(Obj.kernels,DataSet,bestAddInd);
+                        newPhi = prtKernel.runMultiKernel(trainedKernelCell,DataSet);
+                        %newPhi = prtKernelGrammMatrix(DataSet,trainedKernels(bestAddInd));
                         %newPhi = newPhi./sqrt(sum(newPhi.^2));
                         
                         cFactor = (Obj.Sigma*(cPhi)'*(newPhi.*obsNoiseVar));
@@ -551,13 +562,21 @@ classdef prtClassRvm < prtClass
                         
                         
                         % Add things to forbidden list
-                        newPhi = prtKernelGrammMatrix(DataSet, trainedKernels(bestAddInd));
+                        % **Why are we re-calculating newPhi here?
+                        trainedKernelCell = prtKernel.sparseKernelFactory(Obj.kernels,DataSet,bestAddInd);
+                        newPhi = prtKernel.runMultiKernel(trainedKernelCell,DataSet);
+                        % newPhi = prtKernelGrammMatrix(DataSet, trainedKernels(bestAddInd));
+                        
                         newPhi = newPhi - mean(newPhi);
                         newPhi = newPhi./sqrt(sum(newPhi.^2));
-                        phiCorrs = zeros(size(trainedKernels));
+                        phiCorrs = zeros(nBasis,1);
                         for iBlock = 1:nBlocks
                             cInds = ((iBlock-1)*Obj.learningSequentialBlockSize+1):min([iBlock*Obj.learningSequentialBlockSize nBasis]);
-                            cPhi = prtKernelGrammMatrix(DataSet, trainedKernels(cInds));
+                            
+                            trainedKernelCell = prtKernel.sparseKernelFactory(Obj.kernels,DataSet,cInds);
+                            cPhi = prtKernel.runMultiKernel(trainedKernelCell,DataSet);
+                            %cPhi = prtKernelGrammMatrix(DataSet, trainedKernels(cInds));
+                            
                             cPhi = bsxfun(@minus,cPhi,mean(cPhi));
                             cPhi = bsxfun(@rdivide,cPhi,sqrt(sum(cPhi.*cPhi))); % We have to normalize here
                             
@@ -593,7 +612,11 @@ classdef prtClassRvm < prtClass
                 
                 % At this point relevantIndices and alpha have changes.
                 % Now we re-estimate Sigma, mu, and sigma2
-                cPhi = prtKernelGrammMatrix(DataSet,trainedKernels(relevantIndices));
+                
+                trainedKernelCell = prtKernel.sparseKernelFactory(Obj.kernels,DataSet,relevantIndices);
+                cPhi = prtKernel.runMultiKernel(trainedKernelCell,DataSet);
+                
+                %cPhi = prtKernelGrammMatrix(DataSet,trainedKernels(relevantIndices));
                 %cPhi = bsxfun(@rdivide,cPhi,sqrt(sum(cPhi.^2)));
                 
                 % Laplacian approx. IRLS
@@ -619,7 +642,10 @@ classdef prtClassRvm < prtClass
                     DsSummary = DataSet.summarize;
                     
                     [linGrid, gridSize,xx,yy] = prtPlotUtilGenerateGrid(DsSummary.lowerBounds, DsSummary.upperBounds, Obj.PlotOptions);
-                    cPhiPlot = prtKernelGrammMatrix(prtDataSetClass(linGrid),trainedKernels(relevantIndices));
+                    
+                    trainedKernelCell = prtKernel.sparseKernelFactory(Obj.kernels,DataSet,relevantIndices);
+                    cPhiPlot = prtKernel.runMultiKernel(trainedKernelCell,prtDataSetClass(linGrid));
+                    %cPhiPlot = prtKernelGrammMatrix(prtDataSetClass(linGrid),trainedKernels(relevantIndices));
                     
                     confMap = reshape(normcdf(cPhiPlot*Obj.beta(relevantIndices)),gridSize);
                     imagesc(xx(1,:),yy(:,1),confMap,[0 1])
@@ -629,7 +655,7 @@ classdef prtClassRvm < prtClass
                     plot(DataSet);
                     relevantIndicesFind = find(relevantIndices);
                     for iRel = 1:length(relevantIndicesFind)
-                        trainedKernels{relevantIndicesFind(iRel)}.classifierPlot();
+                        trainedKernelCell{iRel}.classifierPlot();
                     end
                     
                     hold off
@@ -662,16 +688,21 @@ classdef prtClassRvm < prtClass
             
             % Make sparse represenation
             Obj.sparseBeta = Obj.beta(relevantIndices,1);
-            Obj.sparseKernels = trainedKernels(relevantIndices);
+            Obj.sparseKernels = prtKernel.sparseKernelFactory(Obj.kernels,DataSet,relevantIndices);
         end
+        
         function Obj = trainActionSequentialInMemory(Obj, DataSet, y, trainedKernels)
             
+            nBasisVec = prtKernel.nDimsMultiKernel(Obj.kernels,DataSet);
+            nBasis = sum(nBasisVec);
             if Obj.learningVerbose
                 fprintf('Sequential RVM training with %d possible vectors.\n', length(trainedKernels));
             end
             
             % Generate the Gram Matrix only once
-            PhiM = prtKernelGrammMatrix(DataSet, trainedKernels);
+            PhiM = prtKernel.evaluateMultiKernelGramm(Obj.kernels,DataSet,DataSet);
+            
+            %PhiM = prtKernelGrammMatrix(DataSet, trainedKernels);
             PhiMNorm = bsxfun(@minus,PhiM,mean(PhiM));
             stds = std(PhiM,0,1);
             stds(stds==0) = 1; % Bias would turn in to nans
@@ -681,7 +712,6 @@ classdef prtClassRvm < prtClass
             ym11 = y;
             y(y ==-1) = 0;
             
-            nBasis = size(trainedKernels,1);
             Obj.beta = zeros(nBasis,1);
             
             relevantIndices = false(nBasis,1); % Nobody!
@@ -706,7 +736,9 @@ classdef prtClassRvm < prtClass
             end
             
             % Add things to forbidden list
-            newPhi = prtKernelGrammMatrix(DataSet, trainedKernels(maxInd));
+            trainedKernelCell = prtKernel.sparseKernelFactory(Obj.kernels,DataSet,maxInd);
+            newPhi = prtKernel.runMultiKernel(trainedKernelCell,DataSet);
+            %newPhi = prtKernelGrammMatrix(DataSet, trainedKernels(maxInd));
             newPhi = newPhi - mean(newPhi);
             stds = sqrt(sum(newPhi.^2));
             stds(stds==0) = 1; % Bias would turn in to nans
@@ -837,7 +869,9 @@ classdef prtClassRvm < prtClass
                         % Modify Mu
                         % (Penalized IRLS will fix it soon but we need good initialization)
                         
-                        newPhi = prtKernelGrammMatrix(DataSet,trainedKernels(bestAddInd));
+                        trainedKernelCell = prtKernel.sparseKernelFactory(Obj.kernels,DataSet,bestAddInd);
+                        newPhi = prtKernel.runMultiKernel(trainedKernelCell,DataSet);
+                        %newPhi = prtKernelGrammMatrix(DataSet,trainedKernels(bestAddInd));
                         %newPhi = newPhi./sqrt(sum(newPhi.^2));
                         
                         cFactor = (Obj.Sigma*(cPhi)'*(newPhi.*obsNoiseVar));
@@ -854,7 +888,11 @@ classdef prtClassRvm < prtClass
                         
                         
                         % Add things to forbidden list
-                        newPhi = prtKernelGrammMatrix(DataSet, trainedKernels(bestAddInd));
+                        % *** Didn't we just do this?
+                        trainedKernelCell = prtKernel.sparseKernelFactory(Obj.kernels,DataSet,bestAddInd);
+                        newPhi = prtKernel.runMultiKernel(trainedKernelCell,DataSet);
+                        
+                        %newPhi = prtKernelGrammMatrix(DataSet, trainedKernels(bestAddInd));
                         newPhi = newPhi - mean(newPhi);
                         stds = sqrt(sum(newPhi.^2));
                         stds(stds==0) = 1; % Bias would turn in to nans
@@ -913,7 +951,9 @@ classdef prtClassRvm < prtClass
                     DsSummary = DataSet.summarize;
                     
                     [linGrid, gridSize,xx,yy] = prtPlotUtilGenerateGrid(DsSummary.lowerBounds, DsSummary.upperBounds, Obj.PlotOptions);
-                    cPhiPlot = prtKernelGrammMatrix(prtDataSetClass(linGrid),trainedKernels(relevantIndices));
+                    trainedKernelCell = prtKernel.sparseKernelFactory(Obj.kernels,DataSet,relevantIndices);
+                    cPhiPlot = prtKernel.runMultiKernel(trainedKernelCell,prtDataSetClass(linGrid));
+                    %cPhiPlot = prtKernelGrammMatrix(prtDataSetClass(linGrid),trainedKernels(relevantIndices));
                     
                     confMap = reshape(normcdf(cPhiPlot*Obj.beta(relevantIndices)),gridSize);
                     imagesc(xx(1,:),yy(:,1),confMap,[0 1])
@@ -956,7 +996,7 @@ classdef prtClassRvm < prtClass
             
             % Make sparse represenation
             Obj.sparseBeta = Obj.beta(relevantIndices,1);
-            Obj.sparseKernels = trainedKernels(relevantIndices);
+            Obj.sparseKernels = prtKernel.sparseKernelFactory(Obj.kernels,DataSet,relevantIndices);
         end
     end
 end

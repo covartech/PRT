@@ -379,17 +379,25 @@ classdef prtDataSetClass  < prtDataSetStandard
             
         end
         
+        function exploreNoUiControls(obj)
+            
+            prtPlotUtilDataSetExplore(obj);
+            %This doesn't exist:
+            %            set(gca,'TooltipString','Right click axes or axes labels to change dimensionality of plot');
+            title('Right click axis or axes labels to change dimensionality / plotted dimensions');
+            disp('Right click axis or axes labels to change dimensionality / plotted dimensions');
+        end
         function explore(obj)
             % explore  Explore the prtDataSetObject
             %
-            %   dataSet.explore() opens the prtDataSetObject explorer. Only
-            %   functions when the number of features is less than or equal
-            %   to 3.
+            %   dataSet.explore() opens the prtDataSetObject explorer for
+            %   visualizing high dimensional data sets.
             
+            %prtPlotUtilDataSetExplore(obj);
             prtPlotUtilDataSetExploreGui(obj);
         end
         
-        function varargout = plotAsTimeSeries(obj,featureIndices)
+        function varargout = plotAsTimeSeries(obj,featureIndices,xData)
             % plotAsTimeSeries  Plot the data set as time series data
             %
             % dataSet.plotAsTimeSeries() plots the data contained in
@@ -416,7 +424,11 @@ classdef prtDataSetClass  < prtDataSetStandard
                 %Use "i" here because it's by uniquetargetIND
                 cX = obj.getObservationsByClassInd(i, featureIndices);
                 
-                xInd = 1:size(cX,2);
+                if nargin < 3
+                    xInd = 1:size(cX,2);
+                else
+                    xInd = xData;
+                end
                 
                 h = prtPlotUtilLinePlot(xInd,cX,classColors(i,:),lineWidth);
                 handleArray(i) = h(1);
@@ -675,15 +687,14 @@ classdef prtDataSetClass  < prtDataSetStandard
             legendHandle = legend(handleArray,legendStrings,'Location','SouthEast'); %#ok<NASGU>
             
             set(gca,'nextPlot',holdState);
-            tickoff;
+            set(gca,'xtick',[]);
+            set(gca,'ytick',[]);
             
             title(obj.name);
             if nargout > 0
                 varargout = {h};
             end
         end
-        
-        
         
         %PLOT:
         function varargout = plot(obj, featureIndices)

@@ -10,13 +10,14 @@ classdef prtGeneticAlgorithmBinaryString
         fitnessFunction
         
         generation = 1;
-        nGenerations = 20;
-        populationSize = 20;
+        nGenerations = 100;
+        populationSize = 200;
         elitistPercentage = .05;
         mutationRate = 0.01;
         priorP1 = 0.5;
         isInitialized = false;
         
+        minPositiveElements = 1;
         maxPositiveElements = 10;
         plotPerformanceOnGeneration = true;
         verbose = true;
@@ -28,11 +29,34 @@ classdef prtGeneticAlgorithmBinaryString
             for i = 1:obj.populationSize
                 element = obj.geneArray(i,:);
                 on = find(element);
+                
+                %Randomly remove ones from vectors with too many
+                %positive elements
                 if length(on) > obj.maxPositiveElements
+                    
+                    %only keep a random subset of maxPositiveElements 
+                    %elements of "on"
                     on = on(randperm(length(on)));
-                    on = on(1:obj.maxPositiveElements);
+                    on = on(1:obj.maxPositiveElements); 
+                    
+                    %start over with an all zero matrix, and only keep
+                    %obj.maxPositiveElements from the current list of ones:
                     newElement = zeros(size(element));
                     newElement(on) = 1;
+                    obj.geneArray(i,:) = newElement;
+                end
+                
+                %Randomly add enough 1's to vectors with too few positive
+                %elements
+                if length(on) < obj.minPositiveElements
+                    %We need to add (currNumOnes-obj.minPositiveElements) ones
+                    %in some of the locations in currentZeros:
+                    currNumOnes = length(find(element));
+                    currentZeros = find(~element);
+                    on = ceil(rand(1,currNumOnes-obj.minPositiveElements)*length(currentZeros));
+                    
+                    newElement = element;
+                    newElement(currentZeros(on)) = 1;
                     obj.geneArray(i,:) = newElement;
                 end
             end

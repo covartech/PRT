@@ -21,7 +21,6 @@ function percentCorrect = prtEvalPercentCorrect(classifier,dataSet,nFolds)
 %   prtEvalMinCost
 
 
-
 % Copyright 2010, New Folder Consulting, L.L.C.
 
 assert(nargin >= 2,'prt:prtEvalPercentCorrect:BadInputs','prtEvalPercentCorrect requires two input arguments');
@@ -32,17 +31,19 @@ if nargin < 3 || isempty(nFolds)
 end
 results = classifier.kfolds(dataSet,nFolds);
 
-if any(isnan(results.getObservations()))
-    keyboard
-end
-
-if results.nFeatures == 1 %binary classifier
+%(note: can't check results.nFeatures here any more...)
+if dataSet.nClasses == 1 %binary classifier 
     [pf,pd] = prtUtilScoreRoc(results.getObservations,dataSet.getTargets);
     pe = prtUtilPfPd2Pe(pf,pd);
     minPe = min(pe);
     percentCorrect = 1-minPe;
 else
-    [~,guess] = max(results.getObservations,[],2);
+    if classifier.includesDecision
+        guess = results.getObservations;
+    else
+        %Naive MAP decision:
+        [~,guess] = max(results.getObservations,[],2);
+    end
     confusionMatrix = prtScoreConfusionMatrix(guess,dataSet.getTargets);
     percentCorrect = prtUtilConfusion2PercentCorrect(confusionMatrix);
 end

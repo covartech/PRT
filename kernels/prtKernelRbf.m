@@ -1,4 +1,4 @@
-classdef prtKernelRbf < prtKernelBinary
+classdef prtKernelRbf < prtKernel
     % prtKernelRbf  Radial basis function kernel
     %
     %   KERN = prtKernelRbf creates a radial basis function kernel object.
@@ -35,7 +35,6 @@ classdef prtKernelRbf < prtKernelBinary
         sigma = 1;    % Inverse kernel width
     end
     properties (SetAccess = 'protected')
-        fnHandle    % Function handle to the kernel
         kernelCenter = nan;   % The kernel center
     end
     methods
@@ -48,20 +47,29 @@ classdef prtKernelRbf < prtKernelBinary
             obj = prtUtilAssignStringValuePairs(obj,varargin{:});
         end
         
-        function obj = initializeBinaryKernel(obj,x)
-            % INITIALIZEBINARYKERNEL  Initialize the prtBinaryKernel Object
-            %
-            %    KERN = KERN.initializeBinaryKernel(CENTER) initializes the
-            %    kernel center of the KERN object to CENTER. CENTER is a
-            %    NxM
-            %    matrix, where N is the number of kernel functions, and M is the
-            %    dimensionality.
-            obj.kernelCenter = x;
-            obj.fnHandle = @(y) prtKernelRbf.rbfEvalKernel(obj.kernelCenter,y,obj.sigma);
-            obj.isInitialized = true;
+        function trainedKernelArray = toTrainedKernelArray(obj,dsTrain,logical)
+            valid = find(logical);
+            trainedKernelArray = repmat(obj,length(valid));
+            for j = 1:length(valid)
+                trainedKernelArray(j) = obj.train(dsTrain.getObservations(valid(j)));
+            end
         end
         
+        function obj = train(obj,x)
+            obj.kernelCenter = x;
+        end
         
+        function yOut = run(obj,ds2)
+            yOut = prtKernelRbf.rbfEvalKernel(obj.kernelCenter,ds2.getObservations,obj.sigma);
+        end
+        
+        function nDims = getExpectedNumKernels(obj,ds)
+            nDims = ds.nObservations;
+        end
+        
+        function gramm = evaluateGramm(obj,ds1,ds2)
+            gramm = prtKernelRbf.rbfEvalKernel(ds1.getObservations,ds2.getObservations,obj.sigma);
+        end
         
         %Should really use latex, or have toLatex
         function string = toString(obj)

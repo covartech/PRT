@@ -26,7 +26,9 @@ classdef prtClass < prtAction
     properties
         internalDecider = [];
     end
-    
+    properties (Dependent = true)
+        includesDecision
+    end
     properties (Hidden = true)
         PlotOptions = prtClass.initializePlotOptions();  % 
     end
@@ -40,6 +42,16 @@ classdef prtClass < prtAction
     end    
     
     methods
+        function obj = set.internalDecider(obj,val)
+            if ~isempty(val) && ~isa(val,'prtDecision')
+                error('prtClass:internalDecider','internalDecider must be an empty vector ([]) of type prtDecision, but input is a %s',class(val));
+            end
+            obj.internalDecider = val;
+        end
+        function has = get.includesDecision(obj)
+            has = ~isempty(obj.internalDecider);
+        end
+        
         function varargout = plot(Obj)
             % PLOT  Plot the output confidence of a prtClass object
             % 
@@ -193,6 +205,11 @@ classdef prtClass < prtAction
                 % We must check twoClassParadigm to see what you want
                 produceMaryOutput = ~strcmpi(ClassObj.twoClassParadigm, 'binary');
             end % Unary Data -> false
+            
+            %torrine HACK:
+            if ClassObj.includesDecision
+                produceMaryOutput = false;
+            end
         end
                 
         function OutputDataSet = maryOutput2binaryOutput(ClassObj,OutputDataSet) %#ok
