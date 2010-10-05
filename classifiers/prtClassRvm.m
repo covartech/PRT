@@ -242,7 +242,7 @@ classdef prtClassRvm < prtClass
             gramm = prtKernel.evaluateMultiKernelGramm(Obj.kernels,DataSet,DataSet);
             nBasis = size(gramm,2);
             
-            sigmaSquared = eps;
+            sigmaSquared = 1e-6;
             
             %Check to make sure the problem is well-posed.  This can be fixed either
             %with changes to kernels, or by regularization
@@ -691,12 +691,12 @@ classdef prtClassRvm < prtClass
             Obj.sparseKernels = prtKernel.sparseKernelFactory(Obj.kernels,DataSet,relevantIndices);
         end
         
-        function Obj = trainActionSequentialInMemory(Obj, DataSet, y, trainedKernels)
+        function Obj = trainActionSequentialInMemory(Obj, DataSet, y)
             
             nBasisVec = prtKernel.nDimsMultiKernel(Obj.kernels,DataSet);
             nBasis = sum(nBasisVec);
             if Obj.learningVerbose
-                fprintf('Sequential RVM training with %d possible vectors.\n', length(trainedKernels));
+                fprintf('Sequential RVM training with %d possible vectors.\n', nBasis);
             end
             
             % Generate the Gram Matrix only once
@@ -732,7 +732,7 @@ classdef prtClassRvm < prtClass
                 %fprintf('Sequential RVM training with %d possible vectors.\n', length(trainedKernels));
                 fprintf('\t Iteration 0: Intialized with vector %d.\n', maxInd);
                 
-                nVectorsStringLength = ceil(log10(length(trainedKernels)))+1;
+                nVectorsStringLength = ceil(log10(nBasis))+1;
             end
             
             % Add things to forbidden list
@@ -963,7 +963,7 @@ classdef prtClassRvm < prtClass
                     plot(DataSet);
                     relevantIndicesFind = find(relevantIndices);
                     for iRel = 1:length(relevantIndicesFind)
-                        trainedKernels{relevantIndicesFind(iRel)}.classifierPlot();
+                        trainedKernelCell{iRel}.classifierPlot();
                     end
                     
                     hold off

@@ -24,8 +24,8 @@ classdef prtKernel
                 gramm(:,i) = trainedKernelCell{i}.run(ds2);
             end
         end
+        
         function gramm = evaluateMultiKernelGramm(kernelCell,ds1,ds2)
-            
             nDims = prtKernel.nDimsMultiKernel(kernelCell,ds1);
             gramm = zeros(ds2.nObservations,sum(nDims));
             start = 1;
@@ -34,6 +34,7 @@ classdef prtKernel
                 start = nDims(i)+1;
             end
         end
+        
         function nDims = nDimsMultiKernel(kernelCell,ds)
             nDims = zeros(length(kernelCell),1);
             for i = 1:length(kernelCell)

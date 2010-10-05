@@ -138,20 +138,11 @@ classdef prtRegressRvm < prtRegress
             
             y = DataSet.getTargets(:,1);
             
-            % Train (center) the kernels at the trianing data (if
-            % necessary)
-            trainedKernels = cell(size(Obj.kernels));
-            for iKernel = 1:length(Obj.kernels);
-                trainedKernels{iKernel} = initializeKernelArray(Obj.kernels{iKernel},DataSet);
-            end
-            trainedKernels = cat(1,trainedKernels{:});
-            
-            
             switch Obj.algorithm
                 case 'JefferysPrior'
-                    Obj = trainActionJefferysPrior(Obj, DataSet, y, trainedKernels);
+                    Obj = trainActionJefferysPrior(Obj, DataSet, y);
                 case 'Sequential'
-                    Obj = trainActionSequential(Obj, DataSet, y, trainedKernels);
+                    Obj = trainActionSequential(Obj, DataSet, y);
             end
             
             
@@ -179,7 +170,8 @@ classdef prtRegressRvm < prtRegress
             for i = 1:memChunkSize:n;
                 cI = i:min(i+memChunkSize,n);
                 cDataSet = prtDataSetRegress(DataSet.getObservations(cI,:));
-                gramm = prtKernelGrammMatrix(cDataSet,Obj.sparseKernels);
+                %gramm = prtKernelGrammMatrix(cDataSet,Obj.sparseKernels);
+                gramm = prtKernel.runMultiKernel(Obj.sparseKernels,cDataSet);
                 
                 DataSetOut = DataSetOut.setObservations(gramm*Obj.sparseBeta, cI);
             end
@@ -187,8 +179,10 @@ classdef prtRegressRvm < prtRegress
     end
     
     methods (Access=private)
-        function Obj = trainActionJefferysPrior(Obj, DataSet, y, trainedKernels)
-            gramm = prtKernelGrammMatrix(DataSet,trainedKernels);
+        function Obj = trainActionJefferysPrior(Obj, DataSet, y)
+            %Obj = trainActionJefferysPrior(Obj, DataSet, y)
+            
+            gramm = prtKernel.evaluateMultiKernelGramm(Obj.kernels,DataSet,DataSet);
             nBasis = size(gramm,2);
             
             Obj.beta = zeros(nBasis,1);
@@ -268,11 +262,14 @@ classdef prtRegressRvm < prtRegress
             
             % Make sparse represenation
             Obj.sparseBeta = Obj.beta(relevantIndices,1);
-            Obj.sparseKernels = trainedKernels(relevantIndices);
+            %Obj.sparseKernels = trainedKernels(relevantIndices);
+            Obj.sparseKernels = prtKernel.sparseKernelFactory(Obj.kernels,DataSet,relevantIndices);
         end
-        function Obj = trainActionSequential(Obj, DataSet, y, trainedKernels)
+        
+        function Obj = trainActionSequential(Obj, DataSet, y)
             
-            nBasis = size(trainedKernels,1);
+            nBasisPer = prtKernel.nDimsMultiKernel(Obj.kernels,DataSet);
+            nBasis = sum(nBasisPer);
             Obj.beta = zeros(nBasis,1);
             
             relevantIndices = false(nBasis,1); % Nobody!
@@ -282,10 +279,13 @@ classdef prtRegressRvm < prtRegress
             Obj.sigma2 = var(y)*0.1; % A descent guess
             
             % Find first kernel
-            kernelCorrs = zeros(size(trainedKernels));
-            kernelEnergies = zeros(size(trainedKernels));
-            for iKernel = 1:length(trainedKernels)
-                cVec = prtKernelGrammMatrix(DataSet,trainedKernels(iKernel));
+            kernelCorrs = zeros(size(nBasis));
+            kernelEnergies = zeros(size(nBasis));
+            for iKernel = 1:nBasis
+                %cVec = prtKernelGrammMatrix(DataSet,trainedKernels(iKernel));
+                trainedKernelCell = prtKernel.sparseKernelFactory(Obj.kernels,DataSet,iKernel);
+                cVec = prtKernel.runMultiKernel(trainedKernelCell,DataSet);
+                
                 kernelEnergies(iKernel) = norm(cVec).^2;
                 kernelCorrs(iKernel) = (cVec'*y)^2 / kernelEnergies(iKernel);
             end
@@ -306,7 +306,9 @@ classdef prtRegressRvm < prtRegress
                     alpha(relevantIndices) = kernelEnergies(relevantIndices)./(kernelCorrs(relevantIndices) - Obj.sigma2);
                     
                     A = diag(alpha(relevantIndices));
-                    cPhi = prtKernelGrammMatrix(DataSet,trainedKernels(relevantIndices));
+                    %cPhi = prtKernelGrammMatrix(DataSet,trainedKernels(relevantIndices));
+                    trainedKernelCell = prtKernel.sparseKernelFactory(Obj.kernels,DataSet,relevantIndices);
+                    cPhi = prtKernel.runMultiKernel(trainedKernelCell,DataSet);
                     
                     sigma2Inv = (Obj.sigma2^-1);
                     
@@ -327,7 +329,9 @@ classdef prtRegressRvm < prtRegress
  %               cPhiProduct = cPhi*sigma2Inv;
                 for iKernel = 1:nBasis
                     
-                    PhiM = prtKernelGrammMatrix(DataSet,trainedKernels(iKernel));
+                    %PhiM = prtKernelGrammMatrix(DataSet,trainedKernels(iKernel));
+                    trainedKernelCell = prtKernel.sparseKernelFactory(Obj.kernels,DataSet,iKernel);
+                    PhiM = prtKernel.runMultiKernel(trainedKernelCell,DataSet);
                     %PhiM = bsxfun(@rdivide,PhiM,sqrt(sum(PhiM.^2)));
                     
 %                    cPhiMProduct = PhiM*sigma2Inv;
@@ -430,7 +434,9 @@ classdef prtRegressRvm < prtRegress
                 % At this point relevantIndices and alpha have changes.
                 % Now we re-estimate Sigma, mu, and sigma2
                 A = diag(alpha(relevantIndices));
-                cPhi = prtKernelGrammMatrix(DataSet,trainedKernels(relevantIndices));
+                %cPhi = prtKernelGrammMatrix(DataSet,trainedKernels(relevantIndices));
+                trainedKernelCell = prtKernel.sparseKernelFactory(Obj.kernels,DataSet,relevantIndices);
+                cPhi = prtKernel.runMultiKernel(trainedKernelCell,DataSet);
                 
                 % Re-estimate Sigma, mu
                 sigma2Inv = 1./Obj.sigma2;
@@ -483,7 +489,7 @@ classdef prtRegressRvm < prtRegress
             
             % Make sparse represenation
             Obj.sparseBeta = Obj.beta(relevantIndices,1);
-            Obj.sparseKernels = trainedKernels(relevantIndices);
+            Obj.sparseKernels = prtKernel.sparseKernelFactory(Obj.kernels,DataSet,relevantIndices);
         end
     end
 end

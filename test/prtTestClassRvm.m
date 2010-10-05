@@ -82,8 +82,6 @@ catch
     disp('error changing algoritm Rvm classifier')
 end
 
-
-
 %check learning plot and learning text
 try
     classifier.learningPlot = true;

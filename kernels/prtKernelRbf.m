@@ -49,7 +49,7 @@ classdef prtKernelRbf < prtKernel
         
         function trainedKernelArray = toTrainedKernelArray(obj,dsTrain,logical)
             valid = find(logical);
-            trainedKernelArray = repmat(obj,length(valid));
+            trainedKernelArray = repmat(obj,length(valid),1);
             for j = 1:length(valid)
                 trainedKernelArray(j) = obj.train(dsTrain.getObservations(valid(j)));
             end

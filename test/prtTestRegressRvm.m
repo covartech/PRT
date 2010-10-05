@@ -14,7 +14,7 @@ result = true;
 % end
 % rmseBase = max(rmseResult);
 % %
-rmseBase =  0.3382;
+rmseBase =  0.4;
 % Check that basic operation works
 dataSet = prtDataGenNoisySinc;           % Load a prtDataRegress
 try
