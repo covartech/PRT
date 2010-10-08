@@ -102,7 +102,7 @@ ds.plotPairs;
 % combinations of the features in a grid.  The diagonal elements of the
 % plots show ksdensity estimates of the relative density of each feature in
 % isolation, while the off-diagonal images show pair-wise scatter matrices.
-%  Pair-wise plotting can be slow for very high dimensional data.
+% Pair-wise plotting can be slow for very high dimensional data.
 % 
 % Up next is a technique that plots each observation as a shape with 
 % nFeatures vertices (in this case since ds has four feature dimensions,

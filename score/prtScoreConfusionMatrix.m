@@ -36,5 +36,5 @@ varargout = {};
 if nargout 
     varargout = {confusionMat, occurances, labels};
 else
-    plotConfusionMatrix(confusionMat./occurances,labels);
+    prtUtilPlotConfusionMatrix(confusionMat./occurances,labels);
 end
