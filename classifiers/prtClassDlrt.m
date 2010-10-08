@@ -16,11 +16,14 @@ classdef prtClassDlrt < prtClass
     %                         It must be a function handle of the form:
     %                         @(x1,x2)distFun(x1,x2). Most prtDistance*
     %                         functions will work.
-    % 
+    %
     %    For more information on Dlrt classifiers, refer to the
-    %    following URL:
-    %  
-    %    XXX Need ref
+    %    following paper:
+    %
+    %    Remus, J.J. et al., "Comparison of a distance-based likelihood ratio
+    %    test and k-nearest neighbor classification methods" Machine Learning
+    %    for Signal Processing, 2008. MLSP 2008. IEEE Workshop on, October,
+    %    2008.
     %
     %    A prtClassDlrt object inherits the TRAIN, RUN, CROSSVALIDATE and
     %    KFOLDS methods from prtAction. It also inherits the PLOT and
@@ -67,7 +70,6 @@ classdef prtClassDlrt < prtClass
     properties
  
         k = 3;   % The number of neighbors to consider in the voting
-        
         distanceFunction = @(x1,x2)prtDistanceEuclidean(x1,x2);   % Function handle to compute distance
     end
     
