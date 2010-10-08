@@ -3,7 +3,7 @@ function groupAssignment = prtUtilEquallySubDivideData(Y,nDivisions)
 %   By equally sub-divide I mean make it so that each group has the same
 %   number of data points of each class.
 %
-% Syntax: groupAssignment = dprtEquallySubDivideData(Y,nDivisions)
+% Syntax: groupAssignment = prtUtilEquallySubDivideData(Y,nDivisions)
 %
 % Inputs:
 %   Y - The class label vector for the dataset
@@ -13,29 +13,6 @@ function groupAssignment = prtUtilEquallySubDivideData(Y,nDivisions)
 %   groupAssignment = Integer assignments specifying the group for each
 %       datapoint. These are randomly drawn
 %
-% Example:
-%   X0 = mvnrnd([0 0],eye(2),500);
-%   X1 = mvnrnd([2.5 2.5],eye(2),500);
-%   X = [X0; X1];
-%   Y = [zeros(500,1); ones(500,1)];
-% 
-%   % Divide the data into two equally sized groups
-%   groupAssignment = dprtEquallySubDivideData(Y,2);
-%   figure
-%   subplot(2,1,1)
-%   dprtDataPlot(X,Y,true)
-%   title('All Data')
-%   subplot(2,2,3)
-%   dprtDataPlot(X(groupAssignment==1,:),Y(groupAssignment==1),true)
-%   title('Group 1')
-%   subplot(2,2,4)
-%   dprtDataPlot(X(groupAssignment==2,:),Y(groupAssignment==2),true)
-%   title('Group 2')
-%   % Other m-files required: DPRT
-% Subfunctions: none
-% MAT-files required: none
-%
-% See also: dprtKFolds.m
 
 % Copyright 2010, New Folder Consulting, L.L.C.
 

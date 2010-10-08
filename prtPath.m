@@ -15,7 +15,6 @@ while ~isempty(string);
 end
 rmpath(removePath);
 
-% warning('prtPath removes all DPRT functions from path');
 % pathCell = prtUtilMatlabPath2StrCell;
 % pathCell = prtUtilRemoveStrCell(pathCell,'dprt');
 % path(prtUtilStrCell2MatlabPath(pathCell));

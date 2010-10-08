@@ -1,7 +1,7 @@
 function Y = prtUtilY(varargin)
-% DPRTY     Quickly generate class labels for the DPRT.
+% prtUtilY     Quickly generate class labels for the PRT.
 %
-% Syntax: Y = dprtY(nH0,nH1,nH2,...)
+% Syntax: Y = prtUtilY(nH0,nH1,nH2,...)
 %
 % Inputs:
 %   nH0 - The number of H0 samples
@@ -9,18 +9,14 @@ function Y = prtUtilY(varargin)
 %       ...
 %
 % Outputs:
-%   Y - A DPRT complient labeled vector
+%   Y - A PRT compliant labeled vector
 %
 % Example:
-%   Y = dprtY(100,100);
-%   Y = dprtY([],100,100);
-%   Y = dprtY(100,0,100);
+%   Y = prtUtilY(100,100);
+%   Y = prtUtilY([],100,100);
+%   Y = prtUtilY(100,0,100);
 %
-% Other m-files required: none
-% Subfunctions: none
-% MAT-files required: none
-%
-% See also: dprtData*
+% See also: prtDataGen*
 
 % Copyright 2010, New Folder Consulting, L.L.C.
 
@@ -30,7 +26,7 @@ if nargin == 1
     if length(varargin{1}) > 1
         
         temp = mat2cell(varargin{1}(:),ones(length(varargin{1}),1),1);
-        Y = dprtY(temp{:});
+        Y = prtUtilY(temp{:});
     else
         Y = zeros(varargin{1},1);
     end

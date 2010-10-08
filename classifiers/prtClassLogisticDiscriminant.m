@@ -1,5 +1,5 @@
 classdef prtClassLogisticDiscriminant < prtClass
-        % prtClassLogisticDiscriminant  Logistic Discriminant classifier
+    % prtClassLogisticDiscriminant  Logistic Discriminant classifier
     %
     %    CLASSIFIER = prtClassLogisticDiscriminant returns a LogisticDiscriminant classifier
     %
@@ -226,7 +226,7 @@ classdef prtClassLogisticDiscriminant < prtClass
                     H = x'*bsxfun(@times,rVec,x);
                     
                     if rcond(H) < eps
-                        warning('dprt:generateLogDisc:stepSize','rcond(H) < eps; Exiting; Try reducing Options.irlsStepSize');
+                        warning('prt:generateLogDisc:stepSize','rcond(H) < eps; Exiting; Try reducing Options.irlsStepSize');
                         return;
                     end
                     
@@ -242,7 +242,7 @@ classdef prtClassLogisticDiscriminant < prtClass
                 end
                 
                 if nIter > Obj.maxIter
-                    warning('dprt:generateLogDisc:maxIter',sprintf('nIterations (%d) > maxIterations; exiting',nIterations)); %#ok
+                    warning('prt:generateLogDisc:maxIter',sprintf('nIterations (%d) > maxIterations; exiting',nIterations)); %#ok
                     return;
                 end
                 nIter = nIter + 1;

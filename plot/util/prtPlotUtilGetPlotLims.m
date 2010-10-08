@@ -5,9 +5,6 @@ if nargin == 1 || isempty(PrtDataSet)
     testX = [];
 else    
     testX = getObservations(PrtDataSet);
-    %     if isfield(PrtClassifier.PrtOptions,'PreProcess')
-    %         testX = dprtPreProcess(testX, testY, PrtClassifier.PrtOptions.PreProcess);
-    %     end
 end
 
 trainX = getObservations(PrtClassifier.PrtDataSet);

@@ -44,12 +44,12 @@ function [pf,pd,auc,thresholds,classLabels] = prtScoreRoc(ds,y,nRocSamples,nPfSa
 %       and pd values.
 %
 % Example:
-%   X = cat(1,mvnrnd([0 0],eye(2),500),mvnrnd([2 2],[1 .5; .5 1],500));
-%   y = cat(1,zeros(500,1),ones(500,1)); 
-%   ds = dprtKFolds(X,y,optionsGLRT,200);
+%   ds = prtDataSetUnimodal;
+%   yout = kfolds(prtClassFld,ds);
+%   prtScoreRoc(yout.getObservations,ds.getTargets);
 %   roc(ds,y)
 %
-%   [...] = roc(ds,y,nRocSamples,nPfSamples,nPdSamples);
+%   [...] = prtScoreRoc(ds,y,nRocSamples,nPfSamples,nPdSamples);
 %       Allows the user to specify one of nRocSamples, nPfSamples, or
 %       nPdSamples.  nRocSamples guarantees uniform (linear) sampling in
 %       the ds space, NPF or NPD samples guarantee uniform (linear)

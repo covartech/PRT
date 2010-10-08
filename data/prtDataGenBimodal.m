@@ -4,25 +4,19 @@ function DataSet = prtDataGenBimodal(N)
 %       H0: 1/2N([0 0],eye(2)) + 1/2*N([-4 -4],eye(2))
 %       H1: 1/2N([2 2],[1 .5; .5 1]) + 1/2*N([-2 -2],[1 .5; .5 1]
 %
-% Syntax: [X, Y] = dprtDataGenBimodal
+% Syntax: ds = prtDataGenBimodal
 %
 % Inputs: 
 %   none
 %
 % Outputs:
-%   X - 400x2 Bimodal data
-%   Y - 400x1 Class labels
+%   ds
 %
 % Example:
-%   [X, Y] = dprtDataGenBimodal;
-%   dprtDataPlot(X,Y)
+%   ds = prtDataGenBimodal;
+%   ds.plot;
 %
-%
-% Other m-files required: none
-% Subfunctions: none
-% MAT-files required: none
-%
-% See also: dprtDataUnimodal
+% See also: prtDataGenUnimodal
 
 % Copyright 2010, New Folder Consulting, L.L.C.
 

@@ -22,9 +22,6 @@ function [Bpls, R, P, Q, T, U] = prtUtilSimpls(X,Y,nComponents)
 %   T - X Scores
 %   U - Y Scores
 %
-% Other m-files required: DPRT
-% Subfunctions: none
-% MAT-files required: none
 
 % Copyright 2010, New Folder Consulting, L.L.C.
 

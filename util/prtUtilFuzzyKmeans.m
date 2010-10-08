@@ -66,7 +66,7 @@ for iter = 1:maxIterations
         % change the class mean of the previously empty class to that 
         % point.
         if warningOnEmptyCluster
-            disp(['DPRT FKM Warning: Class or classes were empty and' ...
+            disp(['PRT FKM Warning: Class or classes were empty and' ...
                 ' have been redetermined']);
         end
         
