@@ -1,10 +1,9 @@
-classdef prtClusterKmeans < prtClass %prtAction %should extent prtCluster
+classdef prtClusterKmeans < prtCluster %prtClass %prtAction %should extent prtCluster
     
       properties (SetAccess=private)
         name = 'K-Means Clustering' % K-Means Clustering
         nameAbbreviation = 'K-MeansCluster' % K-MeansCluster
         isSupervised = false;
-        isNativeMary = true;
     end
     
     properties

@@ -63,6 +63,7 @@ classdef prtDecisionBinaryBootstrapDataAtPd < prtDecisionBinary
             
             Obj.threshold = sortedH0Data(thresholdInd);
             Obj.ThresholdSetSummary.pfAtPd1 = pfAtPd1;
+            Obj.classList = DS.uniqueClasses;
         end
         function DS = runAction(Obj,DS)
             algorithmOutput = Obj.algorithm.run(DS);

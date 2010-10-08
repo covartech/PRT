@@ -10,11 +10,12 @@ classdef prtDecisionBinaryMinPe < prtDecisionBinary
     end
     methods (Access = protected)
         function Obj = trainAction(Obj,dataSet)
+            
             [pf,pd,auc,thresh] = prtScoreRoc(dataSet.getObservations,dataSet.getTargets);
             pe = prtUtilPfPd2Pe(pf,pd);
             [v,minPeIndex] = min(pe);
             Obj.threshold = thresh(minPeIndex);
-            Obj.uniqueClasses = dataSet.uniqueClasses;
+            Obj.classList = dataSet.uniqueClasses;
         end
     end
     methods

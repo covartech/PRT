@@ -5,10 +5,6 @@ classdef prtDecisionMap < prtDecision
         isSupervised = false;
     end
     
-    properties
-        classList
-    end
-    
     methods
         function Obj = prtDecisionMap(varargin)
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
@@ -26,7 +22,9 @@ classdef prtDecisionMap < prtDecision
             else
                 index = (yOut > .5)+1;
             end
-            DS = DS.setObservations(Obj.classList(index));
+            classList = Obj.classList(index);
+            classList = classList(:);
+            DS = DS.setObservations(classList);
         end
     end
 end

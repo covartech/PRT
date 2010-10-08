@@ -35,8 +35,12 @@ classdef prtClass < prtAction
     
     methods (Hidden = true)
         function featureNames = updateFeatureNames(obj,featureNames) %#ok<MANU>
-            for i = 1:length(featureNames)
-                featureNames{i} = sprintf('%s Output_{%d}',obj.nameAbbreviation,i);
+            if ~obj.includesDecision
+                for i = 1:length(featureNames)
+                    featureNames{i} = sprintf('%s Output_{%d}',obj.nameAbbreviation,i);
+                end
+            else
+                featureNames{1} = 'Class Label';
             end
         end
     end    
