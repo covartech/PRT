@@ -60,10 +60,10 @@ classdef prtClassSvm < prtClass
     properties (SetAccess = 'protected',GetAccess = 'public')
         alpha 
         beta
+        sparseKernels   % Trained kernels
+        sparseAlpha
     end
-    properties 
-        trainedKernels   % Trained kernels
-    end
+    
     methods
         
         function Obj = set.kernels(Obj,val)
@@ -86,7 +86,6 @@ classdef prtClassSvm < prtClass
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
         end
         
-        
     end
     
     methods (Access=protected, Hidden = true)
@@ -95,15 +94,19 @@ classdef prtClassSvm < prtClass
             
             % Train (center) the kernels at the trianing data (if
             % necessary)
-            Obj.trainedKernels = cell(size(Obj.kernels));
-            for iKernel = 1:length(Obj.kernels);
-                Obj.trainedKernels{iKernel} = initializeKernelArray(Obj.kernels{iKernel},DataSet);
-            end
-            Obj.trainedKernels = cat(1,Obj.trainedKernels{:});
-            gramm = prtKernelGrammMatrix(DataSet,Obj.trainedKernels);
+            %             obj.trainedkernels = cell(size(obj.kernels));
+            %             for ikernel = 1:length(obj.kernels);
+            %                 obj.trainedkernels{ikernel} = initializekernelarray(obj.kernels{ikernel},dataset);
+            %             end
+            %             obj.trainedkernels = cat(1,obj.trainedkernels{:});
+            %             gramm = prtkernelgrammmatrix(dataset,obj.trainedkernels);
             
+            gramm = prtKernel.evaluateMultiKernelGramm(Obj.kernels,DataSet,DataSet);
             [Obj.alpha,Obj.beta] = prtUtilSmo(DataSet.getX,DataSet.getY,gramm,Obj.c,Obj.tol);
             
+            relevantIndices = find(Obj.alpha);
+            Obj.sparseKernels = prtKernel.sparseKernelFactory(Obj.kernels,DataSet,relevantIndices);
+            Obj.sparseAlpha = Obj.alpha(relevantIndices);
         end
         
         function DataSetOut = runAction(Obj,DataSet)
@@ -115,9 +118,10 @@ classdef prtClassSvm < prtClass
             for i = 1:memChunkSize:n;
                 cI = i:min(i+memChunkSize,n);
                 cDataSet = prtDataSetClass(DataSet.getObservations(cI,:));
-                gramm = prtKernelGrammMatrix(cDataSet,Obj.trainedKernels);
+                gramm = prtKernel.runMultiKernel(Obj.sparseKernels,cDataSet);
+                %gramm = prtKernelGrammMatrix(cDataSet,Obj.trainedKernels);
                 
-                y = gramm*Obj.alpha - Obj.beta;
+                y = gramm*Obj.sparseAlpha - Obj.beta;
                 DataSetOut = DataSetOut.setObservations(y, cI);
             end
         end
@@ -135,10 +139,8 @@ classdef prtClassSvm < prtClass
             
             % Plot the kernels
             hold on
-            for iKernel = 1:length(Obj.trainedKernels)
-                if Obj.alpha(iKernel) ~= 0
-                    Obj.trainedKernels{iKernel}.classifierPlot();
-                end
+            for iKernel = 1:length(Obj.sparseKernels)
+                Obj.sparseKernels{iKernel}.classifierPlot();
             end
             hold off
             

@@ -5,33 +5,16 @@ result = true;
 
 try
     kern = prtKernelRbf;
-    kern = kern.initializeBinaryKernel(1);
+    kern = kern.train(1);
     result = kern.run(1);
 catch
     disp('basic rbf kernel failure')
     result = false;
 end
 
-if kern.isInitialized ~= 1
-    disp('kernel not initialized')
-    result = false;
-end
-
-handle = kern.fnHandle;
-if ~isa(handle, 'function_handle')
-    disp('not a function handle')
-    result = false;
-end
-
-handleOut = handle(2);
-if ~isequal(handleOut, kern.run(2))
-    disp('function handle not equal to run')
-    result = false;
-end
-
 % check higher dim kernel
 try
-    kern = kern.initializeBinaryKernel([1 2]);
+    kern = kern.train([1 2]);
     kernOut = kern.run([ 1 2]);
 catch
     disp('higher dim radial basis kernel fail')
@@ -58,13 +41,12 @@ end
 kern = prtKernelRbf;
 dataSet = prtDataSetStandard;
 dataSet = dataSet.setX ([1 2]');
-kernCell = kern.initializeKernelArray(dataSet);
+kernCell = prtKernel.sparseKernelFactory(kern,dataSet,1:dataSet.nObservations);
 
 if (kernCell{1}.run(1) ~=1) || (kernCell{2}.run(2) ~=1)
     disp('kernel array error')
     result = false;
 end
-
 
 
 %% Erorr checks

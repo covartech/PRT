@@ -37,8 +37,8 @@ classdef prtDataSetClass  < prtDataSetStandard
     %   prtDataSetFile
     
     properties (Dependent)
-        nClasses     % The number of classes
-        uniqueClasses  % The unique class labels
+        nClasses        % The number of classes
+        uniqueClasses   % The unique class labels
         nObservationsByClass %  The number of observations per class
         
         isUnary                % True if the number of classes = 1

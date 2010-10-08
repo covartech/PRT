@@ -36,6 +36,9 @@ classdef prtKernel
         end
         
         function nDims = nDimsMultiKernel(kernelCell,ds)
+            if ~isa(kernelCell,'cell')
+                kernelCell = {kernelCell};
+            end
             nDims = zeros(length(kernelCell),1);
             for i = 1:length(kernelCell)
                 nDims(i) = kernelCell{i}.getExpectedNumKernels(ds);

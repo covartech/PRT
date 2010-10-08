@@ -241,8 +241,13 @@ classdef prtClass < prtAction
         function HandleStructure = plotBinaryClassifierConfidence(Obj)
             
             [OutputDataSet, linGrid, gridSize] = runClassifierOnGrid(Obj);
-            
-            imageHandle = prtPlotUtilPlotGriddedEvaledClassifier(OutputDataSet.getObservations(), linGrid, gridSize, Obj.PlotOptions.twoClassColorMapFunction());
+            %added this hack to make M-ary classifiers *with
+            %internalDeciders* output the right colors:
+            if Obj.DataSetSummary.nClasses > 2
+                imageHandle = prtPlotUtilPlotGriddedEvaledClassifier(OutputDataSet.getObservations(), linGrid, gridSize, Obj.PlotOptions.colorsFunction(Obj.DataSetSummary.nClasses));
+            else
+                imageHandle = prtPlotUtilPlotGriddedEvaledClassifier(OutputDataSet.getObservations(), linGrid, gridSize, Obj.PlotOptions.twoClassColorMapFunction());
+            end
             
             if ~isempty(Obj.DataSet)
                 hold on;

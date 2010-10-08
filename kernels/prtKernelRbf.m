@@ -35,7 +35,7 @@ classdef prtKernelRbf < prtKernel
         sigma = 1;    % Inverse kernel width
     end
     properties (SetAccess = 'protected')
-        kernelCenter = nan;   % The kernel center
+        kernelCenter = [];   % The kernel center
     end
     methods
         function obj = set.sigma(obj,value)
@@ -60,7 +60,12 @@ classdef prtKernelRbf < prtKernel
         end
         
         function yOut = run(obj,ds2)
-            yOut = prtKernelRbf.rbfEvalKernel(obj.kernelCenter,ds2.getObservations,obj.sigma);
+            if isa(ds2,'prtDataSet')
+                data = ds2.getObservations;
+            else
+                data = ds2;
+            end
+            yOut = prtKernelRbf.rbfEvalKernel(obj.kernelCenter,data,obj.sigma);
         end
         
         function nDims = getExpectedNumKernels(obj,ds)
@@ -68,7 +73,17 @@ classdef prtKernelRbf < prtKernel
         end
         
         function gramm = evaluateGramm(obj,ds1,ds2)
-            gramm = prtKernelRbf.rbfEvalKernel(ds1.getObservations,ds2.getObservations,obj.sigma);
+            if isa(ds1,'prtDataSet')
+                data1 = ds1.getObservations;
+            else
+                data1 = ds1;
+            end
+            if isa(ds2,'prtDataSet')
+                data2 = ds2.getObservations;
+            else
+                data2 = ds2;
+            end
+            gramm = prtKernelRbf.rbfEvalKernel(data1,data2,obj.sigma);
         end
         
         %Should really use latex, or have toLatex

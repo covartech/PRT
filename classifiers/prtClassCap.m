@@ -61,7 +61,6 @@ classdef prtClassCap < prtClass
     end 
     
     properties
-       
         thresholdSampling = 100; % The number of neighbors to consider in the nearest-neighbor voting.
     end
     

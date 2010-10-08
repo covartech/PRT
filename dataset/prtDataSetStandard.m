@@ -624,7 +624,11 @@ classdef prtDataSetStandard < prtDataSetBase
             %
             % nObjervations = dataSet.nObservations() returns the number of
             % observations from the dataSet object.
-            nObservations = size(obj.data,1); %use InMem's .data field
+            nObservations = obj.determineNumObservations;
+        end
+        
+        function nObservations = determineNumObservations(obj)
+            nObservations = size(obj.data,1);
         end
         
         function nFeatures = get.nFeatures(obj)

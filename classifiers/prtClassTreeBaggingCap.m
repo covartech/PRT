@@ -82,7 +82,7 @@ classdef prtClassTreeBaggingCap < prtClass
         nFeatures = 2;  % The number of features
         featureSelectWithReplacement = 1;  % Flag indicating whether or not to do feature selection with replacement
         
-        bootStrapDataAtNodes = true;  % Flag indicating whether or not to boostrap at nodes
+        bootStrapDataAtNodes = false;  % Flag indicating whether or not to boostrap at nodes
         bootStrapDataAtRoots = true; % Flag indicating whether or not to boostrap at roots
         
         nProcessors = 1;  % The number of processors on this machine
