@@ -1,5 +1,5 @@
 classdef prtClassCap < prtClass
-        % prtClassCap  Central Axis projection classifier
+    % prtClassCap  Central Axis projection classifier
     %
     %    CLASSIFIER = prtClassCap returns a Cap classifier
     %
@@ -10,21 +10,28 @@ classdef prtClassCap < prtClass
     %    A prtClassCap object inherits all properties from the abstract class
     %    prtClass. In addition is has the following properties:
     %
-    %        
     %    w                 -  Central axis projection weights, set during
     %                         training
     %    threshold         -  Decision threshold, set during training
-    %    thresholdSampling -  The number of neighbors to consider in the
-    %                         nearest-neighbor voting.
-    % 
-    %    For more information on Cap classifiers, refer to the
-    %    following URL:
-    %  
-    %    XXX Need ref
+    %    thresholdSampling -  The number of points to consider when
+    %                         determining the optimal threshold (lower 
+    %                         numbers result in less resolution, but reduce 
+    %                         computational complexity).
     %
-    %    A prtClassCap object inherits the TRAIN, RUN, CROSSVALIDATE and
-    %    KFOLDS methods from prtAction. It also inherits the PLOT and
-    %    PLOTDECISION classes from prtClass.
+    %    Cap classifiers are a prototypical "weak" classification algorithm
+    %    that find application in multiple meta-algorithms.  A good
+    %    explanation of Cap classifiers can be found in:
+    %
+    %    Breiman, Leo (2001). "Random Forests". Machine Learning 45 (1): 
+    %    5–32.
+    %
+    %   Note that the output of the run method of a prtClassCap classifier
+    %   includes the process of applying the learned threshold to the
+    %   linear projection, so the outputs are discrete valued.
+    %
+    %   A prtClassCap object inherits the TRAIN, RUN, CROSSVALIDATE and
+    %   KFOLDS methods from prtAction. It also inherits the PLOT and
+    %   PLOTDECISION classes from prtClass.
     %
     %    Example:
     %
@@ -33,8 +40,7 @@ classdef prtClassCap < prtClass
     %     classifier = prtClassCap;              % Create a classifier
     %     classifier = classifier.train(TrainingDataSet);    % Train
     %     classified = run(classifier, TestDataSet);         % Test
-    %     classes  = classified.getX > .5;
-    %     percentCorr = prtScorePercentCorrect(classes,TestDataSet.getTargets);
+    %     percentCorr = prtScorePercentCorrect(classified,TestDataSet);
     %     classifier.plot;
     %
     %    See also prtClass, prtClassLogisticDiscriminant, prtClassBagging,
@@ -46,19 +52,18 @@ classdef prtClassCap < prtClass
     
     
     properties (SetAccess=private)
-    
+        
         name = 'Central Axis Projection' % Central Axis Projection
         nameAbbreviation = 'CAP' % CAP
         isSupervised = true; % True
         
-       
         isNativeMary = false; % False
         
         % Central axis projection weights
         w = [];
         % Decision threshold
-        threshold = []; 
-    end 
+        threshold = [];
+    end
     
     properties
         thresholdSampling = 100; % The number of neighbors to consider in the nearest-neighbor voting.
@@ -66,7 +71,7 @@ classdef prtClassCap < prtClass
     
     methods
         function Obj = prtClassCap(varargin)
-          
+            
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
         end
     end
@@ -87,7 +92,7 @@ classdef prtClassCap < prtClass
         end
         
         function Obj = optimizeThresholdPosNeg(Obj,x,y)
-           
+            
             [thresholdValue,minPe] = optimizeThreshold(Obj,x,y);
             
             %It's possible that for oddly distributed data, the weight
@@ -125,7 +130,7 @@ classdef prtClassCap < prtClass
             y = y - Obj.threshold;
             y(y >= 0) = 1;
             y(y < 0) = 0;
-
+            
             ClassifierResults = prtDataSetClass(y);
             
         end

@@ -1,5 +1,50 @@
 classdef prtClassAdaBoost < prtClass
-               
+ %prtClassAdaBoost AdaBoost classifier
+ % 
+ %    CLASSIFIER = prtClassAdaBoost returns a AdaBoost classifier
+ %
+ %    CLASSIFIER = prtClassAdaBoost(PROPERTY1, VALUE1, ...) constructs a
+ %    prtClassAdaBoost object CLASSIFIER with properties as specified by
+ %    PROPERTY/VALUE pairs.
+ %
+ %    A prtClassAdaBoost object inherits all properties from the abstract class
+ %    prtClass. In addition is has the following properties:
+ %
+ %    baseClassifier     - the prtClass object that forms the "weak" or
+ %                         "Base" classifier for the AdaBoost.
+ %    nBoosts            - Number of iterations to run (number of weak
+ %                         classifiers to train)
+ %
+ %    AdaBoost is a meta algorithm for training ensembles of weak
+ %    classifiers on different sub-sets of the complete data set, with
+ %    later classifiers trained to focus on data points that were
+ %    mis-classified in earlier iterations.  A complete description of the
+ %    algorithm for AdaBoost is beyond the scope of this help entry, but
+ %    more information AdaBoost can be found at the following URL:
+ %
+ %    http://en.wikipedia.org/wiki/AdaBoost
+ %
+ %    A prtClassAdaBoost object inherits the TRAIN, RUN, CROSSVALIDATE and
+ %    KFOLDS methods from prtAction. It also inherits the PLOT and
+ %    PLOTDECISION classes from prtClass.
+ %
+ %    Example:
+ %
+ %    TestDataSet = prtDataGenUniModal;       % Create some test and
+ %    TrainingDataSet = prtDataGenUniModal;   % training data
+ %    classifier = prtClassAdaBoost;           % Create a classifier
+ %    classifier = classifier.train(TrainingDataSet);    % Train
+ %    classified = run(classifier, TestDataSet);         % Test
+ %    subplot(2,1,1);
+ %    classifier.plot;
+ %    subplot(2,1,2); 
+ %    [pf,pd] = prtScoreRoc(classified,TestDataSet);
+ %    h = plot(pf,pd,'linewidth',3);
+ %    title('ROC');
+ %    xlabel('Pf');
+ %    ylabel('Pd');
+ %
+ 
 
     properties (SetAccess=private)
         % Required by prtAction
@@ -13,6 +58,8 @@ classdef prtClassAdaBoost < prtClass
     properties
         baseClassifier = prtClassFld;
         nBoosts = 30;
+    end
+    properties (Hidden)
         classifierArray = [];
         alpha = [];
     end

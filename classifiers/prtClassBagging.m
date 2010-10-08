@@ -1,5 +1,5 @@
 classdef prtClassBagging < prtClass
-    % prtClassBagging  Bagging classifier
+    % prtClassBagging  Bagging (Bootstrap Aggregating) classifier
     %
     %    CLASSIFIER = prtClassBagging returns a bagging classifier
     %
@@ -10,12 +10,11 @@ classdef prtClassBagging < prtClass
     %    A prtClassBagging object inherits all properties from the abstract class
     %    prtClass. In addition is has the following properties:
     %
-    %    prtClassifier  - The classifier to be used
-    %    nBags          - The number of bags
+    %    baseClassifier  - The classifier to be used
+    %    nBags           - The number of bags
     % 
     %    For more information on bagging classifiers, refer to the
     %    following URL:
-    %
     %
     %    http://en.wikipedia.org/wiki/Bootstrap_aggregating
     %
@@ -28,17 +27,12 @@ classdef prtClassBagging < prtClass
     %     TestDataSet = prtDataGenUniModal;       % Create some test and
     %     TrainingDataSet = prtDataGenUniModal;   % training data
     %     classifier = prtClassBagging;           % Create a classifier
-    %     classifier.prtClassifier = prtClassMap;  % Set the classifier to
+    %     classifier.baseClassifier = prtClassMap;  % Set the classifier to
     %                                             % a prtClassMap
     %     classifier = classifier.train(TrainingDataSet);    % Train
     %     classified = run(classifier, TestDataSet);         % Test
-    %     classes  = classified.getX > .5;
-    %     percentCorr = prtScorePercentCorrect(classes,TestDataSet.getTargets);
     %     classifier.plot;
     %
-    %    See also prtClass, prtClassLogisticDiscriminant, prtClassBagging,
-    %    prtClassMap, prtClassCap, prtClassMaryEmulateOneVsAll, prtClassDlrt,
-    %    prtClassPlsda, prtClassFld, prtClassRvm, prtClassGlrt,  prtClass
     
 
     properties (SetAccess=private)
@@ -51,7 +45,7 @@ classdef prtClassBagging < prtClass
     end
     
     properties
-        prtClassifier = prtClassFld;  % The classifier to be bagged
+        baseClassifier = prtClassFld;  % The classifier to be bagged
         nBags = 100;                  % The number of bags
     end
     properties (SetAccess=protected, Hidden = true)
@@ -71,12 +65,12 @@ classdef prtClassBagging < prtClass
         
         function Obj = trainAction(Obj,DataSet)
 
-            Obj.nameAbbreviation = sprintf('Bagging_{%s}',Obj.prtClassifier.nameAbbreviation);
+            Obj.nameAbbreviation = sprintf('Bagging_{%s}',Obj.baseClassifier.nameAbbreviation);
             for i = 1:Obj.nBags
                 if i == 1
-                    Obj.Classifiers = train(Obj.prtClassifier,DataSet.bootstrap(DataSet.nObservations));
+                    Obj.Classifiers = train(Obj.baseClassifier,DataSet.bootstrap(DataSet.nObservations));
                 else
-                    Obj.Classifiers(i) = train(Obj.prtClassifier,DataSet.bootstrap(DataSet.nObservations));
+                    Obj.Classifiers(i) = train(Obj.baseClassifier,DataSet.bootstrap(DataSet.nObservations));
                 end
             end
         end
