@@ -24,7 +24,7 @@ classdef prtClassBumping < prtClass
         % Required by prtAction
         name = 'Bumping'   %  Bagging Classifier
         nameAbbreviation = 'Bumping'  %  Bagging
-        isSupervised = true;          %  True
+        %isSupervised = true;          %  True
         
         isNativeMary = false;         % False
     end
@@ -41,7 +41,11 @@ classdef prtClassBumping < prtClass
     end
     
     methods
-        
+        function Obj = set.baseClassifier(Obj,classifier)
+            assert(isa(classifier,'prtClass'),'prt:prtClassBumping','baseClassifier must be a subclass of prtClass, but classifier provided was a %s',class(classifier));
+            assert(classifier.includesDecision,'prt:prtClassBumping','baseClassifier must have in internal decision (non-empty internalDecider field), but classifier.includesDecision was false');
+            Obj.baseClassifier = classifier;
+        end
         function Obj = prtClassBumping(varargin)
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
         end
