@@ -54,18 +54,11 @@ classdef prtClassLogisticDiscriminant < prtClass
     %    prtClassLogisticDiscriminant,  prtClass
     
     
-    
-    
-    %   
-    
     properties (SetAccess=private)
         name = 'Logistic Discriminant'  % Logistic Discriminant
      
         nameAbbreviation = 'LogDisc'  % LogDisc
      
-        isSupervised = true;   %  True
-        
- 
         isNativeMary = false;  % True
     end
     

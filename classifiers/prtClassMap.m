@@ -38,9 +38,6 @@ classdef prtClassMap < prtClass
         % Required by prtAction
         name = 'Maximum a Posteriori'   % Maximum a Posteriori
         nameAbbreviation = 'MAP'        % MAP
-        isSupervised = true;            % True
-        
-        
         isNativeMary = true;            % True
     end
     

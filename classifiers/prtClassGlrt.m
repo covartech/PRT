@@ -44,8 +44,6 @@ classdef prtClassGlrt < prtClass
     
         name = 'Generalized likelihood ratio test'  % Generalized likelihood ratio test
         nameAbbreviation = 'GLRT'% GLRT
-        isSupervised = true;  % True
-        
         isNativeMary = false;  % False
         
     end 

@@ -6,10 +6,8 @@ classdef prtClassMatlabNnet < prtClass
     %yOut = Nn.run(prtDataGenBimodal);
     
     properties (SetAccess=private)
-        
         name = 'MATLAB Neural Network' % Fisher Linear Discriminant
         nameAbbreviation = 'MLNN'            % FLD
-        isSupervised = true;   % True
         isNativeMary = true;  % False
     end
     

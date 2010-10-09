@@ -55,8 +55,6 @@ classdef prtClassCap < prtClass
         
         name = 'Central Axis Projection' % Central Axis Projection
         nameAbbreviation = 'CAP' % CAP
-        isSupervised = true; % True
-        
         isNativeMary = false; % False
         
         % Central axis projection weights

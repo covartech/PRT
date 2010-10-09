@@ -59,11 +59,8 @@ classdef prtClassDlrt < prtClass
     %   run - Logistic discriminant evaluation; see prtAction.run
     
     properties (SetAccess=private)
-     
         name = 'Distance Likelihood Ratio Test' % Distance Likelihood Ratio Test
         nameAbbreviation = 'DLRT' % DLRT
-        isSupervised = true; % True
-        
         isNativeMary = false;  % False
     end 
     

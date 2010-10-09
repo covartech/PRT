@@ -46,7 +46,6 @@ classdef prtClassFld < prtClass
         
         name = 'Fisher Linear Discriminant' % Fisher Linear Discriminant
         nameAbbreviation = 'FLD'            % FLD
-        isSupervised = true;   % True
         isNativeMary = false;  % False
     end
     

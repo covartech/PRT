@@ -49,9 +49,6 @@ classdef prtClassKmeansPrototypes < prtClass
         
         name = 'K-Means Prototypes' % K-Means Prototypes
         nameAbbreviation = 'K-MeansProto' % K-MeansProto
-        isSupervised = true; % True
-        
-        % Required by prtClass
         isNativeMary = true;  % True
     end
     

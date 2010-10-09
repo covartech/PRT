@@ -45,8 +45,6 @@ classdef prtClassKnn < prtClass
        
         name = 'K-Nearest Neighbor'   % K-Nearest Neighbor
         nameAbbreviation = 'KNN'      % KNN  
-        isSupervised = true;          % True
-        
         isNativeMary = true;         % False
         
     end

@@ -39,8 +39,6 @@ classdef prtClassBagging < prtClass
         % Required by prtAction
         name = 'Bagging Classifier'   %  Bagging Classifier
         nameAbbreviation = 'Bagging'  %  Bagging
-        isSupervised = true;          %  True
-        
         isNativeMary = false;         % False
     end
     

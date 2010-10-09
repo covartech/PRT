@@ -46,8 +46,6 @@ classdef prtClassSvm < prtClass
     properties (SetAccess=private)
         name = 'Support Vector Machine'  % Support Vector Machine
         nameAbbreviation = 'SVM'         % SVM
-        isSupervised = true; % True
-        
         isNativeMary = false;  % False
     end
     

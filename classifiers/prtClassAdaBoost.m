@@ -50,8 +50,6 @@ classdef prtClassAdaBoost < prtClass
         % Required by prtAction
         name = 'AdaBoost' 
         nameAbbreviation = 'AdaBoost'
-        isSupervised = true;
-        
         isNativeMary = false;
     end
     

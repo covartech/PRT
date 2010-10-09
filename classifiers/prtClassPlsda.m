@@ -43,11 +43,8 @@ classdef prtClassPlsda < prtClass
     
 
     properties (SetAccess=private)
-       
         name = 'Partial Least Squares Discriminant' % Partial Least Squares Discriminant
         nameAbbreviation = 'PLSDA' % PLSDA
-        isSupervised = true;  % True
-        
         isNativeMary = true;  % True
     end
     

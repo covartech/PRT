@@ -11,9 +11,8 @@ classdef prtClassMatlabTreeBagger < prtClass
     
     properties (SetAccess=private)
         
-        name = 'MATLAB Tree Bagger' % Fisher Linear Discriminant
-        nameAbbreviation = 'MLTB'            % FLD
-        isSupervised = true;   % True
+        name = 'MATLAB Tree Bagger';
+        nameAbbreviation = 'MLTB';
         isNativeMary = true;  % False
     end
     
@@ -39,7 +38,7 @@ classdef prtClassMatlabTreeBagger < prtClass
     methods (Access=protected, Hidden = true)
         
         function Obj = trainAction(Obj,DataSet)
-            Obj.forest = treeBagger(Obj.nTrees,DataSet.getObservations,DataSet.getTargets,Obj.treeBaggerParamValuePairs{:});
+            Obj.forest = TreeBagger(Obj.nTrees,DataSet.getObservations,DataSet.getTargets,Obj.treeBaggerParamValuePairs{:});
         end
         
         function DataSet = runAction(Obj,DataSet)

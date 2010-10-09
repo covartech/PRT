@@ -40,8 +40,6 @@ classdef prtClassKmsd < prtClass
         % Required by prtAction
         name = 'Kernel matched subspace detector'  % Kernel matched subspace detector
         nameAbbreviation = 'KMSD'  % KMSD
-        isSupervised = true;  % True
-        
         isNativeMary = false;   % False
     end
     properties (Access = private, Hidden = true)

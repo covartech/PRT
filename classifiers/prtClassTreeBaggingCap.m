@@ -64,8 +64,6 @@ classdef prtClassTreeBaggingCap < prtClass
     
         name = 'Tree Bagging Central Axis Projection'  %Tree Bagging Central Axis Projection
         nameAbbreviation = 'TBCAP'  % TBCAP
-        isSupervised = true;   % True
-        
        
         isNativeMary = false;    % False
         

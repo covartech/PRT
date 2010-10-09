@@ -19,6 +19,9 @@ classdef prtClass < prtAction
         isNativeMary % Logical, classifier natively produces an output for each unique class
     end
     
+    properties (SetAccess=private)
+        isSupervised = true;
+    end
     properties (SetAccess=protected, Hidden = true)
         yieldsMaryOutput = nan; % Determined in trainProcessing()
         twoClassParadigm = 'binary';   %  Whether the classifier is binary or m-ary
@@ -30,11 +33,11 @@ classdef prtClass < prtAction
         includesDecision
     end
     properties (Hidden = true)
-        PlotOptions = prtClass.initializePlotOptions();  % 
+        PlotOptions = prtClass.initializePlotOptions();
     end
     
     methods (Hidden = true)
-        function featureNames = updateFeatureNames(obj,featureNames) %#ok<MANU>
+        function featureNames = updateFeatureNames(obj,featureNames)
             if ~obj.includesDecision
                 for i = 1:length(featureNames)
                     featureNames{i} = sprintf('%s Output_{%d}',obj.nameAbbreviation,i);

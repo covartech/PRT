@@ -1,5 +1,5 @@
 classdef prtClassMaryEmulateOneVsAll < prtClass
-    % prtClassMaryEmulateOneVsAll  K-means prototypes classifier
+    % prtClassMaryEmulateOneVsAll  M-Ary Emulation Classifier
     %
     %    CLASSIFIER = prtClassMaryEmulateOneVsAll returns a M-ary one
     %    versus all classifier. A one versus all classifier utilizes a
@@ -42,11 +42,8 @@ classdef prtClassMaryEmulateOneVsAll < prtClass
     %    prtClassPlsda, prtClassFld, prtClassRvm, prtClassGlrt,  prtClass
     
     properties (SetAccess=private)
-        
         name = 'M-Ary Emaulation One vs. All'  % M-Ary Emaulation One vs. All
         nameAbbreviation = 'OneVsAll'  % OVA
-        isSupervised = true;  % True
-        
         isNativeMary = true;  % True
     end
     

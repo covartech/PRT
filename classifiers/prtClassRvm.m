@@ -73,9 +73,6 @@ classdef prtClassRvm < prtClass
        
         name = 'Relevance Vector Machine'  % Relevance Vector Machine
         nameAbbreviation = 'RVM'           % RVM
-        isSupervised = true;               % True
-        
-        
         isNativeMary = false;  % False
     end
     
