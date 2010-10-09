@@ -32,6 +32,8 @@ classdef prtClassBumping < prtClass
     properties
         baseClassifier = prtClassFld('internalDecider',prtDecisionBinaryMinPe);  % The classifier to be bagged
         nBags = 100;                                    % The number of bags
+        includeOriginalDataClassifier = false;          %run one additional classifier with the original data?  
+                                                        %(Default to NO since this can give over trained results)
     end
     properties (SetAccess=protected)
         baggedPerformance
@@ -57,18 +59,30 @@ classdef prtClassBumping < prtClass
         function Obj = trainAction(Obj,DataSet)
             
             Obj.nameAbbreviation = sprintf('Bumping_{%s}',Obj.baseClassifier.nameAbbreviation);
-            waitHandle = prtUtilWaitbarWithCancel(sprintf('Building %d  %s models...',Obj.nBags,Obj.baseClassifier.name));
-            Obj.baggedPerformance = nan(Obj.nBags,1);
-            Classifiers = repmat(Obj.baseClassifier,Obj.nBags,1);
-            for i = 1:Obj.nBags
+            if Obj.includeOriginalDataClassifier
+                titleString = sprintf('Building %d(+1) %s models...',Obj.nBags,Obj.baseClassifier.name);
+            else
+                titleString = sprintf('Building %d %s models...',Obj.nBags,Obj.baseClassifier.name);
+            end
+            waitHandle = prtUtilWaitbarWithCancel(titleString);
+            Obj.baggedPerformance = nan(Obj.nBags+1,1);
+            Classifiers = repmat(Obj.baseClassifier,Obj.nBags+1,1);
+            for i = 1:Obj.nBags+1
                 waitHandle = prtUtilWaitbarWithCancel(i./Obj.nBags,waitHandle);
                 
-                Classifiers(i) = train(Obj.baseClassifier,DataSet.bootstrap(DataSet.nObservations));
-                Obj.baggedPerformance(i) = prtScorePercentCorrect(Classifiers(i).run(DataSet),DataSet);
+                if i == Obj.nBags + 1 && Obj.includeOriginalDataClassifier
+                    %the full model; see "The Elements of Statistical Learning"
+                    Classifiers(i) = train(Obj.baseClassifier,DataSet);
+                    Obj.baggedPerformance(i) = prtScorePercentCorrect(Classifiers(i).run(DataSet),DataSet);
+                elseif i < Obj.nBags+1
+                    Classifiers(i) = train(Obj.baseClassifier,DataSet.bootstrap(DataSet.nObservations));
+                    Obj.baggedPerformance(i) = prtScorePercentCorrect(Classifiers(i).run(DataSet),DataSet);
+                end
                 if ~ishandle(waitHandle)
                     break;
                 end
             end
+            
             if ishandle(waitHandle)
                 delete(waitHandle);
             end
