@@ -1,4 +1,5 @@
-classdef prtKernelDirect < prtKernelUnary
+classdef prtKernelDirect < prtKernelFeatureDependent
+    % prtKernelDirect
     
     properties (SetAccess = 'protected')
         fnHandle
@@ -7,11 +8,15 @@ classdef prtKernelDirect < prtKernelUnary
     
     methods 
         
-        function kernelObj = prtKernelDirect(theDimension)
-            kernelObj.dimension = theDimension;
+        function kernelObj = prtKernelDirect(varargin)
+            kernelObj = prtUtilAssignStringValuePairs(kernelObj,varargin{:});
         end
-        function obj = initializeUnaryKernel(obj)
-            obj.fnHandle = @(x) x(:,obj.dimension);
+        
+        function yOut = evalKernel(obj,x)
+            yOut = x(:,obj.dimension);
+        end
+        function obj = trainKernel(obj,theDimension)
+            obj.dimension = theDimension;
         end
     end
 end

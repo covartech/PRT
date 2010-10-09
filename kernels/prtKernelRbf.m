@@ -1,32 +1,6 @@
-classdef prtKernelRbf < prtKernel
+classdef prtKernelRbf < prtKernelBinary
     % prtKernelRbf  Radial basis function kernel
     %
-    %   KERN = prtKernelRbf creates a radial basis function kernel object.
-    %
-    %   KERN = prtKernelRbf(PROPERTY1, VALUE1, ...) constructs a prtKernelRbf
-    %   object KERN with properties as specified by PROPERTY/VALUE pairs.
-    %
-    %   When the KERN.run(X) is called on a prtKernalBinary object, the kernel
-    %   function evaluated is exp(-||x-kernelCenter||/sigma^2)
-    %
-    %   A prtKernelRbf object inherits all properties from the abstract class
-    %   prtKernel. In addition is has the following property:
-    %
-    %   sigma   - Inverse kernel width
-    %
-    %   A prtKernelRbf inherits the intializeBinaryKernel from the
-    %   prtKernelBinary class. It also inherits the run, toString, and
-    %   initializeKernelArray functions from the prtKernelBinary class.
-    %
-    %   Example:
-    %   kern = prtKernelRbf;             % Create a prtKernRbf object;
-    %   kern.sigma = 2;                  % Set the sigma parameter
-    %   % Set the center of the kernel to 2.
-    %   kern = kern.initializeBinaryKernel(2);
-    %   result = kern.run(4);            % Run the kernel with input 4
-    %   kern.toString;                   % Display a string showing the
-    %                                    % equation that the run function
-    %                                    % evaluates.
     %
     %  See also  prtKernelRbfNdimensionScale, prtKernelPolynomial, prtKernelVoigt, prtKernelDc,
     %  prtKernelLaplacian,prtKernelQuadExpCovariance
@@ -47,43 +21,8 @@ classdef prtKernelRbf < prtKernel
             obj = prtUtilAssignStringValuePairs(obj,varargin{:});
         end
         
-        function trainedKernelArray = toTrainedKernelArray(obj,dsTrain,logical)
-            valid = find(logical);
-            trainedKernelArray = repmat(obj,length(valid),1);
-            for j = 1:length(valid)
-                trainedKernelArray(j) = obj.train(dsTrain.getObservations(valid(j)));
-            end
-        end
-        
-        function obj = train(obj,x)
+        function obj = trainKernel(obj,x)
             obj.kernelCenter = x;
-        end
-        
-        function yOut = run(obj,ds2)
-            if isa(ds2,'prtDataSet')
-                data = ds2.getObservations;
-            else
-                data = ds2;
-            end
-            yOut = prtKernelRbf.rbfEvalKernel(obj.kernelCenter,data,obj.sigma);
-        end
-        
-        function nDims = getExpectedNumKernels(obj,ds)
-            nDims = ds.nObservations;
-        end
-        
-        function gramm = evaluateGramm(obj,ds1,ds2)
-            if isa(ds1,'prtDataSet')
-                data1 = ds1.getObservations;
-            else
-                data1 = ds1;
-            end
-            if isa(ds2,'prtDataSet')
-                data2 = ds2.getObservations;
-            else
-                data2 = ds2;
-            end
-            gramm = prtKernelRbf.rbfEvalKernel(data1,data2,obj.sigma);
         end
         
         %Should really use latex, or have toLatex
@@ -92,10 +31,12 @@ classdef prtKernelRbf < prtKernel
             %
             % STR = KERN.toString returns a string description of the
             % kernel function realized by the prtKernel objet KERN.
-            
             string = sprintf('  f(x) = exp(-(x - %s)./(%.2f^2))',mat2str(obj.kernelCenter,2),obj.sigma);
         end
         
+        function yOut = evalKernel(obj,data)
+            yOut = prtKernelRbf.rbfEvalKernel(obj.kernelCenter,data,obj.sigma);
+        end
         
     end
     
@@ -116,6 +57,7 @@ classdef prtKernelRbf < prtKernel
             end
         end
     end
+    
     
     methods(Hidden = true)
         function h = classifierPlot(obj)

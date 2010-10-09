@@ -3,18 +3,10 @@ classdef prtKernelRbfNdimensionScale < prtKernelRbf
     %   sigma <- sqrt(sigma.^2*nDim)
     
     methods
-        function yOut = run(obj,ds2)
+
+        function yOut = evalKernel(obj,data)
             sigma = sqrt(obj.sigma.^2*size(obj.kernelCenter,2));
-            yOut = prtKernelRbf.rbfEvalKernel(obj.kernelCenter,ds2.getObservations,sigma);
-        end
-        
-        function nDims = getExpectedNumKernels(obj,ds)
-            nDims = ds.nObservations;
-        end
-        
-        function gramm = evaluateGramm(obj,ds1,ds2)
-            sigma = sqrt(obj.sigma.^2*ds1.nFeatures);
-            gramm = prtKernelRbf.rbfEvalKernel(ds1.getObservations,ds2.getObservations,sigma);
+            yOut = prtKernelRbf.rbfEvalKernel(obj.kernelCenter,data,sigma);
         end
         
         %Should really use latex, or have toLatex

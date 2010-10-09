@@ -1,8 +1,6 @@
-classdef prtKernelBinary < prtKernel
-    % prtKernelBinary provides a super class for kernels that are functions
-    % of both the training data and the testing data in kernel-based
-    % learning algorithms.  Binary kernels are probably the most widely
-    % used kinds of kernels - examples include rbf kernels, etc.
+classdef prtKernelFeatureDependent < prtKernel
+    % prtKernelFeatureDependent provides a super class for kernels that are 
+    % functions of the individual feature dimensions of the data set
     %
     % Kernels that sub-class from prtKernelBinary must implement two
     % functions:
@@ -14,7 +12,7 @@ classdef prtKernelBinary < prtKernel
     methods
         
         function nDims = getExpectedNumKernels(obj,ds)
-            nDims = ds.nObservations;
+            nDims = ds.nFeatures;
         end
         
         function gramm = evaluateGramm(obj,ds1,ds2)
@@ -31,7 +29,7 @@ classdef prtKernelBinary < prtKernel
             %"evaluateGramm(obj,ds1,ds2)" that they can write to be fast,
             %but for now we haven't done that.  Actually, clever kernels
             %can just overload this function to make it fast.  
-            kernelArray = toTrainedKernelArray(obj,ds1,true(ds1.nObservations,1));
+            kernelArray = toTrainedKernelArray(obj,ds1,true(ds1.nFeatures,1));
             gramm = nan(ds2.nObservations,length(kernelArray));
             for i = 1:length(kernelArray);
                 gramm(:,i) = evalKernel(kernelArray(i),ds2.getObservations);
@@ -42,7 +40,8 @@ classdef prtKernelBinary < prtKernel
             valid = find(logical);
             trainedKernelArray = repmat(obj,length(valid),1);
             for j = 1:length(valid)
-                trainedKernelArray(j) = obj.trainKernel(dsTrain.getObservations(valid(j)));
+                featureIndex = valid(j);
+                trainedKernelArray(j) = obj.trainKernel(featureIndex);
             end
         end
         
