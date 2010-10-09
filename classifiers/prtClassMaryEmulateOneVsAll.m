@@ -17,7 +17,7 @@ classdef prtClassMaryEmulateOneVsAll < prtClass
     %
     %    Classifiers - The classifier to be used to make the binary
     %                  decisions. Must be a prtClass object, and defaults 
-    %                  to a prtClassFld classifier.
+    %                  to a prtClassLogisticDiscriminant classifier.
     % 
     %    A prtClassMaryEmulateOneVsAll object inherits the TRAIN, RUN,
     %    CROSSVALIDATE and KFOLDS methods from prtAction. It also inherits
@@ -51,16 +51,13 @@ classdef prtClassMaryEmulateOneVsAll < prtClass
     end
     
     properties
-       
-        Classifiers = prtClassFld; % The classifier to be used
+        Classifiers = prtClassLogisticDiscriminant; % The classifier to be used
     end
     
     methods
         
         function Obj = prtClassMaryEmulateOneVsAll(varargin)
-            if nargin == 0
-                % Nothing to do
-            end
+            Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
         end
     end
     

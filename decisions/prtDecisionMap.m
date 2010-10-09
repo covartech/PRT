@@ -20,7 +20,7 @@ classdef prtDecisionMap < prtDecision
             if size(yOut,2) > 1
                 [~,index] = max(yOut,[],2);
             else
-                index = (yOut > .5)+1;
+                error('prt:prtDecisionMap','Cannot run prtDecisionMap on algorithms with single-column output; use prtDecisionBinaryMinPe instead');
             end
             classList = Obj.classList(index);
             classList = classList(:);

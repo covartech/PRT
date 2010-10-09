@@ -11,6 +11,9 @@ classdef prtDecisionBinaryMinPe < prtDecisionBinary
     methods (Access = protected)
         function Obj = trainAction(Obj,dataSet)
             
+            if dataSet.nObservations > 1
+                error('prt:prtDecisionBinaryMinPe','prtDecisionBinaryMinPe can not be used on algorithms that output multi-column results; consider using prtDecisionMap instead');
+            end
             [pf,pd,auc,thresh] = prtScoreRoc(dataSet.getObservations,dataSet.getTargets);
             pe = prtUtilPfPd2Pe(pf,pd);
             [v,minPeIndex] = min(pe);
