@@ -2,6 +2,8 @@ classdef prtKernelHyperbolicTangent < prtKernelBinary
     % prtKernelHyperbolicTangent  hyperbolic tangent
     %
     %
+    %  http://en.wikipedia.org/wiki/Support_vector_machine#Non-linear_classification
+    %
     
     properties
         kappa = 1;    % polynomial order

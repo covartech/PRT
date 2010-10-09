@@ -2,6 +2,8 @@ classdef prtKernelPolynomial < prtKernelBinary
     % prtKernelPolynomial  Polynomial
     %
     %
+    %  http://en.wikipedia.org/wiki/Support_vector_machine#Non-linear_classification
+    %
     
     properties
         d = 2;    % polynomial order
