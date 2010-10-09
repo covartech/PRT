@@ -36,6 +36,12 @@ classdef prtDecisionBinaryMinPe < prtDecisionBinary
         threshold
         uniqueClasses
     end
+    methods
+        
+        function obj = prtDecisionBinaryMinPe(varargin)
+            obj = prtUtilAssignStringValuePairs(obj,varargin{:});
+        end
+    end
     methods (Access = protected)
         function Obj = trainAction(Obj,dataSet)
             

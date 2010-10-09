@@ -31,7 +31,7 @@ classdef prtDecision < prtAction
     % Note that the regardless of how one uses a decider, the outputs of
     % algo.run(dsTest) and myKnn.run(dsTest) should be identical;
     
-    properties 
+    properties (Hidden)
         classList
     end
     methods
