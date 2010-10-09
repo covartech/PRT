@@ -1,4 +1,7 @@
 classdef prtDecisionMap < prtDecision
+    % Maximum a-posteriori decision making
+    %
+    % Basically takes the max over the column outputs.
      properties (SetAccess = private)
         name = 'MAP'
         nameAbbreviation = 'MAP';

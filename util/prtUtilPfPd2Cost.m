@@ -5,7 +5,6 @@ function cost = prtUtilPfPd2Cost(pf,pd,costMatrix,priorH0,priorH1)
 %
 %   Cost matrix = [0, 1; 1 0];
 
-
 if nargin < 3
     costMatrix = [0, 1; 1 0];  %equal costs
 end
