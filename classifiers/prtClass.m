@@ -81,6 +81,11 @@ classdef prtClass < prtAction
                 HandleStructure = plotBinaryClassifierConfidence(Obj);
             end
             
+            if ~isempty(Obj.DataSet) && ~isempty(Obj.DataSet.name)
+                title(sprintf('%s (%s)',Obj.name,Obj.DataSet.name));
+            else
+                title(Obj.name);
+            end
             varargout = {};
             if nargout > 0
                 varargout = {HandleStructure};
