@@ -5,8 +5,8 @@ result = true;
 
 try
     kern = prtKernelRbf;
-    kern = kern.train(1);
-    result = kern.run(1);
+    kern = kern.trainKernel(1);
+    result = kern.evalKernel(1);
 catch
     disp('basic rbf kernel failure')
     result = false;
@@ -14,8 +14,8 @@ end
 
 % check higher dim kernel
 try
-    kern = kern.train([1 2]);
-    kernOut = kern.run([ 1 2]);
+    kern = kern.trainKernel([1 2]);
+    kernOut = kern.evalKernel([ 1 2]);
 catch
     disp('higher dim radial basis kernel fail')
     result= false;

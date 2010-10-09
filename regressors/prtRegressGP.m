@@ -10,7 +10,7 @@ classdef prtRegressGP < prtRegress
     %    A prtRegressGP object inherits all properties from the prtRegress
     %    class. In addition, it has the following properties:
     %
-    %   covarianceFunction = @(x1,x2)prtKernelQuadExpCovariance(x1,x2, 1, 4, 0, 0);
+    %   covarianceFunction = @(x1,x2)prtUtillQuadExpCovariance(x1,x2, 1, 4, 0, 0);
     %   noiseVariance = 0.01;
     %   CN ?
     %   weights?
@@ -48,7 +48,7 @@ classdef prtRegressGP < prtRegress
     properties
         % Optional parameters
         
-        covarianceFunction = @(x1,x2)prtKernelQuadExpCovariance(x1,x2, 1, 4, 0, 0);
+        covarianceFunction = @(x1,x2)prtUtillQuadExpCovariance(x1,x2, 1, 4, 0, 0);
         noiseVariance = 0.01;
         
         % Infered parameters

@@ -81,7 +81,9 @@ catch
 end
 
 try
-    dataSet.plotStar()
+    warning('off','prt:plotStar:TooFewDimensions');
+    dataSet.plotStar();
+    warning('on','prt:plotStar:TooFewDimensions');
     close
 catch
     disp('dataSetClass star plot fail')
@@ -90,7 +92,9 @@ catch
 end
 
 try
-    dataSet.plotStarIndividual()
+    warning('off','prt:plotStar:TooFewDimensions'); 
+    dataSet.plotStarIndividual();
+    warning('on','prt:plotStar:TooFewDimensions');
     close
 catch
     disp('dataSetClass star plot individual fail')
