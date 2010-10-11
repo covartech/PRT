@@ -16,7 +16,7 @@ nodePosMat = bsxfun(@rdivide,nodePosMat,max(nodePosMat));
 nodePosMat(isnan(nodePosMat))=0;
 
 % Decide how big the blocks can reasonably be given the number of blocks
-% we have to put in the unit box
+% we have to put in the unit square
 minDistBetweenBlocks = min(min(prtDistanceLNorm(nodePosMat,nodePosMat,2) + realmax*eye(size(connectivityMatrix))));
 blockSize = minDistBetweenBlocks*2/3;
 
@@ -67,12 +67,12 @@ set(gcf,'NextPlot','replace')
 
 %% Begin Functions
 
-    function patchWindowButtonMotion(hObject, eventData, blockIndex) %#ok
+    function patchWindowButtonMotion(hObject, eventData, blockIndex, offSet) %#ok
         cp = get(Handles.AxesPanel.mainAxes,'currentPoint');
         
         oldBlockPosition = get(Layout.Blocks(blockIndex).handle,'position');
         
-        cp = cp - blockSize/2;
+        cp = cp - blockSize/2 + repmat(cat(2, offSet, 0),2,1);
         
         Layout.Blocks(blockIndex).polygonPosition = cp(1,1:2);
         
@@ -82,7 +82,6 @@ set(gcf,'NextPlot','replace')
         %Move Edges
         for jEdge = 1:length(GraphLayoutInfo.Edges)
             if blockIndex == GraphLayoutInfo.Edges(jEdge).startIndex || blockIndex == GraphLayoutInfo.Edges(jEdge).stopIndex
-                
                 
                 startInd = GraphLayoutInfo.Edges(jEdge).startIndex;
                 stopInd = GraphLayoutInfo.Edges(jEdge).stopIndex;
@@ -110,7 +109,15 @@ set(gcf,'NextPlot','replace')
                 % % disp('Double Click Block')
                 % Nothing for now
             otherwise % case 'normal'
-                set(Handles.handle,'WindowButtonMotionFcn',@(h,E)patchWindowButtonMotion(h,E, blockIndex));
+                
+                % Get block clock offset
+                cp = get(Handles.AxesPanel.mainAxes,'currentPoint');
+                
+                cPolyCorner = Layout.Blocks(blockIndex).polygonPosition;
+                
+                offSet = cPolyCorner + blockSize/2 - cp(1,1:2);
+                
+                set(Handles.handle,'WindowButtonMotionFcn',@(h,E)patchWindowButtonMotion(h,E, blockIndex, offSet));
                 set(Handles.handle,'WindowButtonUpFcn',@(h,E)patchButtonUpFunction(h,E, blockIndex));
                 set(Layout.Blocks(blockIndex).handle,'Selected','off')
         end
