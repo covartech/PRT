@@ -232,7 +232,12 @@ set(gcf,'NextPlot','replace')
             'cameratargetmode', 'auto');
         
         % Resize the text since the block size has changed
-        Options.blockFontSizeNormalized = Options.blockFontSizeNormalized .* zoomfactor;
+        xRange = xlim(2)-xlim(1);
+        yRange = ylim(2)-ylim(1);
+        
+        zoomFactorFromOriginal = max(xRange,yRange) ./ (Options.initialCanvasLimits(2)-Options.initialCanvasLimits(1));
+        textSizes = 1./zoomFactorFromOriginal.*originalTextSizes;
+        
         resizeText();
     end 
 
