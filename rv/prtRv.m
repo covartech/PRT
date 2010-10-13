@@ -169,6 +169,8 @@ classdef prtRv
             % Quick Exit for the zero input constructor
             if nIn == 0
                 return
+            elseif mod(nIn,2)
+                error('prt:prtRv:constructorInputParse','Inputs must be supplied by as string/value pairs');
             end
             
             R = prtUtilAssignStringValuePairs(R,varargin{:});

@@ -251,6 +251,9 @@ classdef prtDataSetClass  < prtDataSetStandard
             %   array of strings that has the same length as the number of
             %   classes in the dataSet object.
             
+            if isa(names,'char') && (obj.nClasses == 1)
+                names = {names};
+            end
             if ~isa(names,'cell') || ~isa(names{1},'char')
                 error('prt:dataSetClass:setClassNames','Input class names must be a cell array of characters');
             end
@@ -590,19 +593,22 @@ classdef prtDataSetClass  < prtDataSetStandard
             end
             title(obj.name);
             
-            % Plot axes
-            axesLength = .6;
-            plot(axesLength*cat(1,zeros(1,length(cT)),cT),axesLength*cat(1,zeros(1,length(sT)),sT),'color',[0 0 0],'lineWidth',2)
-            
-            fNames = obj.getFeatureNames();
-            
-            textOffSet = 0.2;
-            textRadius = axesLength+textOffSet;
-            
+            % Plot axes and text:
             %textRotationAngles = rem(theta-pi/2,2*pi)/pi*180;
-            textRotationAngles = zeros(size(theta));
-            for iAxes = 1:length(cT)
-                text(textRadius*cT(iAxes),textRadius*sT(iAxes), fNames{iAxes}, 'rotation', textRotationAngles(iAxes),'HorizontalAlignment','Center','VerticalAlignment','Middle');
+            axesLength = .6;
+
+            if obj.nFeatures < 300
+                plot(axesLength*cat(1,zeros(1,length(cT)),cT),axesLength*cat(1,zeros(1,length(sT)),sT),'color',[0 0 0],'lineWidth',2)
+                
+                fNames = obj.getFeatureNames();
+                
+                textOffSet = 0.2;
+                textRadius = axesLength+textOffSet;
+                
+                textRotationAngles = zeros(size(theta));
+                for iAxes = 1:length(cT)
+                    text(textRadius*cT(iAxes),textRadius*sT(iAxes), fNames{iAxes}, 'rotation', textRotationAngles(iAxes),'HorizontalAlignment','Center','VerticalAlignment','Middle');
+                end
             end
             axis([-1 1 -1 1]*(axesLength + 0.4));
             

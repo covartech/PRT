@@ -89,7 +89,6 @@ classdef prtClassSvm < prtClass
     methods (Access=protected, Hidden = true)
         
         function Obj = trainAction(Obj,DataSet)
-            
             % Train (center) the kernels at the trianing data (if
             % necessary)
             %             obj.trainedkernels = cell(size(obj.kernels));

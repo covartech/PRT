@@ -235,8 +235,10 @@ classdef prtClassRvm < prtClass
     end
     methods (Access=private)
         function Obj = trainActionFigueiredo(Obj, DataSet, y)
-            
+            tic
             gramm = prtKernel.evaluateMultiKernelGramm(Obj.kernels,DataSet,DataSet);
+            toc
+            tic
             nBasis = size(gramm,2);
             
             sigmaSquared = 1e-6;
@@ -321,6 +323,7 @@ classdef prtClassRvm < prtClass
                 end
             end
             
+            toc
             % Make sparse represenation
             Obj.sparseBeta = Obj.beta(relevantIndices,1);
             Obj.sparseKernels = prtKernel.sparseKernelFactory(Obj.kernels,DataSet,relevantIndices);
