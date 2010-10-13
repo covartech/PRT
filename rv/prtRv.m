@@ -171,28 +171,8 @@ classdef prtRv
                 return
             end
             
-            runMleAfter = false;
-            if mod(nIn,2)
-                % Odd number of extra inputs supplied must run mle after
-                % the assignment of the other string value pairs
-                runMleAfter = true;
-                
-                % We must make sure that varargin{1} is a valid X
-                X = varargin{1};
-                assert(isnumeric(varargin{1}), 'If an odd number of inputs are supplied the first input must be numeric matrix. and the remaining must be string value pairs.')
-                
-                if length(varargin) > 1
-                    varargin = varargin(2:end);
-                else
-                    varargin = {};
-                end
-            end
-            
             R = prtUtilAssignStringValuePairs(R,varargin{:});
-            
-            if runMleAfter
-                R = R.mle(X);
-            end
+
         end
         
         
