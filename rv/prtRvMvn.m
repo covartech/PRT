@@ -1,44 +1,58 @@
 classdef prtRvMvn < prtRv
     % prtRvMvn  Multivariate normal random variable
     %
-    %   rv = prtRvMvn; generates the default prt multivariate normal random
-    %      variable.
+    %   RV = prtRvMvn creates a prtRvMvn object with empty mean and
+    %   covariance matrices. The mean and covariance matrices must be set
+    %   either directly, or by calling the MLE method.
     %
-    %   rv = prtRvMvn(X); generates a multivariate normal random variable
-    %   using maximum likelihood estimation (mle) based on the data in the
-    %   matrix X.  X should be size nObservations x nDimensions.
+    %   RV = prtRvMvn('covarianceStructure', VALUE) enforces a covariance
+    %   structure, which may be either 'full', 'spherical', or 'diagonal'.
+    %   Setting this property to 'spherical' or 'diagonal' will enforce
+    %   this structure onto the existing covariance matrix, or one
+    %   estimated by calling the MLE method.
     %
-    %   rv = prtRvMvn(X,paramName1,paramVal1,...) generates a multivariate 
-    %   normal random variable using maximum likelihood estimation (mle) 
-    %   based on the data in the matrix X.  X should be size 
-    %   nObservations x nDimensions. MLE estimation is applied after the
-    %   parameter name / value pairs have been parsed.  See below for valid
-    %   parameter value pairs.
+    %   RV = prtRvMvn(PROPERTY1, VALUE1,...) creates a prtRvMv object RV
+    %   with properties as specified by PROPERTY/VALUE pairs.
     %
-    %   rv = prtRvMvn(paramName1,paramVal1,...) generates a multivariate 
-    %   normal random variable using the parameter name / value pairs have 
-    %   specified.  See below for valid parameter / value pairs.
+    %   A prtRvMvn object inherits all properties from the prtRv class. In
+    %   addition, it has the following properties:
     %
-    % Fields (valid parameter names):
     %   covarianceStructure - A string specifying the structure of the
-    %   covariance matrix to estimate or enforce; one of 'full',
-    %   'spherical', 'diagonal'
-    %
-    %   mean - The mean of the distribution; a 1 x nDimensions vector.
-    %
-    %   covariance - The covariance of the distribution - a nDimensions x
-    %   nDimensions matrix.
+    %                         covariance matrix to estimate or enforce. 
+    %                         Valid values are 'full','spherical', or 
+    %                         'diagonal'
+    %   mean                - The mean of the distribution, which is
+    %                         a 1 x nDimensions vector.
+    %   covariance          - The covariance matrix of the distribution,
+    %                         which is a nDimensions x nDimensions 
+    %                         matrix.
     %   
-    % Methods:
-    %   mle
-    %   pdf
-    %   logPdf
-    %   cdf
-    %   draw
+    %  A prtRvMvn object inherits all methods from the prtRv class. The MLE
+    %  method can be used to estimate the distribution parameters from
+    %  data.
     %
-    % Inherited Methods
-    %   plotPdf
-    %   plotCdf
+    %  Example:
+    %
+    %  dataSet    = prtDataGenUnimodal;   % Load a dataset consisting of 2
+    %                                     % classes
+    %  % Extract one of the classes from the dataSet
+    %  dataSetOneClass = prtDataSetClass(dataSet.getObservationsByClass(1));
+    %
+    %  RV = prtRvMvn;                       % Create a prtRvMvn object
+    %  RV = RV.mle(dataSetOneClass.getX);   % Compute the maximum
+    %                                       % likelihood estimate from the
+    %                                       % data
+    %  RV.plotPdf                           % Plot the pdf
+    %
+    %  RVspec = prtRvMvn;                   % Create another prtRvMvn
+    %                                       % object
+    %  RVspec.mean = [1 2];                 % Specify the mean
+    %  RVspec.covariance = [2 -1; -1 2]     % Specify the covariance
+    %  figure;
+    %  RVspec.plotPdf                       % Plot the pdf
+    %  sample = RVspec.draw(1)              % Draw 1 random sample from the
+    %                                       % Distribution
+
     
     properties (Dependent)
         covarianceStructure
