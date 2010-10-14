@@ -52,6 +52,10 @@ classdef prtRvMvn < prtRv
     %  RVspec.plotPdf                       % Plot the pdf
     %  sample = RVspec.draw(1)              % Draw 1 random sample from the
     %                                       % Distribution
+    %
+    %   See also: prtRv, prtRvGmm, prtRvMultinomial, prtRvUniform,
+    %   prtRvUniformImproper, prtRvVq
+    
 
     
     properties (Dependent)
