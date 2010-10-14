@@ -1,42 +1,42 @@
 classdef prtRv
-    % prtRv    Base class for all prt random variables
+    %prtRv    Base class for all prt random variables
     %
-    % This is an abstract class from which all prt random variables
-    % inherit. It can not be instantiated. prtRv contains the following 
-    % properties:
+    %   This is an abstract class from which all prt random variables
+    %   inherit. It can not be instantiated. prtRv contains the following 
+    %   properties:
     %
-    %   name           - Name of random variable
+    %   name           - Name of the random variable.
     %   UserData       - Structure for holding additional related to the
-    %                    random variable
-    %
+    %                    random variable.
     %   nDimensions    - Number of dimensions of the vector space
-    %       represented by the random variable.
+    %                    represented by the random variable.
     %
-    % The prtRv class has the following methods
+    %   The prtRv class has the following methods
     %
     %   plotPdf - Plot the pdf of the random variable
     %   plotCdf - Plot the cdf of the random variable
     %
-    % The prtRv class has the following methods which should be overloaded
-    % to provide functionality.  These functions are not abstract, because
-    % some sub-classes of prtRv may not be able to implement some subset of
-    % these.
+    %   The prtRv class has the following methods, most of which are
+    %   overloaded. If a method is not overloaded, it is because it is not
+    %   possible to implement the functionality.
+    %
     %   pdf - Output the pdf of the random variable evaluated at the points
-    %       specified
+    %         specified
     %
     %   logPdf - Output the log-pdf of the random variable evaluated at the
-    %       points specified (for many distributions, this can be calculated
-    %       more easily than simply log(pdf(R,X))
+    %            points specified (for many distributions, this can be
+    %            calculated more easily than simply log(pdf(R,X))
     %
     %   cdf - Output the cdf of the random variable evaluated at the
-    %   points specified
+    %         points specified
     %
     %   draw - Draw samples from the random variable
     %
     %   mle - Perform maximum likelihood estimation using the specified
-    %      data
+    %         data
     %
-    %   See also: prtRvMvn, prtRvGmm, prtRvMultinomial
+    %   See also: prtRvMvn, prtRvGmm, prtRvMultinomial, prtRvUniform,
+    %   prtRvUniformImproper, prtRvVq
     
     properties
         name        % The name displayed
@@ -53,18 +53,22 @@ classdef prtRv
         % subclass has not specified these standard methods.
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         function vals = pdf(R,X) %#ok
+            % Output the pdf
             missingMethodError(R,'pdf');
         end
 
         function vals = logPdf(R,X) %#ok
+            % Output the log of the pdf
             vals = log(R.pdf(X));
         end
         
         function vals = cdf(R,X) %#ok
+            % output the cdf
             missingMethodError(R,'cdf');
         end
         
         function vals = draw(R,N) %#ok
+            % draw random samples from the distribution
             missingMethodError(R,'draw');
         end
 
@@ -77,6 +81,7 @@ classdef prtRv
         % These functions are default plotting functions
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         function varargout = plotPdf(R,varargin)
+            % Plot the pdf
             varargout = {};
             if R.isPlottable
                 
@@ -105,6 +110,7 @@ classdef prtRv
         end
         
         function varargout = plotCdf(R,varargin)
+            %plot the cdf
             varargout = {};
             if R.isPlottable
                 
