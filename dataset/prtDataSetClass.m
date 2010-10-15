@@ -597,7 +597,7 @@ classdef prtDataSetClass  < prtDataSetStandard
             %textRotationAngles = rem(theta-pi/2,2*pi)/pi*180;
             axesLength = .6;
 
-            if obj.nFeatures < 300
+            if obj.nFeatures < 100
                 plot(axesLength*cat(1,zeros(1,length(cT)),cT),axesLength*cat(1,zeros(1,length(sT)),sT),'color',[0 0 0],'lineWidth',2)
                 
                 fNames = obj.getFeatureNames();
@@ -724,6 +724,10 @@ classdef prtDataSetClass  < prtDataSetStandard
             if nPlotDimensions < 1
                 warning('prt:plot:NoPlotDimensionality','No plot dimensions requested.');
                 return
+            elseif nPlotDimensions > 3
+                %Too many dimensions; default to explore()
+                explore(obj);
+                return;
             end
             nClasses = obj.nClasses;
             

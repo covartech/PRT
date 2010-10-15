@@ -92,7 +92,8 @@ updatePlot;
         
         dist = prtDistanceEuclidean(rP,rD);
         [~,i] = min(dist);
-        title(sprintf('Observation Closest To Last Click: %d',i));
+        obsName = theObject.getObservationNames(i);
+        title(sprintf('Observation Closest To Last Click: %s',obsName{1}));
         
         debug = false;
         if debug
