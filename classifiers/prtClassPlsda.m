@@ -30,8 +30,6 @@ classdef prtClassPlsda < prtClass
     %     TrainingDataSet = prtDataGenUnimodal;  % training data
     %     classifier = prtClassPlsda;           % Create a classifier
     %     classifier = classifier.train(TrainingDataSet);    % Train
-    %     classified = run(classifier, TestDataSet);         % Test
-    %     classes  = classified.getX > .5;
     %     percentCorr = prtScorePercentCorrect(classes,TestDataSet.getTargets);
     %     classifier.plot;
     %

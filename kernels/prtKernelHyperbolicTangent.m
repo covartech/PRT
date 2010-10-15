@@ -1,4 +1,5 @@
 classdef prtKernelHyperbolicTangent < prtKernelBinary
+    % xxx NEED HELP xxx
     % prtKernelHyperbolicTangent  hyperbolic tangent
     %
     %

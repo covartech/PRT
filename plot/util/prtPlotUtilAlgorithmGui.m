@@ -1,4 +1,6 @@
 function prtPlotUtilAlgorithmGui(connectivityMatrix, actionCell)
+% Internal function, for PRT use only, makes use of GraphViz
+% xxx NEED HELP xxx
 
 % Given the algorithms action cell extract the names of each of the blocks
 % Also add in Input and Output blocks

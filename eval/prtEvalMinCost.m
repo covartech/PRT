@@ -27,8 +27,6 @@ function [cost, pf, pd] = prtEvalMinCost(classifier,dataSet,costMatrix,nFolds)
 %   See Also: prtEvalAuc, prtEvalPfAtPd, prtEvalPfAtPf
 %   prtEvalPercentCorrect
 
-%cost = prtEvalMinCost(DS,PrtClassOpt,costMatrix,nFolds)
-
 assert(nargin >= 2,'prt:prtEvalMinCost:BadInputs','prtEvalMinCost requires two input arguments');
 assert(isa(classifier,'prtAction') && isa(dataSet,'prtDataSetBase'),'prt:prtEvalMinCost:BadInputs','prtEvalMinCost inputs must be sublcasses of prtClass and prtDataSetBase, but input one was a %s, and input 2 was a %s',class(classifier),class(dataSet));
 

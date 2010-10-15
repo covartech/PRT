@@ -1,5 +1,6 @@
 classdef prtDataSetClassPlotOpt
-    
+    % Internal function
+    % xxx Need Help xxx
     properties
         colorsFunction = @prtPlotUtilClassColors;
         colorsFunctionBw = @prtPlotUtilClassColorsBW; 

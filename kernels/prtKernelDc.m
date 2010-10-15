@@ -1,5 +1,5 @@
 classdef prtKernelDc < prtKernelUnary
-    
+    % xxx NEED HELP xxx
     methods 
         function obj = prtKernelDc(varargin)
             obj = prtUtilAssignStringValuePairs(obj,varargin{:});

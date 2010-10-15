@@ -1,11 +1,10 @@
-classdef prtPreProcZeroMeanColumns < prtPreProc
+classdef prtPreProcMinMaxRows < prtPreProc
     % xxx Need Help xxx
-
     
     properties (SetAccess=private)
         % Required by prtAction
-        name = 'Zero-Mean Columns'
-        nameAbbreviation = 'ZMC'
+        name = 'MinMax Rows'
+        nameAbbreviation = 'MMR'
         isSupervised = false;
     end
     
@@ -14,13 +13,12 @@ classdef prtPreProcZeroMeanColumns < prtPreProc
     end
     properties (SetAccess=private)
         % General Classifier Properties
-        meanVector = [];           % A vector of the means
     end
     
     methods
         
           % Allow for string, value pairs
-        function Obj = prtPreProcZeroMeanColumns(varargin)
+        function Obj = prtPreProcZeroMeanRows(varargin)
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
         end
     end
@@ -28,11 +26,15 @@ classdef prtPreProcZeroMeanColumns < prtPreProc
     methods (Access = protected)
         
         function Obj = trainAction(Obj,DataSet)
-            Obj.meanVector = nanmean(DataSet.getObservations(),1);
+            %do nothing
         end
         
         function DataSet = runAction(Obj,DataSet)
-            DataSet = DataSet.setObservations(bsxfun(@minus,DataSet.getObservations,Obj.meanVector));
+            theData = DataSet.getObservations;
+            minVals = min(theData,[],2);
+            maxVals = max(theData,[],2);
+            theData = bsxfun(@rdivide,bsxfun(@minus,theData,minVals),(maxVals-minVals));
+            DataSet = DataSet.setObservations(theData);
         end
         
     end

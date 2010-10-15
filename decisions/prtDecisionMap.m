@@ -1,4 +1,5 @@
 classdef prtDecisionMap < prtDecision
+    % xxx NEED HELP xxx
     % Maximum a-posteriori decision making
     %
     % Basically takes the max over the column outputs.

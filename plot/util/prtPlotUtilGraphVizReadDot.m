@@ -1,4 +1,6 @@
 function FileStruct = prtPlotUtilGraphVizReadDot(filename)
+% Internal function, 
+% xxx Need Help xxx
 % prtPlotUtilGraphVizReadDot - Reads  GraphViz Dot file
 %   Not all aspects of the DOT file format are supported.
 %

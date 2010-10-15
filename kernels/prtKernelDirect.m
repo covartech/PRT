@@ -1,5 +1,6 @@
 classdef prtKernelDirect < prtKernelFeatureDependent
     % prtKernelDirect
+    % xxx NEED HELP xxx
     
     properties (SetAccess = 'protected')
         fnHandle

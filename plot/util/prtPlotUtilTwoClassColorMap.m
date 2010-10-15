@@ -1,5 +1,6 @@
 function cMap = prtPlotUtilTwoClassColorMap(n,colors)
 % cMap = prtPlotUtilTwoClassColorMap(n=256)
+% xxx Need Help xxx
 
 if nargin < 1 || isempty(n)
     n = 256;

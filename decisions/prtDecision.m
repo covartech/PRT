@@ -1,4 +1,6 @@
 classdef prtDecision < prtAction
+    % xxx NEED HELP xxx
+    %
     % Decisions take the ooutputs of classifiers or clusterers and turn
     % them into class labels (or cluster labels).  The output of a decider
     % object's run function is always a nObservations x 1 data set where

@@ -1,5 +1,7 @@
 function [linGrid,gridSize,xx,yy,zz] = prtPlotUtilGenerateGrid(plotMins, plotMaxs, nSamplesPerDim)
 % [linGrid,gridSize,xx,yy,zz] = prtPlotUtilGenerateGrid(plotMins, plotMaxs, nSamplesPerDim)
+% Internal function, 
+% xxx Need Help xxx
 
 xx = [];
 yy = [];

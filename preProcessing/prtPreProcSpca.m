@@ -1,4 +1,5 @@
 classdef prtPreProcSpca < prtPreProc
+    % xxx Need Help xxx
     
     %
     % [DataSet,A,S] = prtDataGenSparseFactors(100,1000,3,5);

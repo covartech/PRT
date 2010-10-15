@@ -1,4 +1,5 @@
 classdef prtKernelFeatureDependent < prtKernel
+    % xxx NEED HELP xxx
     % prtKernelFeatureDependent provides a super class for kernels that are 
     % functions of the individual feature dimensions of the data set
     %

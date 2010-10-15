@@ -1,4 +1,6 @@
 function varargout = prtPlotUtilPlotArrow(x, y, arrowSize)
+% Internal function, 
+% xxx Need Help xxx
 % PRPLOTUTILPLOTARROW - Plots an arrow
 
 % This is just a wrapper for the matlab 

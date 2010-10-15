@@ -1,4 +1,5 @@
 classdef prtPreProcHistEq < prtPreProc
+    % xxx Need Help xxx
     
     properties (SetAccess=private)
         % Required by prtAction

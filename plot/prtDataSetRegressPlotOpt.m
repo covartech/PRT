@@ -1,5 +1,6 @@
 classdef prtDataSetRegressPlotOpt
-    
+    % Internal function
+    % xxx Need Help xxx
     properties
         colorsFunction = @prtPlotUtilClassColors; % Colors function handle
         colorsFunctionBw = @prtPlotUtilClassColorsBW;

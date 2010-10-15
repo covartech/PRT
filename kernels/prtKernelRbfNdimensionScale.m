@@ -1,4 +1,5 @@
 classdef prtKernelRbfNdimensionScale < prtKernelRbf
+    % xxx NEED HELP xxx
     %[gramm,nBasis] = prtKernelRbfNdimensionScale(x1,x2,sigma)
     %   sigma <- sqrt(sigma.^2*nDim)
     

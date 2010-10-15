@@ -1,4 +1,6 @@
 function FileInfo = prtPlotUtilGraphVizRun(connectivity)
+% Internal function, 
+% xxx Need Help xxx
 % FileInfo = prtPlotUtilGraphVizRun(connectivity)
 %   Calls the GraphViz binary neato on the graph specified by 
 %   connectivity matrix.

@@ -22,8 +22,6 @@ function pd = prtEvalPdAtPf(classifier,dataSet,pfDesired,nFolds)
 %   See Also: prtEvalAuc, prtEvalPfAtPd, prtEvalPercentCorrect,
 %   prtEvalMinCost
 
-%pd = prtEvalPdAtPf(classifier,dataSet,pfDesired)
-%pd = prtEvalPdAtPf(classifier,dataSet,pfDesired,nFolds)
 
 assert(nargin >= 2,'prt:prtEvalPdAtPf:BadInputs','prtEvalPdAtPf requires two input arguments');
 assert(isa(classifier,'prtAction') && isa(dataSet,'prtDataSetBase'),'prt:prtEvalPdAtPf:BadInputs','prtEvalPdAtPf inputs must be sublcasses of prtClass and prtDataSetBase, but input one was a %s, and input 2 was a %s',class(classifier),class(dataSet));

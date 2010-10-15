@@ -1,4 +1,5 @@
 classdef prtKernelPolynomial < prtKernelBinary
+    % xxx NEED HELP xxx
     % prtKernelPolynomial  Polynomial
     %
     %

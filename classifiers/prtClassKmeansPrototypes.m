@@ -31,7 +31,7 @@ classdef prtClassKmeansPrototypes < prtClass
     %     classifier = prtClassKmeansPrototypes; % Create a classifier
     %     classifier = classifier.train(TrainingDataSet);    % Train
     %     classified = run(classifier, TestDataSet);         % Test
-    %     [~, classes] = max(classified.getX,[],2);              % Select the
+    %     [~, classes] = max(classified.getX,[],2);          % Select the
     %                                                        % classes
     %     percentCorr = prtScorePercentCorrect(classes,TestDataSet.getTargets);
     %     classifier.plot;
@@ -39,11 +39,6 @@ classdef prtClassKmeansPrototypes < prtClass
     %    See also prtClass, prtClassLogisticDiscriminant, prtClassBagging,
     %    prtClassMap, prtClassCap, prtClassBinaryToMaryOneVsAll, prtClassDlrt,
     %    prtClassPlsda, prtClassFld, prtClassRvm, prtClassGlrt,  prtClass
-    
-    
-    % prtClassKmeansPrototypes
-    %   Unsupervised clustering on data in each hypothesis, then supervised
-    %   classify with closest prototype
     
     properties (SetAccess=private)
         
@@ -57,10 +52,9 @@ classdef prtClassKmeansPrototypes < prtClass
         clusterCenters = {};        % The cluster centers
         kmeansHandleEmptyClusters = 'remove';
         distanceMetricFn = @prtDistanceEuclidean;
-       % uY = [];                    % uY ?
     end
     properties (SetAccess = private, Hidden = true)
-        uY = [];                    % uY ?
+        uY = [];                    
     end
     
     methods

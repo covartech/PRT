@@ -1,4 +1,6 @@
 function cm = prtPlotUtilLinspaceColormap(startRGB,endRGB,len)
+% Internal function, 
+% xxx Need Help xxx
 % prtPlotUtilLinspaceColormap makes a linearspace colormap in RGB space
 %
 % Syntax: cm = prtPlotUtilLinspaceColormap(startRGB,endRGB,len)

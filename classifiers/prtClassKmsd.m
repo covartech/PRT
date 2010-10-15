@@ -28,8 +28,6 @@ classdef prtClassKmsd < prtClass
     %     classifier = prtClassKmsd;              % Create a classifier
     %     classifier = classifier.train(TrainingDataSet);    % Train
     %     classified = run(classifier, TestDataSet);         % Test
-    %     classes  = classified.getX > .5;
-    %     percentCorr = prtScorePercentCorrect(classes,TestDataSet.getTargets);
     %     classifier.plot;
     %
     %    See also prtClass, prtClassLogisticDiscriminant, prtClassBagging,

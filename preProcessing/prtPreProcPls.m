@@ -1,5 +1,6 @@
 classdef prtPreProcPls < prtPreProc
     % prtPreProcPls   Partial least squares
+    % xxx Need Help xxx
     
     properties (SetAccess=private)
         % Required by prtAction

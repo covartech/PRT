@@ -1,4 +1,5 @@
 classdef prtKernelUnary < prtKernel
+    % xxx NEED HELP xxx
     % Base class for kernel functions that always return a single column of
     % a gramm matrix regardless of training data and testing data.  The
     % classic example of this kind of kernel is a "DC" kernel which has a

@@ -1,4 +1,6 @@
 classdef prtKernelBinary < prtKernel
+    % xxx NEED HELP xxx
+    %
     % prtKernelBinary provides a super class for kernels that are functions
     % of both the training data and the testing data in kernel-based
     % learning algorithms.  Binary kernels are probably the most widely

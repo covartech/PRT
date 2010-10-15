@@ -1,4 +1,6 @@
 classdef prtClassMatlabTreeBagger < prtClass
+    % xxx NEED HELP xxx
+    %
     %DS = prtDataGenBimodal;
     %Nn = prtClassMatlabTreeBagger; 
     % %Or:

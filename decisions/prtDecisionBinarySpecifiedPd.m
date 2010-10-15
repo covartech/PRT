@@ -1,4 +1,6 @@
 classdef prtDecisionBinarySpecifiedPd < prtDecisionBinary
+    % xxx NEED HELP xxx
+    %
     % prtDecisionBinarySpecifiedPd prt Decision action to find a threshold in a
     % binary problem to approximately acheive a specified probability of
     % detection

@@ -1,5 +1,5 @@
 classdef prtFeatureExtractor < prtAction
-
+    % xxx NEED HELP xxx
     methods (Hidden = true)
         function featureNames = updateFeatureNames(obj,featureNames) %#ok<MANU>
             for i = 1:length(featureNames)

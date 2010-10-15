@@ -1,7 +1,7 @@
 function DataSet = prtDataGenNoisySinc
 % DataSet = prtDataGenNoisySync
 % 
-% 
+% % xxx NEED HELP xxx
 
 nSamples = 100;
 noiseVar = 0.1;

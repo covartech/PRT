@@ -1,5 +1,6 @@
 function h = prtPlotUtilScatter(cX, featureNames, classSymbols, classColors, classEdgeColor, linewidth, markerSize)
-    
+% Internal function
+% xxx Need Help xxx
 nPlotDimensions = size(cX,2);
 if nPlotDimensions < 1
     warning('prt:prtPlotUtilScatter:NoPlotDimensionality','No plot dimensions requested.');

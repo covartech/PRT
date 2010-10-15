@@ -1,4 +1,6 @@
 classdef prtCluster < prtAction
+    %prtCluster < prtAction
+    % xxx NEED HELP xxx
 
     properties (SetAccess=private)
         isNativeMary = true; % Logical, classifier natively produces an output for each unique class
@@ -103,60 +105,9 @@ classdef prtCluster < prtAction
                 OutputDataSet = ClassObj.internalDecider.run(OutputDataSet);
             end
             
-            %             %             if ~isempty(ClassObj.yieldsMaryOutput) && ~isnan(ClassObj.yieldsMaryOutput)
-            %             %                 if ClassObj.yieldsMaryOutput
-            %             %                     % Mary classifier output mary decision statistics
-            %             %                     % enforce that it has output one for each class in the
-            %             %                     % training data set.
-            %             %                     % assert(OutputDataSet.nFeatures == ClassObj.DataSetSummary.nClasses,'M-ary classifiers must yield observations with nFeatures equal to the number of unique classes in the training data set. This classifier must be modified to output observations with the proper dimensionality. If integer outputs are desired, output a binary matrix.');
-            %             %                 else
-            %             %                     % Run Function provided mary output but ClassObj knows
-            %             %                     % not to supply this. We must run
-            %             %                     % maryOutput2binaryOutput()
-            %             %                     OutputDataSet = maryOutput2binaryOutput(ClassObj,OutputDataSet);
-            %             %                 end
-            %             %             end
-            
             OutputDataSet = postRunProcessing@prtAction(ClassObj, InputDataSet, OutputDataSet);
         end
-
-        %         function produceMaryOutput = determineMaryOutput(ClassObj,DataSet)
-        %             % Determine if an Mary output will be provided by the classifier
-        %             % Determined by the dataSet the classifier capabilities and the
-        %             % twoClassParadigm switch
-        %             if nargin ~= 2 || ~isa(DataSet,'prtDataSetBase')
-        %                 error('prt:prtClass:determineMaryOutput:invalidInput','Invalid input.');
-        %             end
-        %             produceMaryOutput = false; % Default answer only do mary in special conditions
-        %
-        %             if DataSet.isMary
-        %                 % You have Mary data so you want an Mary output
-        %                 if ClassObj.isNativeMary
-        %                     % You have Mary data and an Mary Classifier
-        %                     % so you want an Mary output
-        %                     produceMaryOutput = true;
-        %                 else
-        %                     % Binary only classifier with Mary Data
-        %                     error('prt:prtClass:classifierDataSetMismatch','M-ary classification is not supported by this classifier. You will need to use prtClassBinaryToMaryOneVsAll() or an equivalent M-ary emulation classifier.');
-        %                 end
-        %             elseif DataSet.isBinary && ClassObj.isNativeMary
-        %                 % You have binary data and an Mary Classifier
-        %                 % We must check twoClassParadigm to see what you want
-        %                 produceMaryOutput = ~strcmpi(ClassObj.twoClassParadigm, 'binary');
-        %             end % Unary Data -> false
-        %
-        %         end
-        %
-        %         function OutputDataSet = maryOutput2binaryOutput(ClassObj,OutputDataSet) %#ok
-        %             % Default method to convert an Mary output to a Binary output
-        %             % Can/should be overloaded by classifiers
-        %
-        %             % The default just takes the last (right-most) output dimension
-        %             % In classifiers this will typically be the confidence of the
-        %             % class with the highest valued target index.
-        %             OutputDataSet = OutputDataSet.setObservations(OutputDataSet.getObservations(:,end));
-        %         end
-
+        
         % Plotting functions
         function [OutputDataSet, linGrid, gridSize] = runClassifierOnGrid(Obj, upperBounds, lowerBounds)
 
@@ -194,22 +145,6 @@ classdef prtCluster < prtAction
                 HandleStructure.Axes = struct('imageHandle',{imageHandle},'handles',{[]},'legendStrings',{[]});
             end
         end
-        %
-        %         function HandleStructure = plotBinaryClassifierConfidence(Obj)
-        %
-        %             [OutputDataSet, linGrid, gridSize] = runClassifierOnGrid(Obj);
-        %
-        %             imageHandle = prtPlotUtilPlotGriddedEvaledClassifier(OutputDataSet.getObservations(), linGrid, gridSize, Obj.PlotOptions.twoClassColorMapFunction());
-        %
-        %             if ~isempty(Obj.DataSet)
-        %                 hold on;
-        %                 [handles,legendStrings] = plot(Obj.DataSet);
-        %                 hold off;
-        %                 HandleStructure.Axes = struct('imageHandle',{imageHandle},'handles',{handles},'legendStrings',{legendStrings});
-        %             else
-        %                 HandleStructure.Axes = struct('imageHandle',{imageHandle},'handles',{[]},'legendStrings',{[]});
-        %             end
-        %         end
 
         function HandleStructure = plotMaryClusterConfidence(Obj)
 

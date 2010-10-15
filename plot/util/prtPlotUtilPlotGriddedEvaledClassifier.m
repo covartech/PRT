@@ -1,4 +1,6 @@
 function imageHandle = prtPlotUtilPlotGriddedEvaledClassifier(DS, linGrid, gridSize, cMap)
+% Internal function
+% xxx Need Help xxx
 
 nDims = size(linGrid,2);
 switch nDims

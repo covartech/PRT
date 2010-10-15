@@ -1,4 +1,6 @@
 function prtPlotUtilDataSetExplore(theObject)
+% Internal function, 
+% xxx Need Help xxx - see prtDataSetClass.explore
 
 featureNames = theObject.getFeatureNames;
 nFeatures = theObject.nFeatures;

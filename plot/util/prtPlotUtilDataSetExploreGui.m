@@ -1,4 +1,6 @@
 function prtPlotUtilDataSetExploreGui(theObject)
+% Internal function, 
+% xxx Need Help xxx - see prtDataSetClass.explore
 
 ss = prtPlotUtilCurrentCursorScreenSize;
 

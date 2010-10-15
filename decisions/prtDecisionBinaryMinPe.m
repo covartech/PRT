@@ -1,4 +1,6 @@
 classdef prtDecisionBinaryMinPe < prtDecisionBinary
+    % xxx NEED HELP xxx
+    %
     % prtDecisionBinaryMinPe prt Decision action to find a threshold in a
     % binary problem to minimize the probability of error.
     %

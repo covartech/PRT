@@ -1,4 +1,6 @@
 classdef prtDecisionBinary < prtDecision
+    % xxx NEED HELP xxx
+    %
     % Sub-class of prtDecision intended to make binary decision functions
     % easier to write.  These decision objects should only work on binary
     % classification algorithms where the classifier output is

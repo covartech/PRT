@@ -1,4 +1,5 @@
 classdef prtUserOptions
+    % xxx NEED HELP xxx
     properties
         DataSetClassPlotOptions = prtDataSetClassPlotOpt;
         DataSetRegressPlotOptions = prtDataSetRegressPlotOpt;

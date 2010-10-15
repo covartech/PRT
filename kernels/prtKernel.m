@@ -1,4 +1,5 @@
 classdef prtKernel
+    % xxx NEED HELP xxx
     % prtKernel is the super class for all prtKernel objects.  The
     % prtKernel class handles the big-picture internal operatings for
     % kernels; prtkernel objects require that sub-classes implement the

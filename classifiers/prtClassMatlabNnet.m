@@ -1,4 +1,5 @@
 classdef prtClassMatlabNnet < prtClass
+    % xxx NEED HELP xxx
     %DS = prtDataGenBimodal;
     %Nn = prtClassMatlabNnet; 
     %Nn = Nn.train(DS);

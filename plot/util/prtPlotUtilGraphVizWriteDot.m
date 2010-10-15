@@ -1,4 +1,6 @@
 function prtPlotUtilGraphVizWriteDot(adj, filename, nodeLabels)
+% Internal function, 
+% xxx Need Help xxx
 % prtPlotUtilGraphVizWriteDot(adj, fileName) Writes a Graph Viz DOT file
 %   This writes a specific DOT file for use with the PRT.
 %   This is not a general purpose DOT file writer.

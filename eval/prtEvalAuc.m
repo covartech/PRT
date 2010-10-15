@@ -19,11 +19,6 @@ function auc = prtEvalAuc(classifier,dataSet,nFolds,varargin)
 %   See Also: prtEvalPdAtPf, prtEvalPfAtPd, prtEvalPercentCorrect,
 %   prtEvalMinCost
 
-%prtEvalAuc   Score by the area under curve method
-%
-%   auc = prtEvalAuc(class,dataSet)
-%   auc = prtEvalAuc(class,dataSet,nFolds)
-
 assert(nargin >= 2,'prt:prtEvalAuc:BadInputs','prtEvalAuc requires two input arguments');
 assert(isa(classifier,'prtAction') && isa(dataSet,'prtDataSetBase'),'prt:prtEvalAuc:BadInputs','prtEvalAuc inputs must be sublcasses of prtClass and prtDataSetBase, but input one was a %s, and input 2 was a %s',class(classifier),class(dataSet));
 

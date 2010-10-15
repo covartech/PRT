@@ -1,5 +1,6 @@
 classdef prtPreProcLda < prtPreProc
     % prtPreProcPca   Linear discriminant analysis
+    % xxx Need Help xxx
     
     properties (SetAccess=private)
         % Required by prtAction

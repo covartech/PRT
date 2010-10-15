@@ -1,5 +1,9 @@
 classdef prtAlgorithm < prtAction
-    
+    % xxx NEED HELP xxx
+    %
+    %  Algorithms represent combinations of prtActions.
+    % 
+    %
     properties (SetAccess=private)
         % Required by prtAction
         name = 'PRT Algorithm'

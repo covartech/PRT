@@ -1,4 +1,6 @@
 classdef prtRegressPlotOpt
+    %Internal function
+    % xxx Need Help xxx
     properties
         nSamplesPerDim = [500 100 20]; % Number of samples to use for plotting
         colorsFunction = @(x)prtPlotUtilDarkenColors(prtPlotUtilClassColors(x)); % Colors function handle

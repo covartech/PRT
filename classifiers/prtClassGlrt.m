@@ -30,9 +30,6 @@ classdef prtClassGlrt < prtClass
     %     TrainingDataSet = prtDataGenUniModal;   % training data
     %     classifier = prtClassGlrt;              % Create a classifier
     %     classifier = classifier.train(TrainingDataSet);    % Train
-    %     classified = run(classifier, TestDataSet);         % Test
-    %     classes  = classified.getX > .5;
-    %     percentCorr = prtScorePercentCorrect(classes,TestDataSet.getTargets);
     %     classifier.plot;
     %
     %    See also prtClass, prtClassLogisticDiscriminant, prtClassBagging,
@@ -66,7 +63,6 @@ classdef prtClassGlrt < prtClass
         function Obj = prtClassGlrt(varargin)
             
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
-            %Obj.verboseStorage = false;
         end
     end
     

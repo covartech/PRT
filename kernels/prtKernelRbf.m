@@ -1,4 +1,5 @@
 classdef prtKernelRbf < prtKernelBinary
+    % xxx NEED HELP xxx
     % prtKernelRbf  Radial basis function kernel
     %
     %  http://en.wikipedia.org/wiki/Support_vector_machine#Non-linear_classification

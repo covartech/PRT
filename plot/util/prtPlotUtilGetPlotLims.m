@@ -1,4 +1,7 @@
 function [plotMins,plotMaxs] = prtPlotUtilGetPlotLims(PrtClassifier,PrtDataSet)
+% Internal function, 
+% xxx Need Help xxx
+
 % Here we get the limits for plotting:
 if nargin == 1 || isempty(PrtDataSet)
     testY = [];

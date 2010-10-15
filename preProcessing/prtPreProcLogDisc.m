@@ -1,4 +1,5 @@
 classdef prtPreProcLogDisc < prtPreProc
+    % xxx Need Help xxx
     
     properties (SetAccess=private)
         % Required by prtAction
@@ -20,15 +21,6 @@ classdef prtPreProcLogDisc < prtPreProc
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
         end
     end
-    
-    %
-    %     methods (Hidden = true)
-    %         function featureNames = updateFeatureNames(obj,featureNames) %#ok<MANU>
-    %             for i = 1:length(featureNames)
-    %                 featureNames{i} = sprintf('LogisticDiscrimant %d',i);
-    %             end
-    %         end
-    %     end
     
     methods (Access = protected)
         
