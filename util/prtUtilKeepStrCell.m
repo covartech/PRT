@@ -6,6 +6,8 @@ function [strCell,ind] = prtUtilKeepStrCell(strCell,str)
 %
 %   see also: removestrcell
 %
+% xxx Need Help xxx
+
 
 %edit 11/4/2005
 %allow cellular str

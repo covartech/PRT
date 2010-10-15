@@ -1,5 +1,7 @@
 function [data1,data2] = prtUtilDistanceParseInputs(dataSet1,dataSet2)
 %[data1,data2] = prtUtilDistanceParseInputs(dataSet1,dataSet2)
+% Internal
+% xxx Need Help xxx
 
 if isnumeric(dataSet1) && isnumeric(dataSet2)
     data1 = dataSet1;

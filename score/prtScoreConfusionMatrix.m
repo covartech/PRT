@@ -1,6 +1,7 @@
 function varargout = prtScoreConfusionMatrix(guess,truth,nClasses,labelsIn)
 %[confMat,occurances,labels] = prtScoreConfusionMatrix(guess,truth,nClasses)
 %
+% xxx Need Help xxx
 %   guess and truth should be either n x 1 doubles, or dataSets with proper
 %   observations and targets
 

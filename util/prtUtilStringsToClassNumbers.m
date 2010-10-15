@@ -1,6 +1,7 @@
 function [classes,uStrings] = prtUtilStringsToClassNumbers(stringCell,uStrings)
 %[classes,uniqueStrings] = prtUtilStringsToClassNumbers(stringCell)
 %[classes,uniqueStrings] = prtUtilStringsToClassNumbers(stringCell,uStrings)
+% xxx Need Help xxx
 
 if nargin < 2
     uStrings = unique(stringCell);

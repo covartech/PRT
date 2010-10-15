@@ -1,3 +1,4 @@
+% xxx Need Help xxx
 %Display a status/progress bar and inform about the elapsed
 %as well as the remaining time (linear estimation).
 %

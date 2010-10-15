@@ -2,6 +2,7 @@ function d = prtUtilBhattacharyyaDistance(varargin)
 %d = prtUtilBhattacharyyaDistance(X1,X2)
 %d = prtUtilBhattacharyyaDistance(DataSet1)
 %d = prtUtilBhattacharyyaDistance(DataSet1,DataSet2)
+% xxx Need Help xxx
 
 if nargin == 1
     DataSet1 = varargin{1};

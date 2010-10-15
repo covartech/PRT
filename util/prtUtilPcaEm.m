@@ -2,6 +2,7 @@ function [pcScores, P] = prtUtilPcaEm(X,nComponents,convergenceThreshold,nMaxIte
 % [pcScores, P] = prtUtilPcaEm(X,nComponents,convergenceThreshold,nMaxIterations)
 %
 % Source: Wikipedia (how amature)
+% xxx Need Help xxx
 
 % Input checks and what not
 if nargin < 2 || isempty(nComponents)

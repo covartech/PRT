@@ -1,4 +1,5 @@
 function K = prtUtillQuadExpCovariance(x1, x2, theta0, theta1, theta2, theta3)
+% xxx Need Help xxx
 % K = prtUtillQuadExpCovariance(x1, x2, theta0, theta1, theta2, theta3)
 %
 % Common covariance function for Gaussian Processes

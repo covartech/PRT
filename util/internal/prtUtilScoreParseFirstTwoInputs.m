@@ -1,4 +1,6 @@
 function [guess,truth,classNames] = prtUtilScoreParseFirstTwoInputs(arg1,arg2)
+% xxx Need Help xxx
+% Internal functin
 %[guess,truth] = prtUtilScoreParseFirstTwoInputs(arg1,arg2)
 
 if (isnumeric(arg1) || islogical(arg1)) && (isnumeric(arg2) || islogical(arg2))

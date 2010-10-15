@@ -69,8 +69,6 @@ if exist('occurances','var')
 end
 percentageConfusionMat(isnan(percentageConfusionMat)) = 0;
 
-%[imageAxes, textHandles, verticleLineHandles, horizontalLineHandles] = plotMatrixTable(percentageConfusionMat,[0 1],gray(256),'%.2f',[1 1 1; 0 0 0]);
-%[imageAxes, textHandles, verticleLineHandles, horizontalLineHandles] = plotMatrixTable(percentageConfusionMat,[0 1],flipud(gray(256)),'%.2f',[0 0 0; 1 1 1;]);
 [imageAxes, textHandles, verticleLineHandles, horizontalLineHandles] = prtUtilPlotMatrixTable(percentageConfusionMat*100,[0 100],flipud(gray(256)),'%0.1f',[0 0 0; 1 1 1;]);
 
 if ~exist('classLabels','var') || isempty(classLabels)

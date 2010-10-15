@@ -1,5 +1,6 @@
 function [VEC,C,V,E] = prtUtilPca(DATA,P)
 %[VEC,C,V,E] = getPcaVec(DATA,P);
+% xxx Need Help xxx
 %
 
 %Peter Torrione

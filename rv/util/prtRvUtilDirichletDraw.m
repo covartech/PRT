@@ -1,6 +1,7 @@
 function X = prtRvUtilDirichletDraw(alpha,N)
 % X = prtRvUtilDirichletDraw(alpha,N)
-
+% Internal
+% xxx Need Help xxx
 K = length(alpha);
 gams = zeros(N,K);
 for iK = 1:K

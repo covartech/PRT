@@ -1,4 +1,5 @@
 function [projectionMat, globalMean] = prtUtilLinearDiscriminantAnalysis(PrtDataSetLabeled,nComponents)
+% xxx Need Help xxx
 
 % Linear discriminant analysis, m-ary capable
 X = PrtDataSetLabeled.getObservations;

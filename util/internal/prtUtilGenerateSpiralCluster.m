@@ -1,4 +1,5 @@
-function X = generateSpiralCluster(t,f,theta,mux,muy,dx,dy,std);
+function X = generateSpiralCluster(t,f,theta,mux,muy,dx,dy,std)
+% xxx Need Help xxx
 
 if nargin < 4
     mux = 0;

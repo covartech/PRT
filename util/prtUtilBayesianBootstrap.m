@@ -1,4 +1,5 @@
 function [boot, sampleIndices, weights] = prtUtilBayesianBootstrap(population,nSamples)
+% xxx Need Help xxx
 
 if nargin < 2 || isempty(nSamples)
     nSamples = size(population,1);

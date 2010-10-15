@@ -1,5 +1,7 @@
 function OutStruct = prtUtilClassParentRelationshipNamesOnly(varargin)
 % prtUtilClassParentRelationship(baseClassName)
+% xxx Need Help xxx
+% Internal
 
 I = meta.class.fromName(varargin{1});
 if nargin == 1

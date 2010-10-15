@@ -1,4 +1,5 @@
 classdef prtRvDiscrete < prtRv
+    % xxx Need Help xxx
     properties (Dependent = true)
         probabilities
         nCategories

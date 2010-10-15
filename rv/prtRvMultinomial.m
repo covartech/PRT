@@ -1,4 +1,5 @@
 classdef prtRvMultinomial < prtRv
+    % xxx Need Help xxx
     properties (Dependent)
         probabilities
     end

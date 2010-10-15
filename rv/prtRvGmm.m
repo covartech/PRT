@@ -1,4 +1,5 @@
 classdef prtRvGmm < prtRv
+    % xxx Need Help xxx
     properties (Dependent = true)
         nComponents
         covarianceStructure 

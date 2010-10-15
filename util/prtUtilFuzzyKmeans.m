@@ -1,5 +1,6 @@
 function [classMeans, DS]= prtUtilFuzzyKmeans(X,Options)
 %[classMeans, DS]= prtUtilFuzzyKmeans(X,Options)
+% xxx Need Help xxx
 
 % Unpack Options
 nClusters = Options.nClusters;

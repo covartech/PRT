@@ -1,4 +1,5 @@
 classdef prtRvVq < prtRv
+    % xxx Need Help xxx
     properties (Dependent = true)
         probabilities
         means

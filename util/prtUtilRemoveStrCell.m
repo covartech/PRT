@@ -6,6 +6,7 @@ function [strCell,IND,aIND] = prtUtilRemoveStrCell(strCell,str)
 %
 %   see also: prtUtilKeepStrCell
 %
+% xxx Need Help xxx
 
 
 [garbage,aIND] = prtUtilKeepStrCell(strCell,str);

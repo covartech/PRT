@@ -1,6 +1,8 @@
 function Yout = prtUtilEvalCAPtree(tree,X)
 %Yout = evalCAPtree(tree,X)
 %   Evaluate a CAP tree on a 1xN data point X
+% Internal 
+% xxx Need Help xxx
 
 index = 1;
 voted = 0;

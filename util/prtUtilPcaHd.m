@@ -1,6 +1,6 @@
 function [PCSCORE, COEFF, eigenvalues] = prtUtilPcaHd(X,nFeaturesOut)
 %[PCSCORE, COEFF] = prtUtilPcaHd(X,nFeaturesOut)
-
+% xxx Need Help xxx
 if nargin < 2 || isempty(nFeaturesOut)
     nFeaturesOut = size(X,2);
 end

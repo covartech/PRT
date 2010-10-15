@@ -1,4 +1,6 @@
 function [useMary, emulate] = prtUtilDetermineMary(varargin)
+% Internal
+% xxx Need Help xxx
 % prtUtilDetermineMary A helper function for prtGenerate
 %
 % Syntax: [useMary, emulate] = prtUtilDetermineMary(PrtDataSet,PrtClassOpt)

@@ -1,4 +1,5 @@
 classdef prtRvUniformImproper < prtRv
+    % xxx Need Help xxx
     properties (Hidden = true, SetAccess = 'private', GetAccess = 'private')
         nDimensionsPrivate
     end

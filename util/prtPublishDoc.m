@@ -1,4 +1,6 @@
 function prtPublishDoc
+% Internal function
+% xxx Need Help xxx
 %prtPublishDoc
 %   Utility function to publish all prtPublish* M-files in prtRoot\doc to
 %   HTML files.

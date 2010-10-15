@@ -1,4 +1,5 @@
 function [alpha,beta] = prtUtilSmo(x,y,gramm,c,tol)
+% xxx Need Help xxx
 %   SMO Sequential Minimal Optimization
 %
 % Syntax: [alpha,beta] = prtUtilSmo(x,y,gramm,c,tol); %Called internally by generateSVM

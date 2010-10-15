@@ -1,5 +1,6 @@
 function [Properties, Methods] = prtUtilClassParentRelationshipTable(className)
-
+% xxx Need Help xxx
+% Internal 
 Info = prtUtilClassParentRelationship(className);
 
 Properties.names = cell(size(Info.AllProperties));

@@ -1,5 +1,6 @@
 function Obj = prtUtilAssignStringValuePairs(Obj,varargin)
-
+% Internal function
+% xxx Need Help xxx
 if isempty(varargin)
     return
 end

@@ -1,4 +1,5 @@
 function eq = prtUtilApproxEqual(x,y,eqThreshold)
+% xxx Need Help xxx
 %eq = prtUtilApproxEqual(x,y)
 %   Returns true when all elements of x and y are within eps of one
 %   another.

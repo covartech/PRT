@@ -1,5 +1,6 @@
 function [MM,JJ] = prtUtilGetSubplotDimensions(nPlots)
 %[MM,JJ] = prtUtilGetSubplotDimensions(nPlots);
+% xxx Need Help xxx
 
 if nPlots <= 3
     MM = nPlots;

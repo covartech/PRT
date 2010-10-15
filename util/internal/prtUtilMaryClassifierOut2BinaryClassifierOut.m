@@ -1,6 +1,7 @@
 function posterior = prtUtilMaryClassifierOut2BinaryClassifierOut(maryOut,H0H1matrix,fusionFn)
 %posterior = prtUtilMaryClassifierOut2BinaryClassifierOut(maryOut,H0H1matrix)
 %posterior = prtUtilMaryClassifierOut2BinaryClassifierOut(maryOut,H0H1matrix,fusionFn)
+% xxx Need Help xxx
 
 if any(maryOut(:) < 0)
     error('prt:NonProbabilisticInputs',sprintf('Some M-ary outputs are not between 0 and 1 (%.2f < 0); prtUtilMaryClassifierOut2BinaryClassifierOut requires probabilistic maryOut (0 <= maryOut <= 1)',min(maryOut(:)))); %#ok

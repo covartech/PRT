@@ -2,6 +2,7 @@ function List = prtUtilRecursiveDir(directory,match,dirMatch)
 % DC = prtUtilRecursiveDir(rootDir)
 % DC = prtUtilRecursiveDir(rootDir,fileSpec)
 % DC = prtUtilRecursiveDir(rootDir,fileSpec,dirSpec)
+% xxx Need Help xxx
 
 if nargin < 2 || isempty(match)
     match = '*';

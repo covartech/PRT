@@ -1,4 +1,5 @@
 classdef prtRvUniform < prtRv
+    % xxx Need Help xxx
     properties
         upperBounds
         lowerBounds

@@ -1,4 +1,6 @@
 function prtUtilPrintAvailableActions(ActionStruct,layer)
+% Internal
+% xxx Need Help xxx
 
 if nargin < 1 || isempty(ActionStruct)
     ActionStruct = prtUtilAvailableActions;
