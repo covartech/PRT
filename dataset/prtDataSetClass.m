@@ -511,24 +511,6 @@ classdef prtDataSetClass  < prtDataSetStandard
                         legendHandle = legend(hs{iFeature,jFeature},legendStrings,'Location','SouthEast');
                     end
                     
-%                     if iFeature~=N
-%                         set(gca,'XTick',[]);
-%                     end
-%                     if jFeature ~= 1
-%                         set(gca,'YTick',[]);
-%                     end
-%                     cP = get(gca,'position');
-%                     cOp = get(gca,'outerposition');
-%                     
-%                     newP = cOp;
-%                     if iFeature == N
-%                         newP = [cOp(1) cP(2) cOp(3) cOp(4)-(cP(3)-cOp(3))];
-%                     end
-%                     
-%                     if jFeature == 1
-%                         newP = [cP(1) cOp(2) cOp(3)-(cP(1)-cOp(1)) cOp(4)];
-%                     end
-%                     set(gca,'position',newP)
                 end
             end
             

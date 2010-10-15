@@ -257,19 +257,6 @@ classdef prtDataSetBase
         end
     end
     
-    %isEmpty and size
-    %     methods
-    %         function bool = isempty(obj)
-    %             bool = obj.nObservations == 0 || obj.nFeatures == 0;
-    %         end
-    %
-    %         function s = size(obj)
-    %             s = [obj.nObservations,obj.nFeatures];
-    %         end
-    %
-    %     end
-    
-    
     %Private static functions for generating feature and observation names
     methods (Access = 'protected', Static = true, Hidden = true)
         function featNames = generateDefaultFeatureNames(indices2)
@@ -345,10 +332,8 @@ classdef prtDataSetBase
         end
         
     end
+   
     
-    %I don't think we need these anymore - addFeatureNames and
-    %addObservationNames...  we may need "remove feature names" and "remove
-    %Observation Names"
     methods (Access = 'protected', Hidden = true)
         function obj = catObservationNames(obj,newDataSet)
             
