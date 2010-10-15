@@ -210,7 +210,7 @@ classdef prtClass < prtAction
                     produceMaryOutput = true;
                 else
                     % Binary only classifier with Mary Data
-                    error('prt:prtClass:classifierDataSetMismatch','M-ary classification is not supported by this classifier. You will need to use prtClassMaryEmulateOneVsAll() or an equivalent M-ary emulation classifier.');
+                    error('prt:prtClass:classifierDataSetMismatch','M-ary classification is not supported by this classifier. You will need to use prtClassBinaryToMaryOneVsAll() or an equivalent M-ary emulation classifier.');
                 end
             elseif DataSet.isBinary && ClassObj.isNativeMary
                 % You have binary data and an Mary Classifier

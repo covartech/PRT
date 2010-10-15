@@ -1,17 +1,17 @@
-classdef prtClassMaryEmulateOneVsAll < prtClass
-    % prtClassMaryEmulateOneVsAll  M-Ary Emulation Classifier
+classdef prtClassBinaryToMaryOneVsAll < prtClass
+    % prtClassBinaryToMaryOneVsAll  M-Ary Emulation Classifier
     %
-    %    CLASSIFIER = prtClassMaryEmulateOneVsAll returns a M-ary one
+    %    CLASSIFIER = prtClassBinaryToMaryOneVsAll returns a M-ary one
     %    versus all classifier. A one versus all classifier utilizes a
     %    binary classifier to make M-ary decisions. For all M classes, it
     %    selects one class, and makes a binary comparison to all the
     %    others.
     %
-    %    CLASSIFIER = prtClassMaryEmulateOneVsAll(PROPERTY1, VALUE1, ...)
+    %    CLASSIFIER = prtClassBinaryToMaryOneVsAll(PROPERTY1, VALUE1, ...)
     %    constructs a prtClassMAP object CLASSIFIER with properties as
     %    specified by PROPERTY/VALUE pairs.
     %
-    %    A prtClassMaryEmulateOneVsAll object inherits all properties from the
+    %    A prtClassBinaryToMaryOneVsAll object inherits all properties from the
     %    abstract class prtClass. In addition is has the following
     %    properties:
     %
@@ -19,7 +19,7 @@ classdef prtClassMaryEmulateOneVsAll < prtClass
     %                  decisions. Must be a prtClass object, and defaults 
     %                  to a prtClassLogisticDiscriminant classifier.
     % 
-    %    A prtClassMaryEmulateOneVsAll object inherits the TRAIN, RUN,
+    %    A prtClassBinaryToMaryOneVsAll object inherits the TRAIN, RUN,
     %    CROSSVALIDATE and KFOLDS methods from prtAction. It also inherits
     %    the PLOT and PLOTDECISION classes from prtClass.
     %
@@ -27,7 +27,7 @@ classdef prtClassMaryEmulateOneVsAll < prtClass
     %
     %     TestDataSet = prtDataGenMary;      % Create some test and 
     %     TrainingDataSet = prtDataGenMary;  % training data
-    %     classifier = prtClassMaryEmulateOneVsAll; % Create a classifier
+    %     classifier = prtClassBinaryToMaryOneVsAll; % Create a classifier
     %     classifier.Classifiers = prtClassGlrt;    % Set the binary 
     %                                               % Classifier
     %     classifier = classifier.train(TrainingDataSet);    % Train
@@ -38,7 +38,7 @@ classdef prtClassMaryEmulateOneVsAll < prtClass
     %     classifier.plot;
     %
     %    See also prtClass, prtClassLogisticDiscriminant, prtClassBagging,
-    %    prtClassMap, prtClassCap, prtClassMaryEmulateOneVsAll, prtClassDlrt,
+    %    prtClassMap, prtClassCap, prtClassBinaryToMaryOneVsAll, prtClassDlrt,
     %    prtClassPlsda, prtClassFld, prtClassRvm, prtClassGlrt,  prtClass
     
     properties (SetAccess=private)
@@ -53,7 +53,7 @@ classdef prtClassMaryEmulateOneVsAll < prtClass
     
     methods
         
-        function Obj = prtClassMaryEmulateOneVsAll(varargin)
+        function Obj = prtClassBinaryToMaryOneVsAll(varargin)
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
         end
     end

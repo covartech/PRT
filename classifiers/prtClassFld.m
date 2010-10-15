@@ -36,7 +36,7 @@ classdef prtClassFld < prtClass
  %    classifier.plot;
  %
  %   See also prtClass, prtClassLogisticDiscriminant, prtClassBagging,
- %   prtClassMap, prtClassCap, prtClassMaryEmulateOneVsAll, prtClassDlrt,
+ %   prtClassMap, prtClassCap, prtClassBinaryToMaryOneVsAll, prtClassDlrt,
  %   prtClassPlsda, prtClassKnn, prtClassRvm, prtClassGlrt,  prtClassSvm,
  %   prtClassTreeBaggingCap, prtClassKmsd, prtClassKnn
 

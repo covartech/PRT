@@ -38,7 +38,7 @@ classdef prtClassKnn < prtClass
     %     classifier.plot;
     %
     %    See also prtClass, prtClassLogisticDiscriminant, prtClassBagging,
-    %    prtClassMap, prtClassCap, prtClassMaryEmulateOneVsAll, prtClassDlrt,
+    %    prtClassMap, prtClassCap, prtClassBinaryToMaryOneVsAll, prtClassDlrt,
     %    prtClassPlsda, prtClassFld, prtClassRvm, prtClassGlrt,  prtClass
     
     properties (SetAccess=private)

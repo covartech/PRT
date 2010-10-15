@@ -49,7 +49,7 @@ classdef prtClassLogisticDiscriminant < prtClass
     %     classifier.plot;
     %
     %    See also prtClass, prtClassLogisticDiscriminant, prtClassBagging,
-    %    prtClassMap, prtClassCap, prtClassMaryEmulateOneVsAll,
+    %    prtClassMap, prtClassCap, prtClassBinaryToMaryOneVsAll,
     %    prtClassDlrt, prtClassPlsda, prtClassFld, prtClassRvm,
     %    prtClassLogisticDiscriminant,  prtClass
     

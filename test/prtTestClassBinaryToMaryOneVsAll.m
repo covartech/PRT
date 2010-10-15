@@ -1,4 +1,4 @@
-function result = prtTestClassMaryEmulateOneVsAll
+function result = prtTestClassBinaryToMaryOneVsAll
 result = true;
 
 % BASELINE generation, uncomment to run to generate new baseline
@@ -10,7 +10,7 @@ result = true;
 %     TestDataSet = prtDataGenMary;
 %     TrainingDataSet = prtDataGenMary;
 %     
-%     classifier = prtClassMaryEmulateOneVsAll;
+%     classifier = prtClassBinaryToMaryOneVsAll;
 %     classifier.Classifiers = prtClassGlrt;
 %     classifier = classifier.train(TrainingDataSet);
 %     classified = run(classifier, TestDataSet);
@@ -27,7 +27,7 @@ TestDataSet = prtDataGenMary;
 TrainingDataSet = prtDataGenMary;
 
 
-classifier = prtClassMaryEmulateOneVsAll;
+classifier = prtClassBinaryToMaryOneVsAll;
 classifier.Classifiers = prtClassGlrt;
 
 classifier = classifier.train(TrainingDataSet);
@@ -40,7 +40,7 @@ percentCorr = prtScorePercentCorrect(classes,TestDataSet.getTargets);
 
 result = result & (percentCorr > baselinePercentCorr);
 if (percentCorr < baselinePercentCorr)
-    disp('prtClassMaryEmulateOneVsAll below baseline')
+    disp('prtClassBinaryToMaryOneVsAll below baseline')
     result = false;
 end
 
@@ -49,7 +49,7 @@ end
 
 TestDataSet = prtDataGenMary;
 
-classifier = prtClassMaryEmulateOneVsAll;
+classifier = prtClassBinaryToMaryOneVsAll;
 classifier.Classifiers = prtClassGlrt;
 
 
@@ -61,7 +61,7 @@ classes = TestDataSet.uniqueClasses(classInds);
 percentCorr = prtScorePercentCorrect(classes,TestDataSet.getTargets);
 
 if (percentCorr < baselinePercentCorr)
-    disp('prtClassMaryEmulateOneVsAll cross-val below baseline')
+    disp('prtClassBinaryToMaryOneVsAll cross-val below baseline')
     result = false;
 end
 
@@ -73,7 +73,7 @@ classes = TestDataSet.uniqueClasses(classInds);
 
 percentCorr = prtScorePercentCorrect(classes,TestDataSet.getTargets);
 if (percentCorr < baselinePercentCorr)
-    disp('prtClassMaryEmulateOneVsAll kfolds below baseline')
+    disp('prtClassBinaryToMaryOneVsAll kfolds below baseline')
     result = false;
 end
 
@@ -90,7 +90,7 @@ error = true;  % We will want all these things to error
 noerror = true;
 
 try
-    classifier = prtClassMaryEmulateOneVsAll('Classifiers', prtClassMap);
+    classifier = prtClassBinaryToMaryOneVsAll('Classifiers', prtClassMap);
     classifier = classifier.train(TrainingDataSet);
     classified = run(classifier, TestDataSet);
     
@@ -104,7 +104,7 @@ try
     TrainingDataSet = prtDataGenMary;
     
     
-    classifier = prtClassMaryEmulateOneVsAll;
+    classifier = prtClassBinaryToMaryOneVsAll;
     classifier = classifier.train(TrainingDataSet);
     classifier.plot();
     close
