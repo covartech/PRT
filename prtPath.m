@@ -1,20 +1,17 @@
 function prtPath
-%This function adds necessary directories for the gatool to your path.
+% prtPath Adds necessary directories for the PRT to your path.
+
 P = genpath(prtRoot);
 addpath(P);
 
-%Remove some paths we don't need
-
+%Remove some paths we don't need (we remove all directories that start with
+% a . or a ~
 removePath = [];
 [string,remString] = strtok(P,pathsep);
 while ~isempty(string);
-    if ~isempty(strfind(string,[filesep '.svn']))
+    if ~isempty(strfind(string,[filesep '.'])) || ~isempty(strfind(string,[filesep '~']))
         removePath = cat(2,removePath,pathsep,string);
     end
     [string,remString] = strtok(remString,pathsep); %#ok
 end
 rmpath(removePath);
-
-% pathCell = prtUtilMatlabPath2StrCell;
-% pathCell = prtUtilRemoveStrCell(pathCell,'dprt');
-% path(prtUtilStrCell2MatlabPath(pathCell));
