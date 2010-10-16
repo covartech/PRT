@@ -59,9 +59,9 @@ classdef prtRvMvn < prtRv
 
     
     properties (Dependent)
-        covarianceStructure
-        mean
-        covariance
+        covarianceStructure  % The covariance structure
+        mean                 % The mean vector
+        covariance           % The covariance matrix
     end
     properties (SetAccess = 'private', GetAccess = 'private', Hidden = true)
         meanDepHelper
@@ -80,15 +80,17 @@ classdef prtRvMvn < prtRv
     
     methods
         function R = prtRvMvn(varargin)
-            % R = prtRvMvn(X);
-            % R = prtRvMvn(X, paramStr1, paramVal1,...);
-            % R = prtRvMvn(paramStr1, paramVal1,...);
             
             R.name = 'Multi-Variate Normal';
             R = constructorInputParse(R,varargin{:});
         end
         
         function R = mle(R,X)
+            % MLE Compute the maximum likelihood estimate 
+            %
+            % RV = RV.mle(X) computes the maximum likelihood estimate based
+            % the data X. X should be nObservations x nDimensions.
+            
             if ~isempty(R.nDimensions)
                 warning('prtRvMvn:overwrite','A mean and/or covariance has already been specified for this rv.mvn object. These values have been over written and the dimensionality may have changed.');
             end
@@ -97,6 +99,14 @@ classdef prtRvMvn < prtRv
         end
         
         function vals = pdf(R,X)
+            % PDF Output the pdf of the random variable evaluated at the points specified
+            %
+            % pdf = RV.pdf(X) returns  the pdf of the prtRv
+            % object evaluated at X. X must be an N x nDims matrix, where
+            % N is the number of locations to evaluate the pdf, and nDims
+            % is the same as the number of dimensions, nDimensions, of the
+            % prtRv object RV.
+            
             assert(R.isValid,'PDF cannot be evaluated because the RV object is not yet valid.')
             assert(size(X,2) == R.nDimensions,'Incorrect dimensionality for RV object.')
             assert(isnumeric(X) && ndims(X)==2,'X must be a 2D numeric array.');
@@ -105,18 +115,40 @@ classdef prtRvMvn < prtRv
         end
         
         function vals = logPdf(R,X)
+            % LOGPDF Output the log pdf of the random variable evaluated at the points specified
+            %
+            % logpdf = RV.logpdf(X) returns the logarithm of value of the
+            % pdf of the prtRv object evaluated at X. X must be an N x
+            % nDims matrix, where N is the number of locations to evaluate
+            % the pdf, and nDims is the same as the number of dimensions,
+            % nDimensions, of the prtRv object RV.
             assert(R.isValid,'LOGPDF cannot be evaluated because the RV object is not yet valid.')
             assert(size(X,2) == R.nDimensions,'Incorrect dimensionality for RV object.')
             vals = prtRvUtilMvnLogPdf(X,R.mean,R.covariance);
         end
         
         function vals = cdf(R,X)
+            % CDF Output the cdf of the random variable evaluated at the points specified
+            %
+            % cdf = RV.cdf(X) returns the value of the cdf of the prtRv
+            % object evaluated at X. X must be an N x nDims matrix, where
+            % N is the number of locations to evaluate the pdf, and nDims
+            % is the same as the number of dimensions, nDimensions, of the
+            % prtRv object RV.
+            
             assert(R.isValid,'CDF cannot be evaluated because the RV object is not yet valid.')
             assert(size(X,2) == R.nDimensions,'Incorrect dimensionality for RV object.')
             vals = prtRvUtilMvnCdf(X,R.mean,R.covariance);
         end
         
         function vals = draw(R,N)
+            % DRAW  Draw random samples from the distribution described by the prtRv object
+            %
+            % VAL = RV.draw(N) generates N random samples drawn from the
+            % distribution described by the prtRv object RV. VAL will be a
+            % N x nDimensions vector, where nDimensions is the number of
+            % dimensions of RV.
+            
             assert(numel(N)==1 && N==floor(N) && N > 0,'N must be a positive integer scalar.')
             vals = prtRvUtilMvnDraw(R.mean,R.covariance,N);
         end
