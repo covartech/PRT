@@ -39,8 +39,8 @@ classdef prtRv
     %   prtRvUniformImproper, prtRvVq
     
     properties
-        name        % The name displayed
-        UserData    % UserData
+        name        % The name of the prtRv
+        UserData    % User specified data
     end
     properties (Abstract = true, Hidden = true, Dependent = true)
         nDimensions % The number of dimensions
@@ -110,7 +110,7 @@ classdef prtRv
         end
         
         function varargout = plotCdf(R,varargin)
-            %plot the cdf
+            %Plot the cdf
             varargout = {};
             if R.isPlottable
                 
