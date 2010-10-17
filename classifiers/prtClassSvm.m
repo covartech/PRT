@@ -66,8 +66,8 @@ classdef prtClassSvm < prtClass
             if ~isa(val,'cell')
                 val = {val};
             end
-            assert(isscalar(val),'prt:prtClassRvm:setKernels','kernels must be a 1x1 prtKernel or a 1x1 cell containing one prtKernel object');
-            assert(isa(val{1},'prtKernel'),'prt:prtClassRvm:setKernels','kernels must be a 1x1 cell array of prtKernels, but value{1} is a %s',class(val{1}));
+            assert(isscalar(val),'prt:prtClassSvm:setKernels','kernels must be a 1x1 prtKernel or a 1x1 cell containing one prtKernel object');
+            assert(isa(val{1},'prtKernel'),'prt:prtClassSvm:setKernels','kernels must be a 1x1 cell array of prtKernels, but value{1} is a %s',class(val{1}));
             Obj.kernels = val;
         end
         function Obj = set.c(Obj,val)
@@ -96,7 +96,7 @@ classdef prtClassSvm < prtClass
             %             obj.trainedkernels = cat(1,obj.trainedkernels{:});
             %             gramm = prtkernelgrammmatrix(dataset,obj.trainedkernels);
             
-            gramm = prtKernel.evaluateMultiKernelGramm(Obj.kernels,DataSet,DataSet);
+            gramm = prtKernel.evaluateMultiKernelGram(Obj.kernels,DataSet,DataSet);
             [Obj.alpha,Obj.beta] = prtUtilSmo(DataSet.getX,DataSet.getY,gramm,Obj.c,Obj.tol);
             
             relevantIndices = find(Obj.alpha);

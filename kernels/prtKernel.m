@@ -44,7 +44,7 @@ classdef prtKernel
             end
         end
         
-        function gramm = evaluateMultiKernelGramm(kernelCell,ds1,ds2)
+        function gramm = evaluateMultiKernelGram(kernelCell,ds1,ds2)
             %Evaluate the gramm matrix from a cell array of kernel objects.
             % The output gramm matrix should be of size ds2.nObservations x
             % sum(prtKernel.nDimsMultiKernel(kernelCell,ds1))

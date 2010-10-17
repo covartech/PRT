@@ -1,6 +1,11 @@
 classdef prtClassRvm < prtClass
     % prtClassRvm  Relevance vector machin classifier
     %
+    %
+    % Herbrich: Learning Kernel Classifiers, Algorithm 7, Page 328
+    %
+    %
+    %
     %    CLASSIFIER = prtClassRvm returns a relevance vector machine classifier
     %
     %    CLASSIFIER = prtClassRvm(PROPERTY1, VALUE1, ...) constructs a
@@ -66,11 +71,7 @@ classdef prtClassRvm < prtClass
     %    prtClassMap, prtClassCap, prtClassBinaryToMaryOneVsAll, prtClassDlrt,
     %    prtClassPlsda, prtClassFld, prtClassRvm, prtClassGlrt,  prtClass
     
-    
-   
-    
     properties (SetAccess=private)
-       
         name = 'Relevance Vector Machine'  % Relevance Vector Machine
         nameAbbreviation = 'RVM'           % RVM
         isNativeMary = false;  % False
@@ -78,30 +79,24 @@ classdef prtClassRvm < prtClass
     
     properties
         kernels = {prtKernelDc, prtKernelRbfNdimensionScale};
-        algorithm = 'Figueiredo';  % The training algorithm
         
-        % learning algorithm
-        learningPlot = false;
         learningVerbose = false;
+        learningPlot = false;
     end
     
     % Estimated Parameters
-    properties (GetAccess = public, SetAccess = private)
+    properties (GetAccess = public, SetAccess = protected)
         Sigma = [];
         beta = [];
         sparseBeta = [];
         sparseKernels = {};
         learningConverged = false;
     end
+    
     properties (Hidden = true)
         learningMaxIterations = 1000;
-        learningBetaConvergedTolerance = 1e-3;
-        learningBetaRelevantTolerance = 1e-3;
-        learningLikelihoodIncreaseThreshold = 1e-6;
-        learningSequentialBlockSize = 1000;
-        learningCorrelationRemovalThreshold = 0.99;
-        learningSequentialFavorRemove = true;
-        learningResults
+        learningConvergedTolerance = 1e-5;
+        learningRelevantTolerance = 1e-3;
     end
     
     methods
@@ -119,26 +114,15 @@ classdef prtClassRvm < prtClass
             end
             Obj.kernels = val;
         end
+        
         function Obj = set.learningPlot(Obj,val)
-            assert(isscalar(val) && islogical(val),'prt:prtClassRvm:learningPlot','learningPlot must be a logical value, but value provided is a %s',class(val));
+            assert(isscalar(val) && (islogical(val) || prtUtilIsPositiveInteger(val)),'prt:prtClassRvm:learningPlot','learningPlot must be a logical value or a positive integer');
             Obj.learningPlot = val;
         end
+        
         function Obj = set.learningVerbose(Obj,val)
             assert(isscalar(val) && islogical(val),'prt:prtClassRvm:learningVerbose','learningVerbose must be a logical value, but value provided is a %s',class(val));
             Obj.learningVerbose = val;
-        end
-        
-        function Obj = set.algorithm(Obj,newAlgo)
-            possibleAlgorithms = {'Figueiredo', 'Sequential', 'SequentialInMemory'};
-            
-            possibleAlgorithmsStr = sprintf('%s, ',possibleAlgorithms{:});
-            possibleAlgorithmsStr = possibleAlgorithmsStr(1:end-2);
-            
-            errorMessage = sprintf('Invalid algorithm. algorithm must be one of the following %s.',possibleAlgorithmsStr);
-            assert(ischar(newAlgo),errorMessage);
-            assert(ismember(newAlgo,possibleAlgorithms),errorMessage);
-            
-            Obj.algorithm = newAlgo;
         end
         
         function varargout = plot(Obj)
@@ -150,12 +134,14 @@ classdef prtClassRvm < prtClass
             
             HandleStructure = plot@prtClass(Obj);
             
+            holdState = get(gca,'nextPlot');
+            
             % Plot the kernels
             hold on
             for iKernel = 1:length(Obj.sparseKernels)
                 Obj.sparseKernels{iKernel}.classifierPlot();
             end
-            hold off
+            set(gca, 'nextPlot', holdState);
             
             varargout = {};
             if nargout > 0
@@ -175,31 +161,87 @@ classdef prtClassRvm < prtClass
             %
             
             warningState = warning;
-            %warning off MATLAB:nearlySingularMatrix
-            
-            if ~DataSet.isBinary
-                error('prt:prtClassRvm:nonBinaryData','prtClassRvm requires a binary data set');
-            end
-            
+            warning off MATLAB:nearlySingularMatrix
+                        
             %Note: do not assume that getTargets returns a double array or
             %values "0" and "1", instead use this:
-            yMat = double(DataSet.getTargetsAsBinaryMatrix());
-            y = nan(size(yMat,1),1);
-            y(yMat(:,1) == 1) = -1;
-            y(yMat(:,2) == 1) = 1;
+            y = Obj.getMinusOneOneTargets(DataSet);
+            y(y==-1) = 0;
             
-            % Train (center) the kernels at the trianing data (if
-            % necessary)
+            gram = Obj.getGram(DataSet);
             
-            switch Obj.algorithm
-                case 'Figueiredo'
-                    Obj = trainActionFigueiredo(Obj, DataSet, y);
-                case 'Sequential'
-                    Obj = trainActionSequential(Obj, DataSet, y);
-                case 'SequentialInMemory'
-                    Obj = trainActionSequentialInMemory(Obj, DataSet, y);
-                    
+            theta = ones(size(gram,2),1);
+            Obj.beta = zeros(size(theta));
+            deltaThetaNorm = ones(Obj.learningMaxIterations,1)*nan;
+
+            if Obj.learningVerbose
+                fprintf('RVM training with %d possible vectors.\n', size(gram,2));
             end
+            
+            for iteration = 1:Obj.learningMaxIterations
+                
+                %%%%
+                %%See: Herbrich: Learning Kernel Classifiers, Algorithm 7, Page 328
+                %%%%
+                
+                %check tolerance for basis removal
+                cRelevent = theta > Obj.learningConvergedTolerance;
+                
+                Obj.beta(~cRelevent) = 0;
+
+                cGram = gram(:,cRelevent);
+                cTheta = theta(cRelevent);
+                cThetaInv = diag(1./cTheta);
+
+                [newBeta, SigmaInvChol] = prtUtilPenalizedIrls(y,cGram,Obj.beta(cRelevent),cThetaInv);
+                     
+                Obj.beta(cRelevent) = newBeta;
+                
+                SigmaChol = inv(SigmaInvChol);
+                sigma = SigmaChol*SigmaChol';
+               
+                zeta = ones(size(diag(cThetaInv))) - (1./cTheta).*diag(sigma);
+
+                previousTheta= theta;
+                theta(cRelevent) = Obj.beta(cRelevent).^2./zeta;
+                
+                deltaThetaNorm(iteration) = norm(previousTheta-theta)./length(theta);
+
+                if ~mod(iteration,Obj.learningPlot)
+                    if DataSet.nFeatures == 2
+                        Obj.verboseIterationPlot(DataSet,cRelevent);
+                    elseif iteration == 1
+                        warning('prt:prtClassRvm','Learning iteration plot can only be produced for training Datasets with 2 features');
+                    end
+                end
+        
+                    
+                if deltaThetaNorm(iteration) < Obj.learningConvergedTolerance && iteration > 1
+                    % Converged
+                    
+                    Obj.learningConverged = true;
+                    
+                    if Obj.learningVerbose
+                        fprintf('Convergence reached. Exiting...\n');
+                    end
+                    
+                    break;
+                end
+                
+                if Obj.learningVerbose
+                    fprintf('\t Iteration %d: %d RV''s, Convergence tolerance: %g \n',iteration, sum(cRelevent), deltaThetaNorm(iteration));
+                end
+                
+            end
+            
+            if Obj.learningVerbose && iteration == Obj.learningMaxIterations
+                fprintf('Exiting...Convergence not reached before the maximum allowed iterations was reached.\n');
+            end
+            
+            % Make sparse represenation
+            Obj.sparseBeta = Obj.beta(cRelevent,1);
+            Obj.sparseKernels = prtKernel.sparseKernelFactory(Obj.kernels,DataSet,cRelevent);
+                        
             
             % Very bad training
             if isempty(Obj.sparseBeta)
@@ -225,778 +267,72 @@ classdef prtClassRvm < prtClass
             for i = 1:memChunkSize:n;
                 cI = i:min(i+memChunkSize,n);
                 cDataSet = prtDataSetClass(DataSet.getObservations(cI,:));
-                %gramm = prtKernelGrammMatrix(cDataSet,Obj.sparseKernels);
+                
                 gramm = prtKernel.runMultiKernel(Obj.sparseKernels,cDataSet);
                 
-                OutputMat(cI) = normcdf(gramm*Obj.sparseBeta);
+                OutputMat(cI) = prtRvUtilNormCdf(gramm*Obj.sparseBeta);
             end
+            
             DataSetOut = prtDataSetClass(OutputMat);
         end
     end
-    methods (Access=private)
-        function Obj = trainActionFigueiredo(Obj, DataSet, y)
-            tic
-            gramm = prtKernel.evaluateMultiKernelGramm(Obj.kernels,DataSet,DataSet);
-            toc
-            tic
-            nBasis = size(gramm,2);
+    
+    methods (Access=protected)
+        
+        function y = getMinusOneOneTargets(Obj, DataSet)
+            yMat = double(DataSet.getTargetsAsBinaryMatrix());
+            y = nan(size(yMat,1),1);
+            y(yMat(:,1) == 1) = -1;
+            y(yMat(:,2) == 1) = 1;
+        end
+        
+        function gram = getGram(Obj, DataSet)
+            gram = prtKernel.evaluateMultiKernelGram(Obj.kernels,DataSet,DataSet);
+        end
+        
+        function G = regularizeGramInnerProduct(Obj, gram)
+            nBasis = size(gram,2);
             
             sigmaSquared = 1e-6;
             
             %Check to make sure the problem is well-posed.  This can be fixed either
             %with changes to kernels, or by regularization
-            G = gramm'*gramm;
+            G = gram'*gram;
             while rcond(G) < 1e-6
                 if sigmaSquared == eps && Obj.learningVerbose
                     %warning('prt:prtClassRvm:illConditionedG','RVM initial G matrix ill-conditioned; regularizing diagonal of G to resolve; this can be modified by changing kernel parameters\n');
-                    disp('Regularizing Gramm matrix...');
+                    fprintf('\n\tRegularizing Gram matrix...\n');
                 end
-                G = (sigmaSquared*eye(nBasis) + gramm'*gramm);
+                G = (sigmaSquared*eye(nBasis) + gram'*gram);
                 sigmaSquared = sigmaSquared*2;
             end
-            Obj.beta = G\gramm'*y;
             
-            u = diag(abs(Obj.beta));
-            relevantIndices = 1:size(gramm,2);
-            
-            h1Ind = y == 1;
-            h0Ind = y == -1;
-            
-            for iteration = 1:Obj.learningMaxIterations
-                
-                %%%%
-                %%See: Figueiredo: "Adaptive Sparseness For Supervised learning"
-                %%%%
-                uK = u(relevantIndices,relevantIndices);
-                grammK = gramm(:,relevantIndices);
-                
-                S = gramm*Obj.beta;
-                
-                S(h1Ind) = S(h1Ind) + normpdf(S(h1Ind))./(1-normcdf(-S(h1Ind)));
-                S(h0Ind) = S(h0Ind) - normpdf(S(h0Ind))./(normcdf(-S(h0Ind)));
-                
-                beta_OLD = Obj.beta;
-                
-                A = (eye(size(uK)) + uK*(grammK'*grammK)*uK);
-                B = uK*(grammK'*S);    %this is correct - see equation (21)
-                
-                Obj.beta(relevantIndices,1) = uK*(A\B);
-                
-                % Remove irrelevant vectors
-                relevantIndices = find(abs(Obj.beta) > max(abs(Obj.beta))*Obj.learningBetaRelevantTolerance);
-                irrelevantIndices = abs(Obj.beta) <= max(abs(Obj.beta))*Obj.learningBetaRelevantTolerance;
-                
-                Obj.beta(irrelevantIndices,1) = 0;
-                u = diag(abs(Obj.beta));
-                
-                if Obj.learningPlot && DataSet.nFeatures == 2
-                    DsSummary = DataSet.summarize;
-                    
-                    [linGrid, gridSize,xx,yy] = prtPlotUtilGenerateGrid(DsSummary.lowerBounds, DsSummary.upperBounds, Obj.PlotOptions);
-                    
-                    trainedKernelCell = prtKernel.sparseKernelFactory(Obj.kernels,DataSet,relevantIndices);
-                    cPhi = prtKernel.runMultiKernel(trainedKernelCell,prtDataSetClass([xx(:),yy(:)]));
-                    
-                    confMap = reshape(normcdf(cPhi*Obj.beta(relevantIndices)),gridSize);
-                    imagesc(xx(1,:),yy(:,1),confMap,[0,1])
-                    colormap(Obj.PlotOptions.twoClassColorMapFunction());
-                    axis xy
-                    hold on
-                    plot(DataSet);
-                    for iRel = 1:length(trainedKernelCell)
-                        trainedKernelCell{iRel}.classifierPlot();
-                    end
-                    hold off
-                    
-                    set(gcf,'color',[1 1 1]);
-                    title(sprintf('Iteration %d',iteration));
-                    drawnow;
-                    
-                    Obj.UserData.movieFrames(iteration) = getframe(gcf);
-                end
-                
-                %check tolerance for basis removal
-                TOL = norm(Obj.beta-beta_OLD)/norm(beta_OLD);
-                if TOL < Obj.learningBetaConvergedTolerance
-                    Obj.learningConverged = true;
-                    break;
-                end
-            end
-            
-            toc
-            % Make sparse represenation
-            Obj.sparseBeta = Obj.beta(relevantIndices,1);
-            Obj.sparseKernels = prtKernel.sparseKernelFactory(Obj.kernels,DataSet,relevantIndices);
-            
-        end
-        function Obj = trainActionSequential(Obj, DataSet, y)
-            
-            nBasisVec = prtKernel.nDimsMultiKernel(Obj.kernels,DataSet);
-            nBasis = sum(nBasisVec);
-            if false && nBasis <= Obj.learningSequentialBlockSize
-                Obj = trainActionSequentialInMemory(Obj, DataSet, y);
-                return
-            end
-            
-            if Obj.learningVerbose
-                fprintf('Sequential RVM training with %d possible vectors.\n', nBasis);
-            end
-            
-            % The sometimes we want y [-1 1] but mostly not
-            ym11 = y;
-            y(y ==-1) = 0;
-            
-            Obj.beta = zeros(nBasis,1);
-            
-            relevantIndices = false(nBasis,1); % Nobody!
-            alpha = inf(nBasis,1); % Nobody!
-            forbidden = zeros(nBasis,1); % Will hold who is forbidding you from joining
-            
-            % Find first kernel
-            kernelCorrs = zeros(nBasis,1);
-            nBlocks = ceil(nBasis./ Obj.learningSequentialBlockSize);
-            for iBlock = 1:nBlocks
-                cInds = ((iBlock-1)*Obj.learningSequentialBlockSize+1):min([iBlock*Obj.learningSequentialBlockSize nBasis]);
-                
-                trainedKernelCell = prtKernel.sparseKernelFactory(Obj.kernels,DataSet,cInds);
-                cPhi = prtKernel.runMultiKernel(trainedKernelCell,DataSet);
-                
-                cPhi = bsxfun(@rdivide,cPhi,sqrt(sum(cPhi.*cPhi))); % We have to normalize here
-                kernelCorrs(cInds) = abs(cPhi'*ym11);
-            end
-            [maxVal, maxInd] = max(kernelCorrs);
-            
-            % Make this ind relevant
-            relevantIndices(maxInd) = true;
-            selectedInds = maxInd;
-            
-            % Add things to forbidden list
-            %newPhi = prtKernelGrammMatrix(DataSet, trainedKernels(maxInd));
-            newPhi = prtKernel.runMultiKernel(trainedKernelCell(maxInd),DataSet);
-            newPhi = newPhi - mean(newPhi);
-            newPhi = newPhi./sqrt(sum(newPhi.^2));
-            phiCorrs = zeros(nBasis,1);
-            for iBlock = 1:nBlocks
-                cInds = ((iBlock-1)*Obj.learningSequentialBlockSize+1):min([iBlock*Obj.learningSequentialBlockSize nBasis]);
-                
-                %cPhi = prtKernelGrammMatrix(DataSet, trainedKernels(cInds));
-                trainedKernelCell = prtKernel.sparseKernelFactory(Obj.kernels,DataSet,cInds);
-                cPhi = prtKernel.runMultiKernel(trainedKernelCell,DataSet);
-                
-                cPhi = bsxfun(@minus,cPhi,mean(cPhi));
-                cPhi = bsxfun(@rdivide,cPhi,sqrt(sum(cPhi.*cPhi))); % We have to normalize here
-                
-                phiCorrs(cInds) = cPhi'*newPhi;
-            end
-            forbidden(phiCorrs > Obj.learningCorrelationRemovalThreshold) = maxInd;
-            
-            % Start the actual Process
-            if Obj.learningVerbose
-                %fprintf('Sequential RVM training with %d possible vectors.\n', length(trainedKernels));
-                fprintf('\t Iteration 0: Intialized with vector %d.\n', maxInd);
-                
-                nVectorsStringLength = ceil(log10(length(nBasis)))+1;
-            end
-            
-            
-            
-            for iteration = 1:Obj.learningMaxIterations
-                
-                % Store old log Alpha
-                logAlphaOld = log(alpha);
-                
-                if iteration == 1
-                    % Initial estimates
-                    % Estimate Sigma, mu etc.
-                    
-                    trainedKernelCell = prtKernel.sparseKernelFactory(Obj.kernels,DataSet,relevantIndices);
-                    % Make up a mu (least squares?) and an alpha (made up)
-                    %cPhi = prtKernelGrammMatrix(DataSet,trainedKernels(relevantIndices));
-                    cPhi = prtKernel.runMultiKernel(trainedKernelCell,DataSet);
-                    %cPhi = bsxfun(@rdivide,cPhi,sqrt(sum(cPhi.^2)));
-                    
-                    logOut = (ym11*0.9+1)/2;
-                    mu = cPhi \ log(logOut./(1-logOut));
-                    %mu = cPhi \ y;
-                    alpha(relevantIndices) = 1./mu.^2;
-                    
-                    % Laplacian approx. IRLS
-                    A = diag(alpha(relevantIndices));
-                    
-                    [mu, SigmaInvChol, obsNoiseVar] = prtUtilPenalizedIrls(y,cPhi,mu,A);
-                    
-                    SigmaChol = inv(SigmaInvChol);
-                    Obj.Sigma = SigmaChol*SigmaChol';
-                    
-                    yHat = 1 ./ (1+exp(-cPhi*mu));
-                end
-                
-                % Eval additions and subtractions
-                Sm = zeros(nBasis,1);
-                Qm = zeros(nBasis,1);
-                cError = y-yHat;
-                
-                cPhiProduct = bsxfun(@times,cPhi,obsNoiseVar);
-                for iBlock = 1:nBlocks
-                    cInds = ((iBlock-1)*Obj.learningSequentialBlockSize+1):min([iBlock*Obj.learningSequentialBlockSize nBasis]);
-                    
-                    trainedKernelCell = prtKernel.sparseKernelFactory(Obj.kernels,DataSet,cInds);
-                    PhiM = prtKernel.runMultiKernel(trainedKernelCell,DataSet);
-                    %PhiM = prtKernelGrammMatrix(DataSet, trainedKernels(cInds));
-                    %PhiM = bsxfun(@rdivide,PhiM,sqrt(sum(PhiM.^2)));
-                    
-                    Sm(cInds) = (obsNoiseVar'*(PhiM.^2)).' - sum((PhiM.'*cPhiProduct*SigmaChol).^2,2);
-                    Qm(cInds) = PhiM.'*cError;
-                end
-                
-                %                 % One at a time method
-                %                 for iKernel = 1:nBasis
-                %                     PhiM = prtKernelGrammMatrix(DataSet,trainedKernels(iKernel));
-                %                     cPhiMProduct = bsxfun(@times,PhiM,obsNoiseVar);
-                %
-                %                     Sm2(iKernel) = cPhiMProduct'*PhiM - sum((PhiM'*cPhiProduct*SigmaChol).^2,2);
-                %                     Qm2(iKernel) = PhiM'*cError; % According to vector anomaly code.
-                %                 end
-                
-                % Find little sm and qm (these are different for relevant vectors)
-                sm = Sm;
-                qm = Qm;
-                
-                cDenom = (alpha(relevantIndices)-Sm(relevantIndices));
-                sm(relevantIndices) = alpha(relevantIndices) .* Sm(relevantIndices) ./ cDenom;
-                qm(relevantIndices) = alpha(relevantIndices) .* Qm(relevantIndices) ./ cDenom;
-                
-                theta = qm.^2 - sm;
-                cantBeRelevent = theta < 0;
-                
-                % Addition
-                addLogLikelihoodChanges = 0.5*( theta./Sm + log(Sm ./ Qm.^2) ); % Eq (27)
-                addLogLikelihoodChanges(cantBeRelevent) = 0; % Can't add things that are disallowed by theta
-                addLogLikelihoodChanges(relevantIndices) = 0; % Can't add things already in
-                addLogLikelihoodChanges(forbidden > 0) = 0; % Can't add things that are forbidden
-                
-                % Removal
-                removeLogLikelihoodChanges = -0.5*( qm.^2./(sm + alpha) - log(1 + sm./alpha) ); % Eq (37) (I think this is wrong in the paper. The one in the paper uses Si and Qi, I got this based on si and qi (or S and Q in their code), from corrected from analyzing code from http://www.vectoranomaly.com/downloads/downloads.htm)
-                removeLogLikelihoodChanges(~relevantIndices) = 0; % Can't remove things not in
-                removeLogLikelihoodChanges(imag(removeLogLikelihoodChanges) > 0) = inf;
-                
-                % Modify
-                updatedAlpha = sm.^2 ./ theta;
-                updatedAlphaDiff = 1./updatedAlpha - 1./alpha;
-                modifyLogLikelihoodChanges = 0.5*( updatedAlphaDiff.*(Qm.^2) ./ (updatedAlphaDiff.*Sm + 1) - log(1 + Sm.*updatedAlphaDiff) );
-                
-                modifyLogLikelihoodChanges(~relevantIndices) = 0; % Can't modify things not in
-                modifyLogLikelihoodChanges(cantBeRelevent) = 0; % Can't modify things that technically shouldn't be in (they would get dropped)
-                
-                [addChange, bestAddInd] = max(addLogLikelihoodChanges);
-                [remChange, bestRemInd] = max(removeLogLikelihoodChanges);
-                [modChange, bestModInd] = max(modifyLogLikelihoodChanges);
-                
-                if iteration == 1
-                    % On the first iteration we don't allow removal
-                    [maxChangeVal, actionInd] = max([addChange, nan, modChange]);
-                else
-                    if remChange > 0 && Obj.learningSequentialFavorRemove
-                        % Removing is top priority.
-                        % If removing increases the likelihood, we have two
-                        % options, actually remove that sample or modify that
-                        % sample if that is better
-                        [maxChangeVal, actionInd] = max([nan remChange, modifyLogLikelihoodChanges(bestRemInd)]);
-                    else
-                        % Not going to remove, so we would be allowed to modify
-                        [maxChangeVal, actionInd] = max([addChange, remChange, modChange]);
-                    end
-                end
-                
-                if maxChangeVal > 1e3
-                    warning('prtClassRvm:BadKernelMatrix','Kernel matrix is poorly conditioned. Consider modifying your kernels' );
-                    break
-                end
-                
-                if maxChangeVal < Obj.learningLikelihoodIncreaseThreshold
-                    % There are no good options right now. Therefore we
-                    % should exit with the previous iteration stats.
-                    Obj.learningConverged = true;
-                    Obj.learningResults.exitReason = 'No Good Actions';
-                    Obj.learningResults.exitValue = maxChangeVal;
-                    if Obj.learningVerbose
-                        fprintf('Exiting...no necessary actions remaining, maximal change in log-likelihood %g\n',maxChangeVal);
-                    end
-                    
-                    break;
-                end
-                
-                if Obj.learningVerbose
-                    actionStrings = {sprintf('Addition: Vector %s has been added.  ', sprintf(sprintf('%%%dd',nVectorsStringLength),bestAddInd));
-                        sprintf('Removal:  Vector %s has been removed.', sprintf(sprintf('%%%dd',nVectorsStringLength), bestRemInd));
-                        sprintf('Update:   Vector %s has been updated.', sprintf(sprintf('%%%dd',nVectorsStringLength), bestModInd));};
-                    fprintf('\t Iteration %d: %s Change in log-likelihood %g.\n',iteration, actionStrings{actionInd}, maxChangeVal);
-                end
-                
-                switch actionInd
-                    case 1 % Add
-                        
-                        relevantIndices(bestAddInd) = true;
-                        selectedInds = cat(1,selectedInds,bestAddInd);
-                        
-                        alpha(bestAddInd) = updatedAlpha(bestAddInd);
-                        % Modify Mu
-                        % (Penalized IRLS will fix it soon but we need good initialization)
-                        
-                        trainedKernelCell = prtKernel.sparseKernelFactory(Obj.kernels,DataSet,bestAddInd);
-                        newPhi = prtKernel.runMultiKernel(trainedKernelCell,DataSet);
-                        %newPhi = prtKernelGrammMatrix(DataSet,trainedKernels(bestAddInd));
-                        %newPhi = newPhi./sqrt(sum(newPhi.^2));
-                        
-                        cFactor = (Obj.Sigma*(cPhi)'*(newPhi.*obsNoiseVar));
-                        Sigmaii = 1./(updatedAlpha(bestAddInd) + Sm(bestAddInd));
-                        newMu = Sigmaii*Qm(bestAddInd);
-                        
-                        updatedOldMu = mu - newMu*cFactor;
-                        sortedSelected = sort(selectedInds);
-                        newMuLocation = find(sortedSelected==bestAddInd);
-                        
-                        mu = zeros(length(mu)+1,1);
-                        mu(setdiff(1:length(mu),newMuLocation)) = updatedOldMu;
-                        mu(newMuLocation) = newMu;
-                        
-                        
-                        % Add things to forbidden list
-                        % **Why are we re-calculating newPhi here?
-                        trainedKernelCell = prtKernel.sparseKernelFactory(Obj.kernels,DataSet,bestAddInd);
-                        newPhi = prtKernel.runMultiKernel(trainedKernelCell,DataSet);
-                        % newPhi = prtKernelGrammMatrix(DataSet, trainedKernels(bestAddInd));
-                        
-                        newPhi = newPhi - mean(newPhi);
-                        newPhi = newPhi./sqrt(sum(newPhi.^2));
-                        phiCorrs = zeros(nBasis,1);
-                        for iBlock = 1:nBlocks
-                            cInds = ((iBlock-1)*Obj.learningSequentialBlockSize+1):min([iBlock*Obj.learningSequentialBlockSize nBasis]);
-                            
-                            trainedKernelCell = prtKernel.sparseKernelFactory(Obj.kernels,DataSet,cInds);
-                            cPhi = prtKernel.runMultiKernel(trainedKernelCell,DataSet);
-                            %cPhi = prtKernelGrammMatrix(DataSet, trainedKernels(cInds));
-                            
-                            cPhi = bsxfun(@minus,cPhi,mean(cPhi));
-                            cPhi = bsxfun(@rdivide,cPhi,sqrt(sum(cPhi.*cPhi))); % We have to normalize here
-                            
-                            phiCorrs(cInds) = cPhi'*newPhi;
-                        end
-                        forbidden(phiCorrs > Obj.learningCorrelationRemovalThreshold) = bestAddInd;
-                        
-                        
-                    case 2 % Remove
-                        
-                        removingInd = sort(selectedInds)==bestRemInd;
-                        
-                        mu = mu + mu(removingInd) .* Obj.Sigma(:,removingInd) ./ Obj.Sigma(removingInd,removingInd);
-                        mu(removingInd) = [];
-                        
-                        relevantIndices(bestRemInd) = false;
-                        selectedInds(selectedInds==bestRemInd) = [];
-                        alpha(bestRemInd) = inf;
-                        
-                        % Anything this guy said is forbidden is now
-                        % allowed.
-                        forbidden(forbidden == bestRemInd) = 0;
-                        
-                    case 3 % Modify
-                        modifyInd = sort(selectedInds)==bestModInd;
-                        
-                        alphaChangeInv = 1/(updatedAlpha(bestModInd) - alpha(bestModInd));
-                        kappa = 1/(Obj.Sigma(modifyInd,modifyInd) + alphaChangeInv);
-                        mu = mu - mu(modifyInd)*kappa*Obj.Sigma(:,modifyInd);
-                        
-                        alpha(bestModInd) = updatedAlpha(bestModInd);
-                end
-                
-                % At this point relevantIndices and alpha have changes.
-                % Now we re-estimate Sigma, mu, and sigma2
-                
-                trainedKernelCell = prtKernel.sparseKernelFactory(Obj.kernels,DataSet,relevantIndices);
-                cPhi = prtKernel.runMultiKernel(trainedKernelCell,DataSet);
-                
-                %cPhi = prtKernelGrammMatrix(DataSet,trainedKernels(relevantIndices));
-                %cPhi = bsxfun(@rdivide,cPhi,sqrt(sum(cPhi.^2)));
-                
-                % Laplacian approx. IRLS
-                A = diag(alpha(relevantIndices));
-                
-                if isempty(cPhi)
-                    yHat = 0.5*ones(size(y));
-                else
-                    [mu, SigmaInvChol, obsNoiseVar] = prtUtilPenalizedIrls(y,cPhi,mu,A);
-                    
-                    SigmaChol = inv(SigmaInvChol);
-                    Obj.Sigma = SigmaChol*SigmaChol';
-                    
-                    yHat = 1 ./ (1+exp(-cPhi*mu));
-                end
-                
-                % Store beta
-                Obj.beta = zeros(nBasis,1);
-                Obj.beta(relevantIndices) = mu;
-                
-                if Obj.learningPlot && DataSet.nFeatures == 2
-                    figure(101)
-                    DsSummary = DataSet.summarize;
-                    
-                    [linGrid, gridSize,xx,yy] = prtPlotUtilGenerateGrid(DsSummary.lowerBounds, DsSummary.upperBounds, Obj.PlotOptions);
-                    
-                    trainedKernelCell = prtKernel.sparseKernelFactory(Obj.kernels,DataSet,relevantIndices);
-                    cPhiPlot = prtKernel.runMultiKernel(trainedKernelCell,prtDataSetClass(linGrid));
-                    %cPhiPlot = prtKernelGrammMatrix(prtDataSetClass(linGrid),trainedKernels(relevantIndices));
-                    
-                    confMap = reshape(normcdf(cPhiPlot*Obj.beta(relevantIndices)),gridSize);
-                    imagesc(xx(1,:),yy(:,1),confMap,[0 1])
-                    colormap(Obj.PlotOptions.twoClassColorMapFunction());
-                    axis xy
-                    hold on
-                    plot(DataSet);
-                    relevantIndicesFind = find(relevantIndices);
-                    for iRel = 1:length(relevantIndicesFind)
-                        trainedKernelCell{iRel}.classifierPlot();
-                    end
-                    
-                    hold off
-                    actionStrings = {'Add','Remove','Update'};
-                    title(sprintf('%d - %s',iteration,actionStrings{actionInd}))
-                    set(gcf,'color',[1 1 1])
-                    drawnow;
-                    
-                    Obj.UserData.movieFrames(iteration) = getframe(gcf);
-                end
-                
-                % Check tolerance
-                TOL = abs(log(alpha)-logAlphaOld);
-                TOL(isnan(TOL)) = 0; % inf-inf = nan
-                if all(TOL < Obj.learningBetaConvergedTolerance) && iteration > 1
-                    Obj.learningConverged = true;
-                    Obj.learningResults.exitReason = 'Alpha Not Changing';
-                    Obj.learningResults.exitValue = TOL;
-                    if Obj.learningVerbose
-                        fprintf('Exiting...Precisions no longer changine appreciably.\n');
-                    end
-                    break;
-                end
-            end
-            
-            
-            if Obj.learningVerbose && iteration == Obj.learningMaxIterations
-                fprintf('Exiting...Convergence not reached before the maximum allowed iterations was reached.\n');
-            end
-            
-            % Make sparse represenation
-            Obj.sparseBeta = Obj.beta(relevantIndices,1);
-            Obj.sparseKernels = prtKernel.sparseKernelFactory(Obj.kernels,DataSet,relevantIndices);
         end
         
-        function Obj = trainActionSequentialInMemory(Obj, DataSet, y)
+        function verboseIterationPlot(Obj,DataSet,relevantIndices)
+            DsSummary = DataSet.summarize;
             
-            nBasisVec = prtKernel.nDimsMultiKernel(Obj.kernels,DataSet);
-            nBasis = sum(nBasisVec);
-            if Obj.learningVerbose
-                fprintf('Sequential RVM training with %d possible vectors.\n', nBasis);
+            [linGrid, gridSize,xx,yy] = prtPlotUtilGenerateGrid(DsSummary.lowerBounds, DsSummary.upperBounds, Obj.PlotOptions);
+            
+            trainedKernelCell = prtKernel.sparseKernelFactory(Obj.kernels,DataSet,relevantIndices);
+            cPhi = prtKernel.runMultiKernel(trainedKernelCell,prtDataSetClass([xx(:),yy(:)]));
+            
+            confMap = reshape(prtRvUtilNormCdf(cPhi*Obj.beta(relevantIndices)),gridSize);
+            imagesc(xx(1,:),yy(:,1),confMap,[0,1])
+            colormap(Obj.PlotOptions.twoClassColorMapFunction());
+            axis xy
+            hold on
+            plot(DataSet);
+            for iRel = 1:length(trainedKernelCell)
+                trainedKernelCell{iRel}.classifierPlot();
             end
+            hold off
             
-            % Generate the Gram Matrix only once
-            PhiM = prtKernel.evaluateMultiKernelGramm(Obj.kernels,DataSet,DataSet);
+            set(gcf,'color',[1 1 1]);
+            drawnow;
             
-            %PhiM = prtKernelGrammMatrix(DataSet, trainedKernels);
-            PhiMNorm = bsxfun(@minus,PhiM,mean(PhiM));
-            stds = std(PhiM,0,1);
-            stds(stds==0) = 1; % Bias would turn in to nans
-            PhiMNorm = bsxfun(@rdivide,PhiMNorm,stds);
-            
-            % The sometimes we want y [-1 1] but mostly not
-            ym11 = y;
-            y(y ==-1) = 0;
-            
-            Obj.beta = zeros(nBasis,1);
-            
-            relevantIndices = false(nBasis,1); % Nobody!
-            alpha = inf(nBasis,1); % Nobody!
-            forbidden = zeros(nBasis,1); % Will hold who is forbidding you from joining
-            
-            % Find first kernel
-            kernelCorrs = abs(bsxfun(@rdivide,PhiM,sqrt(sum(PhiM.^2,1)))'*ym11);
-            
-            [maxVal, maxInd] = max(kernelCorrs);
-            
-            % Make this ind relevant
-            relevantIndices(maxInd) = true;
-            selectedInds = maxInd;
-            % Start the actual Process
-            
-            if Obj.learningVerbose
-                %fprintf('Sequential RVM training with %d possible vectors.\n', length(trainedKernels));
-                fprintf('\t Iteration 0: Intialized with vector %d.\n', maxInd);
-                
-                nVectorsStringLength = ceil(log10(nBasis))+1;
-            end
-            
-            % Add things to forbidden list
-            trainedKernelCell = prtKernel.sparseKernelFactory(Obj.kernels,DataSet,maxInd);
-            newPhi = prtKernel.runMultiKernel(trainedKernelCell,DataSet);
-            %newPhi = prtKernelGrammMatrix(DataSet, trainedKernels(maxInd));
-            newPhi = newPhi - mean(newPhi);
-            stds = sqrt(sum(newPhi.^2));
-            stds(stds==0) = 1; % Bias would turn in to nans
-            newPhi = newPhi./stds;
-            
-            phiCorrs = PhiMNorm'*newPhi;
-            
-            forbidden(phiCorrs > Obj.learningCorrelationRemovalThreshold) = maxInd;
-            
-            
-            for iteration = 1:Obj.learningMaxIterations
-                
-                % Store old log Alpha
-                logAlphaOld = log(alpha);
-                
-                if iteration == 1
-                    % Initial estimates
-                    % Estimate Sigma, mu etc.
-                    
-                    % Make up a mu (least squares?) and an alpha (made up)
-                    cPhi = PhiM(:,relevantIndices);
-                    %cPhi = bsxfun(@rdivide,cPhi,sqrt(sum(cPhi.^2)));
-                    
-                    logOut = (ym11*0.9+1)/2;
-                    mu = cPhi \ log(logOut./(1-logOut));
-                    %mu = cPhi \ y;
-                    alpha(relevantIndices) = 1./mu.^2;
-                    
-                    % Laplacian approx. IRLS
-                    A = diag(alpha(relevantIndices));
-                    
-                    [mu, SigmaInvChol, obsNoiseVar] = prtUtilPenalizedIrls(y,cPhi,mu,A);
-                    
-                    SigmaChol = inv(SigmaInvChol);
-                    Obj.Sigma = SigmaChol*SigmaChol';
-                    
-                    yHat = 1 ./ (1+exp(-cPhi*mu));
-                end
-                
-                % Eval additions and subtractions
-                cError = y-yHat;
-                
-                cPhiProduct = bsxfun(@times,cPhi,obsNoiseVar);
-                Sm = (obsNoiseVar'*(PhiM.^2))' - sum((PhiM'*cPhiProduct*SigmaChol).^2,2);
-                Qm = PhiM'*cError;
-                
-                % Find little sm and qm (these are different for relevant vectors)
-                sm = Sm;
-                qm = Qm;
-                
-                cDenom = (alpha(relevantIndices)-Sm(relevantIndices));
-                sm(relevantIndices) = alpha(relevantIndices) .* Sm(relevantIndices) ./ cDenom;
-                qm(relevantIndices) = alpha(relevantIndices) .* Qm(relevantIndices) ./ cDenom;
-                
-                theta = qm.^2 - sm;
-                cantBeRelevent = theta < 0;
-                
-                % Addition
-                addLogLikelihoodChanges = 0.5*( theta./Sm + log(Sm ./ Qm.^2) ); % Eq (27)
-                addLogLikelihoodChanges(cantBeRelevent) = 0; % Can't add things that are disallowed by theta
-                addLogLikelihoodChanges(relevantIndices) = 0; % Can't add things already in
-                addLogLikelihoodChanges(forbidden > 0) = 0; % Can't add things that are forbidden
-                
-                % Removal
-                removeLogLikelihoodChanges = -0.5*( qm.^2./(sm + alpha) - log(1 + sm./alpha) ); % Eq (37) (I think this is wrong in the paper. The one in the paper uses Si and Qi, I got this based on si and qi (or S and Q in their code), from corrected from analyzing code from http://www.vectoranomaly.com/downloads/downloads.htm)
-                removeLogLikelihoodChanges(~relevantIndices) = 0; % Can't remove things not in
-                
-                % Modify
-                updatedAlpha = sm.^2 ./ theta;
-                updatedAlphaDiff = 1./updatedAlpha - 1./alpha;
-                modifyLogLikelihoodChanges = 0.5*( updatedAlphaDiff.*(Qm.^2) ./ (updatedAlphaDiff.*Sm + 1) - log(1 + Sm.*updatedAlphaDiff) );
-                modifyLogLikelihoodChanges(~relevantIndices) = 0; % Can't modify things not in
-                modifyLogLikelihoodChanges(cantBeRelevent) = 0; % Can't modify things that technically shouldn't be in (they would get dropped)
-                
-                [addChange, bestAddInd] = max(addLogLikelihoodChanges);
-                [remChange, bestRemInd] = max(removeLogLikelihoodChanges);
-                [modChange, bestModInd] = max(modifyLogLikelihoodChanges);
-                
-                if iteration == 1
-                    % On the first iteration we don't allow removal
-                    [maxChangeVal, actionInd] = max([addChange, nan, modChange]);
-                else
-                    if remChange > 0 && Obj.learningSequentialFavorRemove
-                        % Removing is top priority.
-                        % If removing increases the likelihood, we have two
-                        % options, actually remove that sample or modify that
-                        % sample if that is better
-                        [maxChangeVal, actionInd] = max([nan remChange, modifyLogLikelihoodChanges(bestRemInd)]);
-                        
-                    else
-                        % Not going to remove, so we would be allowed to modify
-                        [maxChangeVal, actionInd] = max([addChange, remChange, modChange]);
-                    end
-                end
-                
-                if maxChangeVal < Obj.learningLikelihoodIncreaseThreshold
-                    % There are no good options right now. Therefore we
-                    % should exit with the previous iteration stats.
-                    Obj.learningConverged = true;
-                    Obj.learningResults.exitReason = 'No Good Actions';
-                    Obj.learningResults.exitValue = maxChangeVal;
-                    if Obj.learningVerbose
-                        fprintf('Exiting...no necessary actions remaining, maximal change in log-likelihood %g\n',maxChangeVal);
-                    end
-                    
-                    break;
-                end
-                
-                if maxChangeVal > 1e3
-                    warning('prtClassRvm:BadKernelMatrix','Kernel matrix is poorly conditioned. Consider modifying your kernels' );
-                end
-                
-                if Obj.learningVerbose
-                    actionStrings = {sprintf('Addition: Vector %s has been added.  ', sprintf(sprintf('%%%dd',nVectorsStringLength),bestAddInd));
-                        sprintf('Removal:  Vector %s has been removed.', sprintf(sprintf('%%%dd',nVectorsStringLength), bestRemInd));
-                        sprintf('Update:   Vector %s has been updated.', sprintf(sprintf('%%%dd',nVectorsStringLength), bestModInd));};
-                    fprintf('\t Iteration %d: %s Change in log-likelihood %g.\n',iteration, actionStrings{actionInd}, maxChangeVal);
-                end
-                
-                
-                switch actionInd
-                    case 1 % Add
-                        
-                        relevantIndices(bestAddInd) = true;
-                        selectedInds = cat(1,selectedInds,bestAddInd);
-                        
-                        alpha(bestAddInd) = updatedAlpha(bestAddInd);
-                        % Modify Mu
-                        % (Penalized IRLS will fix it soon but we need good initialization)
-                        
-                        trainedKernelCell = prtKernel.sparseKernelFactory(Obj.kernels,DataSet,bestAddInd);
-                        newPhi = prtKernel.runMultiKernel(trainedKernelCell,DataSet);
-                        %newPhi = prtKernelGrammMatrix(DataSet,trainedKernels(bestAddInd));
-                        %newPhi = newPhi./sqrt(sum(newPhi.^2));
-                        
-                        cFactor = (Obj.Sigma*(cPhi)'*(newPhi.*obsNoiseVar));
-                        Sigmaii = 1./(updatedAlpha(bestAddInd) + Sm(bestAddInd));
-                        newMu = Sigmaii*Qm(bestAddInd);
-                        
-                        updatedOldMu = mu - newMu*cFactor;
-                        sortedSelected = sort(selectedInds);
-                        newMuLocation = find(sortedSelected==bestAddInd);
-                        
-                        mu = zeros(length(mu)+1,1);
-                        mu(setdiff(1:length(mu),newMuLocation)) = updatedOldMu;
-                        mu(newMuLocation) = newMu;
-                        
-                        
-                        % Add things to forbidden list
-                        % *** Didn't we just do this?
-                        trainedKernelCell = prtKernel.sparseKernelFactory(Obj.kernels,DataSet,bestAddInd);
-                        newPhi = prtKernel.runMultiKernel(trainedKernelCell,DataSet);
-                        
-                        %newPhi = prtKernelGrammMatrix(DataSet, trainedKernels(bestAddInd));
-                        newPhi = newPhi - mean(newPhi);
-                        stds = sqrt(sum(newPhi.^2));
-                        stds(stds==0) = 1; % Bias would turn in to nans
-                        newPhi = newPhi./stds;
-                        
-                        phiCorrs = PhiMNorm'*newPhi;
-                        forbidden(phiCorrs > Obj.learningCorrelationRemovalThreshold) = bestAddInd;
-                        
-                        
-                    case 2 % Remove
-                        
-                        removingInd = sort(selectedInds)==bestRemInd;
-                        
-                        mu = mu + mu(removingInd) .* Obj.Sigma(:,removingInd) ./ Obj.Sigma(removingInd,removingInd);
-                        mu(removingInd) = [];
-                        
-                        relevantIndices(bestRemInd) = false;
-                        selectedInds(selectedInds==bestRemInd) = [];
-                        alpha(bestRemInd) = inf;
-                        
-                        % Anything this guy said is forbidden is now
-                        % allowed.
-                        forbidden(forbidden == bestRemInd) = 0;
-                        
-                    case 3 % Modify
-                        modifyInd = sort(selectedInds)==bestModInd;
-                        
-                        alphaChangeInv = 1/(updatedAlpha(bestModInd) - alpha(bestModInd));
-                        kappa = 1/(Obj.Sigma(modifyInd,modifyInd) + alphaChangeInv);
-                        mu = mu - mu(modifyInd)*kappa*Obj.Sigma(:,modifyInd);
-                        
-                        alpha(bestModInd) = updatedAlpha(bestModInd);
-                end
-                
-                % At this point relevantIndices and alpha have changes.
-                % Now we re-estimate Sigma, mu, and sigma2
-                cPhi = PhiM(:,relevantIndices);
-                %cPhi = bsxfun(@rdivide,cPhi,sqrt(sum(cPhi.^2)));
-                
-                % Laplacian approx. IRLS
-                A = diag(alpha(relevantIndices));
-                
-                [mu, SigmaInvChol, obsNoiseVar] = prtUtilPenalizedIrls(y,cPhi,mu,A);
-                
-                SigmaChol = inv(SigmaInvChol);
-                Obj.Sigma = SigmaChol*SigmaChol';
-                
-                yHat = 1 ./ (1+exp(-cPhi*mu));
-                
-                % Store beta
-                Obj.beta = zeros(nBasis,1);
-                Obj.beta(relevantIndices) = mu;
-                
-                if Obj.learningPlot && DataSet.nFeatures == 2
-                    figure(101)
-                    DsSummary = DataSet.summarize;
-                    
-                    [linGrid, gridSize,xx,yy] = prtPlotUtilGenerateGrid(DsSummary.lowerBounds, DsSummary.upperBounds, Obj.PlotOptions);
-                    trainedKernelCell = prtKernel.sparseKernelFactory(Obj.kernels,DataSet,relevantIndices);
-                    cPhiPlot = prtKernel.runMultiKernel(trainedKernelCell,prtDataSetClass(linGrid));
-                    %cPhiPlot = prtKernelGrammMatrix(prtDataSetClass(linGrid),trainedKernels(relevantIndices));
-                    
-                    confMap = reshape(normcdf(cPhiPlot*Obj.beta(relevantIndices)),gridSize);
-                    imagesc(xx(1,:),yy(:,1),confMap,[0 1])
-                    colormap(Obj.PlotOptions.twoClassColorMapFunction());
-                    axis xy
-                    hold on
-                    plot(DataSet);
-                    relevantIndicesFind = find(relevantIndices);
-                    for iRel = 1:length(relevantIndicesFind)
-                        trainedKernelCell{iRel}.classifierPlot();
-                    end
-                    
-                    hold off
-                    actionStrings = {'Add','Remove','Update'};
-                    title(sprintf('%d - %s',iteration,actionStrings{actionInd}))
-                    set(gcf,'color',[1 1 1])
-                    drawnow;
-                    
-                    Obj.UserData.movieFrames(iteration) = getframe(gcf);
-                end
-                
-                % Check tolerance
-                TOL = abs(log(alpha)-logAlphaOld);
-                TOL(isnan(TOL)) = 0; % inf-inf = nan
-                if all(TOL < Obj.learningBetaConvergedTolerance) && iteration > 1
-                    Obj.learningConverged = true;
-                    Obj.learningResults.exitReason = 'Alpha Not Changing';
-                    Obj.learningResults.exitValue = TOL;
-                    if Obj.learningVerbose
-                        fprintf('Exiting...Precisions no longer changing appreciably.\n');
-                    end
-                    break;
-                end
-            end
-            
-            
-            if Obj.learningVerbose && iteration == Obj.learningMaxIterations
-                fprintf('Exiting...Convergence not reached before the maximum allowed iterations was reached.\n');
-            end
-            
-            % Make sparse represenation
-            Obj.sparseBeta = Obj.beta(relevantIndices,1);
-            Obj.sparseKernels = prtKernel.sparseKernelFactory(Obj.kernels,DataSet,relevantIndices);
+            % Obj.UserData.movieFrames(iteration) = getframe(gcf);
         end
+        
     end
 end

@@ -182,7 +182,7 @@ classdef prtRegressRvm < prtRegress
         function Obj = trainActionJefferysPrior(Obj, DataSet, y)
             %Obj = trainActionJefferysPrior(Obj, DataSet, y)
             
-            gramm = prtKernel.evaluateMultiKernelGramm(Obj.kernels,DataSet,DataSet);
+            gramm = prtKernel.evaluateMultiKernelGram(Obj.kernels,DataSet,DataSet);
             nBasis = size(gramm,2);
             
             Obj.beta = zeros(nBasis,1);

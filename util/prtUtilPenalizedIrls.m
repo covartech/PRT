@@ -3,8 +3,8 @@ function [mu, U, w, likelihood] = prtUtilPenalizedIrls(y,cPhi,mu,A)
 
 nMaxIterations = 100; % Max outer iterations
 gThreshold = 1e-6; % Termination criterion
-nMaxStepSizeIterations = 8; % Per outer iteration how many steps to take
-                            % Steps decrease by a factor of 1/2 each time
+nMaxStepSizeIterations = 20; % Per outer iteration how many steps to take
+                             % Steps decrease by a factor of 1/2 each time
                             
 % Get initial error just so we know where we started
 [dataNegativeLogLikelihood, yHat] = modelError(y,cPhi,mu);
@@ -12,7 +12,7 @@ weightNegativeLogLikelihood = (diag(A)'*(mu.^2))/2; % mu'*A*mu
 oldTotalNegativeLogLikelihood = dataNegativeLogLikelihood + weightNegativeLogLikelihood;
 
 totalNegativeLogLikelihood = oldTotalNegativeLogLikelihood;
-
+               
 for iteration = 1:nMaxIterations
     % Calculate find direction to go in
     
@@ -26,6 +26,7 @@ for iteration = 1:nMaxIterations
     % Compute the Hessian
     cPhiBeta = bsxfun(@times,cPhi,w);
     H = (cPhiBeta'*cPhi + A);
+    
     
     % Invert Hessian
     [U, pdErr] = chol(H);
@@ -61,7 +62,7 @@ for iteration = 1:nMaxIterations
     end
     
     if stepIteration == nMaxStepSizeIterations
-        % Went to the max on the inner loop means we around numerical
+        % Went to the max on the inner loop means we are around numerical
         % precision. So exit
         %warning('bad exit : %0.4f',totalNegativeLogLikelihood-oldTotalNegativeLogLikelihood)
         totalNegativeLogLikelihood = oldTotalNegativeLogLikelihood;
@@ -72,6 +73,7 @@ for iteration = 1:nMaxIterations
         oldTotalNegativeLogLikelihood = totalNegativeLogLikelihood;
     end
 end
+
 
 likelihood = -totalNegativeLogLikelihood;
 
@@ -84,3 +86,4 @@ yHat = 1 ./ (1+exp(-cPhi*mu));
 yHat0 = (yHat==0);
 yHat1 = (yHat==1);
 negativeLogLikelihood = -(y(~yHat0)'*log(yHat(~yHat0)) + (1-y(~yHat1))'*log(1-yHat(~yHat1)));
+

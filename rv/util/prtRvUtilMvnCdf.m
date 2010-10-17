@@ -11,6 +11,18 @@ function Y = prtRvUtilMvnCdf(X,mu,Sigma)
 % Outputs:
 %   Y - The value of the log of the pdf at the specified X values
 
+if nargin < 2 || isempty(mu)
+    mu = 0;
+end
+
+if nargin < 3 || isempty(Sigma)
+    Sigma = 1;
+end
+
+
+if numel(mu) > 1 || numel(Sigma) > 1
+    error('prt:prtRvUtilMvnCdf','prtRvUtilMvnCdf only functions for 1D data.');
+end
 
 % Change this to not use the stats toolbox at somepoint
-Y = mvncdf(X,mu,Sigma);
+Y = prtRvUtilNormCdf(X,mu,Sigma);

@@ -11,6 +11,14 @@ function Y = prtRvUtilMvnLogPdf(X,mu,Sigma)
 % Outputs:
 %   Y - The value of the log of the pdf at the specified X values
 
+if nargin < 2 || isempty(mu)
+    mu = zeros(1,size(X,2));
+end
+
+if nargin < 3 || isempty(Sigma)
+    Sigma = eye(size(X,2));
+end
+
 % Make sure Sigma is a valid covariance matrix
 [R,err] = cholcov(Sigma,0);
 if err ~= 0
