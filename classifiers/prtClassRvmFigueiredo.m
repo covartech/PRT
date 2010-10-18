@@ -93,6 +93,11 @@ classdef prtClassRvmFigueiredo < prtClassRvm
                 
                 if TOL < Obj.learningConvergedTolerance
                     Obj.learningConverged = true;
+                    
+                    if Obj.learningVerbose
+                        fprintf('Convergence reached. Exiting...\n\n');
+                    end
+                    
                     break;
                 end
             end

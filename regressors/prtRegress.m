@@ -28,7 +28,6 @@ classdef prtRegress < prtAction %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             assert(Obj.DataSetSummary.nFeatures < 2, 'nFeatures in the training dataset must be 1');
             
             [OutputDataSet, linGrid] = runRegressorOnGrid(Obj);
-            iPlot = 1;
             
             colors = Obj.PlotOptions.colorsFunction(Obj.DataSetSummary.nTargetDimensions);
             lineWidth = Obj.PlotOptions.lineWidth;

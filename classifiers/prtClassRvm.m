@@ -222,7 +222,7 @@ classdef prtClassRvm < prtClass
                     Obj.learningConverged = true;
                     
                     if Obj.learningVerbose
-                        fprintf('Convergence reached. Exiting...\n');
+                        fprintf('Convergence reached. Exiting...\n\n');
                     end
                     
                     break;
@@ -235,7 +235,7 @@ classdef prtClassRvm < prtClass
             end
             
             if Obj.learningVerbose && iteration == Obj.learningMaxIterations
-                fprintf('Exiting...Convergence not reached before the maximum allowed iterations was reached.\n');
+                fprintf('Exiting...Convergence not reached before the maximum allowed iterations was reached.\n\n');
             end
             
             % Make sparse represenation

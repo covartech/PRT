@@ -9,9 +9,14 @@ zz = [];
 
 nDims = length(plotMins);
 
-if isa(nSamplesPerDim,'prtClassPlotOpt')
-    nSamplesPerDim = nSamplesPerDim.nSamplesPerDim;
+if ~isnumeric(nSamplesPerDim)
+    try
+        nSamplesPerDim = nSamplesPerDim.nSamplesPerDim;
+    catch  %#ok<CTCH>
+        error('prt:prtPlotUtilGenerateGrid','Invalid nSamplesPerDim input');
+    end
 end
+
 switch nDims
     case 1
         xx = linspace(plotMins(1),plotMaxs(1),nSamplesPerDim(nDims));

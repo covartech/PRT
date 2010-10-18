@@ -1,4 +1,4 @@
-classdef prtClassRvmSequential < prtClassRvm
+classdef prtClassRvmSequential < prtRegressRvm
     % prtClassRvmSequential  Relevance vector machin classifier using
     % sequential training
     %
@@ -186,15 +186,6 @@ classdef prtClassRvmSequential < prtClassRvm
                     Qm(cInds) = PhiM.'*cError;
                 end
                 
-                %                 % One at a time method
-                %                 for iKernel = 1:nBasis
-                %                     PhiM = prtKernelGrammMatrix(DataSet,trainedKernels(iKernel));
-                %                     cPhiMProduct = bsxfun(@times,PhiM,obsNoiseVar);
-                %
-                %                     Sm2(iKernel) = cPhiMProduct'*PhiM - sum((PhiM'*cPhiProduct*SigmaChol).^2,2);
-                %                     Qm2(iKernel) = PhiM'*cError; % According to vector anomaly code.
-                %                 end
-                
                 % Find little sm and qm (these are different for relevant vectors)
                 sm = Sm;
                 qm = Qm;
@@ -257,7 +248,7 @@ classdef prtClassRvmSequential < prtClassRvm
                     Obj.learningResults.exitReason = 'No Good Actions';
                     Obj.learningResults.exitValue = maxChangeVal;
                     if Obj.learningVerbose
-                        fprintf('Convergence criterion met, no necessary actions remaining, maximal change in log-likelihood %g\n',maxChangeVal);
+                        fprintf('Convergence criterion met, no necessary actions remaining, maximal change in log-likelihood %g\n\n',maxChangeVal);
                     end
                     
                     break;
@@ -388,14 +379,14 @@ classdef prtClassRvmSequential < prtClassRvm
                     Obj.learningResults.exitReason = 'Alpha Not Changing';
                     Obj.learningResults.exitValue = TOL;
                     if Obj.learningVerbose
-                        fprintf('Exiting...Precisions no longer changing appreciably.\n');
+                        fprintf('Exiting...Precisions no longer changing appreciably.\n\n');
                     end
                     break;
                 end
             end
             
             if Obj.learningVerbose && iteration == Obj.learningMaxIterations
-                fprintf('Exiting...Convergence not reached before the maximum allowed iterations was reached.\n');
+                fprintf('Exiting...Convergence not reached before the maximum allowed iterations was reached.\n\n');
             end
             
             % Make sparse represenation

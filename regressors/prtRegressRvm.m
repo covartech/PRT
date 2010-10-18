@@ -13,14 +13,12 @@ classdef prtRegressRvm < prtRegress
     %   SetAccess = public:
     %    kernels            - A cell array of prtKernel objects specifying
     %                         the kernels to use
-    %    algorithm          - Allowable algorithms are 'JeffreysPrior' 
-    %                         or 'Sequential'
-    %    LearningPlot       - Flag indicating whether or not to plot during
+    %    learningPlot       - Flag indicating whether or not to plot during
     %                         training
     %
     %   SetAccess = private/protected:
-    %    LearningConverged  - Flag indicating if the training converged
-    %    LearningResults    - Struct with information about the convergence
+    %    learningConverged  - Flag indicating if the training converged
+    %    learningResults    - Struct with information about the convergence
     %    beta               - The weights on each of the kernel elements;
     %                         learned during training
     %    Sigma              - The learned covariance
@@ -65,60 +63,32 @@ classdef prtRegressRvm < prtRegress
     
     properties
         kernels = {prtKernelDc, prtKernelRbfNdimensionScale};
-        algorithm = 'JefferysPrior';   %Allowable algorithms are 'JeffreysPrior' or 'Sequential'
                 
-        LearningPlot = false;   % Whether or not to plot during training
+        learningPlot = false;   % Whether or not to plot during training
+        learningVerbose = false;   % Whether or not to plot during training
     end
     
     properties (Hidden = true)
-        LearningMaxIterations = 1000;  % Maximum number of iteratoins
-        LearningBetaConvergedTolerance = 1e-6;
-        LearningBetaRelevantTolerance = 1e-3;
-        LearningLikelihoodIncreaseThreshold = 1e-2;
-        
-        sigma2 = [];    % Estimated in training
+        learningMaxIterations = 1000;  % Maximum number of iteratoins
+        learningConvergedTolerance = 1e-6;
+        learningRelevantTolerance = 1e-3;
     end
-    properties (SetAccess = 'private',GetAccess = 'public')
-        LearningResults % Struct with information about the convergence
-        
-        LearningConverged = [];% Whether or not the training converged
+    properties (SetAccess = 'protected',GetAccess = 'public')
+        learningConverged = [];% Whether or not the training converged
         
         beta = [];      % Estimated in training
         Sigma = [];     % Estimated in training
+        sigma2 = [];    % Estimated in training
         
         sparseBeta = [];% Estimated in training
         sparseKernels = {};% Estimated in training 
     end
     methods
-        
          % Allow for string, value pairs
         function Obj = prtRegressRvm(varargin)
            
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
         end
-        
-        function Obj = set.algorithm(Obj,newAlgo)
-            % ALGORITHM  Set the RVM algorithm.
-            %
-            % REGRESS = REGRESS.algorithm('JefferysPrior') sets the
-            % algorithm of the REGRESS object to the Jefferys Prior
-            % algorithm
-            %
-            % REGRESS = REGRESS.algorithm('Sequential') sets the
-            % algorithm of the REGRESS object to the Sequential
-            % algorithm
-            possibleAlgorithms = {'Jefferys', 'Sequential'};
-            
-            possibleAlgorithmsStr = sprintf('%s, ',possibleAlgorithms{:});
-            possibleAlgorithmsStr = possibleAlgorithmsStr(1:end-2);
-            
-            errorMessage = sprintf('Invalid algorithm. algorithm must be one of the following %s.',possibleAlgorithmsStr);
-            assert(ischar(newAlgo),errorMessage);
-            assert(ismember(newAlgo,possibleAlgorithms),errorMessage);
-            
-            Obj.algorithm = newAlgo;
-        end
-        
     end
     
     methods (Access = protected, Hidden = true)
@@ -138,52 +108,12 @@ classdef prtRegressRvm < prtRegress
             
             y = DataSet.getTargets(:,1);
             
-            switch Obj.algorithm
-                case 'JefferysPrior'
-                    Obj = trainActionJefferysPrior(Obj, DataSet, y);
-                case 'Sequential'
-                    Obj = trainActionSequential(Obj, DataSet, y);
-            end
-            
-            
-            % Very bad training
-            if isempty(Obj.sparseBeta)
-                warning('prt:prtClassRvm:NoRelevantFeatures','No relevant features were found during training.');
-            end
-            
-            % Reset warning
-            warning(warningState);
-            
-        end
-        
-        function DataSetOut = runAction(Obj,DataSet)
-            
-            if isempty(Obj.sparseBeta)
-                DataSetOut = DataSet.setObservations(nan(DataSet.nObservations,DataSet.nFeatures));
-                return
-            end
-            
-            memChunkSize = 1000; % Should this be moved somewhere?
-            n = DataSet.nObservations;
-            
-            DataSetOut = prtDataSetRegress(zeros(n,1));
-            for i = 1:memChunkSize:n;
-                cI = i:min(i+memChunkSize,n);
-                cDataSet = prtDataSetRegress(DataSet.getObservations(cI,:));
-                %gramm = prtKernelGrammMatrix(cDataSet,Obj.sparseKernels);
-                gramm = prtKernel.runMultiKernel(Obj.sparseKernels,cDataSet);
-                
-                DataSetOut = DataSetOut.setObservations(gramm*Obj.sparseBeta, cI);
-            end
-        end
-    end
-    
-    methods (Access=private)
-        function Obj = trainActionJefferysPrior(Obj, DataSet, y)
-            %Obj = trainActionJefferysPrior(Obj, DataSet, y)
-            
             gramm = prtKernel.evaluateMultiKernelGram(Obj.kernels,DataSet,DataSet);
             nBasis = size(gramm,2);
+            
+            if Obj.learningVerbose
+                fprintf('RVM training with %d possible vectors.\n', nBasis);
+            end
             
             Obj.beta = zeros(nBasis,1);
             
@@ -191,9 +121,9 @@ classdef prtRegressRvm < prtRegress
             
             alpha = ones(nBasis,1); % Initialize
             
-            Obj.sigma2 = var(y); % A descent guess
+            Obj.sigma2 = var(y); % A descent guess to start with
             
-            for iteration = 1:Obj.LearningMaxIterations
+            for iteration = 1:Obj.learningMaxIterations
                 % Given currenet relevant stuff find the weight mean and
                 % covariance
                 cPhi = gramm(:,relevantIndices);
@@ -220,50 +150,126 @@ classdef prtRegressRvm < prtRegress
                 Obj.beta = zeros(nBasis,1);
                 Obj.beta(relevantIndices) = mu;
                 
+                
                 %check tolerance for basis removal
                 TOL = abs(log(alpha(relevantIndices))-logAlphaOld);
-                if TOL < Obj.LearningBetaConvergedTolerance
-                    Obj.LearningConverged = true;
+                TOL(isnan(TOL)) = 0; % inf-inf = nan
+                
+                if Obj.learningVerbose
+                    fprintf('\t Iteration %d: %d RV''s, Convergence tolerance: %g \n',iteration, sum(relevantIndices), max(TOL));
+                end
+                
+                if all(TOL < Obj.learningConvergedTolerance) && iteration > 1
+                    Obj.learningConverged = true;
+                    
+                    if Obj.learningVerbose
+                        fprintf('Convergence reached. Exiting...\n\n');
+                    end
+                    
                     break;
                 end
                 % We didn't break so we can contiue on
-                
-                if Obj.LearningPlot
-                    subplot(1,2,1)
-                    alphaPlot = log(alpha(2:end));
-                    alphaPlot(~relevantIndices(2:end)) = nan;
-                    
-                    stem(DataSet.getObservations,alphaPlot);
-                    ylabel('Log Weight Precision')
-                    ylim([0 10]);
-                end
-                
                 % Select relevant stuff
-                relevantIndices = alpha < 1./Obj.LearningBetaRelevantTolerance;
+                newRelevantIndices = alpha < 1./Obj.learningRelevantTolerance;
                 
-                if Obj.LearningPlot
-                    subplot(1,2,2)
-                    [sortedObs,sortingInds] = sort(DataSet.getObservations());
-                    
-                    plot(sortedObs,yHat(sortingInds));
-                    hold on
-                    plot(DataSet.getObservations(),y,'.k')
-                    % Here we assumed we have a bias;
-                    plot(DataSet.getObservations(relevantIndices(2:end)),y(relevantIndices(2:end)),'ro')
-                    hold off
-                    prtUtilSubplotTitle(sprintf('Iteration %d',iteration));
-                    set(gcf,'color',[1 1 1])
-                    drawnow;
-                    
-                    Obj.UserData.movieFrames(iteration) = getframe(gcf);
+                if ~mod(iteration,Obj.learningPlot)
+                    if DataSet.nFeatures == 1
+                        Obj.verboseIterationPlot(DataSet,relevantIndices);
+                    elseif iteration == 1
+                        warning('prt:prtRegressRvm','Learning iteration plot can only be produced for training Datasets with 1 feature.');
+                    end
                 end
                 
+                relevantIndices = newRelevantIndices;
+            end
+            
+            if Obj.learningVerbose && iteration == Obj.learningMaxIterations
+                fprintf('Exiting...Convergence not reached before the maximum allowed iterations was reached.\n\n');
             end
             
             % Make sparse represenation
             Obj.sparseBeta = Obj.beta(relevantIndices,1);
-            %Obj.sparseKernels = trainedKernels(relevantIndices);
             Obj.sparseKernels = prtKernel.sparseKernelFactory(Obj.kernels,DataSet,relevantIndices);
+            
+            
+            % Very bad training
+            if isempty(Obj.sparseBeta)
+                warning('prt:prtClassRvm:NoRelevantFeatures','No relevant features were found during training.');
+            end
+            
+            % Reset warning
+            warning(warningState);
+            
+        end
+        
+        function DataSetOut = runAction(Obj,DataSet)
+            
+            if isempty(Obj.sparseBeta)
+                DataSetOut = DataSet.setObservations(nan(DataSet.nObservations,DataSet.nFeatures));
+                return
+            end
+            
+            memChunkSize = 1000; % Should this be moved somewhere?
+            n = DataSet.nObservations;
+            
+            DataSetOut = prtDataSetRegress(zeros(n,1));
+            for i = 1:memChunkSize:n;
+                cI = i:min(i+memChunkSize,n);
+                cDataSet = prtDataSetRegress(DataSet.getObservations(cI,:));
+                gramm = prtKernel.runMultiKernel(Obj.sparseKernels,cDataSet);
+                
+                DataSetOut = DataSetOut.setObservations(gramm*Obj.sparseBeta, cI);
+            end
+        end
+    end
+    
+    methods
+        function varargout = plot(Obj)
+            % plot - Plot output confidence of the prtRegressRvm object
+            %
+            %   CLASS.plot plots the output confidence of the prtClassRvm
+            %   object. The dimensionality of the dataset must be 3 or
+            %   less.
+            
+            HandleStructure = plot@prtRegress(Obj);
+            
+            holdState = get(gca,'nextPlot');
+            
+            % Plot the kernels
+            hold on
+            for iKernel = 1:length(Obj.sparseKernels)
+                Obj.sparseKernels{iKernel}.classifierPlot();
+            end
+            set(gca, 'nextPlot', holdState);
+            
+            varargout = {};
+            if nargout > 0
+                varargout = {HandleStructure};
+            end
+        end
+    end
+    
+    methods (Access=protected)
+        function Obj = verboseIterationPlot(Obj,DataSet,relevantIndices)
+            DsSummary = DataSet.summarize;
+            
+            [linGrid, gridSize] = prtPlotUtilGenerateGrid(DsSummary.lowerBounds, DsSummary.upperBounds, Obj.PlotOptions);
+            
+            trainedKernelCell = prtKernel.sparseKernelFactory(Obj.kernels,DataSet,relevantIndices);
+            cPhi = prtKernel.runMultiKernel(trainedKernelCell,prtDataSetClass(linGrid));
+            
+            yHat = reshape(cPhi*Obj.beta(relevantIndices),gridSize);
+            
+            colors = Obj.PlotOptions.colorsFunction(Obj.DataSetSummary.nTargetDimensions);
+            lineWidth = Obj.PlotOptions.lineWidth;
+            plot(linGrid,yHat,'color',colors(1,:),'lineWidth',lineWidth);
+            hold on
+            plot(DataSet);
+            for iRel = 1:length(trainedKernelCell)
+                trainedKernelCell{iRel}.classifierPlot();
+            end
+            hold off
+            drawnow;
         end
         
         function Obj = trainActionSequential(Obj, DataSet, y)
@@ -295,7 +301,7 @@ classdef prtRegressRvm < prtRegress
             relevantIndices(maxInd) = true;
             selectedInds = maxInd;
             % Start the actual Process
-            for iteration = 1:Obj.LearningMaxIterations
+            for iteration = 1:Obj.learningMaxIterations
                 
                 % Store old log Alpha
                 logAlphaOld = log(alpha);
@@ -393,12 +399,12 @@ classdef prtRegressRvm < prtRegress
                     end
                 end
                 
-                if maxChangeVal < Obj.LearningLikelihoodIncreaseThreshold
+                if maxChangeVal < Obj.learningLikelihoodIncreaseThreshold
                     % There are no good options right now. Therefore we
                     % should exit with the previous iteration stats.
-                    Obj.LearningConverged = true;
-                    Obj.LearningResults.exitReason = 'No Good Actions';
-                    Obj.LearningResults.exitValue = maxChangeVal;
+                    Obj.learningConverged = true;
+                    Obj.learningResults.exitReason = 'No Good Actions';
+                    Obj.learningResults.exitValue = maxChangeVal;
                     break;
                 end
                 
@@ -418,7 +424,7 @@ classdef prtRegressRvm < prtRegress
                 end
                 
                 
-                if Obj.LearningPlot
+                if Obj.learningPlot
                     subplot(1,2,1);
                     
                     stem(DataSet.getObservations(~isnan(addLogLikelihoodChanges(2:end))), addLogLikelihoodChanges([false; ~isnan(addLogLikelihoodChanges(2:end))]),'b')
@@ -457,7 +463,7 @@ classdef prtRegressRvm < prtRegress
                 Obj.beta = zeros(nBasis,1);
                 Obj.beta(relevantIndices) = mu;
                 
-                if Obj.LearningPlot
+                if Obj.learningPlot
                     subplot(1,2,2);
                     [sortedObs,sortingInds] = sort(DataSet.getObservations());
                     
@@ -479,10 +485,10 @@ classdef prtRegressRvm < prtRegress
                 % Check tolerance
                 TOL = abs(log(alpha)-logAlphaOld);
                 TOL(isnan(TOL)) = 0; % inf-inf = nan
-                if all(TOL < Obj.LearningBetaConvergedTolerance) && iteration > 1
-                    Obj.LearningConverged = true;
-                    Obj.LearningResults.exitReason = 'Alpha Not Changing';
-                    Obj.LearningResults.exitValue = TOL;
+                if all(TOL < Obj.learningConvergedTolerance) && iteration > 1
+                    Obj.learningConverged = true;
+                    Obj.learningResults.exitReason = 'Alpha Not Changing';
+                    Obj.learningResults.exitValue = TOL;
                     break;
                 end
             end
