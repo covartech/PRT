@@ -408,7 +408,7 @@ classdef prtDataSetClass  < prtDataSetStandard
             %   visualizing high dimensional data sets.
             
             %prtPlotUtilDataSetExplore(obj);
-            prtPlotUtilDataSetExploreGui(obj);
+            prtPlotUtilDataSetExploreGui2(obj);
         end
         
         function varargout = plotAsTimeSeries(obj,featureIndices,xData)
