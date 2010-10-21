@@ -20,7 +20,6 @@ classdef prtRvDiscrete < prtRv
         % The Constructor
         function R = prtRvDiscrete(varargin)
             R.name = 'Discrete Random Variable';
-            
             R = constructorInputParse(R,varargin{:});
         end
         function val = get.nCategories(R)
