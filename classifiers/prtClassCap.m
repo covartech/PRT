@@ -77,7 +77,8 @@ classdef prtClassCap < prtClass
     methods (Access=protected, Hidden = true)
         function Obj = trainAction(Obj,DataSet)
             
-            y = DataSet.getTargets;
+            %y = DataSet.getTargets;
+            y = DataSet.getBinaryTargetsAsZeroOne;
             x = DataSet.getObservations;
             mean0 = mean(DataSet.getObservationsByClass(0),1);
             mean1 = mean(DataSet.getObservationsByClass(1),1);

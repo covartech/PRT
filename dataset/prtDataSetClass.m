@@ -346,6 +346,17 @@ classdef prtDataSetClass  < prtDataSetStandard
             d = obj.getObservations(obj.getTargets == obj.uniqueClasses(classInd),featureIndices);
         end
         
+        function y = getBinaryTargetsAsZeroOne(obj)
+            % getBinaryTargetsAsZeroOne  Return the target vector from a
+            % binary prtDataSetClass as a vector of zeros (lower class
+            % index) and ones (higher class index).
+            %
+            bm = obj.getTargetsAsBinaryMatrix;
+            y = zeros(size(bm,1),1);
+            y(logical(bm(:,1))) = 0;
+            y(logical(bm(:,2))) = 1;
+        end
+        
         function binaryMatTargets = getTargetsAsBinaryMatrix(obj,indices1,indices2)
             % binaryMatTargets  Return the targets as a binary matrix
             %

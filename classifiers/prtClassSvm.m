@@ -97,7 +97,9 @@ classdef prtClassSvm < prtClass
             %             gramm = prtkernelgrammmatrix(dataset,obj.trainedkernels);
             
             gramm = prtKernel.evaluateMultiKernelGram(Obj.kernels,DataSet,DataSet);
-            [Obj.alpha,Obj.beta] = prtUtilSmo(DataSet.getX,DataSet.getY,gramm,Obj.c,Obj.tol);
+            %Check y-labels
+            yZeroOne = DataSet.getBinaryTargetsAsZeroOne;
+            [Obj.alpha,Obj.beta] = prtUtilSmo(DataSet.getX,yZeroOne,gramm,Obj.c,Obj.tol);
             
             relevantIndices = find(Obj.alpha);
             Obj.sparseKernels = prtKernel.sparseKernelFactory(Obj.kernels,DataSet,relevantIndices);

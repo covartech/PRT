@@ -141,7 +141,7 @@ classdef prtClassLogisticDiscriminant < prtClass
                 case 'fld'
                     Fld = prtClassFld;
                     Fld = Fld.train(DataSet);
-                    Obj.w = [0;Fld.w]; %append zero for offset
+                    Obj.w = [1;Fld.w]; %append zero for offset
                 case 'randn'
                     Obj.w = randn(DataSet.nFeatures+1,1);
                 case 'manual'
@@ -154,7 +154,13 @@ classdef prtClassLogisticDiscriminant < prtClass
             
             x = DataSet.getObservations;
             x = cat(2,ones(size(x,1),1),x);  %append "ones"
-            y = DataSet.getTargets;
+            %             y = DataSet.getTargets;
+            %             if ~isequal(DataSet.uniqueClasses,[0;1])
+            %                 bm = DataSet.getTargetsAsBinaryMatrix;
+            %                 y(logical(bm(:,1))) = 0;
+            %                 y(logical(bm(:,2))) = 1;
+            %             end
+            y = DataSet.getBinaryTargetsAsZeroOne;
             
             yOut = sigmaFn((x*Obj.w)')';
             rVec = yOut.*(1-yOut);
@@ -177,7 +183,7 @@ classdef prtClassLogisticDiscriminant < prtClass
                                 rVec = rVec + diagAdd;
                             end
                         case 'exit'
-                            warning('prt:generateLogDisc:stepSize','rcond(R) < eps; Exiting; Try reducing Options.irlsStepSize');
+                            warning('prt:generateLogDisc:stepSize','rcond(R) < eps; Exiting; Try reducing classifier.irlsStepSize');
                             return;
                         otherwise
                             error('Invalid Obj.handleNonPosDefR field');
