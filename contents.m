@@ -1,2 +1,2 @@
 % Pattern Recognition Toolbox
-% Version 501 20-Oct-2010
+% Version 504 20-Oct-2010
