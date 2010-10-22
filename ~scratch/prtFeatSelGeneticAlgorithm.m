@@ -1,6 +1,19 @@
 classdef prtFeatSelGeneticAlgorithm < prtFeatSel
 % prtFeatSelGeneticAlgorithm   Genetic algorithm feature selection
 %
+% clear all;
+% close all;
+% 
+% f = randn(600,300);
+% f(1:300,[10,292]) = f(1:300,[10,292]) + 2;
+% %f(301:600,[10,292]) = f(301:600,[10,292]) + 2;
+% y = prtUtilY(300,300);
+% ds = prtDataSetClass(f,y);
+% 
+% featSelGa = prtFeatSelGeneticAlgorithm;  
+% featSelGa = featSelGa.train(ds);
+%
+    
     
     properties (SetAccess=private)
         % Required by prtAction

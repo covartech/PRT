@@ -219,6 +219,8 @@ classdef prtDataSetStandard < prtDataSetBase
             
             indices2 = prtDataSetBase.parseIndices(obj.nFeatures,varargin{:});
             if nargin < 3
+                %clear the old feature names:
+                obj.featureNames = prtUtilIntegerAssociativeArray;
                 if size(featNames,1) ~= length(indices2)
                     error('prt:dataSetStandard:setFeatureNames','setFeatureNames with one input requires that size(names,1) (%d) equals number of features (%d)',size(featNames,1),obj.nFeatures);
                 end
@@ -348,6 +350,8 @@ classdef prtDataSetStandard < prtDataSetBase
                     throw(ME);
                 end
             end
+            % Note: fix this!
+            %obj = obj.fixObservationFeatureNames;
         end
         
         function targets = getTargets(obj,varargin)

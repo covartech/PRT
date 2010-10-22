@@ -238,7 +238,9 @@ classdef prtAction
                 currResults = classOut.run(testDataSet);
                 
                 if uInd == 1
-                    InternalOutputDataSet = prtDataSetClass(nan(DataSet.nObservations,currResults.nFeatures));
+                    InternalOutputDataSet = currResults;
+                    InternalOutputDataSet = InternalOutputDataSet.setXY(nan(DataSet.nObservations,currResults.nFeatures),DataSet.getTargets);
+                    %InternalOutputDataSet = prtDataSetClass(nan(DataSet.nObservations,currResults.nFeatures));
                 end
                 OutputMat(cTestLogical,:) = currResults.getObservations();
                 
@@ -254,11 +256,12 @@ classdef prtAction
                         TrainedActions(uInd) = classOut;
                     end
                 end
-            end
+            end	
             InternalOutputDataSet = InternalOutputDataSet.setObservations(OutputMat);
             
             OutputDataSet = DataSet;
             OutputDataSet = OutputDataSet.setObservations(InternalOutputDataSet.getObservations);
+            OutputDataSet = OutputDataSet.setFeatureNames(InternalOutputDataSet.getFeatureNames);
         end
         
         function varargout = kfolds(Obj,DataSet,K)
