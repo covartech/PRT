@@ -1,4 +1,4 @@
-function prtPlotUtilDataSetExploreGui(theObject)
+function prtPlotUtilDataSetExploreGuiSimple(theObject)
 % Internal function, 
 % xxx Need Help xxx - see prtDataSetClass.explore
 
