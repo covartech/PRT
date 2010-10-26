@@ -34,7 +34,7 @@ function distance = prtDistanceEarthMover(dataSet1,dataSet2,X1,X2)
 %   See also: Rubner, Tomasi, Guibas.  The Earth Mover's Distance as a Metric
 %   for Image Retrieval. 
 
-[data1,data2] = prtUtilDistanceParseInputs(dataSet1,dataSet2);
+[data1,data2] = prtUtilDistanceParseInputs(dataSet1,dataSet2,false);
 if nargin < 4
     X1 = repmat(1:size(data1,2),size(data1,1),1);
     X2 = repmat(1:size(data2,2),size(data2,1),1);
