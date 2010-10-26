@@ -92,6 +92,52 @@ function [pf,pd,auc,thresholds,classLabels] = prtScoreRoc(ds,y,nRocSamples,nPfSa
 
 % Copyright 2010, New Folder Consulting, L.L.C.
 
+%handle the different possible input combinations:
+if nargin == 2
+    nRocSamples = [];
+    nPfSamples = [];
+    nPdSamples = [];
+elseif nargin == 3
+    nPfSamples = [];
+    nPdSamples = [];
+elseif nargin == 4
+    nPdSamples = [];
+end
+
+%Handle multi-dimensional input DS (numeric or prtDataSetClass)
+if (isnumeric(ds) && size(ds,2) > 1)
+    for j = 1:size(ds,2)
+        [pf{j},pd{j},auc{j},thresholds{j},classLabels{j}] = prtScoreRoc(ds(:,j),y,nRocSamples,nPfSamples,nPdSamples); %#ok<NASGU,AGROW>
+    end
+    if nargout == 0
+        hold all;
+        for j = 1:size(ds,2)
+            lineHandles(j) = plot(pf{j},pd{j}); %#ok<AGROW,NASGU>
+            xlabel('Pf');
+            ylabel('Pd');
+        end
+        clear pf pd auc thresholds classLabels
+    end
+    return;
+elseif isa(ds,'prtDataSetClass') && ds.nFeatures > 1
+    for j = 1:ds.nFeatures
+        tempDs = ds.retainFeatures(j);
+        [pf{j},pd{j},auc{j},thresholds{j},classLabels{j}] = prtScoreRoc(tempDs,y,nRocSamples,nPfSamples,nPdSamples); %#ok<NASGU,AGROW>
+    end
+    if nargout == 0
+        for j = 1:ds.nFeatures
+            lineHandles(j) = plot(pf{j},pd{j}); %#ok<AGROW,NASGU>
+            hold all;
+        end
+        xlabel('Pf');
+        ylabel('Pd');
+        hold off;
+        clear pf pd auc thresholds classLabels
+    end
+    return;
+end
+
+%Regular processing
 [ds,y,classLabels] = prtUtilScoreParseFirstTwoInputs(ds,y);
 
 if ~isreal(ds(:))
@@ -133,18 +179,6 @@ else
     
     DS_H1 = ds(y==1);
     DS_H0 = ds(y==0);
-end
-
-%handle the different possible input combinations:
-if nargin == 2
-    nRocSamples = [];
-    nPfSamples = [];
-    nPdSamples = [];
-elseif nargin == 3
-    nPfSamples = [];
-    nPdSamples = [];
-elseif nargin == 4
-    nPdSamples = [];
 end
 
 mtVec = [~isempty(nRocSamples),~isempty(nPfSamples),~isempty(nPdSamples)];
