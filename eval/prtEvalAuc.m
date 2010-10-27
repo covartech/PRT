@@ -1,11 +1,11 @@
-function auc = prtEvalAuc(classifier,dataSet,nFolds,varargin)
+function auc = prtEvalAuc(classifier,dataSet,nFolds)
 % prtEvalPfAtPd   Returns the area under the receiver operating curve.
 %
-%   PF = prtEvalAuc(CLASSIFIER, DATASET) returns the area under the
+%   auc = prtEvalAuc(CLASSIFIER, DATASET) returns the area under the
 %   receiver operating curve. DATASET must be a labeled, binary
 %   prtDataSetStandard object. CLASSIFIER must be a prtClass object. 
 %
-%   PF = prtScoreAuc(CLASSIFIER, DATASET, NFOLDS) returns the area
+%   auc = prtScoreAuc(CLASSIFIER, DATASET, NFOLDS) returns the area
 %   under the receiver operating curve with K-fold cross-validation.
 %   DATASET must be a labeled, binary prtDataSetStandard object. CLASSIFIER
 %   must be a prtClass object. NFOLDS is the number of folds in the K-fold
@@ -14,7 +14,7 @@ function auc = prtEvalAuc(classifier,dataSet,nFolds,varargin)
 %   Example:
 %   dataSet = prtDataGenSpiral;
 %   classifier = prtClassDlrt;
-%   pf =  prtEvalAuc(classifier, dataSet)
+%   auc = prtEvalAuc(classifier, dataSet)
 %
 %   See Also: prtEvalPdAtPf, prtEvalPfAtPd, prtEvalPercentCorrect,
 %   prtEvalMinCost
@@ -27,4 +27,5 @@ if nargin < 3 || isempty(nFolds)
 end
 
 Results = classifier.kfolds(dataSet,nFolds);
-[~,~,auc] = prtScoreRoc(Results.getObservations,dataSet.getTargets,varargin{:});
+%[~,~,auc] = prtScoreRoc(Results.getObservations,dataSet.getTargets,varargin{:});
+auc = prtScoreAuc(Results.getObservations,dataSet.getTargets);

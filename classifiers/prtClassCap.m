@@ -91,7 +91,6 @@ classdef prtClassCap < prtClass
         end
         
         function Obj = optimizeThresholdPosNeg(Obj,x,y)
-            
             [thresholdValue,minPe] = optimizeThreshold(Obj,x,y);
             
             %It's possible that for oddly distributed data, the weight
