@@ -74,8 +74,8 @@ classdef prtRvMvn < prtRv
     end
     
     properties (SetAccess = 'private', Hidden = true)
-        covarianceCholDecomp
         trueCovariance
+        badCovariance = false;
     end
     
     methods
@@ -107,7 +107,7 @@ classdef prtRvMvn < prtRv
             % prtRv object RV.
             
             assert(R.isValid,'PDF cannot be evaluated because the RV object is not yet valid.')
-            
+            assert(~R.badCovariance,'Covariance matrix is not positive definite. Consider modifying "covarianceStructure".');
             X = R.dataInputParse(X); % Basic error checking etc
             
             assert(size(X,2) == R.nDimensions,'Data, RV dimensionality missmatch. Input data, X, has dimensionality %d and this RV has dimensionality %d.', size(X,2), R.nDimensions)
@@ -152,7 +152,7 @@ classdef prtRvMvn < prtRv
             % prtRv object RV.
             
             assert(R.isValid,'CDF cannot be evaluated because the RV object is not yet valid.')
-            
+            assert(~R.badCovariance,'Covariance matrix is not positive definite. Consider modifying "covarianceStructure"');
             X = R.dataInputParse(X); % Basic error checking etc
             
             assert(size(X,2) == R.nDimensions,'Data, RV dimensionality missmatch. Input data, X, has dimensionality %d and this RV has dimensionality %d.', size(X,2), R.nDimensions)
@@ -168,6 +168,8 @@ classdef prtRvMvn < prtRv
             % dimensions of RV.
             
             assert(numel(N)==1 && N==floor(N) && N > 0,'N must be a positive integer scalar.')
+            assert(R.isValid,'DRAW cannot be evaluated because the RV object is not yet valid.')
+            assert(~R.badCovariance,'Covariance matrix is not positive definite. Consider modifying "covarianceStructure"');
             vals = prtRvUtilMvnDraw(R.mean,R.covariance,N);
         end
     end
@@ -248,6 +250,11 @@ classdef prtRvMvn < prtRv
     methods
         function R = set.covarianceStructure(R,covarianceStructure)
             % Find and fix known abbreviations
+            
+            assert(ischar(covarianceStructure),'covarianceStructure must be a string that is either, full, diagonal, or spherical');
+            
+            covarianceStructure = lower(covarianceStructure);
+            
             if strcmpi(covarianceStructure,'diag')
                 covarianceStructure = 'diagonal';
             end
@@ -281,17 +288,12 @@ classdef prtRvMvn < prtRv
             if ~isempty(R.mean) && size(covariance,1) ~= R.nDimensions
                 error('prtRvMvn:dimensions','Dimensions mismatch between covariance and prtRvMvn dimensionality')
             end
-            
-            [cholCovR, posDefError] = cholcov(covariance,0); %#ok<ASGLU>
-            if posDefError ~= 0
-                error('Covariance matrix must be positive definite.')
-            end
-            
+
             % Save this input as a true hidden covariance
             R.trueCovariance = covariance;
             
             % Enforce the covariance structure
-            switch R.covarianceStructure
+            switch lower(R.covarianceStructure)
                 case 'full'
                     R.covarianceDepHelper = covariance;
                 case 'diagonal'
@@ -299,8 +301,12 @@ classdef prtRvMvn < prtRv
                 case 'spherical'
                     R.covarianceDepHelper = eye(size(covariance))*mean(diag(covariance));
             end
-            
-            R.covarianceCholDecomp = cholcov(R.covariance,0);
+
+            [dontNeed, cholErr] = chol(R.covarianceDepHelper); %#ok<ASGLU>
+            if cholErr ~=0
+                R.badCovariance = true;
+                warning('prt:prtRvMvn','Covariance matrix is not positive definite. This may cause errors. Consider modifying "covarianceStructure".');
+            end
         end
     end
 end

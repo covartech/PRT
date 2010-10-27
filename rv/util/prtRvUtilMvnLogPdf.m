@@ -22,7 +22,7 @@ end
 % Make sure Sigma is a valid covariance matrix
 [R,err] = cholcov(Sigma,0);
 if err ~= 0
-    error('mvnlogpdf:BadCovariance', ...
+    error('prtRvUtilMvnLogPdf:BadCovariance', ...
         'SIGMA must be symmetric and positive definite.');
 end
 
