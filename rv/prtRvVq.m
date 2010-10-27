@@ -86,6 +86,7 @@ classdef prtRvVq < prtRv
         end
         
         function R = mle(R,X)
+            X = R.dataInputParse(X); % Basic error checking etc
             assert(isnumeric(X) && ndims(X)==2,'X must be a 2D numeric array.');
             
             R.InternalKMeansPrototypes = R.InternalKMeansPrototypes.train(prtDataSetClass(X,ones(size(X,1),1)));
@@ -96,7 +97,8 @@ classdef prtRvVq < prtRv
         
         function vals = pdf(R,X)
             assert(R.isValid,'PDF cannot be evaluated because this RV object is not yet valid.')
-            assert(size(X,2) == R.nDimensions,'Incorrect dimensionality for this prtRv');
+            X = R.dataInputParse(X); % Basic error checking etc
+            assert(size(X,2) == R.nDimensions,'Data, RV dimensionality missmatch. Input data, X, has dimensionality %d and this RV has dimensionality %d.', size(X,2), R.nDimensions)
             assert(isnumeric(X) && ndims(X)==2,'X must be a 2D numeric array.');
             
             trainingOutput = R.InternalKMeansPrototypes.run(X);

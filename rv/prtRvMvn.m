@@ -91,9 +91,8 @@ classdef prtRvMvn < prtRv
             % RV = RV.mle(X) computes the maximum likelihood estimate based
             % the data X. X should be nObservations x nDimensions.
             
-            if ~isempty(R.nDimensions)
-                warning('prtRvMvn:overwrite','A mean and/or covariance has already been specified for this rv.mvn object. These values have been over written and the dimensionality may have changed.');
-            end
+            X = R.dataInputParse(X); % Basic error checking etc
+            
             R.mean = mean(X);
             R.covariance = cov(X);
         end
@@ -108,7 +107,10 @@ classdef prtRvMvn < prtRv
             % prtRv object RV.
             
             assert(R.isValid,'PDF cannot be evaluated because the RV object is not yet valid.')
-            assert(size(X,2) == R.nDimensions,'Incorrect dimensionality for RV object.')
+            
+            X = R.dataInputParse(X); % Basic error checking etc
+            
+            assert(size(X,2) == R.nDimensions,'Data, RV dimensionality missmatch. Input data, X, has dimensionality %d and this RV has dimensionality %d.', size(X,2), R.nDimensions)
             assert(isnumeric(X) && ndims(X)==2,'X must be a 2D numeric array.');
             
             vals = exp(prtRvUtilMvnLogPdf(X,R.mean,R.covariance));
@@ -123,8 +125,21 @@ classdef prtRvMvn < prtRv
             % the pdf, and nDims is the same as the number of dimensions,
             % nDimensions, of the prtRv object RV.
             assert(R.isValid,'LOGPDF cannot be evaluated because the RV object is not yet valid.')
-            assert(size(X,2) == R.nDimensions,'Incorrect dimensionality for RV object.')
+            
+            X = R.dataInputParse(X); % Basic error checking etc
+            
+            assert(size(X,2) == R.nDimensions,'Data, RV dimensionality missmatch. Input data, X, has dimensionality %d and this RV has dimensionality %d.', size(X,2), R.nDimensions)
             vals = prtRvUtilMvnLogPdf(X,R.mean,R.covariance);
+        end
+        
+        function varargout = plotCdf(R,varargin)
+            
+            assert(R.nDimensions == 1,'prtRvMvn.plotCdf can only be used for 1D RV objects.');
+            
+            varargout = cell(nargout,1); 
+            
+            [varargout{:}] = plotCdf@prtRv(R,varargin{:});
+                
         end
         
         function vals = cdf(R,X)
@@ -137,7 +152,10 @@ classdef prtRvMvn < prtRv
             % prtRv object RV.
             
             assert(R.isValid,'CDF cannot be evaluated because the RV object is not yet valid.')
-            assert(size(X,2) == R.nDimensions,'Incorrect dimensionality for RV object.')
+            
+            X = R.dataInputParse(X); % Basic error checking etc
+            
+            assert(size(X,2) == R.nDimensions,'Data, RV dimensionality missmatch. Input data, X, has dimensionality %d and this RV has dimensionality %d.', size(X,2), R.nDimensions)
             vals = prtRvUtilMvnCdf(X,R.mean,R.covariance);
         end
         

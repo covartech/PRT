@@ -29,12 +29,15 @@ classdef prtRvMultinomial < prtRv
         end
         
         function R = mle(R,X)
+            X = R.dataInputParse(X); % Basic error checking etc
+            
             N_bar = sum(X,1);
             R.probabilities = N_bar./sum(N_bar(:));
         end
         
         function vals = pdf(R,X)
             assert(R.isValid,'PDF cannot be evaluated because this RV object is not yet valid.')
+            X = R.dataInputParse(X); % Basic error checking etc
             assert(size(X,2) == R.nCategories,'Incorrect dimensionality for RV object.')
             assert(isnumeric(X) && ndims(X)==2,'X must be a 2D numeric array.');
             
@@ -42,8 +45,8 @@ classdef prtRvMultinomial < prtRv
         end
         
         function vals = logPdf(R,X)
-            assert(R.isValid,'LOGPDF cannot be evaluated because this RV object is not yet valid.')
-            
+            assert(R.isValid,'LOGPDF cannot be evaluated because this RV object is not yet valid.')            
+
             vals = log(pdf(R,X));
         end
         
@@ -74,16 +77,8 @@ classdef prtRvMultinomial < prtRv
             end
         end
         
-        function varargout = plotCdf(R,varargin)
-            h = bar(1:R.nCategories,cumsum(R.probabilities),'k');
-            
-            ylim([0 1])
-            xlim(R.plotLimits());
-            
-            varargout = {};
-            if nargout
-                varargout = {h};
-            end
+        function plotCdf(R,varargin) %#ok<MANU>
+            error('prt:prtRvMultinomial','plotCdf is not implimented for this prtRv');
         end
         
     end
@@ -94,6 +89,9 @@ classdef prtRvMultinomial < prtRv
             assert(abs(sum(probs)-1) < R.approximatelyEqualThreshold,'Probability vector must must sum to 1.')
             
             R.probabilitiesDepHelper = probs(:)';
+        end
+        function R = set.nCategories(R,val) %#ok<MANU,INUSD>
+            error('prt:prtRvMultinomial','nCategories is a dependent property that cannot be set by the user. To set the number of categories, set "probabilities" to be a vector of the desired length.');
         end
     end
     

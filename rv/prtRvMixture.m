@@ -23,10 +23,10 @@
 classdef prtRvMixture < prtRv
     properties
         components
-        mixingProportions = prtRvMultinomial;
     end
     
     properties (Dependent = true)
+        mixingProportions 
         nComponents
     end
     
@@ -34,6 +34,9 @@ classdef prtRvMixture < prtRv
         nDimensions
     end
     
+    properties (SetAccess = 'private', GetAccess = 'private', Hidden=true)
+        mixingProportionsDepHelper = prtRvMultinomial;
+    end
     properties (Hidden = true)
         postMaximizationFunction = @(R)R;
         
@@ -55,12 +58,29 @@ classdef prtRvMixture < prtRv
     % Set methods
     methods
         function R = set.mixingProportions(R,weights)
-            if ~isempty(weights) % For loading and saving
-                assert(isa(weights,'prtRvMultinomial'),'Mixing weights must be a prtRvMultinomial')
+            if isnumeric(weights)
+                if isvector(weights) && prtUtilApproxEqual(sum(weights),1)
+                    weights = prtRvMultinomial('probabilities',weights(:)');
+                else
+                    error('prt:prtRvMixture','prtRvMixture mixinigProportions must be a vector of probabilities (that sum to 1) or a prtRvMultinomial');
+                end
             end
-            R.mixingProportions = weights;
+            
+            if ~isempty(weights) % For loading and saving
+                assert(isa(weights,'prtRvMultinomial'),'prtRvMixture mixinigProportions must be a vector of probabilities (that sum to 1) or a prtRvMultinomial')
+            end
+            
+            
+            if R.nComponents > 0
+                nSpecifiiedComponents = R.nComponents;
+                assert(weights.nCategories == nSpecifiiedComponents,'The length of these mixingProportions does not mach the number of components of thie prtRvMixture.')
+            end
+            
+            R.mixingProportionsDepHelper = weights;
         end
-        
+        function val = get.mixingProportions(R)
+            val = R.mixingProportionsDepHelper;
+        end
         function R = set.components(R,CompArray)
             if ~isempty(CompArray)
                 assert(isa(CompArray(1),'prtRv'),'components must be a prtRv');
@@ -75,6 +95,8 @@ classdef prtRvMixture < prtRv
     methods
         
         function R = mle(R,X)
+            
+            X = R.dataInputParse(X); % Basic error checking etc
             
             membershipMat = initialComponentMembership(R,X);
             
@@ -107,7 +129,9 @@ classdef prtRvMixture < prtRv
         end
         
         function [y, componentPdf] = pdf(R,X)
-            assert(size(X,2) == R.nDimensions,'Incorrect data dimensionality for this prtRvMixture');
+            X = R.dataInputParse(X); % Basic error checking etc
+            
+            assert(size(X,2) == R.nDimensions,'Data, RV dimensionality missmatch. Input data, X, has dimensionality %d and this RV has dimensionality %d.', size(X,2), R.nDimensions)
             
             [logy, componentLogPdf] = logPdf(R,X);
             
@@ -118,7 +142,9 @@ classdef prtRvMixture < prtRv
         end 
         
         function [logy, componentLogPdf] = logPdf(R,X)
-            assert(size(X,2) == R.nDimensions,'Incorrect data dimensionality for this prtRvMixture');
+            X = R.dataInputParse(X); % Basic error checking etc
+            assert(size(X,2) == R.nDimensions,'Data, RV dimensionality missmatch. Input data, X, has dimensionality %d and this RV has dimensionality %d.', size(X,2), R.nDimensions)
+           
             componentLogPdf = zeros(size(X,1),R.nComponents);
             
             logWeights = log(R.mixingProportions.probabilities);
@@ -130,7 +156,9 @@ classdef prtRvMixture < prtRv
         end 
         
         function y = cdf(R,X)
-            assert(size(X,2) == R.nDimensions,'Incorrect data dimensionality for this prtRvMixture');
+            X = R.dataInputParse(X); % Basic error checking etc
+            
+            assert(size(X,2) == R.nDimensions,'Data, RV dimensionality missmatch. Input data, X, has dimensionality %d and this RV has dimensionality %d.', size(X,2), R.nDimensions)
             
             y = zeros(size(X,1),1);
             for iComp = 1:R.nComponents;

@@ -18,20 +18,22 @@ classdef prtRvUniform < prtRv
         end
         
         function R = mle(R,X)
-           R.upperBounds = nanmax(X,[],1);
-           R.lowerBounds = nanmin(X,[],1);
+            X = R.dataInputParse(X); % Basic error checking etc
+            R.upperBounds = nanmax(X,[],1);
+            R.lowerBounds = nanmin(X,[],1);
         end
         
         function vals = pdf(R,X)
             assert(R.isValid,'PDF cannot be evaluated because this RV object is not yet valid.')
-            assert(size(X,2) == R.nDimensions,'Incorrect dimensionality for RV object.')
+            X = R.dataInputParse(X); % Basic error checking etc
+            assert(size(X,2) == R.nDimensions,'Data, RV dimensionality missmatch. Input data, X, has dimensionality %d and this RV has dimensionality %d.', size(X,2), R.nDimensions)
             
             
             isIn = true(size(X,1),1);
             for iDim = 1:size(X,2)
                 isIn = isIn & X(:,iDim) >= R.lowerBounds(iDim) & X(:,iDim) <= R.upperBounds(iDim);
             end
-                
+            
             vals = zeros(size(X,1),1);
             vals(isIn) = 1/R.area();
         end
@@ -43,6 +45,8 @@ classdef prtRvUniform < prtRv
         end
         
         function vals = cdf(R,X)
+            X = R.dataInputParse(X); % Basic error checking etc
+            assert(size(X,2) == R.nDimensions,'Data, RV dimensionality missmatch. Input data, X, has dimensionality %d and this RV has dimensionality %d.', size(X,2), R.nDimensions)
             vals = prod(max(bsxfun(@minus,bsxfun(@min,X,R.upperBounds),R.lowerBounds),0),2)./R.area();
         end
         
@@ -73,6 +77,6 @@ classdef prtRvUniform < prtRv
             else
                 error('prtRvUniform:plotLimits','Plotting limits can no be determined for this RV because it is not yet valid.')
             end
-        end         
+        end
     end
 end

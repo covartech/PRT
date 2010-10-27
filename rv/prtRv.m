@@ -57,7 +57,7 @@ classdef prtRv
             missingMethodError(R,'pdf');
         end
 
-        function vals = logPdf(R,X) %#ok
+        function vals = logPdf(R,X)
             % Output the log of the pdf
             vals = log(R.pdf(X));
         end
@@ -163,11 +163,24 @@ classdef prtRv
     end
     
     methods (Access = 'private', Hidden = true)
-        function missingMethodError(R,methodName)
+        function missingMethodError(R,methodName) %#ok<MANU>
             error('The method %s is not defined for this prtRv object',methodName);
         end
     end
     methods (Access = 'protected', Hidden = true)
+        function X = dataInputParse(R,X) %#ok<MANU>
+            
+            if isnumeric(X)
+                % Quick exit from this ifelse so we don't call isa
+                % which can be slow
+            elseif isa(X,'prtDataSetBase')
+                X = X.getObservations();
+            else
+                error('prt:prtRv','Input to mle() must be a matrix of data or a prtDataSet.');
+            end
+            
+        end
+        
         function R = constructorInputParse(R,varargin)
             
             nIn = length(varargin);

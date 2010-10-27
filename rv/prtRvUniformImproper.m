@@ -17,21 +17,24 @@ classdef prtRvUniformImproper < prtRv
         end
         
         function R = mle(R,X)
+            X = R.dataInputParse(X); % Basic error checking etc
            R.nDimensionsPrivate = size(X,2);
         end
         
         function vals = pdf(R,X)
-            assert(size(X,2) == R.nDimensions,'Incorrect dimensionality for RV object.')
+            X = R.dataInputParse(X); % Basic error checking etc
+            assert(size(X,2) == R.nDimensions,'Data, RV dimensionality missmatch. Input data, X, has dimensionality %d and this RV has dimensionality %d.', size(X,2), R.nDimensions)
             vals = ones(size(X,1),1);
         end
         
         function vals = logPdf(R,X)
-            assert(size(X,2) == R.nDimensions,'Incorrect dimensionality for RV object.')
+            X = R.dataInputParse(X); % Basic error checking etc
             vals = log(pdf(R,X));
         end
         
         function vals = cdf(R,X)
-            assert(size(X,2) == R.nDimensions,'Incorrect dimensionality for RV object.')
+            X = R.dataInputParse(X); % Basic error checking etc
+            assert(size(X,2) == R.nDimensions,'Data, RV dimensionality missmatch. Input data, X, has dimensionality %d and this RV has dimensionality %d.', size(X,2), R.nDimensions)
             vals = nan(size(X,1),1);
         end
         

@@ -47,12 +47,18 @@ classdef prtRvDiscrete < prtRv
             end
             R.InternalMultinomial.probabilities = val(:);
         end
-
+        
         function val = get.nDimensions(R)
             val = size(R.symbols,2);
         end
         
         function R = set.symbols(R,val)
+            if isvector(val)
+                % We assume that they wanted a single set of symbols
+                % instead of a single multi-dimensional symbol.
+                val = val(:);
+            end
+            
             assert(~R.InternalMultinomial.isValid || R.nCategories == size(val,1),'Number of specified symbols does not match the current number of categories.')
             assert(isnumeric(val) && ndims(val)==2,'symbols must be a 2D numeric array.')
             
@@ -64,14 +70,21 @@ classdef prtRvDiscrete < prtRv
         end
         
         function R = mle(R,X)
-            assert(size(X,2) == R.nDimensions,'Incorrect dimensionality for this prtRv');
-            assert(isnumeric(X) && ndims(X)==2,'X must be a 2D numeric array.');
+            X = R.dataInputParse(X); % Basic error checking etc
+            
+            assert(isnumeric(X) && ndims(X)==2,'Input data must be a 2D numeric array or a prtDataSet.');
             
             R = weightedMle(R,X,ones(size(X,1),1));
         end
         
         function vals = pdf(R,X)
+            
+            X = R.dataInputParse(X); % Basic error checking etc
+            
             assert(R.isValid,'PDF cannot be evaluated because this RV object is not yet valid.')
+            
+            assert(size(X,2) == R.nDimensions,'Data, RV dimensionality missmatch. Input data, X, has dimensionality %d and this RV has dimensionality %d.', size(X,2), R.nDimensions)
+            
             assert(isnumeric(X) && ndims(X)==2,'X must be a 2D numeric array.');
             
             [dontNeed, symbolInds] = ismember(X,R.symbols,'rows'); %#ok
@@ -83,6 +96,8 @@ classdef prtRvDiscrete < prtRv
         function vals = logPdf(R,X)
             assert(R.isValid,'LOGPDF cannot be evaluated because this RV object is not yet valid.')
             
+            X = R.dataInputParse(X); % Basic error checking etc
+            
             vals = log(pdf(R,X));
         end
         
@@ -93,36 +108,56 @@ classdef prtRvDiscrete < prtRv
             
             assert(numel(N)==1 && N==floor(N) && N > 0,'N must be a positive integer scalar.')
             
-            
-            
             vals = R.symbols(drawIntegers(R.InternalMultinomial,N),:);
         end
         
         
         function varargout = plotPdf(R,varargin)
-            h = plotPdf(R.InternalMultinomial);
+            if ~R.isPlottable
+                if R.isValid
+                    error('prt:prtRv:plot','This RV object cannont be plotted because it has too many dimensions for plotting.')
+                else
+                    error('prt:prtRv:plot','This RV object cannot be plotted because it is not yet valid.');
+                end
+            end
             
-            xTick = get(gca,'XTick');
-            symStrs = R.symbolsStrs();
-            set(gca,'XTickLabel',symStrs(xTick));
+            switch R.nDimensions
+                case 1
+                    h = plotPdf(R.InternalMultinomial);
+                    symStrs = R.symbolsStrs();
+                    xTick = get(gca,'XTick');
+                    set(gca,'XTickLabel',symStrs(xTick));
+                case 2
+                    z = R.InternalMultinomial.probabilities(:);
+                    UserOptions = prtUserOptions;
+                    colorMapInds = gray2ind(mat2gray(z),UserOptions.RvPlotOptions.nColorMapSamples);
+                    cMap = UserOptions.RvPlotOptions.colorMapFunction(UserOptions.RvPlotOptions.nColorMapSamples);
+                    
+                    cMap = prtPlotUtilDarkenColors(cMap);
+                    
+                    holdState = get(gca,'NextPlot');
+                    h = zeros(size(cMap,1));
+                    for iColor = 1:size(cMap,1)
+                        cInds = colorMapInds == iColor;
+                        if any(cInds)
+                            cColor = cMap(iColor,:);
+                            h(iColor) = stem3(R.symbols(cInds,1),R.symbols(cInds,2),R.InternalMultinomial.probabilities(cInds),'fill','color',cColor);
+                            hold on
+                        end
+                    end
+                    set(gca,'NextPlot',holdState);
+                    
+                otherwise
+                    error('prt:prtRvDiscreteplotPdf','Discrete RV objects can only be plotted in one or two dimensions');
+            end
             
             varargout = {};
             if nargout
                 varargout = {h};
             end
         end
-        
-        function varargout = plotCdf(R,varargin)
-            h = plotCdf(R.InternalMultinomial);
-            
-            xTick = get(gca,'XTick');
-            symStrs = R.symbolsStrs();
-            set(gca,'XTickLabel',symStrs(xTick));
-           
-            varargout = {};
-            if nargout
-                varargout = {h};
-            end
+        function plotCdf(R,varargin) %#ok<MANU>
+            error('prt:prtRvDiscrete','plotCdf is not implimented for this prtRv');
         end
         
         function cs = symbolsStrs(R)
@@ -134,6 +169,7 @@ classdef prtRvDiscrete < prtRv
         
     end
     
+    
     methods (Hidden = true)
         function val = isValid(R)
             val = isValid(R.InternalMultinomial);
@@ -141,7 +177,7 @@ classdef prtRvDiscrete < prtRv
         function val = plotLimits(R)
             val = plotLimits(R.InternalMultinomial);
         end
-    
+        
         function val = isPlottable(R)
             val = isPlottable(R.InternalMultinomial);
         end
@@ -149,9 +185,9 @@ classdef prtRvDiscrete < prtRv
         function R = weightedMle(R,X,weights)
             assert(numel(weights)==size(X,1),'The number of weights must mach the number of observations.');
             
-            [symbols, dontNeed, symbolInd] = unique(X,'rows'); %#ok
+            [R.symbols, dontNeed, symbolInd] = unique(X,'rows'); %#ok
             
-            occuranceLogical = false(size(X,1),size(symbols,1));
+            occuranceLogical = false(size(X,1),size(R.symbols,1));
             occuranceLogical(sub2ind(size(occuranceLogical),(1:size(X,1))',symbolInd)) = true;
             
             R.InternalMultinomial = R.InternalMultinomial.weightedMle(occuranceLogical, weights);

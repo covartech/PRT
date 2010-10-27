@@ -20,7 +20,7 @@ if nargin < 3 || isempty(Sigma)
 end
 
 
-if numel(mu) > 1 || numel(Sigma) > 1
+if numel(mu) > 1 || numel(Sigma) > 1 || size(X,2) > 1
     error('prt:prtRvUtilMvnCdf','prtRvUtilMvnCdf only functions for 1D data.');
 end
 
