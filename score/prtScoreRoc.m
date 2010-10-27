@@ -92,8 +92,11 @@ function [pf,pd,auc,thresholds,classLabels] = prtScoreRoc(ds,y,nRocSamples,nPfSa
 
 % Copyright 2010, New Folder Consulting, L.L.C.
 
+if nargin == 1 && isa(ds,'prtDataSetClass')
+    y = ds;
+end
 %handle the different possible input combinations:
-if nargin == 2
+if nargin <= 2
     nRocSamples = [];
     nPfSamples = [];
     nPdSamples = [];
