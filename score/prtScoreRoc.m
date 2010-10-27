@@ -256,9 +256,7 @@ else
 end
 
 if nargout > 2
-    auc = trapz(flipud(pf(:)),flipud(pd(:)));
-    % [redhed, sortInd] = sort(ds);
-    % auc = (sum(find(y(sortInd))) - Nhit*(Nhit + 1)/2) / (Nmiss*Nhit); % eq. 1 of Hand and Till, 2001
+	auc = prtScoreAuc(ds,y);
 end
 
 %if there are no outputs; plot the ROC;
