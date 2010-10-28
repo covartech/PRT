@@ -1,9 +1,11 @@
-function ranks = prtUtilRank(ds)
+function [ranks, sortingInds, isTied] = prtUtilRank(ds)
 % prtUtilRank - Ranks the vector in increasing magnitude
 %   Ties have a rank of the middle of the tied ranks
 %   NaNs have a rank of NaN
 % 
 % prtUtilRank([1 2 2 4 5 inf nan nan]')
+%
+% The third output tieRegions is relative to the sortingInds
 
 if ~isnumeric(ds) 
     if isa(ds,'prtDataSetBase')
@@ -31,6 +33,7 @@ end
 
 % If there are any ties we need to figure out the tied regions and set each
 % of the ranks to the average of the tied ranks.
+tieRegions = [];
 if any(isTiedWithNext)
     diffIsTiedWithNext = diff(isTiedWithNext);
     
@@ -53,3 +56,13 @@ end
 ranks(isnan(sortedDS)) = nan;
 
 ranks(sortingInds) = ranks;
+
+if nargout > 2
+    % We asked for the isTied vector
+    isTied = false(size(ds));
+    for iRegion = 1:size(tieRegions,1);
+        isTied(tieRegions(iRegion,1):tieRegions(iRegion,2)) = true;
+    end
+    isTied(sortingInds) = isTied;
+end
+
