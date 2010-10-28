@@ -3,6 +3,10 @@ function [guess,truth,classNames] = prtUtilScoreParseFirstTwoInputs(arg1,arg2)
 % Internal functin
 %[guess,truth] = prtUtilScoreParseFirstTwoInputs(arg1,arg2)
 
+if isempty(arg2)
+    arg2 = arg1;
+end
+
 if (isnumeric(arg1) || islogical(arg1)) && (isnumeric(arg2) || islogical(arg2))
     assert(size(arg1,1) == size(arg2,1),'prtScore functions require input arguments to have same number of rows, but input 1 is size %s, and input 2 is size %s',mat2str(size(arg1)),mat2str(size(arg2)));
     assert(size(arg1,2) == 1 && size(arg2,2) == 1,'prtScore functions require input arguments to have one column, but input 1 is size %s, and input 2 is size %s',mat2str(size(arg1)),mat2str(size(arg2)));
