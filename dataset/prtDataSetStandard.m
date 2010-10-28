@@ -499,16 +499,18 @@ classdef prtDataSetStandard < prtDataSetBase
             % observations from the dataSet object except those specified
             % by INDICES
             
-            retainedIndices = prtDataSetBase.parseIndices(obj.nObservations ,retainedIndices);
-            
-            obj = obj.retainObservationNames(retainedIndices);
-            obj.data = obj.data(retainedIndices,:);
-            if obj.isLabeled
-                obj.targets = obj.targets(retainedIndices,:);
-            end
-            
-            if ~isempty(obj.ObservationInfo)
-                obj.ObservationInfo = obj.ObservationInfo(retainedIndices);
+            try
+                obj = obj.retainObservationNames(retainedIndices);
+                obj.data = obj.data(retainedIndices,:);
+                if obj.isLabeled
+                    obj.targets = obj.targets(retainedIndices,:);
+                end
+                
+                if ~isempty(obj.ObservationInfo)
+                    obj.ObservationInfo = obj.ObservationInfo(retainedIndices);
+                end
+            catch ME
+                retainedIndices = prtDataSetBase.parseIndices(obj.nObservations ,retainedIndices);
             end
             
         end

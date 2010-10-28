@@ -141,7 +141,12 @@ elseif isa(ds,'prtDataSetClass') && ds.nFeatures > 1
 end
 
 %Regular processing
-[ds,y,classLabels] = prtUtilScoreParseFirstTwoInputs(ds,y);
+if nargout > 4
+    [ds,y,classLabels] = prtUtilScoreParseFirstTwoInputs(ds,y);
+else
+    %faster:
+    [ds,y] = prtUtilScoreParseFirstTwoInputs(ds,y);
+end
 
 if ~isreal(ds(:))
     error('ROC requires input ds to be real');
@@ -237,9 +242,10 @@ end
 for COUNT = 1:nRocSamples
     thresh = thresholds(COUNT);
     %DS_H0(DS_H0 >= thresh) are false alarms;
-    pf(COUNT) = length(find(DS_H0 >= thresh));
+    %pf(COUNT) = length(find(DS_H0 >= thresh));
+    pf(COUNT) = sum(DS_H0 >= thresh);
     %DS_H1(DS_H1 >= thresh) are targets; 
-    pd(COUNT) = length(find(DS_H1 >= thresh));
+    pd(COUNT) = sum(DS_H1 >= thresh);
 end
 
 %normalize the number of false alarms and detections
@@ -256,7 +262,10 @@ else
 end
 
 if nargout > 2
-	auc = prtScoreAuc(ds,y);
+    %No, we've already done the hard work
+	%auc = prtScoreAuc(ds,y);
+    %Use trapz:
+    auc = trapz(flipud(pf),flipud(pd));
 end
 
 %if there are no outputs; plot the ROC;

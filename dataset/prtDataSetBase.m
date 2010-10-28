@@ -337,6 +337,9 @@ classdef prtDataSetBase
     methods (Access = 'protected', Hidden = true)
         function obj = catObservationNames(obj,newDataSet)
             
+            if isempty(newDataSet.observationNames)
+                return;
+            end
             for i = 1:newDataSet.nObservations;
                 currObsName = newDataSet.observationNames.get(i);
                 if ~isempty(currObsName)
@@ -348,6 +351,9 @@ classdef prtDataSetBase
         %   Note: only call this from within retainObservations
         function obj = retainObservationNames(obj,varargin)
             
+            if isempty(obj.observationNames)
+                return;
+            end
             
             retainIndices = prtDataSetBase.parseIndices(obj.nObservations,varargin{:});
             %parse returns logicals

@@ -80,8 +80,8 @@ classdef prtClassCap < prtClass
             %y = DataSet.getTargets;
             y = DataSet.getBinaryTargetsAsZeroOne;
             x = DataSet.getObservations;
-            mean0 = mean(DataSet.getObservationsByClass(0),1);
-            mean1 = mean(DataSet.getObservationsByClass(1),1);
+            mean0 = mean(DataSet.getObservationsByClassInd(1),1);
+            mean1 = mean(DataSet.getObservationsByClassInd(2),1);
             
             Obj.w = mean1 - mean0;
             Obj.w = Obj.w./norm(Obj.w);
