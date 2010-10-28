@@ -69,22 +69,22 @@ percentCorr = prtScorePercentCorrect(classes,TestDataSet.getTargets);
 result = result & (percentCorr > baselinePercentCorr);
 
 % check that i can change the algorithm
-try
-    classifier.algorithm = 'Sequential';
-    classifier = classifier.train(TrainingDataSet);
-    classified = run(classifier, TestDataSet);
-    
-    classifier.algorithm = 'SequentialInMemory';
-    classifier = classifier.train(TrainingDataSet);
-    classified = run(classifier, TestDataSet);
-catch
-    result = false;
-    disp('error changing algoritm Rvm classifier')
-end
+% try
+%     classifier.algorithm = 'Sequential';
+%     classifier = classifier.train(TrainingDataSet);
+%     classified = run(classifier, TestDataSet);
+%     
+%     classifier.algorithm = 'SequentialInMemory';
+%     classifier = classifier.train(TrainingDataSet);
+%     classified = run(classifier, TestDataSet);
+% catch
+%     result = false;
+%     disp('error changing algoritm Rvm classifier')
+% end
 
 %check learning plot and learning text
 try
-    classifier.learningPlot = true;
+    classifier.learningPlot = 20;
     classifier.learningVerbose = true;
     classifier.train(TestDataSet);
     classified = run(classifier, TestDataSet);
@@ -100,7 +100,7 @@ end
 noerror = true;
 
 try
-    classifier = prtClassRvm('LearningMaxIterations', 40);
+    classifier = prtClassRvm('learningMaxIterations', 40);
 catch
     noerror = false;
 end

@@ -1,4 +1,4 @@
-classdef prtClassRvmSequential < prtRegressRvm
+classdef prtClassRvmSequential < prtClassRvm
     % prtClassRvmSequential  Relevance vector machin classifier using
     % sequential training
     %
