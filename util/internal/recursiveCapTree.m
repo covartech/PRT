@@ -1,4 +1,4 @@
-function tree = recursiveCapTree2(Obj,tree,x,y,index)
+function tree = recursiveCapTree(Obj,tree,x,y,index)
 
 nFeatures = size(x,2);
 uniqueY = unique(y);
@@ -72,13 +72,13 @@ end
 tree.father = index;
 xLeft = x(ind0,:);
 yLeft = y(ind0,:);
-tree = recursiveCapTree2(Obj,tree,xLeft,yLeft,index + 1);
+tree = recursiveCapTree(Obj,tree,xLeft,yLeft,index + 1);
 tree.father = index;
 
 xRight = x(ind1,:);
 yRight = y(ind1,:);
 maxLen = length(find(~isnan(tree.W(1,:))));
-tree = recursiveCapTree2(Obj,tree,xRight,yRight,maxLen + 1);
+tree = recursiveCapTree(Obj,tree,xRight,yRight,maxLen + 1);
 
     function M = memorySaverAppendNulls(M,nAppend,nFeats)
         M = cat(2,M,nan(nFeats,nAppend));
