@@ -4,8 +4,6 @@ function [ranks, sortingInds, isTied] = prtUtilRank(ds)
 %   NaNs have a rank of NaN
 % 
 % prtUtilRank([1 2 2 4 5 inf nan nan]')
-%
-% The third output tieRegions is relative to the sortingInds
 
 if ~isnumeric(ds) 
     if isa(ds,'prtDataSetBase')

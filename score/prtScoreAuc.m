@@ -22,9 +22,22 @@ else
 end
 
 dsRank = prtUtilRank(ds);
-dsRank(isnan(dsRank)) = 0; % Nans are interpreted at the front of the roc.
 
 nH1 = sum(isH1);
 nH0 = sum(isH0);
 
-auc = (sum(dsRank(isH1)) - nH1*(nH0+1)/2) / (nH0*nH1);
+% If there are nans we need to account
+nanSpots = isnan(dsRank);
+
+nNansH1 = sum(nanSpots & isH1);
+nNansH0 = sum(nanSpots & isH0);
+
+nH1NonNans = nH1-nNansH1;
+nH0NonNans = nH0-nNansH0;
+
+auc = (nansum(dsRank(isH1)) - nH1NonNans*(nH1NonNans+1)/2) / (nH0NonNans*nH1NonNans);
+
+if any(nanSpots)
+    % With nans we need to correct for the uncovered region
+    auc = auc*(1-nNansH1/nH1)*(1-nNansH0/nH0);
+end
