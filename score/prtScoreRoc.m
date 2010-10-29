@@ -113,6 +113,8 @@ pD = cat(1,0,pD);
 pFa = cat(1,0,pFa);
 
 if nargout > 3
+    %this is faster than prtScoreRoc if we've already calculated pd and pf,
+    %which we have:
     auc = trapz(pFa,pD);
 else
     auc = [];

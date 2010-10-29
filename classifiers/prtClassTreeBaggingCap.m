@@ -73,6 +73,7 @@ classdef prtClassTreeBaggingCap < prtClass
         useMex = 1;     % Flag indicating whether or not to use the Mex file
     end
     properties (Hidden = true)
+        eml = true;
         Memory = struct('nAppend',1000); % XXX ?
     end
     
@@ -102,14 +103,6 @@ classdef prtClassTreeBaggingCap < prtClass
             Obj.useMex = val;
         end
         
-        
-        % Obsolete as of Rev 522
-        %         function Obj = set.CapClassifier(Obj,val)
-        %             assert(isa(val,'prtClassCap'),'prt:prtClassTreeBaggingCap:CapClassifier','CapClassifier must be a prtClassCap, but value provided is a %s',class(val));
-        %             Obj.CapClassifier = val;
-        %         end
-        
-        
         function Obj = prtClassTreeBaggingCap(varargin)
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
         end
@@ -126,12 +119,28 @@ classdef prtClassTreeBaggingCap < prtClass
             for i = 1:Obj.nTrees
                 treeRoot(i) = generateCAPTree(Obj,DataSet);  %#ok<AGROW>
                 
+                if i == 1
+                    treeRoot = repmat(treeRoot,Obj.nTrees,1);
+                end
+                
                 len = length(find(~isnan(treeRoot(i).W(1,:))));
                 treeRoot(i).W = treeRoot(i).W(:,1:len);   %#ok<AGROW>
-                treeRoot(i).threshold = treeRoot(i).threshold(:,1:len);  %#ok<AGROW> 
+                treeRoot(i).threshold = treeRoot(i).threshold(:,1:len);  %#ok<AGROW>
                 treeRoot(i).featureIndices = treeRoot(i).featureIndices(:,1:len);  %#ok<AGROW>
                 treeRoot(i).treeIndices = treeRoot(i).treeIndices(:,1:len);  %#ok<AGROW>
                 treeRoot(i).terminalVote = treeRoot(i).terminalVote(:,1:len);  %#ok<AGROW>
+            end
+            if Obj.eml
+                wSizes = cellfun(@(x)size(x),{treeRoot.W},'uniformOutput',false);
+                wSizes = cat(1,wSizes{:});
+                maxWSize = max(wSizes);
+                maxWSize = maxWSize(2);
+                for i = 1:length(treeRoot)
+                    f = fieldnames(treeRoot);
+                    for j = 1:length(f)
+                        treeRoot(i).(f{j}) = cat(2,treeRoot(i).(f{j}),nan(size(treeRoot(i).(f{j}),1),maxWSize-size(treeRoot(i).(f{j}),2))); %#ok<AGROW>
+                    end
+                end
             end
             
             if Obj.nProcessors > 1
