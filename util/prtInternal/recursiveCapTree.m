@@ -65,21 +65,53 @@ xTrain = xTrain(:,tree.featureIndices(:,index));
 % Generate a CAP classifier (internal code, don't use prtClassCap for
 % speed issues)
 [w,thresholdValue,yOut] = recursiveCapTreeGenerateCap(xTrain,yTrain,uniqueY);
+
+if any(~isfinite(w)) || ~isfinite(thresholdValue)
+    exitNow = true;
+else
+    
+    yOut = double(yOut >= thresholdValue);
+    ind0 = find(yOut == 0);
+    ind1 = find(yOut == 1);
+
+    % True if nly one class in the output
+    exitNow = isempty(ind0) || isempty(ind1);
+end
+
+if exitNow
+    % If we get here we have the same mean under both class labels
+    % or have infs in the data
+    % So we exit
+    
+    tree.W(:,index) = inf;  %place holder for completed processing
+    tree.threshold(:,index) = nan;
+    tree.treeIndices(index) = tree.father;
+    
+    % Figure out the dominant class
+    classCounts = histc(yTrain,uniqueY);
+    [maxClassCounts, maxClassInd] = max(classCounts);
+    isGoodClass = classCounts == maxClassCounts;
+    
+    nGoodInds = sum(isGoodClass);
+    
+    % If nGoodInds > 1 We have ties and need to decide randomly
+    if nGoodInds > 1
+        goodInds = find(isGoodClass);
+        maxClassInd = goodInds(ceil(rand*nGoodInds));
+    end
+    
+    tree.terminalVote(index) = uniqueY(maxClassInd);
+    return
+end
+
 tree.W(:,index) = w(:);
 tree.threshold(:,index) = thresholdValue;
-%yOut = double(yOut >= tree.threshold(:,index));
-yOut = double(yOut >= tree.threshold(:,index));
-ind0 = find(yOut == 0);
-ind1 = find(yOut == 1);
-
-if isempty(ind0) || isempty(ind1)
-    error('Classifier output unique labels');
-end
 
 tree.father = index;
 xLeft = x(ind0,:);
 yLeft = y(ind0,:);
 tree = recursiveCapTree(Obj,tree,xLeft,yLeft,index + 1);
+
 tree.father = index;
 
 xRight = x(ind1,:);
@@ -102,7 +134,16 @@ function [w,thresholdValue,yOut] = recursiveCapTreeGenerateCap(x,y,uniqueY)
 mean0 = mean(x(y == uniqueY(1),:),1);
 mean1 = mean(x(y == uniqueY(2),:),1);
 w = mean1 - mean0;
+
 w = w./norm(w);
+
+if isnan(w)
+    w = nan(size(w));
+    thresholdValue = nan;
+    yOut = nan;
+    return
+end
+
 yOut = (w*x')';
 
 % figure out the threshold:
@@ -126,7 +167,7 @@ if minPe >= 0.5
     thresholdValue = thresh(I);
 
     if minPe >= 0.5
-        warning('prt:recursiveCapTree:badTraining','Min PE from CAP.trainAction is >= 0.5');
+        % warning('prt:recursiveCapTree:badTraining','Min PE from CAP.trainAction is >= 0.5');
     end
 end
 end

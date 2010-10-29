@@ -54,11 +54,7 @@ y = newY;
 
 [sortedDS, sortingInds] = sort(ds,'descend');
 
-% Move nans to the bottom
 nanSpots = isnan(sortedDS);
-%sortedDS = cat(1,sortedDS(~nanSpots),sortedDS(nanSpots));
-%sortingInds = cat(1,sortingInds(~nanSpots),sortingInds(nanSpots));
-%nanSpots = isnan(sortedDS);
 
 % Sort y
 sortedY = y(sortingInds);
