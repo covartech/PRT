@@ -45,6 +45,10 @@ classdef prtDataSetStandard < prtDataSetBase
         featureNames        % The feature names
     end
     
+    properties (Hidden=true, Access='private')
+        uniqueTargetsCache
+    end
+    
     methods (Access = 'protected', Hidden = true)
         
         function obj = catTargetNames(obj,newDataSet)
@@ -275,6 +279,9 @@ classdef prtDataSetStandard < prtDataSetBase
             end
             obj.data = data;
             obj.targets = targets;
+            
+            % Reset the cache of uniqueTargets
+            obj.uniqueTargetsCache = [];
         end
         
         function data = getObservations(obj,varargin)
@@ -437,6 +444,9 @@ classdef prtDataSetStandard < prtDataSetBase
             else
                 obj.targets = [];
             end
+            
+            % Reset the cached unique targets since it will have changed.
+            obj.uniqueTargetsCache = [];
         end
         
         function obj = catObservations(obj, varargin)
@@ -473,6 +483,8 @@ classdef prtDataSetStandard < prtDataSetBase
                     end
                 end
             end
+            % Reset the cache of uniqueTargets
+            obj.uniqueTargetsCache = [];
         end
         
         function [obj,retainedIndices] = removeObservations(obj,removeIndices)
@@ -509,7 +521,10 @@ classdef prtDataSetStandard < prtDataSetBase
                 if ~isempty(obj.ObservationInfo)
                     obj.ObservationInfo = obj.ObservationInfo(retainedIndices);
                 end
-            catch ME
+                
+                % Reset the cache of uniqueTargets
+                obj.uniqueTargetsCache = [];
+            catch  %#ok<CTCH>
                 retainedIndices = prtDataSetBase.parseIndices(obj.nObservations ,retainedIndices);
             end
             
@@ -779,6 +794,8 @@ classdef prtDataSetStandard < prtDataSetBase
                     obj.targets = cat(2,obj.targets,currInput.getTargets);
                 end
             end
+            % Reset the cache of uniqueTargets
+            obj.uniqueTargetsCache = [];
         end
         
         function [obj,retainedTargets] = removeTargets(obj,removeIndices)
@@ -811,9 +828,22 @@ classdef prtDataSetStandard < prtDataSetBase
             obj = obj.retainTargetNames(retainedTargets);
             obj.targets = obj.targets(:,retainedTargets);
             
+            % Reset the cache of uniqueTargets
+            obj.uniqueTargetsCache = [];
         end
-        
     end
+    
+    methods (Hidden=true, Access='protected')
+        function uT = getUniqueTargets(obj)
+            % KDM - FIX ME
+            if isempty(obj.uniqueTargetsCache)
+                obj.uniqueTargetsCache = unique(obj.targets,'rows');
+                % disp('changed');
+            end
+            uT = obj.uniqueTargetsCache;
+        end
+    end
+    
     methods (Hidden = true)
         
         function obj = copyDescriptionFieldsFrom(obj,dataSet)

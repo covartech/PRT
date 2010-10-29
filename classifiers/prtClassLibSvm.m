@@ -134,7 +134,7 @@ classdef prtClassLibSvm < prtClass
             
             %Need to figure out whether to flip SVM outputs:
             yOut = runAction(Obj,DataSet);
-            [~,~,auc] = prtScoreRoc(yOut.getObservations,DataSet.getTargets,100);
+            auc = prtScoreAuc(yOut.getObservations,DataSet.getTargets);
             if auc < .5
                 Obj.gain = -1;
             end
@@ -150,7 +150,7 @@ classdef prtClassLibSvm < prtClass
                 disp('Testing predicted accuracy:');
             end
             testing_instance_matrix = DataSet.getObservations;
-            [~, ~, decision_values] = svmpredict(testing_label_vector, testing_instance_matrix, Obj.trainedSvm, Obj.libSvmOptionsTest);
+            [dontNeed, dontNeed, decision_values] = svmpredict(testing_label_vector, testing_instance_matrix, Obj.trainedSvm, Obj.libSvmOptionsTest); %#ok<ASGLU>
             
             DataSetOut = DataSet;
             DataSetOut = DataSetOut.setObservations(decision_values*Obj.gain);
@@ -169,7 +169,7 @@ classdef prtClassLibSvm < prtClass
                 obj.svmType,obj.kernelType,obj.degree,obj.gamma,obj.coef0,obj.cost,obj.nu,...
                 obj.pEpsilon,obj.cachesize,obj.eEpsilon,obj.shrinking,obj.probabilityEstimates,obj.weight);
         end
-        function optionString = libSvmOptionStringTest(obj,dataSet)
+        function optionString = libSvmOptionStringTest(obj,dataSet) %#ok<INUSD>
             optionString = sprintf('-b %d',obj.probabilityEstimates);
         end
     end

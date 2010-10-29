@@ -41,10 +41,10 @@ classdef prtDecisionBinaryBootstrapDataAtPd < prtDecisionBinary
                 try
                     algorithmOutput = Obj.algorithm.kfolds(cDSBoot,Obj.nFolds);
         
-                    [pf,pd,auc,thresholds] = prtScoreRoc(algorithmOutput.getObservations(),cDSBoot.getTargets());
+                    [rocPf,rocPd,thresholds] = prtScoreRoc(algorithmOutput.getObservations(),cDSBoot.getTargets());
             
-                    [pfAtPd1(iBootStrap), thresholdAtPd1(iBootStrap)] = prtUtilPfAtPd1(pf,pd,thresholds);
-                catch
+                    [pfAtPd1(iBootStrap), thresholdAtPd1(iBootStrap)] = prtUtilPfAtPd1(rocPf,rocPd,thresholds);
+                catch %#ok<CTCH>
                     badIterations(iBootStrap) = true;
                     pfAtPd1(iBootStrap) = nan;
                     thresholdAtPd1(iBootStrap) = nan;
@@ -56,7 +56,7 @@ classdef prtDecisionBinaryBootstrapDataAtPd < prtDecisionBinary
             algorithmOutput = algorithmOutput.setTargets(DS.getTargets);
             sortedH0Data = sort(algorithmOutput.getObservationsByClassInd(1),'ascend');
             
-            [sortedPfAtPd1, sortingInds] = sort(pfAtPd1,'ascend');
+            sortedPfAtPd1 = sort(pfAtPd1,'ascend');
             
             sortedPfAtPd1Ind = max(min(round(Obj.confidence*length(sortedPfAtPd1)),length(sortedPfAtPd1)),1);
             thresholdInd = max(min(round((1-sortedPfAtPd1(sortedPfAtPd1Ind))*length(sortedH0Data)),length(sortedH0Data)),1);

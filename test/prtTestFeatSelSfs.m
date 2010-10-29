@@ -35,7 +35,7 @@ dataSet = prtDataGenCircles;
 featSel = prtFeatSelSfs;
 featSel.nFeatures = 1;
 try
-    featSel.EvaluationMetric = @(DS)prtEvalPdAtPf(prtClassMAP, DS, .9);
+    featSel.EvaluationMetric = @(DS)prtEvalPdAtPf(prtClassMap, DS, .9);
     featSel = featSel.train(dataSet);
     outDataSet = featSel.run(dataSet);
 catch

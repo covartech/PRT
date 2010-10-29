@@ -92,17 +92,6 @@ catch
     % For now, just be happy it is erroring out.
 end
 
-%% Object construction
-% We want these to be non-errors
-noerror = true;
-
-try
-    classifier = prtClassCap('thresholdSampling', 50);
-catch
-    noerror = false;
-    disp('Cap param/val constructor fail');
-end
-
 
 %% 
 result = result & error & noerror;

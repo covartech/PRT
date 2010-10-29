@@ -37,9 +37,9 @@ classdef prtDecisionBinarySpecifiedPf < prtDecisionBinary
             if dataSet.nFeatures > 1
                 error('prt:prtDecisionBinaryMinPe','prtDecisionBinaryMinPe can not be used on algorithms that output multi-column results; consider using prtDecisionMap instead');
             end
-            [pf,pd,auc,thresh] = prtScoreRoc(dataSet.getObservations,dataSet.getTargets);
+            [rocPf,pd,thresh] = prtScoreRoc(dataSet.getObservations,dataSet.getTargets); %#ok<ASGLU>
             
-            index = find(pf < Obj.pf,1);
+            index = find(rocPf < Obj.pf,1);
             Obj.threshold = thresh(index);
             Obj.classList = dataSet.uniqueClasses;
         end

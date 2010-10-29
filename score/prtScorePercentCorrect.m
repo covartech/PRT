@@ -18,10 +18,12 @@ function percentCorrect = prtScorePercentCorrect(dataSet1,dataSet2)
 %   See also prtScoreConfusionMatrix, prtScoreRoc, prtScoreRmse,
 %   prtScoreRocBayesianBootstrap, prtScoreRocBayesianBootstrapNfa
 
+if nargin < 2
+    dataSet2 = dataSet1;
+end 
+
 [guesses,targets] = prtUtilScoreParseFirstTwoInputs(dataSet1,dataSet2);
-% if isnumeric(targets) && any(targets ~= round(targets))
-%     error('prt:prtScorePercentCorrect:invalidTargets','prtScorePercentCorrect requires targets to be discrete and integer-valued');
-% end
+
 if size(guesses,2) ~= 1 
     error('prt:prtScorePercentCorrect','Requires dataSet1 to be a n x 1 integer vector of class guesses');
 else

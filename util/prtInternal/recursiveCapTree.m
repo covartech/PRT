@@ -3,7 +3,7 @@ function tree = recursiveCapTree(Obj,tree,x,y,index)
 uniqueY = [0;1];
 if index == 1
     if ~isequal(unique(y(:)),uniqueY)
-        error('recursiveCapTree','Requires input y to only have classes 0 and 1');
+        error('prt:recursiveCapTree','Requires input y to only have classes 0 and 1');
     end
 end
 
@@ -64,7 +64,7 @@ xTrain = xTrain(:,tree.featureIndices(:,index));
 
 % Generate a CAP classifier (internal code, don't use prtClassCap for
 % speed issues)
-[w,thresholdValue,yOut] = recursiveCapTreeGenerateCap(xTrain,yTrain,uniqueY,Obj.nCapRocSamples);
+[w,thresholdValue,yOut] = recursiveCapTreeGenerateCap(xTrain,yTrain,uniqueY);
 tree.W(:,index) = w(:);
 tree.threshold(:,index) = thresholdValue;
 %yOut = double(yOut >= tree.threshold(:,index));
@@ -94,7 +94,7 @@ tree = recursiveCapTree(Obj,tree,xRight,yRight,maxLen + 1);
 end
 
 
-function [w,thresholdValue,yOut] = recursiveCapTreeGenerateCap(x,y,uniqueY,nRocEvals)
+function [w,thresholdValue,yOut] = recursiveCapTreeGenerateCap(x,y,uniqueY)
 %[w,thresholdValue,yOut] = recursiveCapGenerateCap(x,y,uniqueY,nRocEvals)
 % Internal function to quicly generate a CAP classifier without prt
 % overhead
@@ -106,21 +106,27 @@ w = w./norm(w);
 yOut = (w*x')';
 
 % figure out the threshold:
-%[pf,pd,~,thresh] = prtScoreRoc(yOut,y,nRocEvals);
-[pf,pd,thresh] = prtScoreRocNew(yOut,y);
+[pf,pd,thresh] = prtScoreRoc(yOut,y);
 pE = prtUtilPfPd2Pe(pf,pd);
 [minPe,I] = min(pE);
-thresholdValue = thresh(unique(I));
+if numel(I) > 1
+    I = unique(I);
+end
+thresholdValue = thresh(I);
 if minPe >= 0.5
     w = -w;
     yOut = (w*x')';
     % % figure out the threshold:
-    [pf,pd,~,thresh] = prtScoreRoc(yOut,y,nRocEvals);
+    [pf,pd,thresh] = prtScoreRoc(yOut,y);
     pE = prtUtilPfPd2Pe(pf,pd);
     [minPe,I] = min(pE);
-    thresholdValue = thresh(unique(I));
+    if numel(I) > 1
+        I = unique(I);
+    end
+    thresholdValue = thresh(I);
+
     if minPe >= 0.5
-        warning('Min PE from CAP.trainAction is >= 0.5');
+        warning('prt:recursiveCapTree:badTraining','Min PE from CAP.trainAction is >= 0.5');
     end
 end
 end

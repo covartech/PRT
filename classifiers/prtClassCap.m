@@ -13,10 +13,6 @@ classdef prtClassCap < prtClass
     %    w                 -  Central axis projection weights, set during
     %                         training
     %    threshold         -  Decision threshold, set during training
-    %    thresholdSampling -  The number of points to consider when
-    %                         determining the optimal threshold (lower 
-    %                         numbers result in less resolution, but reduce 
-    %                         computational complexity).
     %
     %    Cap classifiers are a prototypical "weak" classification algorithm
     %    that find application in multiple meta-algorithms.  A good
@@ -63,10 +59,6 @@ classdef prtClassCap < prtClass
         threshold = [];
     end
     
-    properties
-        thresholdSampling = 100; % The number of neighbors to consider in the nearest-neighbor voting.
-    end
-    
     methods
         function Obj = prtClassCap(varargin)
             
@@ -101,7 +93,7 @@ classdef prtClassCap < prtClass
                 Obj.w = -Obj.w;
                 [thresholdValue,minPe] = optimizeThreshold(Obj,x,y);
                 if minPe >= 0.5
-                    warning('Min PE from CAP.trainAction is >= 0.5');
+                    warning('prt:prtClassCap','Min PE from CAP.trainAction is >= 0.5');
                 end
             end
             Obj.threshold = thresholdValue;
@@ -110,11 +102,8 @@ classdef prtClassCap < prtClass
         function [thresholdValue,minPe] = optimizeThreshold(Obj,x,y)
             yOut = (Obj.w*x')';
             
-            if Obj.thresholdSampling > length(y)
-                [pf,pd,~,thresh] = prtScoreRoc(yOut,y);
-            else
-                [pf,pd,~,thresh] = prtScoreRoc(yOut,y,Obj.thresholdSampling);
-            end
+            [pf,pd,thresh] = prtScoreRoc(yOut,y);
+            
             pE = prtUtilPfPd2Pe(pf,pd);
             [minPe,I] = min(pE);
             thresholdValue = thresh(unique(I));

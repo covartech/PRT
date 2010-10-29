@@ -38,7 +38,7 @@ classdef prtDataSetClass  < prtDataSetStandard
     
     properties (Dependent)
         nClasses        % The number of classes
-        uniqueClasses   % The unique class labels
+        uniqueClasses   % The unique class
         nObservationsByClass %  The number of observations per class
         
         isUnary                % True if the number of classes = 1
@@ -303,10 +303,7 @@ classdef prtDataSetClass  < prtDataSetStandard
             % CLASSES = dataSet.uniqueClasses returns the unique classes of
             % a dataSet object.
             
-            % 
-            % This can be slow, but we can't make this persistent.
-            % We don't know when if labels have changed
-            uT = unique(obj.targets);
+            uT = obj.getUniqueTargets(); % Protected and hidden from prtDataSetStandard
         end
         
         function obj = catObservations(obj,varargin)

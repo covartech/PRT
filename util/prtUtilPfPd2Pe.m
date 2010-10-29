@@ -4,8 +4,10 @@ function pE = prtUtilPfPd2Pe(pf,pd,priorH0,priorH1)
 %   of error.
 % xxx Need Help xxx
 
-if nargin == 2
+if nargin < 3 || isempty(priorH0)
     priorH0 = 1/2;
+end
+if nargin < 4 || isempty(priorH1)
     priorH1 = 1/2;
 end
 

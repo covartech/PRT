@@ -74,8 +74,7 @@ result = result & (percentCorr > baselinePercentCorr);
 % check that i can change cap classifier
 % try
 %     CAP = prtClassCap;
-%     CAP.thresholdSampling = 20;
-%     classifier.CapClassifier = {CAP};
+f%     classifier.CapClassifier = {CAP};
 %     classifier = classifier.train(TrainingDataSet);
 %     classified = run(classifier, TestDataSet);
 %     

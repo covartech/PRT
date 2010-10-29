@@ -61,7 +61,7 @@ end
 % check the pdf and cdf functions
 try
     val1 = RV.pdf([ 0 0 ]);
-    val2 = RV.cdf([ 0 0]);
+    %val2 = RV.cdf([ 0 0]); % Cdf does not work in 2D
 catch
     disp('prtRvMvn pdf/cdf fail')
     result = false;

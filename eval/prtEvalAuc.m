@@ -27,5 +27,4 @@ if nargin < 3 || isempty(nFolds)
 end
 
 Results = classifier.kfolds(dataSet,nFolds);
-%[~,~,auc] = prtScoreRoc(Results.getObservations,dataSet.getTargets,varargin{:});
 auc = prtScoreAuc(Results.getObservations,dataSet.getTargets);

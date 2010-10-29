@@ -1,4 +1,4 @@
-function [nf,pd,auc,thresholds,classLabels] = prtScoreRocNfa(ds,y,varargin)
+function varargout = prtScoreRocNfa(ds,y)
 % prtScoreRocNfa   Generate a operator characteristic curve and output the number of false alarms
 %
 %    prtScoreRocNfa(DECSTATS,LABELS) plots the receiver operator
@@ -7,9 +7,10 @@ function [nf,pd,auc,thresholds,classLabels] = prtScoreRocNfa(ds,y,varargin)
 %    statistics. LABELS must be a Nx1 vector of binary class labels. This
 %    behavior is the same as prtScoreRoc.
 %
-%    [NF, PD, AUC] = prtScoreRocNfa(DECSTATS,LABELS, NFA) outputs the number
-%    of false alarms NF, the probability of detection PD, and the area
-%    under the ROC scurve AUC.
+%    [NF,PD,THRESHOLDS,AUC] = prtScoreRocNfa(DECSTATS,LABELS) outputs the
+%    number of false alarms NF, the probability of detection PD, the
+%    thresholds used to obtain each PD and NF pair, and the area under the
+%    ROC scurve AUC.
 %
 %    Example:     
 %    TestDataSet = prtDataGenSpiral;       % Create some test and
@@ -42,14 +43,17 @@ function [nf,pd,auc,thresholds,classLabels] = prtScoreRocNfa(ds,y,varargin)
 
 % Copyright 2010, New Folder Consulting, L.L.C.
 
-[pf,pd,auc,thresholds,classLabels] = prtScoreRoc(ds,y,varargin{:});
+[nf,pd,thresholds,auc] = prtScoreRoc(ds,y);
+
 nMiss = length(find(y == 0));
-nf = pf*nMiss;
+nf = nf*nMiss;
 
 if nargout == 0
     plot(nf,pd);
     xlabel('#FA');
     ylabel('Pd');
     
-    clear nf pd auc thresholds classLabels
+    varargout = {};
+else
+    varargout = {nf,pd,thresholds,auc};
 end
