@@ -1,7 +1,13 @@
 function tree = recursiveCapTree(Obj,tree,x,y,index)
 
+uniqueY = [0;1];
+if index == 1
+    if ~isequal(unique(y(:)),uniqueY)
+        error('recursiveCapTree','Requires input y to only have classes 0 and 1');
+    end
+end
+
 nFeatures = size(x,2);
-uniqueY = unique(y);
 
 if index > tree.maxReservedLen
     tree.W = memorySaverAppendNulls(tree.W,Obj.Memory.nAppend,Obj.nFeatures);
@@ -13,7 +19,8 @@ if index > tree.maxReservedLen
 end
 
 %Base cases; if there is only one class left, we must return
-if length(unique(y)) == 1;
+% if length(unique(y)) == 1;
+if all(y == 1) || all(y == 0)
     tree.W(:,index) = inf;  %place holder for completed processing
     tree.treeIndices(index) = tree.father;
     tree.terminalVote(index) = unique(y);
@@ -48,7 +55,6 @@ if Obj.bootStrapDataAtNodes
         stop = start + nj - 1;
         xTrain(start:stop,:) = currX;
         yTrain(start:stop,1) = uniqueY(j);
-        
     end
 else
     xTrain = x;
@@ -61,6 +67,7 @@ xTrain = xTrain(:,tree.featureIndices(:,index));
 [w,thresholdValue,yOut] = recursiveCapTreeGenerateCap(xTrain,yTrain,uniqueY,Obj.nCapRocSamples);
 tree.W(:,index) = w(:);
 tree.threshold(:,index) = thresholdValue;
+%yOut = double(yOut >= tree.threshold(:,index));
 yOut = double(yOut >= tree.threshold(:,index));
 ind0 = find(yOut == 0);
 ind1 = find(yOut == 1);
@@ -77,6 +84,7 @@ tree.father = index;
 
 xRight = x(ind1,:);
 yRight = y(ind1,:);
+
 maxLen = length(find(~isnan(tree.W(1,:))));
 tree = recursiveCapTree(Obj,tree,xRight,yRight,maxLen + 1);
 
@@ -98,7 +106,8 @@ w = w./norm(w);
 yOut = (w*x')';
 
 % figure out the threshold:
-[pf,pd,~,thresh] = prtScoreRoc(yOut,y,nRocEvals);
+%[pf,pd,~,thresh] = prtScoreRoc(yOut,y,nRocEvals);
+[pf,pd,thresh] = prtScoreRocNew(yOut,y);
 pE = prtUtilPfPd2Pe(pf,pd);
 [minPe,I] = min(pE);
 thresholdValue = thresh(unique(I));

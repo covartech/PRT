@@ -164,7 +164,8 @@ classdef prtClassTreeBaggingCap < prtClass
                 DataSet = DataSet.bootstrapByClass();
             end
             %tree = recursiveCAPtree(Obj,tree,DataSet,1);
-            tree = recursiveCapTree(Obj,tree,DataSet.getObservations,DataSet.getTargets,1);
+            t = DataSet.getTargetsAsBinaryMatrix;
+            tree = recursiveCapTree(Obj,tree,DataSet.getObservations,t(:,2),1);
         end
         
         function ClassifierResults = runAction(Obj,PrtDataSet)
@@ -189,6 +190,9 @@ classdef prtClassTreeBaggingCap < prtClass
             ClassifierResults = prtDataSetClass(mean(Yout,2));
         end
         
+        function export(obj,fileSpec)
+            keyboard
+        end
         % This function is now in prtPrivate.recursiveCAPtree to avoud
         % object oriented overhead in thousands of recursive calls, which
         % can be slow, as of MATLAB 2010B

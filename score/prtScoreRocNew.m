@@ -90,7 +90,7 @@ pFa = cumsum(pFa)/nH0;
 pD = cat(1,0,pD);
 pFa = cat(1,0,pFa);
 
-if nargout > 2
+if nargout > 3
     auc = trapz(pFa,pD);
 else
     auc = [];
@@ -103,5 +103,5 @@ if nargout == 0
     
     varargout = {};
 else
-    varargout = {pFa, pD, sortedDS, auc};
+    varargout = {pFa, pD, cat(1,inf,sortedDS(:)), auc};
 end
