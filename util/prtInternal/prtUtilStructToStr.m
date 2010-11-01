@@ -1,15 +1,15 @@
 function str = prtUtilStructToStr(S,varName)
-
+%
 %     S.a = [1 2 3];
 %     S.b = 'asdf';
 %     prtUtilStructToStr(S)
-
+%
 %     S(1).a = [1 2 3];
 %     S(1).b = 'asdf';
 %     S(2).a = 'lkjh';
 %     S(2).b = [4 5 6];
 %     prtUtilStructToStr(S)    
-
+%
 %     S1(1).S2.a = [1 2 3];
 %     S1(2).S2.b = 'lkjh';   
 %     prtUtilStructToStr(S1)    

@@ -189,9 +189,21 @@ classdef prtClassTreeBaggingCap < prtClass
             end
             ClassifierResults = prtDataSetClass(mean(Yout,2));
         end
-        
-        function export(obj,fileSpec)
-            keyboard
+    end
+    
+    methods
+        function exportString = export(obj,fileSpec,file)
+            switch fileSpec
+                case {'mfile','m-file'}
+                    exportString = prtUtilStructToStr(obj.root,'rfRoot');
+                    if nargin > 2
+                        fid = fopen(file,'w');
+                        fprintf(fid,'%s\n',exportString{:});
+                        fclose(fid);
+                    end
+                otherwise
+                    error('prt:prtClassTreeBaggingCap:export','Invalid file formal specified');
+            end
         end
     end
 end

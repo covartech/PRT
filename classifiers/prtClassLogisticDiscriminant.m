@@ -252,12 +252,26 @@ classdef prtClassLogisticDiscriminant < prtClass
             %ClassifierResults = runAction(Obj,DataSet)
             
             sigmaFn = @(x) 1./(1 + exp(-x));
-            
-            
             x = cat(2,ones(DataSet.nObservations,1),DataSet.getX());
             y = sigmaFn((x*Obj.w)')';
             ClassifierResults = DataSet.setObservations(y);
         end
     end
-    
+    methods (Hidden)
+        function exportString = export(obj,fileSpec,file)
+            
+            objStruct.w = obj.w;
+            switch fileSpec
+                case {'mfile','m-file'}
+                    exportString = prtUtilStructToStr(objStruct,'logDisc');
+                    if nargin > 2
+                        fid = fopen(file,'w');
+                        fprintf(fid,'%s\n',exportString{:});
+                        fclose(fid);
+                    end
+                otherwise
+                    error('prt:prtClassTreeBaggingCap:export','Invalid file formal specified');
+            end
+        end
+    end
 end

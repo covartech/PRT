@@ -1,4 +1,5 @@
 function tree = recursiveCapTree(Obj,tree,x,y,index)
+%tree = recursiveCapTree(Obj,tree,x,y,index)
 
 uniqueY = [0;1];
 if index == 1
