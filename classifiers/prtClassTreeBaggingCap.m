@@ -112,7 +112,7 @@ classdef prtClassTreeBaggingCap < prtClass
             if Obj.eml
                 wSizes = cellfun(@(x)size(x),{treeRoot.W},'uniformOutput',false);
                 wSizes = cat(1,wSizes{:});
-                maxWSize = max(wSizes);
+                maxWSize = max(wSizes,[],1);
                 maxWSize = maxWSize(2);
                 for i = 1:length(treeRoot)
                     f = fieldnames(treeRoot);

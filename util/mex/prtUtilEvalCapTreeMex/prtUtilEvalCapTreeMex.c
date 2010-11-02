@@ -71,7 +71,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
                 }
                 yOut = yOut - thresholdData[index-1];
                 
-                if (yOut > 0){ //find the second (right) branch
+                if (yOut >= 0){ //find the second (right) branch
                     found = 0;
                     iTreeSearch = -1;
                     while (found <= 1){

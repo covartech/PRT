@@ -141,7 +141,15 @@ pE = prtUtilPfPd2Pe(pf,pd);
 if numel(I) > 1
     I = unique(I);
 end
-thresholdValue = thresh(I);
+
+if I < length(thresh)
+    %for categorical variables, the threshold should live between the
+    %samples we've seen; this is true for continuous variables too.  Makes
+    %a big difference when multiple values take the same value
+    thresholdValue = mean([thresh(I),thresh(I+1)]);
+else
+    thresholdValue = thresh(I);
+end
 
 if minPe >= 0.5
     w = -w;
