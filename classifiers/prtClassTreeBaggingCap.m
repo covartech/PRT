@@ -56,6 +56,7 @@ classdef prtClassTreeBaggingCap < prtClass
         nTrees = 100; % The number of trees
         
         nFeatures = 2;  % The number of features at each node
+        
         featureSelectWithReplacement = true;  % Flag indicating whether or not to do feature selection with replacement
         
         bootStrapDataAtRoots = true; % Flag indicating whether or not to boostrap at roots
@@ -187,7 +188,7 @@ classdef prtClassTreeBaggingCap < prtClass
                         error('prt:prtClassTreeBaggingCap:export','When using EML export, file must be a string that is a valid MATLAB function name (optionally it can also contain a path.)');
                     end
                     
-                    fileWithExt = cat(2,file,'.m');
+                    fileWithMExt = cat(2,file,'.m');
                     
                     exportString = prtUtilStructToStr(obj.root,structureName);
                     
