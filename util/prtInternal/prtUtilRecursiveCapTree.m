@@ -1,14 +1,9 @@
-function tree = recursiveCapTree(Obj,tree,x,y,index)
+function tree = prtUtilRecursiveCapTree(Obj,tree,x,y,index)
 %tree = recursiveCapTree(Obj,tree,x,y,index)
 
-uniqueY = [0;1];
-if index == 1
-    if ~isequal(unique(y(:)),uniqueY)
-        error('prt:recursiveCapTree','Requires input y to only have classes 0 and 1');
-    end
-end
-
 nFeatures = size(x,2);
+
+uniqueY = find(sum(y,1)>0);
 
 if index > tree.maxReservedLen
     tree.W = memorySaverAppendNulls(tree.W,Obj.Memory.nAppend,Obj.nFeatures);
@@ -20,11 +15,11 @@ if index > tree.maxReservedLen
 end
 
 %Base cases; if there is only one class left, we must return
-% if length(unique(y)) == 1;
-if all(y == 1) || all(y == 0)
+
+if length(uniqueY) == 1
     tree.W(:,index) = inf;  %place holder for completed processing
     tree.treeIndices(index) = tree.father;
-    tree.terminalVote(index) = unique(y);
+    tree.terminalVote(index) = uniqueY;
     return;
 end
 
@@ -38,45 +33,20 @@ else
     tree.treeIndices(index) = tree.father;
 end
 
-if Obj.bootStrapDataAtNodes
-    xTrain = zeros(size(x));
-    yTrain = zeros(size(y));
-    start = 1;
-    for j = 1:length(uniqueY)
-        currX = x(y == uniqueY(j),:);
-        nj = sum(y == uniqueY(j));
-        c = ceil(rand(nj,1)*nj);
-        currX = currX(c,:);
-        
-        if j == 1
-            start = 1;
-        else
-            start = start + nj;
-        end
-        stop = start + nj - 1;
-        xTrain(start:stop,:) = currX;
-        yTrain(start:stop,1) = uniqueY(j);
-    end
-else
-    xTrain = x;
-    yTrain = y;
-end
-xTrain = xTrain(:,tree.featureIndices(:,index));
+xTrain = x(:,tree.featureIndices(:,index));
 
 % Generate a CAP classifier (internal code, don't use prtClassCap for
 % speed issues)
-[w,thresholdValue,yOut] = recursiveCapTreeGenerateCap(xTrain,yTrain,uniqueY);
+[w,thresholdValue,yOut] = recursiveCapTreeGenerateCap(xTrain,y);
 
 if any(~isfinite(w)) || ~isfinite(thresholdValue)
     exitNow = true;
 else
     
-    yOut = double(yOut >= thresholdValue);
-    ind0 = find(yOut == 0);
-    ind1 = find(yOut == 1);
-
-    % True if nly one class in the output
-    exitNow = isempty(ind0) || isempty(ind1);
+    yOut = yOut >= thresholdValue;
+    
+    % True if only one class in the output
+    exitNow = ~any(yOut) || all(yOut);
 end
 
 if exitNow
@@ -84,12 +54,13 @@ if exitNow
     % or have infs in the data
     % So we exit
     
+    % Tree params on an exit
     tree.W(:,index) = inf;  %place holder for completed processing
     tree.threshold(:,index) = nan;
     tree.treeIndices(index) = tree.father;
     
     % Figure out the dominant class
-    classCounts = histc(yTrain,uniqueY);
+    classCounts = sum(y,1);
     [maxClassCounts, maxClassInd] = max(classCounts);
     isGoodClass = classCounts == maxClassCounts;
     
@@ -105,21 +76,26 @@ if exitNow
     return
 end
 
+% Continue on...
+% Store node info into tree
+
 tree.W(:,index) = w(:);
 tree.threshold(:,index) = thresholdValue;
-
-tree.father = index;
-xLeft = x(ind0,:);
-yLeft = y(ind0,:);
-tree = recursiveCapTree(Obj,tree,xLeft,yLeft,index + 1);
-
 tree.father = index;
 
-xRight = x(ind1,:);
-yRight = y(ind1,:);
+% Split the data 
 
+% Left
+xLeft = x(~yOut,:);
+yLeft = y(~yOut,:);
+tree = prtUtilRecursiveCapTree(Obj,tree,xLeft,yLeft,index + 1);
+tree.father = index;
+
+% Right
+xRight = x(yOut,:);
+yRight = y(yOut,:);
 maxLen = length(find(~isnan(tree.W(1,:))));
-tree = recursiveCapTree(Obj,tree,xRight,yRight,maxLen + 1);
+tree = prtUtilRecursiveCapTree(Obj,tree,xRight,yRight,maxLen + 1);
 
     function M = memorySaverAppendNulls(M,nAppend,nFeats)
         M = cat(2,M,nan(nFeats,nAppend));
@@ -127,13 +103,21 @@ tree = recursiveCapTree(Obj,tree,xRight,yRight,maxLen + 1);
 end
 
 
-function [w,thresholdValue,yOut] = recursiveCapTreeGenerateCap(x,y,uniqueY)
+function [w,thresholdValue,yOut] = recursiveCapTreeGenerateCap(x,y)
 %[w,thresholdValue,yOut] = recursiveCapGenerateCap(x,y,uniqueY,nRocEvals)
 % Internal function to quicly generate a CAP classifier without prt
 % overhead
 
-mean0 = mean(x(y == uniqueY(1),:),1);
-mean1 = mean(x(y == uniqueY(2),:),1);
+if size(y,2) > 2
+    classCounts = sum(y,1);
+    [sortedClassCounts, sortedClassInds] = sort(classCounts,'descend'); %#ok<ASGLU>
+else
+    sortedClassInds = [1 2];
+end
+% Ties go to the lower classInds
+
+mean0 = mean(x(y(:,sortedClassInds(1)),:),1);
+mean1 = mean(x(y(:,sortedClassInds(2)),:),1);
 w = mean1 - mean0;
 
 w = w./norm(w);
@@ -145,30 +129,30 @@ if isnan(w)
     return
 end
 
+selectedClasses = y(:,sortedClassInds(1)) | y(:,sortedClassInds(2));
+
 yOut = (w*x')';
+yTest = y(selectedClasses,sortedClassInds(2));
 
 % figure out the threshold:
-[pf,pd,thresh] = prtScoreRoc(yOut,y);
+[pf,pd,thresh] = prtScoreRoc(yOut(selectedClasses,:),yTest,'uniqueLabels',[0 1]);
 pE = prtUtilPfPd2Pe(pf,pd);
 [minPe,I] = min(pE);
 if numel(I) > 1
     I = unique(I);
 end
 thresholdValue = thresh(I);
+
 if minPe >= 0.5
     w = -w;
-    yOut = (w*x')';
+    yOut = -yOut;
     % % figure out the threshold:
-    [pf,pd,thresh] = prtScoreRoc(yOut,y);
+    [pf,pd,thresh] = prtScoreRoc(yOut(selectedClasses,:),yTest,'uniqueLabels',[0 1]);
     pE = prtUtilPfPd2Pe(pf,pd);
-    [minPe,I] = min(pE);
+    [minPe,I] = min(pE); %#ok<ASGLU>
     if numel(I) > 1
         I = unique(I);
     end
     thresholdValue = thresh(I);
-
-    if minPe >= 0.5
-        % warning('prt:recursiveCapTree:badTraining','Min PE from CAP.trainAction is >= 0.5');
-    end
 end
 end

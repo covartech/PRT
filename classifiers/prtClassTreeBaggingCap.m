@@ -16,20 +16,16 @@ classdef prtClassTreeBaggingCap < prtClass
     %    featureSelectWithReplacement - Flag indicating whether or not to
     %                                   do feature selection with 
     %                                   replacement
-    %    bootStrapDataAtNodes         - Flag indicating whether or not 
-    %                                   to bootstrap at nodes
     %    bootStrapDataAtRoots         - Flag indicating whether or not
     %                                   to bootstrap at roots
-    %    nProcessors                  - the number of processors available
-    %                                   on the local machine
     %    useMex                       - flag indicating wheter or not to
     %                                   use the Mex file for speedup.
     %
     %   XXX NEED Refernece
     %
-    %    A prtClassTreeBaggingCap object inherits the TRAIN, RUN, CROSSVALIDATE and
-    %    KFOLDS methods from prtAction. It also inherits the PLOT and
-    %    PLOTDECISION classes from prtClass.
+    %    A prtClassTreeBaggingCap object inherits the TRAIN, RUN,
+    %    CROSSVALIDATE and KFOLDS methods from prtAction. It also inherits
+    %    the PLOT and PLOTDECISION classes from prtClass.
     %
     %    Example:
     %
@@ -49,32 +45,26 @@ classdef prtClassTreeBaggingCap < prtClass
         name = 'Tree Bagging Central Axis Projection'  %Tree Bagging Central Axis Projection
         nameAbbreviation = 'TBCAP'  % TBCAP
        
-        isNativeMary = false;    % False
+        isNativeMary = true;    % False
         
-        % Central axis projection weights
+        % Array of Central Axis Projection Trees
         root = [];
-        
-        % Decision threshold
-        threshold = [];
     end
     
     properties
         
         nTrees = 100; % The number of trees
         
-        nFeatures = 2;  % The number of features
+        nFeatures = 2;  % The number of features at each node
         featureSelectWithReplacement = true;  % Flag indicating whether or not to do feature selection with replacement
         
-        bootStrapDataAtNodes = false;  % Flag indicating whether or not to boostrap at nodes
         bootStrapDataAtRoots = true; % Flag indicating whether or not to boostrap at roots
         
-        nProcessors = 1;  % The number of processors on this machine
-        
-        useMex = 1;     % Flag indicating whether or not to use the Mex file
+        useMex = true;     % Flag indicating whether or not to use the Mex file
     end
     properties (Hidden = true)
         eml = true;
-        Memory = struct('nAppend',1000); % XXX ?
+        Memory = struct('nAppend',1000); % Used in prtUtilRecursiveCapTree
     end
     
     methods
@@ -90,14 +80,6 @@ classdef prtClassTreeBaggingCap < prtClass
             assert(isscalar(val) && islogical(val),'prt:prtClassTreeBaggingCap:featureSelectWithReplacement','featureSelectWithReplacement must be a logical value, but value provided is a %s',class(val));
             Obj.featureSelectWithReplacement = val;
         end
-        function Obj = set.bootStrapDataAtNodes(Obj,val)
-            assert(isscalar(val) && islogical(val),'prt:prtClassTreeBaggingCap:bootStrapDataAtNodes','bootStrapDataAtNodes must be a logical value, but value provided is a %s',class(val));
-            Obj.bootStrapDataAtNodes = val;
-        end
-        function Obj = set.nProcessors(Obj,val)
-            assert(isscalar(val) && isnumeric(val) && val > 0 && val == round(val),'prt:prtClassTreeBaggingCap:nProcessors','nProcessors must be a scalar integer greater than 0, but value provided is %s',mat2str(val));
-            Obj.nProcessors = val;
-        end
         function Obj = set.useMex(Obj,val)
             assert(isscalar(val) && islogical(val),'prt:prtClassTreeBaggingCap:useMex','useMex must be a logical value, but value provided is a %s',class(val));
             Obj.useMex = val;
@@ -111,11 +93,6 @@ classdef prtClassTreeBaggingCap < prtClass
     methods (Access=protected, Hidden = true)
         function Obj = trainAction(Obj,DataSet)
             
-            if Obj.nProcessors>1
-                matlabpool(Obj.nProcessors)
-            end
-            
-            %parfor(i = 1:Obj.nTrees,Obj.nProcessors)
             for i = 1:Obj.nTrees
                 treeRoot(i) = generateCAPTree(Obj,DataSet);  %#ok<AGROW>
                 
@@ -130,6 +107,7 @@ classdef prtClassTreeBaggingCap < prtClass
                 treeRoot(i).treeIndices = treeRoot(i).treeIndices(:,1:len);  %#ok<AGROW>
                 treeRoot(i).terminalVote = treeRoot(i).terminalVote(:,1:len);  %#ok<AGROW>
             end
+            
             if Obj.eml
                 wSizes = cellfun(@(x)size(x),{treeRoot.W},'uniformOutput',false);
                 wSizes = cat(1,wSizes{:});
@@ -143,9 +121,6 @@ classdef prtClassTreeBaggingCap < prtClass
                 end
             end
             
-            if Obj.nProcessors > 1
-                matlabpool close
-            end
             Obj.root = treeRoot;
             
         end
@@ -164,30 +139,29 @@ classdef prtClassTreeBaggingCap < prtClass
             if Obj.bootStrapDataAtRoots
                 DataSet = DataSet.bootstrapByClass();
             end
-            %tree = recursiveCAPtree(Obj,tree,DataSet,1);
-            t = DataSet.getTargetsAsBinaryMatrix;
-            tree = recursiveCapTree(Obj,tree,DataSet.getObservations,t(:,2),1);
+            
+            tree = prtUtilRecursiveCapTree(Obj, tree, DataSet.getObservations, logical(DataSet.getTargetsAsBinaryMatrix), 1);
         end
         
         function ClassifierResults = runAction(Obj,PrtDataSet)
             
-            Yout = nan(PrtDataSet.nObservations,length(Obj.root));
+            Yout = zeros(PrtDataSet.nObservations,Obj.DataSetSummary.nClasses);
             x = PrtDataSet.getObservations;
             theRoot = Obj.root;
             
-            %This double loop is slow; we need to make this faster (30
-            %seconds to evaluate 10000 samples or so, with a moderately
-            %sized tree)
-            for j = 1:PrtDataSet.nObservations
-                for i = 1:length(theRoot);
-                    if Obj.useMex
-                        Yout(j,i) = prtUtilEvalCAPtreeMEX(theRoot(i),x(j,:));
-                    else
-                        Yout(j,i) = prtUtilEvalCAPtree(theRoot(i),x(j,:));
+            if Obj.useMex
+                for iTree = 1:Obj.nTrees
+                    Yout = Yout + prtUtilEvalCAPtreeMEX(theRoot(iTree), x, Obj.DataSetSummary.nClasses);
+                end
+            else
+                for jSample = 1:PrtDataSet.nObservations
+                    for iTree = 1:Obj.nTrees
+                        Yout(jSample,:) = Yout(jSample,:) + prtUtilEvalCAPtree(theRoot(iTree),x(jSample,:),Obj.DataSetSummary.nClasses);
                     end
                 end
             end
-            ClassifierResults = prtDataSetClass(mean(Yout,2));
+            
+            ClassifierResults = prtDataSetClass(Yout/length(theRoot));
         end
     end
     

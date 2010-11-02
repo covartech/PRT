@@ -1,4 +1,4 @@
-function varargout = prtScoreRoc(ds,y)
+function varargout = prtScoreRoc(ds,y,varargin)
 % prtScoreRoc   Generate a reciever operator characteristic curve
 %
 %    prtScoreRoc(DECSTATS,LABELS) plots the receiver operator
@@ -26,12 +26,14 @@ function varargout = prtScoreRoc(ds,y)
 
 % Copyright 2010, New Folder Consulting, L.L.C.
 
-if nargin == 1 && isa(ds,'prtDataSetClass')
+
+if (nargin == 1 || isempty(y)) && isa(ds,'prtDataSetClass')
     y = ds;
 end
 
 [ds,y] = prtUtilScoreParseFirstTwoInputs(ds,y);
 
+uY  = prtScoreRocVararginParse(ds,y,varargin{:});
 
 if ~isreal(ds(:))
     error('ROC requires input ds to be real');
@@ -40,7 +42,7 @@ if any(isnan(ds(:)))
     warning('PRT:roc:dsContainsNans',['ds input to ROC function contains NaNs; these are interpreted as "missing data".  \n',...
         ' The resulting ROC curve may not acheive Pd or Pfa = 1'])
 end
-uY = unique(y(:));
+
 if length(uY) ~= 2  
     error('ROC requires only 2 unique classes; unique(y(:)) = %s\n',mat2str(unique(y(:))));
 end
@@ -124,4 +126,29 @@ if nargout == 0
     varargout = {};
 else
     varargout = {pFa, pD, cat(1,inf,sortedDS(:)), auc};
+end
+
+
+function uY  = prtScoreRocVararginParse(ds,y,varargin) %#ok<INUSL>
+
+uY = [];
+
+if nargin > 1 && mod(nargin,2)~=0
+    error('prt:prtScoreRoc','Additional inputs to prtScoreRoc must be parameter string value pairs');
+end
+
+strPairs = varargin(1:2:end);
+valPairs = varargin(2:2:end);
+
+for iStr = 1:length(strPairs)
+    switch lower(strPairs{iStr})
+        case 'uniquelabels'
+            uY = valPairs{iStr}(:);
+        otherwise
+            error('prt:prtScoreRoc','Unknown parameter name %s, for prtScoreRoc',strPairs{iStr});
+    end
+end
+
+if isempty(uY)
+    uY = unique(y(:));
 end
