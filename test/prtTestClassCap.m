@@ -94,4 +94,4 @@ end
 
 
 %% 
-result = result & error & noerror;
+result = result & error;

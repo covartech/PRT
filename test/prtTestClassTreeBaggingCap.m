@@ -74,7 +74,7 @@ result = result & (percentCorr > baselinePercentCorr);
 % check that i can change cap classifier
 % try
 %     CAP = prtClassCap;
-f%     classifier.CapClassifier = {CAP};
+%     classifier.CapClassifier = {CAP};
 %     classifier = classifier.train(TrainingDataSet);
 %     classified = run(classifier, TestDataSet);
 %     
@@ -87,9 +87,9 @@ f%     classifier.CapClassifier = {CAP};
 
 %check that i can turn off bootstrapping
 try
-    classifier.bootStrapDataAtNodes = false;
+    % classifier.bootStrapDataAtNodes = false;
     classifier.bootStrapDataAtRoots = false;
-    classifier.train(TestDataSet);
+    classifier = classifier.train(TestDataSet);
     classified = run(classifier, TestDataSet);
     
 catch

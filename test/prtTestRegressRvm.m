@@ -31,8 +31,7 @@ end
 % Check that the non-default algo  works
 dataSet = prtDataGenNoisySinc;           % Load a prtDataRegress
 try
-    reg = prtRegressRvm;             % Create a prtRegressRvm object
-    reg.algorithm = 'Sequential';
+    reg = prtRegressRvmSequential;             % Create a prtRegressRvm object
     reg = reg.train(dataSet);        % Train the prtRegressRvm object
     reg.plot();                      % Plot the result
     dataOut = reg.run(dataSet);
@@ -50,13 +49,13 @@ end
  end
  
 
-% Check param-val constuctor
-try
-    reg = prtRegressRvm('algorithm','Sequential');
-catch
-    result = false;
-    disp('prtTestRegressRvm param-val constructor fail')
-end
+% % Check param-val constuctor
+% try
+%     %reg = prtRegressRvm('algorithm','Sequential');
+% catch
+%     result = false;
+%     disp('prtTestRegressRvm param-val constructor fail')
+% end
 %
 % % check that plotting the training works
 % dataSet = prtDataGenNoisySinc;           % Load a prtDataRegress

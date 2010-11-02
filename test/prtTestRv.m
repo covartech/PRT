@@ -1,14 +1,16 @@
+function prtTestRv
 %% MVN
 R = prtRvMvn;
-R = prtRvMvn(randn(10,2));
+R = R.mle(randn(10,2));
 R = prtRvMvn('covarianceStructure','diagonal');
-R = prtRvMvn(bsxfun(@plus,mvnrnd([0 1],[1 0.2; 0.2 2],100),[10 5]),'covarianceStructure','spherical');
+R = prtRvMvn('covarianceStructure','spherical');
+R = R.mle(bsxfun(@plus,mvnrnd([0 1],[1 0.2; 0.2 2],100),[10 5]));
 
 plotPdf(R)
 %% Multinomial (Discrete)
 
 R = prtRvMultinomial;
-R = prtRvMultinomial([100 90 10]);
+R = R.mle([100 90 10]');
 R = prtRvMultinomial(R.draw(100));
 
 plotCdf(R)

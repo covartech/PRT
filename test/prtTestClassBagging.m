@@ -73,7 +73,7 @@ result = result & (percentCorr > baselinePercentCorr);
 
 % check that i can change the classifier
 try
-    classifier.prtClassifier = prtClassMap;
+    classifier.baseClassifier = prtClassMap;
     classifier = classifier.train(TrainingDataSet);
     classified = run(classifier, TestDataSet);
     

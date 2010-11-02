@@ -1,6 +1,4 @@
-
-%%
-%function prtTestClassPlotting
+function prtTestClassPlotting
 
 dsBinary = prtDataGenBimodal;
 dsMary = prtDataGenIris;
