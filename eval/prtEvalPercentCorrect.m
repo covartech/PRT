@@ -32,8 +32,8 @@ end
 results = classifier.kfolds(dataSet,nFolds);
 
 %(note: can't check results.nFeatures here any more...)
-if dataSet.nClasses == 1 %binary classifier 
-    [pf,pd] = prtUtilScoreRoc(results.getObservations,dataSet.getTargets);
+if dataSet.nClasses == 2 %binary classifier 
+    [pf,pd] = prtScoreRoc(results.getObservations,dataSet.getTargets);
     pe = prtUtilPfPd2Pe(pf,pd);
     minPe = min(pe);
     percentCorrect = 1-minPe;
