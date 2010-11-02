@@ -165,11 +165,16 @@ classdef prtClassTreeBaggingCap < prtClass
         end
     end
     
-    methods
-        function exportString = export(obj,fileSpec,file)
+    methods (Hidden)
+        function exportString = export(obj,fileSpec,file,structureName)
+            % export(obj,fileSpec);
+            % export(obj,'eml',file,structureName);
             switch fileSpec
-                case {'mfile','m-file'}
-                    exportString = prtUtilStructToStr(obj.root,'rfRoot');
+                case {'eml'}
+                    if nargin < 4
+                        structureName = 'prtEmlTreeBaggingCapStruct';
+                    end
+                    exportString = prtUtilStructToStr(obj.root,structureName);
                     if nargin > 2
                         fid = fopen(file,'w');
                         fprintf(fid,'%s\n',exportString{:});

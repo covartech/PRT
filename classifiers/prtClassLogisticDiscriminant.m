@@ -262,7 +262,7 @@ classdef prtClassLogisticDiscriminant < prtClass
             
             objStruct.w = obj.w;
             switch fileSpec
-                case {'mfile','m-file'}
+                case {'eml'}
                     exportString = prtUtilStructToStr(objStruct,'logDisc');
                     if nargin > 2
                         fid = fopen(file,'w');
@@ -273,5 +273,9 @@ classdef prtClassLogisticDiscriminant < prtClass
                     error('prt:prtClassTreeBaggingCap:export','Invalid file formal specified');
             end
         end
+    end
+    
+    properties (Hidden = true)
+        eml = true;  %enable incorporatin in EML
     end
 end
