@@ -151,7 +151,7 @@ classdef prtClassTreeBaggingCap < prtClass
             
             if Obj.useMex
                 for iTree = 1:Obj.nTrees
-                    Yout = Yout + prtUtilEvalCAPtreeMEX(theRoot(iTree), x, Obj.DataSetSummary.nClasses);
+                    Yout = Yout + prtUtilEvalCapTreeMex(theRoot(iTree), x, Obj.DataSetSummary.nClasses);
                 end
             else
                 for jSample = 1:PrtDataSet.nObservations
