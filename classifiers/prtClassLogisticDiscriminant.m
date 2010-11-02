@@ -258,19 +258,41 @@ classdef prtClassLogisticDiscriminant < prtClass
         end
     end
     methods (Hidden)
-        function exportString = export(obj,fileSpec,file)
+        function export(obj,fileSpec,file,structureName)
+            % export(obj,fileSpec);
+            % export(obj,'eml',file,structureName);
+            if nargin < 4
+                structureName = 'prtEmlLogisticDiscriminantStruct';
+            end
+            if nargin < 3
+                file = sprintf('%sCreate',structureName);
+            end
+            if nargin < 2 
+                error('prt:prtClassLogisticDiscriminant:export','fileSpec must be specified');
+            end
             
-            objStruct.w = obj.w;
             switch fileSpec
                 case {'eml'}
-                    exportString = prtUtilStructToStr(objStruct,'logDisc');
-                    if nargin > 2
-                        fid = fopen(file,'w');
-                        fprintf(fid,'%s\n',exportString{:});
-                        fclose(fid);
+                    [filePath, file, fileExt] = fileparts(file); %#ok<NASGU>
+                    
+                    if ~isvarname(file)
+                        error('prt:prtClassLogisticDiscriminant:export','When using EML export, file must be a string that is a valid MATLAB function name (optionally it can also contain a path.)');
                     end
+                    
+                    fileWithMExt = cat(2,file,'.m');
+                    
+                    objStruct.w = obj.w;
+                    exportString = prtUtilStructToStr(objStruct,structureName);
+                    
+                    % Add a function declaration name to the beginning
+                    exportString = cat(1, {sprintf('function [%s] = %s()',structureName,file)}, {''}, exportString);
+                    
+                    fid = fopen(fullfile(filePath,fileWithMExt),'w');
+                    fprintf(fid,'%s\n',exportString{:});
+                    fclose(fid);
+                    
                 otherwise
-                    error('prt:prtClassTreeBaggingCap:export','Invalid file formal specified');
+                    error('prt:prtClassLogisticDiscriminant:export','Invalid file formal specified');
             end
         end
     end

@@ -166,20 +166,38 @@ classdef prtClassTreeBaggingCap < prtClass
     end
     
     methods (Hidden)
-        function exportString = export(obj,fileSpec,file,structureName)
+        function export(obj,fileSpec,file,structureName)
             % export(obj,fileSpec);
             % export(obj,'eml',file,structureName);
+            if nargin < 4
+                structureName = 'prtEmlTreeBaggingCapStruct';
+            end
+            if nargin < 3
+                file = sprintf('%sCreate',structureName);
+            end
+            if nargin < 2 
+                error('prt:prtClassTreeBaggingCap:export','fileSpec must be specified');
+            end
+            
             switch fileSpec
                 case {'eml'}
-                    if nargin < 4
-                        structureName = 'prtEmlTreeBaggingCapStruct';
+                    [filePath, file, fileExt] = fileparts(file); %#ok<NASGU>
+                    
+                    if ~isvarname(file)
+                        error('prt:prtClassTreeBaggingCap:export','When using EML export, file must be a string that is a valid MATLAB function name (optionally it can also contain a path.)');
                     end
+                    
+                    fileWithExt = cat(2,file,'.m');
+                    
                     exportString = prtUtilStructToStr(obj.root,structureName);
-                    if nargin > 2
-                        fid = fopen(file,'w');
-                        fprintf(fid,'%s\n',exportString{:});
-                        fclose(fid);
-                    end
+                    
+                    % Add a function declaration name to the beginning
+                    exportString = cat(1, {sprintf('function [%s] = %s()',structureName,file)}, {''}, exportString);
+                    
+                    fid = fopen(fullfile(filePath,fileWithMExt),'w');
+                    fprintf(fid,'%s\n',exportString{:});
+                    fclose(fid);
+                    
                 otherwise
                     error('prt:prtClassTreeBaggingCap:export','Invalid file formal specified');
             end
