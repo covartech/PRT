@@ -180,6 +180,8 @@ classdef prtClassTreeBaggingCap < prtClass
                 error('prt:prtClassTreeBaggingCap:export','fileSpec must be specified');
             end
             
+            
+            
             switch fileSpec
                 case {'eml'}
                     [filePath, file, fileExt] = fileparts(file); %#ok<NASGU>
@@ -190,7 +192,15 @@ classdef prtClassTreeBaggingCap < prtClass
                     
                     fileWithMExt = cat(2,file,'.m');
                     
-                    exportString = prtUtilStructToStr(obj.root,structureName);
+                    exportStruct.nTrees = obj.nTrees;
+                    exportStruct.nFeatures = obj.nFeatures;
+                    exportStruct.DataSetSummary.nFeatures = obj.DataSetSummary.nFeatures;
+                    exportStruct.DataSetSummary.nClasses = obj.DataSetSummary.nClasses;
+                    exportStruct.twoClassParadigm = obj.twoClassParadigm;
+                    exportStruct.root = obj.root;
+
+                    
+                    exportString = prtUtilStructToStr(exportStruct,structureName);
                     
                     % Add a function declaration name to the beginning
                     exportString = cat(1, {sprintf('function [%s] = %s()',structureName,file)}, {''}, exportString);

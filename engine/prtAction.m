@@ -281,6 +281,8 @@ classdef prtAction
             %    objects TRAINEDACTIONS, and the generated cross-validation
             %    keys CROSSVALKEYS.
             
+            assert(isa(DataSet,'prtDataSetBase'),'First input must by a prtDataSet.');
+            
             if nargin == 2 || isempty(K)
                 K = DataSet.nObservations;
             end
@@ -312,7 +314,7 @@ classdef prtAction
     end
     
     methods (Access=protected, Hidden= true)
-        function ClassObj = preTrainProcessing(ClassObj,DataSet)
+        function ClassObj = preTrainProcessing(ClassObj,DataSet) %#ok<INUSD>
             % preTrainProcessing - Processing done prior to train()
             %   Called by train(). Can be overloaded by prtActions to
             %   store specific information about the DataSet or Classifier
@@ -321,7 +323,7 @@ classdef prtAction
             %   ClassObj = preTrainProcessing(ClassObj,DataSet)
         end
         
-        function ClassObj = postTrainProcessing(ClassObj,DataSet)
+        function ClassObj = postTrainProcessing(ClassObj,DataSet) %#ok<INUSD>
             % postTrainProcessing - Processing done after train()
             %   Called by train(). Can be overloaded by prtActions to
             %   store specific information about the DataSet or Classifier
