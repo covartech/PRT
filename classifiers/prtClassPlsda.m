@@ -21,8 +21,8 @@ classdef prtClassPlsda < prtClass
     %    Need reference 
     %
     %    A prtClassPlsda object inherits the TRAIN, RUN, CROSSVALIDATE and
-    %    KFOLDS methods from prtAction. It also inherits the PLOT and
-    %    PLOTDECISION classes from prtClass.
+    %    KFOLDS methods from prtAction. It also inherits the PLOT method
+    %    from prtClass.
     %
     %    Example:
     %

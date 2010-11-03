@@ -25,9 +25,9 @@ classdef prtClassCap < prtClass
     %   includes the process of applying the learned threshold to the
     %   linear projection, so the outputs are discrete valued.
     %
-    %   A prtClassCap object inherits the TRAIN, RUN, CROSSVALIDATE and
-    %   KFOLDS methods from prtAction. It also inherits the PLOT and
-    %   PLOTDECISION classes from prtClass.
+    %   A prtClassCap object inherits the TRAIN, RUN, CROSSVALIDATE and 
+    %   KFOLDS methods from prtAction. It also inherits the PLOT method 
+    %   from prtClass.
     %
     %    Example:
     %

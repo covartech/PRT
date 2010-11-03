@@ -5,8 +5,9 @@ classdef prtClassRvmFigueiredo < prtClassRvm
     %   IEEE PAMI, vol. 25, no. 9 pp.1150-1159, September 2003.
     %
     %    A prtClassRvm object inherits the TRAIN, RUN, CROSSVALIDATE and
-    %    KFOLDS methods from prtAction. It also inherits the PLOT and
-    %    PLOTDECISION classes from prtClass.
+    %    KFOLDS methods from prtAction. It also inherits the PLOT method
+    %    from prtClass.
+    %
     %
     %    Example:
     %{

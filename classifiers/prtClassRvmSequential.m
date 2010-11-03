@@ -23,16 +23,16 @@ classdef prtClassRvmSequential < prtClassRvm
     %
     %
     %    A prtClassRvm object inherits the TRAIN, RUN, CROSSVALIDATE and
-    %    KFOLDS methods from prtAction. It also inherits the PLOT and
-    %    PLOTDECISION classes from prtClass.
+    %    KFOLDS methods from prtAction. It also inherits the PLOT method
+    %    from prtClass.
     %
     %    Example:
-    %{
-        TrainingDataSet = prtDataGenUnimodal;  % training data
-        classifier = prtClassRvmSequential;    % Create a classifier
-        classifier = classifier.train(TrainingDataSet);    % Train
-        classifier.plot;
-    %}
+    %
+    %         TrainingDataSet = prtDataGenUnimodal;  % training data
+    %         classifier = prtClassRvmSequential;    % Create a classifier
+    %         classifier = classifier.train(TrainingDataSet);    % Train
+    %         classifier.plot;
+    %
     
     
     properties

@@ -23,8 +23,8 @@ classdef prtClassKnn < prtClass
     %    http://en.wikipedia.org/wiki/K-nearest_neighbor_algorithm    
     %
     %    A prtClassKnn object inherits the TRAIN, RUN, CROSSVALIDATE and
-    %    KFOLDS methods from prtAction. It also inherits the PLOT and
-    %    PLOTDECISION classes from prtClass.
+    %    KFOLDS methods from prtAction. It also inherits the PLOT method
+    %    from prtClass.
     %
     %    Example:
     %

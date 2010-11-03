@@ -7,8 +7,8 @@ classdef prtClassAdaBoost < prtClass
  %    prtClassAdaBoost object CLASSIFIER with properties as specified by
  %    PROPERTY/VALUE pairs.
  %
- %    A prtClassAdaBoost object inherits all properties from the abstract class
- %    prtClass. In addition is has the following properties:
+ %    A prtClassAdaBoost object inherits all properties from the abstract
+ %    class prtClass. In addition is has the following properties:
  %
  %    baseClassifier     - the prtClass object that forms the "weak" or
  %                         "Base" classifier for the AdaBoost.
@@ -26,23 +26,21 @@ classdef prtClassAdaBoost < prtClass
  %
  %    A prtClassAdaBoost object inherits the TRAIN, RUN, CROSSVALIDATE and
  %    KFOLDS methods from prtAction. It also inherits the PLOT and
- %    PLOTDECISION classes from prtClass.
+ %    method from prtClass.
  %
  %    Example:
  %
  %    TestDataSet = prtDataGenUniModal;       % Create some test and
- %    TrainingDataSet = prtDataGenUniModal;   % training data
- %    classifier = prtClassAdaBoost;           % Create a classifier
- %    classifier = classifier.train(TrainingDataSet);    % Train
- %    classified = run(classifier, TestDataSet);         % Test
+ %    TrainingDataSet = prtDataGenUniModal;   % training data 
+ %    classifier = prtClassAdaBoost;                     % Create a classifier 
+ %    classifier = classifier.train(TrainingDataSet);    % Train 
+ %    classified = run(classifier, TestDataSet);         % Test 
  %    subplot(2,1,1);
- %    classifier.plot;
+ %    classifier.plot; 
  %    subplot(2,1,2); 
- %    [pf,pd] = prtScoreRoc(classified,TestDataSet);
+ %    [pf,pd] = prtScoreRoc(classified,TestDataSet); 
  %    h = plot(pf,pd,'linewidth',3);
- %    title('ROC');
- %    xlabel('Pf');
- %    ylabel('Pd');
+ %    title('ROC'); xlabel('Pf'); ylabel('Pd');
  %
  
 

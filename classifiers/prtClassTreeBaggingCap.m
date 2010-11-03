@@ -23,9 +23,9 @@ classdef prtClassTreeBaggingCap < prtClass
     %
     %   XXX NEED Refernece
     %
-    %    A prtClassTreeBaggingCap object inherits the TRAIN, RUN,
-    %    CROSSVALIDATE and KFOLDS methods from prtAction. It also inherits
-    %    the PLOT and PLOTDECISION classes from prtClass.
+    %    A prtClassTreeBaggingCap  object inherits the TRAIN, RUN, 
+    %    CROSSVALIDATE and KFOLDS methods from prtAction. It also inherits 
+    %    the PLOT method from prtClass.
     %
     %    Example:
     %

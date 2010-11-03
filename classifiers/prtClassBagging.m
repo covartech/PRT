@@ -7,20 +7,20 @@ classdef prtClassBagging < prtClass
     %    prtClassBagging object CLASSIFIER with properties as specified by
     %    PROPERTY/VALUE pairs.
     %
-    %    A prtClassBagging object inherits all properties from the abstract class
-    %    prtClass. In addition is has the following properties:
+    %    A prtClassBagging object inherits all properties from the abstract
+    %    class prtClass. In addition is has the following properties:
     %
-    %    baseClassifier  - The classifier to be used
-    %    nBags           - The number of bags
+    %    baseClassifier  - The classifier to be used nBags           - The
+    %    number of bags
     % 
     %    For more information on bagging classifiers, refer to the
     %    following URL:
     %
     %    http://en.wikipedia.org/wiki/Bootstrap_aggregating
     %
-    %    A prtClassBagging object inherits the TRAIN, RUN, CROSSVALIDATE and
-    %    KFOLDS methods from prtAction. It also inherits the PLOT and
-    %    PLOTDECISION classes from prtClass.
+    %    A prtClassBagging  object inherits the TRAIN, RUN, 
+    %    CROSSVALIDATE and KFOLDS methods from prtAction. It also inherits 
+    %    the PLOT method from prtClass.
     %
     %    Example:
     %

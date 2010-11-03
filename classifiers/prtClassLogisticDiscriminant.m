@@ -33,9 +33,9 @@ classdef prtClassLogisticDiscriminant < prtClass
     %  
     %    XXX Need ref
     %
-    %    A prtClassLogisticDiscriminant object inherits the TRAIN, RUN, CROSSVALIDATE and
-    %    KFOLDS methods from prtAction. It also inherits the PLOT and
-    %    PLOTDECISION classes from prtClass.
+    %    A prtClassLogisticDiscriminant object inherits the TRAIN, RUN, 
+    %    CROSSVALIDATE and KFOLDS methods from prtAction. It also inherits 
+    %    the PLOT method from prtClass.
     %
     %    Example:
     %

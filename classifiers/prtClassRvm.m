@@ -53,8 +53,9 @@ classdef prtClassRvm < prtClass
     %   on Artificial Intelligence and Statistics, Key West, FL, Jan 3-6.
     %
     %    A prtClassRvm object inherits the TRAIN, RUN, CROSSVALIDATE and
-    %    KFOLDS methods from prtAction. It also inherits the PLOT and
-    %    PLOTDECISION classes from prtClass.
+    %    KFOLDS methods from prtAction. It also inherits the PLOT method
+    %    from prtClass.
+    %
     %
     %    Example:
     %

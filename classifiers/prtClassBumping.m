@@ -1,24 +1,59 @@
 classdef prtClassBumping < prtClass
-    % prtClassBumping  Bumping (Bootstrap Selection) classifier
-    %
-    %  Botstrap the data nBags times, and choose the single best classifier
-    %  based on the training data.  This is useful for processing data sets
-    %  that may contain significant outliers.
-    %
-    % % Example:
-    % ds = prtDataGenUnimodal;
-    %  % add a significant outlier to the data:
-    % ds = ds.setXY(cat(1,ds.getObservations,[-30 -10]),cat(1,ds.getTargets,1));
-    % fld = prtClassFld('internalDecider',prtDecisionBinaryMinPe);
-    % fld = fld.train(ds);
-    % 
-    % bumpingFld = prtClassBumping('baseClassifier',fld);
-    % bumpingFld = bumpingFld.train(ds);
-    %
-    % subplot(2,1,1); plot(fld);
-    % subplot(2,1,2); plot(bumpingFld);
-    % 
-    
+ %prtClassBumping Bumping (Bootstrap Selection) Classifier
+ % 
+ %    CLASSIFIER = prtClassBumping returns a Bumping classifier
+ %
+ %    CLASSIFIER = prtClassBumping(PROPERTY1, VALUE1, ...) constructs a
+ %    prtClassBumping object CLASSIFIER with properties as specified by
+ %    PROPERTY/VALUE pairs.
+ %
+ % A Bumping classifier is a meta-classifier that chooses one of several
+ % classifiers trained on a bootstrap sampled version of the input training
+ % data.  In this case, the classifier chosen is the classifier trained on
+ % the bootstrap sample that results in the smallest percent error when
+ % tested on the original data set.  Bumping classifiers can be useful when
+ % the data set under consideration has a small number of significant
+ % outliers; some of the bagging samples will be free of at least some of
+ % the outliers and may provide better generalization performance.
+ % 
+ % For more information on Bumping classifiers, see:
+ %  Hastie, Tibshirani, and Friedman, The Elements of Statistical Learning
+ %  Theory.
+ %
+ % A prtClassBumping object inherits all properties from the abstract class
+ % prtClass. In addition is has the following properties:
+ %
+ %      baseClassifier    - The base classifier to be re-trained with bootstrap 
+ %                        samples
+ %      nBags             - The number of bagging samples to use
+ %
+ %      includeOriginalDataClassifier - Boolean value specifying whether to
+ %                                      include a classifier trained with
+ %                                      all the available data (not a
+ %                                      bootstrap sample) in comparison.
+ %                                      Defaults to "false" since training
+ %                                      with all the available data can
+ %                                      result in over-training.
+ %
+ % After training, a Bump classifier contains a field "Classifier" with the
+ % best trained classification algorithm, and a vector baggedPerformance
+ % with the percent correct found for each bagging sample.
+ %
+ % % Example:
+ % ds = prtDataGenUnimodal;
+ % % add a significant outlier to the data:
+ % ds = ds.setXY(cat(1,ds.getObservations,[-30 -10]),cat(1,ds.getTargets,1));
+ % fld = prtClassFld('internalDecider',prtDecisionBinaryMinPe);
+ % fld = fld.train(ds);
+ %
+ % bumpingFld = prtClassBumping('baseClassifier',fld);
+ % bumpingFld = bumpingFld.train(ds);
+ %
+ % subplot(2,1,1); plot(fld);
+ % subplot(2,1,2); plot(bumpingFld);
+ %
+ % See also: 
+ 
 
     properties (SetAccess=private)
         % Required by prtAction
@@ -37,8 +72,6 @@ classdef prtClassBumping < prtClass
     end
     properties (SetAccess=protected)
         baggedPerformance
-    end
-    properties (SetAccess=protected, Hidden = true)
         Classifier 
     end
     

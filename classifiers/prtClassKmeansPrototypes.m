@@ -22,7 +22,7 @@ classdef prtClassKmeansPrototypes < prtClass
     %
     %    A prtClassKmeansPrototypes object inherits the TRAIN, RUN,
     %    CROSSVALIDATE and KFOLDS methods from prtAction. It also inherits
-    %    the PLOT and PLOTDECISION classes from prtClass.
+    %    the PLOT method from prtClass.
     %
     %    Example:
     %

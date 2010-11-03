@@ -23,8 +23,8 @@ classdef prtClassFld < prtClass
  %    http://en.wikipedia.org/wiki/Linear_discriminant_analysis#Fisher.27s_linear_discriminant
  %
  %    A prtClassFld object inherits the TRAIN, RUN, CROSSVALIDATE and
- %    KFOLDS methods from prtAction. It also inherits the PLOT and
- %    PLOTDECISION classes from prtClass.
+ %    KFOLDS methods from prtAction. It also inherits the PLOT method from
+ %    prtClass.
  %
  %    Example:
  %
