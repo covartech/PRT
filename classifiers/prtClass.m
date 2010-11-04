@@ -13,7 +13,6 @@ classdef prtClass < prtAction
     %   prtClass objects have the following methods:
     %
     %   plot          - Plot the output confidence
-    %   plotDecision  - Plot the decision boundaries
     
     properties (SetAccess=private, Abstract)
         isNativeMary % Logical, classifier natively produces an output for each unique class
@@ -86,54 +85,6 @@ classdef prtClass < prtAction
             else
                 title(Obj.name);
             end
-            varargout = {};
-            if nargout > 0
-                varargout = {HandleStructure};
-            end
-        end
-        
-        function varargout = plotDecision(Obj)         
-            % PLOTDECISION  Plot the decision boundaries of a prtClass object
-            % 
-            %   OBJ.plotDecision() plots the decision boundaries of a prtClass
-            %   object. This function only operates when the dimensionality
-            %   of dataset is 3 or less. When verboseStorage is set to
-            %   'true', the training data points are also displayed on the
-            %   plot. 
-            %  
-            %   See also: prtClass\plot
-            
-            assert(Obj.isTrained,'Classifier must be trained before it can be plotted.');
-            assert(Obj.DataSetSummary.nFeatures < 4, 'nFeatures in the training dataset must be less than or equal to 3');
-            
-            [OutputDataSet, linGrid, gridSize] = runClassifierOnGrid(Obj);
-            
-            % Map the output dataset to hard class decisions
-            if Obj.yieldsMaryOutput
-                [~, classOutInd] = max(OutputDataSet.getObservations(),[],2);
-                OutputDataSet = OutputDataSet.setObservations(classOutInd);
-            else
-                threshold = mean(OutputDataSet.getObservations());
-                OutputDataSet = OutputDataSet.setObservations(OutputDataSet.getObservations() > threshold);
-            end
-            
-            cMap = Obj.PlotOptions.colorsFunction(Obj.DataSetSummary.nClasses);
-            
-            % Lighten the colors
-            cMap = cMap + 0.2;
-            cMap(cMap > 1) = 1;
-            
-            imageHandle = prtPlotUtilPlotGriddedEvaledClassifier(reshape(OutputDataSet.getObservations(),gridSize), linGrid, gridSize, cMap);
-            
-            if ~isempty(Obj.DataSet)
-                hold on;
-                [handles,legendStrings] = plot(Obj.DataSet);
-                hold off;
-                HandleStructure.Axes = struct('imageHandle',{imageHandle},'handles',{handles},'legendStrings',{legendStrings});
-            else
-                HandleStructure.Axes = struct('imageHandle',{imageHandle},'handles',{[]},'legendStrings',{[]});
-            end
-            
             varargout = {};
             if nargout > 0
                 varargout = {HandleStructure};

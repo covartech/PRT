@@ -199,7 +199,6 @@ classdef prtClassTreeBaggingCap < prtClass
                     exportStruct.twoClassParadigm = obj.twoClassParadigm;
                     exportStruct.root = obj.root;
 
-                    
                     exportString = prtUtilStructToStr(exportStruct,structureName);
                     
                     % Add a function declaration name to the beginning

@@ -2,75 +2,75 @@ function result = prtTestClassPlotting
 
 result = true;
 try
-    dsbinary = prtdatagenbimodal;
-    dsmary = prtdatageniris;
-    dsmary = dsmary.retainfeatures(1:2);
+    dsbinary = prtDataGenBimodal;
+    dsmary = prtDataGenIris;
+    dsmary = dsmary.retainFeatures(1:2);
     
     %% test binary plot classifier; no decision
-    binaryclassifier = prtclassadaboost;
+    binaryclassifier = prtClassAdaBoost;
     binaryclassifier = binaryclassifier.train(dsbinary);
-    binaryclassifier.plot;
+    binaryclassifier.plot; drawnow; pause(0.1);
     
     %% test binary plot classifier; with decision
     clc;
-    binaryclassifier = prtclassadaboost;
-    binaryclassifier.internaldecider = prtdecisionbinaryminpe;
+    binaryclassifier = prtClassAdaBoost;
+    binaryclassifier.internalDecider = prtDecisionBinaryMinPe;
     binaryclassifier = binaryclassifier.train(dsbinary);
-    binaryclassifier.plot;
+    binaryclassifier.plot; drawnow; pause(0.1);
     
     %% m-ary classifier; no decision
-    maryclassifier = prtclassknn;
+    maryclassifier = prtClassKnn;
     maryclassifier = maryclassifier.train(dsmary);
-    maryclassifier.plot;
+    maryclassifier.plot; drawnow; pause(0.1);
     
     %% m-ary classifier; with decision
     clc;
     close all;
-    maryclassifier = prtclassknn;
-    maryclassifier.internaldecider = prtdecisionmap;
+    maryclassifier = prtClassKnn;
+    maryclassifier.internalDecider = prtDecisionMap;
     maryclassifier = maryclassifier.train(dsmary);
-    maryclassifier.plot;
+    maryclassifier.plot; drawnow; pause(0.1);
     
     %% m-ary-binary classifier; no decision
     close all;
     marybinaryclassifier = prtclassbinarytomaryonevsall('classifiers',prtclasslogisticdiscriminant);
     marybinaryclassifier = marybinaryclassifier.train(dsmary);
-    marybinaryclassifier.plot;
+    marybinaryclassifier.plot; drawnow; pause(0.1);
     
     %% m-ary-binary classifier; with decision
     close all;
-    marybinaryclassifier = prtclassbinarytomaryonevsall('classifiers',prtclasslogisticdiscriminant);
-    marybinaryclassifier.internaldecider = prtdecisionmap;
+    marybinaryclassifier = prtClassBinaryToMaryOneVsAll('classifiers',prtclasslogisticdiscriminant);
+    marybinaryclassifier.internalDecider = prtDecisionMap;
     marybinaryclassifier = marybinaryclassifier.train(dsmary);
-    marybinaryclassifier.plot;
+    marybinaryclassifier.plot; drawnow; pause(0.1);
     
     %% clustering - m-ary data
     close all;
-    clusterer = prtclusterkmeans;
+    clusterer = prtClusterKmeans;
     clusterer = clusterer.train(dsmary);
-    clusterer.plot;
+    clusterer.plot; drawnow; pause(0.1);
     
     %% clustering with decision
     close all;
-    clusterer = prtclusterkmeans;
-    clusterer.internaldecider = prtdecisionmap;
+    clusterer = prtClusterKmeans;
+    clusterer.internalDecider = prtDecisionMap;
     clusterer = clusterer.train(dsmary);
-    clusterer.plot;
+    clusterer.plot; drawnow; pause(0.1);
     
     %% clustering - m-ary data
     close all;
-    clusterer = prtclusterkmeans;
-    clusterer.nclusters = 2;
+    clusterer = prtClusterKmeans;
+    clusterer.nClusters = 2;
     clusterer = clusterer.train(dsbinary);
-    clusterer.plot;
+    clusterer.plot; drawnow; pause(0.1);
     
     %% clustering with decision
     close all;
-    clusterer = prtclusterkmeans;
-    clusterer.nclusters = 2;
-    clusterer.internaldecider = prtdecisionmap;
+    clusterer = prtClusterKmeans;
+    clusterer.nClusters = 2;
+    clusterer.internalDecider = prtDecisionMap;
     clusterer = clusterer.train(dsbinary);
-    clusterer.plot;
+    clusterer.plot; drawnow; pause(0.1);
 catch
     result = false;
 end
