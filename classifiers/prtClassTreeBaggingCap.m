@@ -208,6 +208,37 @@ classdef prtClassTreeBaggingCap < prtClass
                     fprintf(fid,'%s\n',exportString{:});
                     fclose(fid);
                     
+                    % Templatized (Broken) version
+                    %                     [filePath, file, fileExt] = fileparts(file); %#ok<NASGU>
+                    %                     templateFile = fullfile(prtRoot,'util','prtEml','prtEmlClassTreeBaggingCapRun_Template.m');
+                    %
+                    %                     fid = fopen(templateFile);
+                    %                     templateString = fscanf(fid,'%c');
+                    %                     fclose(fid);
+                    %
+                    %                     if ~isvarname(file)
+                    %                         error('prt:prtClassTreeBaggingCap:export','When using EML export, file must be a string that is a valid MATLAB function name (optionally it can also contain a path.)');
+                    %                     end
+                    %
+                    %                     fileWithMExt = cat(2,file,'.m');
+                    %
+                    %                     exportStruct.nTrees = obj.nTrees;
+                    %                     exportStruct.nFeatures = obj.nFeatures;
+                    %                     exportStruct.DataSetSummary.nFeatures = obj.DataSetSummary.nFeatures;
+                    %                     exportStruct.DataSetSummary.nClasses = obj.DataSetSummary.nClasses;
+                    %                     exportStruct.twoClassParadigm = obj.twoClassParadigm;
+                    %                     exportStruct.root = obj.root;
+                    %
+                    %                     exportString = prtUtilStructToStr(exportStruct,'theClassifier');
+                    %
+                    %                     % Add a function declaration name to the beginning
+                    %                     %                     exportString = cat(1, {sprintf('function [%s] = %s()',structureName,file)}, {''}, exportString);
+                    %                     exportString = strrep(templateString,'%<prt.insertClassifierCreationCode>',sprintf('%s\n',exportString{:}));
+                    %                     exportString = strrep(exportString,'%<prt.insertClassifierMfileName>',file);
+                    %                     fid = fopen(fullfile(filePath,fileWithMExt),'w');
+                    %                     fprintf(fid,'%s\n',exportString);
+                    %                     fclose(fid);
+                    %
                 otherwise
                     error('prt:prtClassTreeBaggingCap:export','Invalid file formal specified');
             end

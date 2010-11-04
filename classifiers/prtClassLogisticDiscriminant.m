@@ -291,6 +291,31 @@ classdef prtClassLogisticDiscriminant < prtClass
                     fprintf(fid,'%s\n',exportString{:});
                     fclose(fid);
                     
+                    % %                     % Templatized (broken) version:
+                    % %                     [filePath, file, fileExt] = fileparts(file); %#ok<NASGU>
+                    % %                     templateFile = fullfile(prtRoot,'util','prtEml','prtEmlClassLogisticDiscriminantRun_Template.m');
+                    % %
+                    % %                     fid = fopen(templateFile);
+                    % %                     templateString = fscanf(fid,'%c');
+                    % %                     fclose(fid);
+                    % %
+                    % %                     if ~isvarname(file)
+                    % %                         error('prt:prtClassTreeBaggingCap:export','When using EML export, file must be a string that is a valid MATLAB function name (optionally it can also contain a path.)');
+                    % %                     end
+                    % %
+                    % %                     fileWithMExt = cat(2,file,'.m');
+                    % %
+                    % %                     objStruct.w = obj.w;
+                    % %                     exportString = prtUtilStructToStr(objStruct,'theClassifier');
+                    % %
+                    % %                     % Add a function declaration name to the beginning
+                    % %                     %                     exportString = cat(1, {sprintf('function [%s] = %s()',structureName,file)}, {''}, exportString);
+                    % %                     exportString = strrep(templateString,'%<prt.insertClassifierCreationCode>',sprintf('%s\n',exportString{:}));
+                    % %                     exportString = strrep(exportString,'%<prt.insertClassifierMfileName>',file);
+                    % %                     fid = fopen(fullfile(filePath,fileWithMExt),'w');
+                    % %                     fprintf(fid,'%s\n',exportString);
+                    % %                     fclose(fid);
+
                 otherwise
                     error('prt:prtClassLogisticDiscriminant:export','Invalid file formal specified');
             end

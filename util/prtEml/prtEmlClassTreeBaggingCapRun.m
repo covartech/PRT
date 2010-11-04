@@ -65,8 +65,8 @@ end
 
 internalOutput = internalOutput/prtEmlClassTreeBaggingCapStruct.nTrees;
 
-if provideOnlyOneOutput
+% if provideOnlyOneOutput
     output = internalOutput(2); % Only output the class 1 confidence
-else
-    output = internalOutput;
-end
+% else
+%     output = internalOutput;
+% end
