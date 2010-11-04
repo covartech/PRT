@@ -5,6 +5,10 @@ classdef prtKernelRbfNdimensionScale < prtKernelRbf
     
     methods
 
+        function obj = prtKernelRbfNdimensionScale(varargin)
+            obj = prtUtilAssignStringValuePairs(obj,varargin{:});
+        end
+        
         function yOut = evalKernel(obj,data)
             sigma = sqrt(obj.sigma.^2*size(obj.kernelCenter,2));
             yOut = prtKernelRbf.rbfEvalKernel(obj.kernelCenter,data,sigma);
