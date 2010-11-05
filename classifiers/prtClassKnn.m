@@ -4,7 +4,7 @@ classdef prtClassKnn < prtClass
     %    CLASSIFIER = prtClassKnn returns a K-nearest neighbors classifier
     %
     %    CLASSIFIER = prtClassKnn(PROPERTY1, VALUE1, ...) constructs a
-    %    prtClassMAP object CLASSIFIER with properties as specified by
+    %    prtClassKnn object CLASSIFIER with properties as specified by
     %    PROPERTY/VALUE pairs.
     %
     %    A prtClassKnn object inherits all properties from the abstract class

@@ -23,8 +23,8 @@ classdef prtClassKmsd < prtClass
     %
     %    Example:
     %
-    %     TestDataSet = prtDataGenUniModal;       % Create some test and
-    %     TrainingDataSet = prtDataGenUniModal;   % training data
+    %     TestDataSet = prtDataGenUnimodal;       % Create some test and
+    %     TrainingDataSet = prtDataGenUnimodal;   % training data
     %     classifier = prtClassKmsd;              % Create a classifier
     %     classifier = classifier.train(TrainingDataSet);    % Train
     %     classified = run(classifier, TestDataSet);         % Test

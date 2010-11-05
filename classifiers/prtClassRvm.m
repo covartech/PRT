@@ -1,11 +1,6 @@
 classdef prtClassRvm < prtClass
     % prtClassRvm  Relevance vector machin classifier
     %
-    %
-    % Herbrich: Learning Kernel Classifiers, Algorithm 7, Page 328
-    %
-    %
-    %
     %    CLASSIFIER = prtClassRvm returns a relevance vector machine classifier
     %
     %    CLASSIFIER = prtClassRvm(PROPERTY1, VALUE1, ...) constructs a
@@ -18,9 +13,6 @@ classdef prtClassRvm < prtClass
     %   SetAccess = public:
     %    kernels            - A cell array of prtKernel objects specifying
     %                         the kernels to use
-    %    algorithm          - The algorithm used, can be 'Figueiredo',
-    %                         'Sequential', or 'SequentialInMemory' (see
-    %                         below for more information)
     %    learningPlot       - Flag indicating whether or not to plot during
     %                         training
     %    learningVerbose       - Flag indicating whether or not to output
@@ -40,8 +32,20 @@ classdef prtClassRvm < prtClass
     %
     %    http://en.wikipedia.org/wiki/Relevance_vector_machine
     %
-    %   When 'algorithm' is set to 'Figueiredo', the algorithm is based on
-    %   the work presented in:
+    %   By default, prtClassRvm uses the Laplacian approximation as found
+    %   in the paper:
+    %
+    %   Michael E. Tipping. 2001. Sparse bayesian learning and the
+    %   relevance vector machine. J. Mach. Learn. Res. 1 (September 2001),
+    %
+    %   The code is based on the algorithm in: 
+    %
+    %   Herbrich, Learning Kernel Classifiers, The MIT Press, 2002
+    %   http://www.learning-kernel-classifiers.org/
+    %
+    %   For alternative approaches to solving the RVM learning problem,
+    %   see prtClassRvmFigueiredo, and prtClassRvmSequential
+    %
     %       M. Figueiredo, Adaptive sparseness for supervised learning, 
     %   IEEE PAMI, vol. 25, no. 9 pp.1150-1159, September 2003.
     %
@@ -56,17 +60,19 @@ classdef prtClassRvm < prtClass
     %    KFOLDS methods from prtAction. It also inherits the PLOT method
     %    from prtClass.
     %
-    %
     %    Example:
     %
-    %     TestDataSet = prtDataGenUnimodal;      % Create some test and
-    %     TrainingDataSet = prtDataGenUnimodal;  % training data
-    %     classifier = prtClassRvm;           % Create a classifier
-    %     classifier = classifier.train(TrainingDataSet);    % Train
-    %     classified = run(classifier, TestDataSet);         % Test
-    %     classes  = classified.getX > .5;
-    %     percentCorr = prtScorePercentCorrect(classes,TestDataSet.getTargets);
-    %     classifier.plot;
+    %    TestDataSet = prtDataGenUnimodal;      % Create some test and
+    %    TrainingDataSet = prtDataGenUnimodal;  % training data
+    %    classifier = prtClassRvm;              % Create a classifier
+    %    classifier = classifier.train(TrainingDataSet);    % Train
+    %    classified = run(classifier, TestDataSet);         % Test
+    %    subplot(2,1,1);
+    %    classifier.plot;
+    %    subplot(2,1,2);
+    %    [pf,pd] = prtScoreRoc(classified,TestDataSet);
+    %    h = plot(pf,pd,'linewidth',3);
+    %    title('ROC'); xlabel('Pf'); ylabel('Pd');
     %
     %    See also prtClass, prtClassLogisticDiscriminant, prtClassBagging,
     %    prtClassMap, prtClassCap, prtClassBinaryToMaryOneVsAll, prtClassDlrt,

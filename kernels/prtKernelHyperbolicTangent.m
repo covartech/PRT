@@ -35,7 +35,6 @@ classdef prtKernelHyperbolicTangent < prtKernelBinary
         function yOut = evalKernel(obj,data)
             yOut = prtKernelHyperbolicTangent.hyperbolicTangentKernelEval(obj.kernelCenter,data,obj.kappa,obj.c);
         end
-        
     end
     
     methods (Static, Hidden = true)

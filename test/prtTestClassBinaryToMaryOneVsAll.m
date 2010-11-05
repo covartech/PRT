@@ -11,7 +11,7 @@ result = true;
 %     TrainingDataSet = prtDataGenMary;
 %     
 %     classifier = prtClassBinaryToMaryOneVsAll;
-%     classifier.Classifiers = prtClassGlrt;
+%     classifier.baseClassifier = prtClassGlrt;
 %     classifier = classifier.train(TrainingDataSet);
 %     classified = run(classifier, TestDataSet);
 %     classes  = classified.getX;
@@ -28,7 +28,7 @@ TrainingDataSet = prtDataGenMary;
 
 
 classifier = prtClassBinaryToMaryOneVsAll;
-classifier.Classifiers = prtClassGlrt;
+classifier.baseClassifier = prtClassGlrt;
 
 classifier = classifier.train(TrainingDataSet);
 classified = run(classifier, TestDataSet);
@@ -50,7 +50,7 @@ end
 TestDataSet = prtDataGenMary;
 
 classifier = prtClassBinaryToMaryOneVsAll;
-classifier.Classifiers = prtClassGlrt;
+classifier.baseClassifier = prtClassGlrt;
 
 
 % cross-val
@@ -90,7 +90,7 @@ error = true;  % We will want all these things to error
 noerror = true;
 
 try
-    classifier = prtClassBinaryToMaryOneVsAll('Classifiers', prtClassMap);
+    classifier = prtClassBinaryToMaryOneVsAll('baseClassifier', prtClassMap);
     classifier = classifier.train(TrainingDataSet);
     classified = run(classifier, TestDataSet);
     

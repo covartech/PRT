@@ -31,6 +31,13 @@ classdef prtClassGlrt < prtClass
     %     classifier = prtClassGlrt;              % Create a classifier
     %     classifier = classifier.train(TrainingDataSet);    % Train
     %     classifier.plot;
+    %     classified = classifier.run(TestDataSet);
+    %    subplot(2,1,1);
+    %    classifier.plot;
+    %    subplot(2,1,2);
+    %    [pf,pd] = prtScoreRoc(classified,TestDataSet);
+    %    h = plot(pf,pd,'linewidth',3);
+    %    title('ROC'); xlabel('Pf'); ylabel('Pd');
     %
     %    See also prtClass, prtClassLogisticDiscriminant, prtClassBagging,
     %    prtClassMap, prtClassCap, prtClassBinaryToMaryOneVsAll, prtClassDlrt,

@@ -21,13 +21,13 @@ classdef prtClassCap < prtClass
     %    Breiman, Leo (2001). "Random Forests". Machine Learning 45 (1): 
     %    5–32.
     %
-    %   Note that the output of the run method of a prtClassCap classifier
-    %   includes the process of applying the learned threshold to the
-    %   linear projection, so the outputs are discrete valued.
+    %    Note that the output of the run method of a prtClassCap classifier
+    %    includes the process of applying the learned threshold to the
+    %    linear projection, so the outputs are discrete valued.
     %
-    %   A prtClassCap object inherits the TRAIN, RUN, CROSSVALIDATE and 
-    %   KFOLDS methods from prtAction. It also inherits the PLOT method 
-    %   from prtClass.
+    %    A prtClassCap object inherits the TRAIN, RUN, CROSSVALIDATE and 
+    %    KFOLDS methods from prtAction. It also inherits the PLOT method 
+    %    from prtClass.
     %
     %    Example:
     %
@@ -37,14 +37,13 @@ classdef prtClassCap < prtClass
     %     classifier = classifier.train(TrainingDataSet);    % Train
     %     classified = run(classifier, TestDataSet);         % Test
     %     percentCorr = prtScorePercentCorrect(classified,TestDataSet);
+    %     subplot(2,1,1);
     %     classifier.plot;
+    %     subplot(2,1,2);
+    %     [pf,pd] = prtScoreRoc(classified,TestDataSet);
+    %     h = plot(pf,pd,'linewidth',3);
+    %     title('ROC'); xlabel('Pf'); ylabel('Pd');
     %
-    %    See also prtClass, prtClassLogisticDiscriminant, prtClassBagging,
-    %    prtClassMap, prtClassCap, prtClassBinaryToMaryOneVsAll, prtClassDlrt,
-    %    prtClassPlsda, prtClassFld, prtClassRvm, prtClassDlrt,  prtClass
-    
-    
-    
     
     
     properties (SetAccess=private)

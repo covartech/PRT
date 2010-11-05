@@ -5,7 +5,7 @@ classdef prtClassKmeansPrototypes < prtClass
     %    classifier
     %
     %    CLASSIFIER = prtClassKmeansPrototypes(PROPERTY1, VALUE1, ...)
-    %    constructs a prtClassMAP object CLASSIFIER with properties as
+    %    constructs a prtClassKmeansPrototypes object CLASSIFIER with properties as
     %    specified by PROPERTY/VALUE pairs.
     %
     %    A prtClassKmeansPrototypes object inherits all properties from the
@@ -13,7 +13,8 @@ classdef prtClassKmeansPrototypes < prtClass
     %    properties:
     %
     %    nClustersPerHypothesis -  The number of clusters per hypothesis
-    %    clusterCenters         -  The cluster centers 
+    %    clusterCenters         -  The cluster centers (set during
+    %                              training)
     % 
     %    For information on the  K-means prototype classifier
     %    algorithm, please refer to:

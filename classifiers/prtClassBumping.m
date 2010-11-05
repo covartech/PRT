@@ -7,24 +7,11 @@ classdef prtClassBumping < prtClass
  %    prtClassBumping object CLASSIFIER with properties as specified by
  %    PROPERTY/VALUE pairs.
  %
- % A Bumping classifier is a meta-classifier that chooses one of several
- % classifiers trained on a bootstrap sampled version of the input training
- % data.  In this case, the classifier chosen is the classifier trained on
- % the bootstrap sample that results in the smallest percent error when
- % tested on the original data set.  Bumping classifiers can be useful when
- % the data set under consideration has a small number of significant
- % outliers; some of the bagging samples will be free of at least some of
- % the outliers and may provide better generalization performance.
- % 
- % For more information on Bumping classifiers, see:
- %  Hastie, Tibshirani, and Friedman, The Elements of Statistical Learning
- %  Theory.
- %
  % A prtClassBumping object inherits all properties from the abstract class
  % prtClass. In addition is has the following properties:
  %
  %      baseClassifier    - The base classifier to be re-trained with bootstrap 
- %                        samples
+ %                          samples
  %      nBags             - The number of bagging samples to use
  %
  %      includeOriginalDataClassifier - Boolean value specifying whether to
@@ -38,6 +25,19 @@ classdef prtClassBumping < prtClass
  % After training, a Bump classifier contains a field "Classifier" with the
  % best trained classification algorithm, and a vector baggedPerformance
  % with the percent correct found for each bagging sample.
+ %
+ % A Bumping classifier is a meta-classifier that chooses one of several
+ % classifiers trained on a bootstrap sampled version of the input training
+ % data.  In this case, the classifier chosen is the classifier trained on
+ % the bootstrap sample that results in the smallest percent error when
+ % tested on the original data set.  Bumping classifiers can be useful when
+ % the data set under consideration has a small number of significant
+ % outliers; some of the bagging samples will be free of at least some of
+ % the outliers and may provide better generalization performance.
+ % 
+ % For more information on Bumping classifiers, see:
+ %  Hastie, Tibshirani, and Friedman, The Elements of Statistical Learning
+ %  Theory.
  %
  % % Example:
  % ds = prtDataGenUnimodal;

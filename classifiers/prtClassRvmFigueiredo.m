@@ -1,5 +1,43 @@
 classdef prtClassRvmFigueiredo < prtClassRvm
-    % prtClassRvmFigueiredo  Relevance vector machin classifier using
+    % prtClassRvmFigueiredo  Relevance vector machin classifier using a
+    %   Jefferey's prior
+    %
+    %    CLASSIFIER = prtClassRvmFigueiredo returns a relevance vector 
+    %    machine classifier based on 
+    %
+    %       M. Figueiredo, Adaptive sparseness for supervised learning, 
+    %   IEEE PAMI, vol. 25, no. 9 pp.1150-1159, September 2003.
+    %
+    %    CLASSIFIER = prtClassRvmFigueiredo(PROPERTY1, VALUE1, ...) constructs a
+    %    prtClassRvm object CLASSIFIER with properties as specified by
+    %    PROPERTY/VALUE pairs.
+    %
+    %    A prtClassRvmFigueiredo object inherits all properties from the
+    %    abstract class prtClass. In addition is has the following
+    %    properties:
+    %
+    %   SetAccess = public:
+    %    kernels            - A cell array of prtKernel objects specifying
+    %                         the kernels to use
+    %    learningPlot       - Flag indicating whether or not to plot during
+    %                         training
+    %    learningVerbose       - Flag indicating whether or not to output
+    %                         verbose updates during training
+    %    learningMaxIterations  - The maximum number of iterations
+    %
+    %   SetAccess = private/protected:
+    %    learningConverged  - Flag indicating if the training converged
+    %    beta          - The regression weights, estimated during training
+    %    sparseBeta    - The sparse regression weights, estimated during
+    %                    training
+    %    sparseKernels - The sparse regression kernels, estimated during
+    %                    training
+    %
+    %   Training using the Figueiredo algorithm can provide faster
+    %   and more robust convergence under some circumstances
+    %
+    %   For alternative RVM implementations, see prtClassRvm and
+    %   prtClassRvmSequential.
     %
     %       M. Figueiredo, Adaptive sparseness for supervised learning, 
     %   IEEE PAMI, vol. 25, no. 9 pp.1150-1159, September 2003.
@@ -8,14 +46,19 @@ classdef prtClassRvmFigueiredo < prtClassRvm
     %    KFOLDS methods from prtAction. It also inherits the PLOT method
     %    from prtClass.
     %
+    %    % Example
+    %    TestDataSet = prtDataGenUnimodal;      % Create some test and
+    %    TrainingDataSet = prtDataGenUnimodal;  % training data
+    %    classifier = prtClassRvmFigueiredo;              % Create a classifier
+    %    classifier = classifier.train(TrainingDataSet);    % Train
+    %    classified = run(classifier, TestDataSet);         % Test
+    %    subplot(2,1,1);
+    %    classifier.plot;
+    %    subplot(2,1,2);
+    %    [pf,pd] = prtScoreRoc(classified,TestDataSet);
+    %    h = plot(pf,pd,'linewidth',3);
+    %    title('ROC'); xlabel('Pf'); ylabel('Pd');
     %
-    %    Example:
-    %{
-        TrainingDataSet = prtDataGenUnimodal;  % training data
-        classifier = prtClassRvmFigueiredo;    % Create a classifier
-        classifier = classifier.train(TrainingDataSet);    % Train
-        classifier.plot;
-    %}
     
     methods
         function Obj = prtClassRvmFigueiredo(varargin)

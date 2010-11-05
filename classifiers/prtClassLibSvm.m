@@ -1,15 +1,78 @@
 classdef prtClassLibSvm < prtClass
     % prtClassLibSvm  Support vector machine classifier using LibSvm
     %
-    %   Note: requires libSvm, which should be in nfPrt\util\libsvm-mat-2.91-1
+    %   CLASSIFIER = prtClassLibSvm returns a SVM Classifier using the
+    %   SVM toolbox "LibSvm" which provides a fast interface to training
+    %   and testing support vector machines.
     %
-    %   Additional options can be specified by editing obj.libSvmOptions
-    %   using the format found here:
+    %   Note: requires libSvm, which should be in nfPrt\util\libsvm-mat-2.91-1
+    %   On linux, you may need to re-build the LibSVM Binaries.  See the
+    %   documentation for LibSvm (link below) for more information.
+    %
+    %    A prtClassLibSvm object inherits all properties from the abstract class
+    %    prtClass. In addition is has the following properties; complete
+    %    documentation for these properties can be found here:
+    %
+    %       http://www.csie.ntu.edu.tw/~cjlin/libsvm/
+    %
+    %         svmType       - Whether to use a C-SVM, nu-SVM, one-class
+    %                        SVM, epsilon-SVR, or nu-SVR
+    %         kernelType    - Kernel type to use - linear, polynomial, rbf,
+    %                        or sigmoid 
+    %         degree        - Kernel function parameter (some kernels)
+    %         gamma         - Kernel function parameter (some kernels)
+    %         coef0         - Kernel function parameter (some kernels)
+    %         cost          - Cost parameter
+    %         nu            - nu parameter (nu-SVM's)
+    %         pEpsilon      - Loss function parameter (epsilon-SVMs)
+    %         cachesize     - Memory cache in MB (can affect speed,
+    %                        computer dependent)
+    %         eEpsilon      - Termination tolerance
+    %         shrinking     - Use shrinking heuristic?
+    %         probabilityEstimates - Output probability estimates?
+    %         weight        - Parameter in C-SCM
+    %
+    %   Default values are:
+    %     svmType = 0;
+    %     kernelType = 2;
+    %     degree = 3;
+    %     gamma = nan;
+    %     coef0 = 0;
+    %     cost = 1;
+    %     nu = .5;
+    %     pEpsilon = .1;
+    %     cachesize = 100;
+    %     eEpsilon = 0.001;
+    %     shrinking = 1;
+    %     probabilityEstimates = 0;
+    %     weight = 1;
+    %
+    %   Additional options can be specified by modifying the field 
+    %   obj.libSvmOptions using the format found here:
     %   http://www.csie.ntu.edu.tw/~cjlin/libsvm/
     %
     %   More documentation can be found here:
     %   http://www.csie.ntu.edu.tw/~cjlin/papers/libsvm.pdf
     %
+    %   Note: the LibSvm will output estimated percent correct values to
+    %   the screen during processing; because of the way the PRT trains and
+    %   tests, these should be ignored during training and plotting. (To be
+    %   fixed)
+    %
+    %   %Example usage:
+    %     TestDataSet = prtDataGenUnimodal;       % Create some test and
+    %     TrainingDataSet = prtDataGenUnimodal;   % training data
+    %     classifier = prtClassLibSvm;              % Create a classifier
+    %     classifier = classifier.train(TrainingDataSet);    % Train
+    %     classified = run(classifier, TestDataSet);         % Test
+    %     percentCorr = prtScorePercentCorrect(classified,TestDataSet);
+    %     subplot(2,1,1);
+    %     classifier.plot;
+    %     subplot(2,1,2);
+    %     [pf,pd] = prtScoreRoc(classified,TestDataSet);
+    %     h = plot(pf,pd,'linewidth',3);
+    %     title('ROC'); xlabel('Pf'); ylabel('Pd');
+    
     %   Notes for doc:
     %       1) The goddamn thing always outputs something like:
     %   Accuracy = 62.63% (6263/10000) (classification)
@@ -18,7 +81,7 @@ classdef prtClassLibSvm < prtClass
     %   didn't think to give us a way that I can see to turn off that
     %   output.
     %
-    %       2) ALl the parameters that you set below actually get set for
+    %       2) All the parameters that you set below actually get set for
     %       real when we call libSvmOptionString and libSvmOptionStringTest
     %       in train.  The calling syntax is command-line-esque, but I
     %       think I check for all the right requirements.

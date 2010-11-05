@@ -10,11 +10,13 @@ classdef prtClassBagging < prtClass
     %    A prtClassBagging object inherits all properties from the abstract
     %    class prtClass. In addition is has the following properties:
     %
-    %    baseClassifier  - The classifier to be used nBags           - The
-    %    number of bags
+    %    baseClassifier  - The classifier to be used 
+    %    nBags           - The number of bagging sampes to use
     % 
-    %    For more information on bagging classifiers, refer to the
-    %    following URL:
+    %    Bagging classifiers are meta-classifiers that attempt to develop
+    %    more robust decision boundaries by aggregating outputs over
+    %    multiple bootstrapped samples of the original data.  For more
+    %    information on bagging classifiers, see:
     %
     %    http://en.wikipedia.org/wiki/Bootstrap_aggregating
     %
@@ -24,14 +26,19 @@ classdef prtClassBagging < prtClass
     %
     %    Example:
     %
-    %     TestDataSet = prtDataGenUniModal;       % Create some test and
+    %     TestDataSet = prtDataGenUnimodal;       % Create some test and
     %     TrainingDataSet = prtDataGenUniModal;   % training data
     %     classifier = prtClassBagging;           % Create a classifier
-    %     classifier.baseClassifier = prtClassMap;  % Set the classifier to
-    %                                             % a prtClassMap
+    %     classifier.baseClassifier = prtClassMap; % Set the classifier to
+    %                                              % a prtClassMap
     %     classifier = classifier.train(TrainingDataSet);    % Train
     %     classified = run(classifier, TestDataSet);         % Test
+    %     subplot(2,1,1);
     %     classifier.plot;
+    %     subplot(2,1,2);
+    %     [pf,pd] = prtScoreRoc(classified,TestDataSet);
+    %     h = plot(pf,pd,'linewidth',3);
+    %     title('ROC'); xlabel('Pf'); ylabel('Pd');
     %
     
 

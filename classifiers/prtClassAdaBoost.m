@@ -25,13 +25,13 @@ classdef prtClassAdaBoost < prtClass
  %    http://en.wikipedia.org/wiki/AdaBoost
  %
  %    A prtClassAdaBoost object inherits the TRAIN, RUN, CROSSVALIDATE and
- %    KFOLDS methods from prtAction. It also inherits the PLOT and
+ %    KFOLDS methods from prtAction. It also inherits the PLOT 
  %    method from prtClass.
  %
  %    Example:
  %
- %    TestDataSet = prtDataGenUniModal;       % Create some test and
- %    TrainingDataSet = prtDataGenUniModal;   % training data 
+ %    TestDataSet = prtDataGenUnimodal;       % Create some test and
+ %    TrainingDataSet = prtDataGenUnimodal;   % training data 
  %    classifier = prtClassAdaBoost;                     % Create a classifier 
  %    classifier = classifier.train(TrainingDataSet);    % Train 
  %    classified = run(classifier, TestDataSet);         % Test 

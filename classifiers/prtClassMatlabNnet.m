@@ -1,10 +1,31 @@
 classdef prtClassMatlabNnet < prtClass
-    % xxx NEED HELP xxx
-    %DS = prtDataGenBimodal;
-    %Nn = prtClassMatlabNnet; 
-    %Nn = Nn.train(DS);
-    %Nn.plot; 
-    %yOut = Nn.run(prtDataGenBimodal);
+    % prtClassMatlabNnet  Support vector machine classifier using the
+    % MATLAB neural network toolbox (requires NNET toolbox)
+    %
+    %   CLASSIFIER = prtClassMatlabNnet returns a neural network classifier
+    %   using the MATLAB NNET toolbox (additonal product, not included)
+    %
+    %  A prtClassMatlabNnet object inherits all properties from the
+    %  abstract class prtClass. In addition is has the following
+    %  properties; complete documentation for these properties can be found
+    %  in the help for the newpr.m function in the MATLAB NNET toolbox.
+    %
+    %   Si, TFi, BTF, BLF, PF, IPF, OPF, DDF
+    %
+    % % Example usage:
+    %
+    %   TestDataSet = prtDataGenBimodal;       % Create some test and
+    %   TrainingDataSet = prtDataGenBimodal;   % training data
+    %   classifier = prtClassMatlabNnet;           % Create a classifier
+    %   classifier = classifier.train(TrainingDataSet);    % Train
+    %   classified = run(classifier, TestDataSet);         % Test
+    %   subplot(2,1,1);
+    %   classifier.plot;
+    %   subplot(2,1,2);
+    %   [pf,pd] = prtScoreRoc(classified,TestDataSet);
+    %   h = plot(pf,pd,'linewidth',3);
+    %   title('ROC'); xlabel('Pf'); ylabel('Pd');
+    %   
     
     properties (SetAccess=private)
         name = 'MATLAB Neural Network' % Fisher Linear Discriminant

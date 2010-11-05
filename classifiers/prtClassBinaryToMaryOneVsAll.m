@@ -1,21 +1,21 @@
 classdef prtClassBinaryToMaryOneVsAll < prtClass
     % prtClassBinaryToMaryOneVsAll  M-Ary Emulation Classifier
     %
-    %    CLASSIFIER = prtClassBinaryToMaryOneVsAll returns a M-ary one
-    %    versus all classifier. A one versus all classifier utilizes a
+    %    CLASSIFIER = prtClassBinaryToMaryOneVsAll returns a M-ary "one
+    %    versus all" classifier. A one versus all classifier utilizes a
     %    binary classifier to make M-ary decisions. For all M classes, it
-    %    selects one class, and makes a binary comparison to all the
+    %    selects each class, and makes a binary comparison to all the
     %    others.
     %
     %    CLASSIFIER = prtClassBinaryToMaryOneVsAll(PROPERTY1, VALUE1, ...)
-    %    constructs a prtClassMAP object CLASSIFIER with properties as
-    %    specified by PROPERTY/VALUE pairs.
+    %    constructs a prtClassBinaryToMaryOneVsAll object CLASSIFIER with
+    %    properties as specified by PROPERTY/VALUE pairs.
     %
     %    A prtClassBinaryToMaryOneVsAll object inherits all properties from the
     %    abstract class prtClass. In addition is has the following
     %    properties:
     %
-    %    Classifiers - The classifier to be used to make the binary
+    %    baseClassifier - The classifier to be used to make the binary
     %                  decisions. Must be a prtClass object, and defaults 
     %                  to a prtClassLogisticDiscriminant classifier.
     % 
@@ -28,7 +28,7 @@ classdef prtClassBinaryToMaryOneVsAll < prtClass
     %     TestDataSet = prtDataGenMary;      % Create some test and 
     %     TrainingDataSet = prtDataGenMary;  % training data
     %     classifier = prtClassBinaryToMaryOneVsAll; % Create a classifier
-    %     classifier.Classifiers = prtClassGlrt;    % Set the binary 
+    %     classifier.baseClassifier = prtClassGlrt;    % Set the binary 
     %                                               % Classifier
     %     classifier = classifier.train(TrainingDataSet);    % Train
     %     classified = run(classifier, TestDataSet);         % Test
@@ -48,7 +48,7 @@ classdef prtClassBinaryToMaryOneVsAll < prtClass
     end
     
     properties
-        Classifiers = prtClassLogisticDiscriminant; % The classifier to be used
+        baseClassifier = prtClassLogisticDiscriminant; % The classifier to be used
     end
     
     methods
@@ -62,9 +62,9 @@ classdef prtClassBinaryToMaryOneVsAll < prtClass
         
         function Obj = trainAction(Obj,DataSet)
             % Repmat the Classifier objects to get one for each class
-            Obj.nameAbbreviation = sprintf('OneVsAll_{%s}',Obj.Classifiers(1).nameAbbreviation);
-            Obj.Classifiers = repmat(Obj.Classifiers(:), (DataSet.nClasses - length(Obj.Classifiers)+1),1);
-            Obj.Classifiers = Obj.Classifiers(1:DataSet.nClasses);
+            Obj.nameAbbreviation = sprintf('OneVsAll_{%s}',Obj.baseClassifier(1).nameAbbreviation);
+            Obj.baseClassifier = repmat(Obj.baseClassifier(:), (DataSet.nClasses - length(Obj.baseClassifier)+1),1);
+            Obj.baseClassifier = Obj.baseClassifier(1:DataSet.nClasses);
             
             for iY = 1:DataSet.nClasses
                 % Replace the targets with binary targets for this class
@@ -72,19 +72,19 @@ classdef prtClassBinaryToMaryOneVsAll < prtClass
                 
                 % We need the classifier to act like a binary and we dont 
                 % want a bunch of DataSets lying around
-                Obj.Classifiers(iY).verboseStorage = false;
-                Obj.Classifiers(iY).twoClassParadigm = 'binary';
+                Obj.baseClassifier(iY).verboseStorage = false;
+                Obj.baseClassifier(iY).twoClassParadigm = 'binary';
                 
                 % Train this Classifier
-                Obj.Classifiers(iY) = train(Obj.Classifiers(iY), cDataSet);
+                Obj.baseClassifier(iY) = train(Obj.baseClassifier(iY), cDataSet);
             end
         end
 
         function DataSetOut = runAction(Obj,DataSet)
-            DataSetOut = prtDataSetClass(zeros(DataSet.nObservations, length(Obj.Classifiers)));
+            DataSetOut = prtDataSetClass(zeros(DataSet.nObservations, length(Obj.baseClassifier)));
             
-            for iY = 1:length(Obj.Classifiers)
-                cOutput = run(Obj.Classifiers(iY), DataSet);
+            for iY = 1:length(Obj.baseClassifier)
+                cOutput = run(Obj.baseClassifier(iY), DataSet);
                 
                 DataSetOut = DataSetOut.setObservations(cOutput.getObservations(),:,iY);
             end

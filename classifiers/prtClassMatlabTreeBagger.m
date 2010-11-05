@@ -1,21 +1,57 @@
 classdef prtClassMatlabTreeBagger < prtClass
-    % xxx NEED HELP xxx
+    % prtClassMatlabTreeBagger  TreeBagger classifier using the MATLAB
+    % function "treeBagger.m" (requires statistics toolbox)
     %
-    %DS = prtDataGenBimodal;
-    %Nn = prtClassMatlabTreeBagger; 
-    % %Or:
-    %Nn = prtClassMatlabTreeBagger('treeBaggerParamValuePairs',{'nVarToSample','all'});
-    % %or
-    %Nn = prtClassMatlabTreeBagger('treeBaggerParamValuePairs',{'nVarToSample',2});
-    %Nn = Nn.train(DS);
-    %Nn.plot; 
-    %yOut = Nn.run(prtDataGenBimodal);
+    %  CLASSIFIER = prtClassMatlabTreeBagger returns a tree-bagger
+    %  classifier build using the MATLAB Statistics toolbox (additonal 
+    %  product, not included).  As an alternative, consider using
+    %  prtClassTreeBaggingCap, which also implements a random forest
+    %  classification scheme.
+    %
+    %  A prtClassMatlabTreeBagger object inherits all properties from the
+    %  abstract class prtClass. In addition is has the following
+    %  properties:
+    % 
+    %   nTrees - The number of trees to use in the MATLAB TreeBagger
+    %
+    %   treeBaggerParamValuePairs - A cell array of parameter value pairs
+    %   to be passed to the MATLAB function "treeBagger". A complete list
+    %   of the valid parameters and their allowed values can be found in
+    %   the help entru for "treeBagger.m"
+    %
+    %  % Example usage:
+    %
+    %   TestDataSet = prtDataGenBimodal;       % Create some test and
+    %   TrainingDataSet = prtDataGenBimodal;   % training data
+    %   classifier = prtClassMatlabTreeBagger;           % Create a classifier
+    %   classifier = classifier.train(TrainingDataSet);    % Train
+    %   classified = run(classifier, TestDataSet);         % Test
+    %   subplot(2,1,1);
+    %   classifier.plot;
+    %   subplot(2,1,2);
+    %   [pf,pd] = prtScoreRoc(classified,TestDataSet);
+    %   h = plot(pf,pd,'linewidth',3);
+    %   title('ROC'); xlabel('Pf'); ylabel('Pd');
+    %
+    % % Example usage setting the treeBaggerParamValuePairs cell array:
+    %   TestDataSet = prtDataGenBimodal;       % Create some test and
+    %   TrainingDataSet = prtDataGenBimodal;   % training data
+    %   classifier = prtClassMatlabTreeBagger('treeBaggerParamValuePairs',{'nVarToSample','all'});
+    %   classifier = classifier.train(TrainingDataSet);    % Train
+    %   classified = run(classifier, TestDataSet);         % Test
+    %   subplot(2,1,1);
+    %   classifier.plot;
+    %   subplot(2,1,2);
+    %   [pf,pd] = prtScoreRoc(classified,TestDataSet);
+    %   h = plot(pf,pd,'linewidth',3);
+    %   title('ROC'); xlabel('Pf'); ylabel('Pd');
+    %
+    %
     
     properties (SetAccess=private)
-        
         name = 'MATLAB Tree Bagger';
         nameAbbreviation = 'MLTB';
-        isNativeMary = true;  % False
+        isNativeMary = true;
     end
     
     properties 

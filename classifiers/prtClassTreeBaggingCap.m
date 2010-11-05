@@ -2,7 +2,10 @@ classdef prtClassTreeBaggingCap < prtClass
     % prtClassTreeBaggingCap  Tree bagging central axis projection classifier
     %
     %    CLASSIFIER = prtClassTreeBaggingCap Tree bagging central axis
-    %    projection classifier
+    %    projection classifier.  This classifier is based on the "Random
+    %    Forest" classifier described in 
+    %
+    %    Breiman, Leo (2001). "Random Forests". Machine Learning 45
     %
     %    CLASSIFIER = prtClassTreeBaggingCap(PROPERTY1, VALUE1, ...) constructs a
     %    prtClassTreeBaggingCap object CLASSIFIER with properties as specified by
@@ -21,7 +24,9 @@ classdef prtClassTreeBaggingCap < prtClass
     %    useMex                       - flag indicating wheter or not to
     %                                   use the Mex file for speedup.
     %
-    %   XXX NEED Refernece
+    %  For more information on random tree classifiers, see:
+    %   http://en.wikipedia.org/wiki/Random_forest
+    %   http://www.stat.berkeley.edu/~breiman/RandomForests/cc_home.htm
     %
     %    A prtClassTreeBaggingCap  object inherits the TRAIN, RUN, 
     %    CROSSVALIDATE and KFOLDS methods from prtAction. It also inherits 

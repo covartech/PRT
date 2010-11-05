@@ -7,12 +7,31 @@ classdef prtClass < prtAction
     % 
     %   isNativeMary - Whather or not the classifier natively produces an
     %                  M-ary result.
-    %   PlotOptions -  prtClassPlotOpt object specifying the plotting
-    %                  options
+    %
+    %   internalDecider - (Optional, default = []) an instance of a
+    %                   prtDecision object.  When set, the classifier will
+    %                   output discrete values corresponding to the class
+    %                   determined by the classifier and the decision
+    %                   object (binary classifier), or a binary vector of
+    %                   zeros and ones (M-ary classification)
     %
     %   prtClass objects have the following methods:
     %
-    %   plot          - Plot the output confidence
+    %   plot          - Plot the output confidence of a trained classifier
+    %                   (classifiers trained with ds with <= 3 features only)
+    %
+    %   Inherited from prtAction:
+    % 
+    %   train         - Train the classifier using a prtDataSetClass and
+    %                   output a trained classifier, e.g.
+    %       myClassifier = myClassifier.train(ds);
+    %
+    %   run           - Run the classifier on a data set, e.g.
+    %       results = myClassifier.run(ds);
+    %
+    %   crossValidate, kfolds - See prtAction
+    %
+    %
     
     properties (SetAccess=private, Abstract)
         isNativeMary % Logical, classifier natively produces an output for each unique class

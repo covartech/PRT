@@ -23,6 +23,18 @@ classdef prtClassSvm < prtClass
     %
     %    http://en.wikipedia.org/wiki/Support_vector_machine
     %
+    %    The prtClassSvm object makes use of the sequential minimal
+    %    optimization as described in Reference: 
+    %     J. Platt, Sequential Minimal Optimization: A Fast Algorithm
+    %     for Training Support Vector Machines, Microsoft Research Technical
+    %     Report MSR-TR-98-14, (1998).
+    %
+    %    And implemented in prtUtilSmo.m.  Because this is an M-file
+    %    implementation, the SVM convergence can be slow; future releases
+    %    of the PRT will inclide a MEX'd version of this code which should
+    %    run faster.  An alternative for faster training is to use
+    %    prtClassLibSvm
+    %
     %    A prtClassSvm object inherits the TRAIN, RUN, CROSSVALIDATE and
     %    KFOLDS methods from prtAction. It also inherits the PLOT method
     %    from prtClass.
@@ -30,12 +42,18 @@ classdef prtClassSvm < prtClass
     %
     %    Example:
     %
-    %     TestDataSet = prtDataGenUniModal;      % Create some test and
-    %     TrainingDataSet = prtDataGenUniModal;  % training data
-    %     classifier = prtClassSvm;              % Create a classifier
-    %     classifier = classifier.train(TrainingDataSet);    % Train
-    %     percentCorr = prtScorePercentCorrect(classes,TestDataSet.getTargets);
-    %     classifier.plot;
+    %    TestDataSet = prtDataGenUnimodal;      % Create some test and
+    %    TrainingDataSet = prtDataGenUnimodal;  % training data
+    %    classifier = prtClassSvm;              % Create a classifier
+    %    classifier = classifier.train(TrainingDataSet);    % Train
+    %    classified = run(classifier, TestDataSet);         % Test
+    %    subplot(2,1,1);
+    %    classifier.plot;
+    %    subplot(2,1,2);
+    %    [pf,pd] = prtScoreRoc(classified,TestDataSet);
+    %    h = plot(pf,pd,'linewidth',3);
+    %    title('ROC'); xlabel('Pf'); ylabel('Pd');
+    %
     %
     %    See also prtClass, prtClassLogisticDiscriminant, prtClassBagging,
     %    prtClassMap, prtClassCap, prtClassBinaryToMaryOneVsAll, prtClassDlrt,

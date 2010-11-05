@@ -10,7 +10,6 @@ classdef prtClassLogisticDiscriminant < prtClass
     %    A prtClassLogisticDiscriminant object inherits all properties from the abstract class
     %    prtClass. In addition is has the following properties:
     %
-    %   w                - The regression weights, estimated during training
     %   wTolerance       - The convergance tolerance of the weights
     %   irlsStepSize     - Step size used in training. Can be set to a
     %                      double, or 'hessian'. If 'hessian', IRLS is 
@@ -28,10 +27,12 @@ classdef prtClassLogisticDiscriminant < prtClass
     %                      regularize the matrix. When set to exit the 
     %                      classifier will exit.
     %
+    %   w                - The regression weights, estimated during training
+    %
     %    For more information on LogisticDiscriminant classifiers, refer to the
     %    following URL:
     %  
-    %    XXX Need ref
+    %    http://en.wikipedia.org/wiki/Logistic_regression
     %
     %    A prtClassLogisticDiscriminant object inherits the TRAIN, RUN, 
     %    CROSSVALIDATE and KFOLDS methods from prtAction. It also inherits 
@@ -39,12 +40,17 @@ classdef prtClassLogisticDiscriminant < prtClass
     %
     %    Example:
     %
-    %     TestDataSet = prtDataGenUniModal;           % Create some test and
-    %     TrainingDataSet = prtDataGenUniModal;       % training data
+    %     TestDataSet = prtDataGenUnimodal;           % Create some test and
+    %     TrainingDataSet = prtDataGenUnimodal;       % training data
     %     classifier = prtClassLogisticDiscriminant;  % Create a classifier
     %     classifier = classifier.train(TrainingDataSet);       % Train
     %     classified = run(classifier, TestDataSet);            % Test
+    %     subplot(2,1,1);
     %     classifier.plot;
+    %     subplot(2,1,2);
+    %     [pf,pd] = prtScoreRoc(classified,TestDataSet);
+    %     h = plot(pf,pd,'linewidth',3);
+    %     title('ROC'); xlabel('Pf'); ylabel('Pd');
     %
     %    See also prtClass, prtClassLogisticDiscriminant, prtClassBagging,
     %    prtClassMap, prtClassCap, prtClassBinaryToMaryOneVsAll,

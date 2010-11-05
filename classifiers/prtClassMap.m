@@ -11,21 +11,28 @@ classdef prtClassMap < prtClass
  %    prtClass. In addition is has the following property:
  %
  %    rvs    - A multivariate normal random variable. This property must be of
- %             type prtRvMvn. This property describes the mean and covariance
- %             matrix required for Maximum a Posteriori classification. It is
- %             writable, or can be set using the Train method.
+ %             type prtRv*. This property describes the random variable 
+ %             model used for Maximum a Posteriori classification. To
+ %             change the type of model used, edit this field and set the
+ %             field to the type of prtRv you'd like to use, then run the
+ %             train method
  %
  %    A prtClassMap object inherits inherits the TRAIN, RUN, CROSSVALIDATE
  %    and KFOLDS methods from prtClass.
  %
  %    Example:
  %
- %    TestDataSet = prtDataGenUniModal;       % Create some test and
- %    TrainingDataSet = prtDataGenUniModal;   % training data
+ %    TestDataSet = prtDataGenUnimodal;       % Create some test and
+ %    TrainingDataSet = prtDataGenUnimodal;   % training data
  %    classifier = prtClassMap;           % Create a classifier
  %    classifier = classifier.train(TrainingDataSet);    % Train
  %    classified = run(classifier, TestDataSet);         % Test
+ %    subplot(2,1,1);
  %    classifier.plot;
+ %    subplot(2,1,2);
+ %    [pf,pd] = prtScoreRoc(classified,TestDataSet);
+ %    h = plot(pf,pd,'linewidth',3);
+ %    title('ROC'); xlabel('Pf'); ylabel('Pd');
  %
  %    See also prtClass, prtClassLogisticDiscriminant, prtClassBagging,
  %    prtClassMap, prtClassFld, prtClassBinaryToMaryOneVsAll, prtClassDlrt,
