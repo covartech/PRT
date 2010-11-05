@@ -1,5 +1,28 @@
 classdef prtPreProcZeroMeanRows < prtPreProc
-    % xxx Need Help xxx
+    % prtPreProcZeroMeanRows   Zero mean observations (rows)
+    %
+    %   ZMC = prtPreProcZeroMeanRows creates an object that removes the
+    %   mean from each row (observation) of a data set.
+    %
+    %   prtPreProcZeroMeanRows has no user settable properties.
+    %
+    %   A prtPreProcZeroMeanRows object also inherits all properties and
+    %   functions from the prtAction class.
+    %
+    %   Example:
+    %
+    %   dataSet = prtDataGenIris;       
+    %   dataSet = dataSet.retainFeatures(1:3);
+    %   zmr = prtPreProcZeroMeanRows;   
+    %                                    
+    %   zmr = zmr.train(dataSet);      
+    %   dataSetNew = zmr.run(dataSet); 
+    % 
+    %   subplot(2,1,1); plot(dataSet);
+    %   subplot(2,1,2); plot(dataSetNew);
+    %
+    %   See Also: prtPreProcPca, prtPreProcHistEq, preProcLogDisc
+    
     
     properties (SetAccess=private)
         % Required by prtAction

@@ -1,6 +1,32 @@
 classdef prtPreProcPls < prtPreProc
     % prtPreProcPls   Partial least squares
-    % xxx Need Help xxx
+    %
+    %   PCA = prtPreProcPls creates a partial least-squares pre-processing
+    %   object.
+    %
+    %   PCA = prtPreProcPls('nComponents',N) constructs a
+    %   prtPreProcPCP object PCA with nComponents set to the value N.
+    %
+    %   A prtPreProcPls object has the following properites:
+    % 
+    %    nComponenets    - The number of principle componenets
+    %
+    %   A prtPreProcPls object also inherits all properties and functions from
+    %   the prtAction class
+    %
+    %   Example:
+    %
+    %   dataSet = prtDataGenUnimodal;  
+    %   pls = prtPreProcPls;           
+    %                        
+    %   pls = pls.train(dataSet);     
+    %   dataSetNew = pls.run(dataSet);
+    % 
+    %   subplot(2,1,1); plot(dataSet);
+    %   title('Original Data');
+    %   subplot(2,1,2); plot(dataSetNew);
+    %   title('PLS Projected Data');
+    %
     
     properties (SetAccess=private)
         % Required by prtAction

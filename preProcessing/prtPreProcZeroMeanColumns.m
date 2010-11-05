@@ -1,6 +1,29 @@
 classdef prtPreProcZeroMeanColumns < prtPreProc
-    % xxx Need Help xxx
-
+    % prtPreProcZeroMeanColumns   Zero mean feature columns
+    %
+    %   ZMC = prtPreProcZeroMeanColumns creates an object that removes the
+    %   mean from each column (feature) of a data set.
+    %
+    %   prtPreProcZeroMeanColumns has no user settable properties.
+    %
+    %   A prtPreProcZeroMeanColumns object also inherits all properties and
+    %   functions from the prtAction class.
+    %
+    %   Example:
+    %
+    %   dataSet = prtDataGenIris;       
+    %   dataSet = dataSet.retainFeatures(1:2);
+    %   zmc = prtPreProcZeroMeanColumns;   
+    %                                    
+    %   zmc = zmc.train(dataSet);      
+    %   dataSetNew = zmc.run(dataSet); 
+    % 
+    %   subplot(2,1,1); plot(dataSet);
+    %   title(sprintf('Mean: %s',mat2str(mean(dataSet.getObservations),2)))
+    %   subplot(2,1,2); plot(dataSetNew);
+    %   title(sprintf('Mean: %s',mat2str(mean(dataSetNew.getObservations),2)))
+    %
+    %   See Also: prtPreProcPca, prtPreProcHistEq, preProcLogDisc
     
     properties (SetAccess=private)
         % Required by prtAction

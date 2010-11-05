@@ -1,5 +1,29 @@
 classdef prtPreProcLogDisc < prtPreProc
-    % xxx Need Help xxx
+    % prtPreProcLogDisc   Histogram equalization processing
+    %
+    %   LOGDISC = prtPreProcLogDisc creates a logistic discriminant pre
+    %   processing object. A prtPreProcLogDisc object processes the input data
+    %   so that each feature dimension is scaled between 0 and 1 to best
+    %   match the data set class labels.
+    % 
+    %   prtPreProcLogDisc has no user settable properties.
+    %
+    %   A prtPreProcLogDisc object also inherits all properties and
+    %   functions from the prtAction class
+    %
+    %   Example:
+    %
+    %   dataSet = prtDataGenUnimodal;   
+    %   logDisc = prtPreProcLogDisc;  
+    %                                
+    %   logDisc = logDisc.train(dataSet);  
+    %   dataSetNew = logDisc.run(dataSet);
+    % 
+    %   subplot(2,1,1); plot(dataSet);
+    %   title('Original Data');
+    %   subplot(2,1,2); plot(dataSetNew);
+    %   title('LogDisc Data');
+    %
     
     properties (SetAccess=private)
         % Required by prtAction

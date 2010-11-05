@@ -1,5 +1,35 @@
 classdef prtPreProcHistEq < prtPreProc
-    % xxx Need Help xxx
+    % prtPreProcHistEq   Histogram equalization processing
+    %
+    %   ZMUV = prtPreProcHistEq creates a histogram equalization pre
+    %   processing object. A prtPreProcHistEq object processes the input data
+    %   so that the distribution of each feature is approximately uniform
+    %   in [0,1].  
+    % 
+    %   prtPreProcHistEq has the following properties:
+    %
+    %   nSamples    - The number of samples to use when learning the
+    %               histogtram of the training data.  Defaults to inf (use
+    %               all the data), however for large data sets this can be
+    %               slow.
+    %
+    %   A prtPreProcHistEq object also inherits all properties and functions from
+    %   the prtAction class
+    %
+    %   Example:
+    %
+    %   dataSet = prtDataGenIris;     
+    %   dataSet = dataSet.retainFeatures(1:2);
+    %   histEq = prtPreProcHistEq;        
+    %                        
+    %   histEq = histEq.train(dataSet); 
+    %   dataSetNew = histEq.run(dataSet); 
+    % 
+    %   subplot(2,1,1); plot(dataSet);
+    %   title('Original Data');
+    %   subplot(2,1,2); plot(dataSetNew);
+    %   title('HistEq Data');
+    %
     
     properties (SetAccess=private)
         % Required by prtAction

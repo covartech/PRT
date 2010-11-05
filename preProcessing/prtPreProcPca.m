@@ -15,14 +15,17 @@ classdef prtPreProcPca < prtPreProc
     %
     %   Example:
     %
-    %   dataSet = prtDataGenProstate;     % Load a data set.
-    %   pca = prtPreProcPca;           % Create the Principle Component
-    %                                  % Analysis object.
-    %   pca.nComponents = 4;           % Set the number of components to 4
-    %   pca = pca.train(dataSet);      % Compute the Principle Components
-    %   dataSetNew = pca.run(dataSet); % Extract the Principle Components
+    %   dataSet = prtDataGenUnimodal;  
+    %   pca = prtPreProcPca;           
+    %                        
+    %   pca = pca.train(dataSet);     
+    %   dataSetNew = pca.run(dataSet);
+    % 
+    %   subplot(2,1,1); plot(dataSet);
+    %   title('Original Data');
+    %   subplot(2,1,2); plot(dataSetNew);
+    %   title('PCA Projected Data');
     %
-    %   See Also: prtPreProcLogDisc, preProcHistEq, preProcZmuv
  
     
     properties (SetAccess=private)
