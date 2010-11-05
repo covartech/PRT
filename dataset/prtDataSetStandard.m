@@ -45,10 +45,6 @@ classdef prtDataSetStandard < prtDataSetBase
         featureNames        % The feature names
     end
     
-    properties (Hidden=true, Access='private')
-        uniqueTargetsCache
-    end
-    
     methods (Access = 'protected', Hidden = true)
         
         function obj = catTargetNames(obj,newDataSet)
@@ -280,8 +276,11 @@ classdef prtDataSetStandard < prtDataSetBase
             obj.data = data;
             obj.targets = targets;
             
-            % Reset the cache of uniqueTargets
-            obj.uniqueTargetsCache = [];
+            % Updated chached data info
+            obj = updateObservationsCache(obj);
+            
+            % Reset the target cache
+            obj = updateTargetsCache(obj);
         end
         
         function data = getObservations(obj,varargin)
@@ -310,7 +309,6 @@ classdef prtDataSetStandard < prtDataSetBase
                         error('prt:prtDataSetStandard:getObservations','getObservations expects 1 or 2 sets of indices; %d indices provided',nargin-1);
                 end
             catch ME
-                keyboard
                 %this should error with a meaningful message:
                 prtDataSetBase.parseIndices([obj.nObservations, obj.nFeatures],varargin{:});
                 %Otherwise, something else happened; show the user
@@ -357,6 +355,9 @@ classdef prtDataSetStandard < prtDataSetBase
                     throw(ME);
                 end
             end
+            % Reset the data cache
+            obj = updateObservationsCache(obj);
+            
             % Note: fix this!
             %obj = obj.fixObservationFeatureNames;
         end
@@ -445,8 +446,8 @@ classdef prtDataSetStandard < prtDataSetBase
                 obj.targets = [];
             end
             
-            % Reset the cached unique targets since it will have changed.
-            obj.uniqueTargetsCache = [];
+            % Updated chached target info
+            obj = updateTargetsCache(obj);
         end
         
         function obj = catObservations(obj, varargin)
@@ -483,8 +484,12 @@ classdef prtDataSetStandard < prtDataSetBase
                     end
                 end
             end
-            % Reset the cache of uniqueTargets
-            obj.uniqueTargetsCache = [];
+            
+            % Updated chached target info
+            obj = updateTargetsCache(obj);
+            
+            % Updated chached data info
+            obj = updateObservationsCache(obj);
         end
         
         function [obj,retainedIndices] = removeObservations(obj,removeIndices)
@@ -522,8 +527,11 @@ classdef prtDataSetStandard < prtDataSetBase
                     obj.ObservationInfo = obj.ObservationInfo(retainedIndices);
                 end
                 
-                % Reset the cache of uniqueTargets
-                obj.uniqueTargetsCache = [];
+                % Updated chached target info
+                obj = updateTargetsCache(obj);
+                
+                % Updated chached data info
+                obj = updateObservationsCache(obj);
             catch  %#ok<CTCH>
                 retainedIndices = prtDataSetBase.parseIndices(obj.nObservations ,retainedIndices);
             end
@@ -557,6 +565,9 @@ classdef prtDataSetStandard < prtDataSetBase
             retainedFeatures = prtDataSetBase.parseIndices(obj.nFeatures ,retainedFeatures);
             obj = obj.retainFeatureNames(retainedFeatures);
             obj.data = obj.data(:,retainedFeatures);
+            
+            % Updated chached data info
+            obj = updateObservationsCache(obj);
         end
         
         function data = getFeatures(obj,varargin)
@@ -604,6 +615,8 @@ classdef prtDataSetStandard < prtDataSetBase
                     obj.data = cat(2,obj.data,currInput.getObservations);
                 end
             end
+            % Updated chached data info
+            obj = updateObservationsCache(obj);
         end
         
         function [obj, sampleIndices] = bootstrap(obj,nSamples,p)
@@ -624,19 +637,16 @@ classdef prtDataSetStandard < prtDataSetBase
             if nargin < 2 || isempty(nSamples)
                 nSamples = obj.nObservations;
             end
-            %rv = prtRvDiscrete('symbols',(1:obj.nObservations)','probabilities',p(:));
-            rv = prtRvMultinomial('probabilities',p(:));
-            sampleIndices = rv.drawIntegers(nSamples);
+            
+            % We could do this
+            % >>rv = prtRvMultinomial('probabilities',p(:));
+            % >>sampleIndices = rv.drawIntegers(nSamples);
+            % but there is overhead associated with RV object creation.
+            % For some actions, TreebaggingCap for example, we need to
+            % rapidly bootstrap so we do not use the object
+            [dontNeed, sampleIndices] = histc(rand(nSamples,1),min([0 cumsum(p(:)')],1)); %#ok<ASGLU>
             
             obj = obj.retainObservations(sampleIndices);
-            %             newData = obj.getObservations(sampleIndices);
-            %             if obj.isLabeled
-            %                 newTargets = obj.getTargets(sampleIndices);
-            %                 obj.data = newData;
-            %                 obj.targets = newTargets;
-            %             else
-            %                 obj.data = newData;
-            %             end
         end
         
         function nObservations = get.nObservations(obj)
@@ -794,8 +804,8 @@ classdef prtDataSetStandard < prtDataSetBase
                     obj.targets = cat(2,obj.targets,currInput.getTargets);
                 end
             end
-            % Reset the cache of uniqueTargets
-            obj.uniqueTargetsCache = [];
+            % Updated chached target info
+            obj = updateTargetsCache(obj);
         end
         
         function [obj,retainedTargets] = removeTargets(obj,removeIndices)
@@ -828,19 +838,21 @@ classdef prtDataSetStandard < prtDataSetBase
             obj = obj.retainTargetNames(retainedTargets);
             obj.targets = obj.targets(:,retainedTargets);
             
-            % Reset the cache of uniqueTargets
-            obj.uniqueTargetsCache = [];
+            % Updated chached target info
+            obj = updateTargetsCache(obj);
         end
     end
     
     methods (Hidden=true, Access='protected')
-        function uT = getUniqueTargets(obj)
-            % KDM - FIX ME
-            if isempty(obj.uniqueTargetsCache)
-                obj.uniqueTargetsCache = unique(obj.targets,'rows');
-                % disp('changed');
-            end
-            uT = obj.uniqueTargetsCache;
+        function obj = updateTargetsCache(obj)
+            % By default do nothing
+            % This is can be overloaded in sub-classes
+            % For example. this is overloaded in prtDataSetClass to cache
+            % unique(targets) amounst other things
+        end
+        function obj = updateObservationsCache(obj)
+            % By default do nothing
+            % This is can be overloaded in sub-classes
         end
     end
     
@@ -852,10 +864,6 @@ classdef prtDataSetStandard < prtDataSetBase
             %No; do not copy featureNames; featureNames must be set by
             %Actions; the outputs of a Action are not guaranteed to have
             %the same number of features!
-            
-            %             if dataSet.hasFeatureNames
-            %                 obj = obj.setFeatureNames(dataSet.getFeatureNames);
-            %             end
             
             obj.ObservationInfo = dataSet.ObservationInfo;
             obj = copyDescriptionFieldsFrom@prtDataSetBase(obj,dataSet);

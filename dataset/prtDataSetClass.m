@@ -51,6 +51,12 @@ classdef prtDataSetClass  < prtDataSetStandard
         classNames
     end
     
+    properties (Hidden=true, Access='private')
+        targetsCacheUnique
+        targetsCacheHist
+        targetsCacheNClasses
+    end
+    
     properties (Hidden = true)
         PlotOptions = prtDataSetClass.initializePlotOptions();
     end
@@ -69,7 +75,7 @@ classdef prtDataSetClass  < prtDataSetStandard
             isZO = isequal(obj.uniqueClasses,[0 1]');
         end
         function nUT = get.nClasses(obj)
-            nUT = length(obj.uniqueClasses);
+            nUT = obj.targetsCacheNClasses;
         end
     end
     
@@ -112,7 +118,6 @@ classdef prtDataSetClass  < prtDataSetStandard
         
         function obj = prtDataSetClass(varargin)
             
-            %obj.classNames = java.util.Hashtable;            
             obj.classNames = prtUtilIntegerAssociativeArray;
             if nargin == 0
                 return;
@@ -302,8 +307,7 @@ classdef prtDataSetClass  < prtDataSetStandard
             %
             % CLASSES = dataSet.uniqueClasses returns the unique classes of
             % a dataSet object.
-            
-            uT = obj.getUniqueTargets(); % Protected and hidden from prtDataSetStandard
+            uT = obj.targetsCacheUnique;
         end
         
         function obj = catObservations(obj,varargin)
@@ -565,8 +569,6 @@ classdef prtDataSetClass  < prtDataSetStandard
             if nPlotDimensions < 3
                 warning('prt:plotStar:TooFewDimensions','Star plots with fewer than 3 dimensions will look like lines or dots; star plots are best suited for data sets with > 2 features');
             end
-            
-            %M = ceil(sqrt(obj.nObservations));
             
             theta = linspace(0,2*pi,length(featureIndices)+1);
             theta = theta(1:end-1);
@@ -882,14 +884,26 @@ classdef prtDataSetClass  < prtDataSetStandard
             if length(N) ~= nClasses
                 error('Number of samples (N) must be either scalar integer or a vector integer of dataSet.nClasses (%d), N is a %s %s',nClasses,mat2str(size(N)),class(N));
             end
-            
-            OutputsByClass = repmat(prtDataSetClass(),[nClasses,1]);
+      
+            targetInds = Obj.getTargetsClassInd;
+            obsInds = (1:Obj.nObservations)';
+            newObsInds = nan(sum(N),1);
             for iClass = 1:nClasses
-                OutputsByClass(iClass) = bootstrap(retainObservations(Obj,Obj.getTargets==Obj.uniqueClasses(iClass)), N(iClass));
-            end
+                cInds = targetInds==iClass;
+                cObsInds = obsInds(cInds);
+                
+                % We could do this
+                % >>rv = prtRvMultinomial('probabilities',p(:));
+                % >>sampleIndices = rv.drawIntegers(nSamples);
+                % but there is overhead associated with RV object creation.
+                % For some actions, TreebaggingCap for example, we need to
+                % rapidly bootstrap so we do not use the object
+                nObs = Obj.nObservationsByClass(iClass);
+                [dontNeed, sampleIndices] = histc(rand(N(iClass),1),min([0 cumsum(ones(1,nObs)/nObs)],1)); %#ok<ASGLU>
+                newObsInds(cInds) = cObsInds(sampleIndices);
+            end    
             
-            Out = catObservations(OutputsByClass);
-            
+            Out = retainObservations(Obj,newObsInds);
         end
         
         function classHist = get.nObservationsByClass(Obj)
@@ -898,7 +912,7 @@ classdef prtDataSetClass  < prtDataSetStandard
             %   N = dataSet.nObservationsByClass() returns a vector
             %   consisting of the number of observations per class.
             
-            classHist = histc(Obj.getTargets, Obj.uniqueClasses);
+            classHist = Obj.targetsCacheHist;
         end
         
         function classInds = getTargetsClassInd(obj,varargin)
@@ -909,7 +923,13 @@ classdef prtDataSetClass  < prtDataSetStandard
             
             targets = getTargets(obj,varargin{:});
             
-            [~, classInds] = ismember(targets,obj.uniqueClasses);
+            [dontNeed, classInds] = max(bsxfun(@eq,targets,obj.uniqueClasses(:)'),[],2); %#ok<ASGLU>
+            
+            % The above is about twice as fast as
+            % >> [dontNeed, classInds] = ismember(targets,obj.uniqueClasses);
+            % but requires storing an nObs by nUniqueTargets matrix
+            % it's a logical matrix though so I don't think that matters
+            % too much.
         end
     end
     methods (Static, Hidden = true)
@@ -927,6 +947,19 @@ classdef prtDataSetClass  < prtDataSetStandard
         end
         function has = hasClassNames(obj)
             has = ~isempty(obj.classNames);
+        end
+    end
+    methods (Hidden=true, Access='protected')
+        function obj = updateTargetsCache(obj)
+            % This is an overload from prtDataSetClass so that we can 
+            % Cache unique targets
+            % This is called automatically in prtDataSetStandard anytime
+            % targets are (re)set
+            %
+            % see also updateObservationsCache (not overloaded here)
+            obj.targetsCacheUnique = unique(obj.targets,'rows');
+            obj.targetsCacheNClasses = length(obj.targetsCacheUnique);
+            obj.targetsCacheHist = histc(obj.targets,obj.targetsCacheUnique);
         end
     end
 end

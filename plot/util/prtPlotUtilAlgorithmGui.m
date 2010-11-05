@@ -65,7 +65,7 @@ end
 
 centerBlocks();
 
-set(gcf,'NextPlot','replace')
+set(gcf,'NextPlot','new')
 
 %% Begin Functions
 
