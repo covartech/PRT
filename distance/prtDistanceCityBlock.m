@@ -18,6 +18,11 @@ function D = prtDistanceCityBlock(dataSet1,dataSet2)
 %      Y = [1 0; 2 2; 3 3;];
 %      D = prtDistanceCityBlock(X,Y)
 %   
+%      % prtDistanceCityBlock also accepts prtDataSet inputs:
+%      dsx = prtDataSetStandard(X);
+%      dsy = prtDataSetStandard(Y);
+%      distance = prtDistanceCityBlock(dsx,dsy);
+%
 % See also: prtDistance, prtDistanceMahalanobis, prtDistanceLNorm.
 % prtDistanceEuclidean, prtDistanceSquare, prtDistanceChebychev
 

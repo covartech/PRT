@@ -16,10 +16,15 @@ function D = prtDistanceMahalanobis(dataSet1,dataSet2,covar)
 %   
 % Example:
 %   
-%   X = [0 0; 1 1];
-%   Y = [1 0; 2 2; 3 3;];
-%   covMat = [1 0; 0 2;];
-%   D = prtDistanceMahalanobis(X,Y,covMat)
+%  X = [0 0; 1 1];
+%  Y = [1 0; 2 2; 3 3;];
+%  covMat = [1 0; 0 2;];
+%  D = prtDistanceMahalanobis(X,Y,covMat)
+%
+%  % prtDistanceMahalanobis also accepts prtDataSet inputs:
+%  dsx = prtDataSetStandard(X);
+%  dsy = prtDataSetStandard(Y);
+%  distance = prtDistanceMahalanobis(dsx,dsy,covMat);
 %
 %   For more information, see:
 %   http://en.wikipedia.org/wiki/Mahalanobis_distance

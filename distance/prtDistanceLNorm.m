@@ -13,7 +13,12 @@ function D = prtDistanceLNorm(dataSet1,dataSet2,Lnorm)
 %      X = [0 0; 1 1];
 %      Y = [1 0; 2 2; 3 3;];
 %      DIST = prtDistanceLNorm(X,Y,3)
-%   
+%
+%     % prtDistanceLNorm also accepts prtDataSet inputs:
+%     dsx = prtDataSetStandard(X);
+%     dsy = prtDataSetStandard(Y);
+%     distance = prtDistanceLNorm(dsx,dsy);
+%
 %   For more information, see:
 %
 %   http://en.wikipedia.org/wiki/Norm_(mathematics)#p-norm

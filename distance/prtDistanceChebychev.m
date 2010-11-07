@@ -16,7 +16,12 @@ function D = prtDistanceChebychev(dataSet1,dataSet2)
 % Example:
 %   X = [0 0; 1 1];
 %   Y = [1 0; 2 2; 3 3;];
-%   dist = prtDistanceChebychev(X,Y)
+%   dist = prtDistanceChebychev(X,Y);
+%
+%   % prtDistanceChebychev also accepts prtDataSet inputs:
+%   dsx = prtDataSetStandard(X);
+%   dsy = prtDataSetStandard(Y);
+%   distance = prtDistanceChebychev(dsx,dsy);
 %
 % See also: prtDistance, prtDistanceCityBlock, prtDistanceEuclidean,
 % prtDistanceMahalanobis, prtDistanceSquare, prtDistanceLnorm

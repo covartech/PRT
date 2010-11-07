@@ -24,6 +24,11 @@ function D = prtDistanceCustom(dataSet1,dataSet2,singleDistanceFunction)
 %      Y = [1 0; 2 2; 3 3;];
 %      D = prtDistanceCustom(X,Y,@(x,y)sqrt(sum((x-y).^2,2)))
 %
+%      % prtDistanceCustom also accepts prtDataSet inputs:
+%      dsx = prtDataSetStandard(X);
+%      dsy = prtDataSetStandard(Y);
+%      distance = prtDistanceCustom(dsx,dsy,@(x,y)sqrt(sum((x-y).^2,2)))
+%
 %   See Also:  prtDistance prtDistanceChebychev prtDistanceCityBlock
 %   prtDistanceEuclidean prtDistanceMahalanobis prtDistanceSquare
 

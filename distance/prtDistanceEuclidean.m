@@ -18,6 +18,11 @@ function D = prtDistanceEuclidean(dataSet1,dataSet2)
 %   Y = [1 0; 2 2; 3 3;];
 %   D = prtDistanceEuclidean(X,Y)
 %   
+%   % prtDistanceEuclidean also accepts prtDataSet inputs:
+%   dsx = prtDataSetStandard(X);
+%   dsy = prtDataSetStandard(Y);
+%   distance = prtDistanceEuclidean(dsx,dsy);
+%
 % See also: prtDistance, prtDistanceCityBlock, prtDistanceLNorm.
 % prtDistanceMahalanobis, prtDistanceSquare, prtDistanceChebychev
 
