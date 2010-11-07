@@ -114,50 +114,50 @@ if(min(nfa) ~= 0) || (max(nfa) ~= 200)
 end
 
 
-try
-    prtScoreRocBayesianBootstrap(classified.getX(), TrainingDataSet.getY(), 100,100,5);
-    
-    close;
-    disp('prtScoreRocBayesianBootstrap check alpha fail')
-    result = false;
-catch
-    
-    close
-end
-
-
-try
-    prtScoreRocBayesianBootstrapNfa(classified.getX(), TrainingDataSet.getY(), 100,100,.1);
-    close;
-catch
-    result = false;
-    disp('prtScoreRocBayesianBootstrapNfa basic fail')
-end
-
-
-% Ensure basic operation doesn't fail
-try
-    [nfa] = prtScoreRocBayesianBootstrapNfa(classified.getX(), TrainingDataSet.getY(), 100,100,.1);
-    
-catch
-    result = false;
-    disp('prtScoreRocBayesianBoostrapNfa basic fail')
-end
-
-if(min(nfa) ~= 0) || (max(nfa) ~= 200)
-    result = false;
-    disp('prtScoreBayesianBootstapNfa wrong ans')
-end
-
-try
-    prtScoreRocBayesianBootstrapNfa(classified.getX(), TrainingDataSet.getY(), 100,100,5);
-    close;
-    result = false;
-    disp('prtScoreRocBayesianBootstrap check alpha fail')
-catch
-    close
-    
-end
+% try
+%     prtScoreRocBayesianBootstrap(classified.getX(), TrainingDataSet.getY(), 100,100,5);
+%     
+%     close;
+%     disp('prtScoreRocBayesianBootstrap check alpha fail')
+%     result = false;
+% catch
+%     
+%     close
+% end
+% 
+% 
+% try
+%     prtScoreRocBayesianBootstrapNfa(classified.getX(), TrainingDataSet.getY(), 100,100,.1);
+%     close;
+% catch
+%     result = false;
+%     disp('prtScoreRocBayesianBootstrapNfa basic fail')
+% end
+% 
+% 
+% % Ensure basic operation doesn't fail
+% try
+%     [nfa] = prtScoreRocBayesianBootstrapNfa(classified.getX(), TrainingDataSet.getY(), 100,100,.1);
+%     
+% catch
+%     result = false;
+%     disp('prtScoreRocBayesianBoostrapNfa basic fail')
+% end
+% 
+% if(min(nfa) ~= 0) || (max(nfa) ~= 200)
+%     result = false;
+%     disp('prtScoreBayesianBootstapNfa wrong ans')
+% end
+% 
+% try
+%     prtScoreRocBayesianBootstrapNfa(classified.getX(), TrainingDataSet.getY(), 100,100,5);
+%     close;
+%     result = false;
+%     disp('prtScoreRocBayesianBootstrap check alpha fail')
+% catch
+%     close
+%     
+% end
 
 
 
