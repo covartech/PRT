@@ -1,5 +1,40 @@
 classdef prtClusterKmeans < prtCluster %prtClass %prtAction %should extent prtCluster
-    % xxx NEED HELP xxx
+    % prtClusterKmeans   Kmeans clustering object
+    %
+    %    CLUSTER = prtClusterKmeans returns a Kmeans clustering object.
+    %
+    %    CLUSTER = prtClusterKmeans(PROPERTY1, VALUE1, ...) constructs a
+    %    prtClassFld object CLASSIFIER with properties as specified by
+    %    PROPERTY/VALUE pairs.
+    %
+    %    A prtClusterKmeans object inherits all properties from the abstract
+    %    class prtCluster. In addition is has the following properties:
+    %
+    %    nClusters          - Number of cluster centers to learn (default =
+    %                         3)
+    %
+    %    kmeansHandleEmptyClusters - How to handle degerate clusters found
+    %                         during training; allowed values are 'remove'
+    %                         and 'random'.  Default = 'remove'.
+    %
+    %    For information on the K-Means algorithm, please
+    %    refer to the following URL:
+    %
+    %    http://en.wikipedia.org/wiki/K-means_clustering
+    %
+    %    A prtClassFld object inherits the TRAIN, RUN, CROSSVALIDATE and
+    %    KFOLDS methods from prtAction. It also inherits the PLOT method from
+    %    prtCluster.
+    %
+    %   Example:
+    %
+    %   ds = prtDataGenIris;
+    %   ds = ds.retainFeatures(2:3);
+    %   clusterAlgo = prtClusterKmeans;
+    %   clusterAlgo = clusterAlgo.train(ds);
+    %   plot(clusterAlgo);
+    %   
+    
       properties (SetAccess=private)
         name = 'K-Means Clustering' % K-Means Clustering
         nameAbbreviation = 'K-MeansCluster' % K-MeansCluster

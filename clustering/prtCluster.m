@@ -1,7 +1,29 @@
 classdef prtCluster < prtAction
-    %prtCluster < prtAction
-    % xxx NEED HELP xxx
-
+    % prtCluster   Base class for prt clustering (unsupervised
+    %           classification) objects
+    %
+    % All prtCluster objects inherit all properities and methods from the
+    % prtActoin object. prtClass objects have no additional properties,
+    % although sub-classes of prtCluster might.
+    %
+    %   prtCluster objects have the following methods:
+    %
+    %   plot          - Plot the output cluster of a trained clustering
+    %                   algorithm (prtCluster trained with ds with <= 3
+    %                   features only)
+    %
+    %   Inherited from prtAction:
+    % 
+    %   train         - Train the clusterer using a prtDataSetClass and
+    %                   output a trained clustering algorithm, e.g.
+    %       myClassifier = myCluster.train(ds);
+    %
+    %   run           - Run the clustering algorithm on a data set, e.g.
+    %       results = myCluster.run(ds);
+    %
+    %   crossValidate, kfolds - See prtAction
+    %
+    
     properties (SetAccess=private)
         isNativeMary = true; % Logical, classifier natively produces an output for each unique class
     end
