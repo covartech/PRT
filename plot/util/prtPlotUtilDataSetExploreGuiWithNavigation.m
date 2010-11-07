@@ -32,6 +32,8 @@ end
 % Make control panel figure
 % Make axes current
 plotAxesFig = gcf;
+set(plotAxesFig,'visible','off');
+
 
 navFigSize = [300 250];
 navFigPad = [18 59];
@@ -58,7 +60,8 @@ navFigH = figure('Number','Off',...
     'Position',navFigPos,...
     'NextPlot','new',...
     'tag','prtDataSetExplorerControl',...
-    'DockControls','off');
+    'DockControls','off',...
+    'visible','off');
 
 % Just in case anyone tries to plot in this window we will plot that inside
 % an invisible axes
@@ -70,9 +73,15 @@ invisibleAxes = axes('parent',navFigH,...
 
 tabGroupH = createTabGroup(ds);
 
+
 PlotHandles = []; % Add to all workspaces
 remakePlot();
 
+% We don't display the plots until now because it is kind of slow to make
+% all of the gui elements and MATLAB will sometimes try to draw the half
+% completed windows
+set(plotAxesFig,'visible','on');
+set(navFigH,'visible','on');
     
     function plotAxesDeleteFunction(myHandle, evenData) %#ok<INUSD>
         try %#ok<TRYNC>
@@ -349,126 +358,3 @@ remakePlot();
     end
 
 end
-
-
-% % Setup the PopOut Option
-% hcmenu = uicontextmenu;
-% hcmenuPopoutItem = uimenu(hcmenu, 'Label', 'Popout', 'Callback', @explorerPopOut); %#ok
-% set(axisH,'UIContextMenu',hcmenu);
-%
-%
-%     function plotSelectPopupCallback(myHandle, eventData, varargin) %#ok
-%         cVal = get(myHandle,'value');
-%         axisInd = varargin{1};
-%         if axisInd == 3
-%             % Z-axis we have a None option
-%             cVal = cVal - 1;
-%         end
-%         plotDims(axisInd) = cVal;
-%         updatePlot;
-%     end
-%
-%     function updatePlot
-%         actualPlotDims = plotDims(plotDims>=1);
-%         axes(axisH); %#ok
-%         h = plot(theObject,actualPlotDims);
-%         set(h,'HitTest','off');
-%         set(axisH,'ButtonDownFcn',@axisOnClick);
-%     end
-%     function explorerPopOut(myHandle,eventData) %#ok
-%         figure;
-%         actualPlotDims = plotDims(plotDims>=1);
-%         plot(theObject,actualPlotDims);
-%     end
-%     function axisOnClick(myHandle,eventData)
-%         actualPlotDims = plotDims(plotDims>=1);
-%         data = theObject.getFeatures(actualPlotDims);
-%
-%         [rP,rD] = rotateDataAndClick(data);
-%
-%         dist = prtDistanceEuclidean(rP,rD);
-%         [~,i] = min(dist);
-%         obsName = theObject.getObservationNames(i);
-%         title(sprintf('Observation Closest To Last Click: %s',obsName{1}));
-%
-%         debug = false;
-%         if debug
-%             hold on;
-%             d = theObject.getObservations(i);
-%             switch length(actualPlotDims)
-%                 case 2
-%                     plot(d(1),d(2),'kx');
-%                 case 3
-%                     plot3(d(1),d(2),d(3),'kx');
-%             end
-%             hold off;
-%         end
-%     end
-%
-% end
-% 
-% 
-% axesMenu = uicontextmenu;
-% axesMenuItem2D = uimenu(axesMenu, 'Label', '2D Plot', 'Callback', @switchTo2D); 
-% axesMenuItem3D = uimenu(axesMenu, 'Label', '3D Plot', 'Callback', @switchTo3D); 
-% set(gca,'UIContextMenu',axesMenu);
-% 
-%     function switchTo3D(h,E) %#ok<INUSD>
-%         set(axesMenuItem2D,'Checked','off');
-%         set(axesMenuItem3D,'Checked','on');
-%         
-%         otherFeatures = setdiff(1:nFeatures,plotDims);
-%         plotDims(3) = otherFeatures(1);
-%         
-%         updatePlot();
-%     end
-% 
-%     function switchTo2D(h,E) %#ok<INUSD>
-%         set(axesMenuItem2D,'Checked','on')
-%         set(axesMenuItem3D,'Checked','off')
-%         plotDims(3) = 0;
-%         updatePlot();
-%     end
-%     
-%     function updatePlot
-%         actualPlotDims = plotDims(plotDims>=1);
-%         plot(theObject,actualPlotDims)
-%         
-%         xContext = uicontextmenu;
-%         xItems = zeros(nFeatures,1);
-%         
-%         yContext = uicontextmenu;
-%         
-%         useZ = length(actualPlotDims) == 3;
-%         if useZ
-%             zContext = uicontextmenu;
-%             zItems = zeros(nFeatures,1);
-%         end
-%         
-%         yItems = zeros(nFeatures,1);
-%         for iFeature = 1:nFeatures
-%             xItems(iFeature) = uimenu(xContext,'Label',featureNames{iFeature},'CallBack',@(h,e)setPlotDim(1,iFeature));
-%             yItems(iFeature) = uimenu(yContext,'Label',featureNames{iFeature},'CallBack',@(h,e)setPlotDim(2,iFeature));
-%             if useZ
-%                 zItems(iFeature) = uimenu(zContext,'Label',featureNames{iFeature},'CallBack',@(h,e)setPlotDim(3,iFeature));
-%             end
-%         end
-%         set(get(gca,'XLabel'),'UIContextMenu',xContext);
-%         set(get(gca,'YLabel'),'UIContextMenu',yContext);
-%         if useZ
-%             set(get(gca,'ZLabel'),'UIContextMenu',zContext);
-%         end
-%            
-%         set(xItems(actualPlotDims(1)),'Checked','on');
-%         set(yItems(actualPlotDims(2)),'Checked','on');
-%         if useZ
-%             set(zItems(actualPlotDims(3)),'Checked','on');
-%         end
-%         
-%     end
-% 
-%     function setPlotDim(axesIndex, featureIndex)
-%         plotDims(axesIndex) = featureIndex;
-%         updatePlot();
-%     end
-%     

@@ -20,7 +20,7 @@ if nargin < 3 || isempty(Sigma)
 end
 
 % Make sure Sigma is a valid covariance matrix
-[R,err] = cholcov(Sigma,0);
+[R,err] = chol(Sigma);
 if err ~= 0
     error('prtRvUtilMvnLogPdf:BadCovariance', ...
         'SIGMA must be symmetric and positive definite.');

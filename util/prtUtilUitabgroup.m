@@ -3,8 +3,11 @@ function h = prtUtilUitabgroup(varargin)
 
 error(javachk('swing'));
 
+warning('off','MATLAB:uitabgroup:OldVersion');
+
 h = uitools.uitabgroup(varargin{:});
 h = double(h); 
+
 
 
 % out = cell(nargout,1);

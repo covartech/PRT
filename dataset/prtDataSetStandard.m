@@ -644,7 +644,7 @@ classdef prtDataSetStandard < prtDataSetBase
             % but there is overhead associated with RV object creation.
             % For some actions, TreebaggingCap for example, we need to
             % rapidly bootstrap so we do not use the object
-            [dontNeed, sampleIndices] = histc(rand(nSamples,1),min([0 cumsum(p(:)')],1)); %#ok<ASGLU>
+            sampleIndices = prtRvUtilRandomSample(p,nSamples);
             
             obj = obj.retainObservations(sampleIndices);
         end

@@ -102,7 +102,7 @@ classdef prtRv
                 end
             else
                 if R.isValid
-                    error('prt:prtRv:plot','This RV object cannont be plotted because it has too many dimensions for plotting.')
+                    error('prt:prtRv:plot','This RV object cannont be plotted because it has too many dimensions.')
                 else
                     error('prt:prtRv:plot','This RV object cannot be plotted because it is not yet valid.');
                 end

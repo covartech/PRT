@@ -502,9 +502,7 @@ classdef prtDataSetClass  < prtDataSetStandard
                         
                         F = zeros([nKSDsamples, nClasses]);
                         for cY = 1:nClasses;
-                            F(:,cY) = ksdensity(obj.getObservationsByClassInd(cY,iFeature),xLoc);
-                            %This errors
-                            %F(:,cY) = pdf(prtRvKsd(obj.getObservationsByClassInd(cY,iFeature),xLoc));
+                            F(:,cY) = pdf(mle(prtRvKde,obj.getObservationsByClassInd(cY,iFeature)),xLoc(:));
                         end
                         
                         hs{iFeature,jFeature} = plot(xLoc,F);
@@ -897,9 +895,8 @@ classdef prtDataSetClass  < prtDataSetStandard
                 % >>sampleIndices = rv.drawIntegers(nSamples);
                 % but there is overhead associated with RV object creation.
                 % For some actions, TreebaggingCap for example, we need to
-                % rapidly bootstrap so we do not use the object
-                nObs = Obj.nObservationsByClass(iClass);
-                [dontNeed, sampleIndices] = histc(rand(N(iClass),1),min([0 cumsum(ones(1,nObs)/nObs)],1)); %#ok<ASGLU>
+                % rapidly bootstrap so we do not use the object.
+                sampleIndices = prtRvUtilRandomSample(Obj.nObservationsByClass(iClass),N(iClass));
                 newObsInds(cInds) = cObsInds(sampleIndices);
             end    
             

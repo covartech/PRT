@@ -59,9 +59,8 @@ classdef prtRvMultinomial < prtRv
         
         function vals = drawIntegers(R,N)
             assert(numel(N)==1 && N==floor(N) && N > 0,'N must be a positive integer scalar.')
-            histBinEdges = min([0 cumsum(R.probabilities(:)')],1);
-            [~, vals] = histc(rand(N,1),histBinEdges);
             
+            vals = prtRvUtilRandomSample(R.probabilities, N);
         end
         
         function varargout = plotPdf(R,varargin)

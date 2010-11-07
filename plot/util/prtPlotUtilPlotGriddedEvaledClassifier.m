@@ -5,7 +5,7 @@ function imageHandle = prtPlotUtilPlotGriddedEvaledClassifier(DS, linGrid, gridS
 nDims = size(linGrid,2);
 switch nDims
     case 1
-        imageHandle = imagesc(linGrid,ones(size(linGrid)),DS);
+        imageHandle = imagesc(linGrid,ones(size(linGrid)),DS');
         set(gca,'YTickLabel',[])
         colormap(cMap)
     case 2
