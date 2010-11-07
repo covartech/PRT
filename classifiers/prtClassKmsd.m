@@ -146,7 +146,7 @@ classdef prtClassKmsd < prtClass
     methods (Static,Hidden = true)
         function LRT = prtClassRunKMSD(Obj,y)
             % Performs kmsd Classification on samples y. Zt is the target library. Zb is the
-            % background library Sigma is the RBF parameter.
+            % background library sigma is the RBF parameter.
             
  
             % Compute the emperical kernel maps
@@ -168,19 +168,19 @@ classdef prtClassKmsd < prtClass
             
             LRT = Num./Den;
         end
-        function [GRAMM,NBASIS] = rbfKernel(X1,X2,SIGMA)
+        function [gram,nBasis] = rbfKernel(x1,x2,sigma)
             
-            [N1, d] = size(X1);
-            [N2, nin] = size(X2);
+            [N1, d] = size(x1);
+            [N2, nin] = size(x2);
             if d ~= nin
-                error('size(X1,2) must equal size(X2,2)');
+                error('size(x1,2) must equal size(x2,2)');
             end
-            dist2 = repmat(sum((X1.^2)', 1), [N2 1])' + ...
-                repmat(sum((X2.^2)',1), [N1 1]) - ...
-                2*X1*(X2');
-            GRAMM = exp(-dist2/(nin*SIGMA));
+            dist2 = repmat(sum((x1.^2)', 1), [N2 1])' + ...
+                repmat(sum((x2.^2)',1), [N1 1]) - ...
+                2*x1*(x2');
+            gram = exp(-dist2/(nin*sigma));
             
-            NBASIS = size(GRAMM,2);
+            nBasis = size(gram,2);
             
         end
     end

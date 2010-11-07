@@ -33,13 +33,13 @@ try
     
     %% m-ary-binary classifier; no decision
     close all;
-    marybinaryclassifier = prtclassbinarytomaryonevsall('classifiers',prtclasslogisticdiscriminant);
+    marybinaryclassifier = prtclassbinarytomaryonevsall('baseClassifier',prtclasslogisticdiscriminant);
     marybinaryclassifier = marybinaryclassifier.train(dsmary);
     marybinaryclassifier.plot; drawnow; pause(0.1);
     
     %% m-ary-binary classifier; with decision
     close all;
-    marybinaryclassifier = prtClassBinaryToMaryOneVsAll('classifiers',prtclasslogisticdiscriminant);
+    marybinaryclassifier = prtClassBinaryToMaryOneVsAll('baseClassifier',prtclasslogisticdiscriminant);
     marybinaryclassifier.internalDecider = prtDecisionMap;
     marybinaryclassifier = marybinaryclassifier.train(dsmary);
     marybinaryclassifier.plot; drawnow; pause(0.1);

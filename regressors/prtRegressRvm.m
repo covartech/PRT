@@ -108,8 +108,8 @@ classdef prtRegressRvm < prtRegress
             
             y = DataSet.getTargets(:,1);
             
-            gramm = prtKernel.evaluateMultiKernelGram(Obj.kernels,DataSet,DataSet);
-            nBasis = size(gramm,2);
+            gram = prtKernel.evaluateMultiKernelGram(Obj.kernels,DataSet,DataSet);
+            nBasis = size(gram,2);
             
             if Obj.learningVerbose
                 fprintf('RVM training with %d possible vectors.\n', nBasis);
@@ -126,7 +126,7 @@ classdef prtRegressRvm < prtRegress
             for iteration = 1:Obj.learningMaxIterations
                 % Given currenet relevant stuff find the weight mean and
                 % covariance
-                cPhi = gramm(:,relevantIndices);
+                cPhi = gram(:,relevantIndices);
                 A = diag(alpha(relevantIndices));
                 
                 sigma2Inv = (Obj.sigma2^-1);
@@ -216,9 +216,9 @@ classdef prtRegressRvm < prtRegress
             for i = 1:memChunkSize:n;
                 cI = i:min(i+memChunkSize,n);
                 cDataSet = prtDataSetRegress(DataSet.getObservations(cI,:));
-                gramm = prtKernel.runMultiKernel(Obj.sparseKernels,cDataSet);
+                gram = prtKernel.runMultiKernel(Obj.sparseKernels,cDataSet);
                 
-                DataSetOut = DataSetOut.setObservations(gramm*Obj.sparseBeta, cI);
+                DataSetOut = DataSetOut.setObservations(gram*Obj.sparseBeta, cI);
             end
         end
     end

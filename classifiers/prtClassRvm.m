@@ -74,6 +74,21 @@ classdef prtClassRvm < prtClass
     %    h = plot(pf,pd,'linewidth',3);
     %    title('ROC'); xlabel('Pf'); ylabel('Pd');
     %
+    %    Example (changing kernel):
+    %
+    %    TestDataSet = prtDataGenUnimodal;      % Create some test and
+    %    TrainingDataSet = prtDataGenUnimodal;  % training data
+    %    classifier = prtClassRvm;              % Create a classifier
+    %    classifier.kernels{2} = prtKernelRbfNdimensionScale;
+    %    classifier = classifier.train(TrainingDataSet);    % Train
+    %    classified = run(classifier, TestDataSet);         % Test
+    %    subplot(2,1,1);
+    %    classifier.plot;
+    %    subplot(2,1,2);
+    %    [pf,pd] = prtScoreRoc(classified,TestDataSet);
+    %    h = plot(pf,pd,'linewidth',3);
+    %    title('ROC'); xlabel('Pf'); ylabel('Pd');
+    % 
     %    See also prtClass, prtClassLogisticDiscriminant, prtClassBagging,
     %    prtClassMap, prtClassCap, prtClassBinaryToMaryOneVsAll, prtClassDlrt,
     %    prtClassPlsda, prtClassFld, prtClassRvm, prtClassGlrt,  prtClass
@@ -275,9 +290,9 @@ classdef prtClassRvm < prtClass
                 cI = i:min(i+memChunkSize,n);
                 cDataSet = prtDataSetClass(DataSet.getObservations(cI,:));
                 
-                gramm = prtKernel.runMultiKernel(Obj.sparseKernels,cDataSet);
+                gram = prtKernel.runMultiKernel(Obj.sparseKernels,cDataSet);
                 
-                OutputMat(cI) = prtRvUtilNormCdf(gramm*Obj.sparseBeta);
+                OutputMat(cI) = prtRvUtilNormCdf(gram*Obj.sparseBeta);
             end
             
             DataSetOut = prtDataSetClass(OutputMat);

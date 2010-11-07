@@ -1,11 +1,38 @@
 classdef prtKernelRbf < prtKernelBinary
-    % xxx NEED HELP xxx
     % prtKernelRbf  Radial basis function kernel
     %
+    %  kernelObj = prtKernelRbf; Generates a kernel object implementing a
+    %  radial basis function.  Kernel objects are widely used in several
+    %  prt classifiers, such as prtClassRvm and prtClassSvm.  RBF kernels
+    %  implement the following function for 1 x N vectors x1 and x2:
+    %
+    %   k(x1,x2) = exp(-sum((x1-x2).^2)./sigma.^2);
+    %
+    %  kernelObj = prtKernelRbf(param,value,...) with parameter value
+    %  strings sets the relevant fields of the prtKernelRbf object to have
+    %  the corresponding values.  prtKernelRbf objects have the following
+    %  user-settable properties:
+    %
+    %   sigma   - Positive scalar value specifying the width of the
+    %       Gaussian kernel in the RBF function.  (Default value is 1)
+    %
+    %  Radial basis function kernels are widely used in the machine
+    %  learning literature. For more information on these kernels, please
+    %  refer to:
+    %   
     %  http://en.wikipedia.org/wiki/Support_vector_machine#Non-linear_classification
     %
-    %  See also  prtKernelRbfNdimensionScale, prtKernelPolynomial, prtKernelVoigt, prtKernelDc,
-    %  prtKernelLaplacian
+    %  % Example usage:
+    %   ds = prtDataGenBimodal;
+    %   k1 = prtKernelRbf;
+    %   k2 = prtKernelRbf('sigma',2);
+    %   
+    %   g1 = k1.evaluateGram(ds,ds);
+    %   g2 = k2.evaluateGram(ds,ds);
+    %
+    %   subplot(2,2,1); imagesc(g1); 
+    %   subplot(2,2,2); imagesc(g2);
+    %
     
     properties
         sigma = 1;    % Inverse kernel width
@@ -44,7 +71,7 @@ classdef prtKernelRbf < prtKernelBinary
     end
     
     methods (Static, Hidden = true)
-        function gramm = rbfEvalKernel(x,y,sigma)
+        function gram = rbfEvalKernel(x,y,sigma)
             [n1, d] = size(x);
             [n2, nin] = size(y);
             if d ~= nin
@@ -54,9 +81,9 @@ classdef prtKernelRbf < prtKernelBinary
             dist2 = repmat(sum((x.^2), 2), [1 n2]) + repmat(sum((y.^2),2), [1 n1]).' - 2*x*(y.');
             
             if numel(sigma) == 1
-                gramm = exp(-dist2/(sigma.^2));
+                gram = exp(-dist2/(sigma.^2));
             else
-                gramm = exp(-bsxfun(@rdivide,dist2,sigma.^2));
+                gram = exp(-bsxfun(@rdivide,dist2,sigma.^2));
             end
         end
     end

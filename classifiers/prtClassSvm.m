@@ -113,12 +113,12 @@ classdef prtClassSvm < prtClass
             %                 obj.trainedkernels{ikernel} = initializekernelarray(obj.kernels{ikernel},dataset);
             %             end
             %             obj.trainedkernels = cat(1,obj.trainedkernels{:});
-            %             gramm = prtkernelgrammmatrix(dataset,obj.trainedkernels);
+            %             gram = prtkernelgrammmatrix(dataset,obj.trainedkernels);
             
-            gramm = prtKernel.evaluateMultiKernelGram(Obj.kernels,DataSet,DataSet);
+            gram = prtKernel.evaluateMultiKernelGram(Obj.kernels,DataSet,DataSet);
             %Check y-labels
             yZeroOne = DataSet.getBinaryTargetsAsZeroOne;
-            [Obj.alpha,Obj.beta] = prtUtilSmo(DataSet.getX,yZeroOne,gramm,Obj.c,Obj.tol);
+            [Obj.alpha,Obj.beta] = prtUtilSmo(DataSet.getX,yZeroOne,gram,Obj.c,Obj.tol);
             
             relevantIndices = find(Obj.alpha);
             Obj.sparseKernels = prtKernel.sparseKernelFactory(Obj.kernels,DataSet,relevantIndices);
@@ -134,10 +134,10 @@ classdef prtClassSvm < prtClass
             for i = 1:memChunkSize:n;
                 cI = i:min(i+memChunkSize,n);
                 cDataSet = prtDataSetClass(DataSet.getObservations(cI,:));
-                gramm = prtKernel.runMultiKernel(Obj.sparseKernels,cDataSet);
-                %gramm = prtKernelGrammMatrix(cDataSet,Obj.trainedKernels);
+                gram = prtKernel.runMultiKernel(Obj.sparseKernels,cDataSet);
+                %gram = prtKernelGrammMatrix(cDataSet,Obj.trainedKernels);
                 
-                y = gramm*Obj.sparseAlpha - Obj.beta;
+                y = gram*Obj.sparseAlpha - Obj.beta;
                 DataSetOut = DataSetOut.setObservations(y, cI);
             end
         end

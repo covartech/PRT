@@ -1,21 +1,48 @@
 classdef prtKernel
-    % xxx NEED HELP xxx
+    % prtKernel  Abstract super class for all prtKernel objects
+    %
     % prtKernel is the super class for all prtKernel objects.  The
-    % prtKernel class handles the big-picture internal operatings for
-    % kernels; prtkernel objects require that sub-classes implement the
-    % following:
+    % prtKernel class requires that sub-classes implement the following
+    % methods:
     %
-    % toTrainedKernelArray, getExpectedNumKernels, evaluateGramm, run
+    %   x = evaluateGram(obj,ds1,ds2)
+    %       Evaluate the kernel object obj trained at all points in ds1 and
+    %       evaluated at all points in ds2.  This should output a gram
+    %       matrix of size ds2.nObservations x
+    %       getExpectedNumKernels(obj,ds1).  This is the main interface
+    %       function for most kernel operations.
     %
-    % Most of that functionality can be found in prtKernelBinary,
-    % prtKernelUnary and prtKernelByFeature, so users should not have to
-    % sub-class prtKernel directly, unless they're doing something a little
-    % odd.
+    %   trainedKernelCell = toTrainedKernelArray(obj,dsTrain,logical)
+    %       Output a cell array of M trained kernel objects trained using
+    %       the data in prtDataSet dsTrain and observations specified in
+    %       logical (optional, default to all data points).  The trained
+    %       kernel cell can be used to maintain only a sparse list of
+    %       kernels in sparse learning machines (e.g. RVM, SVM).
+    %
+    %   yOut = run(obj,dsTest)
+    %       Run a trained kernel object (one element of
+    %       toTrainedKernelArray) on the data in dsTest.
+    %
+    %   nDims = getExpectedNumKernels(obj,dsTrain)
+    %       Output an integer containing of the expected number of trained
+    %       kernels that would be created using toTrainedKernelArray on all
+    %       the observations in the data set dsTrain.  For binary kernesls
+    %       (e.g. rbf, polynomial), this is dsTrain.nObservations, for
+    %       unary kernels (e.g. DC kernels) this is 1, and other kernel
+    %       objects might use other specifications.
+    %
+    %  General purpose implementations for these abstract methods can be
+    %  found in prtKernelBinary, prtKernelUnary, and
+    %  prtKernelFeatureDependent; to implement a new kernel class, most
+    %  users should be able to directly inherit from one of these rather
+    %  than directly from prtKernel.
+    %
+    
     
     methods (Abstract)
-        trainedKernelCell = toTrainedKernelArray(dsTrain,logical);
-        nDims = getExpectedNumKernels(dsTrain);
-        x = evaluateGramm(ds1,ds2);
+        trainedKernelCell = toTrainedKernelArray(obj,dsTrain,logical);
+        nDims = getExpectedNumKernels(obj,dsTrain);
+        x = evaluateGram(obj,ds1,ds2);
         yOut = run(obj,dsTest);
     end
     
@@ -34,25 +61,25 @@ classdef prtKernel
     
     methods (Static)
         
-        function gramm = runMultiKernel(trainedKernelCell,ds2)
+        function gram = runMultiKernel(trainedKernelCell,ds2)
             %Evaluate a cell array of trained kernel objects on the data in
             %ds2, which should be a prtDataSet
             nDims = length(trainedKernelCell);
-            gramm = zeros(ds2.nObservations,nDims);
+            gram = zeros(ds2.nObservations,nDims);
             for i = 1:length(trainedKernelCell)
-                gramm(:,i) = trainedKernelCell{i}.run(ds2);
+                gram(:,i) = trainedKernelCell{i}.run(ds2);
             end
         end
         
-        function gramm = evaluateMultiKernelGram(kernelCell,ds1,ds2)
-            %Evaluate the gramm matrix from a cell array of kernel objects.
-            % The output gramm matrix should be of size ds2.nObservations x
+        function gram = evaluateMultiKernelGram(kernelCell,ds1,ds2)
+            %Evaluate the gram matrix from a cell array of kernel objects.
+            % The output gram matrix should be of size ds2.nObservations x
             % sum(prtKernel.nDimsMultiKernel(kernelCell,ds1))
             nDims = prtKernel.nDimsMultiKernel(kernelCell,ds1);
-            gramm = zeros(ds2.nObservations,sum(nDims));
+            gram = zeros(ds2.nObservations,sum(nDims));
             start = 1;
             for i = 1:length(kernelCell)
-                gramm(:,start:start+nDims(i)-1) = kernelCell{i}.evaluateGramm(ds1,ds2);
+                gram(:,start:start+nDims(i)-1) = kernelCell{i}.evaluateGram(ds1,ds2);
                 start = nDims(i)+1;
             end
         end
@@ -62,7 +89,7 @@ classdef prtKernel
             % each kernel generates when trained on ds.  The length of
             % nDims should be the same as length(kernelCell), and
             % sum(nDims) is the total number of columns that can be
-            % expected in a gramm matrix based on kernelCell and ds.
+            % expected in a gram matrix based on kernelCell and ds.
             if ~isa(kernelCell,'cell')
                 kernelCell = {kernelCell};
             end
@@ -78,7 +105,7 @@ classdef prtKernel
             %  kernels kernelCell, the training data set, and the indices.
             %
             %  Note: for cell arrays of kernels, elements of indices are
-            %  indicative of which column *in the entire resulting gramm
+            %  indicative of which column *in the entire resulting gram
             %  matrix* gets selected.  i.e. for a data set of 4 elements,
             %  and kernelCell = {prtKernelDc, prtKernelRbf}, nDims from
             %  nDimsMultiKernel will be [1,4].  if indices is:

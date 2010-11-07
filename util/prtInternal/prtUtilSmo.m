@@ -1,8 +1,8 @@
-function [alpha,beta] = prtUtilSmo(x,y,gramm,c,tol)
+function [alpha,beta] = prtUtilSmo(x,y,gram,c,tol)
 % xxx Need Help xxx
 %   SMO Sequential Minimal Optimization
 %
-% Syntax: [alpha,beta] = prtUtilSmo(x,y,gramm,c,tol); %Called internally by generateSVM
+% Syntax: [alpha,beta] = prtUtilSmo(x,y,gram,c,tol); %Called internally by generateSVM
 %
 %   Reference: J. Platt, Sequential Minimal Optimization: A Fast Algorithm
 %   for Training Support Vector Machines, Microsoft Research Technical
@@ -34,7 +34,7 @@ while (numChanged > 0 || examineAll)
     end
     
     for i = 1:length(I);
-        [n,alpha,beta] = examineExample(x,y,alpha,beta,gramm,I(i),tol,c);
+        [n,alpha,beta] = examineExample(x,y,alpha,beta,gram,I(i),tol,c);
         numChanged = numChanged + n;
     end
 
@@ -49,11 +49,11 @@ end
 alpha = alpha.*y;
 
 
-function [bool,alpha,beta] = examineExample(x,y,alpha,beta,gramm,IND,tol,c)
+function [bool,alpha,beta] = examineExample(x,y,alpha,beta,gram,IND,tol,c)
 
 bool = 0;
 
-S = (alpha.*y)' * gramm + -beta;
+S = (alpha.*y)' * gram + -beta;
 y2 = y(IND);
 a2 = alpha(IND);
 e2 = S(IND)-y2;
@@ -68,14 +68,14 @@ if ((r2 < -tol) && (a2 < c)) || ((r2 > tol) && (a2 > 0))
         [v,i1] = max(E1mE2);
         i1 = i1(1);
         
-        [bool,alpha,beta] = takeStep(x,y,alpha,beta,gramm,Aind(i1),IND,tol,c);
+        [bool,alpha,beta] = takeStep(x,y,alpha,beta,gram,Aind(i1),IND,tol,c);
         if bool 
             return
         end
     end
     if ~bool
         for j = randperm(length(Aind));
-            [bool,alpha,beta] = takeStep(x,y,alpha,beta,gramm,Aind(j),IND,tol,c);
+            [bool,alpha,beta] = takeStep(x,y,alpha,beta,gram,Aind(j),IND,tol,c);
             if bool 
                 return;
             end
@@ -83,7 +83,7 @@ if ((r2 < -tol) && (a2 < c)) || ((r2 > tol) && (a2 > 0))
     end
     if ~bool
         for j = randperm(size(x,1));
-            [bool,alpha,beta] = takeStep(x,y,alpha,beta,gramm,j,IND,tol,c);
+            [bool,alpha,beta] = takeStep(x,y,alpha,beta,gram,j,IND,tol,c);
             if bool 
                 return;
             end
@@ -91,14 +91,14 @@ if ((r2 < -tol) && (a2 < c)) || ((r2 > tol) && (a2 > 0))
     end
 end
 
-function [bool,alpha,beta] = takeStep(x,y,alpha,beta,gramm,i1,i2,tol,c)
+function [bool,alpha,beta] = takeStep(x,y,alpha,beta,gram,i1,i2,tol,c)
 
 if i1 == i2
     bool = 0;
     return;
 end
 
-S = (alpha.*y)' * gramm + -beta;
+S = (alpha.*y)' * gram + -beta;
 alph1 = alpha(i1);
 alph2 = alpha(i2);
 y1 = y(i1);
@@ -121,9 +121,9 @@ if L == H
     return
 end
 
-k11 = gramm(i1,i1);
-k12 = gramm(i1,i2);
-k22 = gramm(i2,i2);
+k11 = gram(i1,i1);
+k12 = gram(i1,i2);
+k22 = gram(i2,i2);
 eta = k11+k22-2*k12;
 
 if eta > 0
@@ -136,11 +136,11 @@ if eta > 0
 else
     aTEMP = alpha;
     aTEMP(i2) = L;
-    Lobj = - sum(aTEMP) + 1/2 * (aTEMP.*y)' * gramm * (aTEMP.*y);    
+    Lobj = - sum(aTEMP) + 1/2 * (aTEMP.*y)' * gram * (aTEMP.*y);    
     
     aTEMP = alpha;
     aTEMP(i2) = H;
-    Hobj = - sum(aTEMP) + 1/2 * (aTEMP.*y)' * gramm * (aTEMP.*y);
+    Hobj = - sum(aTEMP) + 1/2 * (aTEMP.*y)' * gram * (aTEMP.*y);
     
     if Lobj < Hobj - eps
         a2 = L;
