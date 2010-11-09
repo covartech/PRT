@@ -170,7 +170,7 @@ classdef prtRv
     methods (Access = 'protected', Hidden = true)
         function X = dataInputParse(R,X) %#ok<MANU>
             
-            if isnumeric(X)
+            if isnumeric(X) || islogical(X)
                 % Quick exit from this ifelse so we don't call isa
                 % which can be slow
             elseif isa(X,'prtDataSetBase')

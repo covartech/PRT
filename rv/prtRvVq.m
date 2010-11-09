@@ -1,5 +1,45 @@
 classdef prtRvVq < prtRv
-    % xxx Need Help xxx
+    % prtRvVq  Vector quantization random variable
+    %   Vector quanitization uses k-means to discretize the data space
+    %   using NCATEGORIES means. MEANS are the discrete points in space and
+    %   have PROBABILITIES representing theirprominence in the data. The
+    %   pdf is calculated by mapping to the nearest entry of the MEANS and
+    %   giving the data point the corresponding entry in PROBABILITIIES.
+    %
+    %   RV = prtRvVq creates a prtRvVq object with empty means and
+    %   probabilities. The MEANS and PROBABILITIES must be set either
+    %   directly, or by calling the MLE method.
+    %
+    %   RV = prtRvVq(PROPERTY1, VALUE1,...) creates a prtRvVq object RV
+    %   with properties as specified by PROPERTY/VALUE pairs.
+    %
+    %   A prtRvVq object inherits all properties from the prtRv class. In
+    %   addition, it has the following properties:
+    %
+    %   nCategories   - The number of means that are calculated to
+    %                   discretize the data
+    %   means         - The means (calculated through k-means) that are
+    %                   used to approximate the density
+    %   probabilities - The probabilities of each of the means
+    %   
+    %  A prtRvVq object inherits all methods from the prtRv class. The MLE
+    %  method can be used to estimate the distribution parameters from
+    %  data.
+    %
+    %  Example:
+    %
+    %  dataSet = prtDataGenUnimodal;        % Load a dataset consisting of
+    %                                       % 2 features
+    %  dataSet = retainFeatures(dataSet,1); % Retain only the first feature
+    %
+    %  RV = prtRvVq;                        % Create a prtRvVq object
+    %  RV = RV.mle(dataSet);                % Compute the VQ parameters
+    %                                       % form the data
+    %  RV.plotPdf                           % Plot the pdf
+    %  
+    %   See also: prtRv, prtRvMvn, prtRvGmm, prtRvMultinomial,
+    %   prtRvUniform, prtRvUniformImproper
+    
     properties (Dependent = true)
         probabilities
         means

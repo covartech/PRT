@@ -1,5 +1,50 @@
 classdef prtRvMultinomial < prtRv
-    % xxx Need Help xxx
+    % prtRvMultinomial  Multinomial random variable
+    %   Models a discrete density on the integers. 
+    %
+    %   prtRvMultinomial operates on count matrices. Therfore, the draw()
+    %   method outputs a matrix that is N x nCategories and has a single 1
+    %   in each row. To draw integer categories you can use the
+    %   drawInteger() method. The mle() method calculates the probabilities
+    %   by sum(X,1) of the input matrix X. The inpus matrix X can be
+    %   estimated probabilities of the categories for each observation. 
+    %
+    %   RV = prtRvMultinomial creates a prtRvMultinomial object
+    %   with an unknown number of categories with unspecified probabilities
+    %   These properties can be set manually or by using the MLE method.
+    %
+    %   RV = prtRvMultinomial(PROPERTY1, VALUE1,...) creates a
+    %   prtRvMultinomial object RV with properties as specified by 
+    %   PROPERTY/VALUE pairs.
+    %
+    %   A prtRvMultinomial object inherits all properties from the
+    %   prtRv class. In addition, it has the following properties:
+    %
+    %   nCategories - number of integers modeled by the RV
+    %   probabilities - 1xnCategories vector of doubles less than 1
+    %                   that sum to 1, representing the probability of
+    %                   each of the integers
+    %   
+    %  A prtRvMultinomial object inherits all methods from the prtRv
+    %  class. The MLE  method can be used to set the parameters from data.
+    %  In addition, it has the the following methods:
+    %   
+    %   x = R.drawIntegers(N) - Draws N integers with the corresponding
+    %                           probabilities
+    %
+    %  Example:
+    %  
+    %  data = rand(100,5);                  % Uniformly random data
+    %  X = bsxfun(@eq,data,max(data,[],2)); % Generate data that has a 
+    %                                       % single 1 in each row
+    %
+    %  RV = prtRvMultinomial;               % Generate a prtRvMultinomial
+    %  RV = mle(RV,X);                      % Estimate the parameters
+    %
+    %  RV.plotPdf()                         % Plot the pdf (pmf)
+    %
+    %   See also: prtRv, prtRvMvn, prtRvGmm, prtRvVq, prtRvKde
+    
     properties (Dependent)
         probabilities
     end

@@ -343,8 +343,15 @@ classdef prtDataSetClass  < prtDataSetStandard
             if nargin < 3 || isempty(featureIndices)
                 featureIndices = 1:obj.nFeatures;
             end
-            
-            d = obj.getObservations(obj.getTargets == obj.uniqueClasses(classInd),featureIndices);
+            if ~obj.isLabeled
+                if classInd == 1
+                    d = obj.getObservations(:,featureIndices);
+                else
+                    error('prt:prtDataSetClass:getObservationsByClassInd','This dataSet is unlabeled and therefore contains only one class.');
+                end
+            else
+                d = obj.getObservations(obj.getTargets == obj.uniqueClasses(classInd),featureIndices);
+            end
         end
         
         function y = getBinaryTargetsAsZeroOne(obj)
@@ -446,6 +453,7 @@ classdef prtDataSetClass  < prtDataSetStandard
             handleArray = zeros(nClasses,1);
             
             holdState = get(gca,'nextPlot');
+            
             % Loop through classes and plot
             for i = 1:nClasses
                 %Use "i" here because it's by uniquetargetIND
@@ -476,6 +484,75 @@ classdef prtDataSetClass  < prtDataSetStandard
             if nargout > 0
                 varargout = {handleArray,legendStrings};
             end
+        end
+        
+        function varargout = plotDensity(ds)
+            % plotDensity(ds)
+            % patchHandles = plotDensity(ds);
+            %
+            % ds = prtDataGenMary;
+            % plotDensity(ds)
+            % 
+            nKSDsamples = 500;
+            alpha = 0.7;
+            
+            Summary = ds.summarize();
+            nClasses = Summary.nClasses;
+            if isempty(nClasses)
+                nClasses = 1;
+            end
+            
+            patchH = zeros(Summary.nFeatures,nClasses);
+            colors = prtPlotUtilClassColors(nClasses);
+            holdState = get(gca,'NextPlot');
+            
+            if strcmp(holdState,'replace')
+                cla; % Clear axes since patch doesn't automatically
+            end
+            
+            for iFeature = 1:Summary.nFeatures
+                low = Summary.lowerBounds(iFeature);
+                high = Summary.upperBounds(iFeature);
+                
+                range = high-low;
+                low = low - range/10;
+                high = high + range/10;
+                
+                xLoc = linspace(low, high, nKSDsamples);
+                xLoc = sort(cat(1,xLoc(:),ds.getObservations(:,iFeature)),'ascend');
+                
+                F = zeros([length(xLoc), nClasses]);
+                for cY = 1:nClasses
+                    F(:,cY) = pdf(mle(prtRvKde,ds.getObservationsByClassInd(cY,iFeature)),xLoc(:));
+                end
+                
+                F = F./max(F(:))/2;
+                xLoc = (xLoc-mean(xLoc))./std(xLoc);
+                
+                for cY = 1:nClasses
+                    cPatch = cat(2,cat(1,-F(:,cY),flipud(F(:,cY))), cat(1,xLoc, flipud(xLoc)));
+                    patchH(iFeature,cY) = patch(cPatch(:,1)+iFeature, cPatch(:,2), colors(cY,:));
+                end
+            end
+            
+            set(patchH,'FaceAlpha',alpha);
+            
+            set(gca,'NextPlot',holdState,'YTick',[]);
+            
+            xlabel('Feature');
+            ylabel('Normalized Feature Value');
+            
+            legendStrings = getClassNames(ds);
+            legend(patchH(1,:),legendStrings,'Location','SouthEast');
+            
+            if Summary.nFeatures < 10
+                set(gca,'XTick',1:Summary.nFeatures);
+            end
+            
+            if nargout
+                varargout = {patchH};
+            end
+            
         end
         
         function varargout = plotPairs(obj)

@@ -1,5 +1,60 @@
 classdef prtRvUniformImproper < prtRv
-    % xxx Need Help xxx
+    % prtRvUniformImproper  Improper uniform random variable
+    %   Models an improper pdf that always yeilds a value of 1 no matter
+    %   the input. prtRvUniformImproper is sometimes useful for creating 
+    %   one class classifiers. See the examples below for more information
+    %
+    %   The DRAW() method of prtRvUniformImproper draws values uniformly
+    %   distributed from realmin to realmax in each dimension.
+    %
+    %   RV = prtRvUniformImproper creates a prtRvUniformImproper object
+    %   with unknown dimensionality (NDIMENSIONS). NDIMENSIONS can be set
+    %   manually or using the MLE method.
+    %
+    %   RV = prtRvUniformImproper(PROPERTY1, VALUE1,...) creates a
+    %   prtRvMultinomial object RV with properties as specified by
+    %   PROPERTY/VALUE pairs.
+    %
+    %   A prtRvUniformImproper object inherits all properties from the
+    %   prtRv class. In addition, it has the following properties:
+    %
+    %   nDimensions - dimensionality of the data modeled by this RV.
+    %   
+    %  A prtRvUniformImproper object inherits all methods from the prtRv
+    %  class. The MLE  method can be used to set the parameters from data.
+    %b
+    %  Example:
+    %
+    %  % In this example we show that the PDF of a prtRvUniformImproper is
+    %  % always 1
+    %  dataSet = prtDataGenUnimodal;        % Load a dataset consisting of
+    %                                       % 2 features
+    %  dataSet = retainFeatures(dataSet,1); % Retain only the first feature
+    %                                       % only for the example.
+    %
+    %  RV = prtRvUniformImproper;           % Create a prtRvUniform object
+    %  RV = RV.mle(dataSet);                % Compute the bounds
+    %
+    %  RV.plotPdf([-10 10]);                % We must manually specify
+    %                                       % plot limits since
+    %                                       % prtRvUniformImproper does not
+    %                                       % have actual plot limits
+    %
+    %
+    %  % In this example we show how to build a one class MAP classifier
+    %  dataSet = prtDataGenUnimodal;        % Load a dataset consisting of
+    %                                       % 2 features
+    %  
+    %  % Create and train a GLRT classifier that uses a 
+    %  % prtRvUniformImproper to model class 0 and a prtRvMvn to model
+    %  % class 1
+    %  glrtClass = train(prtClassGlrt('rvH0',prtRvUniformImproper,'rvH1',prtRvMvn),dataSet);
+    %
+    %  plot(glrtClass) % Contours only show the log-likelihood of class 1
+    %
+    %   See also: prtRv, prtRvMvn, prtRvGmm, prtRvMultinomial,
+    %   prtRvVq, prtRvKde
+    
     properties (Hidden = true, SetAccess = 'private', GetAccess = 'private')
         nDimensionsPrivate
     end
@@ -42,6 +97,11 @@ classdef prtRvUniformImproper < prtRv
             assert(numel(N)==1 && N==floor(N) && N > 0,'N must be a positive integer scalar.')
             
             vals = bsxfun(@plus,bsxfun(@times,rand(N,R.nDimensions),realmax - realmin),realmin);
+        end
+        
+        function R = set.nDimensions(R,val)
+            assert(numel(N)==1 && N==floor(N) && N > 0,'nDimensions must be a positive integer scalar.')
+            R.nDimensionsPrivate = val;
         end
         
         function val = get.nDimensions(R)

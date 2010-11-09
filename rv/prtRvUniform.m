@@ -1,5 +1,42 @@
 classdef prtRvUniform < prtRv
-    % xxx Need Help xxx
+    % prtRvUniform  Uniform random variable
+    %   The variables UPPERBOUNDS and LOWERBOUNDS specify the randge of the
+    %   uniform variable. 
+    %
+    %   RV = prtRvUniform creates a prtRvUniform object with empty 
+    %   UPPDERBOUNDS and LOWERBOUNDS. The UPPDERBOUNDS and LOWERBOUNDS must
+    %   be set either directly, or by calling the MLE method.
+    %
+    %   RV = prtRvUniform(PROPERTY1, VALUE1,...) creates a prtRvUniform
+    %   object RV with properties as specified by PROPERTY/VALUE pairs.
+    %
+    %   A prtRvUniform object inherits all properties from the prtRv class.
+    %   In
+    %   addition, it has the following properties:
+    %
+    %   upperBounds - 1 x nDims double vector specifying the upper bound of
+    %                 the region with uniform density
+    %   lowerBounds - 1 x nDims double vector specifying the lower bound of
+    %                 the region with uniform density
+    %   
+    %  A prtRvUniform object inherits all methods from the prtRv class.
+    %  The MLE  method can be used to estimate the distribution parameters
+    %  from data.
+    %
+    %  Example:
+    %
+    %  dataSet = prtDataGenUnimodal;        % Load a dataset consisting of
+    %                                       % 2 features
+    %  dataSet = retainFeatures(dataSet,1); % Retain only the first feature
+    %
+    %  RV = prtRvUniform;                   % Create a prtRvUniform object
+    %  RV = RV.mle(dataSet);                % Compute the bounds
+    %                                       % form the data
+    %  RV.plotPdf                           % Plot the pdf
+    %  
+    %   See also: prtRv, prtRvMvn, prtRvGmm, prtRvMultinomial,
+    %   prtRvVq, prtRvKde
+    
     properties
         upperBounds
         lowerBounds
@@ -71,9 +108,14 @@ classdef prtRvUniform < prtRv
         end
         function val = plotLimits(R)
             if R.isValid
+                
+                range = R.upperBounds-R.lowerBounds;
+                
                 val = zeros(2*R.nDimensions,1);
-                val(1:2:end) = R.lowerBounds;
-                val(2:2:end) = R.upperBounds;
+                val(1:2:end) = R.lowerBounds-range/10;
+                val(2:2:end) = R.upperBounds+range/10;
+                
+                
             else
                 error('prtRvUniform:plotLimits','Plotting limits can no be determined for this RV because it is not yet valid.')
             end
