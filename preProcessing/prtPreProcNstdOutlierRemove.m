@@ -1,5 +1,5 @@
 classdef prtPreProcNstdOutlierRemove < prtPreProc
-    % prtPreProcNstdOutlierRemove  Min (0), Max (1) all rows of the data
+    % prtPreProcNstdOutlierRemove  Removes outliers from a prtDataSet
     %
     %   NSTDOUT = prtPreProcNstdOutlierRemove creates a pre-processing
     %   object that removes observations where any of the feature values is

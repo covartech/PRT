@@ -11,7 +11,7 @@ classdef prtAlgorithm < prtAction
         isSupervised = true; % We say true even though we don't know
     end
     
-    properties
+    properties (SetAccess=protected)
         actionCell = {};
         connectivityMatrix = [];
     end
@@ -80,6 +80,9 @@ classdef prtAlgorithm < prtAction
                 
                 Obj1.actionCell = cat(1,Obj1.actionCell(:),Obj2.actionCell(:));
                 Obj1.connectivityMatrix = newConn;
+                
+                Obj1.isSupervised = any(cellfun(@(c)c.isSupervised,Obj1.actionCell));
+                Obj1.isCrossValidateValid = all(cellfun(@(c)c.isCrossValidateValid,Obj1.actionCell));
             else
                 error('prt:prtAlgorithm:plus','prtAlgorithm.plus is only defined for second inputs of type prtAlgorithm or prtAction, but the second input is a %s',class(Obj2));
             end
@@ -127,6 +130,8 @@ classdef prtAlgorithm < prtAction
                 Obj1.actionCell = cat(1,Obj1.actionCell(:),Obj2.actionCell(:));
                 Obj1.connectivityMatrix = newConn;
                 
+                Obj1.isSupervised = any(cellfun(@(c)c.isSupervised,Obj1.actionCell));
+                Obj1.isCrossValidateValid = all(cellfun(@(c)c.isCrossValidateValid,Obj1.actionCell));
             else
                 error('prt:prtAlgorithm:plus','prtAlgorithm.plus is only defined for second inputs of type prtAlgorithm or prtAction, but the second input is a %s',class(Obj2));
             end
@@ -146,28 +151,15 @@ classdef prtAlgorithm < prtAction
             end
         end
         
-        function Obj = prtAlgorithm(actionCell,varargin)
-            if nargin == 0
-                return
-            end
-            if ~isa(actionCell,'cell') && isa(actionCell,'prtAction')
-                actionCell = {actionCell};
-            end
-            for i = 1:length(actionCell)
-               if ~isa(actionCell{i},'prtAction')
-                    error('prt:prtAlgorithm:invlaidInputs','prtAlgorithm requires input to be a cell of prtActions, but cell element %d was a %s',i,class(actionCell{i}));
-               end
-            end
-            
-            Obj.actionCell = actionCell;
-            Obj.connectivityMatrix = false(length(Obj.actionCell)+2);
-            for i = 2:length(Obj.actionCell)+1
-                Obj.connectivityMatrix(i,i-1) = true;
-            end
-            terminalNodes = all(Obj.connectivityMatrix(:,1:end-1) == false);
-            Obj.connectivityMatrix(end,terminalNodes) = true;
-            
-            if nargin > 1
+        function Obj = prtAlgorithm(varargin)
+            % One input is a constructor from another prtAction
+            if nargin == 1
+                assert(isa(varargin{1},'prtAction'),'prtAlgorithm with 1 input requires a prtAction input');
+                Obj.actionCell = varargin(1);
+                Obj.connectivityMatrix = false(3);
+                Obj.connectivityMatrix(2,1) = true;
+                Obj.connectivityMatrix(3,2) = true;
+            else
                 Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
             end
         end

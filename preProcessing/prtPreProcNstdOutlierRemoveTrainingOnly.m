@@ -50,7 +50,7 @@ classdef prtPreProcNstdOutlierRemoveTrainingOnly < prtPreProcNstdOutlierRemove
     
     methods (Access = protected)
         
-        function DataSet = runAction(Obj,DataSet)
+        function DataSet = runAction(Obj,DataSet) %#ok<MANU>
             % During run we don't do anything so that we remain
             % cross-validatable
         end

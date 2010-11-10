@@ -5,8 +5,9 @@ function FileInfo = prtPlotUtilGraphVizRun(connectivity)
 %   Calls the GraphViz binary neato on the graph specified by 
 %   connectivity matrix.
 % 
-%   This requires that GraphViz is installed or more specifically that
-%   neato is available from the command prompt.
+%   This requires that GraphViz is installed and available from the command
+%   prompt
+
 
 % Write file for graphviz
 tempDotFileName = fullfile(tempdir,'_tempPrtGraphVizGraph.dot');
