@@ -19,17 +19,20 @@ classdef prtAction
     %   DataSetSummary       - A struct, set during training, containing
     %                          information about the training data set
     %   DataSet              - A prtDataSet, containing the training data,
-    %                           only used if verboseStorage is true
+    %                          only used if verboseStorage is true
     %   UserData             - A struct containing user specified data
     %
     %   All prtAction objects have the following methods:
     %
-    %   train          - Train the prtAction object using a prtDataSet
-    %   run            - Evaluate the prtAction object on a prtDataSet
-    %   crossValidate  - Cross-validate a prtAction object using a labeled 
-    %                    prtDataSet and cross-validation keys.
-    %   kfolds         - K-folds cross-validate a prtAction object using a
-    %                    labeled prtDataSet
+    %   train             - Train the prtAction object using a prtDataSet
+    %   run               - Evaluate the prtAction object on a prtDataSet
+    %   runOnTrainingData - Evaluate the prtAction object on a prtDataSet
+    %                       during training prior to training of other
+    %                       prtActions within a prtAlgorithm
+    %   crossValidate     - Cross-validate a prtAction object using a 
+    %                       labeled prtDataSet and cross-validation keys.
+    %   kfolds            - K-folds cross-validate a prtAction object using
+    %                       a labeled prtDataSet
     %
     % See Also: prtAction/train, prtAction/run, prtAction/crossValidate,
     % prtAction/kfolds, prtClass, prtRegress, prtFeatSel, prtPreProc,
@@ -115,7 +118,7 @@ classdef prtAction
     methods
         function Obj = plus(in1,in2)
             if isa(in2,'prtAlgorithm')
-                Obj = in2 - in1; %use prtAlgorithm (use MINUS to flip left/right)
+                Obj = in2 - in1; % Use prtAlgorithm (use MINUS to flip left/right)
             elseif isa(in2,'prtAction') && (isa(in2,'prtAction') || all(cellfun(@(x)isa(x,'prtAction'),in2)))
                 Obj = prtAlgorithm(in1) + prtAlgorithm(in2);
             else
@@ -125,7 +128,7 @@ classdef prtAction
         
         function Obj = mrdivide(in1,in2)
             if isa(in2,'prtAlgorithm')
-                Obj = in2 \ in1; %use prtAlgorithm(use MRDIVIDE to flip left/right)
+                Obj = in2 \ in1; % Use prtAlgorithm(use MLDIVIDE to flip left/right)
             elseif isa(in2,'prtAction')
                 Obj = prtAlgorithm(in1) / prtAlgorithm(in2);
             else
@@ -164,12 +167,12 @@ classdef prtAction
         function DataSetOut = run(Obj, DataSetIn)         
             % RUN  Run a prtAction object on a prtDataSet object.
             %
-            %   OUTPUT = OBJ.train(DataSet) runs the prtAction object using
+            %   OUTPUT = OBJ.run(DataSet) runs the prtAction object using
             %   the prtDataSet DataSet. OUTPUT will be a prtDataSet object.
             if isnumeric(DataSetIn)
                 try
                    DataSetIn = prtDataSetStandard(DataSetIn); 
-                catch
+                catch %#ok<CTCH>
                     error('prt:prtAction:prtDataSetBase','DataSet provided to prtAction %s''s run() was a prtDataSetBase, DataSet is a %s',class(Obj),class(DataSetIn));
                 end
             elseif ~isa(DataSetIn,'prtDataSetBase')
@@ -180,6 +183,16 @@ classdef prtAction
             DataSetOut = runAction(Obj, DataSetIn);
             DataSetOut = postRunProcessing(Obj, DataSetIn, DataSetOut);
         end
+        
+        function DataSetOut = runOnTrainingData(Obj, DataSetIn)
+            % RUNONTRAININGDATA  Run a prtAction object on a prtDataSet
+            % object during training of a prtAlgorithm
+            %
+            %   OUTPUT = OBJ.run(DataSet) runs the prtAction object using
+            %   the prtDataSet DataSet. OUTPUT will be a prtDataSet object.
+            DataSetOut = runActionOnTrainingData(Obj, DataSetIn);
+        end
+            
         
         function Obj = set.verboseStorage(Obj,val)
             assert(numel(val)==1 && (islogical(val) || (isnumeric(val) && (val==0 || val==1))),'prtAction:invalidVerboseStorage','verboseStorage must be a logical');
@@ -345,6 +358,21 @@ classdef prtAction
                 DataSetOut = DataSetOut.copyDescriptionFieldsFrom(DataSetIn);
             end
             DataSetOut = ClassObj.updateDataSetFeatureNames(DataSetOut);
+        end
+        
+    end
+    methods (Access = protected)
+        function DataSetOut = runActionOnTrainingData(Obj, DataSetIn)
+            % RUNACTIONONTRAININGDATA Run a prtAction object on a prtDataSet object
+            %   This method differs from RUN() in that it is called after
+            %   train() within prtAlgorithm prior to training of subsequent
+            %   actions. By default this method is the same as RUN() but it
+            %   can be overloaded by prtActions to enable things such as 
+            %   outlier removal.
+            %
+            %    DataSetOut = runOnTrainingData(Obj DataSetIn);
+            %
+            DataSetOut = runAction(Obj, DataSetIn);
         end
     end
 end

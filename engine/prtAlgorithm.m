@@ -184,7 +184,7 @@ classdef prtAlgorithm < prtAction
             for i = 2:length(topoOrder)-1
                 currentInput = catFeatures(input{Obj.connectivityMatrix(i,:)});
                 Obj.actionCell{i-1} = train(Obj.actionCell{i-1},currentInput);
-                input{i} = run(Obj.actionCell{i-1},currentInput);
+                input{i} = runOnTrainingData(Obj.actionCell{i-1},currentInput);
             end
         end
         
