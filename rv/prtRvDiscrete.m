@@ -140,7 +140,7 @@ classdef prtRvDiscrete < prtRv
             if nargin < 2 || isempty(N)
                 N = 1;
             end
-            
+            assert(R.isValid,'DRAW cannot be called because this RV is not yet valid.');
             assert(numel(N)==1 && N==floor(N) && N > 0,'N must be a positive integer scalar.')
             
             vals = R.symbols(drawIntegers(R.InternalMultinomial,N),:);
@@ -207,7 +207,7 @@ classdef prtRvDiscrete < prtRv
     
     methods (Hidden = true)
         function val = isValid(R)
-            val = isValid(R.InternalMultinomial);
+            val = isValid(R.InternalMultinomial) && ~isempty(R.symbols);
         end
         function val = plotLimits(R)
             val = plotLimits(R.InternalMultinomial);
