@@ -1,5 +1,51 @@
 classdef prtRvGmm < prtRv
-    % xxx Need Help xxx
+    % prtRvGmm - Gaussian Mixture Model Random Variable
+    %   A mixture of multi-variance normal random variables.
+    %
+    %   The prtRvGmm class is implemented using the prtRvMixture class.
+    %
+    %   RV = prtRvGmm creates a prtRvGmm object with empty 
+    %   mixingProportions and prtRvMvn components. These parameters can be
+    %   set manually or by calling the MLE method.
+    %
+    %   RV = prtRvGmm(PROPERTY1, VALUE1,...) creates a prtRvGmm
+    %   object RV with properties as specified by PROPERTY/VALUE pairs.
+    %
+    %   A prtRvGmm object inherits all properties from the prtRv class.
+    %   In addition, it has the following properties:
+    %
+    %   nComponents         - A positive integer specifiying the number of
+    %                         MVN components in the mixture.
+    %   covarianceStructure - The covariance structure applied to each of
+    %                         the prtRvMvn objects in the mixture. See prtRvMvn.
+    %   covariancePool      - A logical specifying whether the components
+    %                         should share a common covariance. If set to
+    %                         true the covariance of the components are 
+    %                         set to the weighted average of the maximum
+    %                         likelihood estimate for the covariance 
+    %                         matrices for the components.
+    %   components          - An array of prtRvMvn objects.
+    %   mixingProportions   - A discrete probability vector, representing
+    %                         the probability of each component in the
+    %                         mixture.
+    %
+    %  A prtRvGmm object inherits all methods from the prtRv class.
+    %  The MLE method can be used to estimate the distribution parameters
+    %  from data.
+    %
+    %  Examples:
+    %       ds = prtDataGenOldFaithful;
+    %       rv = prtRvGmm('nComponents',2);
+    %       rv = mle(rv,ds);
+    %       plotPdf(rv);
+    %
+    %       rv = prtRvGmm('nComponents',2,'covariancePool',true,'covarianceStructure','diagonal);
+    %       rv = mle(rv,ds);
+    %       plotPdf(rv);
+    %
+    %   See also: prtRv, prtRvMvn, prtRvMultinomial, prtRvUniform,
+    %             prtRvUniformImproper, prtRvVq
+    
     properties (Dependent = true)
         nComponents
         covarianceStructure 

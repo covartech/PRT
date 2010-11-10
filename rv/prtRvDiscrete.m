@@ -1,5 +1,40 @@
 classdef prtRvDiscrete < prtRv
-    % xxx Need Help xxx
+    % prtRvDiscrete  Discrete random variable
+    %   Models a discrete density on a set of numeric symbols
+    %
+    %   RV = prtRvDiscrete creates a prtRvDiscrete object with an unknown
+    %   number of symbols with unspecified probabilities. These properties
+    %   can be set manually or by using the MLE method.
+    %
+    %   RV = prtRvDiscrete(PROPERTY1, VALUE1,...) creates a
+    %   prtRvDiscrete object RV with properties as specified by 
+    %   PROPERTY/VALUE pairs.
+    %
+    %   A prtRvDiscrete object inherits all properties from the
+    %   prtRv class. In addition, it has the following properties:
+    %
+    %   nCategories   - number of integers modeled by the RV
+    %   probabilities - 1 x nCategories vector of doubles less than 1
+    %                   that sum to 1, representing the probability of
+    %                   each of the integers
+    %   symbols       - nCategories x M matrix of symbols
+    %                   M specifies the dimensionality of the RV object.
+    %   
+    %  A prtRvDiscrete object inherits all methods from the prtRv
+    %  class. The MLE  method can be used to set the parameters from data.
+    %
+    %  Example:
+    %  
+    %      rv = prtRvDiscrete('symbols',(10:12)','probabilities',[0.3 0.3 0.4]);
+    %      plotPdf(rv);
+    %
+    %      % Plot MVN distributed data as discrete
+    %      rv = mle(prtRvDiscrete,draw(prtRvMvn('Mean',[1 2],'Covariance',2*eye(2)),100));
+    %      plotPdf(rv);
+    %
+    %   See also: prtRv, prtRvMvn, prtRvGmm, prtRvVq, prtRvKde,
+    %             prtRvMultinomial
+    
     properties (Dependent = true)
         probabilities
         nCategories

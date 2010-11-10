@@ -25,13 +25,18 @@ classdef prtDataSetClass  < prtDataSetStandard
     %   getObservationsByClassInd  - Return the observations by class and index
     %   getTargetsAsBinaryMatrix   - Return a binary matrix of targets.
     %   explore                    - Explore the prtDataSetClass object
-    %   plotAsTimeSeries           - Plot the prtDataSetClass object as a time
-    %                                series
-    %   plotStar                   - Create a star plot to visualize higher
-    %                                dimensional data
     %   plot                       - Plot the data set
     %   plotbw                     - Plot the data set in a manner that
     %                                will remain clear in black and white
+    %   plotStar                   - Create a star plot to visualize higher
+    %                                dimensional data
+    %   plotAsTimeSeries           - Plot the prtDataSetClass object as a
+    %                                time series
+    %   plotPairs                  - Plot a grid of plots containing each
+    %                                set of two-features with density
+    %                                estimates on the diagonals
+    %   plotDensity                - Plot the density of each feature
+    %                                independently as a volume
     % 
     %   See also, prtDataSetBase, prtDataSetStandard, prtDataSetRegress,
     %   prtDataSetFile
@@ -486,15 +491,50 @@ classdef prtDataSetClass  < prtDataSetStandard
             end
         end
         
-        function varargout = plotDensity(ds)
+        function varargout = plotDensity(ds,varargin)
+            % Plot the density of each feature independently as a volume.
+            %
             % plotDensity(ds)
             % patchHandles = plotDensity(ds);
             %
-            % ds = prtDataGenMary;
-            % plotDensity(ds)
+            % plotDensity(ds,'PARMNAME',PARAMVALUE)
+            %   Additional parameters:
+            %       nDensitySamples        - Number of linearly spaced 
+            %                                samples used to construct the 
+            %                                density estimate. Default 500.
+            %       faceAlpha              - Face alpha value of the patch
+            %                                for each density. Must be a
+            %                                value between 0 and 1. Default
+            %                                0.7.
+            %       minimumKernelBandwidth - minimumBandwidth parameter of 
+            %                                prtRvKde that is used to
+            %                                estimate each density. default
+            %                                eps.
+            %
+            % Example:
+            %    ds = prtDataGenMary;
+            %    plotDensity(ds)
+            %
+            %    ds = prtDataGenIris;
+            %    plotDensity(ds,'minimumKernelBandwidth',5e-3);
             % 
-            nKSDsamples = 500;
-            alpha = 0.7;
+            Options.nDensitySamples = 500;
+            Options.faceAlpha = 0.7;
+            Options.minimumKernelBandwidth = eps;
+            
+            if nargin > 1
+                assert(mod(length(varargin),2)==0,'Additional inputs must be string value pairs')
+                
+                paramNames = varargin(1:2:end);
+                paramValues = varargin(2:2:end);
+                
+                optionFieldNames = fieldnames(Options);
+                for iPair = 1:length(paramNames)
+                    assert(ismember(paramNames{iPair},optionFieldNames),'%s is not a valid parameter name for plotDensity()',paramNames{iPair});
+                    Options.(paramNames{iPair}) = paramValues{iPair};
+                end
+            end
+            
             
             Summary = ds.summarize();
             nClasses = Summary.nClasses;
@@ -518,12 +558,12 @@ classdef prtDataSetClass  < prtDataSetStandard
                 low = low - range/10;
                 high = high + range/10;
                 
-                xLoc = linspace(low, high, nKSDsamples);
+                xLoc = linspace(low, high, Options.nDensitySamples);
                 xLoc = sort(cat(1,xLoc(:),ds.getObservations(:,iFeature)),'ascend');
                 
                 F = zeros([length(xLoc), nClasses]);
                 for cY = 1:nClasses
-                    F(:,cY) = pdf(mle(prtRvKde,ds.getObservationsByClassInd(cY,iFeature)),xLoc(:));
+                    F(:,cY) = pdf(mle(prtRvKde('minimumBandwidth',Options.minimumKernelBandwidth),ds.getObservationsByClassInd(cY,iFeature)),xLoc(:));
                 end
                 
                 F = F./max(F(:))/2;
@@ -535,7 +575,7 @@ classdef prtDataSetClass  < prtDataSetStandard
                 end
             end
             
-            set(patchH,'FaceAlpha',alpha);
+            set(patchH,'FaceAlpha',Options.faceAlpha);
             
             set(gca,'NextPlot',holdState,'YTick',[]);
             
@@ -546,7 +586,7 @@ classdef prtDataSetClass  < prtDataSetStandard
             legend(patchH(1,:),legendStrings,'Location','SouthEast');
             
             if Summary.nFeatures < 10
-                set(gca,'XTick',1:Summary.nFeatures);
+                set(gca,'XTick',1:Summary.nFeatures,'XTickLabel',ds.getFeatureNames());
             end
             
             if nargout

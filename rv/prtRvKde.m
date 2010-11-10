@@ -38,7 +38,7 @@ classdef prtRvKde < prtRv
     %                      To overcome this a set minimumBandwidth to be
     %                      greater than zero. The default value is 0.
     %   
-    %  A prtRvMvn object inherits all methods from the prtRv class. The MLE
+    %  A prtRvKde object inherits all methods from the prtRv class. The MLE
     %  method can be used to estimate the distribution parameters from
     %  data.
     %

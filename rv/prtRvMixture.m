@@ -1,26 +1,42 @@
-% xxx Need Help xxx
-% PRTRVMVN  PRT Random Variable Object - Multi-Variate Normal
-%
-% Syntax:
-%   R = prtRvMixture
-%   R = prtRvMixture(RVs)
-%   R = prtRvMixture(nComponents,baseRV)
-%   R = prtRvMixture(RVs,mixingWeights)
-%
-% Methods:
-%   mle
-%   pdf
-%   logPdf
-%   cdf
-%   draw
-%   kld
-%
-% Inherited Methods
-%   ezPdfPlot
-%   ezCdfPlot
-
-
 classdef prtRvMixture < prtRv
+    % prtRvMixture - Mixture Random Variable
+    %   Forms a mixture of other prtRv objects of the same dimensionality.
+    %
+    %   The prtRvMixture class is used to implement the prtRvGmm class but
+    %   can also be used to implement other mixtures. The base prtRv object
+    %   must implement the weightedMle() method.
+    %
+    %   RV = prtRvMixture creates a prtRvMixture object with empty 
+    %   mixingProportions and components. These parameters can be set
+    %   manually or by calling the MLE method.
+    %
+    %   RV = prtRvMixture(PROPERTY1, VALUE1,...) creates a prtRvMixture
+    %   object RV with properties as specified by PROPERTY/VALUE pairs.
+    %
+    %   A prtRvMixture object inherits all properties from the prtRv class.
+    %   In addition, it has the following properties:
+    %
+    %   components        - A vector of prtRv objects. The length of the
+    %                       array specifies the number of components in the
+    %                       mixture
+    %   mixingProportions - A discrete probability vector, representing the 
+    %                       probability of each component in the mixture.
+    %
+    %  A prtRvMixture object inherits all methods from the prtRv class.
+    %  The MLE method can be used to estimate the distribution parameters
+    %  from data.
+    %
+    %  Examples:
+    %       ds = prtDataGenOldFaithful;
+    %       rv = prtRvMixture('components',repmat(prtRvMvn,1,2));
+    %       rv = mle(rv,ds);
+    %       plotPdf(rv);
+    %       hold on;
+    %       plot(ds);
+    %
+    %   See also: prtRv, prtRvMvn, prtRvGmm, prtRvMultinomial,
+    %   prtRvUniform, prtRvUniformImproper, prtRvVq
+    
     properties
         components
     end

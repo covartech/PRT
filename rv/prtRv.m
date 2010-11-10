@@ -1,5 +1,5 @@
 classdef prtRv
-    %prtRv    Base class for all prt random variables
+    % prtRv Base class for all prt random variables
     %
     %   This is an abstract class from which all prt random variables
     %   inherit. It can not be instantiated. prtRv contains the following 
