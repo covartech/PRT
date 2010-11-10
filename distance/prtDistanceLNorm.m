@@ -44,61 +44,41 @@ if nDim1 ~= nDim2
     error('Dimensionality of data1 and data2 must be equal')
 end
 
-persistent bsxFunExists
-if isempty(bsxFunExists)
-    bsxFunExists = exist('bsxfun','builtin') || exist('bsxfun','file');
-end
-if bsxFunExists
-    % We can use bsxfun
-    if (nDim1>1) && ((nSamples1*nSamples2*nDim1)<=chunkSize)
-        % its a small enough problem that we might gain by full use of bsxfun
-        switch Lnorm
-            case 1
-                D = sum(abs(bsxfun(@minus,reshape(data1,[nSamples1,1,nDim1]),reshape(data2,[1,nSamples2,nDim1]))),3);
-            case inf
-                D = max(abs(bsxfun(@minus,reshape(data1,[nSamples1,1,nDim1]),reshape(data2,[1,nSamples2,nDim1]))),[],3);
-            case 0
-                D = min(abs(bsxfun(@minus,reshape(data1,[nSamples1,1,nDim1]),reshape(data2,[1,nSamples2,nDim1]))),[],3);
-            otherwise
-                D = sum(bsxfun(@minus,reshape(data1,[nSamples1,1,nDim1]),reshape(data2,[1,nSamples2,nDim1])).^Lnorm,3);
-        end
-    else
-        % too big, so that the ChunkSize will have been exceeded, or just 1-d
-        if isfinite(Lnorm) && Lnorm > 1
-            D = bsxfun(@minus,data1(:,1),data2(:,1)').^Lnorm;
-        else
-            D = abs(bsxfun(@minus,data1(:,1),data2(:,1)'));
-        end
-        for i=2:nDim1
-            switch Lnorm
-                case 1
-                    D = D + abs(bsxfun(@minus,data1(:,i),data2(:,i)'));
-                case inf
-                    D = max(D,abs(bsxfun(@minus,data1(:,i),data2(:,i)')));
-                case 0
-                    D = min(D,abs(bsxfun(@minus,data1(:,i),data2(:,i)')));
-                otherwise
-                    D = D + bsxfun(@minus,data1(:,i),data2(:,i)').^Lnorm;
-            end
-        end
+if (nDim1>1) && ((nSamples1*nSamples2*nDim1)<=chunkSize)
+    switch Lnorm
+        case 1
+            D = sum(abs(bsxfun(@minus,reshape(data1,[nSamples1,1,nDim1]),reshape(data2,[1,nSamples2,nDim1]))),3);
+        case inf
+            D = max(abs(bsxfun(@minus,reshape(data1,[nSamples1,1,nDim1]),reshape(data2,[1,nSamples2,nDim1]))),[],3);
+        case 0
+            D = min(abs(bsxfun(@minus,reshape(data1,[nSamples1,1,nDim1]),reshape(data2,[1,nSamples2,nDim1]))),[],3);
+        case 2
+            %un-rolled((x-y)^2)) - sqrt below; this takes less time than
+            %the generic code below for the most common L-norm (2)
+            
+            %D = repmat(sum((data1.^2), 2), [1 nSamples2]) + repmat(sum((data2.^2),2), [1 nSamples1]).' - 2*data1*(data2.');
+            D = bsxfun(@minus,bsxfun(@plus,sum((data1.^2), 2),sum((data2.^2),2).'),2*data1*(data2.'));
+            
+        otherwise
+            D = sum(bsxfun(@minus,reshape(data1,[nSamples1,1,nDim1]),reshape(data2,[1,nSamples2,nDim1])).^Lnorm,3);
     end
 else
-    % Cannot use bsxfun. Sigh. Do things the hard (and slower) way.
+    % too big, so that the ChunkSize will have been exceeded, or just 1-d
     if isfinite(Lnorm) && Lnorm > 1
-        D = (repmat(data1(:,1),1,nSamples2) - repmat(data2(:,1)',nSamples1,1)).^Lnorm;
+        D = bsxfun(@minus,data1(:,1),data2(:,1)').^Lnorm;
     else
-        D = abs(repmat(data1(:,1),1,nSamples2) - repmat(data2(:,1)',nSamples1,1));
+        D = abs(bsxfun(@minus,data1(:,1),data2(:,1)'));
     end
     for i=2:nDim1
         switch Lnorm
             case 1
-                D = D + abs(repmat(data1(:,i),1,nSamples2) - repmat(data2(:,i)',nSamples1,1));
+                D = D + abs(bsxfun(@minus,data1(:,i),data2(:,i)'));
             case inf
-                D = max(D,abs(repmat(data1(:,i),1,nSamples2) - repmat(data2(:,i)',nSamples1,1)));
+                D = max(D,abs(bsxfun(@minus,data1(:,i),data2(:,i)')));
             case 0
-                D = min(D,abs(repmat(data1(:,i),1,nSamples2) - repmat(data2(:,i)',nSamples1,1)));
+                D = min(D,abs(bsxfun(@minus,data1(:,i),data2(:,i)')));
             otherwise
-                D = D + (repmat(data1(:,i),1,nSamples2) - repmat(data2(:,i)',nSamples1,1)).^Lnorm;
+                D = D + bsxfun(@minus,data1(:,i),data2(:,i)').^Lnorm;
         end
     end
 end
