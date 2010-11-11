@@ -85,7 +85,6 @@ if (nDim1>1) && ((nSamples1*nSamples2*nDim1)<=chunkSize)
             
             %D = repmat(sum((data1.^2), 2), [1 nSamples2]) + repmat(sum((data2.^2),2), [1 nSamples1]).' - 2*data1*(data2.');
             D = bsxfun(@minus,bsxfun(@plus,sum((data1.^2), 2),sum((data2.^2),2).'),2*data1*(data2.'));
-            
         otherwise
             D = sum(bsxfun(@minus,reshape(data1,[nSamples1,1,nDim1]),reshape(data2,[1,nSamples2,nDim1])).^Lnorm,3);
     end
@@ -113,6 +112,9 @@ end
 if isfinite(Lnorm) && Lnorm ~= 1
     if Lnorm == 2
         D = sqrt(D);
+        if isreal(data1) && isreal(data2)
+            D = real(D);
+        end
     else
         D = D.^(1./Lnorm);
     end
