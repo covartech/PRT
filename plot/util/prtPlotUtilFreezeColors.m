@@ -1,6 +1,9 @@
 function prtPlotUtilFreezeColors(varargin)
 % freezeColors  Lock colors of plot, enabling multiple colormaps per figure. (v2.3)
 %
+%   This is a renaming of the matlab central submission freezeColors.
+%   See prtExternal.freezeColors
+%
 %   Problem: There is only one colormap per figure. This function provides
 %       an easy solution when plots using different colomaps are desired 
 %       in the same figure.

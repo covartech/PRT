@@ -1,6 +1,6 @@
-function C = prtNextChoose(N,K)
-%prtNextChoose Loop through combinations without replacement.
-% prtNextChoose(N,K), when first called, returns a function handle.  This  
+function C = nextchoose(N,K)
+%NEXTCHOOSE Loop through combinations without replacement.
+% NEXTCHOOSE(N,K), when first called, returns a function handle.  This  
 % function handle, when called, returns the next combination without 
 % replacement of K elements taken from the set 1:N. This can be useful
 % when the number of such combinations is too large to hold in memory at
@@ -15,7 +15,7 @@ function C = prtNextChoose(N,K)
 %     % To use each combination one at a time, put it in a loop.
 %     N = 4;  % Length of the set.
 %     K = 3;  % Number of samples taken for each sampling.
-%     H = prtNextChoose(N,K);
+%     H = nextchoose(N,K);
 %     for ii = 1:(prod(1:N)/(prod(1:(N-K)) * prod(1:K)))
 %         A = H();
 %         % Do stuff with A: use it as an index, etc.
@@ -34,37 +34,11 @@ function C = prtNextChoose(N,K)
 % returned.
 %
 % See also,  nchoosek, perms, combinator, npermutek (both on the FEX)
-
-% This function is a modification of the matlab central submission
-%   next_comb_perm. See prtExtrenal.next_comb_perm.*   
 %
-% The license information for that file below
-%
-% Copyright (c) 2009, Matt Fig
-% All rights reserved.
-% 
-% Redistribution and use in source and binary forms, with or without 
-% modification, are permitted provided that the following conditions are 
-% met:
-% 
-%     * Redistributions of source code must retain the above copyright 
-%       notice, this list of conditions and the following disclaimer.
-%     * Redistributions in binary form must reproduce the above copyright 
-%       notice, this list of conditions and the following disclaimer in 
-%       the documentation and/or other materials provided with the distribution
-%       
-% THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-% AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
-% IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
-% ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE 
-% LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
-% CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
-% SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
-% INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
-% CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-% ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
-% POSSIBILITY OF SUCH DAMAGE.
-
+% Author:   Matt Fig
+% Contact:  popkenai@yahoo.com
+% Date: 6/9/2009
+% Reference:  http://mathworld.wolfram.com/BallPicking.html
 
 if K>N 
     error('K must be less than or equal to N.')
@@ -88,9 +62,7 @@ else
     WV = K;
 end
 
-%BC = prod(1:N)/(prod(1:(N-WV)) * prod(1:WV)) - 1;
-BC = round(prod(1:N)/(prod(1:(N-WV)) * prod(1:WV)) - 1); 
-
+BC = prod(1:N)/(prod(1:(N-WV)) * prod(1:WV)) - 1;
 CNT = 0;  % Tells us when to restart.
 WV = [];  % Initial WV, the working vector for looping.  
 C = @nestfunc;  % Handle to nested function.
@@ -104,7 +76,7 @@ C = @nestfunc;  % Handle to nested function.
             return
         end
          
-        if CNT >= BC;
+        if CNT == BC;
             B = (N-K+1):N;  % The final vector, reset other vals.
             CNT = 0;
             inc = 1;            

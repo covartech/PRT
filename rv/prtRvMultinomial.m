@@ -6,8 +6,9 @@ classdef prtRvMultinomial < prtRv
     %   method outputs a matrix that is N x nCategories and has a single 1
     %   in each row. To draw integer categories you can use the
     %   drawInteger() method. The mle() method calculates the probabilities
-    %   by sum(X,1) of the input matrix X. The inpus matrix X can be
-    %   estimated probabilities of the categories for each observation. 
+    %   by sum(X,1) of the input matrix X. Therefore X should be a count
+    %   matrix or estimated probabilities of the categories for each
+    %   observation. 
     %
     %   RV = prtRvMultinomial creates a prtRvMultinomial object
     %   with an unknown number of categories with unspecified probabilities
@@ -83,8 +84,9 @@ classdef prtRvMultinomial < prtRv
         function vals = pdf(R,X)
             assert(R.isValid,'PDF cannot be evaluated because this RV object is not yet valid.')
             X = R.dataInputParse(X); % Basic error checking etc
-            assert(size(X,2) == R.nCategories,'Incorrect dimensionality for RV object.')
             assert(isnumeric(X) && ndims(X)==2,'X must be a 2D numeric array.');
+            assert(size(X,2) == R.nCategories,'Incorrect number of categories for this RV object. This RV object is defined to have %d categories, but the input data has only %d columns. Remember that prtRvMultinomial operates on count matrices.', R.nCategories, size(X,2))
+            
             
             vals = sum(bsxfun(@times,X,R.probabilities),2);
         end

@@ -1,10 +1,14 @@
 classdef prtRvDiscrete < prtRv
     % prtRvDiscrete  Discrete random variable
     %   Models a discrete density on a set of numeric symbols
+    %   If input to mle(), X, is a vector it is interpreted as a 1D vector
+    %   of symbol observations. If X is an nObs x nDim matrix it is
+    %   interpreted as nObs observations of nDim dimensional symbols.
     %
     %   RV = prtRvDiscrete creates a prtRvDiscrete object with an unknown
-    %   number of symbols with unspecified probabilities. These properties
-    %   can be set manually or by using the MLE method.
+    %   symbols and unspecified probabilities. These properties
+    %   can be set manually or by using the MLE method. Both of these
+    %   properties must be set to make the RV valid.
     %
     %   RV = prtRvDiscrete(PROPERTY1, VALUE1,...) creates a
     %   prtRvDiscrete object RV with properties as specified by 
@@ -214,10 +218,17 @@ classdef prtRvDiscrete < prtRv
         end
         
         function val = isPlottable(R)
-            val = isPlottable(R.InternalMultinomial);
+            val = isPlottable(R.InternalMultinomial) && ~isempty(R.symbols);
         end
         
         function R = weightedMle(R,X,weights)
+            if isvector(X)
+                % A single symbol... interperet as a vector of 1D symbols
+                X = X(:);
+                if numel(weights) == 1
+                    weights = weights.*ones(size(X));
+                end
+            end
             assert(numel(weights)==size(X,1),'The number of weights must mach the number of observations.');
             
             [R.symbols, dontNeed, symbolInd] = unique(X,'rows'); %#ok
