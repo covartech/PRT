@@ -106,7 +106,9 @@ classdef prtRvMvn < prtRv
             % is the same as the number of dimensions, nDimensions, of the
             % prtRv object RV.
             
-            assert(R.isValid,'PDF cannot be evaluated because the RV object is not yet valid.')
+            [isValid, reasonStr] = R.isValid;
+            assert(isValid,'PDF cannot yet be evaluated. This RV is not yet valid %s.',reasonStr);
+            
             assert(~R.badCovariance,'Covariance matrix is not positive definite. Consider modifying "covarianceStructure".');
             X = R.dataInputParse(X); % Basic error checking etc
             
@@ -124,7 +126,8 @@ classdef prtRvMvn < prtRv
             % nDims matrix, where N is the number of locations to evaluate
             % the pdf, and nDims is the same as the number of dimensions,
             % nDimensions, of the prtRv object RV.
-            assert(R.isValid,'LOGPDF cannot be evaluated because the RV object is not yet valid.')
+            [isValid, reasonStr] = R.isValid;
+            assert(isValid,'LOGPDF cannot yet be evaluated. This RV is not yet valid %s.',reasonStr);
             
             X = R.dataInputParse(X); % Basic error checking etc
             
@@ -151,7 +154,9 @@ classdef prtRvMvn < prtRv
             % is the same as the number of dimensions, nDimensions, of the
             % prtRv object RV.
             
-            assert(R.isValid,'CDF cannot be evaluated because the RV object is not yet valid.')
+            [isValid, reasonStr] = R.isValid;
+            assert(isValid,'CDF cannot yet be evaluated. This RV is not yet valid %s.',reasonStr);
+            
             assert(~R.badCovariance,'Covariance matrix is not positive definite. Consider modifying "covarianceStructure"');
             X = R.dataInputParse(X); % Basic error checking etc
             
@@ -168,21 +173,48 @@ classdef prtRvMvn < prtRv
             % dimensions of RV.
             
             assert(numel(N)==1 && N==floor(N) && N > 0,'N must be a positive integer scalar.')
-            assert(R.isValid,'DRAW cannot be evaluated because the RV object is not yet valid.')
+            [isValid, reasonStr] = R.isValid;
+            assert(isValid,'DRAW cannot yet be evaluated. This RV is not yet valid %s.',reasonStr);
+            
             assert(~R.badCovariance,'Covariance matrix is not positive definite. Consider modifying "covarianceStructure"');
             vals = prtRvUtilMvnDraw(R.mean,R.covariance,N);
         end
     end
     
     methods (Hidden=true)
-        function val = isValid(R)
-            val = false(size(R));
-            for iR = 1:numel(R)
-                val(iR) = ~isempty(R(iR).covariance) && ~isempty(R(iR).mean);
+        function [val, reasonStr] = isValid(R)
+            
+            if numel(R) > 1
+                val = false(size(R));
+                for iR = 1:numel(R)
+                    [val(iR), reasonStr] = isValid(R(iR));
+                end
+                return
+            end
+            
+            val = ~isempty(R.covariance) && ~isempty(R.mean);
+            
+            if val
+                reasonStr = '';
+            else
+                badCov = isempty(R.covariance);
+                badMean = isempty(R.mean);
+                
+                if badCov && ~badMean
+                    reasonStr = 'because covariance has not been set';
+                elseif ~badCov && badMean
+                    reasonStr = 'because mean has not been set';
+                elseif badCov && badMean
+                    reasonStr = 'because mean and covariance have not been set';
+                else
+                    reasonStr = 'because of an unknown reason';
+                end
             end
         end
+        
         function val = plotLimits(R)
-            if R.isValid
+            [isValid, reasonStr] = R.isValid;
+            if isValid
                 minX = min(R.mean, [], 1)' - 2*sqrt(diag(R.covariance));
                 maxX = max(R.mean, [], 1)' + 2*sqrt(diag(R.covariance));
                 
@@ -190,7 +222,7 @@ classdef prtRvMvn < prtRv
                 val(1:2:R.nDimensions*2-1) = minX;
                 val(2:2:R.nDimensions*2) = maxX;
             else
-                error('prtRvMvn:plotLimits','Plotting limits can no be determined for this RV because it is not yet valid.')
+                error('prtRvMvn:plotLimits','Plotting limits can not be determined for this RV. It is not yet valid %s',reasonStr)
             end
         end
         

@@ -78,23 +78,32 @@ classdef prtRvUniformImproper < prtRv
         
         function vals = pdf(R,X)
             X = R.dataInputParse(X); % Basic error checking etc
+            [isValid, reasonStr] = R.isValid;
+            assert(isValid,'PDF cannot yet be evaluated. This RV is not yet valid %s.',reasonStr);
             assert(size(X,2) == R.nDimensions,'Data, RV dimensionality missmatch. Input data, X, has dimensionality %d and this RV has dimensionality %d.', size(X,2), R.nDimensions)
             vals = ones(size(X,1),1);
         end
         
         function vals = logPdf(R,X)
             X = R.dataInputParse(X); % Basic error checking etc
+            [isValid, reasonStr] = R.isValid;
+            assert(isValid,'LOGPDF cannot yet be evaluated. This RV is not yet valid %s.',reasonStr);
             vals = log(pdf(R,X));
         end
         
         function vals = cdf(R,X)
             X = R.dataInputParse(X); % Basic error checking etc
+            [isValid, reasonStr] = R.isValid;
+            assert(isValid,'CDF cannot yet be evaluated. This RV is not yet valid %s.',reasonStr);
             assert(size(X,2) == R.nDimensions,'Data, RV dimensionality missmatch. Input data, X, has dimensionality %d and this RV has dimensionality %d.', size(X,2), R.nDimensions)
             vals = nan(size(X,1),1);
         end
         
         function vals = draw(R,N)
             assert(numel(N)==1 && N==floor(N) && N > 0,'N must be a positive integer scalar.')
+            
+            [isValid, reasonStr] = R.isValid;
+            assert(isValid,'DRAW cannot yet be evaluated. This RV is not yet valid %s.',reasonStr);
             
             vals = bsxfun(@plus,bsxfun(@times,rand(N,R.nDimensions),realmax - realmin),realmin);
         end
@@ -110,11 +119,26 @@ classdef prtRvUniformImproper < prtRv
     end
     
     methods (Hidden = true)
-        function val = isValid(R)
+        function [val, reasonStr] = isValid(R)
+            if numel(R) > 1
+                val = false(size(R));
+                for iR = 1:numel(R)
+                    [val(iR), reasonStr] = isValid(R(iR));
+                end
+                return
+            end
+            
             val = ~isempty(R.nDimensionsPrivate);
+            
+            if val
+                reasonStr = '';
+            else
+                reasonStr = 'because the nDimeions has not been set';
+            end
         end
         function val = plotLimits(R)
-            if R.isValid
+            [isValid, reasonStr] = R.isValid;
+            if isValid
                 val = zeros(2*R.nDimensions,1);
                 val(1:2:end) = Inf;
                 val(2:2:end) = -Inf;
@@ -123,7 +147,7 @@ classdef prtRvUniformImproper < prtRv
                 % In this case this RV would not change the resulting
                 % max(upperBounds), min(lowerBounds)
             else
-                error('prtRvUniformImproper:plotLimits','Plotting limits can no be determined for this RV because it is not yet valid.')
+                error('prtRvUniformImproper:plotLimits','Plotting limits can not be determined for this RV. It is not yet valid %s.',reasonStr)
             end
         end         
     end

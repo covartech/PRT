@@ -34,11 +34,11 @@ classdef prtRvKde < prtRv
     %   minimumBandwidth - Minium bandwidth that is aloud to be estimated.
     %                      Diffusion based estimation can correctly 
     %                      identify a discrete density and infer a very
-    %                      small bandwidth. This is sometimes undesirable.
-    %                      To overcome this a set minimumBandwidth to be
-    %                      greater than zero. The default value is 0.
+    %                      small bandwidth. This is sometimes undesirable
+    %                      and causes stability issues. The default value
+    %                      is eps.
     %   
-    %  A prtRvKde object inherits all methods from the prtRv class. The MLE
+    %  A prtRvMvn object inherits all methods from the prtRv class. The MLE
     %  method can be used to estimate the distribution parameters from
     %  data.
     %
@@ -49,6 +49,9 @@ classdef prtRvKde < prtRv
     %   plotPdf(mle(prtRvKde,ds))
     %   % or using the static method
     %   prtRvKde.ezPlotPdf(ds)
+    %
+    %   % Diffusion bandwidth estimation can identify discrete densities
+    %   plotPdf(mle(prtRvKde,[0; 0; 0; 1; 1; 1; 2; 2;]))
     %
     %   % Comparison to ksdensity (Statistics toolbox required)
     %   % ksdensity() is only for 1D data
@@ -86,7 +89,7 @@ classdef prtRvKde < prtRv
         bandwidthMode = 'diffusion';
         bandwidths = []; % Will be estimated
         trainingData = []% Locations of kernels
-        minimumBandwidth = 0;
+        minimumBandwidth = eps;
     end
     
     properties (Dependent = true, Hidden=true)
@@ -129,6 +132,10 @@ classdef prtRvKde < prtRv
         function R = mle(R,X)
             X = R.dataInputParse(X); % Basic error checking etc
             
+            if isempty(X)
+                error('prt:prtRvKde','prtRvKde.mle() requires non-empty X');
+            end
+            
             R.trainingData = X;
             
             switch R.bandwidthMode
@@ -159,17 +166,19 @@ classdef prtRvKde < prtRv
             end
             
             R.bandwidths = max(R.bandwidths,R.minimumBandwidth);
-            
         end
         
         function vals = pdf(R,X)
-            assert(R.isValid,'PDF cannot be evaluated because the RV object is not yet valid.')
+            [isValid, reasonStr] = R.isValid;
+            assert(isValid,'PDF cannot yet be evaluated. This RV is not yet valid %s.',reasonStr);
             
             vals = exp(logPdf(R,X));
         end
         
         function vals = logPdf(R,X)
-            assert(R.isValid,'LOGPDF cannot be evaluated because this RV object is not yet valid.')
+            [isValid, reasonStr] = R.isValid;
+            assert(isValid,'LOGPDF cannot yet be evaluated. This RV is not yet valid %s.',reasonStr);
+            
             assert(size(X,2) == R.nDimensions,'Data, RV dimensionality missmatch. Input data, X, has dimensionality %d and this RV has dimensionality %d.', size(X,2), R.nDimensions)
             assert(isnumeric(X) && ndims(X)==2,'X must be a 2D numeric array.');
     
@@ -204,8 +213,34 @@ classdef prtRvKde < prtRv
     end
     
     methods (Hidden = true)
-        function val = isValid(R)
+        function [val, reasonStr] = isValid(R)
+            if numel(R) > 1
+                val = false(size(R));
+                for iR = 1:numel(R)
+                    [val(iR), reasonStr] = isValid(R(iR));
+                end
+                return
+            end
+            
             val = ~isempty(R.trainingData) & ~isempty(R.bandwidths);
+            
+            if val
+                reasonStr = '';
+            else
+                badTrainingData = isempty(R.trainingData);
+                badBandwidths = isempty(R.bandwidths);
+                
+                if badTrainingData && ~badBandwidths
+                    reasonStr = 'because trainingData has not been set';
+                elseif ~badTrainingData && badBandwidths
+                    reasonStr = 'because bandwidths has not been set';
+                elseif badTrainingData && badBandwidths
+                    reasonStr = 'because trainingData and bandwidths have not been set';
+                else
+                    reasonStr = 'because of an unknown reason';
+                end
+            end
+            
         end
         function val = plotLimits(R)
             % We use the minimum and maximum of the training data with an
@@ -227,4 +262,43 @@ classdef prtRvKde < prtRv
             plotPdf(mle(prtRvKde,X));
         end
     end
+    
+    methods
+        function varargout = plotPdf(R,varargin)
+            % Plot the pdf
+            %
+            % This is overloaded from prtRv because we want to enforce that
+            % the training data is included in the evaluated points
+            % This ensures that when very small bandwidths are present
+            % the plot still looks as expected.
+            
+            varargout = {};
+            if R.isPlottable
+                
+                if nargin > 1 % Calculate appropriate limits from covariance
+                    plotLims = varargin{1};
+                else
+                    plotLims = plotLimits(R);
+                end
+                
+                UserOptions = prtUserOptions;
+                
+                [linGrid,gridSize] = prtPlotUtilGenerateGrid(plotLims(1:2:end), plotLims(2:2:end), UserOptions.RvPlotOptions.nSamplesPerDim, R.trainingData);
+                
+                imageHandle = prtPlotUtilPlotGriddedEvaledFunction(R.pdf(linGrid), linGrid, gridSize, UserOptions.RvPlotOptions.colorMapFunction(UserOptions.RvPlotOptions.nColorMapSamples));
+                
+                if nargout
+                    varargout = {imageHandle};
+                end
+            else
+                [isValid, reasonStr] = R.isValid;
+                if isValid
+                    error('prt:prtRv:plot','This RV object cannont be plotted because it has too many dimensions.')
+                else
+                    error('prt:prtRv:plot','This RV object cannot be plotted. It is not yet valid %s.',reasonStr);
+                end
+            end
+        end
+    end
+    
 end

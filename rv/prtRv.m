@@ -46,7 +46,7 @@ classdef prtRv
         nDimensions % The number of dimensions
     end
     methods (Abstract, Hidden=true)
-        bool = isValid(R)
+        [bool, reasonStr] = isValid(R)
     end
     methods
         % These functions are default "error" functions incase a

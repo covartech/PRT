@@ -61,7 +61,10 @@ classdef prtRvUniform < prtRv
         end
         
         function vals = pdf(R,X)
-            assert(R.isValid,'PDF cannot be evaluated because this RV object is not yet valid.')
+            
+            [isValid, reasonStr] = R.isValid;
+            assert(isValid,'PDF cannot yet be evaluated. This RV is not yet valid %s.',reasonStr);
+            
             X = R.dataInputParse(X); % Basic error checking etc
             assert(size(X,2) == R.nDimensions,'Data, RV dimensionality missmatch. Input data, X, has dimensionality %d and this RV has dimensionality %d.', size(X,2), R.nDimensions)
             
@@ -76,7 +79,8 @@ classdef prtRvUniform < prtRv
         end
         
         function vals = logPdf(R,X)
-            assert(R.isValid,'LOGPDF cannot be evaluated because this RV object is not yet valid.')
+            [isValid, reasonStr] = R.isValid;
+            assert(isValid,'LOGPDF cannot yet be evaluated. This RV is not yet valid %s.',reasonStr);
             
             vals = log(pdf(R,X));
         end
@@ -103,11 +107,38 @@ classdef prtRvUniform < prtRv
     end
     
     methods (Hidden = true)
-        function val = isValid(R)
+        function [val, reasonStr] = isValid(R)
+            if numel(R) > 1
+                val = false(size(R));
+                for iR = 1:numel(R)
+                    [val(iR), reasonStr] = isValid(R(iR));
+                end
+                return
+            end
+            
             val = ~isempty(R.upperBounds) && ~isempty(R.lowerBounds);
+            
+            if val
+                reasonStr = '';
+            else
+                badUpper = isempty(R.upperBounds);
+                badLower = isempty(R.lowerBounds);
+                
+                if badUpper && ~badLower
+                    reasonStr = 'because upperBounds has not been set';
+                elseif ~badUpper && badLower
+                    reasonStr = 'because lowerBounds has not been set';
+                elseif badUpper && badLower
+                    reasonStr = 'because upperBounds and lowerBounds have not been set';
+                else
+                    reasonStr = 'because of an unknown reason';
+                end
+            end
         end
+        
         function val = plotLimits(R)
-            if R.isValid
+            [isValid, reasonStr] = R.isValid;
+            if isValid
                 
                 range = R.upperBounds-R.lowerBounds;
                 
@@ -117,7 +148,7 @@ classdef prtRvUniform < prtRv
                 
                 
             else
-                error('prtRvUniform:plotLimits','Plotting limits can no be determined for this RV because it is not yet valid.')
+                error('prtRvUniform:plotLimits','Plotting limits can not be determined for this RV. It is not yet valid %s.',reasonStr)
             end
         end
     end

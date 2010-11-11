@@ -155,10 +155,17 @@ classdef prtRvGmm < prtRv
         end
     end
 
-    
     methods (Hidden=true)
-        function val = isValid(R)
-            val = isValid(R.mixtureRv);
+        function [val, reasonStr] = isValid(R)
+            if numel(R) > 1
+                val = false(size(R));
+                for iR = 1:numel(R)
+                    [val(iR), reasonStr] = isValid(R(iR));
+                end
+                return
+            end
+            
+            [val, reasonStr] = isValid(R.mixtureRv);
         end
         function val = plotLimits(R)
             val = plotLimits(R.mixtureRv);

@@ -82,7 +82,9 @@ classdef prtRvMultinomial < prtRv
         end
         
         function vals = pdf(R,X)
-            assert(R.isValid,'PDF cannot be evaluated because this RV object is not yet valid.')
+            [isValid, reasonStr] = R.isValid;
+            assert(isValid,'PDF cannot yet be evaluated. This RV is not yet valid %s.',reasonStr);
+            
             X = R.dataInputParse(X); % Basic error checking etc
             assert(isnumeric(X) && ndims(X)==2,'X must be a 2D numeric array.');
             assert(size(X,2) == R.nCategories,'Incorrect number of categories for this RV object. This RV object is defined to have %d categories, but the input data has only %d columns. Remember that prtRvMultinomial operates on count matrices.', R.nCategories, size(X,2))
@@ -92,8 +94,9 @@ classdef prtRvMultinomial < prtRv
         end
         
         function vals = logPdf(R,X)
-            assert(R.isValid,'LOGPDF cannot be evaluated because this RV object is not yet valid.')            
-
+            [isValid, reasonStr] = R.isValid;
+            assert(isValid,'LOGPDF cannot yet be evaluated. This RV is not yet valid %s.',reasonStr);
+            
             vals = log(pdf(R,X));
         end
         
@@ -156,14 +159,32 @@ classdef prtRvMultinomial < prtRv
     end
     
     methods (Hidden = true)
-        function val = isValid(R)
+        function [val, reasonStr] = isValid(R)
+            if numel(R) > 1
+                val = false(size(R));
+                for iR = 1:numel(R)
+                    [val(iR), reasonStr] = isValid(R(iR));
+                end
+                return
+            end
+            
             val = ~isempty(R.probabilities);
+            
+            if val
+                reasonStr = '';
+            else
+                reasonStr = 'because probabilities has not been set';
+            end
         end
+        
+        
         function val = plotLimits(R)
-            if R.isValid
+            [isValid, reasonStr] = R.isValid;
+            if isValid
                 val = [0.5 0.5+R.nCategories];
             else
-                error('multinomial:plotLimits','Plotting limits can no be determined for this RV because it is not yet valid.')
+                
+                error('multinomial:plotLimits','Plotting limits can not yet be determined. This RV is not yet valid %s.',reasonStr)
             end
         end
         

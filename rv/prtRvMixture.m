@@ -6,7 +6,7 @@ classdef prtRvMixture < prtRv
     %   can also be used to implement other mixtures. The base prtRv object
     %   must implement the weightedMle() method.
     %
-    %   RV = prtRvMixture creates a prtRvMixture object with empty 
+    %   RV = prtRvMixture creates a prtRvMixture object with empty
     %   mixingProportions and components. These parameters can be set
     %   manually or by calling the MLE method.
     %
@@ -19,7 +19,7 @@ classdef prtRvMixture < prtRv
     %   components        - A vector of prtRv objects. The length of the
     %                       array specifies the number of components in the
     %                       mixture
-    %   mixingProportions - A discrete probability vector, representing the 
+    %   mixingProportions - A discrete probability vector, representing the
     %                       probability of each component in the mixture.
     %
     %  A prtRvMixture object inherits all methods from the prtRv class.
@@ -42,7 +42,7 @@ classdef prtRvMixture < prtRv
     end
     
     properties (Dependent = true)
-        mixingProportions 
+        mixingProportions
         nComponents
     end
     
@@ -141,7 +141,7 @@ classdef prtRvMixture < prtRv
             end
             R.learningResults.nIterations = iteration;
             R.learningResults.logLikelihood = cLogLikelihood;
-
+            
         end
         
         function [y, componentPdf] = pdf(R,X)
@@ -155,12 +155,12 @@ classdef prtRvMixture < prtRv
             if nargout > 1
                 componentPdf = exp(componentLogPdf);
             end
-        end 
+        end
         
         function [logy, componentLogPdf] = logPdf(R,X)
             X = R.dataInputParse(X); % Basic error checking etc
             assert(size(X,2) == R.nDimensions,'Data, RV dimensionality missmatch. Input data, X, has dimensionality %d and this RV has dimensionality %d.', size(X,2), R.nDimensions)
-           
+            
             componentLogPdf = zeros(size(X,1),R.nComponents);
             
             logWeights = log(R.mixingProportions.probabilities);
@@ -169,7 +169,7 @@ classdef prtRvMixture < prtRv
             end
             
             logy = prtUtilSumExp(componentLogPdf')';
-        end 
+        end
         
         function y = cdf(R,X)
             X = R.dataInputParse(X); % Basic error checking etc
@@ -183,7 +183,8 @@ classdef prtRvMixture < prtRv
         end
         
         function [vals, components] = draw(R,N)
-            assert(R.isValid,'prtRvMixture must be valid before it can be drawn from.')
+            [isValid, reasonStr] = R.isValid;
+            assert(isValid,'DRAW cannot yet be evaluated. This RV is not yet valid %s.',reasonStr);
             
             components = drawIntegers(R.mixingProportions,N);
             
@@ -195,7 +196,7 @@ classdef prtRvMixture < prtRv
             end
         end
     end
-
+    
     % Get Methods
     methods
         function val = get.nDimensions(R)
@@ -211,21 +212,51 @@ classdef prtRvMixture < prtRv
         end
     end
     
-    
     methods (Hidden=true)
-        function val = isValid(R)
+        function [val, reasonStr] = isValid(R)
+            if numel(R) > 1
+                val = false(size(R));
+                for iR = 1:numel(R)
+                    [val(iR), reasonStr] = isValid(R(iR));
+                end
+                return
+            end
+            
+            
             if ~isempty(R.components)
                 % This should work but doesnt for nested mixtures
                 val = all(isValid(R.components)) && ~isempty(R.mixingProportions);
             else
                 val = false;
             end
+            
+            if val
+                reasonStr = '';
+            else
+                unsetComps = isempty(R.components);
+                invalidComps = all(isValid(R.components));
+                badProbs = isempty(R.mixingProportions);
+                
+                if unsetComps && ~badProbs
+                    reasonStr = 'because components has not been set';
+                elseif unsetComps && badProbs
+                    reasonStr = 'because components and mixingProportions have not been set';
+                elseif ~unsetComps && badProbs && invalidComps
+                    reasonStr = 'because mixingProportions have not been set and some components are not yet valid';
+                elseif ~unsetComps && ~badProbs && invalidComps
+                    reasonStr = 'because some components are not yet valid';
+                else
+                    reasonStr = 'because of an unknown reason';
+                end
+            end
+            
         end
     end
     
     methods (Hidden = true)
         function val = plotLimits(R)
-            if R.isValid
+            [isValid, reasonStr] = R.isValid;
+            if isValid
                 allPlotLimits = zeros(R.nComponents,R.nDimensions*2);
                 for iComp = 1:R.nComponents
                     try
@@ -240,10 +271,9 @@ classdef prtRvMixture < prtRv
                 val(1:2:R.nDimensions*2-1) = min(allPlotLimits(:,(1:2:R.nDimensions*2-1)),[],1);
                 val(2:2:R.nDimensions*2) = max(allPlotLimits(:,(2:2:R.nDimensions*2)),[],1);
             else
-                error('prtRvMixture:plotLimits','Plotting limits can not be determined for this prtRvMixture because it is not yet valid.')
+                error('prtRvMixture:plotLimits','Plotting limits can not be determined for this prtRvMixture. It is not yet valid %s',reasonStr)
             end
         end
-
     end
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -256,7 +286,7 @@ classdef prtRvMixture < prtRv
         end
         
         function membershipMat = expectedComponentMembership(R,X)
-
+            
             [logy, membershipMat] = logPdf(R,X); %#ok
             
             membershipMat = exp(bsxfun(@minus,membershipMat,prtUtilSumExp(membershipMat')'));
@@ -269,5 +299,5 @@ classdef prtRvMixture < prtRv
             R.mixingProportions = R.mixingProportions.mle(membershipMat);
             
         end
-    end 
+    end
 end

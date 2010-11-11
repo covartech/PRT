@@ -120,7 +120,8 @@ classdef prtRvDiscrete < prtRv
             
             X = R.dataInputParse(X); % Basic error checking etc
             
-            assert(R.isValid,'PDF cannot be evaluated because this RV object is not yet valid.')
+            [isValid, reasonStr] = R.isValid;
+            assert(isValid,'PDF cannot yet be evaluated. This RV is not yet valid %s.',reasonStr);
             
             assert(size(X,2) == R.nDimensions,'Data, RV dimensionality missmatch. Input data, X, has dimensionality %d and this RV has dimensionality %d.', size(X,2), R.nDimensions)
             
@@ -133,7 +134,8 @@ classdef prtRvDiscrete < prtRv
         end
         
         function vals = logPdf(R,X)
-            assert(R.isValid,'LOGPDF cannot be evaluated because this RV object is not yet valid.')
+            [isValid, reasonStr] = R.isValid;
+            assert(isValid,'LOGPDF cannot yet be evaluated. This RV is not yet valid %s.',reasonStr);
             
             X = R.dataInputParse(X); % Basic error checking etc
             
@@ -144,7 +146,8 @@ classdef prtRvDiscrete < prtRv
             if nargin < 2 || isempty(N)
                 N = 1;
             end
-            assert(R.isValid,'DRAW cannot be called because this RV is not yet valid.');
+            [isValid, reasonStr] = R.isValid;
+            assert(isValid,'DRAW cannot yet be evaluated. This RV is not yet valid %s.',reasonStr);
             assert(numel(N)==1 && N==floor(N) && N > 0,'N must be a positive integer scalar.')
             
             vals = R.symbols(drawIntegers(R.InternalMultinomial,N),:);
@@ -153,10 +156,11 @@ classdef prtRvDiscrete < prtRv
         
         function varargout = plotPdf(R,varargin)
             if ~R.isPlottable
-                if R.isValid
+                [isValid, reasonStr] = R.isValid;
+                if isValid
                     error('prt:prtRv:plot','This RV object cannont be plotted because it has too many dimensions for plotting.')
                 else
-                    error('prt:prtRv:plot','This RV object cannot be plotted because it is not yet valid.');
+                    error('prt:prtRv:plot','This RV object cannot be plotted. It is not yet valid %s',reasonStr);
                 end
             end
             
@@ -210,8 +214,34 @@ classdef prtRvDiscrete < prtRv
     
     
     methods (Hidden = true)
-        function val = isValid(R)
+        function [val, reasonStr] = isValid(R)
+            if numel(R) > 1
+                val = false(size(R));
+                for iR = 1:numel(R)
+                    [val(iR), reasonStr] = isValid(R(iR));
+                end
+                return
+            end
+            
             val = isValid(R.InternalMultinomial) && ~isempty(R.symbols);
+            
+            if val
+                reasonStr = '';
+            else
+                badProbs = isempty(R.probabilities);
+                badSymbols = isempty(R.symbols);
+                
+                if badProbs && ~badSymbols
+                    reasonStr = 'because probabilities has not been set';
+                elseif ~badProbs && badSymbols
+                    reasonStr = 'because symbols has not been set';
+                elseif badProbs && badSymbols
+                    reasonStr = 'because probabilities and symbols have not been set';
+                else
+                    reasonStr = 'because of an unknown reason';
+                end
+            end
+                
         end
         function val = plotLimits(R)
             val = plotLimits(R.InternalMultinomial);

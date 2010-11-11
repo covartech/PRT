@@ -136,7 +136,9 @@ classdef prtRvVq < prtRv
         end
         
         function vals = pdf(R,X)
-            assert(R.isValid,'PDF cannot be evaluated because this RV object is not yet valid.')
+            [isValid, reasonStr] = R.isValid;
+            assert(isValid,'PDF cannot yet be evaluated. This RV is not yet valid %s.',reasonStr);
+            
             X = R.dataInputParse(X); % Basic error checking etc
             assert(size(X,2) == R.nDimensions,'Data, RV dimensionality missmatch. Input data, X, has dimensionality %d and this RV has dimensionality %d.', size(X,2), R.nDimensions)
             assert(isnumeric(X) && ndims(X)==2,'X must be a 2D numeric array.');
@@ -147,7 +149,8 @@ classdef prtRvVq < prtRv
         end
         
         function vals = logPdf(R,X)
-            assert(R.isValid,'LOGPDF cannot be evaluated because this RV object is not yet valid.')
+            [isValid, reasonStr] = R.isValid;
+            assert(isValid,'LOGPDF cannot yet be evaluated. This RV is not yet valid %s.',reasonStr);
             
             vals = log(pdf(R,X));
         end
@@ -183,8 +186,17 @@ classdef prtRvVq < prtRv
     end
     
     methods (Hidden = true)
-        function val = isValid(R)
-            val = isValid(R.InternalDiscrete);
+        function [val, reasonStr] = isValid(R)
+            if numel(R) > 1
+                val = false(size(R));
+                for iR = 1:numel(R)
+                    [val(iR), reasonStr] = isValid(R(iR));
+                end
+                return
+            end
+            
+            [val, reasonStr] = isValid(R.InternalDiscrete);
+            reasonStr = strrep(reasonStr,'symbols','means');
         end
         function val = plotLimits(R)
             val = plotLimits(R.InternalDiscrete);
