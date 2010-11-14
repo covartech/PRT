@@ -32,8 +32,8 @@ classdef prtRv
     %
     %   draw - Draw samples from the random variable
     %
-    %   mle - Perform maximum likelihood estimation using the specified
-    %         data
+    %   mle - Perform maximum likelihood estimation of the objects parameters 
+    %         using the specified data
     %
     %   See also: prtRvMvn, prtRvGmm, prtRvMultinomial, prtRvUniform,
     %   prtRvUniformImproper, prtRvVq
