@@ -51,7 +51,7 @@ classdef prtRvMultinomial < prtRv
     end
     
     properties (Dependent = true)
-        nCategories
+        nCategories  % The number of categories
     end
     
     properties (Hidden = true, SetAccess='private', GetAccess='private')
@@ -69,12 +69,15 @@ classdef prtRvMultinomial < prtRv
     methods
         % The Constructor
         function R = prtRvMultinomial(varargin)
-            R.name = 'Multinomial Random Variable';
+            R.name = 'Multinomial Random Variable';  
             
             R = constructorInputParse(R,varargin{:});
         end
         
         function R = mle(R,X)
+            % RV = RV.mle(X) computes the maximum likelihood estimate based
+            % the data X. X should be nObservations x nDimensions.
+
             X = R.dataInputParse(X); % Basic error checking etc
             
             N_bar = sum(X,1);
@@ -82,9 +85,14 @@ classdef prtRvMultinomial < prtRv
         end
         
         function vals = pdf(R,X)
-            [isValid, reasonStr] = R.isValid;
-            assert(isValid,'PDF cannot yet be evaluated. This RV is not yet valid %s.',reasonStr);
-            
+            % PDF Output the pdf of the random variable evaluated at the points specified
+            %
+            % pdf = RV.pdf(X) returns  the pdf of the prtRv
+            % object evaluated at X. X must be an N x nDims matrix, where
+            % N is the number of locations to evaluate the pdf, and nDims
+            % is the same as the number of dimensions, nDimensions, of the
+            % prtRv object RV.
+            assert(R.isValid,'PDF cannot be evaluated because this RV object is not yet valid.')
             X = R.dataInputParse(X); % Basic error checking etc
             assert(isnumeric(X) && ndims(X)==2,'X must be a 2D numeric array.');
             assert(size(X,2) == R.nCategories,'Incorrect number of categories for this RV object. This RV object is defined to have %d categories, but the input data has only %d columns. Remember that prtRvMultinomial operates on count matrices.', R.nCategories, size(X,2))
@@ -94,13 +102,27 @@ classdef prtRvMultinomial < prtRv
         end
         
         function vals = logPdf(R,X)
-            [isValid, reasonStr] = R.isValid;
-            assert(isValid,'LOGPDF cannot yet be evaluated. This RV is not yet valid %s.',reasonStr);
-            
+            % LOGPDF Output the log pdf of the random variable evaluated at the points specified
+            %
+            % logpdf = RV.logpdf(X) returns the logarithm of value of the
+            % pdf of the prtRv object evaluated at X. X must be an N x
+            % nDims matrix, where N is the number of locations to evaluate
+            % the pdf, and nDims is the same as the number of dimensions,
+            % nDimensions, of the prtRv object RV.
+
+            assert(R.isValid,'LOGPDF cannot be evaluated because this RV object is not yet valid.')            
+
             vals = log(pdf(R,X));
         end
         
         function vals = draw(R,N)
+            % DRAW  Draw random samples from the distribution described by the prtRv object
+            %
+            % VAL = RV.draw(N) generates N random samples drawn from the
+            % distribution described by the prtRv object RV. VAL will be a
+            % N x nDimensions vector, where nDimensions is the number of
+            % dimensions of RV.
+            
             assert(numel(N)==1 && N==floor(N) && N > 0,'N must be a positive integer scalar.')
             
             vals = zeros(N,R.nCategories);
@@ -108,12 +130,22 @@ classdef prtRvMultinomial < prtRv
         end
         
         function vals = drawIntegers(R,N)
+            % DRAW  Draw random integer samples from the distribution described by the prtRv object
+            %
+            % VAL = RV.draw(N) generates N random integer samples drawn from the
+            % distribution described by the prtRv object RV. VAL will be a
+            % N x nDimensions vector, where nDimensions is the number of
+            % dimensions of RV.
+            
             assert(numel(N)==1 && N==floor(N) && N > 0,'N must be a positive integer scalar.')
             
             vals = prtRvUtilRandomSample(R.probabilities, N);
         end
         
         function varargout = plotPdf(R,varargin)
+            %plotPdf Plot the pdf of the RV
+            %
+            % rv.plotPdf() plots the pdf of rv
             h = bar(1:R.nCategories,R.probabilities,'k');
             
             ylim([0 1])
@@ -127,6 +159,7 @@ classdef prtRvMultinomial < prtRv
         end
         
         function plotCdf(R,varargin) %#ok<MANU>
+            % plotCDF Not implemented for this prtRv
             error('prt:prtRvMultinomial','plotCdf is not implimented for this prtRv');
         end
         
