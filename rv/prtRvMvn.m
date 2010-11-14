@@ -54,7 +54,7 @@ classdef prtRvMvn < prtRv
     %                                       % Distribution
     %
     %   See also: prtRv, prtRvGmm, prtRvMultinomial, prtRvUniform,
-    %   prtRvUniformImproper, prtRvVq
+    %   prtRvUniformImproper, prtRvVq, prtRvDiscrete
     
 
     
