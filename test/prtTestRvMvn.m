@@ -41,10 +41,12 @@ try
     sample = RVspec.draw(1);
 catch
     disp('prtRvMvn draw fail')
+    result = false;
 end
 
 if( size(sample) ~= [1 2])
     disp('prtRvMvn sample size incorrect')
+    result = false;
 end
 
 % Check that we can set the covar structure
@@ -54,9 +56,14 @@ try
     RV.covarianceStructure = 'Diagonal';
 catch
     disp('prtRvMvn covar structure set fail')
+    result = false;
 end
 
 % Add a check here to make sure the covar is actually diagonal
+if ~isequal(RV.covariance, diag(diag(RV.covariance),0))
+    disp('prtRvMvn covariance not diagonal')
+    result = false;
+end
 
 % check the pdf and cdf functions
 try
