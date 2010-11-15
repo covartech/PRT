@@ -11,6 +11,17 @@ function varargout = prtScoreRoc(ds,y,varargin)
 %    THREHSOLDS required to achieved each PF and PD, and the area under the
 %    ROC curve AUC.
 %
+%    [PF, PD, THRESHOLDS, AUC] = prtScoreRoc(DECSTATSMAT,LABELS) outputs
+%    the roc outputs for each column of DECSTATSMAT using. The output
+%    values are now cell arrays containing the outputs as if prtScoreRoc
+%    were called on each column of DECSTATSMAT individually.
+%
+%    [...] = prtScoreRoc(PRTDATASETCLASS) use a prtDataSetClass as input
+%    DECSTATS is PRTDATASETCLASS.getObservations() and LABELS is
+%    PRTDATASETCLASS.getTargets(). If PRTDATASETCLASS.nFeatures > 1 cell
+%    arrays are provided as outputs.
+%   
+%
 %    Example:
 %    TestDataSet = prtDataGenSpiral;       % Create some test and
 %    TrainingDataSet = prtDataGenSpiral;   % training data
@@ -20,9 +31,8 @@ function varargout = prtScoreRoc(ds,y,varargin)
 %    %  Plot the ROC
 %    prtScoreRoc(classified.getX, TestDataSet.getY);
 %
-%   See also prtScoreConfusionMatrix, prtScoreRmse,
-%   prtScoreRocBayesianBootstrap, prtScoreRocBayesianBootstrapNfa,
-%   prtScorePercentCorrect
+%   See also prtScoreConfusionMatrix, prtScoreRmse, prtScoreRocNfa,
+%            prtScorePercentCorrect, prtScoreAuc
 
 % Copyright 2010, New Folder Consulting, L.L.C.
 
@@ -32,6 +42,25 @@ if (nargin == 1 || isempty(y)) && isa(ds,'prtDataSetClass')
 end
 
 [ds,y] = prtUtilScoreParseFirstTwoInputs(ds,y);
+
+%Handle multi-dimensional input DS (numeric or prtDataSetClass)
+if size(ds,2) > 1
+    for iRoc = 1:size(ds,2)
+        [pf{iRoc},pd{iRoc},thresholds{iRoc},auc{iRoc}] = prtScoreRoc(ds(:,iRoc),y,varargin{:}); %#ok<NASGU,AGROW>
+    end
+    if nargout == 0
+        hold all;
+        lineHandles = zeros(size(ds,2),1);
+        for iRoc = 1:size(ds,2)
+            lineHandles(iRoc) = plot(pf{iRoc},pd{iRoc});
+            xlabel('Pf');
+            ylabel('Pd');
+        end
+        clear pf pd auc thresholds
+    end
+    return;
+end
+
 
 uY  = prtScoreRocVararginParse(ds,y,varargin{:});
 

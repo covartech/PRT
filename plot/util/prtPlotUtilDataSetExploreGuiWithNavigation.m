@@ -21,10 +21,10 @@ if strcmpi(get(plotAxes,'tag'),'prtDataSetExploreAxes')
 end
     
 
-if ds.nObservations > 1
+if ds.nFeatures > 1
     plotInds = [1 2 0];
-elseif ds.nObservations > 0
-    plotInds = [1 1 0];
+elseif ds.nFeatures > 0
+    plotInds = [1 0 0];
 else
     error('prt:prtDataSetClassExplore','Dataset has zero features and cannot be explored');
 end
@@ -95,8 +95,8 @@ set(navFigH,'visible','on');
     function featureSelectPopupCallback(myHandle, eventData, varargin)  %#ok<INUSL>
         cVal = get(myHandle,'value');
         axisInd = varargin{1};
-        if axisInd == 3
-            % Z-axis we have a None option
+        
+        if axisInd > 1
             cVal = cVal - 1;
         end
         plotInds(axisInd) = cVal;
@@ -220,8 +220,6 @@ set(navFigH,'visible','on');
         % OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
         % POSSIBILITY OF SUCH DAMAGE.
 
-        
-
         point = get(plotAxes, 'CurrentPoint'); % mouse click position
         camPos = get(plotAxes, 'CameraPosition'); % camera position
         camTgt = get(plotAxes, 'CameraTarget'); % where the camera is pointing to
@@ -239,15 +237,30 @@ set(navFigH,'visible','on');
         rot = [xAxis; yAxis; zAxis]; % view rotation
 
         if size(data,2) < 3
-            data = cat(2,data,zeros(size(data,1),1));
+            if size(data,2) < 2
+                rot = rot(1);
+            else
+                rot = rot(1:2);
+            end
         end
+        
+        %if size(data,2) < 3
+        %    data = cat(2,data,zeros(size(data,1),3-size(data,2)));
+        %end
 
         % the point cloud represented in the view frame
         rotatedData = (rot * data')';
-        rotatedData = rotatedData(:,1:2);
+        
+        if size(rotatedData,2) > 2
+            rotatedData = rotatedData(:,1:2);
+        end
         % the clicked point represented in the view frame
         rotatedClick = rot * point' ;
         rotatedClick = rotatedClick(1:2,1)';
+        
+        if size(data,2) < 2
+            rotatedClick = rotatedClick(1);
+        end
     end
 
 
@@ -293,7 +306,7 @@ set(navFigH,'visible','on');
         H.yPopUp = uicontrol(H.navTab(1),'style','popup',...
             'units','normalized',...
             'position',[0.025 0.35 0.95 0.2],...
-            'string',featureNames,...
+            'string',cat(1,{'None'}, featureNames),...
             'FontUnits','normalized',...
             'FontSize',0.5,...
             'callback',{@featureSelectPopupCallback 2});
@@ -317,12 +330,16 @@ set(navFigH,'visible','on');
             'callback',{@featureSelectPopupCallback 3});
         
         
-        set(H.xPopUp,'value',plotInds(1))
-        set(H.yPopUp,'value',plotInds(2))
+        set(H.xPopUp,'value',plotInds(1)) % Always have at least 1 features
+        if plotInds(2) > 0
+            set(H.yPopUp,'value',plotInds(2)+1)
+        else
+            set(H.yPopUp,'value',1) % None;
+        end
         if plotInds(3) > 0
             set(H.zPopUp,'value',plotInds(3))
         else
-            set(H.zPopUp,'value',plotInds(1)) % None;
+            set(H.zPopUp,'value',1) % None;
         end
         
         % Make classes uitable with tick boxes

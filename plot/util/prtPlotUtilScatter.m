@@ -14,6 +14,7 @@ switch nPlotDimensions
     case 1
         h = plot(cX,ones(size(cX)),classSymbols,'MarkerFaceColor',classColors,'MarkerEdgeColor',classEdgeColor,'linewidth',linewidth,'MarkerSize',markerSize);
         xlabel(featureNames{1});
+        set(gca,'YTick',[]);
         grid on
     case 2
         h = plot(cX(:,1),cX(:,2),classSymbols,'MarkerFaceColor',classColors,'MarkerEdgeColor',classEdgeColor,'linewidth',linewidth,'MarkerSize',markerSize);
