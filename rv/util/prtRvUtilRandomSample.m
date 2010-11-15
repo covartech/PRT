@@ -10,7 +10,7 @@ if numel(probabilities) == 1 % Assume nObjects
     probabilities = 1./probabilities * ones(1,probabilities);
 else
     probabilities = probabilities(:)';
-    assert(prtUtilApproxEqual(sum(probabilities),1),'probabilities must sum to 1');
+    assert(prtUtilApproxEqual(sum(probabilities),1,1e-6),'probabilities must sum to 1');
 end
 
 if nargin < 2 || isempty(nSamples)
