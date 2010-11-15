@@ -1003,9 +1003,13 @@ classdef prtDataSetClass  < prtDataSetStandard
             targetInds = Obj.getTargetsClassInd;
             obsInds = (1:Obj.nObservations)';
             newObsInds = nan(sum(N),1);
+            classStartingInds = cat(1,1,cumsum(N(:))+1);
+            classStartingInds = classStartingInds(1:end-1);
             for iClass = 1:nClasses
                 cInds = targetInds==iClass;
                 cObsInds = obsInds(cInds);
+                
+                cNewInds = classStartingInds(iClass)+(1:N(iClass))-1;
                 
                 % We could do this
                 % >>rv = prtRvMultinomial('probabilities',p(:));
@@ -1014,7 +1018,7 @@ classdef prtDataSetClass  < prtDataSetStandard
                 % For some actions, TreebaggingCap for example, we need to
                 % rapidly bootstrap so we do not use the object.
                 sampleIndices = prtRvUtilRandomSample(Obj.nObservationsByClass(iClass),N(iClass));
-                newObsInds(cInds) = cObsInds(sampleIndices);
+                newObsInds(cNewInds) = cObsInds(sampleIndices);
             end    
             
             Out = retainObservations(Obj,newObsInds);
