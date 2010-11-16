@@ -43,9 +43,6 @@ classdef prtClassPlsda < prtClass
     %    prtClassMap, prtClassCap, prtClassBinaryToMaryOneVsAll, prtClassDlrt,
     %    prtClassKnn, prtClassFld, prtClassRvm, prtClassGlrt,  prtClass
     
-    
-    
-
     properties (SetAccess=private)
         name = 'Partial Least Squares Discriminant' % Partial Least Squares Discriminant
         nameAbbreviation = 'PLSDA' % PLSDA
@@ -57,6 +54,7 @@ classdef prtClassPlsda < prtClass
         % learned during Fld.train(DataSet)
         nComponents = 2;
     end
+    
     properties (SetAccess=protected)
         xMeans  % The xMeans
         yMeans  % The yMeans
@@ -66,7 +64,6 @@ classdef prtClassPlsda < prtClass
     methods
         
         function Obj = prtClassPlsda(varargin)
-           
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
         end
         
@@ -77,12 +74,8 @@ classdef prtClassPlsda < prtClass
         function Obj = trainAction(Obj,DataSet)
                                     
             X = DataSet.getObservations;
-            if DataSet.nClasses > 2
-                Y = DataSet.getTargetsAsBinaryMatrix;
-            else
-                Y = DataSet.getTargetsAsBinaryMatrix;
-                Y = Y(:,2); %0's and 1's for H1
-            end
+            
+            Y = DataSet.getTargetsAsBinaryMatrix;
             
             maxComps = min(size(X));
             if Obj.nComponents > maxComps;
