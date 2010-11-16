@@ -58,22 +58,44 @@ classdef prtRv
         end
 
         function vals = logPdf(R,X)
-            % Output the log of the pdf
-            vals = log(R.pdf(X));
+            % LOGPDF Output the log pdf of the random variable evaluated at the points specified
+            %
+            % logpdf = RV.logpdf(X) returns the logarithm of value of the
+            % pdf of the prtRv object evaluated at X. X must be an N x
+            % nDims matrix, where N is the number of locations to evaluate
+            % the pdf, and nDims is the same as the number of dimensions,
+            % nDimensions, of the prtRv object RV.
+                        vals = log(R.pdf(X));
         end
         
         function vals = cdf(R,X) %#ok
-            % output the cdf
+            % CDF Output the cdf of the random variable evaluated at the points specified
+            %
+            % cdf = RV.cdf(X) returns the value of the cdf of the prtRv
+            % object evaluated at X. X must be an N x nDims matrix, where
+            % N is the number of locations to evaluate the pdf, and nDims
+            % is the same as the number of dimensions, nDimensions, of the
+            % prtRv object RV.
+
             missingMethodError(R,'cdf');
         end
         
         function vals = draw(R,N) %#ok
-            % draw random samples from the distribution
+            % DRAW  Draw random samples from the distribution described by the prtRv object
+            %
+            % VAL = RV.draw(N) generates N random samples drawn from the
+            % distribution described by the prtRv object RV. VAL will be a
+            % N x nDimensions vector, where nDimensions is the number of
+            % dimensions of RV.
+
             missingMethodError(R,'draw');
         end
 
         function vals = mle(R,X) %#ok
-            % Maximum likelihood estimate
+           % MLE Compute the maximum likelihood estimate 
+            %
+            % RV = RV.mle(X) computes the maximum likelihood estimate based
+            % the data X. X should be nObservations x nDimensions.        
             missingMethodError(R,'mle');
         end
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -81,7 +103,7 @@ classdef prtRv
         % These functions are default plotting functions
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         function varargout = plotPdf(R,varargin)
-            % Plot the pdf
+            % PLOTPDF  Plot the pdf of the prtRv
             varargout = {};
             if R.isPlottable
                 
@@ -110,7 +132,7 @@ classdef prtRv
         end
         
         function varargout = plotCdf(R,varargin)
-            %Plot the cdf
+            %PLOTCDF Plot the cdf of the prtRv
             varargout = {};
             if R.isPlottable
                 
