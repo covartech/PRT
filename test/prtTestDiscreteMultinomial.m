@@ -26,6 +26,7 @@ end
 % make sure none of these error out
 try
     RVd = prtRvDiscrete;
+    RVd.symbols = [ 1 2 3];
     RVd.probabilities = [.1 .2 .7];
     RVd.plotPdf                           % Plot the pdf
     close
@@ -71,20 +72,25 @@ end
 
 % check the draw function
 try
-   sample1 = RVd.draw(1);
-   sample2 = RVm.draw(1);
+    RVd.symbols = [ 1 2 3];
+    RVd.probabilities = [.1 .2 .7];
+    
+    RVm = prtRvMultinomial;
+    RVm.probabilities = [.1 .2 .7];
+    sample1 = RVd.draw(1);
+    sample2 = RVm.draw(1);
 catch
     disp('prtRvDiscMult draw fail')
 end
 
 if( size(sample1) ~= [1 2])
     disp('prtRvDiscrete sample size incorrect')
-     result = false;
+    result = false;
 end
 
 if( size(sample2) ~= [1 2])
     disp('prtRvMultinomial sample size incorrect')
-     result = false;
+    result = false;
 end
 
 % Check that we can set the symbols for the prtRvDiscrete
@@ -112,21 +118,49 @@ try
 catch
     %no-op
 end
-
+%
 % check the pdf and cdf functions
 try
-    val1 = RVd.pdf([ 0 0 ]);
+    val1 = RVd.pdf([1 2 3 ]');
+    val2 = RVm.pdf([1 0 0; 0 1 0; 0 0 1]);
 catch
-    disp('prtRvMvn pdf/cdf fail')
+    disp('prtRvDiscrete pdf/cdf fail')
     result = false;
 end
 
+if(~ isequal(val1,[.1 .2 .7]'))
+    disp('prtRvDiscrete pdf wrong val')
+    result = false;
+end
+
+if(~ isequal(val2,[.1 .2 .7]'))
+    disp('prtRvMultinomial pdf wrong val')
+    result = false;
+end
+
+
 % Make sure we error out on size mismatch
 try
-    val1 = RV.pdf(0);
-    val2 = RV.cdf(0);
-    disp('prtRvMvn pdf/cdf size check fail')
+    val1 = RVd.pdf([1 2]);
+    val2 = RVm.cdf([1 2 3]);
+    disp('prtRvDiscreteMultinomial pdf/cdf size check fail')
     result = false;
 catch
     % noop;
 end
+
+% Make sure we dont operate on an invalid RV
+try
+    
+    RVd = prtRvDiscrete;
+    RVd.symbols = [ 1 2 3];
+    RVd.plotPdf                           % Plot the pdf
+    RVd.pdf(1);
+    RVd.draw(1);
+    disp('prtRvDiscrete operationg on invalid RV')
+    result = false;
+    
+catch
+    % no-op
+end
+
