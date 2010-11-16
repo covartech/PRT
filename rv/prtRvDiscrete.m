@@ -1,9 +1,5 @@
 classdef prtRvDiscrete < prtRv
-    % prtRvDiscrete  Discrete random variable
-    %   Models a discrete density on a set of numeric symbols
-    %   If input to mle(), X, is a vector it is interpreted as a 1D vector
-    %   of symbol observations. If X is an nObs x nDim matrix it is
-    %   interpreted as nObs observations of nDim dimensional symbols.
+    % prtRvDiscrete  Discrete random variable.
     %
     %   RV = prtRvDiscrete creates a prtRvDiscrete object with an unknown
     %   symbols and unspecified probabilities. These properties

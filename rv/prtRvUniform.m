@@ -1,18 +1,16 @@
 classdef prtRvUniform < prtRv
     % prtRvUniform  Uniform random variable
-    %   The variables UPPERBOUNDS and LOWERBOUNDS specify the randge of the
-    %   uniform variable. 
     %
-    %   RV = prtRvUniform creates a prtRvUniform object with empty 
-    %   UPPDERBOUNDS and LOWERBOUNDS. The UPPDERBOUNDS and LOWERBOUNDS must
-    %   be set either directly, or by calling the MLE method.
+    %   RV = prtRvUniform creates a prtRvUniform object with empty
+    %   upperBounds and lowerBounds. The upperBounds and lowerBounds must
+    %   be set either directly, or by calling the MLE method. upperBounds
+    %   and lowerBounds specify the range of the uniform variable.
     %
     %   RV = prtRvUniform(PROPERTY1, VALUE1,...) creates a prtRvUniform
     %   object RV with properties as specified by PROPERTY/VALUE pairs.
     %
     %   A prtRvUniform object inherits all properties from the prtRv class.
-    %   In
-    %   addition, it has the following properties:
+    %   In addition, it has the following properties:
     %
     %   upperBounds - 1 x nDims double vector specifying the upper bound of
     %                 the region with uniform density

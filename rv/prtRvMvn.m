@@ -86,11 +86,11 @@ classdef prtRvMvn < prtRv
         end
         
         function R = mle(R,X)
-            % MLE Compute the maximum likelihood estimate 
+           % MLE Compute the maximum likelihood estimate 
             %
             % RV = RV.mle(X) computes the maximum likelihood estimate based
-            % the data X. X should be nObservations x nDimensions.
-            
+            % the data X. X should be nObservations x nDimensions.        
+
             X = R.dataInputParse(X); % Basic error checking etc
             
             R.mean = mean(X);
@@ -136,7 +136,7 @@ classdef prtRvMvn < prtRv
         end
         
         function varargout = plotCdf(R,varargin)
-            
+            % PLOTCDF Plots the CDF of the prtRv
             assert(R.nDimensions == 1,'prtRvMvn.plotCdf can only be used for 1D RV objects.');
             
             varargout = cell(nargout,1); 
