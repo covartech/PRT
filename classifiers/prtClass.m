@@ -40,9 +40,11 @@ classdef prtClass < prtAction
     properties (SetAccess=private)
         isSupervised = true;
     end
+    properties
+        twoClassParadigm = 'binary';   %  Whether the classifier is binary or m-ary
+    end
     properties (SetAccess=protected, Hidden = true)
         yieldsMaryOutput = nan; % Determined in trainProcessing()
-        twoClassParadigm = 'binary';   %  Whether the classifier is binary or m-ary
     end
     properties
         internalDecider = [];

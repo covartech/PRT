@@ -283,7 +283,12 @@ classdef prtRvKde < prtRv
                 
                 UserOptions = prtUserOptions;
                 
-                [linGrid,gridSize] = prtPlotUtilGenerateGrid(plotLims(1:2:end), plotLims(2:2:end), UserOptions.RvPlotOptions.nSamplesPerDim, R.trainingData);
+                tooBigNObservations = [2000 500 100];
+                if size(R.trainingData,1) > tooBigNObservations(size(R.trainingData,2))
+                    [linGrid,gridSize] = prtPlotUtilGenerateGrid(plotLims(1:2:end), plotLims(2:2:end), UserOptions.RvPlotOptions.nSamplesPerDim);
+                else
+                    [linGrid,gridSize] = prtPlotUtilGenerateGrid(plotLims(1:2:end), plotLims(2:2:end), UserOptions.RvPlotOptions.nSamplesPerDim, R.trainingData);
+                end
                 
                 imageHandle = prtPlotUtilPlotGriddedEvaledFunction(R.pdf(linGrid), linGrid, gridSize, UserOptions.RvPlotOptions.colorMapFunction(UserOptions.RvPlotOptions.nColorMapSamples));
                 
