@@ -72,7 +72,8 @@ if exitNow
         maxClassInd = goodInds(ceil(rand*nGoodInds));
     end
     
-    tree.terminalVote(index) = uniqueY(maxClassInd);
+    %tree.terminalVote(index) = uniqueY(maxClassInd);
+    tree.terminalVote(index) = maxClassInd;
     return
 end
 

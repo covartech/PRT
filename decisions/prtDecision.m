@@ -42,7 +42,7 @@ classdef prtDecision < prtAction
         end
         function c = get.classList(obj)
             if isempty(obj.classList)
-                error('Plotting prtDecisions in cluster methods requires that classList be manually set in postTrainProcessing');
+                error('prtDecision field of a classifier was not set during training; please try re-training the classifier');
             end
             c = obj.classList;
         end

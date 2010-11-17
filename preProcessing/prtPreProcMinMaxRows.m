@@ -12,7 +12,7 @@ classdef prtPreProcMinMaxRows < prtPreProc
     %   functions from the prtAction class.
     %
     %   Note for two-dimensional data sets, min/max rows will result in all
-    %   observations taking values 1 or 2
+    %   observations taking values 0 or 1.
     %
     %   Example:
     %

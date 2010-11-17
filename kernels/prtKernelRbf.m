@@ -79,6 +79,7 @@ classdef prtKernelRbf < prtKernelBinary
             end
             
             dist2 = repmat(sum((x.^2), 2), [1 n2]) + repmat(sum((y.^2),2), [1 n1]).' - 2*x*(y.');
+            %dist2 = prtDistanceLNorm(x,y,2);
             
             if numel(sigma) == 1
                 gram = exp(-dist2/(sigma.^2));
