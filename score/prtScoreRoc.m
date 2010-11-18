@@ -49,14 +49,19 @@ if size(ds,2) > 1
         [pf{iRoc},pd{iRoc},thresholds{iRoc},auc{iRoc}] = prtScoreRoc(ds(:,iRoc),y,varargin{:}); %#ok<NASGU,AGROW>
     end
     if nargout == 0
-        hold all;
+        colors = prtPlotUtilClassColors(size(ds,2));
+        holdState = get(gca,'nextPlot');
         lineHandles = zeros(size(ds,2),1);
         for iRoc = 1:size(ds,2)
-            lineHandles(iRoc) = plot(pf{iRoc},pd{iRoc});
+            lineHandles(iRoc) = plot(pf{iRoc},pd{iRoc},'color',colors(iRoc,:));
+            hold on
             xlabel('Pf');
             ylabel('Pd');
         end
-        clear pf pd auc thresholds
+        set(gca,'nextPlot',holdState);
+        varargout = {};
+    else
+        varargout = {pf, pd, thresholds, auc};
     end
     return;
 end

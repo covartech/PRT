@@ -77,6 +77,7 @@ classdef prtClassRvmSequential < prtClassRvm
         largestNumberOfGramColumns = 1000;
         learningCorrelationRemovalThreshold = 0.99;
         learningFactorRemove = true;
+        learningRepeatedActionLimit = 25;
         learningResults
     end
     
@@ -178,6 +179,7 @@ classdef prtClassRvmSequential < prtClassRvm
             trainedKernelCell = prtKernel.sparseKernelFactory(Obj.kernels,DataSet,relevantIndices);
             cPhi = prtKernel.runMultiKernel(trainedKernelCell,DataSet);
             
+            repeatedActionCounter = 0;
             for iteration = 1:Obj.learningMaxIterations
                 
                 % Store old log Alpha
@@ -198,7 +200,7 @@ classdef prtClassRvmSequential < prtClassRvm
                     [mu, SigmaInvChol, obsNoiseVar] = prtUtilPenalizedIrls(y,cPhi,mu,A);
                     
                     SigmaChol = inv(SigmaInvChol);
-                    Obj.Sigma = SigmaChol*SigmaChol';
+                    Obj.Sigma = SigmaChol*SigmaChol'; %#ok<MINV>
                     
                     yHat = 1 ./ (1+exp(-cPhi*mu));
                 end
@@ -252,6 +254,7 @@ classdef prtClassRvmSequential < prtClassRvm
                 modifyLogLikelihoodChanges(~relevantIndices) = 0; % Can't modify things not in
                 modifyLogLikelihoodChanges(cantBeRelevent) = 0; % Can't modify things that technically shouldn't be in (they would get dropped)
                 
+                
                 [addChange, bestAddInd] = max(addLogLikelihoodChanges);
                 [remChange, bestRemInd] = max(removeLogLikelihoodChanges);
                 [modChange, bestModInd] = max(modifyLogLikelihoodChanges);
@@ -290,6 +293,27 @@ classdef prtClassRvmSequential < prtClassRvm
                     break;
                 end
                 
+                switch actionInd
+                    case 1
+                        cBestInd = bestAddInd;
+                    case 2
+                        cBestInd = bestRemInd;
+                    case 3
+                        cBestInd = bestModInd;
+                end
+                if iteration > 1 && lastAction == actionInd && cBestInd == lastInd
+                    repeatedActionCounter = repeatedActionCounter + 1;
+                else
+                    repeatedActionCounter = 0;
+                end
+                
+                if repeatedActionCounter >= Obj.learningRepeatedActionLimit
+                    if Obj.learningVerbose
+                        fprintf('Exiting... repeating action limit has been reached.\n\n');
+                    end
+                    return
+                end
+                
                 if Obj.learningVerbose
                     actionStrings = {sprintf('Addition: Vector %s has been added.  ', sprintf(sprintf('%%%dd',nVectorsStringLength),bestAddInd));
                         sprintf('Removal:  Vector %s has been removed.', sprintf(sprintf('%%%dd',nVectorsStringLength), bestRemInd));
@@ -297,6 +321,7 @@ classdef prtClassRvmSequential < prtClassRvm
                     fprintf('\t Iteration %d: %s Change in log-likelihood %g.\n',iteration, actionStrings{actionInd}, maxChangeVal);
                 end
                 
+                lastAction = actionInd;
                 switch actionInd
                     case 1 % Add
                         
@@ -324,7 +349,6 @@ classdef prtClassRvmSequential < prtClassRvm
                         
                         
                         % Add things to forbidden list
-                        % **Why are we re-calculating newPhi here?
                         newPhiDemeanedNormalized = newPhi - mean(newPhi);
                         newPhiDemeanedNormalized = newPhiDemeanedNormalized./sqrt(sum(newPhiDemeanedNormalized.^2));
                         phiCorrs = zeros(nBasis,1);
@@ -338,15 +362,14 @@ classdef prtClassRvmSequential < prtClassRvm
                                 blockPhiDemeanedNormalized = bsxfun(@minus,blockPhiDemeanedNormalized,mean(blockPhiDemeanedNormalized));
                                 blockPhiDemeanedNormalized = bsxfun(@rdivide,blockPhiDemeanedNormalized,sqrt(sum(blockPhiDemeanedNormalized.*blockPhiDemeanedNormalized))); % We have to normalize here
                                 
-                                %else we have this from before
-                                
+                            %else we have this from before
                             end
                             
                             phiCorrs(cInds) = blockPhiDemeanedNormalized'*newPhiDemeanedNormalized;
                         end
                         forbidden(phiCorrs > Obj.learningCorrelationRemovalThreshold) = bestAddInd;
                         
-                        
+                        lastInd = bestAddInd;
                     case 2 % Remove
                         
                         removingInd = sort(selectedInds)==bestRemInd;
@@ -362,6 +385,8 @@ classdef prtClassRvmSequential < prtClassRvm
                         % allowed.
                         forbidden(forbidden == bestRemInd) = 0;
                         
+                        lastInd = bestRemInd;
+                        
                     case 3 % Modify
                         modifyInd = sort(selectedInds)==bestModInd;
                         
@@ -370,6 +395,8 @@ classdef prtClassRvmSequential < prtClassRvm
                         mu = mu - mu(modifyInd)*kappa*Obj.Sigma(:,modifyInd);
                         
                         alpha(bestModInd) = updatedAlpha(bestModInd);
+                        
+                        lastInd = bestModInd;
                 end
                 
                 % At this point relevantIndices and alpha have changes.
@@ -390,7 +417,7 @@ classdef prtClassRvmSequential < prtClassRvm
                     [mu, SigmaInvChol, obsNoiseVar] = prtUtilPenalizedIrls(y,cPhi,mu,A);
                     
                     SigmaChol = inv(SigmaInvChol);
-                    Obj.Sigma = SigmaChol*SigmaChol';
+                    Obj.Sigma = SigmaChol*SigmaChol'; %#ok<MINV>
                     
                     yHat = 1 ./ (1+exp(-cPhi*mu)); % We use a logistic here. 
                 end

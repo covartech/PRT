@@ -146,6 +146,7 @@ classdef prtRvMultinomial < prtRv
             %plotPdf Plot the pdf of the RV
             %
             % rv.plotPdf() plots the pdf of rv
+            
             h = bar(1:R.nCategories,R.probabilities,'k');
             
             ylim([0 1])

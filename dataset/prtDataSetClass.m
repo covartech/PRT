@@ -57,9 +57,9 @@ classdef prtDataSetClass  < prtDataSetStandard
     end
     
     properties (Hidden=true, Access='private')
-        targetsCacheUnique
-        targetsCacheHist
-        targetsCacheNClasses
+        targetsCacheUnique = [];
+        targetsCacheHist = []; 
+        targetsCacheNClasses = 1;
     end
     
     properties (Hidden = true)
@@ -196,6 +196,12 @@ classdef prtDataSetClass  < prtDataSetStandard
             %    class names corresponding to the index IDX.
             
             indices1 = prtDataSetBase.parseIndices(obj.nClasses, varargin{:});
+            
+            if ~obj.isLabeled
+                tn = {'Unlabeled'};
+                return
+            end
+            
             uniqueClasses = obj.uniqueClasses;
             if isa(indices1,'logical')
                 indices1 = find(indices1);
@@ -481,8 +487,11 @@ classdef prtDataSetClass  < prtDataSetStandard
             title(obj.name);
             
             % Create legend
-            legendStrings = getClassNames(obj);
-            legend(handleArray,legendStrings,'Location','SouthEast');
+            if obj.isLabeled
+                legendStrings = getClassNames(obj);
+                legend(handleArray,legendStrings,'Location','SouthEast');
+            end
+            
             
             % Handle Outputs
             varargout = {};
@@ -571,7 +580,7 @@ classdef prtDataSetClass  < prtDataSetStandard
                 
                 for cY = 1:nClasses
                     cPatch = cat(2,cat(1,-F(:,cY),flipud(F(:,cY))), cat(1,xLoc, flipud(xLoc)));
-                    patchH(iFeature,cY) = patch(cPatch(:,1)+iFeature, cPatch(:,2), colors(cY,:));
+                    patchH(iFeature,cY) = patch(cPatch(:,1)+iFeature, cPatch(:,2), colors(cY,:),'edgecolor','none');
                 end
             end
             
@@ -582,8 +591,11 @@ classdef prtDataSetClass  < prtDataSetStandard
             xlabel('Feature');
             ylabel('Normalized Feature Value');
             
-            legendStrings = getClassNames(ds);
-            legend(patchH(1,:),legendStrings,'Location','SouthEast');
+            % Create legend
+            if ds.isLabeled
+                legendStrings = getClassNames(ds);
+                legend(patchH(1,:),legendStrings,'Location','SouthEast');
+            end
             
             if Summary.nFeatures < 10
                 set(gca,'XTick',1:Summary.nFeatures,'XTickLabel',ds.getFeatureNames());
@@ -646,8 +658,13 @@ classdef prtDataSetClass  < prtDataSetStandard
                     end
                     
                     if (iFeature==N && jFeature==N)
-                        legendStrings = getClassNames(obj);
-                        legendHandle = legend(hs{iFeature,jFeature},legendStrings,'Location','SouthEast');
+                                    % Create legend
+                        if obj.isLabeled
+                            legendStrings = getClassNames(obj);
+                            legendHandle = legend(hs{iFeature,jFeature},legendStrings,'Location','SouthEast');
+                        else
+                            legendHandle = [];
+                        end
                     end
                     
                 end
@@ -663,11 +680,6 @@ classdef prtDataSetClass  < prtDataSetStandard
             %   dataSet.plotStar() creates a star plot of the data
             %   contained in the prtDataSetClass dataSet. Star plots can be
             %   useful in visulaizing higher dimensional data sets.
-            
-            if ~obj.isLabeled
-                obj = obj.setTargets(zeros(obj.nObservations,1));
-                obj = obj.setClassNames({'Unlabeled'});
-            end
             
             if nargin < 2 || isempty(featureIndices)
                 featureIndices = 1:obj.nFeatures;
@@ -736,8 +748,12 @@ classdef prtDataSetClass  < prtDataSetStandard
                 handleArray(iClass) = plot(nan,nan,'color',classColors(iClass,:));
             end
             
-            legendStrings = getClassNames(obj);
-            legendHandle = legend(handleArray,legendStrings,'Location','SouthEast'); %#ok<NASGU>
+            % Create legend
+            if obj.isLabeled
+                legendStrings = getClassNames(obj);
+                legend(handleArray,legendStrings,'Location','SouthEast');
+            end
+            
             set(gca,'XTick',[],'YTick',[],'Box','on')
             
             set(gca,'nextPlot',holdState);
@@ -754,11 +770,6 @@ classdef prtDataSetClass  < prtDataSetStandard
             %   contained in the prtDataSetClass dataSet. Star plots can be
             %   useful in visulaizing higher dimensional data sets.
             %   plotStarIndividual plots each observation by itself.
-            
-            if ~obj.isLabeled
-                obj = obj.setTargets(zeros(obj.nObservations,1));
-                obj = obj.setClassNames({'Unlabeled'});
-            end
             
             if nargin < 2 || isempty(featureIndices)
                 featureIndices = 1:obj.nFeatures;
@@ -800,6 +811,10 @@ classdef prtDataSetClass  < prtDataSetStandard
                 
                 h = plot([repmat(centerI,nFeats,1),points(1,:)']',[repmat(centerJ,nFeats,1),points(2,:)']',ppoints(1,:)',ppoints(2,:)','lineWidth',obj.PlotOptions.starLineWidth);
                 classInd = obj.getTargets(i) == uClasses;
+                if isempty(classInd) %unlabeled dataset
+                    classInd = 1;
+                end
+                
                 set(h,'color',classColors(classInd,:));
                 hold on;
             end
@@ -808,8 +823,11 @@ classdef prtDataSetClass  < prtDataSetStandard
                 handleArray(iClass) = plot(nan,nan,'color',classColors(iClass,:));
             end
             
-            legendStrings = getClassNames(obj);
-            legendHandle = legend(handleArray,legendStrings,'Location','SouthEast'); %#ok<NASGU>
+            % Create legend
+            if obj.isLabeled
+                legendStrings = getClassNames(obj);
+                legend(handleArray,legendStrings,'Location','SouthEast');
+            end
             
             set(gca,'nextPlot',holdState);
             set(gca,'xtick',[]);
@@ -826,11 +844,6 @@ classdef prtDataSetClass  < prtDataSetStandard
             % Plot   Plot the prtDataSetClass object
             %
             %   dataSet.plot() Plots the prtDataSetClass object.
-            
-            if ~obj.isLabeled
-                obj = obj.setTargets(zeros(obj.nObservations,1));
-                obj = obj.setClassNames({'Unlabeled'});
-            end
             
             if nargin < 2 || isempty(featureIndices)
                 featureIndices = 1:obj.nFeatures;
@@ -874,13 +887,15 @@ classdef prtDataSetClass  < prtDataSetStandard
             title(obj.name);
             
             % Create legend
-            legendStrings = getClassNames(obj);
-            legend(handleArray,legendStrings,'Location','SouthEast');
+            if obj.isLabeled
+                legendStrings = getClassNames(obj);
+                legend(handleArray,legendStrings,'Location','SouthEast');
+            end
             
             % Handle Outputs
             varargout = {};
             if nargout > 0
-                varargout = {handleArray,legendStrings};
+                varargout = {handleArray};
             end
         end
         %PLOTBW:
@@ -890,11 +905,6 @@ classdef prtDataSetClass  < prtDataSetStandard
             %   dataSet.plotbw() Plots the prtDataSetClass object in a
             %   manner that will display well when converted to black and
             %   white.
-            
-            if ~obj.isLabeled
-                obj = obj.setTargets(0);
-                obj = obj.setClassNames({'Unlabeled'});
-            end
             
             if nargin < 2 || isempty(featureIndices)
                 featureIndices = 1:obj.nFeatures;
@@ -936,13 +946,15 @@ classdef prtDataSetClass  < prtDataSetStandard
             grid on
             
             % Create legend
-            legendStrings = getClassNames(obj);
-            legend(handleArray,legendStrings,'Location','SouthEast');
+            if obj.isLabeled
+                legendStrings = getClassNames(obj);
+                legend(handleArray,legendStrings,'Location','SouthEast');
+            end
             
             % Handle Outputs
             varargout = {};
             if nargout > 0
-                varargout = {handleArray,legendStrings};
+                varargout = {handleArray};
             end
         end
         
@@ -1075,9 +1087,28 @@ classdef prtDataSetClass  < prtDataSetStandard
             % targets are (re)set
             %
             % see also updateObservationsCache (not overloaded here)
-            obj.targetsCacheUnique = unique(obj.targets,'rows');
-            obj.targetsCacheNClasses = length(obj.targetsCacheUnique);
-            obj.targetsCacheHist = histc(obj.targets,obj.targetsCacheUnique);
+            if isempty(obj.targets)
+                obj.targetsCacheUnique = [];
+                obj.targetsCacheNClasses = 1; % If unlabeled we really have one class
+                obj.targetsCacheHist = obj.nObservations;
+            else
+                obj.targetsCacheUnique = unique(obj.targets,'rows');
+                obj.targetsCacheNClasses = length(obj.targetsCacheUnique);
+                obj.targetsCacheHist = histc(obj.targets,obj.targetsCacheUnique);
+            end
+        end
+        function obj = updateObservationsCache(obj)
+            % This is an overload from prtDataSetClass so that we can
+            % cache things about the observations
+            % This is called automatically in prtDataSetStandard anytime
+            % data is (re)set
+            
+            % Here we modify the targets cache if we don't have targets
+            % This is because we have to infer targetsCacheHist as the
+            % number of observations changes
+            if isempty(obj.targets)
+                obj.targetsCacheHist = obj.nObservations;
+            end
         end
     end
 end
