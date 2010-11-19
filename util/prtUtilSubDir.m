@@ -14,14 +14,14 @@ X = dir(fullfile(directory,dirMatch));
 
 Xdir = X(cat(1,X.isdir));
 
-Xdir = Xdir(cellfun(@(x)isempty(strmatch(x,{'.';'..'})),{Xdir.name}));
+Xdir = Xdir(cellfun(@(x)isempty(strcmp(x,{'.';'..'})),{Xdir.name}));
 
 DC = dir(fullfile(directory,match));
 DC = DC(~cat(1,DC.isdir));
 List = {};
 for ind = 1:length(Xdir)
     NewDir = fullfile(directory,Xdir(ind).name);
-    cList = subDir(NewDir,match,dirMatch);
+    cList = prtUtilSubDir(NewDir,match,dirMatch);
     List = [List;cList];
 end
 List = [List;cellfun(@(x)fullfile(directory,x),{DC.name}','uniformoutput',false)];
