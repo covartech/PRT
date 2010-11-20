@@ -164,3 +164,14 @@ catch
     % no-op
 end
 
+
+% Should error out on non-count matrix input
+try
+    RV = prtRvMultinomial;
+    Y = [ 1 2 3; 4 5 6];
+    RV = mle(RV,Y);
+    disp('prtRvMultinomial non-count matrix input');
+    result = false;
+catch
+    % no-op
+end
