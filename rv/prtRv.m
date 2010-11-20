@@ -53,7 +53,13 @@ classdef prtRv
         % subclass has not specified these standard methods.
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         function vals = pdf(R,X) %#ok
-            % Output the pdf
+            % PDF Output the pdf of the random variable evaluated at the points specified
+            %
+            % pdf = RV.pdf(X) returns the value of the pdf of the prtRv
+            % object evaluated at X. X must be an N x nDims matrix, where N
+            % is the number of locations to evaluate the pdf, and nDims is
+            % the same as the number of dimensions, nDimensions, of the
+            % prtRv object RV.
             missingMethodError(R,'pdf');
         end
 

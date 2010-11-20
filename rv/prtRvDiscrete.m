@@ -7,7 +7,7 @@ classdef prtRvDiscrete < prtRv
     %   properties must be set to make the RV valid.
     %
     %   RV = prtRvDiscrete(PROPERTY1, VALUE1,...) creates a
-    %   prtRvDiscrete object RV with properties as specified by 
+    %   prtRvDiscrete object RV with properties as specified by
     %   PROPERTY/VALUE pairs.
     %
     %   A prtRvDiscrete object inherits all properties from the
@@ -19,12 +19,12 @@ classdef prtRvDiscrete < prtRv
     %                   each of the integers
     %   symbols       - nCategories x M matrix of symbols
     %                   M specifies the dimensionality of the RV object.
-    %   
+    %
     %  A prtRvDiscrete object inherits all methods from the prtRv
     %  class. The MLE  method can be used to set the parameters from data.
     %
     %  Example:
-    %  
+    %
     %      rv = prtRvDiscrete('symbols',(10:12)','probabilities',[0.3 0.3 0.4]);
     %      plotPdf(rv);
     %
@@ -36,9 +36,9 @@ classdef prtRvDiscrete < prtRv
     %             prtRvMultinomial
     
     properties (Dependent = true)
-        probabilities
-        nCategories
-        symbols
+        probabilities   % The probabilities of each symbol
+        nCategories    %  The number of categories
+        symbols        % The symbols
     end
     
     properties (Dependent = true, Hidden=true)
@@ -199,6 +199,12 @@ classdef prtRvDiscrete < prtRv
             error('prt:prtRvDiscrete','plotCdf is not implimented for this prtRv');
         end
         
+        
+    end
+    
+    
+    methods (Hidden = true)
+        
         function cs = symbolsStrs(R)
             cs = cell(size(R.symbols,1),1);
             for iS = 1:size(R.symbols,1)
@@ -206,10 +212,6 @@ classdef prtRvDiscrete < prtRv
             end
         end
         
-    end
-    
-    
-    methods (Hidden = true)
         function [val, reasonStr] = isValid(R)
             if numel(R) > 1
                 val = false(size(R));
@@ -237,7 +239,7 @@ classdef prtRvDiscrete < prtRv
                     reasonStr = 'because of an unknown reason';
                 end
             end
-                
+            
         end
         function val = plotLimits(R)
             val = plotLimits(R.InternalMultinomial);

@@ -1,14 +1,12 @@
 classdef prtRvMixture < prtRv
-    % prtRvMixture - Mixture Random Variable
-    %   Forms a mixture of other prtRv objects of the same dimensionality.
-    %
-    %   The prtRvMixture class is used to implement the prtRvGmm class but
-    %   can also be used to implement other mixtures. The base prtRv object
-    %   must implement the weightedMle() method.
+    % prtRvMixture  Mixture Random Variable
     %
     %   RV = prtRvMixture creates a prtRvMixture object with empty
     %   mixingProportions and components. These parameters can be set
-    %   manually or by calling the MLE method.
+    %   manually or by calling the MLE method.     
+    %
+    %   The prtRvMixture class is used to implement mixtures of prtRvs. The
+    %   base prtRv object must implement the weightedMle() method.
     %
     %   RV = prtRvMixture(PROPERTY1, VALUE1,...) creates a prtRvMixture
     %   object RV with properties as specified by PROPERTY/VALUE pairs.
@@ -18,7 +16,8 @@ classdef prtRvMixture < prtRv
     %
     %   components        - A vector of prtRv objects. The length of the
     %                       array specifies the number of components in the
-    %                       mixture
+    %                       mixture. The component RV objects must all have
+    %                       the same dimensionality.
     %   mixingProportions - A discrete probability vector, representing the
     %                       probability of each component in the mixture.
     %
@@ -27,23 +26,27 @@ classdef prtRvMixture < prtRv
     %  from data.
     %
     %  Examples:
-    %       ds = prtDataGenOldFaithful;
+    %       ds = prtDataGenOldFaithful;      % Load a data set
+    %  
+    %       % Create a prtRvMixture object consistig of 2 multivariate
+    %       % normal objects
     %       rv = prtRvMixture('components',repmat(prtRvMvn,1,2));
-    %       rv = mle(rv,ds);
-    %       plotPdf(rv);
+    %
+    %       rv = mle(rv,ds);                 % Compute the ML estimate
+    %       plotPdf(rv);                     % Plot the estimated PDF
     %       hold on;
-    %       plot(ds);
+    %       plot(ds);                        % Overlay the original data
     %
     %   See also: prtRv, prtRvMvn, prtRvGmm, prtRvMultinomial,
     %   prtRvUniform, prtRvUniformImproper, prtRvVq
     
     properties
-        components
+        components  % A vector of the components
     end
     
     properties (Dependent = true)
-        mixingProportions
-        nComponents
+        mixingProportions % The mixing proportions
+        nComponents     % The number of components
     end
     
     properties (Hidden = true, Dependent = true)

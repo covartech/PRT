@@ -1,12 +1,10 @@
 classdef prtRvGmm < prtRv
     % prtRvGmm - Gaussian Mixture Model Random Variable
-    %   A mixture of multi-variance normal random variables.
     %
-    %   The prtRvGmm class is implemented using the prtRvMixture class.
-    %
-    %   RV = prtRvGmm creates a prtRvGmm object with empty 
+    %   RV = prtRvGmm creates a prtRvGmm object with empty
     %   mixingProportions and prtRvMvn components. These parameters can be
-    %   set manually or by calling the MLE method.
+    %   set manually or by calling the MLE method. A prtRvGmm is a mixture
+    %   of multi-variance normal random variables.
     %
     %   RV = prtRvGmm(PROPERTY1, VALUE1,...) creates a prtRvGmm
     %   object RV with properties as specified by PROPERTY/VALUE pairs.
@@ -34,24 +32,22 @@ classdef prtRvGmm < prtRv
     %  from data.
     %
     %  Examples:
-    %       ds = prtDataGenOldFaithful;
-    %       rv = prtRvGmm('nComponents',2);
-    %       rv = mle(rv,ds);
-    %       plotPdf(rv);
-    %
-    %       rv = prtRvGmm('nComponents',2,'covariancePool',true,'covarianceStructure','diagonal);
-    %       rv = mle(rv,ds);
-    %       plotPdf(rv);
+    %       ds = prtDataGenOldFaithful;      % Load a data set
+    %       rv = prtRvGmm('nComponents',2);  % Specify 2 components
+    %       rv = mle(rv,ds);                 % Compute the ML estimate
+    %       plotPdf(rv);                     % Plot the estimated PDF
+    %       hold on;
+    %       plot(ds);                        % Overlay the original data   
     %
     %   See also: prtRv, prtRvMvn, prtRvMultinomial, prtRvUniform,
     %             prtRvUniformImproper, prtRvVq
     
     properties (Dependent = true)
-        nComponents
-        covarianceStructure 
-        covariancePool
-        components
-        mixingProportions        
+        nComponents   % The number of components
+        covarianceStructure   % The covariance structure
+        covariancePool         % Flag indicating whether or not to pool the covariance
+        components             % The mixture components
+        mixingProportions        % The mixing proportions
     end
     
     properties (SetAccess = 'private', GetAccess = 'private', Hidden=true)

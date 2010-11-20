@@ -1,18 +1,16 @@
 classdef prtRvMultinomial < prtRv
     % prtRvMultinomial  Multinomial random variable
-    %   Models a discrete density on the integers. 
-    %
-    %   prtRvMultinomial operates on count matrices. Therfore, the draw()
-    %   method outputs a matrix that is N x nCategories and has a single 1
-    %   in each row. To draw integer categories you can use the
-    %   drawInteger() method. The mle() method calculates the probabilities
-    %   by sum(X,1) of the input matrix X. Therefore X should be a count
-    %   matrix or estimated probabilities of the categories for each
-    %   observation. 
     %
     %   RV = prtRvMultinomial creates a prtRvMultinomial object
     %   with an unknown number of categories with unspecified probabilities
     %   These properties can be set manually or by using the MLE method.
+    %
+    %   prtRvMultinomial operates on count matrices. Therfore, the DRAW()
+    %   method outputs a matrix that is N x nCategories and has a single 1
+    %   in each row. To draw integer categories you can use the
+    %   DRAWINTEGER() method.  Similarly, the MLE function takes a count
+    %   matrix as an input. Type help prtRvMultinomial.mle for more
+    %   information.
     %
     %   RV = prtRvMultinomial(PROPERTY1, VALUE1,...) creates a
     %   prtRvMultinomial object RV with properties as specified by 
@@ -21,8 +19,8 @@ classdef prtRvMultinomial < prtRv
     %   A prtRvMultinomial object inherits all properties from the
     %   prtRv class. In addition, it has the following properties:
     %
-    %   nCategories - number of integers modeled by the RV
-    %   probabilities - 1xnCategories vector of doubles less than 1
+    %   nCategories   - number of integers modeled by the RV
+    %   probabilities - A 1 x nCategories vector of doubles less than 1
     %                   that sum to 1, representing the probability of
     %                   each of the integers
     %   
@@ -76,7 +74,17 @@ classdef prtRvMultinomial < prtRv
         
         function R = mle(R,X)
             % RV = RV.mle(X) computes the maximum likelihood estimate based
-            % the data X. X should be nObservations x nDimensions.
+            % the data X. X should be nObservations x nDimensions. X must
+            % be a count matrix, consisting of only zeros and ones. A one
+            % in the ith column indicates that the sample in the jth row is
+            % of class i.
+            % 
+            
+            %The MLE() method calculates the probabilities
+    %   by sum(X,1) of the input matrix X. Therefore X should be a count
+    %   matrix or estimated probabilities of the categories for each
+    %   observation. 
+    %
 
             X = R.dataInputParse(X); % Basic error checking etc
             
