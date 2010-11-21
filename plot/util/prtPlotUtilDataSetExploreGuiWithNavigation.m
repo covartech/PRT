@@ -236,34 +236,31 @@ set(navFigH,'visible','on');
 
         rot = [xAxis; yAxis; zAxis]; % view rotation
 
+        % the clicked point represented in the view frame
+        rotatedClick = rot * point' ;
+        rotatedClick = rotatedClick(1:2,1)';        
+        
         if size(data,2) < 3
             if size(data,2) < 2
                 rot = rot(1);
             else
-                rot = rot(1:2);
+                rot = rot(1:2,1:2);
             end
         end
         
-        %if size(data,2) < 3
-        %    data = cat(2,data,zeros(size(data,1),3-size(data,2)));
-        %end
-
         % the point cloud represented in the view frame
         rotatedData = (rot * data')';
         
         if size(rotatedData,2) > 2
             rotatedData = rotatedData(:,1:2);
         end
-        % the clicked point represented in the view frame
-        rotatedClick = rot * point' ;
-        rotatedClick = rotatedClick(1:2,1)';
         
         if size(data,2) < 2
             rotatedClick = rotatedClick(1);
         end
     end
 
-
+    
     function H = createTabGroup(ds)
         % Make control panel uitabs and uipanels
         H.navTabGroup = prtUtilUitabgroup('parent',navFigH);
