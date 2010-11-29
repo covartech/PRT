@@ -99,6 +99,10 @@ classdef prtRvMixture < prtRv
         end
         function val = get.mixingProportions(R)
             val = R.mixingProportionsDepHelper;
+
+            if ~isValid(val)
+                val = [];
+            end
         end
         function R = set.components(R,CompArray)
             if ~isempty(CompArray)
