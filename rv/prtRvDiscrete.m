@@ -45,6 +45,13 @@ classdef prtRvDiscrete < prtRv
         InternalMultinomial
         nDimensions
     end
+    properties (Hidden = true)
+        inferSymbols = true;    %logical; if true, infer symbols during 
+                                %MLE; if false, check if there are provided
+                                %symbols - if there are, use the provided
+                                %symbols, ignoring symbols that are not
+                                %pre-specified
+    end
     
     properties (SetAccess = 'private', GetAccess = 'private', Hidden=true)
         InternalMultinomialDepHelp = prtRvMultinomial();
@@ -250,6 +257,7 @@ classdef prtRvDiscrete < prtRv
         end
         
         function R = weightedMle(R,X,weights)
+            
             if isvector(X)
                 % A single symbol... interperet as a vector of 1D symbols
                 X = X(:);
@@ -259,10 +267,26 @@ classdef prtRvDiscrete < prtRv
             end
             assert(numel(weights)==size(X,1),'The number of weights must mach the number of observations.');
             
-            [R.symbols, dontNeed, symbolInd] = unique(X,'rows'); %#ok
-            
-            occuranceLogical = false(size(X,1),size(R.symbols,1));
-            occuranceLogical(sub2ind(size(occuranceLogical),(1:size(X,1))',symbolInd)) = true;
+            if isempty(R.symbols) || R.inferSymbols
+                [R.symbols, dontNeed, symbolInd] = unique(X,'rows'); %#ok
+                
+                occuranceLogical = false(size(X,1),size(R.symbols,1));
+                occuranceLogical(sub2ind(size(occuranceLogical),(1:size(X,1))',symbolInd)) = true;
+            else
+                %Check for missing symbols, and warn:
+                [tempSymbols, dontNeed, symbolInd] = unique(X,'rows'); %#ok
+                missingSymbols = setdiff(tempSymbols,R.symbols,'rows');
+                if ~isempty(missingSymbols)
+                    warning('prtRvDiscrete:weightedMle','Discrete RV with manual symbols trained on data containing new discrete values');
+                end
+                
+                %Otherwise, build the logical occurence matrix
+                occuranceLogical = false(size(X,1),size(R.symbols,1));
+                for j = 1:size(R.symbols,1)
+                    occuranceLogical(:,j) = all(X == repmat(R.symbols(j,:),size(X,1),1),2);
+                end
+                
+            end
             
             R.InternalMultinomial = R.InternalMultinomial.weightedMle(occuranceLogical, weights);
         end
