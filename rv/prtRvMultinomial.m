@@ -80,12 +80,6 @@ classdef prtRvMultinomial < prtRv
             % of class i.
             % 
             
-            %The MLE() method calculates the probabilities
-    %   by sum(X,1) of the input matrix X. Therefore X should be a count
-    %   matrix or estimated probabilities of the categories for each
-    %   observation. 
-    %
-
             X = R.dataInputParse(X); % Basic error checking etc
             
             N_bar = sum(X,1);
@@ -100,7 +94,10 @@ classdef prtRvMultinomial < prtRv
             % N is the number of locations to evaluate the pdf, and nDims
             % is the same as the number of dimensions, nDimensions, of the
             % prtRv object RV.
-            assert(R.isValid,'PDF cannot be evaluated because this RV object is not yet valid.')
+            
+            [isValid, reasonStr] = R.isValid;
+            assert(isValid,'PDF cannot yet be evaluated. This RV is not yet valid %s.',reasonStr);
+            
             X = R.dataInputParse(X); % Basic error checking etc
             assert(isnumeric(X) && ndims(X)==2,'X must be a 2D numeric array.');
             assert(size(X,2) == R.nCategories,'Incorrect number of categories for this RV object. This RV object is defined to have %d categories, but the input data has only %d columns. Remember that prtRvMultinomial operates on count matrices.', R.nCategories, size(X,2))
@@ -118,8 +115,9 @@ classdef prtRvMultinomial < prtRv
             % the pdf, and nDims is the same as the number of dimensions,
             % nDimensions, of the prtRv object RV.
 
-            assert(R.isValid,'LOGPDF cannot be evaluated because this RV object is not yet valid.')            
-
+            [isValid, reasonStr] = R.isValid;
+            assert(isValid,'LOGPDF cannot yet be evaluated. This RV is not yet valid %s.',reasonStr);
+            
             vals = log(pdf(R,X));
         end
         

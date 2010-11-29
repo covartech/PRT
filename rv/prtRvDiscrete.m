@@ -37,8 +37,8 @@ classdef prtRvDiscrete < prtRv
     
     properties (Dependent = true)
         probabilities   % The probabilities of each symbol
-        nCategories    %  The number of categories
-        symbols        % The symbols
+        nCategories     % The number of categories
+        symbols         % The symbols
     end
     
     properties (Dependent = true, Hidden=true)

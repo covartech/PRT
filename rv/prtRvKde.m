@@ -38,7 +38,7 @@ classdef prtRvKde < prtRv
     %                      and causes stability issues. The default value
     %                      is eps.
     %   
-    %  A prtRvMvn object inherits all methods from the prtRv class. The MLE
+    %  A prtRvKdeu object inherits all methods from the prtRv class. The MLE
     %  method can be used to estimate the distribution parameters from
     %  data.
     %
@@ -182,21 +182,26 @@ classdef prtRvKde < prtRv
             assert(size(X,2) == R.nDimensions,'Data, RV dimensionality missmatch. Input data, X, has dimensionality %d and this RV has dimensionality %d.', size(X,2), R.nDimensions)
             assert(isnumeric(X) && ndims(X)==2,'X must be a 2D numeric array.');
     
-            % xxx Fix xxx
-            % Right now pdf requires storage of a matrix that is nTrainingObs x
-            % nTestingObs. This can be remedied by evaluating the pdf in blocks and
-            % should be changed in the future.
+            
+            memChunkSize = 1000; % Should this be moved somewhere?
             
             nDims = size(X,2);
 
-            cDist = zeros(size(X,1),size(R.trainingData,1));
-            for iDim = 1:nDims
-                cDist = cDist + (bsxfun(@minus,X(:,iDim),R.trainingData(:,iDim)').^2) / R.bandwidths(iDim);
+            nTrainingPoints = size(R.trainingData,1); 
+            
+            vals = zeros(size(X,1),1);
+            for iBlockStart = 1:memChunkSize:size(X,1);
+                cInds = iBlockStart:min(iBlockStart+memChunkSize,size(X,1));
+                
+                cNSamples = lenght(cInds);
+                
+                cDist = zeros(cNSamples,size(R.trainingData,1));
+                for iDim = 1:nDims
+                    cDist = cDist + (bsxfun(@minus,X(cInds,iDim),R.trainingData(:,iDim)').^2) / R.bandwidths(iDim);
+                end
+                
+                vals(cInds) = prtUtilSumExp(((-cDist.^2)/2 - 0.5*log(2*pi) - 0.5*sum(log(R.bandwidths)))')' - log(nTrainingPoints);
             end
-            
-            nTrainingPoints = size(R.trainingData,1);
-            
-            vals = prtUtilSumExp(((-cDist.^2)/2 - 0.5*log(2*pi) - 0.5*sum(log(R.bandwidths)))')' - log(nTrainingPoints);
         end
         
         function vals = draw(R,N)
