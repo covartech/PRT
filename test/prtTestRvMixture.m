@@ -22,7 +22,7 @@ catch
     close
 end
 
-RVspec = prtRvMixture('components',repmat(prtRvMvn,1,2));
+RVspec = prtRvMixture('components',repmat(prtRvMvn,1,2),'mixingProportions',[0.5 0.5]);
 % Check that I can specify the mean and covar
 try
     RVspec.components(1).mean = [1 2];                 % Specify the mean
