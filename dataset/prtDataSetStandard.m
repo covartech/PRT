@@ -473,6 +473,7 @@ classdef prtDataSetStandard < prtDataSetBase
                     end
                 elseif isa(currInput,class(obj))
                     obj = obj.catObservationNames(currInput);
+                    obj = obj.catObservationInfo(currInput);
                     if isempty(obj.data) %handle empty data set
                         obj.data = currInput.data;
                         obj.targets = currInput.targets;
@@ -781,6 +782,19 @@ classdef prtDataSetStandard < prtDataSetBase
             end
             
             obj.ObservationInfo = cStruct;
+        end
+        
+        function obj = catObservationInfo(obj, newDataSet)
+            
+            if isempty(newDataSet.ObservationInfo) && isempty(obj.Observationinfo)
+                return;
+            end
+            
+            if ~isequal(fieldnames(obj.ObservationInfo),fieldnames(newDataSet.ObservationInfo))
+                error('prt:prtDataSetStandard:catObservationInfo','ObservationInfo structures for these datasets do not match.');
+            end
+            
+            obj.ObservationInfo = cat(1,obj.ObservationInfo,newDataSet.ObservationInfo);
         end
         
         
