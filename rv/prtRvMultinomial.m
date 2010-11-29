@@ -131,6 +131,9 @@ classdef prtRvMultinomial < prtRv
             
             assert(numel(N)==1 && N==floor(N) && N > 0,'N must be a positive integer scalar.')
             
+            [isValid, reasonStr] = R.isValid;
+            assert(isValid,'DRAW cannot yet be evaluated. This RV is not yet valid %s.',reasonStr);
+            
             vals = zeros(N,R.nCategories);
             vals(sub2ind([N, R.nCategories], (1:N)',drawIntegers(R,N))) = 1;
         end
@@ -143,6 +146,9 @@ classdef prtRvMultinomial < prtRv
             % N x nDimensions vector, where nDimensions is the number of
             % dimensions of RV.
             
+            [isValid, reasonStr] = R.isValid;
+            assert(isValid,'DRAWINTEGERS cannot yet be evaluated. This RV is not yet valid %s.',reasonStr);
+
             assert(numel(N)==1 && N==floor(N) && N > 0,'N must be a positive integer scalar.')
             
             vals = prtRvUtilRandomSample(R.probabilities, N);
@@ -152,12 +158,12 @@ classdef prtRvMultinomial < prtRv
             %plotPdf Plot the pdf of the RV
             %
             % rv.plotPdf() plots the pdf of rv
+            [isValid, reasonStr] = R.isValid;
+            assert(isValid,'plotPdf cannot yet be evaluated. This RV is not yet valid %s.',reasonStr);
             
             h = bar(1:R.nCategories,R.probabilities,'k');
-            
             ylim([0 1])
             xlim(R.plotLimits());
-            
             
             varargout = {};
             if nargout

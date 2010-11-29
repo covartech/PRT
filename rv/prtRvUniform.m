@@ -96,6 +96,9 @@ classdef prtRvUniform < prtRv
         function vals = draw(R,N)
             assert(numel(N)==1 && N==floor(N) && N > 0,'N must be a positive integer scalar.')
             
+            [isValid, reasonStr] = R.isValid;
+            assert(isValid,'DRAW cannot yet be evaluated. This RV is not yet valid %s.',reasonStr);
+            
             vals = bsxfun(@plus,bsxfun(@times,rand(N,R.nDimensions),R.upperBounds - R.lowerBounds),R.lowerBounds);
         end
         
@@ -114,7 +117,9 @@ classdef prtRvUniform < prtRv
                 return
             end
             
-            val = ~isempty(R.upperBounds) && ~isempty(R.lowerBounds);
+            badOrder = ~all(R.upperBounds>R.lowerBounds);
+            
+            val = ~isempty(R.upperBounds) && ~isempty(R.lowerBounds) && ~badOrder;
             
             if val
                 reasonStr = '';
@@ -128,6 +133,8 @@ classdef prtRvUniform < prtRv
                     reasonStr = 'because lowerBounds has not been set';
                 elseif badUpper && badLower
                     reasonStr = 'because upperBounds and lowerBounds have not been set';
+                elseif badOrder
+                    reasonStr = 'because at least one entry of lowerBounds is greater than the corresponding entry of upperBounds';
                 else
                     reasonStr = 'because of an unknown reason';
                 end

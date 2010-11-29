@@ -123,10 +123,10 @@ classdef prtRvDiscrete < prtRv
             
             assert(isnumeric(X) && ndims(X)==2,'X must be a 2D numeric array.');
             
-            [dontNeed, symbolInds] = ismember(X,R.symbols,'rows'); %#ok
-            
-            vals = R.probabilities(symbolInds);
-            vals = vals(:);
+            [isValidSymbol, symbolInds] = ismember(X,R.symbols,'rows');
+
+            vals = zeros(size(X,1),1);
+            vals(isValidSymbol) = R.probabilities(symbolInds(isValidSymbol));
         end
         
         function vals = logPdf(R,X)

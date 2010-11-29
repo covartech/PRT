@@ -127,12 +127,16 @@ classdef prtFeatSelSfs < prtFeatSel
                         break
                     end
                     
+                    if all(~isfinite(performance))
+                        error('prt:prtFeatSelSfs','All evaluation matrics resulted in non-finite values. Check EvalutionMetric');
+                    end
+                    
                     % Randomly choose the next feature if more than one provide the same performance
                     [val,newFeatInd] = max(performance);
                     newFeatInd = find(performance == val);
                     newFeatInd = newFeatInd(max(1,ceil(rand*length(newFeatInd))));
-                    % In the (degenerate) case when rand==0, set the index to the first one
                     
+                    % In the (degenerate) case when rand==0, set the index to the first one
                     sfsPerformance(j) = val;
                     sfsSelectedFeatures(j) = [availableFeatures(newFeatInd)];
                 end
@@ -140,7 +144,7 @@ classdef prtFeatSelSfs < prtFeatSel
                 Obj.selectedFeatures = sfsSelectedFeatures;
                 
             catch ME
-                if ~isempty(h)
+                if ~isempty(h) && ishandle(h)
                     close(h);
                 end
                 throw(ME);

@@ -235,11 +235,11 @@ classdef prtClass < prtAction
             
             if ~isempty(Obj.DataSet)
                 hold on;
-                [handles,legendStrings] = plot(Obj.DataSet);
+                handles = plot(Obj.DataSet);
                 hold off;
-                HandleStructure.Axes = struct('imageHandle',{imageHandle},'handles',{handles},'legendStrings',{legendStrings});
+                HandleStructure.Axes = struct('imageHandle',{imageHandle},'handles',{handles});
             else
-                HandleStructure.Axes = struct('imageHandle',{imageHandle},'handles',{[]},'legendStrings',{[]});
+                HandleStructure.Axes = struct('imageHandle',{imageHandle},'handles',{[]});
             end
         end
         

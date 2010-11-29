@@ -152,6 +152,9 @@ classdef prtRvMixture < prtRv
             
             assert(size(X,2) == R.nDimensions,'Data, RV dimensionality missmatch. Input data, X, has dimensionality %d and this RV has dimensionality %d.', size(X,2), R.nDimensions)
             
+            [isValid, reasonStr] = R.isValid;
+            assert(isValid,'PDF cannot yet be evaluated. This RV is not yet valid %s.',reasonStr);
+            
             [logy, componentLogPdf] = logPdf(R,X);
             
             y = exp(logy);
@@ -163,6 +166,9 @@ classdef prtRvMixture < prtRv
         function [logy, componentLogPdf] = logPdf(R,X)
             X = R.dataInputParse(X); % Basic error checking etc
             assert(size(X,2) == R.nDimensions,'Data, RV dimensionality missmatch. Input data, X, has dimensionality %d and this RV has dimensionality %d.', size(X,2), R.nDimensions)
+            
+            [isValid, reasonStr] = R.isValid;
+            assert(isValid,'LOGPDF cannot yet be evaluated. This RV is not yet valid %s.',reasonStr);
             
             componentLogPdf = zeros(size(X,1),R.nComponents);
             
@@ -195,7 +201,9 @@ classdef prtRvMixture < prtRv
             for iComp = 1:R.nComponents
                 cSamples = components==iComp;
                 cNSamples = sum(cSamples);
-                vals(cSamples,:) = draw(R.components(iComp),cNSamples);
+                if cNSamples > 0
+                    vals(cSamples,:) = draw(R.components(iComp),cNSamples);
+                end
             end
         end
     end
@@ -227,8 +235,7 @@ classdef prtRvMixture < prtRv
             
             
             if ~isempty(R.components)
-                % This should work but doesnt for nested mixtures
-                val = all(isValid(R.components)) && ~isempty(R.mixingProportions);
+                val = all(isValid(R.components)) && R.mixingProportions.isValid;
             else
                 val = false;
             end
@@ -237,8 +244,8 @@ classdef prtRvMixture < prtRv
                 reasonStr = '';
             else
                 unsetComps = isempty(R.components);
-                invalidComps = all(isValid(R.components));
-                badProbs = isempty(R.mixingProportions);
+                invalidComps = ~all(isValid(R.components));
+                badProbs = ~R.mixingProportions.isValid;
                 
                 if unsetComps && ~badProbs
                     reasonStr = 'because components has not been set';
@@ -248,6 +255,8 @@ classdef prtRvMixture < prtRv
                     reasonStr = 'because mixingProportions have not been set and some components are not yet valid';
                 elseif ~unsetComps && ~badProbs && invalidComps
                     reasonStr = 'because some components are not yet valid';
+                elseif ~unsetComps && badProbs && ~invalidComps
+                    reasonStr = 'because mixingProportions have not been set';
                 else
                     reasonStr = 'because of an unknown reason';
                 end
