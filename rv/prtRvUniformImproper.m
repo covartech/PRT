@@ -78,9 +78,10 @@ classdef prtRvUniformImproper < prtRv
         
         function vals = pdf(R,X)
             X = R.dataInputParse(X); % Basic error checking etc
+            
             [isValid, reasonStr] = R.isValid;
             assert(isValid,'PDF cannot yet be evaluated. This RV is not yet valid %s.',reasonStr);
-            assert(size(X,2) == R.nDimensions,'Data, RV dimensionality missmatch. Input data, X, has dimensionality %d and this RV has dimensionality %d.', size(X,2), R.nDimensions)
+            
             vals = ones(size(X,1),1);
         end
         
@@ -100,17 +101,21 @@ classdef prtRvUniformImproper < prtRv
         end
         
         function vals = draw(R,N)
+            if nargin < 2
+                N = 1;
+            end
+            
             assert(numel(N)==1 && N==floor(N) && N > 0,'N must be a positive integer scalar.')
             
             [isValid, reasonStr] = R.isValid;
             assert(isValid,'DRAW cannot yet be evaluated. This RV is not yet valid %s.',reasonStr);
             
-            vals = bsxfun(@plus,bsxfun(@times,rand(N,R.nDimensions),realmax - realmin),realmin);
+            vals = bsxfun(@times,bsxfun(@times,rand(N,R.nDimensions),realmax),sign(randn(N,1)));
         end
         
-        function R = set.nDimensions(R,val)
+        function R = set.nDimensions(R,N)
             assert(numel(N)==1 && N==floor(N) && N > 0,'nDimensions must be a positive integer scalar.')
-            R.nDimensionsPrivate = val;
+            R.nDimensionsPrivate = N;
         end
         
         function val = get.nDimensions(R)
@@ -128,13 +133,8 @@ classdef prtRvUniformImproper < prtRv
                 return
             end
             
-            val = ~isempty(R.nDimensionsPrivate);
-            
-            if val
-                reasonStr = '';
-            else
-                reasonStr = 'because the nDimeions has not been set';
-            end
+            val = true;
+            reasonStr = '';
         end
         function val = plotLimits(R)
             [isValid, reasonStr] = R.isValid;
