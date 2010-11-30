@@ -312,8 +312,8 @@ classdef prtRvMixture < prtRv
             for iComp = 1:R.nComponents
                 R.components(iComp) = weightedMle(R.components(iComp),X,membershipMat(:,iComp));
             end
-            R.mixingProportions = R.mixingProportions.mle(membershipMat);
             
+            R.mixingProportions = mle(prtRvMultinomial,membershipMat);
         end
     end
 end
