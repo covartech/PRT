@@ -53,7 +53,8 @@ classdef prtRvVq < prtRv
     end
     
     properties (SetAccess = 'private', GetAccess = 'private', Hidden=true)
-        InternalKMeansPrototypesDepHelp = prtClassKmeansPrototypes('kMeansHandleEmptyClusters','random');
+        %InternalKMeansPrototypesDepHelp = prtClassKmeansPrototypes('kMeansHandleEmptyClusters','random');
+        meanDepHelper = [];
         InternalDiscreteDepHelp = prtRvDiscrete();
         nCategoriesDepHelp = 2;
     end
@@ -66,7 +67,7 @@ classdef prtRvVq < prtRv
             R = constructorInputParse(R,varargin{:});
         end
         function val = get.means(R)
-            val = R.InternalKMeansPrototypes.clusterCenters{1};
+            val = R.meanDepHelper;
         end
         function val = get.probabilities(R)
             val = R.InternalDiscreteDepHelp.probabilities;
@@ -78,13 +79,7 @@ classdef prtRvVq < prtRv
         function val = get.InternalDiscrete(R)
             val = R.InternalDiscreteDepHelp;
         end
-        function val = get.InternalKMeansPrototypes(R)
-            val = R.InternalKMeansPrototypesDepHelp;
-        end
         
-        function R = set.InternalKMeansPrototypes(R,val)
-            R.InternalKMeansPrototypesDepHelp = val;
-        end
         function R = set.InternalDiscrete(R,val)
             R.InternalDiscreteDepHelp = val;
         end
@@ -93,33 +88,36 @@ classdef prtRvVq < prtRv
             assert(isa(val,'prtRvDiscrete'),'InternalDiscrete must be a prtRvDiscrete.')
             R.InternalDiscreteDepHelp = val;
         end
-        function R = set.InternalKMeansPrototypesDepHelp(R,val)
-            assert(isa(val,'prtClassKmeansPrototypes'),'InternalKMeansPrototypes must be a prtClassKMeansPrototypes.')
-            R.InternalKMeansPrototypesDepHelp = val;
-        end
         
         function R = set.nCategories(R,val)
-            assert(numel(val)==1 && val==floor(val) && val > 0,'nCategories must be a scalar positive integer');
+            assert(numel(val)==1 && val==floor(val) && val > 0,'nCategories must be a scalar positive integer.');
             
-            R.InternalKMeansPrototypesDepHelp.nClustersPerHypothesis = val;
             R.nCategoriesDepHelp = val;
         end
         
         function R = set.probabilities(R,val)
+            assert(isnumeric(val) && isvector(val),'probabilities must be numer vector whose values sum to one.');
+            
             if ~isempty(R.InternalDiscreteDepHelp.symbols)
-                assert(size(R.InternalDiscreteDepHelp.symbols,1) == numel(val),'size mismatch between probabilities and symbols')
+                assert(size(R.InternalDiscreteDepHelp.symbols,1) == numel(val),'size mismatch between probabilities and means.')
             end
             R.InternalDiscreteDepHelp.probabilities = val(:);
         end
         
         function R = set.means(R,val)
+            assert(ndims(val)==2 && isnumeric(val),'means must be a 2D numeric matrix.')
+            
+            if ~isempty(R.InternalDiscreteDepHelp.probabilities)
+                assert(numel(R.InternalDiscreteDepHelp.probabilities) == size(val,1),'size mismatch between probabilities and means.')
+            end
+            
             R.InternalDiscrete.symbols = val;
-            R.InternalKMeansPrototypes.clusterCenters{1} = val;
+            R.meanDepHelper = val;
         end
 
         function val = get.nDimensions(R)
-            if R.InternalKMeansPrototypes.isTrained
-                val = R.InternalKMeansPrototypes.DataSetSummary.nFeatures;
+            if ~isempty(R.means)
+                val = size(R.means,2);
             else
                 val = [];
             end
@@ -129,10 +127,11 @@ classdef prtRvVq < prtRv
             X = R.dataInputParse(X); % Basic error checking etc
             assert(isnumeric(X) && ndims(X)==2,'X must be a 2D numeric array.');
             
-            R.InternalKMeansPrototypes = R.InternalKMeansPrototypes.train(prtDataSetClass(X,ones(size(X,1),1)));
-            trainingOutput = R.InternalKMeansPrototypes.run(X);
+            R.means = prtUtilKmeans(X,R.nCategories,'handleEmptyClusters','random');
             
-            R.InternalDiscrete = prtRvDiscrete('symbols',R.InternalKMeansPrototypes.clusterCenters{1},'probabilities',histc(trainingOutput.ActionData.selectedKMeansIndexes,1:R.nCategories)/size(X,1));
+            trainingOutput = R.data2ClosestMeanInd(X);
+            
+            R.InternalDiscrete = prtRvDiscrete('symbols',R.means,'probabilities',histc(trainingOutput,1:R.nCategories)/size(X,1));
         end
         
         function vals = pdf(R,X)
@@ -143,8 +142,8 @@ classdef prtRvVq < prtRv
             assert(size(X,2) == R.nDimensions,'Data, RV dimensionality missmatch. Input data, X, has dimensionality %d and this RV has dimensionality %d.', size(X,2), R.nDimensions)
             assert(isnumeric(X) && ndims(X)==2,'X must be a 2D numeric array.');
             
-            trainingOutput = R.InternalKMeansPrototypes.run(X);
-            vals = R.probabilities(trainingOutput.ActionData.selectedKMeansIndexes);
+            trainingOutput = R.data2ClosestMeanInd(X);
+            vals = R.probabilities(trainingOutput);
             vals = vals(:);
         end
         
@@ -160,12 +159,14 @@ classdef prtRvVq < prtRv
                 N = 1;
             end
             
+            [isValid, reasonStr] = R.isValid;
+            assert(isValid,'DRAW cannot yet be evaluated. This RV is not yet valid %s.',reasonStr);
+            
             assert(numel(N)==1 && N==floor(N) && N > 0,'N must be a positive integer scalar.')
             
             vals = R.InternalDiscrete.draw(N);
         end
-        
-        
+
         function varargout = plotPdf(R,varargin)
             h = plotPdf(R.InternalDiscrete);
             
@@ -182,6 +183,11 @@ classdef prtRvVq < prtRv
             if nargout
                 varargout = {h};
             end
+        end        
+        
+        function quantizedData = vq(R,X)
+            X = R.dataInputParse(X); % Basic error checking etc
+            quantizedData = data2ClosestMeanInd(R,X);
         end
     end
     
@@ -198,12 +204,21 @@ classdef prtRvVq < prtRv
             [val, reasonStr] = isValid(R.InternalDiscrete);
             reasonStr = strrep(reasonStr,'symbols','means');
         end
+        
         function val = plotLimits(R)
             val = plotLimits(R.InternalDiscrete);
         end
-    
+
         function val = isPlottable(R)
             val = isPlottable(R.InternalDiscrete);
         end
     end
+    
+    methods (Hidden = true, Access=protected)
+        function closestMeanInds = data2ClosestMeanInd(R,X)
+            distance = prtDistanceEuclidean(X,R.means);
+            [dontNeed, closestMeanInds] = min(distance,[],2); %#ok<ASGLU>
+        end
+    end
+    
 end
