@@ -333,7 +333,7 @@ classdef prtRvMvn < prtRv
                 case 'spherical'
                     R.covarianceDepHelper = eye(size(covariance))*mean(diag(covariance));
             end
-
+            
             [dontNeed, cholErr] = chol(R.covarianceDepHelper); %#ok<ASGLU>
             if cholErr ~=0
                 R.badCovariance = true;

@@ -193,7 +193,7 @@ classdef prtRvKde < prtRv
             for iBlockStart = 1:memChunkSize:size(X,1);
                 cInds = iBlockStart:min(iBlockStart+memChunkSize,size(X,1));
                 
-                cNSamples = lenght(cInds);
+                cNSamples = length(cInds);
                 
                 cDist = zeros(cNSamples,size(R.trainingData,1));
                 for iDim = 1:nDims

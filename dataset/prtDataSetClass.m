@@ -887,6 +887,7 @@ classdef prtDataSetClass  < prtDataSetStandard
             title(obj.name);
             
             % Create legend
+            legendStrings = [];
             if obj.isLabeled
                 legendStrings = getClassNames(obj);
                 legend(handleArray,legendStrings,'Location','SouthEast');
@@ -895,7 +896,7 @@ classdef prtDataSetClass  < prtDataSetStandard
             % Handle Outputs
             varargout = {};
             if nargout > 0
-                varargout = {handleArray};
+                varargout = {handleArray,legendStrings};
             end
         end
         %PLOTBW:
