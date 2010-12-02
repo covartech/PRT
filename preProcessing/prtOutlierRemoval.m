@@ -79,6 +79,29 @@ classdef prtOutlierRemoval < prtAction
         runOnTrainingMode = 'removeObservation';
         runMode = 'noAction';
     end
+    properties (Access = 'private')
+        validModes = {'noAction','replaceWithNan','removeObservation','removeFeature'};
+    end
+    
+    methods
+        
+        function Obj = set.runOnTrainingMode(Obj,string)
+            if ~any(strcmpi(string,Obj.validModes))
+                error('prtOutlierRemoval:runOnTrainingMode','runOnTrainingMode must be one of the follwing strings: {%s}',sprintf('%s ',Obj.validModes{:}));
+            end
+            Obj.runOnTrainingMode = string;
+        end
+        
+        function Obj = set.runMode(Obj,string)
+            if ~any(strcmpi(string,Obj.validModes))
+                error('prtOutlierRemoval:runOnTrainingMode','runOnTrainingMode must be one of the follwing strings: {%s}',sprintf('%s ',Obj.validModes{:}));
+            end
+            Obj.runMode = string;
+            if strcmpi(Obj.runMode,'removeObservation')
+                Obj.isCrossValidateValid = false;
+            end
+        end
+    end
     
     methods (Access = protected, Hidden = true)
         
