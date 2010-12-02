@@ -43,6 +43,7 @@ classdef prtPreProcHistEq < prtPreProc
     end
     properties (SetAccess=private)
         % General Classifier Properties
+        %binEdges = {};
         binEdges = [];
     end
     
@@ -61,12 +62,17 @@ classdef prtPreProcHistEq < prtPreProc
             
             if Obj.nSamples == inf;
                 Obj.nSamples = DataSet.nObservations;
-                Obj.binEdges = sort(DataSet.getObservations);
+                for dim = 1:DataSet.nFeatures
+                    %Obj.binEdges{dim} = sort(DataSet.getX);
+                    [~,Obj.binEdges] =sort(DataSet.getX);
+                end
             else
                 for dim = 1:DataSet.nFeatures
+                    %[~,Obj.binEdges{dim}] = hist(DataSet.getFeatures(dim),Obj.nSamples);
                     [~,Obj.binEdges(:,dim)] = hist(DataSet.getObservations(:,dim),Obj.nSamples);
                 end
             end
+            
             Obj.binEdges = cat(1,-inf*ones(1,DataSet.nFeatures),Obj.binEdges);
             Obj.binEdges(end+1,:) = inf;
         end

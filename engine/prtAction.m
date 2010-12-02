@@ -115,7 +115,7 @@ classdef prtAction
         DataSet = runAction(Obj, DataSet)
     end
     
-    methods
+    methods (Hidden)
         function Obj = plus(in1,in2)
             if isa(in2,'prtAlgorithm')
                 Obj = in2 - in1; % Use prtAlgorithm (use MINUS to flip left/right)
@@ -136,6 +136,17 @@ classdef prtAction
             end
         end
         
+        function DataSetOut = runOnTrainingData(Obj, DataSetIn)
+            % RUNONTRAININGDATA  Run a prtAction object on a prtDataSet
+            % object during training of a prtAlgorithm
+            %
+            %   OUTPUT = OBJ.run(DataSet) runs the prtAction object using
+            %   the prtDataSet DataSet. OUTPUT will be a prtDataSet object.
+            DataSetOut = runActionOnTrainingData(Obj, DataSetIn);
+            DataSetOut = postRunProcessing(Obj, DataSetIn, DataSetOut);
+        end
+    end
+    methods
         function Obj = train(Obj, DataSet)
             % TRAIN  Train a prtAction object using training a prtDataSet object.
             %
@@ -183,16 +194,6 @@ classdef prtAction
             DataSetOut = runAction(Obj, DataSetIn);
             DataSetOut = postRunProcessing(Obj, DataSetIn, DataSetOut);
         end
-        
-        function DataSetOut = runOnTrainingData(Obj, DataSetIn)
-            % RUNONTRAININGDATA  Run a prtAction object on a prtDataSet
-            % object during training of a prtAlgorithm
-            %
-            %   OUTPUT = OBJ.run(DataSet) runs the prtAction object using
-            %   the prtDataSet DataSet. OUTPUT will be a prtDataSet object.
-            DataSetOut = runActionOnTrainingData(Obj, DataSetIn);
-        end
-            
         
         function Obj = set.verboseStorage(Obj,val)
             assert(numel(val)==1 && (islogical(val) || (isnumeric(val) && (val==0 || val==1))),'prtAction:invalidVerboseStorage','verboseStorage must be a logical');
@@ -380,6 +381,24 @@ classdef prtAction
             %    DataSetOut = runOnTrainingData(Obj DataSetIn);
             %
             DataSetOut = runAction(Obj, DataSetIn);
+        end
+    end
+    methods (Hidden)
+        function [optimizedAction,performance] = optimize(Obj,DataSet,objFn,parameterName,parameterValues)
+            %[optimizedAction,performance] = optimize(Obj,DataSet,objFn,parameterName,parameterValues)
+            
+            if isnumeric(parameterValues);
+                parameterValues = num2cell(parameterValues);
+            end
+            performance = nan(length(parameterValues),1);
+            for i = 1:length(performance)
+                Obj.(parameterName) = parameterValues{i};
+                performance(i) = objFn(Obj,DataSet);
+            end
+            [maxPerformance,maxPerformanceInd] = max(performance);
+            Obj.(parameterName) = parameterValues{maxPerformanceInd};
+            optimizedAction = train(Obj,DataSet);
+            
         end
     end
 end

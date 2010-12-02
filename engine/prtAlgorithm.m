@@ -178,7 +178,8 @@ classdef prtAlgorithm < prtAction
                 Obj.actionCell{i-1} = train(Obj.actionCell{i-1},currentInput);
                 input{i} = runOnTrainingData(Obj.actionCell{i-1},currentInput);
                 
-                input{i} = input{i}.setTargets(input{1}.getTargets);
+                %Fixed by having runOnTrainingData call postRunProcessing
+                %input{i} = input{i}.setTargets(input{1}.getTargets);
             end
         end
         

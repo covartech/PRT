@@ -412,14 +412,6 @@ classdef prtDataSetClass  < prtDataSetStandard
             
         end
         
-        function exploreNoUiControls(obj)
-            
-            prtPlotUtilDataSetExplore(obj);
-            %This doesn't exist:
-            %            set(gca,'TooltipString','Right click axes or axes labels to change dimensionality of plot');
-            title('Right click axis or axes labels to change dimensionality / plotted dimensions');
-            disp('Right click axis or axes labels to change dimensionality / plotted dimensions');
-        end
         function explore(obj)
             % explore  Explore the prtDataSetObject
             %
@@ -902,65 +894,6 @@ classdef prtDataSetClass  < prtDataSetStandard
                 varargout = {handleArray,legendStrings};
             end
         end
-        %PLOTBW:
-        function varargout = plotbw(obj, featureIndices)
-            % plotbw   Plots the prtDataSetClass object
-            %
-            %   dataSet.plotbw() Plots the prtDataSetClass object in a
-            %   manner that will display well when converted to black and
-            %   white.
-            
-            if nargin < 2 || isempty(featureIndices)
-                featureIndices = 1:obj.nFeatures;
-            end
-            if islogical(featureIndices)
-                featureIndices = find(featureIndices);
-            end
-            
-            nPlotDimensions = length(featureIndices);
-            if nPlotDimensions < 1
-                warning('prt:plot:NoPlotDimensionality','No plot dimensions requested.');
-                return
-            end
-            nClasses = obj.nClasses;
-            classColors = obj.PlotOptions.colorsFunctionBw(obj.nClasses);
-            classSymbols = obj.PlotOptions.symbolsFunctionBw(obj.nClasses);
-            
-            lineWidth = obj.PlotOptions.symbolLineWidth;
-            markerSize = obj.PlotOptions.symbolSize;
-            
-            handleArray = zeros(nClasses,1);
-            
-            holdState = get(gca,'nextPlot');
-            % Loop through classes and plot
-            for i = 1:nClasses
-                %Use "i" here because it's by uniquetargetIND
-                cX = obj.getObservationsByClassInd(i, featureIndices);
-                classEdgeColor = classColors(i,:);
-                
-                handleArray(i) = prtPlotUtilScatter(cX,obj.getFeatureNames(featureIndices),classSymbols(i),classColors(i,:),classEdgeColor,lineWidth, markerSize);
-                
-                if i == 1
-                    hold on;
-                end
-            end
-            set(gca,'nextPlot',holdState);
-            % Set title
-            title(obj.name);
-            grid on
-            
-            % Create legend
-            if obj.isLabeled
-                legendStrings = getClassNames(obj);
-                legend(handleArray,legendStrings,'Location','SouthEast');
-            end
-            
-            % Handle Outputs
-            varargout = {};
-            if nargout > 0
-                varargout = {handleArray};
-            end
-        end
         
         function Summary = summarize(Obj)
             % Summarize   Summarize the prtDataSetClass object
@@ -1111,6 +1044,67 @@ classdef prtDataSetClass  < prtDataSetStandard
             % number of observations changes
             if isempty(obj.targets)
                 obj.targetsCacheHist = obj.nObservations;
+            end
+        end
+    end
+    methods (Hidden)
+        %PLOTBW:
+        function varargout = plotbw(obj, featureIndices)
+            % plotbw   Plots the prtDataSetClass object
+            %
+            %   dataSet.plotbw() Plots the prtDataSetClass object in a
+            %   manner that will display well when converted to black and
+            %   white.
+            
+            if nargin < 2 || isempty(featureIndices)
+                featureIndices = 1:obj.nFeatures;
+            end
+            if islogical(featureIndices)
+                featureIndices = find(featureIndices);
+            end
+            
+            nPlotDimensions = length(featureIndices);
+            if nPlotDimensions < 1
+                warning('prt:plot:NoPlotDimensionality','No plot dimensions requested.');
+                return
+            end
+            nClasses = obj.nClasses;
+            classColors = obj.PlotOptions.colorsFunctionBw(obj.nClasses);
+            classSymbols = obj.PlotOptions.symbolsFunctionBw(obj.nClasses);
+            
+            lineWidth = obj.PlotOptions.symbolLineWidth;
+            markerSize = obj.PlotOptions.symbolSize;
+            
+            handleArray = zeros(nClasses,1);
+            
+            holdState = get(gca,'nextPlot');
+            % Loop through classes and plot
+            for i = 1:nClasses
+                %Use "i" here because it's by uniquetargetIND
+                cX = obj.getObservationsByClassInd(i, featureIndices);
+                classEdgeColor = classColors(i,:);
+                
+                handleArray(i) = prtPlotUtilScatter(cX,obj.getFeatureNames(featureIndices),classSymbols(i),classColors(i,:),classEdgeColor,lineWidth, markerSize);
+                
+                if i == 1
+                    hold on;
+                end
+            end
+            set(gca,'nextPlot',holdState);
+            % Set title
+            title(obj.name);
+            grid on
+            
+            % Create legend
+            if obj.isLabeled
+                legendStrings = getClassNames(obj);
+                legend(handleArray,legendStrings,'Location','SouthEast');
+            end
+            
+            % Handle Outputs
+            varargout = {};
+            if nargout > 0
+                varargout = {handleArray};
             end
         end
     end

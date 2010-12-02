@@ -180,10 +180,19 @@ set(navFigH,'visible','on');
             cString = sprintf('Closest Observation:\n\t Name: %s\t\nClass: %s',obsName{1},className{1});
         end
         
+        
         set(tabGroupH.infoText,'string',cString);
+        if length(ds.ObservationInfo) > clickedObsInd
+            uicontrol('parent',tabGroupH.navPanel(3),'string','View ObsInfo','callback',@(a,b)testAb(a,b,ds.ObservationInfo(clickedObsInd)));
+        else
+            uicontrol('parent',tabGroupH.navPanel(3),'string','View Observation Info','enable','off');
+        end
         
     end
-         
+    function testAb(a,b,c)
+        assignin('base','prtPlotUtilDataSetExploreGuiWithNavigationTempVar',c);
+        openvar('prtPlotUtilDataSetExploreGuiWithNavigationTempVar');
+    end
     function [rotatedData,rotatedClick] = rotateDataAndClick(data)
         % Used internally; from Click3dPoint from matlab central;
         % See prtExternal.ClickA3DPoint.()
@@ -266,7 +275,7 @@ set(navFigH,'visible','on');
         H.navTabGroup = prtUtilUitabgroup('parent',navFigH);
         H.navTab(1) = prtUtilUitab(H.navTabGroup, 'title', 'Features');
         H.navTab(2) = prtUtilUitab(H.navTabGroup, 'title', 'Classes');
-        H.navTab(3) = prtUtilUitab(H.navTabGroup, 'title', 'Info.');
+        H.navTab(3) = prtUtilUitab(H.navTabGroup, 'title', 'Info');
         
         H.navPanel(1) = uipanel(H.navTab(1));
         H.navPanel(2) = uipanel(H.navTab(2));
