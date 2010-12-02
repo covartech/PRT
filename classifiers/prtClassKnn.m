@@ -86,7 +86,9 @@ classdef prtClassKnn < prtClass
             y = zeros(n,nClasses);
             
             xTrain = getObservations(Obj.DataSet);
-            memBlock = 1000;
+            
+            largestMatrixSize = prtOptionsGet('prtOptionsComputation','largestMatrixSize');
+            memBlock = max(floor(largestMatrixSize/size(xTrain,1)),1);
             
             if n > memBlock
                 for start = 1:memBlock:n

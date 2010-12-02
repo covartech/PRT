@@ -58,8 +58,11 @@ for iEdge = 1:length(GraphLayoutInfo.Edges)
     startLoc = cat(2,nodePosMat(GraphLayoutInfo.Edges(iEdge).startIndex,1)+blockSize,nodePosMat(GraphLayoutInfo.Edges(iEdge).startIndex,2)+blockSize/2);
     stopLoc = cat(2,nodePosMat(GraphLayoutInfo.Edges(iEdge).stopIndex,1),nodePosMat(GraphLayoutInfo.Edges(iEdge).stopIndex,2)+blockSize/2);
     
-    Layout.edges(iEdge) = prtPlotUtilPlotArrow(cat(1,startLoc(1),stopLoc(1)),cat(1,startLoc(2),stopLoc(2)),[20 4]);
-    set(Layout.edges(iEdge),'facecolor',[0 0 0],'edgecolor',[0 0 0])
+    %Layout.edges(iEdge) = prtPlotUtilPlotArrow(cat(1,startLoc(1),stopLoc(1)),cat(1,startLoc(2),stopLoc(2)),[20 4]);
+    %set(Layout.edges(iEdge),'facecolor',[0 0 0],'edgecolor',[0 0 0])
+    
+    Layout.edges(iEdge) = prtPlotUtilPlotArrow(cat(1,startLoc(1),stopLoc(1)),cat(1,startLoc(2),stopLoc(2)));
+    
     
 end
 
@@ -94,12 +97,15 @@ set(gcf,'NextPlot','new')
                 startLoc = cStart(1:2) + [blockSize blockSize/2];
                 stopLoc = cStop(1:2) + [0 blockSize/2];
     
-                try  %#ok<TRYNC>
-                    delete(Layout.edges(jEdge));
-                end
+%                 try  %#ok<TRYNC>
+%                     delete(Layout.edges(jEdge));
+%                 end
+%                 Layout.edges(jEdge) = prtPlotUtilPlotArrow(cat(1,startLoc(1),stopLoc(1)),cat(1,startLoc(2),stopLoc(2)));
                 
-                Layout.edges(jEdge) = prtPlotUtilPlotArrow(cat(1,startLoc(1),stopLoc(1)),cat(1,startLoc(2),stopLoc(2)),[20 4]);
-                set(Layout.edges(jEdge),'facecolor',[0 0 0],'edgecolor',[0 0 0])
+                %Layout.edges(jEdge) = prtPlotUtilPlotArrow(cat(1,startLoc(1),stopLoc(1)),cat(1,startLoc(2),stopLoc(2)),[20 4]);
+                %set(Layout.edges(jEdge),'facecolor',[0 0 0],'edgecolor',[0 0 0])
+                
+                Layout.edges(jEdge) = prtPlotUtilPlotArrow(cat(1,startLoc(1),stopLoc(1)),cat(1,startLoc(2),stopLoc(2)),Layout.edges(jEdge));
             end
         end
     end
@@ -108,8 +114,12 @@ set(gcf,'NextPlot','new')
         
         switch lower(get(Handles.handle, 'selectiontype'))
             case 'open'
-                % % disp('Double Click Block')
                 % Nothing for now
+                BlockObject = Layout.Blocks(blockIndex).Object;
+                if ~isempty(BlockObject) && BlockObject.isTrained && prtUtilIsMethodIncludeHidden(BlockObject,'plot') && BlockObject.DataSetSummary.nFeatures < 4
+                    plot(BlockObject);
+                end
+                
             otherwise % case 'normal'
                 
                 % Get block clock offset
@@ -152,13 +162,24 @@ set(gcf,'NextPlot','new')
         elseif isa(BlockObject,'prtDecision')
             blockColor = Options.BlockColors.decision;
             textColor = Options.BlockTextColors.decision;
+        elseif isa(BlockObject,'prtDecision')
+            blockColor = Options.BlockColors.decision;
+            textColor = Options.BlockTextColors.decision;
+        elseif isa(BlockObject,'prtOR')
+            blockColor = Options.BlockColors.outlierRemoval ;
+            textColor = Options.BlockTextColors.outlierRemoval ;
         else
-            error('Unsupported Block Type');
+            blockColor = [1 1 1];
+            textColor = [0 0 0];
         end
         
-                       
         Layout.Blocks(iBlock).polygonPosition = position;
         Layout.Blocks(iBlock).handle = rectangle('Position',[position,blockSize,blockSize],'Curvature',[0.25, 0.25],'FaceColor',blockColor,'LineWidth',2);
+        
+        if ~isempty(BlockObject) && BlockObject.isTrained && prtUtilIsMethodIncludeHidden(BlockObject,'plot') && BlockObject.DataSetSummary.nFeatures < 4
+            %set(Layout.Blocks(iBlock).handle,'lineWidth',2,'EdgeColor',[1 1 0.1]);
+            set(Layout.Blocks(iBlock).handle,'lineWidth',4);
+        end
         
         Layout.Blocks(iBlock).textHandle = text(position(1)+blockSize/2,position(2)+blockSize/2,blockStr,'VerticalAlignment','Middle','HorizontalAlignment','Center','Color',textColor,'FontUnits','Normalized','FontSize',textSize,'FontWeight','Bold');
         
@@ -277,8 +298,6 @@ set(gcf,'NextPlot','new')
         if get(Handles.handle, 'currentaxes') ~= Handles.AxesPanel.mainAxes
             return
         end
-        
-        
         
         %deselectEverything();
         % reset Gui.status
@@ -401,7 +420,7 @@ set(gcf,'NextPlot','new')
 
     function Options = localGetOptions()
         
-        colors = prtPlotUtilClassColors(4);
+        colors = prtPlotUtilClassColors(5);
         
         Options.initialCanvasLimits = [-0.1 1.1 -0.1 1.1];
         Options.blockSize = blockSize*[1 1];
@@ -413,12 +432,15 @@ set(gcf,'NextPlot','new')
         Options.BlockColors.featureSelector = colors(2,:);
         Options.BlockColors.classifier = colors(3,:);
         Options.BlockColors.decision = colors(4,:);
+        Options.BlockColors.outlierRemoval = colors(5,:);
         
         Options.BlockTextColors.dataSet = [0 0 0];
         Options.BlockTextColors.preProcessor = [1 1 1];
         Options.BlockTextColors.featureSelector = [1 1 1];
         Options.BlockTextColors.classifier = [1 1 1];
         Options.BlockTextColors.decision = [0 0 0];
+        Options.BlockTextColors.outlierRemoval = [1 1 1];
+        
         
     end
 
@@ -458,7 +480,6 @@ set(gcf,'NextPlot','new')
         MainFigure.Children.AxesPanel.Children.mainAxes.nextPlot = 'add';
         
         Handles = prtUtilSuicontrol(MainFigure);
-        
         
         % define zooming with scrollwheel, and panning with mouseclicks
         set(Handles.handle, 'WindowScrollWheelFcn' , @mouseControlWindowScrollWheelZoomFcn,...

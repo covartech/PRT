@@ -1,6 +1,6 @@
 function ss = prtPlotUtilCurrentCursorScreenSize
 % Internal function, 
-% xxx Need Help xxx - see prtUserOptions
+% xxx Need Help xxx
 
 try
     ss = get(0,'MonitorPositions');

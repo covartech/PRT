@@ -539,11 +539,10 @@ classdef prtDataSetClass  < prtDataSetStandard
                 
                 optionFieldNames = fieldnames(Options);
                 for iPair = 1:length(paramNames)
-                    assert(ismember(paramNames{iPair},optionFieldNames),'%s is not a valid parameter name for plotDensity()',paramNames{iPair});
+                    assert(ismember(paramNames{iPair},optionFieldNames),'%s is not a valid parameter name for plotDensity() (These parameters are case sensitive.)',paramNames{iPair});
                     Options.(paramNames{iPair}) = paramValues{iPair};
                 end
             end
-            
             
             Summary = ds.summarize();
             nClasses = Summary.nClasses;
@@ -554,6 +553,10 @@ classdef prtDataSetClass  < prtDataSetStandard
             patchH = zeros(Summary.nFeatures,nClasses);
             colors = prtPlotUtilClassColors(nClasses);
             holdState = get(gca,'NextPlot');
+            
+            if strcmpi(get(gcf,'NextPlot'),'New')
+                figure
+            end
             
             if strcmp(holdState,'replace')
                 cla; % Clear axes since patch doesn't automatically
@@ -1065,8 +1068,7 @@ classdef prtDataSetClass  < prtDataSetStandard
     end
     methods (Static, Hidden = true)
         function PlotOptions = initializePlotOptions()
-            UserOptions = prtUserOptions;
-            PlotOptions = UserOptions.DataSetClassPlotOptions;
+            PlotOptions = prtOptionsGet('prtOptionsDataSetClassPlot');
         end
     end
     methods (Hidden = true)

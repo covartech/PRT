@@ -95,11 +95,22 @@ classdef prtRvDiscrete < prtRv
         end
         
         function R = set.symbols(R,val)
-            if isvector(val)
-                % We assume that they wanted a single set of symbols
-                % instead of a single multi-dimensional symbol.
-                val = val(:);
-            end
+            
+            % Although the below might be more intuitive for setting the
+            % symbols directly, it can cause problems in more sophisticated
+            % processing. Consider cross-validating a classifier that uses
+            % prtRvDiscrete to model the classes. It is possible that a
+            % training fold may only contain 1 observation of a
+            % multidimensional data set. This will lead to difficult to
+            % understand errors.
+            %
+            % See also prtRvDiscrete.weightedMle()
+            %
+            % if isvector(val)
+            %     % We assume that they wanted a single set of symbols
+            %     % instead of a single multi-dimensional symbol.
+            %     val = val(:);
+            % end
             
             assert(~R.InternalMultinomial.isValid || R.nCategories == size(val,1),'Number of specified symbols does not match the current number of categories.')
             assert(isnumeric(val) && ndims(val)==2,'symbols must be a 2D numeric array.')
@@ -175,9 +186,9 @@ classdef prtRvDiscrete < prtRv
                     set(gca,'XTickLabel',symStrs(xTick));
                 case 2
                     z = R.InternalMultinomial.probabilities(:);
-                    UserOptions = prtUserOptions;
-                    colorMapInds = gray2ind(mat2gray(z),UserOptions.RvPlotOptions.nColorMapSamples);
-                    cMap = UserOptions.RvPlotOptions.colorMapFunction(UserOptions.RvPlotOptions.nColorMapSamples);
+                    
+                    colorMapInds = gray2ind(mat2gray(z),R.PlotOptions.nColorMapSamples);
+                    cMap = R.PlotOptions.colorMapFunction(R.PlotOptions.nColorMapSamples);
                     
                     cMap = prtPlotUtilDarkenColors(cMap);
                     
@@ -258,13 +269,24 @@ classdef prtRvDiscrete < prtRv
         
         function R = weightedMle(R,X,weights)
             
-            if isvector(X)
-                % A single symbol... interperet as a vector of 1D symbols
-                X = X(:);
-                if numel(weights) == 1
-                    weights = weights.*ones(size(X));
-                end
-            end
+            % Although the below might be more intuitive for setting the
+            % symbols directly, it can cause problems in more sophisticated
+            % processing. Consider cross-validating a classifier that uses
+            % prtRvDiscrete to model the classes. It is possible that a
+            % training fold may only contain 1 observation of a
+            % multidimensional data set. This will lead to difficult to
+            % understand errors.
+            %
+            % See also prtRvDiscrete.set.symbols()
+            %
+            % if isvector(X)
+            %     % A single symbol... interperet as a vector of 1D symbols
+            %     X = X(:);
+            %     if numel(weights) == 1
+            %         weights = weights.*ones(size(X));
+            %     end
+            % end
+            
             assert(numel(weights)==size(X,1),'The number of weights must mach the number of observations.');
             
             if isempty(R.symbols) || R.inferSymbols

@@ -1,6 +1,6 @@
 function classSymbols = prtPlotUtilClassSymbolsBW(nClasses)
 % Internal function, default color specs.
-% xxx Need Help xxx - see prtUserOptions
+% xxx Need Help xxx
 
 
 classSymbols = 'os^dv';

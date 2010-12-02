@@ -1,6 +1,6 @@
 function colors = prtPlotUtilClassColorsBW(nClasses)
 % Internal function, default color specs.
-% xxx Need Help xxx - see prtUserOptions
+% xxx Need Help xxx
 
 
 % colors = [55  126 184; % Blue

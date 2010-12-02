@@ -282,8 +282,11 @@ classdef prtClassRvm < prtClass
                 return
             end
             
-            memChunkSize = 1000; % Should this be moved somewhere?
             n = DataSet.nObservations;
+            
+            largestMatrixSize = prtOptionsGet('prtOptionsComputation','largestMatrixSize');
+            
+            memChunkSize = max(floor(largestMatrixSize/length(Obj.sparseBeta)),1);
             
             OutputMat = zeros(n,1);
             for i = 1:memChunkSize:n;

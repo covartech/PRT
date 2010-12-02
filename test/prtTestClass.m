@@ -86,7 +86,7 @@ catch
 end
 
 try
-    classifier.PlotOptions = prtClassPlotOpt;   
+    classifier.PlotOptions = prtOptions.prtOptionsDataSetClassPlot;   
 catch
     noerror = false;
 end

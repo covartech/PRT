@@ -52,7 +52,7 @@ classdef prtDataSetRegress < prtDataSetStandard
                 warning('prt:plot:NoPlotDimensionality','No plot dimensions requested.');
                 return
             elseif nPlotDimensions >= 2
-                error('prt:plot:NoPlotDimensionality','Regression plots are currently only valid for 1 dimensional data, but DataSet has %d dimensions',obj.nFeatures);
+                error('prt:plot:NoPlotDimensionality','Regression plots are currently only valid for 1 dimensional data, but the requested plot has %d dimensions',nPlotDimensions);
             end
             
             holdState = get(gca,'nextPlot');
@@ -101,8 +101,7 @@ classdef prtDataSetRegress < prtDataSetStandard
     end
     methods (Static, Hidden = true)
         function PlotOptions = initializePlotOptions()
-            UserOptions = prtUserOptions;
-            PlotOptions = UserOptions.DataSetRegressPlotOptions;
+            PlotOptions = prtOptionsGet('prtOptionsDataSetRegressPlot');
         end
     end
 end

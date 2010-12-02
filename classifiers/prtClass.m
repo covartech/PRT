@@ -300,7 +300,7 @@ classdef prtClass < prtAction
                 for subImage = 1:M*N
                     subplot(M,N,subImage)
                     hold on;
-                    [handles,legendStrings] = plot(Obj.DataSet);
+                    handles = plot(Obj.DataSet);
                     hold off;
                     HandleStructure.Axes(subImage) = struct('imageHandle',{imageHandle(subImage)},'handles',{handles},'legendStrings',{legendStrings});
                 end
@@ -316,8 +316,7 @@ classdef prtClass < prtAction
     
     methods (Static, Hidden = true)
         function PlotOptions =initializePlotOptions()
-            UserOptions = prtUserOptions;
-            PlotOptions = UserOptions.ClassifierPlotOptions;
+            PlotOptions = prtOptionsGet('prtOptionsClassPlot');
         end
     end
 end

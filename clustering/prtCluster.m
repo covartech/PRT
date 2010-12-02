@@ -211,9 +211,8 @@ classdef prtCluster < prtAction
     end
 
     methods (Static, Hidden = true)
-        function PlotOptions =initializePlotOptions()
-            UserOptions = prtUserOptions;
-            PlotOptions = UserOptions.ClassifierPlotOptions;
+        function PlotOptions = initializePlotOptions()
+            PlotOptions = prtOptionsGet('prtOptionsClusterPlot');
         end
     end
 end

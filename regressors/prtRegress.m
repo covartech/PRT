@@ -65,8 +65,7 @@ classdef prtRegress < prtAction %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     end
     methods (Static, Hidden = true)
         function PlotOptions = initializePlotOptions()
-            UserOptions = prtUserOptions;
-            PlotOptions = UserOptions.RegressionPlotOptions;
+            PlotOptions = prtOptionsGet('prtOptionsRegressPlot');
         end
     end
 end

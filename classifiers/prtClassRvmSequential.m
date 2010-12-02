@@ -131,7 +131,7 @@ classdef prtClassRvmSequential < prtClassRvm
                 
                 kernelCorrs(cInds) = abs(blockPhiNormalized'*ym11);
             end
-            [maxVal, maxInd] = max(kernelCorrs);
+            [maxVal, maxInd] = max(kernelCorrs); %#ok<ASGLU>
             
             
             % Make this ind relevant
@@ -163,7 +163,6 @@ classdef prtClassRvmSequential < prtClassRvm
             
             % Start the actual Process
             if Obj.learningVerbose
-                %fprintf('Sequential RVM training with %d possible vectors.\n', length(trainedKernels));
                 fprintf('\t Iteration 0: Intialized with vector %d.\n', maxInd);
                 
                 nVectorsStringLength = ceil(log10(length(nBasis)))+1;

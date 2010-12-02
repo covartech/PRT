@@ -41,6 +41,7 @@ classdef prtRv
     properties
         name        % The name of the prtRv
         UserData    % User specified data
+        PlotOptions  = prtRv.initializePlotOptions()
     end
     properties (Abstract = true, Hidden = true, Dependent = true)
         nDimensions % The number of dimensions
@@ -119,11 +120,9 @@ classdef prtRv
                     plotLims = plotLimits(R);
                 end
                 
-                UserOptions = prtUserOptions;
+                [linGrid,gridSize] = prtPlotUtilGenerateGrid(plotLims(1:2:end), plotLims(2:2:end), R.PlotOptions.nSamplesPerDim);
                 
-                [linGrid,gridSize] = prtPlotUtilGenerateGrid(plotLims(1:2:end), plotLims(2:2:end), UserOptions.RvPlotOptions.nSamplesPerDim);
-                
-                imageHandle = prtPlotUtilPlotGriddedEvaledFunction(R.pdf(linGrid), linGrid, gridSize, UserOptions.RvPlotOptions.colorMapFunction(UserOptions.RvPlotOptions.nColorMapSamples));
+                imageHandle = prtPlotUtilPlotGriddedEvaledFunction(R.pdf(linGrid), linGrid, gridSize, R.PlotOptions.colorMapFunction(R.PlotOptions.nColorMapSamples));
                 
                 if nargout
                     varargout = {imageHandle};
@@ -148,10 +147,9 @@ classdef prtRv
                     plotLims = plotLimits(R);
                 end
                 
-                UserOptions = prtUserOptions;
-                [linGrid,gridSize] = prtPlotUtilGenerateGrid(plotLims(1:2:end), plotLims(2:2:end), UserOptions.RvPlotOptions.nSamplesPerDim);
+                [linGrid,gridSize] = prtPlotUtilGenerateGrid(plotLims(1:2:end), plotLims(2:2:end), R.PlotOptions.nSamplesPerDim);
                 
-                imageHandle = prtPlotUtilPlotGriddedEvaledFunction(R.cdf(linGrid), linGrid, gridSize, UserOptions.RvPlotOptions.colorMapFunction(UserOptions.RvPlotOptions.nColorMapSamples));
+                imageHandle = prtPlotUtilPlotGriddedEvaledFunction(R.cdf(linGrid), linGrid, gridSize, R.PlotOptions.colorMapFunction(R.PlotOptions.nColorMapSamples));
                 
                 if nargout
                     varargout = {imageHandle};
@@ -193,6 +191,11 @@ classdef prtRv
     methods (Access = 'private', Hidden = true)
         function missingMethodError(R,methodName) %#ok<MANU>
             error('The method %s is not defined for this prtRv object',methodName);
+        end
+    end
+    methods (Access = 'private',Hidden = true,Static = true)
+        function PlotOptions = initializePlotOptions()
+            PlotOptions = prtOptionsGet('prtOptionsRvPlot');
         end
     end
     methods (Access = 'protected', Hidden = true)

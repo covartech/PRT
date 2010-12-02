@@ -224,14 +224,14 @@ classdef prtAction
                 %Should this error?
                 warning('prtAction:crossValidate','The input object of type %s has isCrossValidateValid set to false; the outputs of cross-validation may be meaningless',class(Obj));
             end
-            if length(validationKeys) ~= DataSet.nObservations;
-                error('Number of validation keys (%d) must match number of data points (%d)',length(validationKeys),DataSet.nObservations);
+            if ~isvector(validationKeys) || (numel(validationKeys) ~= DataSet.nObservations)
+                error('prt:prtAction:crossValidate','validationKeys must be a vector with a length equal to the number of observations in the data set');
             end
             
             uKeys = unique(validationKeys);
             
             for uInd = 1:length(uKeys);
-                
+                    
                 %get the testing indices:
                 if isa(uKeys(uInd),'cell')
                     cTestLogical = strcmp(uKeys(uInd),validationKeys);
@@ -250,14 +250,22 @@ classdef prtAction
                 classOut = Obj.train(trainDataSet);
                 currResults = classOut.run(testDataSet);
                 
+                if currResults.nObservations < 1
+                    error('prt:prtAction:crossValidate','A cross-validation fold returned a data set with no observations.')
+                end
+                if uInd == 1
+                    nOutputDimensions = length(currResults.getX(1,:));
+                end
+                if nOutputDimensions ~= length(currResults.getX(1,:));
+                    error('prt:prtAction:crossValidate','A cross-validation fold returned a data set with a different number of dimensions than a previous fold.')
+                end
+                
                 if uInd == 1
                     InternalOutputDataSet = currResults;
-                    InternalOutputDataSet = InternalOutputDataSet.setXY(nan(DataSet.nObservations,currResults.nFeatures),DataSet.getTargets);
-                    %InternalOutputDataSet = prtDataSetClass(nan(DataSet.nObservations,currResults.nFeatures));
+                    
+                    OutputMat = nan(DataSet.nObservations, nOutputDimensions);
                 end
                 OutputMat(cTestLogical,:) = currResults.getObservations();
-                
-                %InternalOutputDataSet = InternalOutputDataSet.setObservations(currResults.getObservations(), cTestLogical);
                 
                 %only do this if the output is requested; otherwise this cell of
                 %classifiers can get very large, and slow things down.
@@ -270,10 +278,9 @@ classdef prtAction
                     end
                 end
             end	
-            InternalOutputDataSet = InternalOutputDataSet.setObservations(OutputMat);
             
             OutputDataSet = DataSet;
-            OutputDataSet = OutputDataSet.setObservations(InternalOutputDataSet.getObservations);
+            OutputDataSet = OutputDataSet.setObservations(OutputMat);
             OutputDataSet = OutputDataSet.setFeatureNames(InternalOutputDataSet.getFeatureNames);
         end
         

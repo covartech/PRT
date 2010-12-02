@@ -38,7 +38,7 @@ classdef prtRvKde < prtRv
     %                      and causes stability issues. The default value
     %                      is eps.
     %   
-    %  A prtRvKdeu object inherits all methods from the prtRv class. The MLE
+    %  A prtRvKde object inherits all methods from the prtRv class. The MLE
     %  method can be used to estimate the distribution parameters from
     %  data.
     %
@@ -183,11 +183,11 @@ classdef prtRvKde < prtRv
             assert(isnumeric(X) && ndims(X)==2,'X must be a 2D numeric array.');
     
             
-            memChunkSize = 1000; % Should this be moved somewhere?
-            
             nDims = size(X,2);
-
             nTrainingPoints = size(R.trainingData,1); 
+            
+            largestMatrixSize = prtOptionsGet('prtOptionsComputation','largestMatrixSize');
+            memChunkSize = max(floor(largestMatrixSize/nTrainingPoints),1);
             
             vals = zeros(size(X,1),1);
             for iBlockStart = 1:memChunkSize:size(X,1);
@@ -286,16 +286,14 @@ classdef prtRvKde < prtRv
                     plotLims = plotLimits(R);
                 end
                 
-                UserOptions = prtUserOptions;
-                
                 tooBigNObservations = [2000 500 100];
                 if size(R.trainingData,1) > tooBigNObservations(size(R.trainingData,2))
-                    [linGrid,gridSize] = prtPlotUtilGenerateGrid(plotLims(1:2:end), plotLims(2:2:end), UserOptions.RvPlotOptions.nSamplesPerDim);
+                    [linGrid,gridSize] = prtPlotUtilGenerateGrid(plotLims(1:2:end), plotLims(2:2:end), R.PlotOptions.nSamplesPerDim);
                 else
-                    [linGrid,gridSize] = prtPlotUtilGenerateGrid(plotLims(1:2:end), plotLims(2:2:end), UserOptions.RvPlotOptions.nSamplesPerDim, R.trainingData);
+                    [linGrid,gridSize] = prtPlotUtilGenerateGrid(plotLims(1:2:end), plotLims(2:2:end), R.PlotOptions.nSamplesPerDim, R.trainingData);
                 end
                 
-                imageHandle = prtPlotUtilPlotGriddedEvaledFunction(R.pdf(linGrid), linGrid, gridSize, UserOptions.RvPlotOptions.colorMapFunction(UserOptions.RvPlotOptions.nColorMapSamples));
+                imageHandle = prtPlotUtilPlotGriddedEvaledFunction(R.pdf(linGrid), linGrid, gridSize, R.PlotOptions.colorMapFunction(R.PlotOptions.nColorMapSamples));
                 
                 if nargout
                     varargout = {imageHandle};
