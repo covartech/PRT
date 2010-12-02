@@ -84,13 +84,12 @@ classdef prtClassNaiveBayes < prtClass
             
             yOut = zeros(DataSet.nObservations,length(Obj.naiveRv));
             for i = 1:length(Obj.naiveRv)
-                yOut(:,i) = Obj.naiveRv(i).pdf(DataSet.getObservations);
+                yOut(:,i) = Obj.naiveRv(i).logPdf(DataSet.getObservations);
             end
             %Replace poorly scaled samples
-            yOut(sum(yOut,2) == 0,:) = 1./size(yOut,2);
-            yOut = bsxfun(@rdivide,yOut,sum(yOut,2));
+            logSum = prtUtilSumExp(yOut')';
+            yOut = exp(bsxfun(@minus,yOut,logSum));
             DataSet = DataSet.setObservations(yOut);
         end
     end
-    
 end

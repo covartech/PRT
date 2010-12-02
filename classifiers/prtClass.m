@@ -29,7 +29,35 @@ classdef prtClass < prtAction
     %   run           - Run the classifier on a data set, e.g.
     %       results = myClassifier.run(ds);
     %
+    %
     %   crossValidate, kfolds - See prtAction
+    %
+    %
+    %   Sub-classing prtClass:
+    %       Concrete sub-classes of prtClass must define the abstract
+    %   methods trainAction and runAction defined in prtAction.  These
+    %   methods have function definitions as follows:
+    %
+    %       Obj = trainAction(Obj, DataSet)
+    %       DataSet = runAction(Obj, DataSet)
+    %
+    %   Both methods are protected and hidden.  A concrete subclass of
+    %   prtClass should contain code similar to the following:
+    %
+    %
+    %     methods (Access = protected, Hidden = true)
+    %         function Obj = trainAction(Obj, DataSet)
+    %           %Code to set trained parameters of Obj
+    %           
+    %         end
+    %
+    %         function DataSetOut = runAction(Obj, DataSet)
+    %           %Code to run trained Obj on DataSet and generate DataSetOut
+    %           %with observations set to the output of the classification
+    %           %algorithm
+    %
+    %         end
+    %     end
     %
     %
     

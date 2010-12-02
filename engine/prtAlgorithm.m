@@ -177,6 +177,8 @@ classdef prtAlgorithm < prtAction
                 currentInput = catFeatures(input{Obj.connectivityMatrix(i,:)});
                 Obj.actionCell{i-1} = train(Obj.actionCell{i-1},currentInput);
                 input{i} = runOnTrainingData(Obj.actionCell{i-1},currentInput);
+                
+                input{i} = input{i}.setTargets(input{1}.getTargets);
             end
         end
         

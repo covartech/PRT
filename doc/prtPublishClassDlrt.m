@@ -1,4 +1,4 @@
-b%% prtClassDlrt
+%% prtClassDlrt
 % 
 % prtClassDlrt implements a distance-likelihood ratio test classifier.  A
 % DLRT classifier is similar in many ways to a two-class KNN classifier
