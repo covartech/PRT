@@ -12,7 +12,7 @@ try
     binaryclassifier.plot; drawnow; pause(0.1);
     
     %% test binary plot classifier; with decision
-    clc;
+    
     binaryclassifier = prtClassAdaBoost;
     binaryclassifier.internalDecider = prtDecisionBinaryMinPe;
     binaryclassifier = binaryclassifier.train(dsbinary);
@@ -24,7 +24,7 @@ try
     maryclassifier.plot; drawnow; pause(0.1);
     
     %% m-ary classifier; with decision
-    clc;
+    
     close all;
     maryclassifier = prtClassKnn;
     maryclassifier.internalDecider = prtDecisionMap;
