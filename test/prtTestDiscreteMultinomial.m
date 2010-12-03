@@ -26,8 +26,8 @@ end
 % make sure none of these error out
 try
     RVd = prtRvDiscrete;
-    RVd.symbols = [ 1 2 3];
-    RVd.probabilities = [.1 .2 .7];
+    RVd.symbols = [ 1 2 3]';
+    RVd.probabilities = [.1 .2 .7]';
     RVd.plotPdf                           % Plot the pdf
     close
 catch
@@ -72,7 +72,7 @@ end
 
 % check the draw function
 try
-    RVd.symbols = [ 1 2 3];
+    RVd.symbols = [ 1 2 3]';
     RVd.probabilities = [.1 .2 .7];
     
     RVm = prtRvMultinomial;
@@ -95,7 +95,7 @@ end
 
 % Check that we can set the symbols for the prtRvDiscrete
 try
-    RVd.symbols = [1 2 3];
+    RVd.symbols = [1 2 3]';
 catch
     disp('prtRvDiscrete symbol set fail')
     result = false;

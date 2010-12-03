@@ -80,6 +80,13 @@ classdef prtRvMultinomial < prtRv
             % of class i.
             % 
             
+            if unique(X(:)) ~= [0;1]
+                error('prtRvMultinomial:invalidData','Input matrix must contain only ones and zeros');
+            end
+            if any(sum(X,2) > 1)
+                error('prtRvMultinomial:invalidData','Rows of input data must contain no more than one "1"');
+            end
+            
             X = R.dataInputParse(X); % Basic error checking etc
             
             N_bar = sum(X,1);
