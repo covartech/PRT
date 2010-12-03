@@ -23,5 +23,15 @@ classdef prtOptionsRvPlot
         function obj = prtOptionsRvPlot(varargin)
             obj = prtUtilAssignStringValuePairs(obj,varargin{:});
         end
-    end    
+    end
+    
+%     methods
+%         function obj = set.nSamplesPerDim(obj,val)
+%             assert(length(val)==3,'largestMatrixSize must be a positive integer');
+%             
+%             if val < 1e3
+%                 warning('prt:prtOptionsComputation','Although valid, this value for largestMatrixSize is small. Consider using a larger value.')
+%             end
+%         end
+%     end
 end

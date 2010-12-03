@@ -688,7 +688,7 @@ classdef prtDataSetStandard < prtDataSetBase
             
             errorMsg = 'ObservationInfo must be an nObservations x 1 structure array';
             assert(isa(Struct,'struct'),errorMsg);
-            %assert(numel(Struct)==obj.nObservations,errorMsg);
+            assert(numel(Struct)==obj.nObservations,errorMsg);
             
             obj.ObservationInfoDepHelper = Struct(:);
         end
