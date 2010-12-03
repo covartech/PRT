@@ -10,8 +10,7 @@ classdef prtClassMap < prtClass
  %    A prtClassMap object inherits all properties from the abstract class
  %    prtClass. In addition is has the following property:
  %
- %    rvs    - A multivariate normal random variable. This property must be of
- %             type prtRv*. This property describes the random variable 
+ %    rvs    - A prtRv*. This property describes the random variable 
  %             model used for Maximum a Posteriori classification. To
  %             change the type of model used, edit this field and set the
  %             field to the type of prtRv you'd like to use, then run the
@@ -60,7 +59,7 @@ classdef prtClassMap < prtClass
         % Set function
         function Obj = set.rvs(Obj,val)
             if(~ isa(val, 'prtRv'))
-                error('prtClassMAP:rvs','Rvs parameter must be of class prtRvMvn');
+                error('prtClassMAP:rvs','Rvs parameter must be of class prtRv');
             else
                 Obj.rvs = val;
             end
