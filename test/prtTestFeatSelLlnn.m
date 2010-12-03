@@ -51,8 +51,9 @@ featSel.nMaxIterations = 10;                   % Set the max # of
 featSel = featSel.train(dataSet);              % Train
 
 if ~isequal(featSel.selectedFeatures, [1 2]')
-    disp('Error #4a, wrong number of selected features')
-    result = false;
+    %Note, this is undesireable, but happens
+    disp('Error #4a, wrong number of selected features; this is undesireable, but happens')
+    result = false; 
 end
 
 %% Stuff that should error
