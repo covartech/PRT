@@ -80,10 +80,10 @@ classdef prtRvMultinomial < prtRv
             % of class i.
             % 
             
-            if unique(X(:)) ~= [0;1]
-                error('prtRvMultinomial:invalidData','Input matrix must contain only ones and zeros');
-            end
-            if any(sum(X,2) > 1)
+            %             if ~isequal(unique(X(:)),[0;1])
+            %                 error('prtRvMultinomial:invalidData','Input matrix must contain only ones and zeros');
+            %             end
+            if ~prtUtilApproxEqual(sum(X,2),1,100*eps);
                 error('prtRvMultinomial:invalidData','Rows of input data must contain no more than one "1"');
             end
             

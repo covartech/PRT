@@ -1,38 +1,63 @@
 classdef prtBlockDiagram < prtBlock
     
     properties
-        connectionMatrix
+        connectivityMatrix
         blockList
         inputList
         outputList
+        actionCell
     end
     
     methods
         function prtB = prtBlockDiagram(nInputs,nOutputs,blocks)
             %How do you construct this?
-            prtB.connectionMatrix = false(5);
-            prtB.connectionMatrix(3,1) = true;  %Inputs to block
-            prtB.connectionMatrix(3,2) = true;
-            prtB.connectionMatrix(3,3) = true;  %Outputs from block
-            prtB.connectionMatrix(4,3) = true;
+            prtB.connectivityMatrix = false(4);
+            prtB.connectivityMatrix(3,1) = true;  %Inputs to block
+            prtB.connectivityMatrix(3,2) = true;
+            prtB.connectivityMatrix(4,3) = true;  %Outputs from blo
+            
+            [contextDataSet,classificationDataSet] = prtDataGenContextDependent;
+            
+            %This creates a block diagram with sources and sinks:
+            prtB.actionCell = {prtBlockSourceDataSet('dataSet',contextDataSet),prtBlockSourceDataSet('dataSet',classificationDataSet),...
+                prtBlockContextDependentRvm,prtBlockSinkAssignInBase('varName','contextResults')};
         end
         
-        function varargout = train(varargin)
-            error('this doesn''t work');
-            topoOrder = prtUtilTopographicalSort(Obj.connectivityMatrix');
-            input = cell(size(Obj.connectivityMatrix,1),1);
-            input{1} = DataSet;
+        function Obj = train(Obj)
             
-            for i = 2:length(topoOrder)-1
-                currentInput = catFeatures(input{Obj.connectivityMatrix(i,:)});
-                Obj.actionCell{i-1} = train(Obj.actionCell{i-1},currentInput);
-                input{i} = runOnTrainingData(Obj.actionCell{i-1},currentInput);
+            topoOrder = prtUtilTopographicalSort(Obj.connectivityMatrix');
+            
+            input = cell(size(Obj.connectivityMatrix,1),1);
+            for i = 1:length(topoOrder)
+                if ~any(Obj.connectivityMatrix(i,:))
+                    currentInput = {};
+                else
+                    currentInput = input(Obj.connectivityMatrix(i,:));
+                end
+                Obj.actionCell{i} = train(Obj.actionCell{i},currentInput{:});
+                %input{i} = runOnTrainingData(Obj.actionCell{i-1},currentInput{:});
+                input{i} = run(Obj.actionCell{i},currentInput{:});
                 
                 %Fixed by having runOnTrainingData call postRunProcessing
                 %input{i} = input{i}.setTargets(input{1}.getTargets);
             end
         end
-        function run()
+        function input = run(Obj)
+            
+            topoOrder = prtUtilTopographicalSort(Obj.connectivityMatrix');
+            input = cell(size(Obj.connectivityMatrix,1),1);
+            
+            for i = 1:length(topoOrder)
+                if ~any(Obj.connectivityMatrix(i,:))
+                    currentInput = {};
+                else
+                    currentInput = input(Obj.connectivityMatrix(i,:));
+                end
+                input{i} = run(Obj.actionCell{i},currentInput(:));
+            end
+            %do nothing!  for now we return the "oinput" (i.e. output) cell
+            %array, but sinks should do something clever if theyu want to
+            %work in general
         end
         function varargout = drawBlock(varargin)
         end

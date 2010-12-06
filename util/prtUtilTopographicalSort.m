@@ -4,6 +4,7 @@ function seq = prtUtilTopographicalSort(adj)
 % INPUT:  adj  -  adjacency matrix
 % OUTPUT: seq  -  a topological ordered sequence of nodes
 %                 or an empty matrix if graph contains cycles
+
 N = size(adj);
 indeg = sum(adj,1);
 outdeg = sum(adj,2);
