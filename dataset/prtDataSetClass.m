@@ -617,7 +617,7 @@ classdef prtDataSetClass  < prtDataSetStandard
             for iFeature = 1:N
                 for jFeature = 1:N
                     
-                    subplot(N, N, (iFeature-1)*N + jFeature)
+                    subplot(N, N, (jFeature-1)*N + iFeature)
                     
                     if iFeature == jFeature
                         
@@ -645,11 +645,11 @@ classdef prtDataSetClass  < prtDataSetStandard
                     
                     legend('off')
                     grid on;
-                    if jFeature == 1
-                        ylabel(fNames{iFeature})
+                    if iFeature == 1
+                        ylabel(fNames{jFeature})
                     end
-                    if iFeature == N
-                        xlabel(fNames{jFeature})
+                    if jFeature == N
+                        xlabel(fNames{iFeature})
                     end
                     
                     if (iFeature==N && jFeature==N)

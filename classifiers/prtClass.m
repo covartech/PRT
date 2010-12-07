@@ -146,7 +146,91 @@ classdef prtClass < prtAction
             Obj.twoClassParadigm = lower(val);
         end
     end
-    
+
+    methods (Hidden = true)
+        function explore(Obj)
+            % explore() Explore the decision contours of classifiers
+            % operating on high dimensional data.
+            %   
+            % ds = prtDataGenIris; t = train(prtClassMAP('internalDecider',prtDecisionMap),ds); explore(t)
+            
+            assert(~isempty(Obj.isTrained),'explore() is only for trained classifiers.');
+            assert(~isempty(Obj.DataSet),'explore() requires that verboseStorage is true and therefore a prtDataSet is stored within the classifier.');
+            assert(~Obj.yieldsMaryOutput,'explore() is only for binary classifiers or classifiers that have an internal decider.');
+            
+            prtPlotUtilClassExploreGui(Obj)
+        end
+        
+        function varargout = plotBinaryConfidenceWithFixedFeatures(Obj,freeDims,featureValues)
+            
+            assert(Obj.isTrained,'plotWithFixedFeatures requires a trained classifier.');
+            assert(~Obj.yieldsMaryOutput,'plotWithFixedFeatures is currently only for classifiers that return a single decision statistic');
+            assert(numel(freeDims)==2 || numel(freeDims)==3,'Two or three freeDims must be specified.')
+            
+            if length(featureValues) == Obj.DataSetSummary.nFeatures
+                featureValues = featureValues(setdiff(1:Obj.DataSetSummary.nFeatures,freeDims));
+            else
+                assert(numel(featureValues) == (Obj.DataSetSummary.nFeatures-length(freeDims)),'Invalid feature values specified.');
+            end
+            
+            [linGrid,gridSize] = prtPlotUtilGenerateGrid(Obj.DataSetSummary.lowerBounds(freeDims), Obj.DataSetSummary.upperBounds(freeDims), Obj.PlotOptions.nSamplesPerDim);
+            
+            XLinGrid = nan(size(linGrid,1), Obj.DataSetSummary.nFeatures);
+            XLinGrid(:,freeDims) = linGrid;
+            XLinGrid(:,setdiff(1:Obj.DataSetSummary.nFeatures,freeDims)) = repmat(featureValues(:)',size(linGrid,1),1);
+            
+            OutputDataSet = run(Obj,prtDataSetClass(XLinGrid));
+            
+            if Obj.DataSetSummary.nClasses > 2
+                %internalDeciders output the right colors:
+                imageHandle = prtPlotUtilPlotGriddedEvaledClassifier(OutputDataSet.getObservations(), linGrid, gridSize, prtPlotUtilLightenColors(Obj.PlotOptions.colorsFunction(Obj.DataSetSummary.nClasses)));
+            else
+                imageHandle = prtPlotUtilPlotGriddedEvaledClassifier(OutputDataSet.getObservations(), linGrid, gridSize, Obj.PlotOptions.twoClassColorMapFunction());
+            end
+            
+            HandleStructure.imageHandle = imageHandle;
+            
+            if ~isempty(Obj.DataSet) && ~isempty(Obj.DataSet.name)
+                title(sprintf('%s (%s)',Obj.name,Obj.DataSet.name));
+            else
+                title(Obj.name);
+            end
+            varargout = {};
+            if nargout > 0
+                varargout = {HandleStructure};
+            end
+        end
+        
+        function produceMaryOutput = determineMaryOutput(ClassObj,DataSet)
+            % Determine if an Mary output will be provided by the classifier
+            % Determined by the dataSet the classifier capabilities and the            
+            % twoClassParadigm switch
+            if nargin ~= 2 || ~isa(DataSet,'prtDataSetBase')
+                error('prt:prtClass:determineMaryOutput:invalidInput','Invalid input.');
+            end
+            produceMaryOutput = false; % Default answer only do mary in special conditions
+            
+            if DataSet.isMary
+                % You have Mary data so you want an Mary output
+                if ClassObj.isNativeMary
+                    % You have Mary data and an Mary Classifier
+                    % so you want an Mary output
+                    produceMaryOutput = true;
+                else
+                    % Binary only classifier with Mary Data
+                    error('prt:prtClass:classifierDataSetMismatch','M-ary classification is not supported by this classifier. You will need to use prtClassBinaryToMaryOneVsAll() or an equivalent M-ary emulation classifier.');
+                end
+            elseif DataSet.isBinary && ClassObj.isNativeMary
+                % You have binary data and an Mary Classifier
+                % We must check twoClassParadigm to see what you want
+                produceMaryOutput = ~strcmpi(ClassObj.twoClassParadigm, 'binary');
+            end % Unary Data -> false
+            
+            if ClassObj.includesDecision
+                produceMaryOutput = false;
+            end
+        end
+    end
     methods (Access = protected, Hidden = true)
 
         function Obj = postTrainProcessing(Obj,DataSet)
@@ -192,38 +276,7 @@ classdef prtClass < prtAction
             
             OutputDataSet = postRunProcessing@prtAction(ClassObj, InputDataSet, OutputDataSet);
         end
-
-        function produceMaryOutput = determineMaryOutput(ClassObj,DataSet)
-            % Determine if an Mary output will be provided by the classifier
-            % Determined by the dataSet the classifier capabilities and the            
-            % twoClassParadigm switch
-            if nargin ~= 2 || ~isa(DataSet,'prtDataSetBase')
-                error('prt:prtClass:determineMaryOutput:invalidInput','Invalid input.');
-            end
-            produceMaryOutput = false; % Default answer only do mary in special conditions
-            
-            if DataSet.isMary
-                % You have Mary data so you want an Mary output
-                if ClassObj.isNativeMary
-                    % You have Mary data and an Mary Classifier
-                    % so you want an Mary output
-                    produceMaryOutput = true;
-                else
-                    % Binary only classifier with Mary Data
-                    error('prt:prtClass:classifierDataSetMismatch','M-ary classification is not supported by this classifier. You will need to use prtClassBinaryToMaryOneVsAll() or an equivalent M-ary emulation classifier.');
-                end
-            elseif DataSet.isBinary && ClassObj.isNativeMary
-                % You have binary data and an Mary Classifier
-                % We must check twoClassParadigm to see what you want
-                produceMaryOutput = ~strcmpi(ClassObj.twoClassParadigm, 'binary');
-            end % Unary Data -> false
-            
-            %torrine HACK:
-            if ClassObj.includesDecision
-                produceMaryOutput = false;
-            end
-        end
-                
+        
         function OutputDataSet = maryOutput2binaryOutput(ClassObj,OutputDataSet) %#ok
             % Default method to convert an Mary output to a Binary output 
             % Can/should be overloaded by classifiers
@@ -253,10 +306,10 @@ classdef prtClass < prtAction
         function HandleStructure = plotBinaryClassifierConfidence(Obj)
             
             [OutputDataSet, linGrid, gridSize] = runClassifierOnGrid(Obj);
-            %added this hack to make M-ary classifiers *with
-            %internalDeciders* output the right colors:
+            
             if Obj.DataSetSummary.nClasses > 2
-                imageHandle = prtPlotUtilPlotGriddedEvaledClassifier(OutputDataSet.getObservations(), linGrid, gridSize, Obj.PlotOptions.colorsFunction(Obj.DataSetSummary.nClasses));
+                %internalDeciders* output the right colors:
+                imageHandle = prtPlotUtilPlotGriddedEvaledClassifier(OutputDataSet.getObservations(), linGrid, gridSize, prtPlotUtilLightenColors(Obj.PlotOptions.colorsFunction(Obj.DataSetSummary.nClasses)));
             else
                 imageHandle = prtPlotUtilPlotGriddedEvaledClassifier(OutputDataSet.getObservations(), linGrid, gridSize, Obj.PlotOptions.twoClassColorMapFunction());
             end

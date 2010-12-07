@@ -1,8 +1,11 @@
-function prtPlotUtilDataSetExploreGuiWithNavigation(ds,plotInds)
-% Internal function,
-% xxx Need Help xxx - see prtDataSetClass.explore
+function prtPlotUtilClassExploreGui(class)
+% PRTPLOTUTILCLASSEXPLOREGUI
 
-if strcmpi(get(gcf,'tag'),'prtDataSetExplorerControl')
+assert(~isempty(class.isTrained),'prtPlotUtilClassExploreGui is only for trained classifiers.');
+assert(~isempty(class.DataSet),'prtPlotUtilClassExploreGui requires that verboseStorage is true and therefore a prtDataSet is stored within the classifier.');
+assert(~class.yieldsMaryOutput,'prtPlotUtilClassExploreGui is currently only for binary classifiers or classifiers that have an internal decider.');
+
+if strcmpi(get(gcf,'tag'),'prtDataSetClassControl')
     % Current figure is nav controls
     % so make a new one
     figure
@@ -10,7 +13,7 @@ end
 
 % Current figure is new (made by gcf or figure calls above) or existed
 plotAxes = gca; % Will make an axes if one isn't already there.
-if strcmpi(get(plotAxes,'tag'),'prtDataSetExploreAxes')
+if strcmpi(get(plotAxes,'tag'),'prtDataSetClassAxes')
     % We are calling explore into an existing explore axes
     % This is bad. We need to destroy the existing nav control for this
     % explorer window (if it still exists).
@@ -21,22 +24,28 @@ if strcmpi(get(plotAxes,'tag'),'prtDataSetExploreAxes')
 end
     
 
-if ds.nFeatures > 1
+if class.DataSetSummary.nFeatures > 1
     plotInds = [1 2 0];
-elseif ds.nFeatures > 0
+elseif class.DataSetSummary.nFeatures > 0
     plotInds = [1 0 0];
 else
-    error('prt:prtDataSetClassExplore','Dataset has zero features and cannot be explored');
+    error('prt:prtPlotUtilClassExploreGui','Dataset has zero features and cannot be explored');
 end
+
+
+featureNames = class.DataSet.getFeatureNames;
+classNames = class.DataSet.getClassNames;
+
+% Set Values
+setValues = mean(cat(1,class.DataSetSummary.upperBounds,class.DataSetSummary.lowerBounds),1);
 
 % Make control panel figure
 % Make axes current
 plotAxesFig = gcf;
 set(plotAxesFig,'visible','off');
 
-
-navFigSize = [300 250];
-navFigPad = [18 54];
+navFigSize = [300 400];
+navFigPad = [18 55];
 
 plotAxesFigPos = get(plotAxesFig,'position');
 % navFigPosTop = plotAxesFigPos(2)+plotAxesFigPos(4);
@@ -53,13 +62,13 @@ navFigPosLeft = plotAxesFigPos(1)+plotAxesOuterPos(1)-1+plotAxesOuterPos(3);
 navFigPos = cat(2,navFigPosLeft+navFigPad(1), navFigPosTop-navFigSize(2)+navFigPad(2), navFigSize(1), navFigSize(2));
 
 navFigH = figure('Number','Off',...
-    'Name','PRT Dataset Explorer Controls',...
+    'Name','PRT Class Explorer Controls',...
     'Menu','none',...
     'Toolbar','none',...
     'Units','pixels',...
     'Position',navFigPos,...
     'NextPlot','new',...
-    'tag','prtDataSetExplorerControl',...
+    'tag','prtDataSetClassControl',...
     'DockControls','off',...
     'visible','off');
 
@@ -71,10 +80,10 @@ invisibleAxes = axes('parent',navFigH,...
     'visible','off',...
     'handlevisibility','off'); %#ok<NASGU>
 
-tabGroupH = createTabGroup(ds);
+tabGroupH = createTabGroup();
 
 PlotHandles = []; % Add to all workspaces
-infoClickedInd = []; % Add to all workspaces
+clickedOnInd = [];
 remakePlot();
 
 % We don't display the plots until now because it is kind of slow to make
@@ -82,7 +91,10 @@ remakePlot();
 % completed windows
 set(plotAxesFig,'visible','on');
 set(navFigH,'visible','on');
-    
+
+yFeatureInds = setdiff(1:class.DataSetSummary.nFeatures,plotInds(1));
+zFeatureInds = setdiff(1:class.DataSetSummary.nFeatures,plotInds(plotInds>0));
+
     function plotAxesDeleteFunction(myHandle, evenData) %#ok<INUSD>
         try %#ok<TRYNC>
             close(navFigH)
@@ -94,14 +106,28 @@ set(navFigH,'visible','on');
 
     function featureSelectPopupCallback(myHandle, eventData, varargin)  %#ok<INUSL>
         cVal = get(myHandle,'value');
+        
         axisInd = varargin{1};
         
-        if axisInd > 2
-            cVal = cVal - 1;
+        switch axisInd
+            case 1
+                plotInds(axisInd) = cVal;
+                setYString(tabGroupH);
+                plotInds(2) = yFeatureInds(get(tabGroupH.yPopUp,'value'));
+                setZString(tabGroupH);
+                remakePlot();
+                
+            case 2
+                plotInds(axisInd) = yFeatureInds(cVal);
+                setZString(tabGroupH);
+                remakePlot();
+                
+            case 3
+                setZAxes(tabGroupH)
+                
+                %Update value selector
+                clickedOnInd = [];
         end
-        plotInds(axisInd) = cVal;
-        
-        remakePlot();
     end
 
     function updateVisibleClasses()
@@ -128,7 +154,20 @@ set(navFigH,'visible','on');
         actualPlotDims = plotInds(plotInds>=1);
         axes(plotAxes); %#ok<MAXES>
         
-        PlotHandles = plot(ds,actualPlotDims);
+        imageHandle = class.plotBinaryConfidenceWithFixedFeatures(actualPlotDims,setValues);
+        set(imageHandle.imageHandle,'HitTest','off');
+        hold on
+        subDataSet = class.DataSet.retainFeatures(actualPlotDims);
+        subDataSet = subDataSet.setFeatureNames(featureNames(actualPlotDims));
+        PlotHandles = plot(subDataSet);
+        
+        if ~isempty(clickedOnInd)
+            symbols = class.DataSet.PlotOptions.symbolsFunction(class.DataSetSummary.nClasses);
+            plot(setValues(actualPlotDims(1)), setValues(actualPlotDims(2)), symbols(class.DataSet.getTargetsClassInd(clickedOnInd)),'MarkerSize',class.DataSet.PlotOptions.symbolSize,'color',[0 0 0]);
+        end
+        
+        hold off
+        
         % Set the plotAxes delete function so that we delete the controls
         % when necessary.
         % We have to reset this each time
@@ -151,10 +190,10 @@ set(navFigH,'visible','on');
         displayLogical = cat(1,cData{:,2});
         
         if all(displayLogical)
-            data = ds.getFeatures(actualPlotDims);
+            data = class.DataSet.getFeatures(actualPlotDims);
         else
-            actualInds = ismember(ds.getTargetsClassInd, find(displayLogical));
-            data = ds.getObservations(actualInds,actualPlotDims);
+            actualInds = ismember(class.DataSet.getTargetsClassInd, find(displayLogical));
+            data = class.DataSet.getObservations(actualInds,actualPlotDims);
         end
 
         [rP,rD] = rotateDataAndClick(data);
@@ -168,37 +207,29 @@ set(navFigH,'visible','on');
         end
         
         displayInfo(clickedObsInd);
+
+        setValues = class.DataSet.getObservations(clickedObsInd);
+        clickedOnInd = clickedObsInd;
+        
+        remakePlot();
+        moveZAxesLine();
     end
     function displayInfo(clickedObsInd)
-        obsName = ds.getObservationNames(clickedObsInd);
+        obsName = class.DataSet.getObservationNames(clickedObsInd);
         
-        cClassInd = ds.getTargetsClassInd(clickedObsInd);
+        cClassInd = class.DataSet.getTargetsClassInd(clickedObsInd);
         
         if isempty(cClassInd)
             cString = sprintf('Closest Observation:\n\t Name: %s',obsName{1});
         else
-            className = ds.getClassNamesByClassInd(cClassInd);
+            className = class.DataSet.getClassNamesByClassInd(cClassInd);
             cString = sprintf('Closest Observation:\n\t Name: %s\t\nClass: %s',obsName{1},className{1});
         end
         
-        
         set(tabGroupH.infoText,'string',cString);
         
-        if length(ds.ObservationInfo) > clickedObsInd
-            infoClickedInd = clickedObsInd;
-            set(tabGroupH.infoButton,'enable','on');
-        else
-            set(tabGroupH.infoButton,'enable','off');
-        end
-        
     end
-    function infoToWorkspaceCallback(myHandle,eventData)  %#ok<INUSD>
-        
-        c = ds.ObservationInfo(infoClickedInd);
-        
-        assignin('base','prtPlotUtilDataSetExploreGuiWithNavigationTempVar',c);
-        openvar('prtPlotUtilDataSetExploreGuiWithNavigationTempVar');
-    end
+         
     function [rotatedData,rotatedClick] = rotateDataAndClick(data)
         % Used internally; from Click3dPoint from matlab central;
         % See prtExternal.ClickA3DPoint.()
@@ -276,32 +307,30 @@ set(navFigH,'visible','on');
     end
 
     
-    function H = createTabGroup(ds)
+    function H = createTabGroup()
         % Make control panel uitabs and uipanels
         H.navTabGroup = prtUtilUitabgroup('parent',navFigH);
         H.navTab(1) = prtUtilUitab(H.navTabGroup, 'title', 'Features');
         H.navTab(2) = prtUtilUitab(H.navTabGroup, 'title', 'Classes');
-        H.navTab(3) = prtUtilUitab(H.navTabGroup, 'title', 'Info');
+        H.navTab(3) = prtUtilUitab(H.navTabGroup, 'title', 'Info.');
         
         H.navPanel(1) = uipanel(H.navTab(1));
         H.navPanel(2) = uipanel(H.navTab(2));
         H.navPanel(3) = uipanel(H.navTab(3));
         
         % Make Feature Selection panel
-        featureNames = ds.getFeatureNames;
         H.xAxesLabel = uicontrol(H.navTab(1),'style','text',...
             'units','normalized',...
-            'position',[0.025 0.875 0.95 0.1],...
+            'position',[0.025 0.9124 0.95 0.0625],...
             'string','X Axis',...
             'FontWeight','bold',...
             'horizontalAlignment','left',...
             'FontUnits','normalized',...
-            'FontSize',0.5,...
             'FontSize',0.75);
         
         H.xPopUp = uicontrol(H.navTab(1),'style','popup',...
             'units','normalized',...
-            'position',[0.025 0.675 0.95 0.2],...
+            'position',[0.025 0.7874 0.95 0.125],...
             'string',featureNames,...
             'FontUnits','normalized',...
             'FontSize',0.5,...
@@ -309,7 +338,7 @@ set(navFigH,'visible','on');
         
         H.yAxesLabel = uicontrol(H.navTab(1),'style','text',...
             'units','normalized',...
-            'position',[0.025 0.55 0.95 0.1],...
+            'position',[0.025 0.6936 0.95 0.0625],...
             'string','Y Axis',...
             'FontWeight','bold',...
             'horizontalAlignment','left',...
@@ -318,7 +347,7 @@ set(navFigH,'visible','on');
         
         H.yPopUp = uicontrol(H.navTab(1),'style','popup',...
             'units','normalized',...
-            'position',[0.025 0.35 0.95 0.2],...
+            'position',[0.025 0.5686 0.95 0.125],...
             'string',featureNames,...
             'FontUnits','normalized',...
             'FontSize',0.5,...
@@ -327,8 +356,8 @@ set(navFigH,'visible','on');
         
         H.zAxesLabel = uicontrol(H.navTab(1),'style','text',...
             'units','normalized',...
-            'position',[0.025 0.225 0.95 0.1],...
-            'string','Z Axis',...
+            'position',[0.025 0.4748 0.95 0.0625],...
+            'string','Other Dimension Values:',...
             'FontWeight','bold',...
             'horizontalAlignment','left',...
             'FontUnits','normalized',...
@@ -336,24 +365,25 @@ set(navFigH,'visible','on');
         
         H.zPopUp = uicontrol(H.navTab(1),'style','popup',...
             'units','normalized',...
-            'position',[0.025 0.025 0.95 0.2],...
-            'string',cat(1,{'None'}, featureNames),...
+            'position',[0.025 0.3498 0.95 0.125],...
             'FontUnits','normalized',...
             'FontSize',0.5,...
             'callback',{@featureSelectPopupCallback 3});
         
         
-        set(H.xPopUp,'value',plotInds(1)) % Always have at least 1 features
-        if plotInds(2) > 0
-            set(H.yPopUp,'value',plotInds(2))
-        else
-            set(H.yPopUp,'value',1) % None;
-        end
-        if plotInds(3) > 0
-            set(H.zPopUp,'value',plotInds(3)+1)
-        else
-            set(H.zPopUp,'value',1) % None;
-        end
+        H.zAxes = axes('parent',H.navTab(1),...
+                       'units','normalized',...
+                       'position',[0.1 0.131 0.8 0.1875]);
+        
+        H.zLinePlot = plot(H.zAxes,0,1,'k'); %Will be quickly changed. 
+                   
+        set(H.xPopUp,'value',plotInds(1))
+        set(H.yPopUp,'value',plotInds(2))
+        set(H.zPopUp,'value',1)
+        
+        setZString(H);
+        setZAxes(H);
+        setYString(H);
         
         % Make classes uitable with tick boxes
         H.uitable = uitable('parent',H.navPanel(2),...
@@ -364,10 +394,10 @@ set(navFigH,'visible','on');
             'RowName',[],...
             'ColumnName',{'Class' 'Plot'},...
             'FontUnits','normalized',...
-            'FontSize',0.1,...
+            'FontSize',0.05,...
             'SelectionHighlight','off',...
             'CellEditCallback',@uitableEditFun,...
-            'data',cat(2,ds.getClassNames,num2cell(true(ds.nClasses,1))));
+            'data',cat(2,classNames,num2cell(true(length(classNames),1))));
         
         % Column widths must be specified in pixels
         set(H.uitable,'units','pixels')
@@ -380,21 +410,81 @@ set(navFigH,'visible','on');
         H.infoText = uicontrol('style','text',...
                                'parent',H.navPanel(3),...
                                'units','normalized',...
-                               'position',[0.025 0.125 0.95 0.85],...
+                               'position',[0.025 0.025 0.95 0.95],...
                                'FontSize',10,...
                                'FontName',get(0,'FixedWidthFontName'),...
                                'HorizontalAlignment','Left',...
                                'string','Click in the axes to inspect observations.');
-                           
+    end
+
+    function setZString(H)
+        oldVal = get(H.zPopUp,'value');
+        featureVec = 1:class.DataSetSummary.nFeatures;
+        preferedNewVal = featureVec(oldVal);
+        newFeatureVec = setdiff(featureVec,plotInds(plotInds>0));
         
-        H.infoButton = uicontrol('parent',H.navPanel(3),...
-                                 'string','View Obs. Info',...
-                                 'units','normalized',...
-                                 'position',[0.2 0.025 0.6 0.095],...
-                                 'callback',@infoToWorkspaceCallback,...
-                                 'enable','off');
-                             
-                             
+        if ismember(preferedNewVal,newFeatureVec)
+            newVal = find(preferedNewVal==newFeatureVec);
+        else
+            newVal = 1;
+        end
+        
+        set(H.zPopUp,'value',newVal,'string',featureNames(newFeatureVec));
+        zFeatureInds = newFeatureVec;
+    end
+    function setYString(H)
+        oldVal = get(H.zPopUp,'value');
+        featureVec = 1:class.DataSetSummary.nFeatures;
+        preferedNewVal = featureVec(oldVal);
+        newFeatureVec = setdiff(featureVec,plotInds(1));
+        
+        if ismember(preferedNewVal,newFeatureVec)
+            newVal = find(preferedNewVal==newFeatureVec);
+        else
+            newVal = 1;
+        end
+        
+        set(H.yPopUp,'value',newVal,'string',featureNames(newFeatureVec));
+        yFeatureInds = newFeatureVec;
+    end
+
+    function setZAxes(H)
+        
+        %set(navFigH,'NextPlot','replace');
+        iFeature = zFeatureInds(get(H.zPopUp,'value'));
+        
+        nKSDsamples = 500;
+        nClasses = class.DataSetSummary.nClasses;
+        xLoc = linspace(class.DataSetSummary.lowerBounds(iFeature), class.DataSetSummary.upperBounds(iFeature), nKSDsamples);
+                        
+        F = zeros([nKSDsamples, nClasses]);
+        for cY = 1:nClasses
+            F(:,cY) = pdf(mle(prtRvKde,class.DataSet.getObservationsByClassInd(cY,iFeature)),xLoc(:));
+        end
+        colors = class.DataSet.PlotOptions.colorsFunction(class.DataSetSummary.nClasses);
+        hold on
+        lineHandles = plot(H.zAxes,xLoc,F);
+        for iLine = 1:length(lineHandles)
+            set(lineHandles(iLine),'color',colors(iLine,:));
+        end
+        xlim([class.DataSetSummary.lowerBounds(iFeature), class.DataSetSummary.upperBounds(iFeature)]);
+                        
+        ylim([0 max(F(:))]);
+        
+        v = axis;
+        set(H.zLinePlot,'XData',setValues(iFeature)*ones(2,1),'YData',v(3:4));
+        hold off
+        
+        set(H.zAxes,'XTick',setValues(iFeature),'YTick',[]);
+        set(navFigH,'NextPlot','new');
+    end
+
+    function moveZAxesLine()
+        H = tabGroupH;
+        iFeature = zFeatureInds(get(H.zPopUp,'value'));
+        v = axis(H.zAxes);
+        set(H.zLinePlot,'XData',setValues(iFeature)*ones(2,1),'YData',v(3:4));
+        set(H.zAxes,'XTick',setValues(iFeature),'YTick',[]);
     end
 
 end

@@ -756,7 +756,7 @@ classdef prtDataSetStandard < prtDataSetBase
             if isempty(cStruct)
                 startingFieldNames = {};
             else
-                startingFieldNames = fieldNames(cStruct);
+                startingFieldNames = fieldnames(cStruct);
             end
             
             for iParam = 1:length(paramNames)
