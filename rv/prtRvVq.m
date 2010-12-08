@@ -108,7 +108,7 @@ classdef prtRvVq < prtRv
             assert(ndims(val)==2 && isnumeric(val),'means must be a 2D numeric matrix.')
             
             if ~isempty(R.InternalDiscreteDepHelp.probabilities)
-                assert(numel(R.InternalDiscreteDepHelp.probabilities) == size(val,1),'size mismatch between probabilities and means.')
+                assert(numel(R.InternalDiscreteDepHelp.probabilities) == size(val,1),'probabilities indicate that %d means of arbitrary dimension are required, but %d means of dimensionality %d were provided',length(R.InternalDiscreteDepHelp.probabilities),size(val,1),size(val,2));
             end
             
             R.InternalDiscrete.symbols = val;
