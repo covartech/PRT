@@ -1,38 +1,35 @@
-classdef prtPreProcMinMaxRows < prtPreProc
-    % prtPreProcMinMaxRows  Min (0), Max (1) all rows of the data
+classdef prtPreProcEnergyNorm < prtPreProc
+    % prtPreProcEnergyNorm  Normalize the energy of all rows of the data
     %
-    %   LOGDISC = prtPreProcMinMaxRows creates a min/max rows pre
-    %   processing object. A prtPreProcMinMaxRows object linearly scales
-    %   the input observations so that each row (observation) has a min of
-    %   0 and a max of 1.
+    %   EnergyNorm = prtPreProcEnergyNorm creates an energy normalize rows
+    %   pre processing object. A prtPreProcEnergyNorm object scales
+    %   the input observations so that each row has unit energy.
     % 
-    %   prtPreProcMinMaxRows has no user settable properties.
+    %   prtPreProcEnergyNorm has no user settable properties.
     %
-    %   A prtPreProcMinMaxRows object also inherits all properties and
+    %   A prtPreProcEnergyNorm object also inherits all properties and
     %   functions from the prtAction class.
     %
-    %   Note for two-dimensional data sets, min/max rows will result in all
-    %   observations taking values 0 or 1.
     %
     %   Example:
     %
     %   dataSet = prtDataGenIris;       
     %   dataSet = dataSet.retainFeatures(1:3);
-    %   logDisc = prtPreProcMinMaxRows;  
+    %   energyNorm = prtPreProcEnergyNorm;  
     %                                  
-    %   logDisc = logDisc.train(dataSet);  
-    %   dataSetNew = logDisc.run(dataSet); 
+    %   energyNorm = energyNorm.train(dataSet);  
+    %   dataSetNew = energyNorm.run(dataSet); 
     % 
     %   subplot(2,1,1); plot(dataSet);
     %   title('Original Data');
     %   subplot(2,1,2); plot(dataSetNew);
-    %   title('MinMaxRows Data');
+    %   title('EnergyNorm Data');
     %
     
     properties (SetAccess=private)
         % Required by prtAction
-        name = 'MinMax Rows'
-        nameAbbreviation = 'MMR'
+        name = 'Energy Norm Rows'
+        nameAbbreviation = 'ENR'
         isSupervised = false;
     end
     
@@ -44,8 +41,9 @@ classdef prtPreProcMinMaxRows < prtPreProc
     end
     
     methods
-        % Allow for string, value pairs
-        function Obj = prtPreProcMinMaxRows(varargin)
+        
+          % Allow for string, value pairs
+        function Obj = prtPreProcEnergyNorm(varargin)
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
         end
     end
@@ -63,9 +61,7 @@ classdef prtPreProcMinMaxRows < prtPreProc
             
             theData = DataSet.getObservations;
             
-            minVals = min(theData,[],2);
-            maxVals = max(theData,[],2);
-            theData = bsxfun(@rdivide,bsxfun(@minus,theData,minVals),(maxVals-minVals));
+            theData = bsxfun(@rdivide,theData,sqrt(sum(theData.^2,2)));
             DataSet = DataSet.setObservations(theData);
         end
         

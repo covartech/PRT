@@ -102,14 +102,23 @@ classdef prtRvVq < prtRv
                 assert(size(R.InternalDiscreteDepHelp.symbols,1) == numel(val),'size mismatch between probabilities and means.')
             end
             R.InternalDiscreteDepHelp.probabilities = val(:);
+            R.nCategories = numel(val);
         end
         
         function R = set.means(R,val)
             assert(ndims(val)==2 && isnumeric(val),'means must be a 2D numeric matrix.')
             
             if ~isempty(R.InternalDiscreteDepHelp.probabilities)
-                assert(numel(R.InternalDiscreteDepHelp.probabilities) == size(val,1),'probabilities indicate that %d means of arbitrary dimension are required, but %d means of dimensionality %d were provided',length(R.InternalDiscreteDepHelp.probabilities),size(val,1),size(val,2));
+                if  numel(R.InternalDiscreteDepHelp.probabilities) ~= size(val,1)
+                    if isvector(val)
+                        error('prt:prtRvVq','means must be an NxD matrix where D is the dimensionality and N is the number of components. You may need to transpose the supplied value.')
+                    else
+                        error('prt:prtRvVq','size mismatch between probabilities and means.')
+                    end
+                end
             end
+            
+            R.nCategories = size(val,1);
             
             R.InternalDiscrete.symbols = val;
             R.meanDepHelper = val;

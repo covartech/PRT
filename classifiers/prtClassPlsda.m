@@ -56,9 +56,12 @@ classdef prtClassPlsda < prtClass
     end
     
     properties (SetAccess=protected)
-        xMeans  % The xMeans
-        yMeans  % The yMeans
-        Bpls    % The regression weights
+        xMeans   % The xMeans
+        yMeans   % The yMeans
+        Bpls     % The prediction weights
+        loadings % T
+        xFactors % P
+        yFactors % Q
     end
     
     methods
@@ -87,7 +90,7 @@ classdef prtClassPlsda < prtClass
             X = bsxfun(@minus, X, Obj.xMeans);
             Y = bsxfun(@minus, Y, Obj.yMeans);
             
-            Obj.Bpls = prtUtilSimpls(X,Y,Obj.nComponents);
+            [Obj.Bpls, ~, Obj.xFactors, Obj.yFactors, Obj.loadings] = prtUtilSimpls(X,Y,Obj.nComponents);
         end
         
         function DataSet = runAction(Obj,DataSet)

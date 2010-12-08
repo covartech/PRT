@@ -152,7 +152,15 @@ classdef prtClass < prtAction
             % explore() Explore the decision contours of classifiers
             % operating on high dimensional data.
             %   
-            % ds = prtDataGenIris; t = train(prtClassMAP('internalDecider',prtDecisionMap),ds); explore(t)
+            % Examples:
+            %   ds = prtDataGenIris;
+            %   t = train(prtClassMAP('internalDecider',prtDecisionMap),ds);
+            %   explore(t);
+            %
+            %   ds = catFeatures(prtDataGenUnimodal,prtDataGenBimodal);
+            %   t = train(prtClassMAP,ds);
+            %   explore(t)
+            
             
             assert(~isempty(Obj.isTrained),'explore() is only for trained classifiers.');
             assert(~isempty(Obj.DataSet),'explore() requires that verboseStorage is true and therefore a prtDataSet is stored within the classifier.');

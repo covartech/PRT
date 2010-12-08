@@ -146,6 +146,9 @@ set(navFigH,'visible','on');
 
     function plotAxesOnClick(myHandle,eventData)  %#ok<INUSD>
         actualPlotDims = plotInds(plotInds>=1);
+        if ~ishandle(navFigH)
+            return
+        end
         
         cData = get(tabGroupH.uitable,'data');
         displayLogical = cat(1,cData{:,2});
@@ -296,7 +299,6 @@ set(navFigH,'visible','on');
             'FontWeight','bold',...
             'horizontalAlignment','left',...
             'FontUnits','normalized',...
-            'FontSize',0.5,...
             'FontSize',0.75);
         
         H.xPopUp = uicontrol(H.navTab(1),'style','popup',...

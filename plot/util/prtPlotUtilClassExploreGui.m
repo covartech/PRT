@@ -123,7 +123,7 @@ zFeatureInds = setdiff(1:class.DataSetSummary.nFeatures,plotInds(plotInds>0));
                 remakePlot();
                 
             case 3
-                setZAxes(tabGroupH)
+                tabGroupH = setZAxes(tabGroupH);
                 
                 %Update value selector
                 clickedOnInd = [];
@@ -185,6 +185,10 @@ zFeatureInds = setdiff(1:class.DataSetSummary.nFeatures,plotInds(plotInds>0));
 
     function plotAxesOnClick(myHandle,eventData)  %#ok<INUSD>
         actualPlotDims = plotInds(plotInds>=1);
+        
+        if ~ishandle(navFigH)
+            return
+        end
         
         cData = get(tabGroupH.uitable,'data');
         displayLogical = cat(1,cData{:,2});
@@ -368,6 +372,7 @@ zFeatureInds = setdiff(1:class.DataSetSummary.nFeatures,plotInds(plotInds>0));
             'position',[0.025 0.3498 0.95 0.125],...
             'FontUnits','normalized',...
             'FontSize',0.5,...
+            'string',{'temp'},... % Will be quickly changed.
             'callback',{@featureSelectPopupCallback 3});
         
         
@@ -375,14 +380,18 @@ zFeatureInds = setdiff(1:class.DataSetSummary.nFeatures,plotInds(plotInds>0));
                        'units','normalized',...
                        'position',[0.1 0.131 0.8 0.1875]);
         
+        axes(H.zAxes) %#ok<MAXES>
+        hold on
         H.zLinePlot = plot(H.zAxes,0,1,'k'); %Will be quickly changed. 
-                   
+        H.zDensityLinePlot = plot(H.zAxes,zeros(2,1),ones(2,class.DataSetSummary.nClasses),'w'); %Will be quickly changed. 
+        hold off
+        
         set(H.xPopUp,'value',plotInds(1))
         set(H.yPopUp,'value',plotInds(2))
         set(H.zPopUp,'value',1)
         
         setZString(H);
-        setZAxes(H);
+        H = setZAxes(H);
         setYString(H);
         
         % Make classes uitable with tick boxes
@@ -419,36 +428,45 @@ zFeatureInds = setdiff(1:class.DataSetSummary.nFeatures,plotInds(plotInds>0));
 
     function setZString(H)
         oldVal = get(H.zPopUp,'value');
-        featureVec = 1:class.DataSetSummary.nFeatures;
-        preferedNewVal = featureVec(oldVal);
-        newFeatureVec = setdiff(featureVec,plotInds(plotInds>0));
+        oldString = get(H.zPopUp,'string');
+        oldStringVal = oldString{oldVal};
         
-        if ismember(preferedNewVal,newFeatureVec)
-            newVal = find(preferedNewVal==newFeatureVec);
-        else
+        featureVec = 1:class.DataSetSummary.nFeatures;
+        newFeatureVec = setdiff(featureVec,plotInds(plotInds>0));
+        newString = featureNames(newFeatureVec);
+        
+        [consistentString, newVal] = ismember(oldStringVal,newString);
+        
+        if ~consistentString
             newVal = 1;
         end
         
-        set(H.zPopUp,'value',newVal,'string',featureNames(newFeatureVec));
+        set(H.zPopUp,'value',newVal,'string',newString);
         zFeatureInds = newFeatureVec;
+        
+        %if ~isequal(preferedNewVal,
+        
     end
     function setYString(H)
-        oldVal = get(H.zPopUp,'value');
-        featureVec = 1:class.DataSetSummary.nFeatures;
-        preferedNewVal = featureVec(oldVal);
-        newFeatureVec = setdiff(featureVec,plotInds(1));
+        oldVal = get(H.yPopUp,'value');
+        oldString = get(H.yPopUp,'string');
+        oldStringVal = oldString{oldVal};
         
-        if ismember(preferedNewVal,newFeatureVec)
-            newVal = find(preferedNewVal==newFeatureVec);
-        else
+        featureVec = 1:class.DataSetSummary.nFeatures;
+        newFeatureVec = setdiff(featureVec,plotInds(1));
+        newString = featureNames(newFeatureVec);
+        
+        [consistentString, newVal] = ismember(oldStringVal,newString);
+        
+        if ~consistentString
             newVal = 1;
         end
         
-        set(H.yPopUp,'value',newVal,'string',featureNames(newFeatureVec));
+        set(H.yPopUp,'value',newVal,'string',newString);
         yFeatureInds = newFeatureVec;
     end
 
-    function setZAxes(H)
+    function H = setZAxes(H)
         
         %set(navFigH,'NextPlot','replace');
         iFeature = zFeatureInds(get(H.zPopUp,'value'));
@@ -462,13 +480,20 @@ zFeatureInds = setdiff(1:class.DataSetSummary.nFeatures,plotInds(plotInds>0));
             F(:,cY) = pdf(mle(prtRvKde,class.DataSet.getObservationsByClassInd(cY,iFeature)),xLoc(:));
         end
         colors = class.DataSet.PlotOptions.colorsFunction(class.DataSetSummary.nClasses);
+        
+        if any(ishandle(H.zDensityLinePlot))
+            delete(H.zDensityLinePlot(ishandle(H.zDensityLinePlot)));
+        end
+        
         hold on
         lineHandles = plot(H.zAxes,xLoc,F);
         for iLine = 1:length(lineHandles)
             set(lineHandles(iLine),'color',colors(iLine,:));
         end
         xlim([class.DataSetSummary.lowerBounds(iFeature), class.DataSetSummary.upperBounds(iFeature)]);
-                        
+               
+        H.zDensityLinePlot = lineHandles;
+        
         ylim([0 max(F(:))]);
         
         v = axis;
@@ -485,6 +510,12 @@ zFeatureInds = setdiff(1:class.DataSetSummary.nFeatures,plotInds(plotInds>0));
         v = axis(H.zAxes);
         set(H.zLinePlot,'XData',setValues(iFeature)*ones(2,1),'YData',v(3:4));
         set(H.zAxes,'XTick',setValues(iFeature),'YTick',[]);
+        
+        axesChildren = get(H.zAxes,'children');
+        
+        lineHInd = find(axesChildren == H.zLinePlot);
+        
+        set(H.zAxes,'children',cat(1, H.zLinePlot ,axesChildren(setdiff(1:length(axesChildren),lineHInd))));
     end
 
 end
