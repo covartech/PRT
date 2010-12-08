@@ -39,7 +39,7 @@ classdef prtDecisionBinarySpecifiedPf < prtDecisionBinary
             end
             [rocPf,pd,thresh] = prtScoreRoc(dataSet.getObservations,dataSet.getTargets); %#ok<ASGLU>
             
-            index = find(rocPf < Obj.pf,1);
+            index = find(rocPf < Obj.pf,1,'last');
             Obj.threshold = thresh(index);
             Obj.classList = dataSet.uniqueClasses;
         end

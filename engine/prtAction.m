@@ -153,6 +153,9 @@ classdef prtAction
             %   OBJ = OBJ.train(DataSet) trains the prtAction object using
             %   the prtDataSet DataSet
             
+            if ~isscalar(Obj)
+                error('prt:prtAction:NonScalarAction','train method expects scalar prtAction objects, prtAction provided was of size %s',mat2str(size(Obj)));
+            end
             if ~isa(DataSet,'prtDataSetBase')
                 error('prt:prtAction:prtDataSetBase','DataSet provided to prtAction %s''s train() is not a prtDataSetBase, DataSet is a %s',class(Obj),class(DataSet));
             end
@@ -361,11 +364,13 @@ classdef prtAction
             %   
             %   DataSet = postRunProcessing(ClassObj, DataSet)
             
-            if ClassObj.isCrossValidateValid
-                DataSetOut = DataSetOut.setTargets(DataSetIn.getTargets);
-                DataSetOut = DataSetOut.copyDescriptionFieldsFrom(DataSetIn);
+            if DataSetIn.nObservations > 0
+                if ClassObj.isCrossValidateValid
+                    DataSetOut = DataSetOut.setTargets(DataSetIn.getTargets);
+                    DataSetOut = DataSetOut.copyDescriptionFieldsFrom(DataSetIn);
+                end
+                DataSetOut = ClassObj.updateDataSetFeatureNames(DataSetOut);
             end
-            DataSetOut = ClassObj.updateDataSetFeatureNames(DataSetOut);
         end
         
     end
@@ -386,6 +391,8 @@ classdef prtAction
     methods (Hidden)
         function [optimizedAction,performance] = optimize(Obj,DataSet,objFn,parameterName,parameterValues)
             %[optimizedAction,performance] = optimize(Obj,DataSet,objFn,parameterName,parameterValues)
+            %  objFn = @(act,ds) = prtEvalAuc(act,ds,3);
+            
             
             if isnumeric(parameterValues);
                 parameterValues = num2cell(parameterValues);
