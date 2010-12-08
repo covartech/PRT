@@ -698,36 +698,53 @@ classdef prtDataSetStandard < prtDataSetBase
         
         
         function obj = select(obj, selectFunction)
-            % Select Observations to retain by specifying a function that
-            % is evaluated on each obesrvation Info structure
-            % selectFunction must accepts one input, the
-            % ObservationInfo structure of a single observation
-            % selectionFunction must supply one output, a 1x1 logical
+            % Select observations to retain by specifying a function
+            %   The specified function is evaluated on each obesrvation.
+            % 
+            % selectedDs = ds.select(selectFunction);
+            % 
+            % There are two ways to define selectionFunction
+            %   One input, One logical vector output
+            %       selectFunction recieves the input data set and must
+            %       output a nObservations by 1 logical vector.
+            %   One input, One logical scalar output
+            %       selectFunction recieves the ObservatioinInfo structure
+            %       of a single observation.
             %
-            % DS = prtDataGenIris;
-            % DS = DS.setObservationInfo('asdf',randn(DS.nObservations,1),'qwer',randn(DS.nObservations,1),'poiu',randn(DS.nObservations,10),'lkjh',mat2cell(randn(DS.nObservations,1),ones(DS.nObservations,1),1),'mnbv',mat2cell(randn(DS.nObservations,10),ones(DS.nObservations,1),10));
-            % DS2 = DS.select(@(I)I.asdf > 0.5);
+            % Examples:
+            %   ds = prtDataGenIris;
+            %   ds = ds.setObservationInfo('asdf',randn(ds.nObservations,1));
+            %   
+            %   dsSmallObservationInfoSelect = ds.select(@(ObsInfo)ObsInfo.asdf > 0.5);
+            %   
+            %   dsSmallObservationSelect = ds.select(@(inputDs)inputDs.getObservations(:,1)>6);
+
+            assert(isa(selectFunction, 'function_handle'),'selectFunction must be a function handle.');
+            assert(nargin(selectFunction)==1,'selectFunction must be a function handle that take a single input.');
             
-            if isempty(obj.ObservationInfo)
-                error('prt:prtDataSetStandardSelect','select requires ObservationInfo. This data set object does not contain ObservationInfo.')
-            end
-            
-            keep = false(obj.nObservations,1);
-            for iObs = 1:obj.nObservations
-                switch nargin(selectFunction)
-                    case 1
-                        cOut = selectFunction(obj.ObservationInfo(iObs));
-                    case 2
-                        cOut = selectFunction(obj.ObservationInfo(iObs),obj);
-                    otherwise
-                        error('prt:prtDataSetStandardSelect','selectFunction must be a function that accepts either one or two inputs.')
+            try
+                keep = selectFunction(obj);
+                assert(size(keep,1)==obj.nObservations);
+                assert(islogical(keep) || (isnumeric(keep) && all(ismember(keep,[0 1]))));
+            catch %#ok<CTCH>
+                if isempty(obj.ObservationInfo)
+                    error('prt:prtDataSetStandard:select','selectFunction did not return a logical vector with nObservation elements and this data set object does not contain ObservationInfo. Therefore this selecFunction is not valid.')
                 end
-                assert(numel(cOut)==1 && (islogical(cOut) || (isnumeric(cOut) && (cOut==0 || cOut==1))),'selectionFunction must output a 1x1 logical');
-                keep(iObs) = cOut;
+                
+                keep = false(obj.nObservations,1);
+                for iObs = 1:obj.nObservations
+                    try
+                        cOut = selectFunction(obj.ObservationInfo(iObs));
+                    catch %#ok<CTCH>
+                        error('prt:prtDataSetStandard:select','selectFunction did not return a logical vector with nObservation elements and there was an evaluation error using this function. See help prtDataSetStandard/select');
+                    end
+                    assert(numel(cOut)==1,'selectFunction did not return a logical vector with nObservation elements but also did not return scalar logical.');
+                    assert((islogical(cOut) || (isnumeric(cOut) && (cOut==0 || cOut==1))),'selectFunction that returns one output must output a 1x1 logical.');
+                    
+                    keep(iObs) = cOut;
+                end
             end
-            
             obj = obj.retainObservations(keep);
-            
         end
         
         function obj = setObservationInfo(obj,varargin)
