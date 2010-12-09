@@ -16,7 +16,6 @@ classdef prtDecisionBinarySpecifiedPf < prtDecisionBinary
     end
     properties (Hidden = true)
         threshold
-        uniqueClasses
     end
     methods
         function obj = set.pf(obj,value)
@@ -47,9 +46,6 @@ classdef prtDecisionBinarySpecifiedPf < prtDecisionBinary
     methods
         function threshold = getThreshold(Obj)
             threshold = Obj.threshold;
-        end
-        function uniqueClasses = getUniqueClasses(Obj)
-            uniqueClasses = Obj.uniqueClasses;
         end
     end
 end
