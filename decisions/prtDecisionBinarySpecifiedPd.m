@@ -1,5 +1,57 @@
 classdef prtDecisionBinarySpecifiedPd < prtDecisionBinary
-    % xxx NEED HELP xxx
+    % prtDecisionBinarySpecifiedPd Decision object for a specified Pd
+    %
+    % prtDec = prtDecisionBinarySpecifiedPd creates a prtDecisionBinarySpecifiedPd
+    % object, which can be used find a decision threshold in a binary
+    % classification problem for a specific probability of detection Pd.
+    %
+    % A prtDecisionBinarySpecifiedPd has the following member:
+    %
+    % pd - The specified probability of detection, which must be between 0
+    % and 1.
+    %
+    % prtDecision objects are intended to be used either as members of
+    % prtAlgorithm or prtClass objects.
+    %
+    % Example 1:
+    %
+    % ds = prtDataGenBimodal;              % Load a data set
+    % classifier = prtClassKnn;            % Create a clasifier
+    % classifier = classifier.train(ds);   % Train the classifier
+    % yOutClassifier = classifier.run(ds); % Run the classifier
+    %
+    % % Construct a prtAlgorithm object consisting of a prtClass object and
+    % % a prtDecision object
+    % dec = prtDecisionBinarySpecifiedPd;
+    % dec.pd = .7;   % Set the desired probility of detection.
+    % algo = prtClassKnn + dec;
+    %
+    % algo = algo.train(ds);        % Train the algorithm
+    % yOutAlgorithm = algo.run(ds); % Run the algorithm
+    %
+    % % Plot and compare the results
+    % subplot(2,1,1); stem(yOutClassifier.getObservations); title('KNN Output');
+    % subplot(2,1,2); stem(yOutAlgorithm.getObservations); title('KNN + Decision Output');
+    %
+    % Example 2:
+    %
+    % ds = prtDataGenBimodal;              % Load a data set
+    % classifier = prtClassKnn;            % Create a clasifier
+    % classifier = classifier.train(ds);   % Train the classifier
+    %
+    % % Plot the trained classifier
+    % subplot(2,1,1); plot(classifier); title('KNN');
+    %
+    % % Set the classifiers internealDecider to be a prtDecsion object
+    % classifier.internalDecider = dec;
+    %
+    % classifier = classifier.train(ds); % Train the classifier
+    % subplot(2,1,2); plot(classifier); title('KNN + Decision');
+    %
+    % See also: prtDecisionBinary, prtDecisionBinaryMinPe,
+    % ptDecisionBinarySpecifiedPf, prtDecisionMap
+    
+    
     %
     % prtDecisionBinarySpecifiedPd prt Decision action to find a threshold in a
     % binary problem to approximately acheive a specified probability of
@@ -7,12 +59,12 @@ classdef prtDecisionBinarySpecifiedPd < prtDecisionBinary
     %
     
     properties (SetAccess = private)
-        name = 'SpecifiedPd'
-        nameAbbreviation = 'SpecPd';
-        isSupervised = true;
+        name = 'SpecifiedPd'   %SpecifiedPd
+        nameAbbreviation = 'SpecPd'; % SpecPd
+        isSupervised = true;  % True
     end
     properties
-        pd
+        pd  % The desired probability of detection
     end
     properties (Hidden = true)
         threshold
@@ -34,7 +86,7 @@ classdef prtDecisionBinarySpecifiedPd < prtDecisionBinary
         function Obj = trainAction(Obj,dataSet)
             
             if dataSet.nFeatures > 1
-                error('prt:prtDecisionBinaryMinPe','prtDecisionBinaryMinPe can not be used on algorithms that output multi-column results; consider using prtDecisionMap instead');
+                error('prt:prtDecisionBinarySpecifiedPd','prtDecisionBinarySpecifiedPd can not be used on algorithms that output multi-column results; consider using prtDecisionMap instead');
             end
             [rocPf,rocPd,thresh] = prtScoreRoc(dataSet.getObservations,dataSet.getTargets); %#ok<ASGLU>
             thresh = thresh(:);

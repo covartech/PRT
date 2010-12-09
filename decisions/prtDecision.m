@@ -1,8 +1,12 @@
 classdef prtDecision < prtAction
-    % xxx NEED HELP xxx
+    % prtDecision Base class for sll prt decision objects
     %
-    % Decisions take the ooutputs of classifiers or clusterers and turn
-    % them into class labels (or cluster labels).  The output of a decider
+    %  This is a base class from which all prt decision objects inherit. It
+    %  cannot be instantiated. prtDecision objects inherit the RUN function
+    %  from prtAction objects. 
+    %
+    % prtDecision objects accept the outputs of classifiers or clusterers
+    % and return class or cluster labels.  The output of a prtDecision 
     % object's run function is always a nObservations x 1 data set where
     % the observations are integer valued and specify the hypothesized
     % class for each observation
@@ -13,25 +17,40 @@ classdef prtDecision < prtAction
     %
     % Or as the internalDecider object inside a prtClass object:
     %
-    % myKnn = prtClassKnn;
-    % myKnn.internalDecider = prtDecisionBinaryMinPe;
-    %
+    %  myKnn = prtClassKnn;
+    %  myKnn.internalDecider = prtDecisionBinaryMinPe;
+    %  myKnn = myKnn.train(dsTrain);
+    % 
     % In the first case, the resulting object is a prtAlgorithm, which
-    % changes the behavior of "PLOT", for example.  In the second case, the
-    % decision is incorporated into the classifier, and the decision
-    % contours can be plotted easily.  Compare:
+    % changes the behavior of PLOT.  In the second case, the decision is
+    % incorporated into the classifier, allowing the decision contours to
+    % be plotted easily.
+    %
+    % Note that the regardless of how one uses a decider, the outputs of
+    % the RUN function should be identical.
+    %
+    %  % Example 1:
+    % 
+    % % This example demonstrates use of a prtDecision object to perform
+    % % class labeling as part of a prtAlgorithm
     %
     % dsTrain = prtDataGenUnimodal;
     % dsTest = prtDataGenUnimodal;
+    % algo = prtClassKnn + prtDecisionBinaryMinPe;
     % algo = algo.train(dsTrain);
-    % myKnn = myKnn.train(dsTrain);
-    % 
-    % plot(algo); title('Algorithm implementation'); drawnow;
-    % pause(3);
-    % plot(myKnn); title('internalDecider implementation'); drawnow;
+    % plot(algo); title('Algorithm implementation');
+    % outAlgo = algo.run(dsTest);
     %
-    % Note that the regardless of how one uses a decider, the outputs of
-    % algo.run(dsTest) and myKnn.run(dsTest) should be identical;
+    %  % Example 2:
+    % 
+    %  % This example demonstrtes the use of a prtDecision objet to perform
+    %  % class labeling as prtClass objects internalDecider
+    %
+    %  myKnn = prtClassKnn;
+    %  myKnn.internalDecider = prtDecisionBinaryMinPe;
+    %  myKnn = myKnn.train(dsTrain);
+    %  outIntDec = myKnn.run(dsTest);
+    %  figure; plot(myKnn); title('internalDecider implementation');
     
     properties (Hidden)
         classList

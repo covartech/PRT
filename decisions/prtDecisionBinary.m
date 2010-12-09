@@ -1,16 +1,24 @@
 classdef prtDecisionBinary < prtDecision
-    % xxx NEED HELP xxx
+    % prtDecisionBinary Base class for all prtDecisionBinary objects
     %
-    % Sub-class of prtDecision intended to make binary decision functions
-    % easier to write.  These decision objects should only work on binary
-    % classification algorithms where the classifier output is
-    % nObservations x 1.  For Mary classification decisions, see
-    % prtDecisionMap for example.
+    % A prtDecisionBinary object is an abstract class and cannot be
+    % instantiated.    
     %
-    % subclasses must implement getThreshold
+    % prtBinaryDecsion objects find a threshold value that is used to make
+    % decisions based on certain criteria.
+    %
+    % prtDecisionBinary objects all have the following function:
+    %
+    % getThreshold - return the prtDecisionBinary objects decision
+    %                threshold
+    %
+    % See also: prtDecisionBinaryMinPe, prtDecisionBinarySpecifiedPd,
+    % ptDecisionBinarySpecifiedPf, prtDecisionMap
     
     methods (Abstract)
-        threshold = getThreshold(Obj)
+        %Returns the objects threshold
+        threshold = getThreshold(Obj) 
+        % THRESH = getThreshold returns the objects threshold
     end
     methods (Access = protected)
         function DS = runAction(Obj,DS)

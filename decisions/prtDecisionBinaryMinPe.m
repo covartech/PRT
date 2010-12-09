@@ -1,38 +1,55 @@
 classdef prtDecisionBinaryMinPe < prtDecisionBinary
-    % xxx NEED HELP xxx
+    % prtDecisionBinaryMinPe Decision object for minimum probability of
+    % error in binary classification
     %
-    % prtDecisionBinaryMinPe prt Decision action to find a threshold in a
-    % binary problem to minimize the probability of error.
+    % prtDec = prtDecisionBinaryMinPe creates a prtDecisionBinaryMinPe
+    % object, which can be used find a decision threshold in a binary
+    % classification problem that minimizes the probability of error.
     %
-    % Examples (as part of an algorithm):
     %
-    % ds = prtDataGenBimodal;
-    % classifier = prtClassKnn;
-    % classifier = classifier.train(ds);
-    % yOutClassifier = classifier.run(ds);
+    % prtDecision objects are intended to be used either as members of
+    % prtAlgorithm or prtClass objects.
     %
-    % algo = prtClassKnn + prtDecisionBinaryMinPe;
-    % algo = algo.train(ds);
-    % yOutAlgorithm = algo.run(ds);
+    % Example 1:
+    %
+    % ds = prtDataGenBimodal;              % Load a data set
+    % classifier = prtClassKnn;            % Create a clasifier
+    % classifier = classifier.train(ds);   % Train the classifier
+    % yOutClassifier = classifier.run(ds); % Run the classifier
+    %
+    % % Construct a prtAlgorithm object consisting of a prtClass object and
+    % % a prtDecision object
+    % algo = prtClassKnn + prtDecisionBinaryMinPe; 
+    %
+    % algo = algo.train(ds);        % Train the algorithm    
+    % yOutAlgorithm = algo.run(ds); % Run the algorithm
+    % 
+    % % Plot and compare the results
     % subplot(2,1,1); stem(yOutClassifier.getObservations); title('KNN Output');
     % subplot(2,1,2); stem(yOutAlgorithm.getObservations); title('KNN + Decision Output');
     %
-    % Example (as an internalDecider object):
+    % Example 2:
     %
-    % ds = prtDataGenBimodal;
-    % classifier = prtClassKnn;
-    % classifier = classifier.train(ds);
+    % ds = prtDataGenBimodal;              % Load a data set
+    % classifier = prtClassKnn;            % Create a clasifier
+    % classifier = classifier.train(ds);   % Train the classifier
+    %
+    % % Plot the trained classifier
     % subplot(2,1,1); plot(classifier); title('KNN');
     %
+    % % Set the classifiers internealDecider to be a prtDecsion object
     % classifier.internalDecider = prtDecisionBinaryMinPe;
-    % classifier = classifier.train(ds);
+    %
+    % classifier = classifier.train(ds); % Train the classifier
     % subplot(2,1,2); plot(classifier); title('KNN + Decision');
     %    	
-    
+    % See also: prtDecisionBinary, prtDecisionBinarySpecifiedPd,
+    % ptDecisionBinarySpecifiedPf, prtDecisionMap
+
     properties (SetAccess = private)
-        name = 'MinPe'
-        nameAbbreviation = 'MINPE';
-        isSupervised = true;
+        name = 'MinPe'   % MinPe
+        nameAbbreviation = 'MINPE';  % MINPE
+        isSupervised = true;  % True
     end
     properties (Hidden = true)
         threshold
