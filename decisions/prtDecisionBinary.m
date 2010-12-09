@@ -14,7 +14,6 @@ classdef prtDecisionBinary < prtDecision
     end
     methods (Access = protected)
         function DS = runAction(Obj,DS)
-            %theClasses = Obj.getUniqueClasses;
             theClasses = Obj.classList;
             DS = DS.setObservations(theClasses((DS.getObservations >= Obj.getThreshold) + 1));
         end
