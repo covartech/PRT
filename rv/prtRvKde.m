@@ -168,6 +168,35 @@ classdef prtRvKde < prtRv
             R.bandwidths = max(R.bandwidths,R.minimumBandwidth);
         end
         
+        function vals = cdf(R,X)
+            [isValid, reasonStr] = R.isValid;
+            assert(isValid,'CDF cannot yet be evaluated. This RV is not yet valid %s.',reasonStr);
+            
+            X = R.dataInputParse(X); % Basic error checking etc
+            
+            nDims = size(X,2);
+            nTrainingPoints = size(R.trainingData,1); 
+            
+            largestMatrixSize = prtOptionsGet('prtOptionsComputation','largestMatrixSize');
+            memChunkSize = max(floor(largestMatrixSize/nTrainingPoints),1);
+            
+            vals = zeros(size(X,1),1);
+            
+            
+            for iBlockStart = 1:memChunkSize:size(X,1);
+                cInds = iBlockStart:min(iBlockStart+memChunkSize,size(X,1));
+                
+                cNSamples = length(cInds);
+                
+                cCdf = ones(cNSamples,1);
+                for iDim = 1:nDims
+                    cZscore = bsxfun(@minus,X(cInds,iDim),R.trainingData(:,iDim)')/R.bandwidths(iDim);
+                    cCdf = cCdf .* mean(prtRvUtilNormCdf(cZscore,0,1),2);
+                end
+                vals(cInds) = cCdf;
+            end
+
+        end
         function vals = pdf(R,X)
             [isValid, reasonStr] = R.isValid;
             assert(isValid,'PDF cannot yet be evaluated. This RV is not yet valid %s.',reasonStr);
@@ -179,9 +208,8 @@ classdef prtRvKde < prtRv
             [isValid, reasonStr] = R.isValid;
             assert(isValid,'LOGPDF cannot yet be evaluated. This RV is not yet valid %s.',reasonStr);
             
-            assert(size(X,2) == R.nDimensions,'Data, RV dimensionality missmatch. Input data, X, has dimensionality %d and this RV has dimensionality %d.', size(X,2), R.nDimensions)
-            assert(isnumeric(X) && ndims(X)==2,'X must be a 2D numeric array.');
-    
+            X = R.dataInputParse(X); % Basic error checking etc
+            
             
             nDims = size(X,2);
             nTrainingPoints = size(R.trainingData,1); 

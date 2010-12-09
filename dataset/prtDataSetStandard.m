@@ -721,7 +721,7 @@ classdef prtDataSetStandard < prtDataSetBase
 
             assert(isa(selectFunction, 'function_handle'),'selectFunction must be a function handle.');
             assert(nargin(selectFunction)==1,'selectFunction must be a function handle that take a single input.');
-            
+                
             try
                 keep = selectFunction(obj);
                 assert(size(keep,1)==obj.nObservations);
