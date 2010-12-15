@@ -1,14 +1,15 @@
 classdef prtRvVq < prtRv
     % prtRvVq  Vector quantization random variable
-    %   Vector quanitization uses k-means to discretize the data space
-    %   using NCATEGORIES means. MEANS are the discrete points in space and
-    %   have PROBABILITIES representing theirprominence in the data. The
-    %   pdf is calculated by mapping to the nearest entry of the MEANS and
-    %   giving the data point the corresponding entry in PROBABILITIIES.
     %
     %   RV = prtRvVq creates a prtRvVq object with empty means and
-    %   probabilities. The MEANS and PROBABILITIES must be set either
+    %   probabilities. The means and probabilties must be set either
     %   directly, or by calling the MLE method.
+    %  
+    %   Vector quanitization uses k-means to discretize the data space
+    %   using nCategories means. The means are the discrete points in space and
+    %   have probabilies representing their prominence in the data. The
+    %   pdf is calculated by mapping to the nearest entry of the means and
+    %   giving the data point the corresponding entry in probabilities.
     %
     %   RV = prtRvVq(PROPERTY1, VALUE1,...) creates a prtRvVq object RV
     %   with properties as specified by PROPERTY/VALUE pairs.
@@ -16,11 +17,10 @@ classdef prtRvVq < prtRv
     %   A prtRvVq object inherits all properties from the prtRv class. In
     %   addition, it has the following properties:
     %
-    %   nCategories   - The number of means that are calculated to
-    %                   discretize the data
-    %   means         - The means (calculated through k-means) that are
-    %                   used to approximate the density
-    %   probabilities - The probabilities of each of the means
+    %   nCategories   - The number of categories
+    %   means         - The means of each catergory that are used to 
+    %                   approximate the density
+    %   probabilities - The probabilities of each category
     %   
     %  A prtRvVq object inherits all methods from the prtRv class. The MLE
     %  method can be used to estimate the distribution parameters from
@@ -41,9 +41,9 @@ classdef prtRvVq < prtRv
     %   prtRvUniform, prtRvUniformImproper
     
     properties (Dependent = true)
-        probabilities
-        means
-        nCategories
+        probabilities   % The probabilities
+        means           % The means
+        nCategories     % The number of categories
     end
     
     properties (Dependent = true, Hidden=true)

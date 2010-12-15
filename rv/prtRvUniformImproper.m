@@ -1,15 +1,15 @@
 classdef prtRvUniformImproper < prtRv
     % prtRvUniformImproper  Improper uniform random variable
-    %   Models an improper pdf that always yeilds a value of 1 no matter
+    %
+    %   RV = prtRvUniformImproper creates a prtRvUniformImproper object
+    %   with unknown dimensionality nDimensions. nDimensions can be set
+    %   manually or using the MLE method. A prtRvUniformImproper
+    %   models an improper pdf that always yields a value of 1 no matter
     %   the input. prtRvUniformImproper is sometimes useful for creating 
     %   one class classifiers. See the examples below for more information
     %
-    %   The DRAW() method of prtRvUniformImproper draws values uniformly
+    %   The draw method of prtRvUniformImproper draws values uniformly
     %   distributed from realmin to realmax in each dimension.
-    %
-    %   RV = prtRvUniformImproper creates a prtRvUniformImproper object
-    %   with unknown dimensionality (NDIMENSIONS). NDIMENSIONS can be set
-    %   manually or using the MLE method.
     %
     %   RV = prtRvUniformImproper(PROPERTY1, VALUE1,...) creates a
     %   prtRvMultinomial object RV with properties as specified by
@@ -22,7 +22,7 @@ classdef prtRvUniformImproper < prtRv
     %   
     %  A prtRvUniformImproper object inherits all methods from the prtRv
     %  class. The MLE  method can be used to set the parameters from data.
-    %b
+    %
     %  Example:
     %
     %  % In this example we show that the PDF of a prtRvUniformImproper is
