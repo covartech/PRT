@@ -52,6 +52,10 @@ classdef prtAction
     properties (Hidden = true)
         %note: this should be a user specified field from userOptions
         verboseFeatureNames = true;
+        
+        % A tag that can be used to reference a specific action within a
+        % prtAlgorithm
+        tag = '';
     end
     
     methods (Hidden = true)
@@ -95,9 +99,6 @@ classdef prtAction
         % If true the training prtDataSet is stored internally prtAction.DataSet.
         verboseStorage = true;
         
-        % A tag that can be used to reference a specific action within a
-        % prtAlgorithm
-        tag = '';
         
         % User specified data
         UserData = [];
