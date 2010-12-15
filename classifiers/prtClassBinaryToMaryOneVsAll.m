@@ -27,14 +27,15 @@ classdef prtClassBinaryToMaryOneVsAll < prtClass
     %
     %     TestDataSet = prtDataGenMary;      % Create some test and 
     %     TrainingDataSet = prtDataGenMary;  % training data
-    %     classifier = prtClassBinaryToMaryOneVsAll; % Create a classifier
+    %     classifier = prtClassBinaryToMaryOneVsAll;   % Create a classifier
     %     classifier.baseClassifier = prtClassGlrt;    % Set the binary 
-    %                                               % Classifier
+    %                                                  % Classifier
     %     classifier = classifier.train(TrainingDataSet);    % Train
     %     classified = run(classifier, TestDataSet);         % Test
     %     [~, classes] = max(classified.getX,[],2);          % Select the
     %                                                        % classes
-    %     percentCorr = prtScorePercentCorrect(classes,TestDataSet.getTargets);
+    %     % Evaluate, plot results
+    %     percentCorr = prtScorePercentCorrect(classes,TestDataSet.getTargets)
     %     classifier.plot;
     %
     %    See also prtClass, prtClassLogisticDiscriminant, prtClassBagging,
