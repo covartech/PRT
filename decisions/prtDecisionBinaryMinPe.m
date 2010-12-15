@@ -6,7 +6,6 @@ classdef prtDecisionBinaryMinPe < prtDecisionBinary
     % object, which can be used find a decision threshold in a binary
     % classification problem that minimizes the probability of error.
     %
-    %
     % prtDecision objects are intended to be used either as members of
     % prtAlgorithm or prtClass objects.
     %
@@ -53,6 +52,7 @@ classdef prtDecisionBinaryMinPe < prtDecisionBinary
     end
     properties (Hidden = true)
         threshold
+        uniqueClasses
     end
     methods
         
@@ -75,7 +75,11 @@ classdef prtDecisionBinaryMinPe < prtDecisionBinary
     end
     methods
         function threshold = getThreshold(Obj)
+             % THRESH = getThreshold returns the objects threshold
             threshold = Obj.threshold;
+        end
+        function uniqueClasses = getUniqueClasses(Obj)
+            uniqueClasses = Obj.uniqueClasses;
         end
     end
 end
