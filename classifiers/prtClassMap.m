@@ -10,11 +10,8 @@ classdef prtClassMap < prtClass
  %    A prtClassMap object inherits all properties from the abstract class
  %    prtClass. In addition is has the following property:
  %
- %    rvs    - A prtRv*. This property describes the random variable 
- %             model used for Maximum a Posteriori classification. To
- %             change the type of model used, edit this field and set the
- %             field to the type of prtRv you'd like to use, then run the
- %             train method
+ %    rvs    - A prtRv object. This property describes the random variable 
+ %             model used for Maximum a Posteriori classification.
  %
  %    A prtClassMap object inherits inherits the TRAIN, RUN, CROSSVALIDATE
  %    and KFOLDS methods from prtClass.
@@ -23,15 +20,13 @@ classdef prtClassMap < prtClass
  %
  %    TestDataSet = prtDataGenUnimodal;       % Create some test and
  %    TrainingDataSet = prtDataGenUnimodal;   % training data
- %    classifier = prtClassMap;           % Create a classifier
+ %    classifier = prtClassMap;               % Create a classifier
  %    classifier = classifier.train(TrainingDataSet);    % Train
  %    classified = run(classifier, TestDataSet);         % Test
- %    subplot(2,1,1);
- %    classifier.plot;
- %    subplot(2,1,2);
- %    [pf,pd] = prtScoreRoc(classified,TestDataSet);
- %    h = plot(pf,pd,'linewidth',3);
- %    title('ROC'); xlabel('Pf'); ylabel('Pd');
+ %
+ %    subplot(2,1,1); classifier.plot;  % Plot results
+ %    subplot(2,1,2); prtScoreRoc(classified,TestDataSet);
+ %    set(get(gca,'Children'), 'LineWidth',3) 
  %
  %    See also prtClass, prtClassLogisticDiscriminant, prtClassBagging,
  %    prtClassMap, prtClassFld, prtClassBinaryToMaryOneVsAll, prtClassDlrt,

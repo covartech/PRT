@@ -2,36 +2,38 @@ classdef prtClass < prtAction
     % prtClass   Base class for prt Classification objects
     %
     % All prtClass objects inherit all properities and methods from the
-    % prtActoin object. prtClass objects have the following additional
+    % prtAction object. prtClass objects have the following additional
     % properties:
     % 
     %   isNativeMary - Whather or not the classifier natively produces an
     %                  M-ary result.
     %
-    %   internalDecider - (Optional, default = []) an instance of a
-    %                   prtDecision object.  When set, the classifier will
-    %                   output discrete values corresponding to the class
-    %                   determined by the classifier and the decision
-    %                   object (binary classifier), or a binary vector of
-    %                   zeros and ones (M-ary classification)
+    %   internalDecider - An optionl property, the default is empty.
+    %                   InternalDecider is an instance of a prtDecision 
+    %                   object. When set, the RUN function of the 
+    %                   classifier will output discrete values
+    %                   corresponding to the class determined by the 
+    %                   classifier and the decision object
+    %                   (binary classifier), or a binary vector of
+    %                   zeros and ones (M-ary classification).
     %
     %   prtClass objects have the following methods:
     %
-    %   plot          - Plot the output confidence of a trained classifier
-    %                   (classifiers trained with ds with <= 3 features only)
+    %   plot          - Plot the output confidence of a trained classifier.
+    %                   This function only operates when trained by a
+    %                   dataset of 3 dimensions or lower.
     %
-    %   Inherited from prtAction:
-    % 
-    %   train         - Train the classifier using a prtDataSetClass and
-    %                   output a trained classifier, e.g.
-    %       myClassifier = myClassifier.train(ds);
-    %
-    %   run           - Run the classifier on a data set, e.g.
-    %       results = myClassifier.run(ds);
+    %   A prtClass object inherits the TRAIN, RUN, CROSSVALIDATE and KFOLDS
+    %   functions from the prtAction object.
     %
     %
-    %   crossValidate, kfolds - See prtAction
+    %   See also prtClassLogisticDiscriminant, prtClassBagging,
+    %   prtClassMap, prtClassFld, prtClassBinaryToMaryOneVsAll, prtClassDlrt,
+    %   prtClassPlsda, prtClassFld, prtClassRvm, prtClassGlrt,  prtClassSvm,
+    %   prtClassTreeBaggingCap, prtClassKmsd, prtClassKnn
     %
+    %
+    
     %
     %   Sub-classing prtClass:
     %       Concrete sub-classes of prtClass must define the abstract
