@@ -28,7 +28,7 @@ RVspec = prtRvVq;
 % Check that I can specify params
 try
     RVspec.probabilities = [.4 .6];
-    RVspec.means = [ 2 4];
+    RVspec.means = [ 2 4]';
 catch
     disp('prtRvVq mean prob set fail')
     result=  false;
