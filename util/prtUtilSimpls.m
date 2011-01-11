@@ -45,7 +45,7 @@ S = X'*Y;
 for iVec = 1:nVectors
     % SVD. This is a little wasteful since we only need the first one. But
     % SVD is very fast so it doesn't really matter
-    [r,dontNeed,dontNeed] = svd(S,'econ');
+    [r,dontNeed,dontNeed] = svd(S,'econ'); %#ok<ASGLU,NASGU>
     
     r = r(:,1); % We only need the first solution
 

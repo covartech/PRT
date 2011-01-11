@@ -42,11 +42,12 @@ classdef prtRvMixture < prtRv
     
     properties
         components  % A vector of the components
+        minimumComponentMembership = 0;
     end
     
     properties (Dependent = true)
         mixingProportions % The mixing proportions
-        nComponents     % The number of components
+        nComponents       % The number of components
     end
     
     properties (Hidden = true, Dependent = true)
@@ -56,6 +57,7 @@ classdef prtRvMixture < prtRv
     properties (SetAccess = 'private', GetAccess = 'private', Hidden=true)
         mixingProportionsDepHelper = prtRvMultinomial;
     end
+    
     properties (Hidden = true)
         postMaximizationFunction = @(R)R;
         
@@ -89,7 +91,6 @@ classdef prtRvMixture < prtRv
                 assert(isa(weights,'prtRvMultinomial'),'prtRvMixture mixinigProportions must be a vector of probabilities (that sum to 1) or a prtRvMultinomial')
             end
             
-            
             if R.nComponents > 0
                 nSpecifiiedComponents = R.nComponents;
                 assert(weights.nCategories == nSpecifiiedComponents,'The length of these mixingProportions does not mach the number of components of thie prtRvMixture.')
@@ -122,6 +123,8 @@ classdef prtRvMixture < prtRv
             X = R.dataInputParse(X); % Basic error checking etc
             
             membershipMat = initialComponentMembership(R,X);
+
+            [R,membershipMat, componentsRemoved] = removeComponents(R,membershipMat);
             
             pLogLikelihood = nan;
             R.learningResults.iterationLogLikelihood = [];
@@ -133,16 +136,25 @@ classdef prtRvMixture < prtRv
                 
                 membershipMat = expectedComponentMembership(R,X);
                 
+                [R,membershipMat, componentsRemoved] = removeComponents(R,membershipMat);
+                
                 cLogLikelihood = sum(logPdf(R,X));
                 
                 R.learningResults.iterationLogLikelihood(end+1) = cLogLikelihood;
                 
-                if abs(cLogLikelihood - pLogLikelihood)*abs(mean([cLogLikelihood  pLogLikelihood])) < R.learningConvergenceThreshold
-                    break
-                elseif (pLogLikelihood - cLogLikelihood) > R.learningApproximatelyEqualThreshold
-                    warning('prtRvMixture:learning','Log-Likelihood has decreased!!! Exiting.');
-                    break
+                if ~componentsRemoved
+                    % No components removed proceed as normal
+                    
+                    if abs(cLogLikelihood - pLogLikelihood)*abs(mean([cLogLikelihood  pLogLikelihood])) < R.learningConvergenceThreshold
+                        break
+                    elseif (pLogLikelihood - cLogLikelihood) > R.learningApproximatelyEqualThreshold
+                        warning('prtRvMixture:learning','Log-Likelihood has decreased!!! Exiting.');
+                        break
+                    else
+                        pLogLikelihood = cLogLikelihood;
+                    end
                 else
+                    % Components were removed this iteration do not exit.
                     pLogLikelihood = cLogLikelihood;
                 end
             end
@@ -178,7 +190,11 @@ classdef prtRvMixture < prtRv
             
             logWeights = log(R.mixingProportions.probabilities);
             for iComp = 1:R.nComponents;
-                componentLogPdf(:,iComp) = logPdf(R.components(iComp),X)+logWeights(iComp);
+                try
+                    componentLogPdf(:,iComp) = logPdf(R.components(iComp),X)+logWeights(iComp);
+                catch  %#ok<CTCH>
+                    error('prt:prtRvMixture:logPdf','An error was encountered while calculating the logPdf of component %d. Perhaps the number of components is too high.',iComp)
+                end
             end
             
             logy = prtUtilSumExp(componentLogPdf')';
@@ -304,16 +320,38 @@ classdef prtRvMixture < prtRv
         function membershipMat = expectedComponentMembership(R,X)
             
             [logy, membershipMat] = logPdf(R,X); %#ok
-            
+
             membershipMat = exp(bsxfun(@minus,membershipMat,prtUtilSumExp(membershipMat')'));
         end
         
         function R = maximizeParameters(R,X,membershipMat)
             for iComp = 1:R.nComponents
-                R.components(iComp) = weightedMle(R.components(iComp),X,membershipMat(:,iComp));
+                try
+                    R.components(iComp) = weightedMle(R.components(iComp),X,membershipMat(:,iComp));
+                catch  %#ok<CTCH>
+                    error('prt:prtRvMixture:maximizeParameters','An error was encountered while fitting the parameters of component %d. Perhaps the number of components is too high.',iComp)
+                end
             end
             
             R.mixingProportions = mle(prtRvMultinomial,membershipMat);
+        end
+        
+        function [R, membershipMat, componentRemoved] = removeComponents(R,membershipMat)
+            nSamplesPerComponent = sum(membershipMat,1);
+            componentsToRemove = nSamplesPerComponent < R.minimumComponentMembership;
+            
+            componentRemoved = any(componentsToRemove);
+            
+            if componentRemoved
+                
+                warning('prt:prtRvMixture:removeComponents','A component of this prtRvMixture had a responsibility below the threshold. This component has been removed from the model. %d components remain.',sum(~componentsToRemove));
+                
+                R.components = R.components(~componentsToRemove);
+                membershipMat = membershipMat(:,~componentsToRemove);
+                membershipMat = bsxfun(@rdivide,membershipMat,sum(membershipMat,2));
+                
+                R.mixingProportions = prtRvMultinomial('probabilities',nSamplesPerComponent(~componentsToRemove)/sum(nSamplesPerComponent(~componentsToRemove)));
+            end
         end
     end
 end

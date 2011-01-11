@@ -133,6 +133,9 @@ classdef prtRvGmm < prtRv
     
     methods
         function R = mle(R,X)
+            X = R.dataInputParse(X);
+            
+            R.mixtureRv.minimumComponentMembership = size(X,2)+1;
             R.mixtureRv = mle(R.mixtureRv,X);
         end
         

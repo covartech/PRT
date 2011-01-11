@@ -74,7 +74,7 @@ classdef prtClassLibSvm < prtClass
     %     title('ROC'); xlabel('Pf'); ylabel('Pd');
     
     %   Notes for doc:
-    %       1) The goddamn thing always outputs something like:
+    %       1) The LIBSVM Matlab interface always outputs something like:
     %   Accuracy = 62.63% (6263/10000) (classification)
     %   when you try and run it on an unlabeled data set (in testing) or
     %   when you plot it.  This is because whoever made the interface
@@ -134,6 +134,9 @@ classdef prtClassLibSvm < prtClass
             obj.degree = val;
         end
         function obj = set.gamma(obj,val)
+            if isnan(val)
+                return
+            end
             if ischar(val)
                 obj.gamma = val;
             else
@@ -208,9 +211,6 @@ classdef prtClassLibSvm < prtClass
             testing_label_vector = DataSet.getTargets;
             if isempty(testing_label_vector)
                 testing_label_vector = zeros(DataSet.nObservations,1);
-                disp('Ignore predicted accuracy:');
-            else
-                disp('Testing predicted accuracy:');
             end
             testing_instance_matrix = DataSet.getObservations;
             [dontNeed, dontNeed, decision_values] = svmpredict(testing_label_vector, testing_instance_matrix, Obj.trainedSvm, Obj.libSvmOptionsTest); %#ok<ASGLU>

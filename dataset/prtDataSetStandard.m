@@ -686,7 +686,7 @@ classdef prtDataSetStandard < prtDataSetBase
                 return
             end
             
-            errorMsg = 'ObservationInfo must be an nObservations x 1 structure array';
+            errorMsg = 'ObservationInfo must be an nObservations x 1 structure array. It cannot be set through indexing.';
             assert(isa(Struct,'struct'),errorMsg);
             assert(numel(Struct)==obj.nObservations,errorMsg);
             
@@ -783,7 +783,7 @@ classdef prtDataSetStandard < prtDataSetBase
                 assert(isvarname(cName),'ObservationInfo fields must be valid MATLAB variable names. %s is not.',cName);
                 
                 if ismember(cName,startingFieldNames)
-                    warining('prt:observationInfoNameCollision','An ObservationInfo field named %s already exists. The data is now overwritten.', cName)
+                    warning('prt:observationInfoNameCollision','An ObservationInfo field named %s already exists. The data is now overwritten.', cName)
                 end
                 assert(size(cVal,1) == obj.nObservations,'ObservationInfo values must have nObservations rows.');
                 
@@ -803,7 +803,7 @@ classdef prtDataSetStandard < prtDataSetBase
         
         function obj = catObservationInfo(obj, newDataSet)
             
-            if isempty(newDataSet.ObservationInfo) && isempty(obj.Observationinfo)
+            if isempty(newDataSet.ObservationInfo) && isempty(obj.ObservationInfo)
                 return;
             end
             
