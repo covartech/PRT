@@ -124,7 +124,7 @@ classdef prtRvMixture < prtRv
             
             membershipMat = initialComponentMembership(R,X);
 
-            [R,membershipMat, componentsRemoved] = removeComponents(R,membershipMat);
+            [R,membershipMat] = removeComponents(R,membershipMat);
             
             pLogLikelihood = nan;
             R.learningResults.iterationLogLikelihood = [];
