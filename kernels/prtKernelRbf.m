@@ -1,14 +1,14 @@
 classdef prtKernelRbf < prtKernelBinary
     % prtKernelRbf  Radial basis function kernel
     %
-    %  kernelObj = prtKernelRbf; Generates a kernel object implementing a
+    %  KERNOBJ = prtKernelRbf Generates a kernel object implementing a
     %  radial basis function.  Kernel objects are widely used in several
     %  prt classifiers, such as prtClassRvm and prtClassSvm.  RBF kernels
     %  implement the following function for 1 x N vectors x1 and x2:
     %
     %   k(x1,x2) = exp(-sum((x1-x2).^2)./sigma.^2);
     %
-    %  kernelObj = prtKernelRbf(param,value,...) with parameter value
+    %  KERNOBJ = prtKernelRbf(param,value,...) with parameter value
     %  strings sets the relevant fields of the prtKernelRbf object to have
     %  the corresponding values.  prtKernelRbf objects have the following
     %  user-settable properties:
@@ -22,17 +22,22 @@ classdef prtKernelRbf < prtKernelBinary
     %   
     %  http://en.wikipedia.org/wiki/Support_vector_machine#Non-linear_classification
     %
-    %  % Example usage:
-    %   ds = prtDataGenBimodal;
-    %   k1 = prtKernelRbf;
-    %   k2 = prtKernelRbf('sigma',2);
+    %  % Example
+    %   ds = prtDataGenBimodal;       % Generate a dataset
+    %   k1 = prtKernelRbf;            % Create a prtKernel object with 
+    %                                 % default value of sigma 
+    %   k2 = prtKernelRbf('sigma',2); % Create a prtKernel object with
+    %                                 % specified value of sigma
     %   
-    %   g1 = k1.evaluateGram(ds,ds);
+    %   g1 = k1.evaluateGram(ds,ds); % Evaluate both kernels
     %   g2 = k2.evaluateGram(ds,ds);
     %
-    %   subplot(2,2,1); imagesc(g1); 
+    %   subplot(2,2,1); imagesc(g1);  %Plot the results
     %   subplot(2,2,2); imagesc(g2);
     %
+    %   See also: prtKernel, prtKernelBinary, prtKernelDc, prtKernelDirect,
+    %   prtKernelFeatureDependent, prtKernelHyperbolicTangent,
+    %   prtKernelPolynomial, prtKernelRbfNdimensionScale, prtKernelUnary
     
     properties
         sigma = 1;    % Inverse kernel width
