@@ -2,22 +2,12 @@ classdef prtOutlierRemoval < prtAction
     % prtOutlierRemoval Base class for prt Outlier Removal objects
     %
     % All prtOutlierRemoval objects inherit all properities and methods
-    % from the prtActoin object. prtOutlierRemoval objects have the
+    % from the prtAction object. prtOutlierRemoval objects have the
     % following additional properties:
     %
-    %   runMode and runOnTrainingMode - These string valued properties
-    %   specify how the outlier removal processing behaves when run on a
+    %   runMode - Specifie how the outlier removal processing behaves when run on a
     %   data set.  runMode specifies how the action behaves during typical
-    %   calls to "run".  runOnTrainingMode specifies how the action should
-    %   behave when the outlier removal object is embedded in a
-    %   prtAlgorithm.  The distinction between runOnTrainingMode and
-    %   runMode enables outlier removal during training to modify how
-    %   prtActions down-stream of the outlier removal object are trained,
-    %   while maintaining valid cross-validation folds during "run".
-    %
-    %   runMode - A string specifying how the outlier removal method should
-    %   behave during running.  Default value is 'noAction'. Valid strings
-    %   and descriptions follow:
+    %   calls to RUN. Valid strings are as follows:
     %
     %       'noAction' - When running the outlier removal action, do
     %       nothing.  This ensures that the outlier removal action outputs
@@ -35,14 +25,28 @@ classdef prtOutlierRemoval < prtAction
     %
     %       'removeFeature'  - When running the outlier removal action,
     %       remove features where any observation contains an outlier.
-    %       
-    %   runOnTrainingMode - A string specifying how the outlier removal
-    %   method should behave when being run during the training of a
-    %   prtAlgorithm.  See above for a more detailed description, and a
-    %   list of valid runOnTrainingMode string values.  Default value is
-    %   'removeObservation'.
-    % 
-    %   prtClass objects have the following Abstract methods:
+    %
+    %   runOnTrainingMode -  specifies how the action should
+    %   behave when the outlier removal object is embedded in a
+    %   prtAlgorithm.  The distinction between runOnTrainingMode and
+    %   runMode enables outlier removal during training to modify how
+    %   prtActions down-stream of the outlier removal object are trained,
+    %   while maintaining valid cross-validation folds during RUN.
+    %   runOnTrainingMode can be set to same set of values as runMode.
+    %
+    %   A prtOutlierRemoval object inherits the TRAIN, RUN, CROSSVALIDATE
+    %   and KFOLDS functions from the prtAction class.
+    %
+    %   See Also: prtPreProc, prtOutlierRemovalMissingData,
+    %   prtOutlierRemovalNStd, prtPreProcHistEq, prtPreProcLda,
+    %   prtPreProcLogDisc, prtPreProcMinMaxRows,
+    %   prtPreProcNstdOutlierRemove,
+    %   prtPreProcNstdOutlierRemoveTrainingOnly, prtPreProcPca,
+    %   prtPreProcPls, prtPreProcZeroMeanColumns, prtPreProcZeroMeanRows,
+    %   prtPreProcZmuv
+    
+    
+    %   prtOutlierRemoval objects have the following Abstract methods:
     %
     %   calculateOutlierIndices - An abstract method that concrete
     %   sub-classes must define.  calculateOutlierIndices takes the form:
@@ -53,23 +57,6 @@ classdef prtOutlierRemoval < prtAction
     %   DataSet.nFeatures.  The (i,j) element of indices specifies whether
     %   that element of DataSet is an outlier.
     %   
-    %   Inherited from prtAction:
-    % 
-    %   train         - Train the classifier using a prtDataSetClass and
-    %                   output a trained classifier, e.g.
-    %       myClassifier = myClassifier.train(ds);
-    %
-    %   run           - Run the classifier on a data set, e.g.
-    %       results = myClassifier.run(ds);
-    %
-    %   crossValidate, kfolds - See prtAction
-    %
-    %  To define a new outlier removal algorithm...
-    %
-    %    You: need to overload trainAction and calculateOutlierIndices...
-    % then set trainingMode and testingMode to do whatever you wants.
-    %
-    % Note; do not overload any testing stuff!
     
     methods (Abstract, Access = protected, Hidden = true)
         indices = calculateOutlierIndices(Obj,DataSet)

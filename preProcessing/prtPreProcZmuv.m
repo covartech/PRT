@@ -3,13 +3,13 @@ classdef prtPreProcZmuv < prtPreProc
     %
     %   ZMUV = prtPreProcZmuv creates a zero mean unit variance pre
     %   processing object. A prtPreProcZmuv object processes the input data
-    %   so that it has zero mean and unit variance.  Use train to determine
-    %   the parametes of the ZMUV object:
+    %   so that it has zero mean and unit variance.  Use TRAIN to determine
+    %   the parameters of the ZMUV object:
     % 
     %   zmuv = prtPreProcZmuv;
     %   zmuv = zmuv.train(ds); 
     %
-    %   And use run to process a data set:
+    %   And use RUN to process a data set:
     %
     %   dsPreProc = zmuv.run(ds);
     %
@@ -30,14 +30,19 @@ classdef prtPreProcZmuv < prtPreProc
     %   subplot(2,1,2); plot(dataSetNew);
     %   title(sprintf('Mean: %s; Stdev: %s',mat2str(mean(dataSetNew.getObservations),2),mat2str(std(dataSetNew.getObservations),2)))
     %
-    %   See Also: prtPreProcPca, prtPreProcHistEq, preProcLogDisc
- 
+    %   See Also: prtPreProc, prtOutlierRemoval,
+    %   prtOutlierRemovalMissingData, prtOutlierRemovalNStd,
+    %   prtPreProcHistEq, prtPreProcLda, prtPreProcLogDisc,
+    %   prtPreProcMinMaxRows, prtPreProcNstdOutlierRemove,
+    %   prtPreProcNstdOutlierRemoveTrainingOnly, prtPreProcPca,
+    %   prtPreProcPls, prtPreProcZeroMeanColumns, prtPreProcZeroMeanRows
+  
     
     properties (SetAccess=private)
         % Required by prtAction
-        name = 'Zero Mean Unit Variance'
-        nameAbbreviation = 'ZMUV'
-        isSupervised = false;
+        name = 'Zero Mean Unit Variance' % Zero Mean Unit Variance
+        nameAbbreviation = 'ZMUV'  % ZMUV
+        isSupervised = false;   % False
     end
     
     properties (SetAccess=private)

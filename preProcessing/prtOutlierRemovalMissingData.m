@@ -4,9 +4,9 @@ classdef prtOutlierRemovalMissingData < prtOutlierRemoval
     
     properties (SetAccess=private)
         % Required by prtAction
-        name = 'Missing Data Outlier Removal';
-        nameAbbreviation = 'missinDataRemove'
-        isSupervised = false;
+        name = 'Missing Data Outlier Removal';  % Missing Data Outlier Removal
+        nameAbbreviation = 'missinDataRemove'   % MissingDataRemove
+        isSupervised = false;  % False
     end
     
     methods
