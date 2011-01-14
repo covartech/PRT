@@ -124,7 +124,7 @@ classdef prtRvMixture < prtRv
             
             membershipMat = initialComponentMembership(R,X);
 
-            [R,membershipMat] = removeComponents(R,membershipMat);
+            [R,membershipMat] = removeComponents(R, X, membershipMat);
             
             pLogLikelihood = nan;
             R.learningResults.iterationLogLikelihood = [];
@@ -136,7 +136,7 @@ classdef prtRvMixture < prtRv
                 
                 membershipMat = expectedComponentMembership(R,X);
                 
-                [R,membershipMat, componentsRemoved] = removeComponents(R,membershipMat);
+                [R, membershipMat, componentsRemoved] = removeComponents(R, X, membershipMat);
                 
                 cLogLikelihood = sum(logPdf(R,X));
                 
@@ -148,7 +148,7 @@ classdef prtRvMixture < prtRv
                     if abs(cLogLikelihood - pLogLikelihood)*abs(mean([cLogLikelihood  pLogLikelihood])) < R.learningConvergenceThreshold
                         break
                     elseif (pLogLikelihood - cLogLikelihood) > R.learningApproximatelyEqualThreshold
-                        warning('prtRvMixture:learning','Log-Likelihood has decreased!!! Exiting.');
+                        warning('prt:prtRvMixture:learning','Log-Likelihood has decreased!!! Exiting.');
                         break
                     else
                         pLogLikelihood = cLogLikelihood;
@@ -322,6 +322,7 @@ classdef prtRvMixture < prtRv
             [logy, membershipMat] = logPdf(R,X); %#ok
 
             membershipMat = exp(bsxfun(@minus,membershipMat,prtUtilSumExp(membershipMat')'));
+            
         end
         
         function R = maximizeParameters(R,X,membershipMat)
@@ -336,7 +337,7 @@ classdef prtRvMixture < prtRv
             R.mixingProportions = mle(prtRvMultinomial,membershipMat);
         end
         
-        function [R, membershipMat, componentRemoved] = removeComponents(R,membershipMat)
+        function [R, membershipMat, componentRemoved] = removeComponents(R,X,membershipMat)
             nSamplesPerComponent = sum(membershipMat,1);
             componentsToRemove = nSamplesPerComponent < R.minimumComponentMembership;
             
@@ -346,11 +347,32 @@ classdef prtRvMixture < prtRv
                 
                 warning('prt:prtRvMixture:removeComponents','A component of this prtRvMixture had a responsibility below the threshold. This component has been removed from the model. %d components remain.',sum(~componentsToRemove));
                 
-                R.components = R.components(~componentsToRemove);
-                membershipMat = membershipMat(:,~componentsToRemove);
-                membershipMat = bsxfun(@rdivide,membershipMat,sum(membershipMat,2));
                 
+                % One might assume we can do this. 
+                % >> membershipMat = membershipMat(:,~componentsToRemove);
+                % >> membershipMat = bsxfun(@rdivide,membershipMat,sum(membershipMat,2));
+                % However, we may be removing a cluster that an observation
+                % has a membership of 1. Therefore, the above would yield a
+                % row of the membership matrix with NaNs.
+                % Instead, we have to recalculate the membership matrix
+                % from the remaining clusters. In order to do that though
+                % we must update the mixing proportions first and then
+                % after.
+                R.components = R.components(~componentsToRemove);
                 R.mixingProportions = prtRvMultinomial('probabilities',nSamplesPerComponent(~componentsToRemove)/sum(nSamplesPerComponent(~componentsToRemove)));
+                
+                % However if the components aren't yet valid (because this
+                % is the first iteration) we have to deal with the NaNs.
+                if R.components(1).isValid
+                    membershipMat = expectedComponentMembership(R,X);
+                else
+                    membershipMat = membershipMat(:,~componentsToRemove);
+                    
+                    % When we renormalize it's possible that we create NaNs
+                    % So we look for and fix this.
+                    membershipMat = bsxfun(@rdivide,membershipMat,sum(membershipMat,2));
+                    membershipMat(any(isnan(membershipMat),2),:) = 1/size(membershipMat,2);
+                end
             end
         end
     end

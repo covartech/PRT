@@ -135,7 +135,15 @@ classdef prtRvGmm < prtRv
         function R = mle(R,X)
             X = R.dataInputParse(X);
             
-            R.mixtureRv.minimumComponentMembership = size(X,2)+1;
+            R.mixtureRv.minimumComponentMembership = size(X,2)+5;
+            % 5 is a rather arbitrarily safe choice. This is motivated by
+            % common prior parameters for NiW distributions in Bayesian
+            % GMMss.
+            
+            if size(X,1) < R.mixtureRv.minimumComponentMembership
+                error('prt:prtRvGmm:mle','This data has too few observations to support a GMM with this many components.');
+            end
+            
             R.mixtureRv = mle(R.mixtureRv,X);
         end
         

@@ -911,7 +911,7 @@ classdef prtDataSetClass  < prtDataSetStandard
             Summary.isMary = Obj.isMary;
         end
         
-        function Out = bootstrapByClass(Obj,N)
+        function [Out, newObsInds] = bootstrapByClass(Obj,N)
             % BOOTSTRAPBYCLASS Generate bootstrap samples from prtDataSetClass object
             %       
             %
