@@ -1,45 +1,56 @@
 classdef prtPreProcHistEq < prtPreProc
-    % prtPreProcHistEq   Histogram equalization processing
-    %
-    %   ZMUV = prtPreProcHistEq creates a histogram equalization pre
-    %   processing object. A prtPreProcHistEq object processes the input data
+% prtPreProcHistEq   Histogram equalization pre-processing
+%
+    %   HISTEQ = prtPreProcHistEq creates a histogram equalization pre
+    %   processing object. A prtPreProcHistEq object processes the input
+    %   data
     %   so that the distribution of each feature is approximately uniform
-    %   in [0,1].  
+    %   in the range [0,1].  
     % 
     %   prtPreProcHistEq has the following properties:
     %
     %   nSamples    - The number of samples to use when learning the
-    %               histogtram of the training data.  Defaults to inf (use
-    %               all the data), however for large data sets this can be
-    %               slow.
+    %               histogtram of the training data.  The default is inf
+    %               (which uses all the data), however for large data sets
+    %               this can be slow.
     %
     %   A prtPreProcHistEq object also inherits all properties and functions from
     %   the prtAction class
     %
     %   Example:
     %
-    %   dataSet = prtDataGenIris;     
-    %   dataSet = dataSet.retainFeatures(1:2);
-    %   histEq = prtPreProcHistEq;        
+    %   dataSet = prtDataGenIris;              % Load a data set
+    %   dataSet = dataSet.retainFeatures(1:2); % Use only the first 2
+    %                                          % Features
+    %   histEq = prtPreProcHistEq;             % Create the
+    %                                          % prtPreProcHistEq Object
     %                        
-    %   histEq = histEq.train(dataSet); 
-    %   dataSetNew = histEq.run(dataSet); 
+    %   histEq = histEq.train(dataSet);        % Train the object
+    %   dataSetNew = histEq.run(dataSet);      % Equalize the histogram
     % 
+    %   % Plot
     %   subplot(2,1,1); plot(dataSet);
     %   title('Original Data');
     %   subplot(2,1,2); plot(dataSetNew);
     %   title('HistEq Data');
     %
-    
+    %   See Also: prtPreProc,
+    %   prtOutlierRemoval,prtPreProcNstdOutlierRemove,
+    %   prtOutlierRemovalMissingData,
+    %   prtPreProcNstdOutlierRemoveTrainingOnly, prtOutlierRemovalNStd,
+    %   prtPreProcPca, prtPreProcPls, prtPreProcHistEq,
+    %   prtPreProcZeroMeanColumns, prtPreProcLda, prtPreProcZeroMeanRows,
+    %   prtPreProcLogDisc, prtPreProcZmuv, prtPreProcMinMaxRows                    
+
     properties (SetAccess=private)
         % Required by prtAction
-        name = 'Histogram Equalization'
-        nameAbbreviation = 'HistEq'
-        isSupervised = false;
+        name = 'Histogram Equalization' % Histogram Equalization
+        nameAbbreviation = 'HistEq'   % HistEq
+        isSupervised = false; % False
     end
     
     properties
-        nSamples = inf;
+        nSamples = inf;  % The number of samples to process.
     end
     properties (SetAccess=private)
         % General Classifier Properties
@@ -59,7 +70,7 @@ classdef prtPreProcHistEq < prtPreProc
         end
     end
     
-    methods (Access = protected)
+    methods (Access = protected, Hidden = true)
         
         function Obj = trainAction(Obj,DataSet)
             

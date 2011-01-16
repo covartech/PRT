@@ -1,12 +1,11 @@
 classdef prtPreProcNstdOutlierRemoveTrainingOnly < prtPreProcNstdOutlierRemove
-    % prtPreProcNstdOutlierRemoveTrainingOnly  Removes outliers from a
-    %   prtDataSet but only during training of a prtAlgorithm
-    %   See prtPreProcNstdOutlierRemove
+    % prtPreProcNstdOutlierRemoveTrainingOnly  Removes outliers from a prtDataSet only during training. 
     %
     %   NSTDOUT = prtPreProcNstdOutlierRemoveTrainingOnly creates a
     %   pre-processing object that removes observations where any of the 
     %   feature values is more then nStd standard deviations from the mean
-    %   of that feature.
+    %   of that feature. This removal only occurs during the TRAIN
+    %   method, and not during the RUN method.
     % 
     %   prtPreProcNstdOutlierRemoveTrainingOnly has the following properties:
     %
@@ -17,16 +16,20 @@ classdef prtPreProcNstdOutlierRemoveTrainingOnly < prtPreProcNstdOutlierRemove
     %   properties and functions from the prtAction class.
     %
     %   Example:
-    %       dataSetOriginal = prtDataGenUnimodal;
+    %       dataSetOriginal = prtDataGenUnimodal;   % Load a data set
+    %       % Insert an outlier
     %       outlier = prtDataSetClass([-10 -10; 20 20;-10 20; 20 -10],[1, 0, 1 ,1]');
     %       dataSet = catObservations(dataSetOriginal,outlier);
     %
-    %       classifier = prtClassMap('rvs',prtRvMvn);
+    %       classifier = prtClassMap('rvs',prtRvMvn); % Create a classifier
+    %       % Create an algorithm 
     %       algo = prtPreProcNstdOutlierRemoveTrainingOnly('nStd',3) + classifier;
     %
+    %       % Train the classifier and algorithm
     %       trainedAlgorithmWithoutOutliers = algo.train(dataSet);
     %       trainedClassifierWithOutliers = classifier.train(dataSet);
     %
+    %       % Plot the results
     %       subplot(2,1,1);
     %       plot(trainedAlgorithmWithoutOutliers.actionCell{2});
     %       title('Trained Classifier Decision Contours with Outlier Removal');
@@ -39,6 +42,14 @@ classdef prtPreProcNstdOutlierRemoveTrainingOnly < prtPreProcNstdOutlierRemove
     %       classifierCrossValidateOut = classifier.kfolds(dataSet,5);
     %       [outlierPf, outlierPd] = prtScoreRoc(classifierCrossValidateOut);
     %       plot(outlierRemovedPf,outlierRemovedPd, outlierPf,outlierPd);
+    %
+    %   See Also: prtPreProc,
+    %   prtOutlierRemoval,prtPreProcNstdOutlierRemove,
+    %   prtOutlierRemovalMissingData,
+    %   prtPreProcNstdOutlierRemoveTrainingOnly, prtOutlierRemovalNStd,
+    %   prtPreProcPca, prtPreProcPls, prtPreProcHistEq,
+    %   prtPreProcZeroMeanColumns, prtPreProcLda, prtPreProcZeroMeanRows,
+    %   prtPreProcLogDisc, prtPreProcZmuv, prtPreProcMinMaxRows                    
     
     
     methods
@@ -48,7 +59,7 @@ classdef prtPreProcNstdOutlierRemoveTrainingOnly < prtPreProcNstdOutlierRemove
         end
     end
     
-    methods (Access = protected)
+    methods (Access = protected, Hidden = true)
         
         function DataSet = runAction(Obj,DataSet) %#ok<MANU>
             % During run we don't do anything so that we remain

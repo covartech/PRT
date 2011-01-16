@@ -1,5 +1,5 @@
 classdef prtPreProcZeroMeanColumns < prtPreProc
-    % prtPreProcZeroMeanColumns   Zero mean feature columns
+    % prtPreProcZeroMeanColumns   Zero mean feature (columns)
     %
     %   ZMC = prtPreProcZeroMeanColumns creates an object that removes the
     %   mean from each column (feature) of a data set.
@@ -11,25 +11,33 @@ classdef prtPreProcZeroMeanColumns < prtPreProc
     %
     %   Example:
     %
-    %   dataSet = prtDataGenIris;       
-    %   dataSet = dataSet.retainFeatures(1:2);
-    %   zmc = prtPreProcZeroMeanColumns;   
+    %   dataSet = prtDataGenIris;             % Load a data set and 
+    %   dataSet = dataSet.retainFeatures(1:2);% Retain the first 2 features
+    %   zmc = prtPreProcZeroMeanColumns;      % Create a
+    %                                         % prtPreProcZeroMeanColumns object
     %                                    
-    %   zmc = zmc.train(dataSet);      
-    %   dataSetNew = zmc.run(dataSet); 
+    %   zmc = zmc.train(dataSet);             % Train
+    %   dataSetNew = zmc.run(dataSet);        % Run
     % 
+    %   % Plot
     %   subplot(2,1,1); plot(dataSet);
     %   title(sprintf('Mean: %s',mat2str(mean(dataSet.getObservations),2)))
     %   subplot(2,1,2); plot(dataSetNew);
     %   title(sprintf('Mean: %s',mat2str(mean(dataSetNew.getObservations),2)))
     %
-    %   See Also: prtPreProcPca, prtPreProcHistEq, preProcLogDisc
-    
+    %   See Also: prtPreProc,
+    %   prtOutlierRemoval,prtPreProcNstdOutlierRemove,
+    %   prtOutlierRemovalMissingData,
+    %   prtPreProcNstdOutlierRemoveTrainingOnly, prtOutlierRemovalNStd,
+    %   prtPreProcPca, prtPreProcPls, prtPreProcHistEq,
+    %   prtPreProcZeroMeanColumns, prtPreProcLda, prtPreProcZeroMeanRows,
+    %   prtPreProcLogDisc, prtPreProcZmuv, prtPreProcMinMaxRows                    
+        
     properties (SetAccess=private)
-        % Required by prtAction
-        name = 'Zero-Mean Columns'
-        nameAbbreviation = 'ZMC'
-        isSupervised = false;
+      
+        name = 'Zero-Mean Columns' % Zero-Mean Columns
+        nameAbbreviation = 'ZMC' % ZMC
+        isSupervised = false;  % False
     end
     
     properties
@@ -48,7 +56,7 @@ classdef prtPreProcZeroMeanColumns < prtPreProc
         end
     end
     
-    methods (Access = protected)
+    methods (Access = protected, Hidden = true)
         
         function Obj = trainAction(Obj,DataSet)
             Obj.meanVector = nanmean(DataSet.getObservations(),1);

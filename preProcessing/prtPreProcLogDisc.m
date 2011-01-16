@@ -13,26 +13,35 @@ classdef prtPreProcLogDisc < prtPreProc
     %
     %   Example:
     %
-    %   dataSet = prtDataGenUnimodal;   
-    %   logDisc = prtPreProcLogDisc;  
+    %   dataSet = prtDataGenUnimodal;     % Load a data set
+    %   logDisc = prtPreProcLogDisc;      % Create a pre processing object
     %                                
-    %   logDisc = logDisc.train(dataSet);  
-    %   dataSetNew = logDisc.run(dataSet);
+    %   logDisc = logDisc.train(dataSet);  % Train
+    %   dataSetNew = logDisc.run(dataSet); % Run
     % 
+    %   % Plot
     %   subplot(2,1,1); plot(dataSet);
     %   title('Original Data');
     %   subplot(2,1,2); plot(dataSetNew);
     %   title('LogDisc Data');
     %
+        %   See Also: prtPreProc,
+    %   prtOutlierRemoval,prtPreProcNstdOutlierRemove,
+    %   prtOutlierRemovalMissingData,
+    %   prtPreProcNstdOutlierRemoveTrainingOnly, prtOutlierRemovalNStd,
+    %   prtPreProcPca, prtPreProcPls, prtPreProcHistEq,
+    %   prtPreProcZeroMeanColumns, prtPreProcLda, prtPreProcZeroMeanRows,
+    %   prtPreProcLogDisc, prtPreProcZmuv, prtPreProcMinMaxRows                    
+
     
     properties (SetAccess=private)
         % Required by prtAction
-        name = 'Logistic Discriminant'
-        nameAbbreviation = 'LogDisc'
-        isSupervised = true;
+        name = 'Logistic Discriminant' % Logistic Discriminant
+        nameAbbreviation = 'LogDisc' % LogDisc
+        isSupervised = true; % True
     end
     
-    properties (SetAccess=private)
+    properties (SetAccess=private, Hidden = true)
         % General Classifier Properties
         logDiscWeights = [];
         logDiscMeans = [];
@@ -46,7 +55,7 @@ classdef prtPreProcLogDisc < prtPreProc
         end
     end
     
-    methods (Access = protected)
+    methods (Access = protected, Hidden = true)
         
         function Obj = trainAction(Obj,DataSet)
             if ~DataSet.isBinary

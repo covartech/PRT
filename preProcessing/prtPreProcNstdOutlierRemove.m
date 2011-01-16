@@ -3,45 +3,54 @@ classdef prtPreProcNstdOutlierRemove < prtPreProc
     %
     %   NSTDOUT = prtPreProcNstdOutlierRemove creates a pre-processing
     %   object that removes observations where any of the feature values is
-    %   more then nStd standard deviations from the mean of that feature.
+    %   more then set number of standard deviations from the mean of that feature.
     % 
     %   prtPreProcNstdOutlierRemove has the following properties:
     %
-    %       nStd    - The number of standard deviations at which to remove
-    %       an observation (default = 3)
+    %   nStd    - The number of standard deviations at which to remove
+    %             an observation (default = 3)
     %
     %   A prtPreProcNstdOutlierRemove object also inherits all properties and
     %   functions from the prtAction class.
     %
     %   Example:
     %
-    %   dataSet = prtDataGenUnimodal;      
-    %   outlier = prtDataSetClass([-10 -10],1);
-    %   dataSet = catObservations(dataSet,outlier);
+    %   dataSet = prtDataGenUnimodal;               % Load a data set
+    %   outlier = prtDataSetClass([-10 -10],1);     % Insert an outlier
+    %   dataSet = catObservations(dataSet,outlier); % Concatenate
     %
-    %   nStdRemove = prtPreProcNstdOutlierRemove;
+    %   nStdRemove = prtPreProcNstdOutlierRemove;  % Create a prtPreProc Object
     %
-    %   nStdRemove = nStdRemove.train(dataSet);    
-    %   dataSetNew = nStdRemove.run(dataSet);  
+    %   nStdRemove = nStdRemove.train(dataSet);    % Train 
+    %   dataSetNew = nStdRemove.run(dataSet);      % Run
     % 
+    %   % Plot
     %   subplot(2,1,1); plot(dataSet);
     %   title('Original Data');
     %   subplot(2,1,2); plot(dataSetNew);
     %   title('NstdOutlierRemove Data');
- 
+    %
+    %   See Also: prtPreProc,
+    %   prtOutlierRemoval,prtPreProcNstdOutlierRemove,
+    %   prtOutlierRemovalMissingData,
+    %   prtPreProcNstdOutlierRemoveTrainingOnly, prtOutlierRemovalNStd,
+    %   prtPreProcPca, prtPreProcPls, prtPreProcHistEq,
+    %   prtPreProcZeroMeanColumns, prtPreProcLda, prtPreProcZeroMeanRows,
+    %   prtPreProcLogDisc, prtPreProcZmuv, prtPreProcMinMaxRows                    
+    
     
     properties (SetAccess=private)
         % Required by prtAction
-        name = 'Standard Deviation Based Outlier Removal';
-        nameAbbreviation = 'nStd'
-        isSupervised = false;
+        name = 'Standard Deviation Based Outlier Removal'; % Standard Deviation Based Outlier Removal
+        nameAbbreviation = 'nStd' % nStd
+        isSupervised = false;     % False
         
     end
     
     properties
         nStd = 3;   % The number of standard deviations beyond which to remove data
     end
-    properties (SetAccess=private)
+    properties (SetAccess=private, Hidden = true)
         % General Classifier Properties
         stdVector = [];
         meanVector = [];
@@ -65,7 +74,7 @@ classdef prtPreProcNstdOutlierRemove < prtPreProc
         end
     end
     
-    methods (Access = protected)
+    methods (Access = protected, Hidden = true)
         
         function Obj = trainAction(Obj,DataSet)
             Obj.meanVector = nanmean(DataSet.getObservations(),1);

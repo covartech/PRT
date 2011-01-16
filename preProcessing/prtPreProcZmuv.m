@@ -25,6 +25,7 @@ classdef prtPreProcZmuv < prtPreProc
     %   zmuv = zmuv.train(dataSet);      % Compute the mean and variance
     %   dataSetNew = zmuv.run(dataSet);  % Normalize the data
     % 
+    %   % Plot
     %   subplot(2,1,1); plot(dataSet);
     %   title(sprintf('Mean: %s; Stdev: %s',mat2str(mean(dataSet.getObservations),2),mat2str(std(dataSet.getObservations),2)))
     %   subplot(2,1,2); plot(dataSetNew);
@@ -39,10 +40,9 @@ classdef prtPreProcZmuv < prtPreProc
   
     
     properties (SetAccess=private)
-        % Required by prtAction
-        name = 'Zero Mean Unit Variance' % Zero Mean Unit Variance
+        name = 'Zero Mean Unit Variance'  % Zero Mean Unit Variance
         nameAbbreviation = 'ZMUV'  % ZMUV
-        isSupervised = false;   % False
+        isSupervised = false;  % False
     end
     
     properties (SetAccess=private)

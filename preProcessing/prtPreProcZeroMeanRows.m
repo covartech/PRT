@@ -1,7 +1,7 @@
 classdef prtPreProcZeroMeanRows < prtPreProc
-    % prtPreProcZeroMeanRows   Zero mean observations (rows)
+    % prtPreProcZeroMeanRows  Zero mean observations (rows)
     %
-    %   ZMC = prtPreProcZeroMeanRows creates an object that removes the
+    %   ZM = prtPreProcZeroMeanRows creates an object that removes the
     %   mean from each row (observation) of a data set.
     %
     %   prtPreProcZeroMeanRows has no user settable properties.
@@ -11,24 +11,30 @@ classdef prtPreProcZeroMeanRows < prtPreProc
     %
     %   Example:
     %
-    %   dataSet = prtDataGenIris;       
-    %   dataSet = dataSet.retainFeatures(1:3);
-    %   zmr = prtPreProcZeroMeanRows;   
-    %                                    
-    %   zmr = zmr.train(dataSet);      
-    %   dataSetNew = zmr.run(dataSet); 
+    %   dataSet = prtDataGenIris;              % Load a data set
+    %   dataSet = dataSet.retainFeatures(1:3); % Use only the first 3 features 
+    %   zmr = prtPreProcZeroMeanRows;          % Create a
+    %                                          %  prtPreProcZeroMeanRows object                                   
+    %   zmr = zmr.train(dataSet);              % Train 
+    %   dataSetNew = zmr.run(dataSet);         % Run
     % 
+    %   % Plot
     %   subplot(2,1,1); plot(dataSet);
     %   subplot(2,1,2); plot(dataSetNew);
     %
-    %   See Also: prtPreProcPca, prtPreProcHistEq, preProcLogDisc
-    
+    %   See Also: prtPreProc,
+    %   prtOutlierRemoval,prtPreProcNstdOutlierRemove,
+    %   prtOutlierRemovalMissingData,
+    %   prtPreProcNstdOutlierRemoveTrainingOnly, prtOutlierRemovalNStd,
+    %   prtPreProcPca, prtPreProcPls, prtPreProcHistEq,
+    %   prtPreProcZeroMeanColumns, prtPreProcLda, prtPreProcZeroMeanRows,
+    %   prtPreProcLogDisc, prtPreProcZmuv, prtPreProcMinMaxRows                    
+        
     
     properties (SetAccess=private)
-        % Required by prtAction
-        name = 'Zero-Mean Rows'
-        nameAbbreviation = 'ZMR'
-        isSupervised = false;
+        name = 'Zero-Mean Rows' % Zero-Mean Rows
+        nameAbbreviation = 'ZMR' % ZMR
+        isSupervised = false; % False
     end
     
     properties
@@ -47,7 +53,7 @@ classdef prtPreProcZeroMeanRows < prtPreProc
         end
     end
     
-    methods (Access = protected)
+    methods (Access = protected, Hidden = true)
         
         function Obj = trainAction(Obj,DataSet)
             %do nothing

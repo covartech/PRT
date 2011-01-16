@@ -25,6 +25,23 @@ classdef prtOutlierRemoval < prtAction
     %
     %       'removeFeature'  - When running the outlier removal action,
     %       remove features where any observation contains an outlier.
+    %       
+    %   runOnTrainingMode - A string specifying how the outlier removal
+    %   method should behave when being run during the training of a
+    %   prtAlgorithm.  See above for a more detailed description, and a
+    %   list of valid runOnTrainingMode string values.  Default value is
+    %   'removeObservation'.
+    %
+    %   See Also: prtPreProc,
+    %   prtOutlierRemoval,prtPreProcNstdOutlierRemove,
+    %   prtOutlierRemovalMissingData,
+    %   prtPreProcNstdOutlierRemoveTrainingOnly, prtOutlierRemovalNStd,
+    %   prtPreProcPca, prtPreProcPls, prtPreProcHistEq,
+    %   prtPreProcZeroMeanColumns, prtPreProcLda, prtPreProcZeroMeanRows,
+    %   prtPreProcLogDisc, prtPreProcZmuv, prtPreProcMinMaxRows                    
+
+    %   Internal help info:
+    %   prtClass objects have the following Abstract methods:
     %
     %   runOnTrainingMode -  specifies how the action should
     %   behave when the outlier removal object is embedded in a
@@ -57,14 +74,14 @@ classdef prtOutlierRemoval < prtAction
     %   DataSet.nFeatures.  The (i,j) element of indices specifies whether
     %   that element of DataSet is an outlier.
     %   
-    
+
     methods (Abstract, Access = protected, Hidden = true)
         indices = calculateOutlierIndices(Obj,DataSet)
     end
     
     properties
-        runOnTrainingMode = 'removeObservation';
-        runMode = 'noAction';
+        runOnTrainingMode = 'removeObservation';  %Operation taken during TRAIN
+        runMode = 'noAction';                     %Operation taken during RUN
     end
     properties (Access = 'private')
         validModes = {'noAction','replaceWithNan','removeObservation','removeFeature'};

@@ -8,31 +8,38 @@ classdef prtPreProcPca < prtPreProc
     %
     %   A prtPreProcPca object has the following properites:
     % 
-    %   nComponenets    - The number of principle componenets
+    %   nComponents    - The number of principle componenets
     %
     %   A prtPreProcPca object also inherits all properties and functions from
     %   the prtAction class
     %
     %   Example:
     %
-    %   dataSet = prtDataGenUnimodal;  
-    %   pca = prtPreProcPca;           
+    %   dataSet = prtDataGenUnimodal;   % Load a data set
+    %   pca = prtPreProcPca;            % Create a prtPreProcPca object
     %                        
-    %   pca = pca.train(dataSet);     
-    %   dataSetNew = pca.run(dataSet);
+    %   pca = pca.train(dataSet);       % Train the prtPreProcPca object
+    %   dataSetNew = pca.run(dataSet);  % Run
     % 
+    %   % Plot
     %   subplot(2,1,1); plot(dataSet);
     %   title('Original Data');
     %   subplot(2,1,2); plot(dataSetNew);
     %   title('PCA Projected Data');
     %
- 
+    %   See Also: prtPreProc,
+    %   prtOutlierRemoval,prtPreProcNstdOutlierRemove,
+    %   prtOutlierRemovalMissingData,
+    %   prtPreProcNstdOutlierRemoveTrainingOnly, prtOutlierRemovalNStd,
+    %   prtPreProcPca, prtPreProcPls, prtPreProcHistEq,
+    %   prtPreProcZeroMeanColumns, prtPreProcLda, prtPreProcZeroMeanRows,
+    %   prtPreProcLogDisc, prtPreProcZmuv, prtPreProcMinMaxRows                    
+    
     
     properties (SetAccess=private)
-        % Required by prtAction
-        name = 'Principal Component Analysis'
-        nameAbbreviation = 'PCA'
-        isSupervised = false;
+        name = 'Principal Component Analysis'  % Principal Component Analysis
+        nameAbbreviation = 'PCA' % PCA
+        isSupervised = false;   % False
     end
     
     properties
@@ -42,9 +49,12 @@ classdef prtPreProcPca < prtPreProc
         % General Classifier Properties
         means = [];           % A vector of the means
         pcaVectors = [];      % The PCA vectors.
-        pcaVectorsSvd = [];
+      
     end
     
+    properties( SetAccess = private, Hidden = true)
+          pcaVectorsSvd = [];
+    end
     methods
         
           % Allow for string, value pairs
@@ -70,7 +80,7 @@ classdef prtPreProcPca < prtPreProc
         end
     end
     
-    methods (Access = protected)
+    methods (Access = protected, Hidden = true)
         
         %NOTE: I think we can replace all this with one call to svds
         function Obj = trainAction(Obj,DataSet)

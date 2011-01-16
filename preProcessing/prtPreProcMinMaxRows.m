@@ -1,10 +1,10 @@
 classdef prtPreProcMinMaxRows < prtPreProc
-    % prtPreProcMinMaxRows  Min (0), Max (1) all rows of the data
+    % prtPreProcMinMaxRows Minimize and maximize all rows of the data
     %
-    %   LOGDISC = prtPreProcMinMaxRows creates a min/max rows pre
+    %   MINMAX = prtPreProcMinMaxRows creates a min/max rows pre
     %   processing object. A prtPreProcMinMaxRows object linearly scales
-    %   the input observations so that each row (observation) has a min of
-    %   0 and a max of 1.
+    %   the input observations so that each row (observation) has a minimum
+    %   of 0 and a maximum of 1.
     % 
     %   prtPreProcMinMaxRows has no user settable properties.
     %
@@ -16,24 +16,32 @@ classdef prtPreProcMinMaxRows < prtPreProc
     %
     %   Example:
     %
-    %   dataSet = prtDataGenIris;       
-    %   dataSet = dataSet.retainFeatures(1:3);
-    %   logDisc = prtPreProcMinMaxRows;  
-    %                                  
-    %   logDisc = logDisc.train(dataSet);  
-    %   dataSetNew = logDisc.run(dataSet); 
+    %   dataSet = prtDataGenIris;              % Load a data set
+    %   dataSet = dataSet.retainFeatures(1:3); % Retain the first 3 features
+    %   logDisc = prtPreProcMinMaxRows;        % Create the pre processing 
+    %                                          % object
+    %   minmax = logDisc.train(dataSet);       % Train
+    %   dataSetNew = minmax.run(dataSet);      % Run
     % 
+    %   % Plot
     %   subplot(2,1,1); plot(dataSet);
     %   title('Original Data');
     %   subplot(2,1,2); plot(dataSetNew);
     %   title('MinMaxRows Data');
     %
+        %   See Also: prtPreProc,
+    %   prtOutlierRemoval,prtPreProcNstdOutlierRemove,
+    %   prtOutlierRemovalMissingData,
+    %   prtPreProcNstdOutlierRemoveTrainingOnly, prtOutlierRemovalNStd,
+    %   prtPreProcPca, prtPreProcPls, prtPreProcHistEq,
+    %   prtPreProcZeroMeanColumns, prtPreProcLda, prtPreProcZeroMeanRows,
+    %   prtPreProcLogDisc, prtPreProcZmuv, prtPreProcMinMaxRows                    
     
     properties (SetAccess=private)
         % Required by prtAction
-        name = 'MinMax Rows'
-        nameAbbreviation = 'MMR'
-        isSupervised = false;
+        name = 'MinMax Rows'  % MinMax Rows
+        nameAbbreviation = 'MMR' % MMR
+        isSupervised = false;   % False
     end
     
     properties
@@ -50,7 +58,7 @@ classdef prtPreProcMinMaxRows < prtPreProc
         end
     end
     
-    methods (Access = protected)
+    methods (Access = protected, Hidden = true)
         
         function Obj = trainAction(Obj,DataSet)
             %do nothing
