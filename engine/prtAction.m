@@ -367,7 +367,9 @@ classdef prtAction
             
             if DataSetIn.nObservations > 0
                 if ClassObj.isCrossValidateValid
-                    DataSetOut = DataSetOut.setTargets(DataSetIn.getTargets);
+                    if DataSetIn.isLabeled && ~DataSetOut.isLabeled
+                        DataSetOut = DataSetOut.setTargets(DataSetIn.getTargets);
+                    end
                     DataSetOut = DataSetOut.copyDescriptionFieldsFrom(DataSetIn);
                 end
                 DataSetOut = ClassObj.updateDataSetFeatureNames(DataSetOut);
