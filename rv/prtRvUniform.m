@@ -36,8 +36,8 @@ classdef prtRvUniform < prtRv
     %   prtRvVq, prtRvKde
     
     properties
-        upperBounds
-        lowerBounds
+        upperBounds  % The lower bounds of the random variable
+        lowerBounds  % The upper bounds of the random variable
     end
     
     properties (Hidden = true, Dependent = true)
