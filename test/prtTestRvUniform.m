@@ -23,7 +23,7 @@ catch
     close
 end
 
-RVspec = prtRVUniform;
+RVspec = prtRvUniform;
 % % Check that I can specify upper and lower bounds
 try
     RVspec.upperBounds = [1 2];  % Spec upper
