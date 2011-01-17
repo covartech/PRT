@@ -111,6 +111,10 @@ classdef prtRv
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         function varargout = plotPdf(R,varargin)
             % PLOTPDF  Plot the pdf of the prtRv
+            %
+            % R.plotPdf()
+            % R.plotPdf([xMin yMin (zMin) xMax yMax (zMax)]);  
+            
             varargout = {};
             if R.isPlottable
                 
@@ -138,6 +142,9 @@ classdef prtRv
         
         function varargout = plotCdf(R,varargin)
             %PLOTCDF Plot the cdf of the prtRv
+            % R.plotCdf()
+            % R.plotCdf([xMin yMin (zMin) xMax yMax (zMax)]);  
+            
             varargout = {};
             if R.isPlottable
                 

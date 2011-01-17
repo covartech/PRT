@@ -118,19 +118,18 @@ classdef prtClass < prtAction
             %   'true', the training data points are also displayed on the
             %   plot.
             %  
-            %   See also: prtClass\plotDecision
+            %   See also: prtClass\explore()
             
             assert(Obj.isTrained,'Classifier must be trained before it can be plotted.');
             assert(Obj.DataSetSummary.nFeatures < 4, 'nFeatures in the training dataset must be less than or equal to 3');
             
             if Obj.yieldsMaryOutput
-                % Must produce mary plot
-                HandleStructure = plotMaryClassifierConfidence(Obj);
-            else
-                % Single binary plot
-                HandleStructure = plotBinaryClassifierConfidence(Obj);
+                % Must have an internal decider
+                Obj = trainAutoDecision(Obj);
             end
-            
+           
+            HandleStructure = plotBinaryClassifierConfidence(Obj); % This handles both the binary classifier confidence plot and binary and m-ary decision plots.
+           
             if ~isempty(Obj.DataSet) && ~isempty(Obj.DataSet.name)
                 title(sprintf('%s (%s)',Obj.name,Obj.DataSet.name));
             else
@@ -166,7 +165,9 @@ classdef prtClass < prtAction
             
             assert(~isempty(Obj.isTrained),'explore() is only for trained classifiers.');
             assert(~isempty(Obj.DataSet),'explore() requires that verboseStorage is true and therefore a prtDataSet is stored within the classifier.');
-            assert(~Obj.yieldsMaryOutput,'explore() is only for binary classifiers or classifiers that have an internal decider.');
+            if Obj.yieldsMaryOutput
+                Obj = trainAutoDecision(Obj);
+            end
             
             prtPlotUtilClassExploreGui(Obj)
         end
@@ -333,48 +334,17 @@ classdef prtClass < prtAction
                 HandleStructure.Axes = struct('imageHandle',{imageHandle},'handles',{[]});
             end
         end
-        
-        function HandleStructure = plotMaryClassifierConfidence(Obj)
-            
-            [OutputDataSet, linGrid, gridSize] = runClassifierOnGrid(Obj);
-            
-            % Mary plotting generates a series of subplots that show the
-            % confidence of each individual class.
-            
-            [M,N] = prtUtilGetSubplotDimensions(Obj.DataSetSummary.nClasses);
-            imageHandle = zeros(M*N,1);
-            
-            % The confidences are displayed with class specific color maps
-            % These will be lightened up to have contrast with the points
-            classColors = prtPlotUtilLightenColors(Obj.PlotOptions.colorsFunction(OutputDataSet.nFeatures));
-            
-            nColorMapSamples = 256;
-            
-            for subImage = 1:M*N
-                cMap = prtPlotUtilLinspaceColormap([1 1 1], classColors(subImage,:),nColorMapSamples);
-                
-                cAxes = subplot(M,N,subImage);
-                imageHandle(subImage) = prtPlotUtilPlotGriddedEvaledClassifier(OutputDataSet.getObservations(:,subImage), linGrid, gridSize, cMap);
-                
-                prtPlotUtilFreezeColors(cAxes);
-            end
-            
+        function Obj = trainAutoDecision(Obj)
             if ~isempty(Obj.DataSet)
-                for subImage = 1:M*N
-                    subplot(M,N,subImage)
-                    hold on;
-                    [handles,legendStrings] = plot(Obj.DataSet);
-                    hold off;
-                    HandleStructure.Axes(subImage) = struct('imageHandle',{imageHandle(subImage)},'handles',{handles},'legendStrings',{legendStrings});
-                end
-            else
-                for subImage = 1:M*N
-                    HandleStructure.Axes(subImage) = struct('imageHandle',{imageHandle(subImage)},'handles',{[]},'legendStrings',{[]});
-                end
+                    warning('prt:prtClass:plot:autoDecision','prtClass.plot() requires a binary prtClass or a prtClass with an internal decider. A prtDecisionMap has been trained and set as the internalDecider to enable plotting.');
+                    Obj.internalDecider =  prtDecisionMap;
+                    Obj = postTrainProcessing(Obj, Obj.DataSet);
+                    Obj.yieldsMaryOutput = false;
+                else
+                    error('prt:prtClass:plot','prtClass.plot() requires a binary prtClass or a prtClass with an internal decider. A prtDecisionMap cannot be trained and set as the internalDecider to enable plotting because this classifier object does not have verboseStorege turned on and therefore the dataSet used to train the classifier is unknow. To enable plotting, set an internalDecider and retrain the classifier.');
             end
         end
         
-
     end
     
     methods (Static, Hidden = true)

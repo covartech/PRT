@@ -405,7 +405,7 @@ classdef prtAction
                 Obj.(parameterName) = parameterValues{i};
                 performance(i) = objFn(Obj,DataSet);
             end
-            [maxPerformance,maxPerformanceInd] = max(performance);
+            [maxPerformance,maxPerformanceInd] = max(performance); %#ok<ASGLU>
             Obj.(parameterName) = parameterValues{maxPerformanceInd};
             optimizedAction = train(Obj,DataSet);
             
