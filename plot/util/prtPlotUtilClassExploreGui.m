@@ -5,7 +5,7 @@ assert(~isempty(class.isTrained),'prtPlotUtilClassExploreGui is only for trained
 assert(~isempty(class.DataSet),'prtPlotUtilClassExploreGui requires that verboseStorage is true and therefore a prtDataSet is stored within the classifier.');
 assert(~class.yieldsMaryOutput,'prtPlotUtilClassExploreGui is currently only for binary classifiers or classifiers that have an internal decider.');
 
-if strcmpi(get(gcf,'tag'),'prtDataSetClassControl')
+if strcmpi(get(gcf,'tag'),'prtClassExploreControl')
     % Current figure is nav controls
     % so make a new one
     figure
@@ -13,7 +13,7 @@ end
 
 % Current figure is new (made by gcf or figure calls above) or existed
 plotAxes = gca; % Will make an axes if one isn't already there.
-if strcmpi(get(plotAxes,'tag'),'prtDataSetClassAxes')
+if strcmpi(get(plotAxes,'tag'),'prtClassExploreAxes')
     % We are calling explore into an existing explore axes
     % This is bad. We need to destroy the existing nav control for this
     % explorer window (if it still exists).
@@ -52,7 +52,7 @@ plotAxesFigPos = get(plotAxesFig,'position');
 % navFigPosLeft = plotAxesFigPos(1)+plotAxesFigPos(3);
 
 oldUnits = get(plotAxes,'units');
-set(plotAxes,'Units','pixels');
+set(plotAxes,'Units','pixels','tag','prtClassExploreAxes');
 plotAxesOuterPos = get(plotAxes,'outerposition');
 set(plotAxes,'units',oldUnits);
 
@@ -68,7 +68,7 @@ navFigH = figure('Number','Off',...
     'Units','pixels',...
     'Position',navFigPos,...
     'NextPlot','new',...
-    'tag','prtDataSetClassControl',...
+    'tag','prtClassExploreControl',...
     'DockControls','off',...
     'visible','off');
 
@@ -177,7 +177,7 @@ zFeatureInds = setdiff(1:class.DataSetSummary.nFeatures,plotInds(plotInds>0));
     end
     function setAxesProperties()
         set(plotAxes,'deleteFcn',@plotAxesDeleteFunction)
-        set(plotAxes,'tag','prtDataSetExploreAxes')
+        set(plotAxes,'tag','prtClassExploreAxes')
         set(plotAxes,'UserData',navFigH);
         set(plotAxes,'ButtonDownFcn',@plotAxesOnClick);
         set(PlotHandles,'HitTest','off');
@@ -380,6 +380,7 @@ zFeatureInds = setdiff(1:class.DataSetSummary.nFeatures,plotInds(plotInds>0));
                        'units','normalized',...
                        'position',[0.1 0.131 0.8 0.1875]);
         
+        
         axes(H.zAxes) %#ok<MAXES>
         hold on
         H.zLinePlot = plot(H.zAxes,0,1,'k'); %Will be quickly changed. 
@@ -427,6 +428,10 @@ zFeatureInds = setdiff(1:class.DataSetSummary.nFeatures,plotInds(plotInds>0));
     end
 
     function setZString(H)
+        if class.DataSetSummary.nFeatures < 3
+            set(H.zPopUp,'value',1,'string',{'Not Available'},'Enable','off');
+            return
+        end
         oldVal = get(H.zPopUp,'value');
         oldString = get(H.zPopUp,'string');
         oldStringVal = oldString{oldVal};
@@ -448,6 +453,11 @@ zFeatureInds = setdiff(1:class.DataSetSummary.nFeatures,plotInds(plotInds>0));
         
     end
     function setYString(H)
+        if class.DataSetSummary.nFeatures < 2
+            set(H.yPopUp,'value',1,'string',{'Not Available'},'Enable','off');
+            return
+        end
+        
         oldVal = get(H.yPopUp,'value');
         oldString = get(H.yPopUp,'string');
         oldStringVal = oldString{oldVal};
@@ -467,6 +477,11 @@ zFeatureInds = setdiff(1:class.DataSetSummary.nFeatures,plotInds(plotInds>0));
     end
 
     function H = setZAxes(H)
+        
+        if class.DataSetSummary.nFeatures < 3
+            set(H.zAxes,'visible','off');
+            return
+        end
         
         %set(navFigH,'NextPlot','replace');
         iFeature = zFeatureInds(get(H.zPopUp,'value'));
@@ -505,6 +520,11 @@ zFeatureInds = setdiff(1:class.DataSetSummary.nFeatures,plotInds(plotInds>0));
     end
 
     function moveZAxesLine()
+        if class.DataSetSummary.nFeatures < 3
+            % Everything is disabled so we don't do anything.
+            return
+        end
+        
         H = tabGroupH;
         iFeature = zFeatureInds(get(H.zPopUp,'value'));
         v = axis(H.zAxes);

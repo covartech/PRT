@@ -155,11 +155,11 @@ classdef prtClass < prtAction
             %   
             % Examples:
             %   ds = prtDataGenIris;
-            %   t = train(prtClassMAP('internalDecider',prtDecisionMap),ds);
+            %   t = train(prtClassMap('internalDecider',prtDecisionMap),ds);
             %   explore(t);
             %
             %   ds = catFeatures(prtDataGenUnimodal,prtDataGenBimodal);
-            %   t = train(prtClassMAP,ds);
+            %   t = train(prtClassLibSvm,ds);
             %   explore(t)
             
             
