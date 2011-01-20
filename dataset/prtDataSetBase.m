@@ -66,13 +66,13 @@ classdef prtDataSetBase
         nTargetDimensions     % The number of target dimensions
     end
     properties (Dependent)
-        isLabeled           % Whether or not the data has target labels
+        isLabeled             % Whether or not the data has target labels
     end
     
     properties  %public, for now
         name = ''             % A string naming the data set
         description = ''      % A string with a verbose description of the data set
-        UserData = struct;         % Additional data per data set
+        UserData = struct;    % Additional data per data set
     end
     
     properties(Hidden)

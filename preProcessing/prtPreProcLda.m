@@ -1,7 +1,7 @@
 classdef prtPreProcLda < prtPreProc
     % prtPreProcLda  Linear discriminant analysis processing
     %
-    %   LDA = prtPreProcLda creates a linear discriminant pre
+    %   preProc = prtPreProcLda creates a linear discriminant pre
     %   processing object. A prtPreProcLda object projects the input data
     %   onto a linear space that best separates class labels
     % 
@@ -10,7 +10,7 @@ classdef prtPreProcLda < prtPreProc
     %   nComponents - The number of dimensions to project the data onto.
     %                 Must be <= ds.nFeatures, and <= ds.nClasses - 1
     %
-    %   A prtPreProcHistEq object also inherits all properties and functions from
+    %   A prtPreProcLda object also inherits all properties and functions from
     %   the prtAction class
     %
     %   More information about LDA can be found at the following URL:

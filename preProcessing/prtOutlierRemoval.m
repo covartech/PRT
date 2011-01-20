@@ -32,6 +32,17 @@ classdef prtOutlierRemoval < prtAction
     %   list of valid runOnTrainingMode string values.  Default value is
     %   'removeObservation'.
     %
+    %   prtOutlierRemoval objects have the following Abstract methods:
+    %
+    %   calculateOutlierIndices - An abstract method that all concrete
+    %   sub-classes must define.  calculateOutlierIndices takes the form:
+    %
+    %       indices = calculateOutlierIndices(Obj,DataSet)
+    %
+    %   where indices is a logical matrix of size DataSet.nObservations x
+    %   DataSet.nFeatures.  The (i,j) element of indices specifies whether
+    %   that element of DataSet is an outlier.
+    %
     %   See Also: prtPreProc,
     %   prtOutlierRemoval,prtPreProcNstdOutlierRemove,
     %   prtOutlierRemovalMissingData,
@@ -62,18 +73,6 @@ classdef prtOutlierRemoval < prtAction
     %   prtPreProcPls, prtPreProcZeroMeanColumns, prtPreProcZeroMeanRows,
     %   prtPreProcZmuv
     
-    
-    %   prtOutlierRemoval objects have the following Abstract methods:
-    %
-    %   calculateOutlierIndices - An abstract method that concrete
-    %   sub-classes must define.  calculateOutlierIndices takes the form:
-    %
-    %       indices = calculateOutlierIndices(Obj,DataSet)
-    %
-    %   where indices is a logical matrix of size DataSet.nObservations x
-    %   DataSet.nFeatures.  The (i,j) element of indices specifies whether
-    %   that element of DataSet is an outlier.
-    %   
 
     methods (Abstract, Access = protected, Hidden = true)
         indices = calculateOutlierIndices(Obj,DataSet)
@@ -112,6 +111,7 @@ classdef prtOutlierRemoval < prtAction
         function DataSet = runAction(Obj,DataSet)
             DataSet = outlierRemovalRun(Obj,DataSet,Obj.runMode);
         end
+        
         function DataSet = runActionOnTrainingData(Obj,DataSet)
             DataSet = outlierRemovalRun(Obj,DataSet,Obj.runOnTrainingMode);
         end
@@ -122,6 +122,9 @@ classdef prtOutlierRemoval < prtAction
                     return;
                 case 'removeObservation'
                     ind = Obj.calculateOutlierIndices(DataSet);
+                    if ~islogical(ind)
+                        error('prtOutlierRemoval:invalidCalculateOutlierIndices','prtOutlierRemoval objects calculateOutlierIndices method must output a logical array of size dataSet.nObservations x dataSet.nFeatures');
+                    end
                     removeInd = any(ind,2);
                     DataSet = DataSet.removeObservations(removeInd);
                 case 'removeFeature'
@@ -137,5 +140,15 @@ classdef prtOutlierRemoval < prtAction
                     error('invalid string');
             end
         end
+        
+        %Overloads prtAction/postRunProcessing
+        function DataSetOut = postRunProcessing(ClassObj, DataSetIn, DataSetOut, removedIndices)
+            %
+            
+            %It's not necessary to do anything; but we can't rely on
+            %prtAction's postRunProcessing to not try something overly
+            %clever here.
+        end
+        
     end
 end

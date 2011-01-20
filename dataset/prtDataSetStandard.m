@@ -530,7 +530,7 @@ classdef prtDataSetStandard < prtDataSetBase
                 
                 % Updated chached target info
                 obj = updateTargetsCache(obj);
-                
+
                 % Updated chached data info
                 obj = updateObservationsCache(obj);
             catch  %#ok<CTCH>
