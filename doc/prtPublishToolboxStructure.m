@@ -15,7 +15,7 @@
 % * DataSet Objects                     (e.g. prtDataSetClass)
 % * Classification algorithms           (e.g. prtClassFld)
 % * Regression algorithms               (e.g. prtRegressLslr)
-% * Unsupervised clustering algorithms  (e.g. prt***)
+% * Unsupervised clustering algorithms  (e.g. prtCluster)
 % * Preprocessing algorithms            (e.g. prtPreProcPca)
 % * Feature selection algorithms        (e.g. prtFeatSelSfs)
 % * Decision making algorithms          (e.g. prtDecisionBinaryMinPe)
