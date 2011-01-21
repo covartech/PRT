@@ -866,6 +866,9 @@ classdef prtDataSetClass  < prtDataSetStandard
             handleArray = zeros(nClasses,1);
             
             holdState = get(gca,'nextPlot');
+            % This call to gca will create a figure if it doesn't already
+            % exist
+            
             % Loop through classes and plot
             for i = 1:nClasses
                 cX = obj.getObservationsByClassInd(i, featureIndices);

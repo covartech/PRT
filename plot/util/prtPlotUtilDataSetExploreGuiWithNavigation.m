@@ -67,14 +67,16 @@ navFigH = figure('Number','Off',...
 % an invisible axes
 invisibleAxes = axes('parent',navFigH,...
     'units','pixels',...
-    'position',[1 1 1 1],...
+    'position',[0 0  1 1],...
     'visible','off',...
-    'handlevisibility','off'); %#ok<NASGU>
+    'handlevisibility','on'); %#ok<NASGU>
 
 tabGroupH = createTabGroup(ds);
 
 PlotHandles = []; % Add to all workspaces
 infoClickedInd = []; % Add to all workspaces
+legendHandle = []; % Add to all workspaces
+legendStruct = []; % Add to all workspaces
 remakePlot();
 
 % We don't display the plots until now because it is kind of slow to make
@@ -82,7 +84,7 @@ remakePlot();
 % completed windows
 set(plotAxesFig,'visible','on');
 set(navFigH,'visible','on');
-    
+
     function plotAxesDeleteFunction(myHandle, evenData) %#ok<INUSD>
         try %#ok<TRYNC>
             close(navFigH)
@@ -128,6 +130,10 @@ set(navFigH,'visible','on');
         actualPlotDims = plotInds(plotInds>=1);
         axes(plotAxes); %#ok<MAXES>
         
+        % Before we plot we get the legend properties (it may not exist)
+        legendHandle = legend(plotAxes);
+        legendStruct = get(legendHandle); 
+        
         PlotHandles = plot(ds,actualPlotDims);
         % Set the plotAxes delete function so that we delete the controls
         % when necessary.
@@ -135,13 +141,32 @@ set(navFigH,'visible','on');
         setAxesProperties();
         
         updateVisibleClasses();
+        
+        % Make sure the navFig is on top
+        figure(navFigH);
     end
+
     function setAxesProperties()
         set(plotAxes,'deleteFcn',@plotAxesDeleteFunction)
         set(plotAxes,'tag','prtDataSetExploreAxes')
         set(plotAxes,'UserData',navFigH);
         set(plotAxes,'ButtonDownFcn',@plotAxesOnClick);
         set(PlotHandles,'HitTest','off');
+        
+        % I know the function is called setAxesProperties but this is also
+        % a great place to put the legend back where we want, amoung other
+        % things.
+        legendHandle = legend(plotAxes);
+        if ~isempty(legendStruct)
+            % legendStruct has all of the properties of the old legend
+            % we will reset some of the new legend's properties to match
+            % the old one. This ends the annoyances of moving legends and
+            % having them move back to their default location.
+            set(legendHandle,'Position',legendStruct.Position,...
+                             'Location',legendStruct.Location,...
+                             'Orientation',legendStruct.Orientation,...
+                             'String',legendStruct.String);
+        end
     end
 
     function plotAxesOnClick(myHandle,eventData)  %#ok<INUSD>
@@ -172,6 +197,7 @@ set(navFigH,'visible','on');
         
         displayInfo(clickedObsInd);
     end
+
     function displayInfo(clickedObsInd)
         obsName = ds.getObservationNames(clickedObsInd);
         
@@ -195,6 +221,7 @@ set(navFigH,'visible','on');
         end
         
     end
+
     function infoToWorkspaceCallback(myHandle,eventData)  %#ok<INUSD>
         
         c = ds.ObservationInfo(infoClickedInd);
@@ -202,7 +229,8 @@ set(navFigH,'visible','on');
         assignin('base','prtPlotUtilDataSetExploreGuiWithNavigationTempVar',c);
         openvar('prtPlotUtilDataSetExploreGuiWithNavigationTempVar');
     end
-    function [rotatedData,rotatedClick] = rotateDataAndClick(data)
+
+    function [rotatedData, rotatedClick] = rotateDataAndClick(data)
         % Used internally; from Click3dPoint from matlab central;
         % See prtExternal.ClickA3DPoint.()
         %
@@ -277,7 +305,6 @@ set(navFigH,'visible','on');
             rotatedClick = rotatedClick(1);
         end
     end
-
     
     function H = createTabGroup(ds)
         % Make control panel uitabs and uipanels
@@ -320,7 +347,7 @@ set(navFigH,'visible','on');
         
         H.yPopUp = uicontrol(H.navTab(1),'style','popup',...
             'units','normalized',...
-            'position',[0.025 0.35 0.95 0.2],...
+            'position',[0.025 0.325 0.95 0.225],...
             'string',featureNames,...
             'FontUnits','normalized',...
             'FontSize',0.5,...
