@@ -1,25 +1,21 @@
 function DataSet = prtDataGenSpiral(N)
-%prtDataGenSpiral   Generates some spirally clustered example data for the prt.
+%prtDataGenSpiral   Generates some spirally clustered example data 
 %
-% Syntax: DataSet = prtDataGenSpiral
+%  DATASET = prtDataGenSpiral returns a prtDataSetClass with randomly
+%  generated data in a spiral pattern in 2 dimensions.
 %
-% Inputs: 
-%   none
+%  Example:
 %
-% Outputs:
-%   X - 400x2 Bimodal data
-%   Y - 400x1 Class labels
+%  ds = prtDataGenSpiral;
+%  plot(ds)
 %
-% Example:
-%   [X, Y] = prtDataGenSpiral;
-%   prtDataPlot(X,Y)
-%
-%
-% Other m-files required: none
-% Subfunctions: none
-% MAT-files required: none
-%
-% See also: prtDataGenUnimodal, prtDataGenBimodal
+%   See also: prtDataSetClass, prtDataGenBiModal, prtDataGenIris,
+%   prtDataGenManual, prtDataGenMary, prtDataGenNoisySinc,
+%   prtDataGenOldFaithful,prtDataGenProtate, prtDataGenSprial,
+%   prtDataGenSpiral3 prtDataGenUnimodal, prtDataGenSwissRoll,
+%   prtDataGenUnimodal, prtDataGenXor
+
+
 
 % Copyright 2010, New Folder Consulting, L.L.C.
 

@@ -1,7 +1,21 @@
 function DataSet = prtDataGenNoisySinc
-% DataSet = prtDataGenNoisySync
-% 
-% % xxx NEED HELP xxx
+% prtDataGenNoisySinc Generates noisy sinc example data
+%
+%   DATASET = prtDataGenNoisySinc returns a prtDataSetRegress with 100
+%   samples of sinc wave with zero-mean additive Gaussian noise. The noise
+%   variance is .1.
+%
+%   Example:
+%
+%   ds = prtDataGenNoisySinc;
+%   plot(ds)
+%
+%   See also: prtDataSetRegress, prtDataGenBiModal, prtDataGenIris,
+%   prtDataGenManual, prtDataGenMary, prtDataGenNoisySinc,
+%   prtDataGenOldFaithful,prtDataGenProtate, prtDataGenSprial,
+%   prtDataGenSpiral3 prtDataGenUnimodal, prtDataGenSwissRoll,
+%   prtDataGenUnimodal, prtDataGenXor
+
 
 nSamples = 100;
 noiseVar = 0.1;

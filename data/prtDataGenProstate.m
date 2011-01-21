@@ -1,4 +1,24 @@
 function DataSet = prtDataGenProstate(prostateFile)
+%   prtDataGenIris Read in data from the UCI PROSTATE data file
+%
+%   DataSet = prtDataGenIris reads in the data from the classic Prostate.UCI
+%   file used in many pattern recognition texts and papers. For more
+%   information about this data, see the following URL:
+%
+%   http://lib.stat.cmu.edu/S/Harrell/data/descriptions/prostate.html
+%
+%   Example:
+% 
+%   ds = prtDataGenProstate;
+%   ds.plot;
+%    
+%   See also: prtDataSetClass, prtDataGenBiModal, prtDataGenIris,
+%   prtDataGenManual, prtDataGenMary, prtDataGenNoisySinc,
+%   prtDataGenOldFaithful,prtDataGenProtate, prtDataGenSprial,
+%   prtDataGenSpiral3 prtDataGenUnimodal, prtDataGenSwissRoll,
+%   prtDataGenUnimodal, prtDataGenXor
+
+
 %   prtDataGenProstate Read in data from a CSV formatted PROSTATE-like data file
 %
 % DataSet = prtDataGenProstate; Read in the data from the Prostate.UCI file

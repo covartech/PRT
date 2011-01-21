@@ -1,8 +1,23 @@
 function DataSet = prtDataGenIris(irisFile)
-%   prtDataGenIris Read in data from a UCI formatted IRIS-like data file
+%   prtDataGenIris Read in data from the UCI IRIS data file
 %
-% DataSet = prtDataGenIris; Read in the data from the iris.UCI file
-% available with the prt and on the web.
+%   DataSet = prtDataGenIris reads in the data from the classic iris.UCI
+%   file used in many pattern recognition texts and papers. For more
+%   information about this data, see the following URL:
+%
+%   http://archive.ics.uci.edu/ml/datasets/Iris
+%
+%   Example:
+% 
+%   ds = prtDataGenIris;
+%   ds.plot;
+%    
+%   See also: prtDataSetClass, prtDataGenBiModal, prtDataGenIris,
+%   prtDataGenManual, prtDataGenMary, prtDataGenNoisySinc,
+%   prtDataGenOldFaithful,prtDataGenProtate, prtDataGenSprial,
+%   prtDataGenSpiral3 prtDataGenUnimodal, prtDataGenSwissRoll,
+%   prtDataGenUnimodal, prtDataGenXor
+
 %
 % DataSet = prtDataGenIris(irisFile);  Read in the UCI-formatted,
 % shell-style-commented file a file matching the specifications of iris.UCI

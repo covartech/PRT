@@ -1,34 +1,22 @@
 function DataSet = prtDataGenUnimodal(N,mu0,mu1,sigma0,sigma1)
-%prtDataGenUnimodal   Generates some unimodal example data for the prt.
-%  DataSet = prtDataGenUnimodal(N)
-%  The data is distributed:
+%prtDataGenUnimodal   Generates unimodal example data
+%
+%   DATASET = prtDataGenUnimodal returns a prtDataSetClass with randomly
+%   generated data according to the following distribution.
+%
 %       H0: N([-1 -1],eye(2))
 %       H1: N([2 2],[1 .5; .5 1])
 %
-% Syntax: [X, Y] = prtDataGenUnimodal
-%         [X, Y] = prtDataGenUnimodal(N,mu0,mu1,sigma0,sigma1)
+%   % Example
 %
-% Inputs: 
-%       N ~ number of samples per class (200)
-%       mu0 ~ mean under class 0 ([-1 -1])
-%       sigma0 ~ covariance under class 0 ([eye(2)])
-%       mu1 ~ mean under class 0 ([2 2])
-%       sigma1 ~ covariance under class 0 ([1 .5; .5 1])
-%
-% Outputs:
-%   X - 400x2 Unimodal data
-%   Y - 400x1 Class labels
-%
-% Example:
-%   [X, Y] = prtDataGenUnimodal;
-%   prtDataPlot(X,Y)
-%
-%
-% Other m-files required: none
-% Subfunctions: none
-% MAT-files required: none
-%
-% See also: prtDataGenBimodal
+%   ds = prtDataGenUniModal;
+%   plot(ds)
+%   
+%   See also: prtDataSetClass, prtDataGenBiModal, prtDataGenIris,
+%   prtDataGenManual, prtDataGenMary, prtDataGenNoisySinc,
+%   prtDataGenOldFaithful,prtDataGenProtate, prtDataGenSprial,
+%   prtDataGenSpiral3 prtDataGenUnimodal, prtDataGenSwissRoll,
+%   prtDataGenUnimodal, prtDataGenXor
 
 % Copyright 2010, New Folder Consulting, L.L.C.
 

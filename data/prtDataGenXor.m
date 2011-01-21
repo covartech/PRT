@@ -1,29 +1,22 @@
 function DataSet = prtDataGenXor(N)
-%prtDataGenXor   Generates some XOR
-%  DataSet = prtDataGenXor(N)
-%  The data is distributed:
+%prtDataGenXor  Generates XOR example data
+%
+%   DATASET = prtDataGenXor returns a prtDataSetClass with randomly
+%   generated data according to the following distribution.
+%
 %       H0: N([-1 -1],eye(2))
 %       H1: N([2 2],[1 .5; .5 1])
 %
-% Syntax: [X, Y] = prtDataGenXor;
+%   % Example
+% 
+%   ds = prtDataGenXor;
+%   plot(ds)
 %
-% Inputs: 
-%       N ~ number of samples per class (200)
-%
-% Outputs:
-%   X - 400x2 Unimodal data
-%   Y - 400x1 Class labels
-%
-% Example:
-%   [X, Y] = prtDataGenXor;
-%   prtDataPlot(X,Y)
-%
-%
-% Other m-files required: none
-% Subfunctions: none
-% MAT-files required: none
-%
-% See also: prtDataGenBimodal
+%   See also: prtDataSetClass, prtDataGenBiModal, prtDataGenIris,
+%   prtDataGenManual, prtDataGenMary, prtDataGenNoisySinc,
+%   prtDataGenOldFaithful,prtDataGenProtate, prtDataGenSprial,
+%   prtDataGenSpiral3 prtDataGenUnimodal, prtDataGenSwissRoll,
+%   prtDataGenUnimodal, prtDataGenXor
 
 % Copyright 2010, New Folder Consulting, L.L.C.
 

@@ -1,29 +1,24 @@
 function DataSet = prtDataGenMary
-% prtDataGenMary  Generates some unimodal m-ary example data for the prt.
-%  The data is distributed:
+% prtDataGenMary  Generate unimodal M-ary example data
+%
+%  DATASET = prtDataGenMary returns a prtDataSetClass with randomly
+%  generated data according to the following distribution.
+%
 %       H1: N([0 0],0.5*eye(2))
 %       H2: N([0.5 0.5],0.1*eye(2))
 %       H3: N([-2 -2],eye(2))
 %
-% Syntax: DataSet = prtDataGenMary
+%  Example:
 %
-% Inputs: 
-%   none
+%  ds = prtDataGenMary;
+%  plot(ds)
 %
-% Outputs:
-%   X - 300x2 Unimodal data
-%   Y - 300x1 Class labels
-%
-% Example:
-%   [X, Y] = prtDataGenMary;
-%   prtDataPlot(X,Y)
-%
-%
-% Other m-files required: none
-% Subfunctions: none
-% MAT-files required: none
-%
-% See also: prtDataGenUnimodal, prtDataGenBimodal
+%   See also: prtDataSetClass, prtDataGenBiModal, prtDataGenIris,
+%   prtDataGenManual, prtDataGenMary, prtDataGenNoisySinc,
+%   prtDataGenOldFaithful,prtDataGenProtate, prtDataGenSprial,
+%   prtDataGenSpiral3 prtDataGenUnimodal, prtDataGenSwissRoll,
+%   prtDataGenUnimodal, prtDataGenXor
+
 
 % Copyright 2010, New Folder Consulting, L.L.C.
 

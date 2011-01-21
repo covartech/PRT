@@ -1,9 +1,23 @@
 function DataSet = prtDataGenSpiral3
-% prtDataGenSpiral3 - Generate a 3-D spiral data set from a 1-D manifold
+%prtDataGenSpiral   Generates some spirally clustered example data 
 %
-% dataSet = prtDataGenSpiral3; Generates the spiral data set used in Ueda 
-% et al. 2000.  It consists of a 1 dimensional manifold in 3 dimensions 
-% with additive noise.
+%  DATASET = prtDataGenSpiral returns a prtDataSetClass with randomly
+%  generated data in a spiral pattern in 3 dimensions.
+%
+%  Example:
+%
+%  ds = prtDataGenSpiral3;
+%
+%   See also: prtDataSetClass, prtDataGenBiModal, prtDataGenIris,
+%   prtDataGenManual, prtDataGenMary, prtDataGenNoisySinc,
+%   prtDataGenOldFaithful,prtDataGenProtate, prtDataGenSprial,
+%   prtDataGenSpiral3 prtDataGenUnimodal, prtDataGenSwissRoll,
+%   prtDataGenUnimodal, prtDataGenXor
+
+
+
+% Generates the spiral data set used in Ueda et al. 2000.  It consists of a
+% 1 dimensional manifold in 3 dimensions with additive noise.
 
 nSamples = 800;
 t = rand(nSamples,1)*4*pi;

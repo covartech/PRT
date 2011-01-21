@@ -1,22 +1,22 @@
 function DataSet = prtDataGenBimodal(N)
-%prtDataGenBimodal   Generates some bimodal example data for the PRT.
-%  The data is distributed:
+%prtDataGenBimodal   Generates bimodal example data 
+%
+%  DATASET = prtDataGenBimodal returns a prtDataSetClass with randomly
+%  generated data according to the following distribution.
+%
 %       H0: 1/2N([0 0],eye(2)) + 1/2*N([-4 -4],eye(2))
 %       H1: 1/2N([2 2],[1 .5; .5 1]) + 1/2*N([-2 -2],[1 .5; .5 1]
 %
-% Syntax: ds = prtDataGenBimodal
+%  Example:
 %
-% Inputs: 
-%   none
+%  dataSet = prtDataGenBimodal;
+%  plot(dataSet)
 %
-% Outputs:
-%   ds
-%
-% Example:
-%   ds = prtDataGenBimodal;
-%   ds.plot;
-%
-% See also: prtDataGenUnimodal
+% See also: prtDataSetClass, prtDataGenCircles, prtDataGenIris,
+% prtDataGenManual, prtDataGenMary, prtDataGenNoisySinc,
+% prtDataGenOldFaithful,prtDataGenProtate, prtDataGenSprial,
+% prtDataGenSpiral3 prtDataGenUnimodal, prtDataGenSwissRoll,
+% prtDataGenUnimodal, prtDataGenXor
 
 % Copyright 2010, New Folder Consulting, L.L.C.
 

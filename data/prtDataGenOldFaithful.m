@@ -1,10 +1,26 @@
 function DS = prtDataGenOldFaithful
-% prtDataGenOldFaithful Load classic Old Faithful dataset
+% prtDataGenOldFaithful Load the classic Old Faithful dataset
 %
-% DataSet = prtDataGenOldFaithful; Generates an unlabeled prtDataSetClass
-% containing the data from the Old Faithful geyser eruptions in terms of
-% eruption length, and waiting time between eruptions.
+%   DataSet = prtDataGenOldFaithful; Generates an unlabeled prtDataSetClass
+%   containing the data from the Old Faithful geyser eruptions in terms of
+%   eruption length, and waiting time between eruptions.
 %
+%   For more information on this data set please refer to the following URL
+% 
+%   http://stat.ethz.ch/R-manual/R-patched/library/datasets/html/faithful.html
+%
+%   Example:
+%
+%   ds = prtDataGenOldFaithful;
+%   plot(ds)
+%
+%   See also: prtDataSetClass, prtDataGenBiModal, prtDataGenIris,
+%   prtDataGenManual, prtDataGenMary, prtDataGenNoisySinc,
+%   prtDataGenOldFaithful,prtDataGenProtate, prtDataGenSprial,
+%   prtDataGenSpiral3 prtDataGenUnimodal, prtDataGenSwissRoll,
+%   prtDataGenUnimodal, prtDataGenXor
+
+
 
 DS = prtDataSetClass(getData(),'name','Old Faithful');
 DS = DS.setFeatureNames({'Eruption time (m)','Waiting time (m)'});

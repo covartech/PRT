@@ -1,12 +1,25 @@
 function DataSet = prtDataGenSwissRoll
-% prtDataGenSwissRoll - Data from Swiss Roll data set.
+% prtDataGenSwissRoll  Generates data from the Swiss Roll data set.
 %
-% DataSet = prtDataGenSwissRoll; generates data from the swiss roll data
-% set.  This data is drawn from a 2-D manifold embedded in 3-dimensions. 
+%   DataSet = prtDataGenSwissRoll generates a prtDataSetRegress from the
+%   swiss roll data set. This data is drawn from a 2-D manifold embedded in
+%   3-dimensions. For more information on ths data set see the following:
+% 
+%   http://isomap.stanford.edu/code/Readme
+%
+%   Example:
+%
+%   ds = prtDataGenSwissRoll;
+%
+%   See also: prtDataSetClass, prtDataGenBiModal, prtDataGenIris,
+%   prtDataGenManual, prtDataGenMary, prtDataGenNoisySinc,
+%   prtDataGenOldFaithful,prtDataGenProtate, prtDataGenSprial,
+%   prtDataGenSpiral3 prtDataGenUnimodal, prtDataGenSwissRoll,
+%   prtDataGenUnimodal, prtDataGenXor
+
+
 % The 2-D manifold locations are in ds.getTargets, and the 3-dimensional 
 % embedding is in ds.getObservations.
-% 
-% See: http://isomap.stanford.edu/code/Readme
 
 swissRollFile = fullfile(prtRoot,'data','swissRoll','swiss_roll_data.mat');
 swiss = load(swissRollFile);

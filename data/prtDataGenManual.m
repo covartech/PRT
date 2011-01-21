@@ -1,11 +1,22 @@
 function DataSet = prtDataGenManual
-%[X,Y] = prtDataGenManual Manually specify 2-D data via mouse clicking
+%prtDataGenManual Manually specify 2-D data via mouse clicking
 %
-%   [X,Y] = prtDataGenManual outputs data X and labels Y defined
+%   dataSet = prtDataGenManual outputs data X and labels Y defined
 %   interactively by clicking on a figure.  Left clickes place points on
 %   the figure, and right clicks change the labels for the points to be
 %   placed.  To finish, close the figure, or click the small "Done" button
 %   on the bottom left of the figure.
+%
+%   Example:
+%
+%   dataSet = prtDataGenManual;
+%
+%   See also: prtDataSetClass, prtDataGenBiModal, prtDataGenIris,
+%   prtDataGenManual, prtDataGenMary, prtDataGenNoisySinc,
+%   prtDataGenOldFaithful,prtDataGenProtate, prtDataGenSprial,
+%   prtDataGenSpiral3 prtDataGenUnimodal, prtDataGenSwissRoll,
+%   prtDataGenUnimodal, prtDataGenXor
+
 
 hF = figure;
 X = zeros(0,2);

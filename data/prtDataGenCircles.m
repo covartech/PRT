@@ -1,25 +1,19 @@
 function DataSet = prtDataGenCircles
-%prtDataGenCircles   Generates some circle clustered example data for the prt.
+%prtDataGenCircles   Generates circularly clustered data 
 %
-% Syntax: [X, Y] = prtDataGenCircles
+%  DATASET = prtDataGenCircles returns a prtDataSetClass with randomly
+%  generated data in a circular pattern.
+%  
+%  Example:
 %
-% Inputs: 
-%   none
+%   dataSet = prtDataGenCircles;
+%   plot(dataSet);
 %
-% Outputs:
-%   X - 400x2 Cirlce data
-%   Y - 400x1 Class labels
-%
-% Example:
-%   [X, Y] = prtDataCirlces;
-%   prtDataPlot(X,Y)
-%
-%
-% Other m-files required: none
-% Subfunctions: none
-% MAT-files required: none
-%
-% See also: prtDataGenUnimodal, prtDataGenBimodal, prtDataGenSpiral
+% See also: prtDataSetClass, prtDataGenBiModal, prtDataGenIris,
+% prtDataGenManual, prtDataGenMary, prtDataGenNoisySinc,
+% prtDataGenOldFaithful,prtDataGenProtate, prtDataGenSprial,
+% prtDataGenSpiral3 prtDataGenUnimodal, prtDataGenSwissRoll,
+% prtDataGenUnimodal, prtDataGenXor
 
 % Copyright 2010, New Folder Consulting, L.L.C.
 
