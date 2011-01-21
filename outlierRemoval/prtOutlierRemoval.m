@@ -32,24 +32,12 @@ classdef prtOutlierRemoval < prtAction
     %   list of valid runOnTrainingMode string values.  Default value is
     %   'removeObservation'.
     %
-    %   prtOutlierRemoval objects have the following Abstract methods:
     %
-    %   calculateOutlierIndices - An abstract method that all concrete
-    %   sub-classes must define.  calculateOutlierIndices takes the form:
-    %
-    %       indices = calculateOutlierIndices(Obj,DataSet)
-    %
-    %   where indices is a logical matrix of size DataSet.nObservations x
-    %   DataSet.nFeatures.  The (i,j) element of indices specifies whether
-    %   that element of DataSet is an outlier.
-    %
-    %   See Also: prtPreProc,
-    %   prtOutlierRemoval,prtPreProcNstdOutlierRemove,
-    %   prtOutlierRemovalMissingData,
-    %   prtPreProcNstdOutlierRemoveTrainingOnly, prtOutlierRemovalNStd,
-    %   prtPreProcPca, prtPreProcPls, prtPreProcHistEq,
-    %   prtPreProcZeroMeanColumns, prtPreProcLda, prtPreProcZeroMeanRows,
-    %   prtPreProcLogDisc, prtPreProcZmuv, prtPreProcMinMaxRows                    
+    %   See Also: prtPreProc, prtOutlierRemoval, prtOutlierRemovalNstd,
+    %   prtOutlierRemovalMissingData, prtPreProcPca, prtPreProcPls,
+    %   prtPreProcHistEq, prtPreProcZeroMeanColumns, prtPreProcLda,
+    %   prtPreProcZeroMeanRows, prtPreProcLogDisc, prtPreProcZmuv,
+    %   prtPreProcMinMaxRows
 
     %   Internal help info:
     %   prtClass objects have the following Abstract methods:
@@ -72,8 +60,18 @@ classdef prtOutlierRemoval < prtAction
     %   prtPreProcNstdOutlierRemoveTrainingOnly, prtPreProcPca,
     %   prtPreProcPls, prtPreProcZeroMeanColumns, prtPreProcZeroMeanRows,
     %   prtPreProcZmuv
+    %
+    %   prtOutlierRemoval objects have the following Abstract methods:
+    %
+    %   calculateOutlierIndices - An abstract method that all concrete
+    %   sub-classes define.  calculateOutlierIndices takes the form:
+    %
+    %       indices = calculateOutlierIndices(Obj,DataSet)
+    %
+    %   where indices is a logical matrix of size DataSet.nObservations x
+    %   DataSet.nFeatures.  The (i,j) element of indices specifies whether
+    %   that element of DataSet is an outlier.
     
-
     methods (Abstract, Access = protected, Hidden = true)
         indices = calculateOutlierIndices(Obj,DataSet)
     end
