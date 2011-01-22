@@ -17,7 +17,7 @@ function DS = prtDataGenOldFaithful
 %   See also: prtDataSetClass, prtDataGenBiModal, prtDataGenIris,
 %   prtDataGenManual, prtDataGenMary, prtDataGenNoisySinc,
 %   prtDataGenOldFaithful,prtDataGenProtate, prtDataGenSprial,
-%   prtDataGenSpiral3 prtDataGenUnimodal, prtDataGenSwissRoll,
+%   prtDataGenSpiral3Regress, prtDataGenUnimodal, prtDataGenSwissRoll,
 %   prtDataGenUnimodal, prtDataGenXor
 
 

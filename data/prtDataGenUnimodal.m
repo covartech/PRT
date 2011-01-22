@@ -15,7 +15,7 @@ function DataSet = prtDataGenUnimodal(N,mu0,mu1,sigma0,sigma1)
 %   See also: prtDataSetClass, prtDataGenBiModal, prtDataGenIris,
 %   prtDataGenManual, prtDataGenMary, prtDataGenNoisySinc,
 %   prtDataGenOldFaithful,prtDataGenProtate, prtDataGenSprial,
-%   prtDataGenSpiral3 prtDataGenUnimodal, prtDataGenSwissRoll,
+%   prtDataGenSpiral3Regress, prtDataGenUnimodal, prtDataGenSwissRoll,
 %   prtDataGenUnimodal, prtDataGenXor
 
 % Copyright 2010, New Folder Consulting, L.L.C.

@@ -1,5 +1,5 @@
 function DataSet = prtDataGenBimodal(N)
-%prtDataGenBimodal   Generates bimodal example data 
+%prtDataGenBimodal   Generate bimodal example data 
 %
 %  DATASET = prtDataGenBimodal returns a prtDataSetClass with randomly
 %  generated data according to the following distribution.
@@ -15,7 +15,7 @@ function DataSet = prtDataGenBimodal(N)
 % See also: prtDataSetClass, prtDataGenCircles, prtDataGenIris,
 % prtDataGenManual, prtDataGenMary, prtDataGenNoisySinc,
 % prtDataGenOldFaithful,prtDataGenProtate, prtDataGenSprial,
-% prtDataGenSpiral3 prtDataGenUnimodal, prtDataGenSwissRoll,
+% prtDataGenSpiral3Regress prtDataGenUnimodal, prtDataGenSwissRoll,
 % prtDataGenUnimodal, prtDataGenXor
 
 % Copyright 2010, New Folder Consulting, L.L.C.
