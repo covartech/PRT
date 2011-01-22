@@ -7,31 +7,33 @@ classdef prtOutlierRemovalNStd < prtOutlierRemoval
     % 
     %   prtOutlierRemovalNStd has the following properties:
     %
-    %       nStd    - The number of standard deviations at which to flag an
-    %       observation as an outlier an observation (default = 3)
+    %       nStd - The number of standard deviations at which to flag an
+    %              observation as an outlier an observation (default = 3)
     %
-    %   A prtPreProcNstdOutlierRemove object also inherits all properties and
+    %   A prtOutlierRemovalNStd object also inherits all properties and
     %   functions from the prtOutlierRemoval class.  For more information
     %   on how to control the behaviour of outlier removal objects, see the
     %   help for prtOutlierRemoval.
     %
     %   Example:
     %
-    %   dataSet = prtDataGenUnimodal;      
-    %   outlier = prtDataSetClass([-10 -10],1);
-    %   dataSet = catObservations(dataSet,outlier);
+    %   dataSet = prtDataGenUnimodal;               % Load a data Set
+    %   outlier = prtDataSetClass([-10 -10],1);     % Create and insert
+    %   dataSet = catObservations(dataSet,outlier); % an outlier
     %
+    %   % Create the prtOutlierRemoval object
     %   nStdRemove = prtOutlierRemovalNStd('runMode','removeObservation');
     %
-    %   nStdRemove = nStdRemove.train(dataSet);    
+    %   nStdRemove = nStdRemove.train(dataSet);    % Train and run    
     %   dataSetNew = nStdRemove.run(dataSet);  
     % 
+    %   % Plot the results
     %   subplot(2,1,1); plot(dataSet);
     %   title('Original Data');
     %   subplot(2,1,2); plot(dataSetNew);
     %   title('NstdOutlierRemove Data');
     %
-     %   See Also: prtPreProc,
+    %   See Also: prtPreProc,
     %   prtOutlierRemoval,prtPreProcNstdOutlierRemove,
     %   prtOutlierRemovalMissingData,
     %   prtPreProcNstdOutlierRemoveTrainingOnly, prtOutlierRemovalNStd,
@@ -42,19 +44,20 @@ classdef prtOutlierRemovalNStd < prtOutlierRemoval
     
     properties (SetAccess=private)
         % Required by prtAction
-        name = 'Standard Deviation Based Outlier Removal';
-        nameAbbreviation = 'nStd'
-        isSupervised = false;
+        name = 'Standard Deviation Based Outlier Removal'; % Standard Deviation Based Outlier Removal
+        nameAbbreviation = 'nStd'  %nStd
+        isSupervised = false;  % False
         
     end
     
     properties
         nStd = 3;   % The number of standard deviations beyond which to remove data
     end
+    
+   % General Classifier Properties
     properties (SetAccess=private)
-        % General Classifier Properties
-        stdVector = [];
-        meanVector = [];
+        stdVector = [];  % The standard deviation vector
+        meanVector = [];  % The mean vector
     end
     
     methods

@@ -1,9 +1,11 @@
 classdef prtOutlierRemoval < prtAction
     % prtOutlierRemoval Base class for prt Outlier Removal objects
     %
-    % All prtOutlierRemoval objects inherit all properities and methods
-    % from the prtAction object. prtOutlierRemoval objects have the
-    % following additional properties:
+    %   prtOutlierRemoval is an abstract class and cannot be instantiated.
+    %
+    %   All prtOutlierRemoval objects inherit all properities and methods
+    %   from the prtAction object. prtOutlierRemoval objects have the
+    %   following additional properties:
     %
     %   runMode - Specifie how the outlier removal processing behaves when run on a
     %   data set.  runMode specifies how the action behaves during typical
@@ -33,7 +35,7 @@ classdef prtOutlierRemoval < prtAction
     %   'removeObservation'.
     %
     %
-    %   See Also: prtPreProc, prtOutlierRemoval, prtOutlierRemovalNstd,
+    %   See Also: prtPreProc, prtOutlierRemovalNstd,
     %   prtOutlierRemovalMissingData, prtPreProcPca, prtPreProcPls,
     %   prtPreProcHistEq, prtPreProcZeroMeanColumns, prtPreProcLda,
     %   prtPreProcZeroMeanRows, prtPreProcLogDisc, prtPreProcZmuv,
