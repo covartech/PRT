@@ -98,7 +98,7 @@ classdef prtDecisionBinarySpecifiedPd < prtDecisionBinary
             
             index = find(rocPd >= Obj.pd,1);
             Obj.threshold = thresh(index);
-            disp(Obj.threshold)
+            %disp(Obj.threshold)
             Obj.classList = dataSet.uniqueClasses;
         end
     end

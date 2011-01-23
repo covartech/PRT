@@ -188,14 +188,15 @@ classdef prtAlgorithm < prtAction
         
         function Obj = prtAlgorithm(varargin)
             % One input is a constructor from another prtAction
+            
             if nargin == 1
-                assert(isa(varargin{1},'prtAction'),'prtAlgorithm with 1 input requires a prtAction input');
+                assert(isa(varargin{1},'prtAction'),'prtAlgorithm constructor requires a prtAction input');
                 Obj.connectivityMatrix = false(3);
                 Obj.connectivityMatrix(2,1) = true;
                 Obj.connectivityMatrix(3,2) = true;
                 Obj.actionCell = varargin(1);
             else
-                Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
+                error('prtAlgorithm:prtAlgorithm','prtAlgorithm constructor requires one prtAction input');
             end
         end
     end
