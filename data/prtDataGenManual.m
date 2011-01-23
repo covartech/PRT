@@ -39,8 +39,11 @@ uiwait(hF);
     end
 
     function prtDataGenManualAxesButtonDownFcn(o,e)
+        persistent previous;
         sType = get(hF,'selectionType');
+        previous = sType;
         point = get(gca,'CurrentPoint');
+        
         switch sType
             case 'normal'
                 DataSet = catObservations(DataSet,prtDataSetClass(point(2,1:2),currentLabel));
@@ -59,6 +62,13 @@ uiwait(hF);
                     currentLabel = 0;
                 end
                 dataManualTitle;
+            %this happens when double-clicking *either* mouse button, so
+            %it's impossible to say which mouse button was pushed.  Which
+            %is not really cool.  In either casel clicking too fast results
+            %in no changes to the GUI.
+            % case 'open'  
+            %      disp('No double clicks allowed');
+            %      % keyboard
         end
     end
 

@@ -14,7 +14,6 @@ function DataSet = prtDataGenSpiral3Regress
 %   prtDataGenSpiral3Regress, prtDataGenUnimodal, prtDataGenSwissRoll,
 %   prtDataGenUnimodal, prtDataGenXor
 
-
 % Generates the spiral data set used in Ueda et al. 2000.  It consists of a
 % 1 dimensional manifold in 3 dimensions with additive noise.
 

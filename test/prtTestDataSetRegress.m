@@ -45,7 +45,7 @@ catch
     % no-op
 end
 
-dataSet = prtDataGenSpiral3;
+dataSet = prtDataGenSpiral3Regress;
 dataSet = dataSet.retainFeatures(1);
 try
     dataSet.plot()

@@ -377,7 +377,7 @@ classdef prtAction
         end
         
     end
-    methods (Access = protected)
+    methods (Access = protected, Hidden)
         function DataSetOut = runActionOnTrainingData(Obj, DataSetIn)
             % RUNACTIONONTRAININGDATA Run a prtAction object on a prtDataSet object
             %   This method differs from RUN() in that it is called after
