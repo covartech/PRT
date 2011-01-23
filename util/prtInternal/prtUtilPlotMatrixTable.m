@@ -32,11 +32,7 @@ function varargout = prtUtilPlotMatrixTable(X,cLim,cMap,num2strFormat,textCMap)
 %
 % See also: plotConfusionMatrix.m
 
-% Author: Kenneth D. Morton Jr.
-% Duke University, Department of Electrical and Computer Engineering
-% Email Address: kennethmorton@ieee.org
-% Created: 29-Jan-2008
-% Last revision: 31-Jan-2008
+% Copyright 2011, New Folder Consulting, L.L.C.
 
 
 if nargin < 2 || isempty(cLim)

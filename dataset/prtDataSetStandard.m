@@ -48,11 +48,12 @@ classdef prtDataSetStandard < prtDataSetBase
     methods (Access = 'protected', Hidden = true)
         
         function obj = catTargetNames(obj,newDataSet)
+            
             for i = 1:newDataSet.nTargetDimensions;
                 currTargName = newDataSet.targetNames.get(i);
                 
                 if ~isempty(currTargName)
-                    obj.targetNames.put(i + obj.nTargetDimensions,currTargName);
+                    obj.targetNames = obj.targetNames.put(i + obj.nTargetDimensions,currTargName);
                 end
             end
         end

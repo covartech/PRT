@@ -3,12 +3,7 @@ function y = prtRvUtilDiscretePdf(X,values,probabilities)
 %	Return the PDF of a discrete distribution with values and
 %	probabilities.
 
-% Author: Peter Torrione
-% Revised by: 
-% Duke University, Department of Electrical and Computer Engineering
-% Email Address: collinslab@gmail.com
-% Created: 18-March-2007
-% Last revision:
+% Copyright 2011, New Folder Consulting, L.L.C.
 
 y = zeros(size(X));
 for i = 1:size(X(:),1);

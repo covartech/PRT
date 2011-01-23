@@ -1,5 +1,4 @@
 function s = prtRvUtilMultinomialStateSpace(n,m)
-
 % MNOMIALSTATESPACE     Multinomial State Space matrix
 %   Yields an M^N x N matrix of all of the possible entries of the state
 %   space of the multinomial variable. This does not work for values of m
@@ -22,12 +21,7 @@ function s = prtRvUtilMultinomialStateSpace(n,m)
 % Subfunctions: none
 % MAT-files required: none
 
-% Author: Peter Torrione and Mark P. Kolba
-% Helped by: Kenneth D. Morton Jr.
-% Duke University, Department of Electrical and Computer Engineering
-% Email Address: kennethmorton@ieee.org
-% Created: 15-Sep-2006 10:33:38
-% Last revision: 05-Dec-2007 14:14:00 by Mark P. Kolba
+% Copyright 2011, New Folder Consulting, L.L.C.
 
 
 if nargin == 1

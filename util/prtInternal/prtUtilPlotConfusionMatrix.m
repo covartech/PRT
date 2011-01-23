@@ -33,12 +33,7 @@ function varargout = prtUtilPlotConfusionMatrix(confusionMat,classLabels,classLa
 %
 % See also: confusionMatrix.m confusion2PercentCorrect.m
 
-% Author: Pete Torrione
-% Revised By: Kenneth D. Morton Jr.
-% Duke University, Department of Electrical and Computer Engineering
-% Email Address: kennethmorton@ieee.org
-% Created: 12-December-2005
-% Last revision: 10-Apr-2007
+% Copyright 2011, New Folder Consulting, L.L.C.
 
 if nargin == 3
     plotConfusionMatrix(confusionMatrix(confusionMat,classLabels),classLabels2)

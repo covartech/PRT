@@ -41,6 +41,8 @@ classdef prtDataSetClass  < prtDataSetStandard
     %   See also, prtDataSetBase, prtDataSetStandard, prtDataSetRegress,
     %   prtDataSetFile
     
+    % Copyright 2011, New Folder Consulting, L.L.C.
+    
     properties (Dependent)
         nClasses        % The number of classes
         uniqueClasses   % The unique class

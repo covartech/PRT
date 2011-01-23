@@ -3,12 +3,7 @@ function y = prtRvUtilDiscreteRnd(values,probabilities,N,discreteEps)
 %	Draw N RV's from a multi-variate uniform distribution with limits
 %	LIMS.
 
-% Author: Peter Torrione
-% Revised by: 
-% Duke University, Department of Electrical and Computer Engineering
-% Email Address: collinslab@gmail.com
-% Created: 18-March-2007
-% Last revision:
+% Copyright 2011, New Folder Consulting, L.L.C.
 
 if nargin < 3
     N = 1;

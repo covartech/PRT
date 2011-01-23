@@ -30,6 +30,7 @@ classdef prtOutlierRemovalNonFinite < prtOutlierRemoval
     %   prtPreProcZeroMeanColumns, prtPreProcLda, prtPreProcZeroMeanRows,
     %   prtPreProcLogDisc, prtPreProcZmuv, prtPreProcMinMaxRows
     
+    % Copyright 2011, New Folder Consulting, L.L.C.
     
     properties (SetAccess=private)
         % Required by prtAction

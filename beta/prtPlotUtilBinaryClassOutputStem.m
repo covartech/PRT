@@ -1,17 +1,8 @@
 function varargout = prtPlotUtilBinaryClassOutputStem(dataSetClass,offSet)
-% DPRTDSSTEM  Decision Statistic Stem Plot for the DPRT
+% prtPlotUtilBinaryClassOutputStem  Decision Statistic Stem Plot for the PRT
 %
-% Syntax: [H, L] = dprtDsStem(ds,Y,opt)
+% Syntax: [H, L] = prtPlotUtilBinaryClassOutputStem(ds,Y,opt)
 %
-%
-% Example:
-%   [X, Y] = dprtDataUnimodal;
-%   figure
-%   dprtDsStem(X(:,1),Y);
-%   figure
-%   dprtDsStem(X(:,1),Y,'unsorted');
-%   figure
-%   dprtDsStem(X(:,1),Y,'ascend');
 
 if dataSetClass.nFeatures > 1
     error('prt:plotUtilBinaryClassOutputStem','prtPlotUtilBinaryClassOutputStem is only for data sets with a single feature.');
