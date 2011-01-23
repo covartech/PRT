@@ -71,7 +71,7 @@ classdef prtDecisionBinarySpecifiedPd < prtDecisionBinary
     end
     methods
         function obj = set.pd(obj,value)
-            assert(isscalar(value) && value >= 0 && value <= 1,'d parameter must be scalar in [0,1], value provided is %s',mat2str(value));
+            assert(isscalar(value) && value >= 0 && value <= 1,'pd parameter must be scalar in [0,1], value provided is %s',mat2str(value));
             obj.pd = value;
         end
     end
@@ -90,7 +90,12 @@ classdef prtDecisionBinarySpecifiedPd < prtDecisionBinary
             end
             [rocPf,rocPd,thresh] = prtScoreRoc(dataSet.getObservations,dataSet.getTargets); %#ok<ASGLU>
             thresh = thresh(:);
+            
             %thresh = cat(1,min(thresh)-eps(min(thresh)),thresh);
+            if isempty(Obj.pd)
+                error('prtDecisionBinarySpecifiedPd:invalidPd','Attempt to train prtDecisionBinarySpecifiedPd withoug setting pd');
+            end
+            
             index = find(rocPd >= Obj.pd,1);
             Obj.threshold = thresh(index);
             disp(Obj.threshold)

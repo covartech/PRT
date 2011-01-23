@@ -8,11 +8,45 @@ classdef prtAlgorithm < prtAction
         % Required by prtAction
         name = 'PRT Algorithm'
         nameAbbreviation = 'ALGO';
-        isSupervised = true; % We say true even though we don't know
+        isSupervised = true; %default to "true", but set in constructor
+    end
+    
+    %This is the public face of the (protected) internalActionCell
+    properties (Dependent)
+        actionCell        
+    end
+    
+    methods
+        
+        function Obj = set.actionCell(Obj,aCell)
+           
+            %Check is cell:
+            if ~isa(aCell,'cell')
+                error('prtAlgorithm:actionCell','prtAlgorithm''s actionCell must be a cell array');
+            end
+            %Check right size:
+            if ~isvector(aCell)
+                error('prtAlgorithm:actionCell','prtAlgorithm''s actionCell must be a vector cell array');
+            end
+            if length(aCell) ~= size(Obj.connectivityMatrix,1)-2
+                error('prtAlgorithm:actionCell','Attempt to change a prtAlgorithm''s actionCell''s size.  actionCell must be a vector cell array of length(size(Obj.connectivityMatrix,1)-2)');
+            end 
+            %Check all prtActions:
+            if ~all(cellfun(@(c)isa(c,'prtAction'),aCell))
+                error('prtAlgorithm:actionCell','actionCell must be a vector cell array of prtActions')
+            end
+            
+            %Set the internal action cell correctly
+            Obj.internalActionCell = aCell;
+        end
+        
+        function actionCell = get.actionCell(Obj)
+            actionCell = Obj.internalActionCell;
+        end
     end
     
     properties (SetAccess=protected)
-        actionCell = {};
+        internalActionCell = {};
         connectivityMatrix = [];
     end
     
@@ -21,7 +55,8 @@ classdef prtAlgorithm < prtAction
             %Algorithms do not have to do this; since they are composed of
             %class objects, we can just rely on the dataSet to have the
             %right feature names already.
-            %At least this is true for sing-stream Algorithm
+            
+            %At least this is true for single-stream Algorithms
         end
     end
     
@@ -78,8 +113,8 @@ classdef prtAlgorithm < prtAction
                 newConn(newInput,1) = true;
                 newConn(end,newOutput) = true;
                 
-                Obj1.actionCell = cat(1,Obj1.actionCell(:),Obj2.actionCell(:));
                 Obj1.connectivityMatrix = newConn;
+                Obj1.actionCell = cat(1,Obj1.actionCell(:),Obj2.actionCell(:));
                 
                 Obj1.isSupervised = any(cellfun(@(c)c.isSupervised,Obj1.actionCell));
                 Obj1.isCrossValidateValid = all(cellfun(@(c)c.isCrossValidateValid,Obj1.actionCell));
@@ -127,8 +162,8 @@ classdef prtAlgorithm < prtAction
                 newConn(newInput,1) = true;
                 newConn(end,newOutput) = true;
                 
-                Obj1.actionCell = cat(1,Obj1.actionCell(:),Obj2.actionCell(:));
                 Obj1.connectivityMatrix = newConn;
+                Obj1.actionCell = cat(1,Obj1.actionCell(:),Obj2.actionCell(:));
                 
                 Obj1.isSupervised = any(cellfun(@(c)c.isSupervised,Obj1.actionCell));
                 Obj1.isCrossValidateValid = all(cellfun(@(c)c.isCrossValidateValid,Obj1.actionCell));
@@ -155,10 +190,10 @@ classdef prtAlgorithm < prtAction
             % One input is a constructor from another prtAction
             if nargin == 1
                 assert(isa(varargin{1},'prtAction'),'prtAlgorithm with 1 input requires a prtAction input');
-                Obj.actionCell = varargin(1);
                 Obj.connectivityMatrix = false(3);
                 Obj.connectivityMatrix(2,1) = true;
                 Obj.connectivityMatrix(3,2) = true;
+                Obj.actionCell = varargin(1);
             else
                 Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
             end
