@@ -80,12 +80,16 @@ classdef prtDecisionBinarySpecifiedPf < prtDecisionBinary
         function Obj = trainAction(Obj,dataSet)
             
             if dataSet.nFeatures > 1
-                error('prt:prtDecisionBinaryMinPe','prtDecisionBinaryMinPe can not be used on algorithms that output multi-column results; consider using prtDecisionMap instead');
+                error('prt:prtDecisionBinarySpecifiedPf','prtDecisionBinarySpecifiedPf can not be used on algorithms that output multi-column results; consider using prtDecisionMap instead');
             end
+            if dataSet.nClasses ~= 2
+                error('prt:prtDecisionBinarySpecifiedPf:nonBinaryData','prtDecisionBinarySpecifiedPf expects input data to have 2 classes, but dataSet.nClasses = %d',dataSet.nClasses);
+            end
+            
             [rocPf,pd,thresh] = prtScoreRoc(dataSet.getObservations,dataSet.getTargets); %#ok<ASGLU>
             
             if isempty(Obj.pf)
-                error('prtDecisionBinarySpecifiedPf:invalidPf','Attempt to train prtDecisionBinarySpecifiedPf withoug setting pf');
+                error('prt:prtDecisionBinarySpecifiedPf:invalidPf','Attempt to train prtDecisionBinarySpecifiedPf withoug setting pf');
             end
             
             index = find(rocPf < Obj.pf,1,'last');

@@ -88,11 +88,15 @@ classdef prtDecisionBinarySpecifiedPd < prtDecisionBinary
             if dataSet.nFeatures > 1
                 error('prt:prtDecisionBinarySpecifiedPd','prtDecisionBinarySpecifiedPd can not be used on algorithms that output multi-column results; consider using prtDecisionMap instead');
             end
+            if dataSet.nClasses ~= 2
+                error('prt:prtDecisionBinarySpecifiedPd:nonBinaryData','prtDecisionBinarySpecifiedPd expects input data to have 2 classes, but dataSet.nClasses = %d',dataSet.nClasses);
+            end
+            
             [rocPf,rocPd,thresh] = prtScoreRoc(dataSet.getObservations,dataSet.getTargets); %#ok<ASGLU>
             thresh = thresh(:);
             
             if isempty(Obj.pd)
-                error('prtDecisionBinarySpecifiedPd:invalidPd','Attempt to train prtDecisionBinarySpecifiedPd withoug setting pd');
+                error('prt:prtDecisionBinarySpecifiedPd:invalidPd','Attempt to train prtDecisionBinarySpecifiedPd withoug setting pd');
             end
             
             index = find(rocPd >= Obj.pd,1);

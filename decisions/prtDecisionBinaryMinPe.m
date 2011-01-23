@@ -66,6 +66,10 @@ classdef prtDecisionBinaryMinPe < prtDecisionBinary
             if dataSet.nFeatures > 1
                 error('prt:prtDecisionBinaryMinPe','prtDecisionBinaryMinPe can not be used on algorithms that output multi-column results; consider using prtDecisionMap instead');
             end
+            if dataSet.nClasses ~= 2
+                error('prt:prtDecisionBinaryMinPe:nonBinaryData','prtDecisionBinaryMinPe expects input data to have 2 classes, but dataSet.nClasses = %d',dataSet.nClasses);
+            end
+            
             [pf,pd,thresh] = prtScoreRoc(dataSet.getObservations,dataSet.getTargets);
             pe = prtUtilPfPd2Pe(pf,pd);
             [v,minPeIndex] = min(pe); %#ok<ASGLU>

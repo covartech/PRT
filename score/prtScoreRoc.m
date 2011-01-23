@@ -78,7 +78,7 @@ if any(isnan(ds(:)))
 end
 
 if length(uY) ~= 2  
-    error('prt:prtUtilScoreRoc:tooFewClasses','ROC requires only 2 unique classes; unique(y(:)) = %s\n',mat2str(unique(y(:))));
+    error('prt:prtUtilScoreRoc:wrongNumberClasses','ROC requires input labels to have 2 unique classes; unique(y(:)) = %s\n',mat2str(unique(y(:))));
 end
 if length(ds) ~= length(y);
     error('length(ds) (%d) must equal length(y) (%d)',length(ds),length(y));
