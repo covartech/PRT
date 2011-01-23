@@ -82,7 +82,7 @@ classdef prtOutlierRemoval < prtAction
         runOnTrainingMode = 'removeObservation';  %Operation taken during TRAIN
         runMode = 'noAction';                     %Operation taken during RUN
     end
-    properties (Access = 'private')
+    properties (Constant = true)
         validModes = {'noAction','replaceWithNan','removeObservation','removeFeature'};
     end
     
@@ -142,7 +142,7 @@ classdef prtOutlierRemoval < prtAction
         end
         
         %Overloads prtAction/postRunProcessing
-        function DataSetOut = postRunProcessing(ClassObj, DataSetIn, DataSetOut, removedIndices)
+        function DataSetOut = postRunProcessing(ClassObj, ~, DataSetOut, ~) %#ok<MANU>
             %
             
             %It's not necessary to do anything; but we can't rely on
