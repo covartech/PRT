@@ -91,7 +91,6 @@ classdef prtDecisionBinarySpecifiedPd < prtDecisionBinary
             [rocPf,rocPd,thresh] = prtScoreRoc(dataSet.getObservations,dataSet.getTargets); %#ok<ASGLU>
             thresh = thresh(:);
             
-            %thresh = cat(1,min(thresh)-eps(min(thresh)),thresh);
             if isempty(Obj.pd)
                 error('prtDecisionBinarySpecifiedPd:invalidPd','Attempt to train prtDecisionBinarySpecifiedPd withoug setting pd');
             end
