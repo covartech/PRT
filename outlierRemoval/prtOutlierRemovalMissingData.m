@@ -53,11 +53,11 @@ classdef prtOutlierRemovalMissingData < prtOutlierRemoval
     
     methods (Access = protected, Hidden = true)
         
-        function Obj = trainAction(Obj,DataSet)
+        function Obj = trainAction(Obj,~)
             %Nothing to do
         end
         
-        function outlierIndices = calculateOutlierIndices(Obj,DataSet)
+        function outlierIndices = calculateOutlierIndices(Obj,DataSet) %#ok<MANU> This is OK - don't make it static.
             outlierIndices = isnan(DataSet.getObservations);
         end
         
