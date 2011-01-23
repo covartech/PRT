@@ -8,7 +8,7 @@ classdef prtAlgorithm < prtAction
         % Required by prtAction
         name = 'PRT Algorithm'
         nameAbbreviation = 'ALGO';
-        isSupervised = true; %default to "true", but set in constructor
+        isSupervised = true; %default to "true", but set in constructor, and as new prtActions are added
     end
     
     %This is the public face of the (protected) internalActionCell
@@ -195,6 +195,7 @@ classdef prtAlgorithm < prtAction
                 Obj.connectivityMatrix(2,1) = true;
                 Obj.connectivityMatrix(3,2) = true;
                 Obj.actionCell = varargin(1);
+                Obj.isSupervised = varargin{1}.isSupervised;
             else
                 error('prtAlgorithm:prtAlgorithm','prtAlgorithm constructor requires one prtAction input');
             end
