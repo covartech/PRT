@@ -38,26 +38,26 @@ classdef prtKernel
     
     methods (Abstract)
         
-        % Return a cell array of trained Kernels
-        %
-        % TRAINEDKERNCELL = KERN.toTrainedKernelArray(DS
-        
-        trainedKernelCell = toTrainedKernelArray(obj,dsTrain,logical);
-        nDims = getExpectedNumKernels(obj,dsTrain);
-        
- 
         % Evaluate Gram matrix
         % 
         % X = KERN.evaulateGram(DS1,DS2) evaluates the Gram matix of the
         % prtKernel object KERN on DS1 and DS2. DS1 and DS2 must be
         % prtDataSet objects.
         x = evaluateGram(obj,ds1,ds2);
- 
-        
         yOut = run(obj,dsTest);
     end
     
-    methods
+    methods (Abstract, Hidden = true)
+        
+        % Return a cell array of trained Kernels
+        %
+        % TRAINEDKERNCELL = KERN.toTrainedKernelArray(DS
+        trainedKernelCell = toTrainedKernelArray(obj,dsTrain,logical);
+        nDims = getExpectedNumKernels(obj,dsTrain);
+    end
+    
+    
+    methods (Hidden = true)
         %Default behavior is to play nice; no one has to implement these
         function h = classifierPlot(obj)
             h = nan;
@@ -65,6 +65,9 @@ classdef prtKernel
         function h = classifierText(obj)
             h = nan;
         end
+    end
+    
+    methods (Hidden = true)
         function str = toString(obj)
             % TOSTRING  String description of kernel function
             %

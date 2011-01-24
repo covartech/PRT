@@ -60,6 +60,13 @@ classdef prtKernelRbf < prtKernelBinary
             obj.kernelCenter = x;
         end
         
+        function yOut = evalKernel(obj,data)
+            yOut = prtKernelRbf.rbfEvalKernel(obj.kernelCenter,data,obj.sigma);
+        end
+        
+    end
+    
+    methods (Hidden = true)
         %Should really use latex, or have toLatex
         function string = toString(obj)
             % TOSTRING  String description of kernel function
@@ -67,12 +74,7 @@ classdef prtKernelRbf < prtKernelBinary
             % STR = KERN.toString returns a string description of the
             % kernel function realized by the prtKernel objet KERN.
             string = sprintf('  f(x) = exp(-(x - %s)./(%.2f^2))',mat2str(obj.kernelCenter,2),obj.sigma);
-        end
-        
-        function yOut = evalKernel(obj,data)
-            yOut = prtKernelRbf.rbfEvalKernel(obj.kernelCenter,data,obj.sigma);
-        end
-        
+        end 
     end
     
     methods (Static, Hidden = true)

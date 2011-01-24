@@ -31,11 +31,12 @@ classdef prtKernelFeatureDependent < prtKernel
     % prtKernelFeatureDependent.
     %
     
+    methods (Abstract)
+        yOut = evalKernel(obj,x);
+        kernel = trainKernel(obj,featureIndex);
+    end
+    
     methods
-        
-        function nDims = getExpectedNumKernels(obj,ds)
-            nDims = ds.nFeatures;
-        end
         
         function gram = evaluateGram(obj,ds1,ds2)
             
@@ -57,6 +58,12 @@ classdef prtKernelFeatureDependent < prtKernel
                 gram(:,i) = evalKernel(kernelArray(i),ds2.getObservations);
             end
         end
+    end
+    
+    methods (Hidden = true)
+        function nDims = getExpectedNumKernels(obj,ds)
+            nDims = ds.nFeatures;
+        end
         
         function trainedKernelArray = toTrainedKernelArray(obj,dsTrain,logical)
             valid = find(logical);
@@ -77,9 +84,5 @@ classdef prtKernelFeatureDependent < prtKernel
             yOut = evalKernel(obj,data);
         end
         
-    end
-    methods (Abstract)
-        yOut = evalKernel(obj,x);
-        kernel = trainKernel(obj,x);
     end
 end

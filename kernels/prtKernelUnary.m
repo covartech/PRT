@@ -39,12 +39,6 @@ classdef prtKernelUnary < prtKernel
     
     methods
         
-        function nDims = getExpectedNumKernels(obj,ds)
-            %nDims = getExpectedNumKernels(obj,ds)
-            % This is 1 for DC and similar kernels
-            nDims = 1;
-        end
-        
         function gram = evaluateGram(obj,ds1,ds2)
             %gram = evaluateGram(obj,ds1,ds2)
             % Internal, evaluate the gram matrix from ds1 to ds2
@@ -63,8 +57,17 @@ classdef prtKernelUnary < prtKernel
             currKernel = obj.trainKernel(data1);
             gram(:,1) = evalKernel(currKernel,data2);
         end
+    end
+    
+    methods (Hidden = true)
         
-        function trainedKernelArray = toTrainedKernelArray(obj,dsTrain,logical)
+        function nDims = getExpectedNumKernels(obj,~)
+            %nDims = getExpectedNumKernels(obj,ds)
+            % This is 1 for DC and similar kernels
+            nDims = 1;
+        end
+        
+        function trainedKernelArray = toTrainedKernelArray(obj,dsTrain,~)
             %Turn the kernel into a trained kernel; for unary kernels this
             %is always a single kernel
             trainedKernelArray = obj.trainKernel(dsTrain);

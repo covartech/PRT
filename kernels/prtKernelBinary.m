@@ -20,12 +20,12 @@ classdef prtKernelBinary < prtKernel
     %   prtKernelPolynomial.m for examples of sub-classing prtKernelBinary.
     %
     
+    methods (Abstract)
+        yOut = evalKernel(obj,x);
+        kernel = trainKernel(obj,x);
+    end
+    
     methods
-        
-        function nDims = getExpectedNumKernels(obj,ds)
-            nDims = ds.nObservations;
-        end
-        
         function gram = evaluateGram(obj,ds1,ds2)
             
             if ~isa(ds1,'prtDataSetBase')
@@ -47,6 +47,13 @@ classdef prtKernelBinary < prtKernel
             end
         end
         
+    end
+    
+    methods (Hidden = true)
+        function nDims = getExpectedNumKernels(obj,ds)
+            nDims = ds.nObservations;
+        end
+        
         function trainedKernelArray = toTrainedKernelArray(obj,dsTrain,logical)
             valid = find(logical);
             trainedKernelArray = repmat(obj,length(valid),1);
@@ -65,9 +72,5 @@ classdef prtKernelBinary < prtKernel
             yOut = evalKernel(obj,data);
         end
         
-    end
-    methods (Abstract)
-        yOut = evalKernel(obj,x);
-        kernel = trainKernel(obj,x);
     end
 end
