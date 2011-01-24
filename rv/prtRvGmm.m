@@ -84,6 +84,9 @@ classdef prtRvGmm < prtRv
         function val = get.nComponents(R)
             val = R.nComponentsDepHelp;
         end
+        function val = get.nComponentsDepHelp(R)
+            val = R.mixtureRv.nComponents;
+        end
         function val = get.covarianceStructure(R)
             val = R.covarianceStructureDepHelp;
         end
