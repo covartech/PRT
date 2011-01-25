@@ -473,8 +473,7 @@ classdef prtDataSetStandard < prtDataSetBase
                         error('prt:prtDataSetStandard:CatObservations','Attempt to cat observations using a double matrix to a prtDataSetStandard that has targets; this will result in target/observation mis-match');
                     end
                 elseif isa(currInput,class(obj))
-                    obj = obj.catObservationNames(currInput);
-                    obj = obj.catObservationInfo(currInput);
+                    
                     if isempty(obj.data) %handle empty data set
                         obj.data = currInput.data;
                         obj.targets = currInput.targets;
@@ -484,6 +483,8 @@ classdef prtDataSetStandard < prtDataSetBase
                     else
                         error('prt:prtDataSetStandard:CatObservations','Attempt to cat observations for data sets with different sized targets');
                     end
+                    obj = obj.catObservationNames(currInput);
+                    obj = obj.catObservationInfo(currInput);
                 end
             end
             
