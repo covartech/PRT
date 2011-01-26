@@ -1,6 +1,10 @@
 classdef prtKernel2 
+    %
     %should we inherit from prtAction?
-    % would simplify a ton of stuff
+    % would simplify a ton of stuff, but some things don't make a whole lot
+    % of sense - e.g. can you cross-validate these?  Probably not - most of
+    % them have outputs with nColumns dependent on nObservations of
+    % training data...
     %
     %
     % Sample code:
