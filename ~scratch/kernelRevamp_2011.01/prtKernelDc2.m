@@ -15,8 +15,12 @@ classdef prtKernelDc2 < prtKernel2
         end
         
         function yOut = run(obj,ds2) %#ok<MANU>
-            yOutData = ones(ds2.nObservations,1);
-            yOut = ds2.setObservations(yOutData);
+            if obj.isRetained
+                yOutData = ones(ds2.nObservations,1);
+                yOut = ds2.setObservations(yOutData);
+            else
+                yOut = prtDataSetClass;
+            end
         end
         
         function nDimensions = getNumDimensions(Obj)

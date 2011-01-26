@@ -59,7 +59,6 @@ classdef prtKernel2
     end
     
     methods
-        
         function Obj3 = and(Obj1,Obj2)
             if isa(Obj1,'prtKernelSet')
                 kernelCell1 = Obj1.getKernelCell;
@@ -78,6 +77,13 @@ classdef prtKernel2
             end
             Obj3 = prtKernelSet(kernelCell1{:},kernelCell2{:});
         end
-        
     end
+    methods 
+        function h = plotOnClassifierContour(Obj)
+           %   do nothing by default; people can overload as they want
+            holdState = get(gca,'nextPlot');
+            h = plot(nan,nan);
+            set(gca,'nextPlot',holdState);
+        end
+        function txt = 
 end

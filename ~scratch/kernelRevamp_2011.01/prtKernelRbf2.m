@@ -25,8 +25,12 @@ classdef prtKernelRbf2 < prtKernel2
             if ~Obj.isTrained
                 error('prtKernelRbf:run','Attempt to run an untrained kernel; use kernel.train(ds) to train');
             end
-            gram = prtKernelRbf2.eval(ds.getObservations,Obj.internalDataSet.getObservations,Obj.sigma);
-            dsOut = ds.setObservations(gram);
+            if Obj.internalDataSet.nObservations == 0
+                dsOut = prtDataSetClass;
+            else
+                gram = prtKernelRbf2.eval(ds.getObservations,Obj.internalDataSet.getObservations,Obj.sigma);
+                dsOut = ds.setObservations(gram);
+            end
         end
         
         function nDimensions = getNumDimensions(Obj)

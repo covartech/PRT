@@ -1,97 +1,5 @@
-classdef prtClassRvm < prtClass
-    % prtClassRvm  Relevance vector machin classifier
-    %
-    %    CLASSIFIER = prtClassRvm returns a relevance vector machine classifier
-    %
-    %    CLASSIFIER = prtClassRvm(PROPERTY1, VALUE1, ...) constructs a
-    %    prtClassRvm object CLASSIFIER with properties as specified by
-    %    PROPERTY/VALUE pairs.
-    %
-    %    A prtClassRvm object inherits all properties from the abstract class
-    %    prtClass. In addition is has the following properties:
-    %
-    %   SetAccess = public:
-    %    kernels            - A cell array of prtKernel objects specifying
-    %                         the kernels to use
-    %    learningPlot       - Flag indicating whether or not to plot during
-    %                         training
-    %    learningVerbose       - Flag indicating whether or not to output
-    %                         verbose updates during training
-    %    learningMaxIterations  - The maximum number of iterations
-    %
-    %   SetAccess = private/protected:
-    %    learningConverged  - Flag indicating if the training converged
-    %    beta          - The regression weights, estimated during training
-    %    sparseBeta    - The sparse regression weights, estimated during
-    %                    training
-    %    sparseKernels - The sparse regression kernels, estimated during
-    %                    training
-    %
-    %    For information on relevance vector machines, please
-    %    refer to the following URL:
-    %
-    %    http://en.wikipedia.org/wiki/Relevance_vector_machine
-    %
-    %   By default, prtClassRvm uses the Laplacian approximation as found
-    %   in the paper:
-    %
-    %   Michael E. Tipping. 2001. Sparse bayesian learning and the
-    %   relevance vector machine. J. Mach. Learn. Res. 1 (September 2001),
-    %
-    %   The code is based on the algorithm in: 
-    %
-    %   Herbrich, Learning Kernel Classifiers, The MIT Press, 2002
-    %   http://www.learning-kernel-classifiers.org/
-    %
-    %   For alternative approaches to solving the RVM learning problem,
-    %   see prtClassRvmFigueiredo, and prtClassRvmSequential
-    %
-    %       M. Figueiredo, Adaptive sparseness for supervised learning, 
-    %   IEEE PAMI, vol. 25, no. 9 pp.1150-1159, September 2003.
-    %
-    %   When 'algorithm' is set to 'Sequential' or 'SequentialInMemory',
-    %   the algorithm is based on the work presented in:
-    %       Tipping, M. E. and A. C. Faul (2003). Fast marginal likelihood
-    %   maximisation for sparse Bayesian models. In C. M. Bishop and 
-    %   B. J. Frey (Eds.), Proceedings of the Ninth International Workshop
-    %   on Artificial Intelligence and Statistics, Key West, FL, Jan 3-6.
-    %
-    %    A prtClassRvm object inherits the TRAIN, RUN, CROSSVALIDATE and
-    %    KFOLDS methods from prtAction. It also inherits the PLOT method
-    %    from prtClass.
-    %
-    %    Example:
-    %
-    %    TestDataSet = prtDataGenUnimodal;      % Create some test and
-    %    TrainingDataSet = prtDataGenUnimodal;  % training data
-    %    classifier = prtClassRvm;              % Create a classifier
-    %    classifier = classifier.train(TrainingDataSet);    % Train
-    %    classified = run(classifier, TestDataSet);         % Test
-    %    subplot(2,1,1);
-    %    classifier.plot;
-    %    subplot(2,1,2);
-    %    [pf,pd] = prtScoreRoc(classified,TestDataSet);
-    %    h = plot(pf,pd,'linewidth',3);
-    %    title('ROC'); xlabel('Pf'); ylabel('Pd');
-    %
-    %    Example (changing kernel):
-    %
-    %    TestDataSet = prtDataGenUnimodal;      % Create some test and
-    %    TrainingDataSet = prtDataGenUnimodal;  % training data
-    %    classifier = prtClassRvm;              % Create a classifier
-    %    classifier.kernels{2} = prtKernelRbfNdimensionScale;
-    %    classifier = classifier.train(TrainingDataSet);    % Train
-    %    classified = run(classifier, TestDataSet);         % Test
-    %    subplot(2,1,1);
-    %    classifier.plot;
-    %    subplot(2,1,2);
-    %    [pf,pd] = prtScoreRoc(classified,TestDataSet);
-    %    h = plot(pf,pd,'linewidth',3);
-    %    title('ROC'); xlabel('Pf'); ylabel('Pd');
-    % 
-    %    See also prtClass, prtClassLogisticDiscriminant, prtClassBagging,
-    %    prtClassMap, prtClassCap, prtClassBinaryToMaryOneVsAll, prtClassDlrt,
-    %    prtClassPlsda, prtClassFld, prtClassRvm, prtClassGlrt,  prtClass
+classdef prtClassRvm2 < prtClass
+    
     
     properties (SetAccess=private)
         name = 'Relevance Vector Machine'  % Relevance Vector Machine
@@ -100,7 +8,7 @@ classdef prtClassRvm < prtClass
     end
     
     properties
-        kernels = {prtKernelDc, prtKernelRbfNdimensionScale};
+        kernels = prtKernelDc2 & prtKernelRbfNdimensionScale2;
         
         learningVerbose = false;
         learningPlot = false;
@@ -128,11 +36,8 @@ classdef prtClassRvm < prtClass
         end
         
         function Obj = set.kernels(Obj,val)
-            if ~isa(val,'cell')
-                val = {val};
-            end
-            for i = 1:length(val)
-                assert(isa(val{i},'prtKernel'),'prt:prtClassRvm:setKernels','kernels must be a cell array of prtKernels, but value{%d} is a %s',i,class(val{i}));
+            if ~isa(val,'prtKernel2')
+                error('need prtKernel2');
             end
             Obj.kernels = val;
         end
@@ -158,12 +63,12 @@ classdef prtClassRvm < prtClass
             
             holdState = get(gca,'nextPlot');
             
-            % Plot the kernels
-            hold on
-            for iKernel = 1:length(Obj.sparseKernels)
-                Obj.sparseKernels{iKernel}.classifierPlot();
-            end
-            set(gca, 'nextPlot', holdState);
+            %             % Plot the kernels
+            %             hold on
+            %             for iKernel = 1:length(Obj.sparseKernels)
+            %                 Obj.sparseKernels{iKernel}.classifierPlot();
+            %             end
+            %             set(gca, 'nextPlot', holdState);
             
             varargout = {};
             if nargout > 0
@@ -190,7 +95,11 @@ classdef prtClassRvm < prtClass
             y = Obj.getMinusOneOneTargets(DataSet);
             y(y==-1) = 0;
             
-            gram = Obj.getGram(DataSet);
+            %gram = Obj.getGram(DataSet);
+            Obj.kernels = Obj.kernels.train(DataSet);
+            gramDataSet = Obj.kernels.run(DataSet);
+            gram = gramDataSet.getObservations;
+            clear gramDataSet;
             
             theta = ones(size(gram,2),1);
             Obj.beta = zeros(size(theta));
@@ -262,11 +171,10 @@ classdef prtClassRvm < prtClass
             
             % Make sparse represenation
             Obj.sparseBeta = Obj.beta(cRelevant,1);
-            Obj.sparseKernels = prtKernel.sparseKernelFactory(Obj.kernels,DataSet,cRelevant);
+            Obj.sparseKernels = Obj.kernels.retainKernelDimensions(cRelevant);
                         
-            
             % Very bad training
-            if isempty(Obj.sparseBeta)
+            if isempty(find(cRelevant,1));
                 warning('prt:prtClassRvm:NoRelevantFeatures','No relevant features were found during training.');
             end
             
@@ -293,9 +201,9 @@ classdef prtClassRvm < prtClass
                 cI = i:min(i+memChunkSize,n);
                 cDataSet = prtDataSetClass(DataSet.getObservations(cI,:));
                 
-                gram = prtKernel.runMultiKernel(Obj.sparseKernels,cDataSet);
+                gram = Obj.sparseKernels.run(cDataSet);
                 
-                OutputMat(cI) = prtRvUtilNormCdf(gram*Obj.sparseBeta);
+                OutputMat(cI) = prtRvUtilNormCdf(gram.getObservations*Obj.sparseBeta);
             end
             
             DataSetOut = prtDataSetClass(OutputMat);
@@ -309,10 +217,6 @@ classdef prtClassRvm < prtClass
             y = nan(size(yMat,1),1);
             y(yMat(:,1) == 1) = -1;
             y(yMat(:,2) == 1) = 1;
-        end
-        
-        function gram = getGram(Obj, DataSet)
-            gram = prtKernel.evaluateMultiKernelGram(Obj.kernels,DataSet,DataSet);
         end
         
         function G = regularizeGramInnerProduct(Obj, gram)
@@ -339,8 +243,11 @@ classdef prtClassRvm < prtClass
             
             [linGrid, gridSize,xx,yy] = prtPlotUtilGenerateGrid(DsSummary.lowerBounds, DsSummary.upperBounds, Obj.PlotOptions);
             
-            trainedKernelCell = prtKernel.sparseKernelFactory(Obj.kernels,DataSet,relevantIndices);
-            cPhi = prtKernel.runMultiKernel(trainedKernelCell,prtDataSetClass([xx(:),yy(:)]));
+            %trainedKernelCell = prtKernel.sparseKernelFactory(Obj.kernels,DataSet,relevantIndices);
+            %cPhi = prtKernel.runMultiKernel(trainedKernelCell,prtDataSetClass([xx(:),yy(:)]));
+            cKernels = Obj.kernels.retainKernelDimensions(relevantIndices);
+            cPhiDataSet = cKernels.run(prtDataSetClass([xx(:),yy(:)]));
+            cPhi = cPhiDataSet.getObservations;
             
             confMap = reshape(prtRvUtilNormCdf(cPhi*Obj.beta(relevantIndices)),gridSize);
             imagesc(xx(1,:),yy(:,1),confMap,[0,1])
@@ -348,10 +255,11 @@ classdef prtClassRvm < prtClass
             axis xy
             hold on
             plot(DataSet);
-            for iRel = 1:length(trainedKernelCell)
-                trainedKernelCell{iRel}.classifierPlot();
-            end
-            hold off
+            %             for iRel = 1:length(trainedKernelCell)
+            %                 trainedKernelCell{iRel}.classifierPlot();
+            %             end
+            %             hold off
+            hold off;
             
             set(gcf,'color',[1 1 1]);
             drawnow;
