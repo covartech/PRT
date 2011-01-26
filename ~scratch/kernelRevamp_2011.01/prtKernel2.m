@@ -1,6 +1,45 @@
 classdef prtKernel2 
     %should we inherit from prtAction?
     % would simplify a ton of stuff
+    %
+    %
+    % Sample code:
+    %
+    % ds1 = prtDataGenUnimodal;
+    % ds2 = prtDataGenUnimodal;
+    %
+    % k = prtKernelRbf2;
+    % k2 = k;
+    % k2.sigma = 2;
+    %
+    % k = k.train(ds);
+    % k2 = k2.train(ds);
+    %
+    % gram1 = k.run(ds2);
+    % gram2 = k.run(ds2);
+    %
+    % subplot(2,2,1); imagesc(gram1.getObservations,[0 1]);
+    % subplot(2,2,2); imagesc(gram2.getObservations,[0 1]);
+    %
+    % %%
+    %
+    % kCombined = k & k2;
+    % kCombined = kCombined.train(ds);
+    % gramCombined = kCombined.run(ds2);
+    %
+    % imagesc(gramCombined.getObservations);
+    %
+    % %%
+    %
+    % kCombined = prtKernelDc2 & k & k2;
+    % kCombined = kCombined.train(ds);
+    % [nColumns,nColumnsByKernel] = kCombined.getNumDimensions;
+    %
+    % %pick the DC kernel, the first k kernel, and the last k2 kernel:
+    % kCombined = kCombined.retainKernelDimensions([true,true,false(1,798),true]);
+    % gramCombined = kCombined.run(ds2);
+    %
+    % imagesc(gramCombined.getObservations);
     
     methods (Abstract)
         Obj = train(Obj,dsTrain)
