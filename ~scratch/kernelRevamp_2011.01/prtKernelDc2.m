@@ -1,20 +1,23 @@
 classdef prtKernelDc2 < prtKernel2
 
+     properties (SetAccess = private)
+        name = 'DC Kernel';
+        nameAbbreviation = 'DCKern';
+        isSupervised = false;
+     end
+    
     properties (Access = 'protected')
         isRetained = true;
     end
-    methods 
-        function obj = prtKernelDc2(varargin)
-            obj = prtUtilAssignStringValuePairs(obj,varargin{:});
-            obj.isTrained = true; %we're always trained... 
-        end
+    
+    methods (Access = protected, Hidden = true)
         
-        function obj = train(obj,~)
+        function obj = trainAction(obj,~)
             %do nothing
             obj.isTrained = true;
         end
         
-        function yOut = run(obj,ds2) %#ok<MANU>
+        function yOut = runAction(obj,ds2) %#ok<MANU>
             if obj.isRetained
                 yOutData = ones(ds2.nObservations,1);
                 yOut = ds2.setObservations(yOutData);
@@ -22,10 +25,17 @@ classdef prtKernelDc2 < prtKernel2
                 yOut = prtDataSetClass;
             end
         end
+    end
+    
+    methods
+        function obj = prtKernelDc2(varargin)
+            obj = prtUtilAssignStringValuePairs(obj,varargin{:});
+            obj.isTrained = true; %we're always trained... 
+        end
         
-        function nDimensions = getNumDimensions(Obj)
+        function nDimensions = nDimensions(Obj)
             if ~Obj.isTrained
-                error('prtKernelRbf:getNumDimensions','Attempt to calculate nDimensions from an untrained kernel; use kernel.train(ds) to train');
+                error('prtKernelRbf:nDimensions','Attempt to calculate nDimensions from an untrained kernel; use kernel.train(ds) to train');
             end
             nDimensions = double(Obj.isRetained);
         end
@@ -34,12 +44,16 @@ classdef prtKernelDc2 < prtKernel2
             if ~Obj.isTrained
                 error('prtKernelRbf:retainKernelDimensions','Attempt to retain dimensions from an untrained kernel; use kernel.train(ds) to train');
             end
-            if islogical(keepLogical) && length(keepLogical) ~= Obj.getNumDimensions
-                error('prtKernelRbf:retainKernelDimensions','When using logical indexing for retaining kernels, length of logical vector (%d) must be equal to kernel.getNumDimensions (%d)',length(keepLogical),Obj.getNumDimensions);
+            if islogical(keepLogical) && length(keepLogical) ~= Obj.nDimensions
+                error('prtKernelRbf:retainKernelDimensions','When using logical indexing for retaining kernels, length of logical vector (%d) must be equal to kernel.nDimensions (%d)',length(keepLogical),Obj.nDimensions);
             end
+            
             if ~islogical(keepLogical)
-                error('prtKernelRbf:retainKernelDimensions','Logical indexing only, please... better error message coming');
+                temp = false(1,Obj.nDimensions);
+                temp(keepLogical) = true;
+                keepLogical = temp;
             end
+            
             Obj.isRetained = keepLogical;
         end
     end

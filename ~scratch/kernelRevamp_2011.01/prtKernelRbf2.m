@@ -1,5 +1,10 @@
 classdef prtKernelRbf2 < prtKernel2
     
+    properties (SetAccess = private)
+        name = 'RBF Kernel';
+        nameAbbreviation = 'RBF';
+        isSupervised = false;
+    end
     properties
         sigma = 1;
     end 
@@ -8,12 +13,26 @@ classdef prtKernelRbf2 < prtKernel2
         internalDataSet
     end
     
-    methods
-        function Obj = train(Obj,ds)
+    methods (Access = protected, Hidden = true)
+        function Obj = trainAction(Obj,ds)
             Obj.internalDataSet = ds;
             Obj.isTrained = true;
         end
         
+        function dsOut = runAction(Obj,ds)
+            if ~Obj.isTrained
+                error('prtKernelRbf:run','Attempt to run an untrained kernel; use kernel.train(ds) to train');
+            end
+            if Obj.internalDataSet.nObservations == 0
+                dsOut = prtDataSetClass;
+            else
+                gram = prtKernelRbf2.kernelFn(ds.getObservations,Obj.internalDataSet.getObservations,Obj.sigma);
+                dsOut = ds.setObservations(gram);
+            end
+        end
+    end
+    
+    methods
         function Obj = set.sigma(Obj,value)
             if ~prtUtilIsPostiveScalar(value)
                 error('prtKernelRbf:set','Value of sigma must be a positive scalar');
@@ -21,21 +40,9 @@ classdef prtKernelRbf2 < prtKernel2
             Obj.sigma = value;
         end
         
-        function dsOut = run(Obj,ds)
+        function nDimensions = nDimensions(Obj)
             if ~Obj.isTrained
-                error('prtKernelRbf:run','Attempt to run an untrained kernel; use kernel.train(ds) to train');
-            end
-            if Obj.internalDataSet.nObservations == 0
-                dsOut = prtDataSetClass;
-            else
-                gram = prtKernelRbf2.eval(ds.getObservations,Obj.internalDataSet.getObservations,Obj.sigma);
-                dsOut = ds.setObservations(gram);
-            end
-        end
-        
-        function nDimensions = getNumDimensions(Obj)
-            if ~Obj.isTrained
-                error('prtKernelRbf:getNumDimensions','Attempt to calculate nDimensions from an untrained kernel; use kernel.train(ds) to train');
+                error('prtKernelRbf:nDimensions','Attempt to calculate nDimensions from an untrained kernel; use kernel.train(ds) to train');
             end
             nDimensions = Obj.internalDataSet.nObservations;
         end
@@ -44,15 +51,21 @@ classdef prtKernelRbf2 < prtKernel2
             if ~Obj.isTrained
                 error('prtKernelRbf:retainKernelDimensions','Attempt to retain dimensions from an untrained kernel; use kernel.train(ds) to train');
             end
-            if islogical(keepLogical) && length(keepLogical) ~= Obj.getNumDimensions
-                error('prtKernelRbf:retainKernelDimensions','When using logical indexing for retaining kernels, length of logical vector (%d) must be equal to kernel.getNumDimensions (%d)',length(keepLogical),Obj.getNumDimensions);
+            if islogical(keepLogical) && length(keepLogical) ~= Obj.nDimensions
+                error('prtKernelRbf:retainKernelDimensions','When using logical indexing for retaining kernels, length of logical vector (%d) must be equal to kernel.nDimensions (%d)',length(keepLogical),Obj.nDimensions);
             end
+            if ~islogical(keepLogical)
+                temp = false(1,Obj.nDimensions);
+                temp(keepLogical) = true;
+                keepLogical = temp;
+            end
+            
             Obj.internalDataSet = Obj.internalDataSet.retainObservations(keepLogical);
         end
     end
     
     methods (Static, Hidden = true)
-        function gram = eval(x,y,sigma)
+        function gram = kernelFn(x,y,sigma)
             [n1, d] = size(x);
             [n2, nin] = size(y);
             if d ~= nin

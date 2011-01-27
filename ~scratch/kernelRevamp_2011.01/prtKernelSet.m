@@ -1,10 +1,36 @@
 classdef prtKernelSet < prtKernel2
     
-    %properties (Access = 'protected')
+    properties (SetAccess = private)
+        name = 'Kernel Set';
+        nameAbbreviation = 'KernelSet';
+        isSupervised = false;
+    end
+    
+    %properties (Access = 'protected') ?
     properties
         internalKernelCell
     end
     
+    methods (Access = protected, Hidden = true)
+        
+        function Obj = trainAction(Obj,ds)
+            for i = 1:length(Obj.internalKernelCell)
+                Obj.internalKernelCell{i} = Obj.internalKernelCell{i}.train(ds);
+            end
+            Obj.isTrained = true;
+        end
+        
+        function dsOut = runAction(Obj,ds)
+            
+            for i = 1:length(Obj.internalKernelCell)
+                if i == 1
+                    dsOut = Obj.internalKernelCell{i}.run(ds);
+                else
+                    dsOut = dsOut.catFeatures(Obj.internalKernelCell{i}.run(ds));
+                end
+            end
+        end
+    end
     methods
         function Obj = prtKernelSet(varargin)
             
@@ -19,40 +45,29 @@ classdef prtKernelSet < prtKernel2
                     Obj.internalKernelCell{c} = varargin{i};
                     c = c + 1;
                 end
-                disp(c)
             end
         end
         
-        function Obj = train(Obj,ds)
-            for i = 1:length(Obj.internalKernelCell)
-                Obj.internalKernelCell{i} = Obj.internalKernelCell{i}.train(ds);
-            end
-            Obj.isTrained = true;
-        end
-        function dsOut = run(Obj,ds)
-            
-            for i = 1:length(Obj.internalKernelCell)
-                if i == 1
-                    dsOut = Obj.internalKernelCell{i}.run(ds);
-                else
-                    dsOut = dsOut.catFeatures(Obj.internalKernelCell{i}.run(ds));
-                end
-            end
-        end
-        
-        function [nDimensions,nDimensionsArray] = getNumDimensions(Obj)
+        function [nDimensions,nDimensionsArray] = nDimensions(Obj)
             
             nDimensionsArray = nan(length(Obj.internalKernelCell),1);
             for i = 1:length(Obj.internalKernelCell)
-                nDimensionsArray(i) = Obj.internalKernelCell{i}.getNumDimensions;
+                nDimensionsArray(i) = Obj.internalKernelCell{i}.nDimensions;
             end
             nDimensions = sum(nDimensionsArray);
         end
         
         function Obj = retainKernelDimensions(Obj,keepLogical)
+            
+            if ~islogical(keepLogical)
+                temp = false(1,Obj.nDimensions);
+                temp(keepLogical) = true;
+                keepLogical = temp;
+            end
+            
             start = 1;
             for i = 1:length(Obj.internalKernelCell)
-                nDimensions = Obj.internalKernelCell{i}.getNumDimensions;
+                nDimensions = Obj.internalKernelCell{i}.nDimensions;
                 Obj.internalKernelCell{i} = Obj.internalKernelCell{i}.retainKernelDimensions(keepLogical(start:start+nDimensions-1));
                 start = start+nDimensions;
             end

@@ -63,7 +63,9 @@ classdef prtAction
             if isa(dataSet,'prtDataSetStandard') && (dataSet.hasFeatureNames || obj.verboseFeatureNames)
                 fNames = dataSet.getFeatureNames;
                 fNames = obj.updateFeatureNames(fNames);
-                dataSet = dataSet.setFeatureNames(fNames);
+                if ~isempty(fNames) %it's possible that the feature set is *empty*; in which case, don't bother
+                    dataSet = dataSet.setFeatureNames(fNames);
+                end
             end
         end
     end
@@ -114,6 +116,12 @@ classdef prtAction
         % prtAction.runAction() - Primary method for evaluating a prtAction
         %   DataSet = runAction(Obj, DataSet)
         DataSet = runAction(Obj, DataSet)
+    end
+    
+    methods
+        function Obj3 = and(Obj1,Obj2) %#ok<INUSD,MANU,STOUT>
+            error('prtAction:And','the AND (&) operation is only defined for objects of type prtKernel');
+        end
     end
     
     methods (Hidden)

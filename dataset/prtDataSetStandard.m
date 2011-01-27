@@ -185,6 +185,7 @@ classdef prtDataSetStandard < prtDataSetBase
             %   names at the specified INDICES.
             
             indices2 = prtDataSetBase.parseIndices(obj.nFeatures,varargin{:});
+            
             %parse returns logicals
             if islogical(indices2)
                 indices2 = find(indices2);
@@ -210,6 +211,11 @@ classdef prtDataSetStandard < prtDataSetBase
             %   dataSet = dataSet.setFeatureNames(FEATNAMES, INDICES) sets the
             %   feature names of the dataSet object at the corresponding
             %   INDICES.
+            
+            %             if isempty(featNames)
+            %                 return;
+            %             end
+            
             if ~isa(featNames,'cell') || ~isa(featNames{1},'char')
                 error('prt:dataSetStandard:setFeatureNames','Input feature names must be a cell array of characters');
             end

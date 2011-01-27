@@ -1,7 +1,7 @@
 classdef prtKernelRbfNdimensionScale2 < prtKernelRbf2
     
-    methods
-        function dsOut = run(Obj,ds)
+    methods (Access = protected, Hidden = true)
+        function dsOut = runAction(Obj,ds)
             if ~Obj.isTrained
                 error('prtKernelRbf:run','Attempt to run an untrained kernel; use kernel.train(ds) to train');
             end
@@ -10,7 +10,7 @@ classdef prtKernelRbfNdimensionScale2 < prtKernelRbf2
                 dsOut = prtDataSetClass;
             else
                 scaledSigma = sqrt(Obj.sigma.^2*Obj.internalDataSet.nFeatures);
-                gram = prtKernelRbf2.eval(ds.getObservations,Obj.internalDataSet.getObservations,scaledSigma);
+                gram = prtKernelRbf2.kernelFn(ds.getObservations,Obj.internalDataSet.getObservations,scaledSigma);
                 dsOut = ds.setObservations(gram);
             end
         end

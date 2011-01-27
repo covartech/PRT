@@ -31,7 +31,7 @@ classdef prtClassRvm2 < prtClass
     
     methods
         
-        function Obj = prtClassRvm(varargin)
+        function Obj = prtClassRvm2(varargin)
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
         end
         
@@ -96,8 +96,8 @@ classdef prtClassRvm2 < prtClass
             y(y==-1) = 0;
             
             %gram = Obj.getGram(DataSet);
-            Obj.kernels = Obj.kernels.train(DataSet);
-            gramDataSet = Obj.kernels.run(DataSet);
+            localKernels = Obj.kernels.train(DataSet);
+            gramDataSet = localKernels.run(DataSet);
             gram = gramDataSet.getObservations;
             clear gramDataSet;
             
@@ -171,7 +171,7 @@ classdef prtClassRvm2 < prtClass
             
             % Make sparse represenation
             Obj.sparseBeta = Obj.beta(cRelevant,1);
-            Obj.sparseKernels = Obj.kernels.retainKernelDimensions(cRelevant);
+            Obj.sparseKernels = localKernels.retainKernelDimensions(cRelevant);
                         
             % Very bad training
             if isempty(find(cRelevant,1));
@@ -245,7 +245,8 @@ classdef prtClassRvm2 < prtClass
             
             %trainedKernelCell = prtKernel.sparseKernelFactory(Obj.kernels,DataSet,relevantIndices);
             %cPhi = prtKernel.runMultiKernel(trainedKernelCell,prtDataSetClass([xx(:),yy(:)]));
-            cKernels = Obj.kernels.retainKernelDimensions(relevantIndices);
+            localKernels = Obj.kernels.train(DataSet);
+            cKernels = localKernels.retainKernelDimensions(relevantIndices);
             cPhiDataSet = cKernels.run(prtDataSetClass([xx(:),yy(:)]));
             cPhi = cPhiDataSet.getObservations;
             

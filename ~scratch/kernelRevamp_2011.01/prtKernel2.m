@@ -1,4 +1,4 @@
-classdef prtKernel2 
+classdef prtKernel2 < prtAction
     %
     %should we inherit from prtAction?
     % would simplify a ton of stuff, but some things don't make a whole lot
@@ -45,17 +45,24 @@ classdef prtKernel2
     %
     % imagesc(gramCombined.getObservations);
     
+    methods
+        function obj = prtKernel2()
+             obj.isCrossValidateValid = false;
+             obj.verboseStorage = false;
+        end
+    end
+    
     methods (Abstract)
-        Obj = train(Obj,dsTrain)
-        dsOut = run(Obj,dsTest)
-        nDimensions = getNumDimensions(Obj)
+        nDimensions = nDimensions(Obj)
         Obj = retainKernelDimensions(Obj,keepLogical)
     end
     
     
-    properties (SetAccess = protected)
-        % Specifies if prtAction object has been trained.
-        isTrained = false;  
+    methods (Hidden)  %internal, can make things faster in some classifiers
+        function gramMatrix = run_OutputDoubleArray(Obj,DataSet)
+            dsOut = Obj.run(DataSet);
+            gramMatrix = dsOut.getObservations;
+        end
     end
     
     methods
@@ -78,12 +85,16 @@ classdef prtKernel2
             Obj3 = prtKernelSet(kernelCell1{:},kernelCell2{:});
         end
     end
-    methods 
+    
+    methods
         function h = plotOnClassifierContour(Obj)
            %   do nothing by default; people can overload as they want
             holdState = get(gca,'nextPlot');
             h = plot(nan,nan);
             set(gca,'nextPlot',holdState);
         end
-        function txt = 
+        function txt = toString(obj)
+            txt = 'prtKernel';
+        end
+    end
 end
