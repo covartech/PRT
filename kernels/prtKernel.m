@@ -5,36 +5,43 @@ classdef prtKernel < prtAction
     %   abstract class and should not be instantiated. All prtKernel
     %   objects implement the following methods:
     %
-    %   X = evaluateGram(OBJ,DS1,DS2)Evaluate the kernel object OBJ trained
-    %   at all points in DS1 and evaluated at all points in DS2.  This will
-    %   ouput a gram matrix of size DS2.nObservations x
-    %   getExpectedNumKernels(OBJ,DS1). This is the main interface function
-    %   for most kernel operations.
+    %   kernel = kernel.train(dataSet) Train the kernel using the specified
+    %   dataSet.  This builds a trained kernel object that can be run.
     %
-    %   TRAINEDKERNELCELL = toTrainedKernelArray(OBJ,DSTRAIN,DATAPOINTS)
-    %   Output a cell array of M trained kernel objects trained using
-    %   the data in prtDataSet DSTRAIN at the observations specified in
-    %   DATAPOINTS. DATAPOINTS must be a logical array indicating which
-    %   elements of DSTRAIN should be used in training. The default
-    %   value is all datapoints.  The trained kernel cell can be used
-    %   to maintain only a sparse list of kernels in sparse learning
-    %   machines such as used by prtClassRVM, prtClassSVM.
+    %   yOut = kernel.run(dataSet) Run a trained kernel object on the data
+    %   in dataSet and output the resulting gram matrix in
+    %   yOut.getObservations.
     %
-    %   yOut = run(OBJ,DSTEST) Run a trained kernel object (one element of
-    %   toTrainedKernelArray) on the data in dsTest.
+    %   nDims = kernel.nDimensions Output the number of columns that should
+    %   be expected in the output of kernel.run.  For many kernels (RBF,
+    %   Polynomial, HyperbolicTangent), nDimensions is the number of
+    %   observations in the training dataSet.  For other kernels (DC),
+    %   nDimensions is a constant (1).  For other kernels (e.g. Direct),
+    %   the number of columns is the number of features in the training
+    %   data set.
     %
-    %   nDims = getExpectedNumKernels(OBJ,DSTRAIN) Output an integer
-    %   containing of the expected number of trained kernels that would be
-    %   created using toTrainedKernelArray on all the observations in the
-    %   data set DSTRAIN.  For binary kernesls such as prtKernelRbf,
-    %   prtKernelPolynomial, this is DSTRSAIN.nObservations, for unary
-    %   kernels such as prtKernelDc kernels. this is 1. Other kernel
-    %   objects might use other specifications.
+    %   kernel = and(kernel1,kernel2) Combine two kernels into a
+    %   prtKernelSet (also a prtKernel).  This is used to join multiple
+    %   kernels together.  Unlike the plus operation for combining
+    %   prtActions, the AND operation trains and runs each kernel
+    %   individually on the provided data.
+    %
+    %   Usually called like: 
+    %       kernels = prtKernelDc & prtKernelRbf;
     %
     %  See also: prtKernelRbf, prtKernelBinary, prtKernelDc, prtKernelDirect,
-    %   prtKernelFeatureDependent, prtKernelHyperbolicTangent,
-    %   prtKernelPolynomial,  prtKernelRbfNdimensionScale, prtKernelUnary
+    %   prtKernelHyperbolicTangent, prtKernelPolynomial,  prtKernelRbfNdimensionScale,
     
+    % Internal Help:
+    %
+    % gramMatrix = kernel.run_OutputDoubleArray(dataSet) same as run, but
+    % don't output the dataSet, just output dataSet.getObservations.  This
+    % saves a lot of time and memory in RVMs
+    %
+    % h = kernel.plot; Used inside classifiers to display kernels on top of
+    % regression and classification plots.
+    %
+    % h = kernel.toString; Currently unused
     
     methods
         function obj = prtKernel()

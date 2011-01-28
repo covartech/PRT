@@ -16,9 +16,10 @@ classdef prtKernelDirect < prtKernel
     %   ds = prtDataGenUnimodal;
     %   k1 = prtKernelDirect;
     %   
-    %   g1 = k1.evaluateGram(ds,ds);
+    %   k1 = k1.train(ds);
+    %   g1 = k1.run(ds);
     %
-    %   subplot(1,1,1); imagesc(g1);
+    %   subplot(1,1,1); imagesc(g1.getObservations);
     %
     
     properties (SetAccess = private)

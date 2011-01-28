@@ -29,11 +29,14 @@ classdef prtKernelRbf < prtKernel
     %   k2 = prtKernelRbf('sigma',2); % Create a prtKernel object with
     %                                 % specified value of sigma
     %   
-    %   g1 = k1.evaluateGram(ds,ds); % Evaluate both kernels
-    %   g2 = k2.evaluateGram(ds,ds);
+    %   k1 = k1.train(ds); % Train
+    %   g1 = k1.run(ds); % Evaluate
     %
-    %   subplot(2,2,1); imagesc(g1);  %Plot the results
-    %   subplot(2,2,2); imagesc(g2);
+    %   k2 = k2.train(ds); % Train
+    %   g2 = k2.run(ds); % Evaluate
+    %
+    %   subplot(2,2,1); imagesc(g1.getObservations);  %Plot the results
+    %   subplot(2,2,2); imagesc(g2.getObservations);
     %
     %   See also: prtKernel, prtKernelBinary, prtKernelDc, prtKernelDirect,
     %   prtKernelFeatureDependent, prtKernelHyperbolicTangent,

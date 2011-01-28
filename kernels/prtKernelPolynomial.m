@@ -30,11 +30,14 @@ classdef prtKernelPolynomial < prtKernel
     %   k1 = prtKernelPolynomial;
     %   k2 = prtKernelPolynomial('d',3);
     %   
-    %   g1 = k1.evaluateGram(ds,ds);
-    %   g2 = k2.evaluateGram(ds,ds);
+    %   k1 = k1.train(ds); % Train
+    %   g1 = k1.run(ds); % Evaluate
     %
-    %   subplot(2,2,1); imagesc(g1); 
-    %   subplot(2,2,2); imagesc(g2);
+    %   k2 = k2.train(ds); % Train
+    %   g2 = k2.run(ds); % Evaluate
+    %
+    %   subplot(2,2,1); imagesc(g1.getObservations);  %Plot the results
+    %   subplot(2,2,2); imagesc(g2.getObservations);
     %
     %
     
