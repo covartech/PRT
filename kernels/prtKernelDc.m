@@ -1,4 +1,4 @@
-classdef prtKernelDc < prtKernelUnary
+classdef prtKernelDc < prtKernel
     % prtKernelDc  DC kernel object
     %
     % kernelObj = prtKernelDc; Generates a kernel object implementing a
@@ -75,5 +75,4 @@ classdef prtKernelDc < prtKernelUnary
             Obj.isRetained = keepLogical;
         end
     end
-end
 end

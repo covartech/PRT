@@ -1,4 +1,4 @@
-classdef prtKernelRbf < prtKernelBinary
+classdef prtKernelRbf < prtKernel
     % prtKernelRbf  Radial basis function kernel
     %
     %  KERNOBJ = prtKernelRbf Generates a kernel object implementing a

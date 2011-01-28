@@ -1,4 +1,4 @@
-classdef prtKernelSet < prtKernel2
+classdef prtKernelSet < prtKernel
     
     properties (SetAccess = private)
         name = 'Kernel Set';
@@ -44,7 +44,7 @@ classdef prtKernelSet < prtKernel2
                     tempCell = varargin{i}.getKernelCell;
                     Obj.internalKernelCell(c:c+length(tempCell)-1) = tempCell;
                     c = c + length(tempCell);
-                elseif isa(varargin{i},'prtKernel2')
+                elseif isa(varargin{i},'prtKernel')
                     Obj.internalKernelCell{c} = varargin{i};
                     c = c + 1;
                 end

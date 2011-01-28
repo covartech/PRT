@@ -62,7 +62,7 @@ classdef prtRegressRvm < prtRegress
     end
     
     properties
-        kernels = {prtKernelDc, prtKernelRbfNdimensionScale};
+        kernels = prtKernelDc & prtKernelRbfNdimensionScale;
                 
         learningPlot = false;   % Whether or not to plot during training
         learningVerbose = false;   % Whether or not to plot during training
@@ -108,7 +108,8 @@ classdef prtRegressRvm < prtRegress
             
             y = DataSet.getTargets(:,1);
             
-            gram = prtKernel.evaluateMultiKernelGram(Obj.kernels,DataSet,DataSet);
+            localKernels = Obj.kernels.train(DataSet);
+            gram = localKernels.run_OutputDoubleArray(DataSet);
             nBasis = size(gram,2);
             
             if Obj.learningVerbose
@@ -189,7 +190,7 @@ classdef prtRegressRvm < prtRegress
             
             % Make sparse represenation
             Obj.sparseBeta = Obj.beta(relevantIndices,1);
-            Obj.sparseKernels = prtKernel.sparseKernelFactory(Obj.kernels,DataSet,relevantIndices);
+            Obj.sparseKernels = localKernels.retainKernelDimensions(relevantIndices);
             
             
             % Very bad training
@@ -216,7 +217,7 @@ classdef prtRegressRvm < prtRegress
             for i = 1:memChunkSize:n;
                 cI = i:min(i+memChunkSize,n);
                 cDataSet = prtDataSetRegress(DataSet.getObservations(cI,:));
-                gram = prtKernel.runMultiKernel(Obj.sparseKernels,cDataSet);
+                gram = Obj.sparseKernels.run_OutputDoubleArray(cDataSet);
                 
                 DataSetOut = DataSetOut.setObservations(gram*Obj.sparseBeta, cI);
             end
@@ -237,9 +238,10 @@ classdef prtRegressRvm < prtRegress
             
             % Plot the kernels
             hold on
-            for iKernel = 1:length(Obj.sparseKernels)
-                Obj.sparseKernels{iKernel}.classifierPlot();
-            end
+            %This only plots the x-coordinate... which is weird, but it's
+            %all we can do right now b/c kernels don't know about
+            %targets...
+            Obj.sparseKernels.plot();
             set(gca, 'nextPlot', holdState);
             
             varargout = {};

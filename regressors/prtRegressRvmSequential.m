@@ -40,7 +40,6 @@ classdef prtRegressRvmSequential < prtRegressRvm
     methods
          % Allow for string, value pairs
         function Obj = prtRegressRvmSequential(varargin)
-           
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
         end
     end
@@ -62,8 +61,8 @@ classdef prtRegressRvmSequential < prtRegressRvm
             
             y = DataSet.getTargets(:,1);
             
-            nBasisPer = prtKernel.nDimsMultiKernel(Obj.kernels,DataSet);
-            nBasis = sum(nBasisPer);
+            localKernels = Obj.kernels.train(DataSet);
+            nBasis = localKernels.nDimensions;
             Obj.beta = zeros(nBasis,1);
             
             if Obj.learningVerbose
@@ -83,8 +82,8 @@ classdef prtRegressRvmSequential < prtRegressRvm
             for iBlock = 1:nBlocks
                 cInds = ((iBlock-1)*Obj.largestNumberOfGramColumns+1):min([iBlock*Obj.largestNumberOfGramColumns nBasis]);
                 
-                trainedKernelCell = prtKernel.sparseKernelFactory(Obj.kernels,DataSet,cInds);
-                blockPhi = prtKernel.runMultiKernel(trainedKernelCell,DataSet);
+                trainedKernelDownSelected = localKernels.retainKernelDimensions(cInds);
+                blockPhi = trainedKernelDownSelected.run_OutputDoubleArray(DataSet);
                 blockPhiNormalized = bsxfun(@rdivide,blockPhi,sqrt(sum(blockPhi.*blockPhi))); % We have to normalize here
                 
                 kernelCorrs(cInds) = abs(blockPhiNormalized'*y);
@@ -106,13 +105,13 @@ classdef prtRegressRvmSequential < prtRegressRvm
             
             if nBlocks == 1
                 % If we have only 1 block we only need to do this once.
-                trainedKernelCell = prtKernel.sparseKernelFactory(Obj.kernels,DataSet,true(nBasis,1));
-                PhiM = prtKernel.runMultiKernel(trainedKernelCell,DataSet);
+                trainedKernelDownSelected = localKernels.retainKernelDimensions(true(nBasis,1));
+                PhiM = trainedKernelDownSelected.run_OutputDoubleArray(DataSet);
             end
             
             % Get the first relevant kernel matrix
-            trainedKernelCell = prtKernel.sparseKernelFactory(Obj.kernels,DataSet,relevantIndices);
-            cPhi = prtKernel.runMultiKernel(trainedKernelCell,DataSet);
+            trainedKernelDownSelected = localKernels.retainKernelDimensions(relevantIndices);
+            cPhi = trainedKernelDownSelected.run_OutputDoubleArray(DataSet);
             
             % Start the actual Process
             for iteration = 1:Obj.learningMaxIterations
@@ -147,8 +146,8 @@ classdef prtRegressRvmSequential < prtRegressRvm
                     cInds = ((iBlock-1)*Obj.largestNumberOfGramColumns+1):min([iBlock*Obj.largestNumberOfGramColumns nBasis]);
                     
                     if nBlocks > 1 % If there is only one block we can keep the on from before
-                        trainedKernelCell = prtKernel.sparseKernelFactory(Obj.kernels,DataSet,cInds);
-                        PhiM = prtKernel.runMultiKernel(trainedKernelCell,DataSet);
+                         trainedKernelDownSelected = localKernels.retainKernelDimensions(cInds);
+                         PhiM = trainedKernelDownSelected.run_OutputDoubleArray(DataSet);
                     end
                     
                     cProduct = sigma2Inv*(PhiM'*cPhi);
@@ -244,8 +243,8 @@ classdef prtRegressRvmSequential < prtRegressRvm
                 A = diag(alpha(relevantIndices));
                 %cPhi = prtKernelGrammMatrix(DataSet,trainedKernels(relevantIndices));
                 if nBlocks > 1
-                    trainedKernelCell = prtKernel.sparseKernelFactory(Obj.kernels,DataSet,relevantIndices);
-                    cPhi = prtKernel.runMultiKernel(trainedKernelCell,DataSet);
+                    trainedKernelDownSelected = localKernels.retainKernelDimensions(relevantIndices);
+                    cPhi = trainedKernelDownSelected.run_OutputDoubleArray(DataSet);
                 else
                     cPhi = PhiM(:,relevantIndices);
                 end
@@ -304,8 +303,7 @@ classdef prtRegressRvmSequential < prtRegressRvm
             
             % Make sparse represenation
             Obj.sparseBeta = Obj.beta(relevantIndices,1);
-            Obj.sparseKernels = prtKernel.sparseKernelFactory(Obj.kernels,DataSet,relevantIndices);
-        
+            Obj.sparseKernels = localKernels.retainKernelDimensions(relevantIndices);
             
             % Very bad training
             if isempty(Obj.sparseBeta)

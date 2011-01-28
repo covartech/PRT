@@ -1,4 +1,4 @@
-classdef prtKernelDirect < prtKernelFeatureDependent
+classdef prtKernelDirect < prtKernel
     % prtKernelDirect  Direct kernel
     %
     %  kernelObj = prtKernelDirect; Generates a kernel object implementing a

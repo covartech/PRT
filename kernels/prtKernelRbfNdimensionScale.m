@@ -56,7 +56,7 @@ classdef prtKernelRbfNdimensionScale < prtKernelRbf
                 dsOut = prtDataSetClass;
             else
                 scaledSigma = sqrt(Obj.sigma.^2*Obj.internalDataSet.nFeatures);
-                gram = prtKernelRbf2.kernelFn(ds.getObservations,Obj.internalDataSet.getObservations,scaledSigma);
+                gram = Obj.kernelFn(ds.getObservations,Obj.internalDataSet.getObservations,scaledSigma);
                 dsOut = ds.setObservations(gram);
             end
         end

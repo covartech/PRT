@@ -77,7 +77,9 @@ classdef prtClassRvmFigueiredo < prtClassRvm
             
             y = Obj.getMinusOneOneTargets(DataSet);
             
-            gram = Obj.getGram(DataSet);
+            localKernels = Obj.kernels.train(DataSet);
+            gram = localKernels.run_OutputDoubleArray(DataSet);
+            %gram = Obj.getGram(DataSet);
             
             G = Obj.regularizeGramInnerProduct(gram);
             
@@ -148,7 +150,7 @@ classdef prtClassRvmFigueiredo < prtClassRvm
             
             % Make sparse represenation
             Obj.sparseBeta = Obj.beta(relevantIndices,1);
-            Obj.sparseKernels = prtKernel.sparseKernelFactory(Obj.kernels,DataSet,relevantIndices);
+            Obj.sparseKernels = localKernels.retainKernelDimensions(relevantIndices);
             
             
             % Very bad training

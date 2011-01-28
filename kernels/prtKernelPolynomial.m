@@ -1,4 +1,4 @@
-classdef prtKernelPolynomial < prtKernelBinary
+classdef prtKernelPolynomial < prtKernel
     % prtKernelPolynomial  Polynomial kernel object
     %
     %  kernelObj = prtKernelPolynomial; Generates a kernel object implementing a
@@ -38,6 +38,16 @@ classdef prtKernelPolynomial < prtKernelBinary
     %
     %
     
+    properties (SetAccess = private)
+        name = 'Hyperbolic Tangent Kernel';
+        nameAbbreviation = 'TANH';
+        isSupervised = false;
+    end
+    
+    properties (Hidden)
+        internalDataSet
+    end
+    
     properties
         d = 2;    % polynomial order
         c = 0;    % offset
@@ -55,18 +65,53 @@ classdef prtKernelPolynomial < prtKernelBinary
             obj = prtUtilAssignStringValuePairs(obj,varargin{:});
         end
         
-        function obj = trainKernel(obj,x)
-            obj.kernelCenter = x;
+        function nDimensions = nDimensions(Obj)
+            if ~Obj.isTrained
+                error('prtKernelHyperbolicTangent:nDimensions','Attempt to calculate nDimensions from an untrained kernel; use kernel.train(ds) to train');
+            end
+            nDimensions = Obj.internalDataSet.nObservations;
         end
         
-        function yOut = evalKernel(obj,data)
-            yOut = prtKernelPolynomial.polynomialKernelEval(obj.kernelCenter,data,obj.d,obj.c);
+        function Obj = retainKernelDimensions(Obj,keepLogical)
+            if ~Obj.isTrained
+                error('prtKernelHyperbolicTangent:retainKernelDimensions','Attempt to retain dimensions from an untrained kernel; use kernel.train(ds) to train');
+            end
+            if islogical(keepLogical) && length(keepLogical) ~= Obj.nDimensions
+                error('prtKernelHyperbolicTangent:retainKernelDimensions','When using logical indexing for retaining kernels, length of logical vector (%d) must be equal to kernel.nDimensions (%d)',length(keepLogical),Obj.nDimensions);
+            end
+            if ~islogical(keepLogical)
+                temp = false(1,Obj.nDimensions);
+                temp(keepLogical) = true;
+                keepLogical = temp;
+            end
+            
+            Obj.internalDataSet = Obj.internalDataSet.retainObservations(keepLogical);
+        end
+        
+    end
+    
+    methods (Access = protected, Hidden = true)
+        function Obj = trainAction(Obj,ds)
+            Obj.internalDataSet = ds;
+            Obj.isTrained = true;
+        end
+        
+        function dsOut = runAction(Obj,ds)
+            if ~Obj.isTrained
+                error('prtKernelRbf:run','Attempt to run an untrained kernel; use kernel.train(ds) to train');
+            end
+            if Obj.internalDataSet.nObservations == 0
+                dsOut = prtDataSetClass;
+            else
+                gram = prtKernelPolynomial.kernelFn(ds.getObservations,Obj.internalDataSet.getObservations,Obj.d,Obj.c);
+                dsOut = ds.setObservations(gram);
+            end
         end
         
     end
     
     methods (Static, Hidden = true)
-        function gram = polynomialKernelEval(x,y,d,c)
+        function gram = kernelFn(x,y,d,c)
             [n1, dim1] = size(x);
             [n2, dim2] = size(y);
             if dim1 ~= dim2

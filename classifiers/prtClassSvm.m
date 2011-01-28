@@ -70,7 +70,7 @@ classdef prtClassSvm < prtClass
         
         c = 1; % Slack parameter
         tol = 0.00001;  % Tolerance
-        kernels = {prtKernelRbfNdimensionScale};  % Kernels
+        kernels = prtKernelRbfNdimensionScale;  % Kernels
     end
     properties (SetAccess = 'protected',GetAccess = 'public')
         alpha 
@@ -115,13 +115,15 @@ classdef prtClassSvm < prtClass
             %             obj.trainedkernels = cat(1,obj.trainedkernels{:});
             %             gram = prtkernelgrammmatrix(dataset,obj.trainedkernels);
             
-            gram = prtKernel.evaluateMultiKernelGram(Obj.kernels,DataSet,DataSet);
+            localKernels = Obj.kernels.train(DataSet);
+            gram = localKernels.run_OutputDoubleArray(DataSet);
+            
             %Check y-labels
             yZeroOne = DataSet.getBinaryTargetsAsZeroOne;
             [Obj.alpha,Obj.beta] = prtUtilSmo(DataSet.getX,yZeroOne,gram,Obj.c,Obj.tol);
             
             relevantIndices = find(Obj.alpha);
-            Obj.sparseKernels = prtKernel.sparseKernelFactory(Obj.kernels,DataSet,relevantIndices);
+            Obj.sparseKernels = localKernels.retainKernelDimensions(relevantIndices);
             Obj.sparseAlpha = Obj.alpha(relevantIndices);
         end
         
@@ -134,7 +136,7 @@ classdef prtClassSvm < prtClass
             for i = 1:memChunkSize:n;
                 cI = i:min(i+memChunkSize,n);
                 cDataSet = prtDataSetClass(DataSet.getObservations(cI,:));
-                gram = prtKernel.runMultiKernel(Obj.sparseKernels,cDataSet);
+                gram = Obj.sparseKernels.run_OutputDoubleArray(cDataSet);
                 %gram = prtKernelGrammMatrix(cDataSet,Obj.trainedKernels);
                 
                 y = gram*Obj.sparseAlpha - Obj.beta;
@@ -154,10 +156,8 @@ classdef prtClassSvm < prtClass
             HandleStructure = plot@prtClass(Obj);
             
             % Plot the kernels
-            hold on
-            for iKernel = 1:length(Obj.sparseKernels)
-                Obj.sparseKernels{iKernel}.classifierPlot();
-            end
+            hold on            
+            Obj.sparseKernels.plot();
             hold off
             
             varargout = {};

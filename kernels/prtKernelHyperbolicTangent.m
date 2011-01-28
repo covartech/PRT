@@ -1,4 +1,4 @@
-classdef prtKernelHyperbolicTangent < prtKernelBinary
+classdef prtKernelHyperbolicTangent < prtKernel
     % prtKernelHyperbolicTangent  Hyperbolic tangent kernel
     %
     %  kernelObj = prtKernelHyperbolicTangent; Generates a kernel object
@@ -37,13 +37,20 @@ classdef prtKernelHyperbolicTangent < prtKernelBinary
     %   subplot(2,2,2); imagesc(g2);
     %
     
+    properties (SetAccess = private)
+        name = 'Hyperbolic Tangent Kernel';
+        nameAbbreviation = 'TANH';
+        isSupervised = false;
+    end
     properties
         kappa = 1;    % polynomial order
         c = 0;    % offset
     end
-    properties (SetAccess = 'protected')
-        kernelCenter = [];   % The kernel center
+
+    properties (Hidden)
+        internalDataSet
     end
+    
     methods
         function obj = set.kappa(obj,value)
             assert(isscalar(value) && value > 0,'kappa parameter must be scalar and > 0, value provided is %s',mat2str(value));
@@ -59,17 +66,52 @@ classdef prtKernelHyperbolicTangent < prtKernelBinary
             obj = prtUtilAssignStringValuePairs(obj,varargin{:});
         end
         
-        function obj = trainKernel(obj,x)
-            obj.kernelCenter = x;
+        function nDimensions = nDimensions(Obj)
+            if ~Obj.isTrained
+                error('prtKernelHyperbolicTangent:nDimensions','Attempt to calculate nDimensions from an untrained kernel; use kernel.train(ds) to train');
+            end
+            nDimensions = Obj.internalDataSet.nObservations;
         end
         
-        function yOut = evalKernel(obj,data)
-            yOut = prtKernelHyperbolicTangent.hyperbolicTangentKernelEval(obj.kernelCenter,data,obj.kappa,obj.c);
+        function Obj = retainKernelDimensions(Obj,keepLogical)
+            if ~Obj.isTrained
+                error('prtKernelHyperbolicTangent:retainKernelDimensions','Attempt to retain dimensions from an untrained kernel; use kernel.train(ds) to train');
+            end
+            if islogical(keepLogical) && length(keepLogical) ~= Obj.nDimensions
+                error('prtKernelHyperbolicTangent:retainKernelDimensions','When using logical indexing for retaining kernels, length of logical vector (%d) must be equal to kernel.nDimensions (%d)',length(keepLogical),Obj.nDimensions);
+            end
+            if ~islogical(keepLogical)
+                temp = false(1,Obj.nDimensions);
+                temp(keepLogical) = true;
+                keepLogical = temp;
+            end
+            
+            Obj.internalDataSet = Obj.internalDataSet.retainObservations(keepLogical);
         end
     end
     
+    methods (Access = protected, Hidden = true)
+        function Obj = trainAction(Obj,ds)
+            Obj.internalDataSet = ds;
+            Obj.isTrained = true;
+        end
+        
+        function dsOut = runAction(Obj,ds)
+            if ~Obj.isTrained
+                error('prtKernelRbf:run','Attempt to run an untrained kernel; use kernel.train(ds) to train');
+            end
+            if Obj.internalDataSet.nObservations == 0
+                dsOut = prtDataSetClass;
+            else
+                gram = prtKernelHyperbolicTangent.kernelFn(ds.getObservations,Obj.internalDataSet.getObservations,Obj.kappa,Obj.c);
+                dsOut = ds.setObservations(gram);
+            end
+        end
+        
+    end
+    
     methods (Static, Hidden = true)
-        function gram = hyperbolicTangentKernelEval(x,y,kappa,c)
+        function gram = kernelFn(x,y,kappa,c)
             [n1, d] = size(x);
             [n2, nin] = size(y);
             if d ~= nin

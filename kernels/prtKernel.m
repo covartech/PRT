@@ -1,4 +1,4 @@
-classdef prtKernel
+classdef prtKernel < prtAction
     % prtKernel  Base class for prtKernel objects.
     %
     %   prtKernel is the base class for all prtKernel objects. It is an

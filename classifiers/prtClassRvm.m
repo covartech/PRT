@@ -100,7 +100,7 @@ classdef prtClassRvm < prtClass
     end
     
     properties
-        kernels = {prtKernelDc, prtKernelRbfNdimensionScale};
+        kernels = prtKernelDc & prtKernelRbfNdimensionScale;
         
         learningVerbose = false;
         learningPlot = false;
@@ -128,11 +128,8 @@ classdef prtClassRvm < prtClass
         end
         
         function Obj = set.kernels(Obj,val)
-            if ~isa(val,'cell')
-                val = {val};
-            end
-            for i = 1:length(val)
-                assert(isa(val{i},'prtKernel'),'prt:prtClassRvm:setKernels','kernels must be a cell array of prtKernels, but value{%d} is a %s',i,class(val{i}));
+            if ~isa(val,'prtKernel')
+                error('need prtKernel');
             end
             Obj.kernels = val;
         end
@@ -157,12 +154,8 @@ classdef prtClassRvm < prtClass
             HandleStructure = plot@prtClass(Obj);
             
             holdState = get(gca,'nextPlot');
-            
-            % Plot the kernels
-            hold on
-            for iKernel = 1:length(Obj.sparseKernels)
-                Obj.sparseKernels{iKernel}.classifierPlot();
-            end
+            hold on;
+            Obj.sparseKernels.plot;
             set(gca, 'nextPlot', holdState);
             
             varargout = {};
@@ -190,7 +183,11 @@ classdef prtClassRvm < prtClass
             y = Obj.getMinusOneOneTargets(DataSet);
             y(y==-1) = 0;
             
-            gram = Obj.getGram(DataSet);
+            %gram = Obj.getGram(DataSet);
+            localKernels = Obj.kernels.train(DataSet);
+            gramDataSet = localKernels.run(DataSet);
+            gram = gramDataSet.getObservations;
+            clear gramDataSet;
             
             theta = ones(size(gram,2),1);
             Obj.beta = zeros(size(theta));
@@ -262,11 +259,10 @@ classdef prtClassRvm < prtClass
             
             % Make sparse represenation
             Obj.sparseBeta = Obj.beta(cRelevant,1);
-            Obj.sparseKernels = prtKernel.sparseKernelFactory(Obj.kernels,DataSet,cRelevant);
+            Obj.sparseKernels = localKernels.retainKernelDimensions(cRelevant);
                         
-            
             % Very bad training
-            if isempty(Obj.sparseBeta)
+            if isempty(find(cRelevant,1));
                 warning('prt:prtClassRvm:NoRelevantFeatures','No relevant features were found during training.');
             end
             
@@ -293,9 +289,9 @@ classdef prtClassRvm < prtClass
                 cI = i:min(i+memChunkSize,n);
                 cDataSet = prtDataSetClass(DataSet.getObservations(cI,:));
                 
-                gram = prtKernel.runMultiKernel(Obj.sparseKernels,cDataSet);
+                gram = Obj.sparseKernels.run(cDataSet);
                 
-                OutputMat(cI) = prtRvUtilNormCdf(gram*Obj.sparseBeta);
+                OutputMat(cI) = prtRvUtilNormCdf(gram.getObservations*Obj.sparseBeta);
             end
             
             DataSetOut = prtDataSetClass(OutputMat);
@@ -309,10 +305,6 @@ classdef prtClassRvm < prtClass
             y = nan(size(yMat,1),1);
             y(yMat(:,1) == 1) = -1;
             y(yMat(:,2) == 1) = 1;
-        end
-        
-        function gram = getGram(Obj, DataSet)
-            gram = prtKernel.evaluateMultiKernelGram(Obj.kernels,DataSet,DataSet);
         end
         
         function G = regularizeGramInnerProduct(Obj, gram)
@@ -339,8 +331,12 @@ classdef prtClassRvm < prtClass
             
             [linGrid, gridSize,xx,yy] = prtPlotUtilGenerateGrid(DsSummary.lowerBounds, DsSummary.upperBounds, Obj.PlotOptions);
             
-            trainedKernelCell = prtKernel.sparseKernelFactory(Obj.kernels,DataSet,relevantIndices);
-            cPhi = prtKernel.runMultiKernel(trainedKernelCell,prtDataSetClass([xx(:),yy(:)]));
+            %trainedKernelCell = prtKernel.sparseKernelFactory(Obj.kernels,DataSet,relevantIndices);
+            %cPhi = prtKernel.runMultiKernel(trainedKernelCell,prtDataSetClass([xx(:),yy(:)]));
+            localKernels = Obj.kernels.train(DataSet);
+            cKernels = localKernels.retainKernelDimensions(relevantIndices);
+            cPhiDataSet = cKernels.run(prtDataSetClass([xx(:),yy(:)]));
+            cPhi = cPhiDataSet.getObservations;
             
             confMap = reshape(prtRvUtilNormCdf(cPhi*Obj.beta(relevantIndices)),gridSize);
             imagesc(xx(1,:),yy(:,1),confMap,[0,1])
@@ -348,10 +344,11 @@ classdef prtClassRvm < prtClass
             axis xy
             hold on
             plot(DataSet);
-            for iRel = 1:length(trainedKernelCell)
-                trainedKernelCell{iRel}.classifierPlot();
-            end
-            hold off
+            %             for iRel = 1:length(trainedKernelCell)
+            %                 trainedKernelCell{iRel}.classifierPlot();
+            %             end
+            %             hold off
+            hold off;
             
             set(gcf,'color',[1 1 1]);
             drawnow;

@@ -98,8 +98,9 @@ classdef prtClassRvmSequential < prtClassRvm
             
             y = Obj.getMinusOneOneTargets(DataSet);
             
-            nBasisVec = prtKernel.nDimsMultiKernel(Obj.kernels,DataSet);
-            nBasis = sum(nBasisVec);
+            localKernels = Obj.kernels.train(DataSet);
+            nBasis = localKernels.nDimensions;
+            
             if false && nBasis <= Obj.largestNumberOfGramColumns
                 Obj = trainActionSequentialInMemory(Obj, DataSet, y);
                 return
@@ -125,8 +126,9 @@ classdef prtClassRvmSequential < prtClassRvm
             for iBlock = 1:nBlocks
                 cInds = ((iBlock-1)*Obj.largestNumberOfGramColumns+1):min([iBlock*Obj.largestNumberOfGramColumns nBasis]);
                 
-                trainedKernelCell = prtKernel.sparseKernelFactory(Obj.kernels,DataSet,cInds);
-                blockPhi = prtKernel.runMultiKernel(trainedKernelCell,DataSet);
+                %trainedKernelCell = prtKernel.sparseKernelFactory(Obj.kernels,DataSet,cInds);
+                trainedKernelDownSelected = localKernels.retainKernelDimensions(cInds);
+                blockPhi = trainedKernelDownSelected.run_OutputDoubleArray(DataSet);
                 blockPhiNormalized = bsxfun(@rdivide,blockPhi,sqrt(sum(blockPhi.*blockPhi))); % We have to normalize here
                 
                 kernelCorrs(cInds) = abs(blockPhiNormalized'*ym11);
@@ -141,18 +143,17 @@ classdef prtClassRvmSequential < prtClassRvm
             % Add things to forbidden list
             initLogical = false(nBasis,1);
             initLogical(maxInd) = true;
-            firstKernel = prtKernel.sparseKernelFactory(Obj.kernels,DataSet, initLogical);
-            firstPhiNormalized = prtKernel.runMultiKernel(firstKernel, DataSet);
+            firstKernel = localKernels.retainKernelDimensions(initLogical);
+            firstPhiNormalized = firstKernel.run_OutputDoubleArray(DataSet);
             firstPhiNormalized = firstPhiNormalized - mean(firstPhiNormalized);
             firstPhiNormalized = firstPhiNormalized./sqrt(sum(firstPhiNormalized.^2));
             phiCorrs = zeros(nBasis,1);
             for iBlock = 1:nBlocks
                 cInds = ((iBlock-1)*Obj.largestNumberOfGramColumns+1):min([iBlock*Obj.largestNumberOfGramColumns nBasis]);
                 
-                trainedKernelCell = prtKernel.sparseKernelFactory(Obj.kernels,DataSet,cInds);
-                
-                if nBlocks > 1 % If there is only one block we can keep the on from before
-                    blockPhi = prtKernel.runMultiKernel(trainedKernelCell,DataSet);
+                trainedKernelDownSelected = localKernels.retainKernelDimensions(cInds);
+                if nBlocks > 1 % If there is only one block we can keep the one from before
+                    blockPhi = trainedKernelDownSelected.run_OutputDoubleArray(DataSet);
                 end
                 blockPhiDemeanedNormalized = bsxfun(@minus,blockPhi,mean(blockPhi));
                 blockPhiDemeanedNormalized = bsxfun(@rdivide,blockPhiDemeanedNormalized,sqrt(sum(blockPhiDemeanedNormalized.*blockPhiDemeanedNormalized))); % We have to normalize here
@@ -170,13 +171,13 @@ classdef prtClassRvmSequential < prtClassRvm
             
             if nBlocks == 1
                 % If we have only 1 block we only need to do this once.
-                trainedKernelCell = prtKernel.sparseKernelFactory(Obj.kernels,DataSet,true(nBasis,1));
-                PhiM = prtKernel.runMultiKernel(trainedKernelCell,DataSet);
+                trainedKernelDownSelected = localKernels.retainKernelDimensions(true(nBasis,1));
+                PhiM = trainedKernelDownSelected.run_OutputDoubleArray(DataSet);
             end
             
             % Get the first relevant kernel matrix
-            trainedKernelCell = prtKernel.sparseKernelFactory(Obj.kernels,DataSet,relevantIndices);
-            cPhi = prtKernel.runMultiKernel(trainedKernelCell,DataSet);
+            trainedKernelDownSelected = localKernels.retainKernelDimensions(relevantIndices);
+            cPhi = trainedKernelDownSelected.run_OutputDoubleArray(DataSet);
             
             repeatedActionCounter = 0;
             for iteration = 1:Obj.learningMaxIterations
@@ -215,8 +216,8 @@ classdef prtClassRvmSequential < prtClassRvm
                     
 
                     if nBlocks > 1 % If there is only one block we can keep the on from before
-                        trainedKernelCell = prtKernel.sparseKernelFactory(Obj.kernels,DataSet,cInds);
-                        PhiM = prtKernel.runMultiKernel(trainedKernelCell,DataSet);
+                        trainedKernelDownSelected = localKernels.retainKernelDimensions(cInds);
+                        PhiM = trainedKernelDownSelected.run_OutputDoubleArray(DataSet);
                     end
                     
                     Sm(cInds) = (obsNoiseVar'*(PhiM.^2)).' - sum((PhiM.'*cPhiProduct*SigmaChol).^2,2);
@@ -331,8 +332,10 @@ classdef prtClassRvmSequential < prtClassRvm
                         % Modify Mu
                         % (Penalized IRLS will fix it soon but we need good initialization)
                         
-                        trainedKernelCell = prtKernel.sparseKernelFactory(Obj.kernels,DataSet,bestAddInd);
-                        newPhi = prtKernel.runMultiKernel(trainedKernelCell,DataSet);
+                        %                         trainedKernelCell = prtKernel.sparseKernelFactory(Obj.kernels,DataSet,bestAddInd);
+                        %                         newPhi = prtKernel.runMultiKernel(trainedKernelCell,DataSet);
+                        trainedKernelDownSelected = localKernels.retainKernelDimensions(bestAddInd);
+                        newPhi = trainedKernelDownSelected.run_OutputDoubleArray(DataSet);
                         
                         cFactor = (Obj.Sigma*(cPhi)'*(newPhi.*obsNoiseVar));
                         Sigmaii = 1./(updatedAlpha(bestAddInd) + Sm(bestAddInd));
@@ -355,8 +358,10 @@ classdef prtClassRvmSequential < prtClassRvm
                             cInds = ((iBlock-1)*Obj.largestNumberOfGramColumns+1):min([iBlock*Obj.largestNumberOfGramColumns nBasis]);
                             
                             if nBlocks > 1
-                                trainedKernelCell = prtKernel.sparseKernelFactory(Obj.kernels,DataSet,cInds);
-                                blockPhiDemeanedNormalized = prtKernel.runMultiKernel(trainedKernelCell,DataSet);
+                                %                                 trainedKernelCell = prtKernel.sparseKernelFactory(Obj.kernels,DataSet,cInds);
+                                %                                 blockPhiDemeanedNormalized = prtKernel.runMultiKernel(trainedKernelCell,DataSet);
+                                trainedKernelDownSelected = localKernels.retainKernelDimensions(cInds);
+                                blockPhiDemeanedNormalized = trainedKernelDownSelected.run_OutputDoubleArray(DataSet);
                                 
                                 blockPhiDemeanedNormalized = bsxfun(@minus,blockPhiDemeanedNormalized,mean(blockPhiDemeanedNormalized));
                                 blockPhiDemeanedNormalized = bsxfun(@rdivide,blockPhiDemeanedNormalized,sqrt(sum(blockPhiDemeanedNormalized.*blockPhiDemeanedNormalized))); % We have to normalize here
@@ -401,8 +406,10 @@ classdef prtClassRvmSequential < prtClassRvm
                 % At this point relevantIndices and alpha have changes.
                 % Now we re-estimate Sigma, mu, and sigma2
                 if nBlocks > 1
-                    trainedKernelCell = prtKernel.sparseKernelFactory(Obj.kernels,DataSet,relevantIndices);
-                    cPhi = prtKernel.runMultiKernel(trainedKernelCell,DataSet);
+                    %                     trainedKernelCell = prtKernel.sparseKernelFactory(Obj.kernels,DataSet,relevantIndices);
+                    %                     cPhi = prtKernel.runMultiKernel(trainedKernelCell,DataSet);
+                    trainedKernelDownSelected = localKernels.retainKernelDimensions(relevantIndices);
+                    cPhi = trainedKernelDownSelected.run_OutputDoubleArray(DataSet);
                 else
                     cPhi = PhiM(:,relevantIndices);
                 end
@@ -453,7 +460,7 @@ classdef prtClassRvmSequential < prtClassRvm
             
             % Make sparse represenation
             Obj.sparseBeta = Obj.beta(relevantIndices,1);
-            Obj.sparseKernels = prtKernel.sparseKernelFactory(Obj.kernels,DataSet,relevantIndices);
+            Obj.sparseKernels = localKernels.retainKernelDimensions(relevantIndices);
             
             
             % Very bad training
