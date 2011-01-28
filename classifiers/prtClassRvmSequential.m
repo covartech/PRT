@@ -2,28 +2,28 @@ classdef prtClassRvmSequential < prtClassRvm
     % prtClassRvmSequential  Relevance vector machin classifier using
     % sequential training
     % 
-    %    CLASSIFIER = prtClassRvmSequential returns a relevance vector 
-    %    machine classifier based on 
+    %   CLASSIFIER = prtClassRvmSequential returns a relevance vector
+    %   machine classifier based on
     %
-    %       Tipping, M. E. and A. C. Faul (2003). Fast marginal likelihood
-    %   maximisation for sparse Bayesian models. In C. M. Bishop and 
-    %   B. J. Frey (Eds.), Proceedings of the Ninth International Workshop
-    %   on Artificial Intelligence and Statistics, Key West, FL, Jan 3-6.
+    %   Tipping, M. E. and A. C. Faul (2003). Fast marginal likelihood
+    %   maximisation for sparse Bayesian models. In C. M. Bishop and B. J.
+    %   Frey (Eds.), Proceedings of the Ninth International Workshop on
+    %   Artificial Intelligence and Statistics, Key West, FL, Jan 3-6.
     %
-    %    CLASSIFIER = prtClassRvmSequential(PROPERTY1, VALUE1, ...) constructs a
-    %    prtClassRvm object CLASSIFIER with properties as specified by
-    %    PROPERTY/VALUE pairs.
+    %   CLASSIFIER = prtClassRvmSequential(PROPERTY1, VALUE1, ...)
+    %   constructs a prtClassRvm object CLASSIFIER with properties as
+    %   specified by PROPERTY/VALUE pairs.
     %
-    %    A prtClassRvmSequential object inherits all properties from the
-    %    abstract class prtClass. In addition is has the following
-    %    properties:
+    %   A prtClassRvmSequential object inherits all properties from the
+    %   abstract class prtClass. In addition is has the following
+    %   properties:
     %
     %   SetAccess = public:
     %    kernels            - A cell array of prtKernel objects specifying
     %                         the kernels to use
-    %    learningPlot       - Flag indicating whether or not to plot during
+    %    verbosePlot        - Flag indicating whether or not to plot during
     %                         training
-    %    learningVerbose       - Flag indicating whether or not to output
+    %    verboseText        - Flag indicating whether or not to output
     %                         verbose updates during training
     %    learningMaxIterations  - The maximum number of iterations
     %
@@ -35,38 +35,30 @@ classdef prtClassRvmSequential < prtClassRvm
     %    sparseKernels - The sparse regression kernels, estimated during
     %                    training
     %
-    %    prtClassRvmSequential is most useful for datasets with a large number
-    % of observations for which the gram matrix can not be held in memory.
-    % The sequential RVM training algorithm is capable of operating by
-    % generating necessary portions of the gram matrix when needed.
-    % The size of the generated portion of the gram matrix is determined by
-    % the property, largestNumberOfGramColumns
-    %
-    % Sequential RVM training will attempt to generate portions of the gram
-    % matrix that are TraingData.nObservations x largesNumberofGramColums
-    % in size. If the entire gram matrix is this size or smaller it need
-    % only be generated once. Therefore if the entire gram matrix can be
-    % stored in memory, training is much faster. For quickest operation, 
-    % largestNumberOfGramColumns should be set as large as possible without
-    % exceeding RAM limitations.
-    %
-    %
-    %       Tipping, M. E. and A. C. Faul (2003). Fast marginal likelihood
-    %   maximisation for sparse Bayesian models. In C. M. Bishop and 
-    %   B. J. Frey (Eds.), Proceedings of the Ninth International Workshop
-    %   on Artificial Intelligence and Statistics, Key West, FL, Jan 3-6.
+    %   prtClassRvmSequential is most useful for datasets with a large
+    %   number of observations for which the gram matrix can not be held in
+    %   memory. The sequential RVM training algorithm is capable of
+    %   operating by generating necessary portions of the gram matrix when
+    %   needed. The size of the generated portion of the gram matrix is
+    %   determined by the property, largestNumberOfGramColumns.
+    %   Sequential RVM training will attempt to generate portions of the
+    %   gram matrix that are TraingData.nObservations x
+    %   largesNumberofGramColums in size. If the entire gram matrix is this
+    %   size or smaller it need only be generated once. Therefore if the
+    %   entire gram matrix can be stored in memory, training is much
+    %   faster. For quickest operation, largestNumberOfGramColumns should
+    %   be set as large as possible without exceeding RAM limitations.
     %
     %    Example:
     %
     %    TestDataSet = prtDataGenUnimodal;      % Create some test and
-    %    TrainingDataSet = prtDataGenUnimodal;  % training data
-    %    classifier = prtClassRvmSequential;              % Create a classifier
+    %    TrainingDataSet = prtDataGenUnimodal;  % training data classifier
+    %    classifier = prtClassRvmSequential('verbosePlot',true); % Create a classifier
     %    classifier = classifier.train(TrainingDataSet);    % Train
     %    classified = run(classifier, TestDataSet);         % Test
-    %    subplot(2,1,1);
-    %    classifier.plot;
-    %    subplot(2,1,2);
-    %    [pf,pd] = prtScoreRoc(classified,TestDataSet);
+    %    % Plot
+    %    subplot(2,1,1); classifier.plot;
+    %    subplot(2,1,2); [pf,pd] = prtScoreRoc(classified,TestDataSet);
     %    h = plot(pf,pd,'linewidth',3);
     %    title('ROC'); xlabel('Pf'); ylabel('Pd');
     %
@@ -84,8 +76,6 @@ classdef prtClassRvmSequential < prtClassRvm
     methods
         function Obj = prtClassRvmSequential(varargin)
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
-            
-            %Obj.name = 'Relevance Vector Machine - Sequential';
         end
     end
     
@@ -106,7 +96,7 @@ classdef prtClassRvmSequential < prtClassRvm
                 return
             end
             
-            if Obj.learningVerbose
+            if Obj.verboseText
                 fprintf('Sequential RVM training with %d possible vectors.\n', nBasis);
             end
             
@@ -126,7 +116,6 @@ classdef prtClassRvmSequential < prtClassRvm
             for iBlock = 1:nBlocks
                 cInds = ((iBlock-1)*Obj.largestNumberOfGramColumns+1):min([iBlock*Obj.largestNumberOfGramColumns nBasis]);
                 
-                %trainedKernelCell = prtKernel.sparseKernelFactory(Obj.kernels,DataSet,cInds);
                 trainedKernelDownSelected = localKernels.retainKernelDimensions(cInds);
                 blockPhi = trainedKernelDownSelected.run_OutputDoubleArray(DataSet);
                 blockPhiNormalized = bsxfun(@rdivide,blockPhi,sqrt(sum(blockPhi.*blockPhi))); % We have to normalize here
@@ -163,7 +152,7 @@ classdef prtClassRvmSequential < prtClassRvm
             forbidden(phiCorrs > Obj.learningCorrelationRemovalThreshold) = maxInd;
             
             % Start the actual Process
-            if Obj.learningVerbose
+            if Obj.verboseText
                 fprintf('\t Iteration 0: Intialized with vector %d.\n', maxInd);
                 
                 nVectorsStringLength = ceil(log10(length(nBasis)))+1;
@@ -286,7 +275,7 @@ classdef prtClassRvmSequential < prtClassRvm
                     Obj.learningConverged = true;
                     Obj.learningResults.exitReason = 'No Good Actions';
                     Obj.learningResults.exitValue = maxChangeVal;
-                    if Obj.learningVerbose
+                    if Obj.verboseText
                         fprintf('Convergence criterion met, no necessary actions remaining, maximal change in log-likelihood %g\n\n',maxChangeVal);
                     end
                     
@@ -308,16 +297,16 @@ classdef prtClassRvmSequential < prtClassRvm
                 end
                 
                 if repeatedActionCounter >= Obj.learningRepeatedActionLimit
-                    if Obj.learningVerbose
+                    if Obj.verboseText
                         fprintf('Exiting... repeating action limit has been reached.\n\n');
                     end
                     return
                 end
                 
-                if Obj.learningVerbose
+                if Obj.verboseText
                     actionStrings = {sprintf('Addition: Vector %s has been added.  ', sprintf(sprintf('%%%dd',nVectorsStringLength),bestAddInd));
-                        sprintf('Removal:  Vector %s has been removed.', sprintf(sprintf('%%%dd',nVectorsStringLength), bestRemInd));
-                        sprintf('Update:   Vector %s has been updated.', sprintf(sprintf('%%%dd',nVectorsStringLength), bestModInd));};
+                                     sprintf('Removal:  Vector %s has been removed.', sprintf(sprintf('%%%dd',nVectorsStringLength), bestRemInd));
+                                     sprintf('Update:   Vector %s has been updated.', sprintf(sprintf('%%%dd',nVectorsStringLength), bestModInd));};
                     fprintf('\t Iteration %d: %s Change in log-likelihood %g.\n',iteration, actionStrings{actionInd}, maxChangeVal);
                 end
                 
@@ -332,8 +321,6 @@ classdef prtClassRvmSequential < prtClassRvm
                         % Modify Mu
                         % (Penalized IRLS will fix it soon but we need good initialization)
                         
-                        %                         trainedKernelCell = prtKernel.sparseKernelFactory(Obj.kernels,DataSet,bestAddInd);
-                        %                         newPhi = prtKernel.runMultiKernel(trainedKernelCell,DataSet);
                         trainedKernelDownSelected = localKernels.retainKernelDimensions(bestAddInd);
                         newPhi = trainedKernelDownSelected.run_OutputDoubleArray(DataSet);
                         
@@ -358,8 +345,6 @@ classdef prtClassRvmSequential < prtClassRvm
                             cInds = ((iBlock-1)*Obj.largestNumberOfGramColumns+1):min([iBlock*Obj.largestNumberOfGramColumns nBasis]);
                             
                             if nBlocks > 1
-                                %                                 trainedKernelCell = prtKernel.sparseKernelFactory(Obj.kernels,DataSet,cInds);
-                                %                                 blockPhiDemeanedNormalized = prtKernel.runMultiKernel(trainedKernelCell,DataSet);
                                 trainedKernelDownSelected = localKernels.retainKernelDimensions(cInds);
                                 blockPhiDemeanedNormalized = trainedKernelDownSelected.run_OutputDoubleArray(DataSet);
                                 
@@ -406,8 +391,6 @@ classdef prtClassRvmSequential < prtClassRvm
                 % At this point relevantIndices and alpha have changes.
                 % Now we re-estimate Sigma, mu, and sigma2
                 if nBlocks > 1
-                    %                     trainedKernelCell = prtKernel.sparseKernelFactory(Obj.kernels,DataSet,relevantIndices);
-                    %                     cPhi = prtKernel.runMultiKernel(trainedKernelCell,DataSet);
                     trainedKernelDownSelected = localKernels.retainKernelDimensions(relevantIndices);
                     cPhi = trainedKernelDownSelected.run_OutputDoubleArray(DataSet);
                 else
@@ -432,7 +415,7 @@ classdef prtClassRvmSequential < prtClassRvm
                 Obj.beta = zeros(nBasis,1);
                 Obj.beta(relevantIndices) = mu;
                 
-                if ~mod(iteration,Obj.learningPlot)
+                if ~mod(iteration,Obj.verbosePlot)
                     if DataSet.nFeatures == 2
                         Obj.verboseIterationPlot(DataSet,relevantIndices);
                     elseif iteration == 1
@@ -447,21 +430,20 @@ classdef prtClassRvmSequential < prtClassRvm
                     Obj.learningConverged = true;
                     Obj.learningResults.exitReason = 'Alpha Not Changing';
                     Obj.learningResults.exitValue = TOL;
-                    if Obj.learningVerbose
+                    if Obj.verboseText
                         fprintf('Exiting...Precisions no longer changing appreciably.\n\n');
                     end
                     break;
                 end
             end
             
-            if Obj.learningVerbose && iteration == Obj.learningMaxIterations
+            if Obj.verboseText && iteration == Obj.learningMaxIterations
                 fprintf('Exiting...Convergence not reached before the maximum allowed iterations was reached.\n\n');
             end
             
             % Make sparse represenation
             Obj.sparseBeta = Obj.beta(relevantIndices,1);
             Obj.sparseKernels = localKernels.retainKernelDimensions(relevantIndices);
-            
             
             % Very bad training
             if isempty(Obj.sparseBeta)

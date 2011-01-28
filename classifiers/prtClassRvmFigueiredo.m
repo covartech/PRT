@@ -19,9 +19,9 @@ classdef prtClassRvmFigueiredo < prtClassRvm
     %   SetAccess = public:
     %    kernels            - A cell array of prtKernel objects specifying
     %                         the kernels to use
-    %    learningPlot       - Flag indicating whether or not to plot during
+    %    verbosePlot        - Flag indicating whether or not to plot during
     %                         training
-    %    learningVerbose       - Flag indicating whether or not to output
+    %    verboseText        - Flag indicating whether or not to output
     %                         verbose updates during training
     %    learningMaxIterations  - The maximum number of iterations
     %
@@ -49,7 +49,7 @@ classdef prtClassRvmFigueiredo < prtClassRvm
     %    % Example
     %    TestDataSet = prtDataGenUnimodal;      % Create some test and
     %    TrainingDataSet = prtDataGenUnimodal;  % training data
-    %    classifier = prtClassRvmFigueiredo;              % Create a classifier
+    %    classifier = prtClassRvmFigueiredo('verbosePlot',true); % Create a classifier
     %    classifier = classifier.train(TrainingDataSet);    % Train
     %    classified = run(classifier, TestDataSet);         % Test
     %    subplot(2,1,1);
@@ -64,7 +64,9 @@ classdef prtClassRvmFigueiredo < prtClassRvm
         function Obj = prtClassRvmFigueiredo(varargin)
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
             
-            %Obj.name = 'Relevance Vector Machine - Figuerido';
+            % The default tolerance from prtClassRvm is too low.
+            % We increase it here.
+            Obj.learningConvergedTolerance = 5e-4;
         end
     end
     
@@ -92,7 +94,7 @@ classdef prtClassRvmFigueiredo < prtClassRvm
             h1Ind = y == 1;
             h0Ind = y == -1;
             
-            if Obj.learningVerbose
+            if Obj.verboseText
                 fprintf('RVM (Figuerieredo) training with %d possible vectors.\n', size(gram,2));
             end
             
@@ -123,7 +125,7 @@ classdef prtClassRvmFigueiredo < prtClassRvm
                 Obj.beta(irrelevantIndices,1) = 0;
                 u = diag(abs(Obj.beta));
                 
-                if ~mod(iteration,Obj.learningPlot)
+                if ~mod(iteration,Obj.verbosePlot)
                     if DataSet.nFeatures == 2
                         Obj.verboseIterationPlot(DataSet,relevantIndices);
                     elseif iteration == 1
@@ -133,14 +135,14 @@ classdef prtClassRvmFigueiredo < prtClassRvm
                 
                 %check tolerance for basis removal
                 TOL = norm(Obj.beta-beta_OLD)/norm(beta_OLD)/length(relevantIndices);
-                if Obj.learningVerbose
+                if Obj.verboseText
                     fprintf('\t Iteration %d: %d RV''s, Convergence tolerance: %g \n', iteration, length(relevantIndices), TOL);
                 end
                 
                 if TOL < Obj.learningConvergedTolerance
                     Obj.learningConverged = true;
                     
-                    if Obj.learningVerbose
+                    if Obj.verboseText
                         fprintf('Convergence reached. Exiting...\n\n');
                     end
                     

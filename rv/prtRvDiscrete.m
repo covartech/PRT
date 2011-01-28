@@ -112,7 +112,7 @@ classdef prtRvDiscrete < prtRv
             %     val = val(:);
             % end
             
-            assert(~R.InternalMultinomial.isValid || R.nCategories == size(val,1),'Number of specified symbols does not match the current number of categories.')
+            assert(~R.InternalMultinomial.isValid || R.nCategories == size(val,1),'Number of specified symbols does not match the current number of categories. symbols must be specified as a nCategories by nDimensions matrix.')
             assert(isnumeric(val) && ndims(val)==2,'symbols must be a 2D numeric array.')
             
             R.symbolsDepHelp = val;

@@ -50,7 +50,8 @@ classdef prtAction
     end
     
     properties (Hidden = true)
-        %note: this should be a user specified field from userOptions
+        % A logical to specify if modified feature names should be stored
+        % even if no feature names were specified for the dataset
         verboseFeatureNames = true;
         
         % A tag that can be used to reference a specific action within a
@@ -151,7 +152,8 @@ classdef prtAction
             %
             %   OUTPUT = OBJ.run(DataSet) runs the prtAction object using
             %   the prtDataSet DataSet. OUTPUT will be a prtDataSet object.
-            DataSetOut = runActionOnTrainingData(Obj, DataSetIn);
+            DataSetOut = preRunProcessing(Obj, DataSetIn);
+            DataSetOut = runActionOnTrainingData(Obj, DataSetOut);
             DataSetOut = postRunProcessing(Obj, DataSetIn, DataSetOut);
         end
     end
@@ -202,8 +204,8 @@ classdef prtAction
                 error('prt:prtAction:prtDataSetBase','DataSet provided to prtAction %s''s run() was a prtDataSetBase, DataSet is a %s',class(Obj),class(DataSetIn));
             end
                 
-            
-            DataSetOut = runAction(Obj, DataSetIn);
+            DataSetOut = preRunProcessing(Obj, DataSetIn);
+            DataSetOut = runAction(Obj, DataSetOut);
             DataSetOut = postRunProcessing(Obj, DataSetIn, DataSetOut);
         end
         
@@ -348,7 +350,7 @@ classdef prtAction
     
     methods (Access=protected, Hidden= true)
         function ClassObj = preTrainProcessing(ClassObj,DataSet) %#ok<INUSD>
-            % preTrainProcessing - Processing done prior to train()
+            % preTrainProcessing - Processing done prior to trainAction()
             %   Called by train(). Can be overloaded by prtActions to
             %   store specific information about the DataSet or Classifier
             %   prior to training.
@@ -357,7 +359,7 @@ classdef prtAction
         end
         
         function ClassObj = postTrainProcessing(ClassObj,DataSet) %#ok<INUSD>
-            % postTrainProcessing - Processing done after train()
+            % postTrainProcessing - Processing done after trainAction()
             %   Called by train(). Can be overloaded by prtActions to
             %   store specific information about the DataSet or Classifier
             %   prior to training.
@@ -365,8 +367,17 @@ classdef prtAction
             %   ClassObj = postTrainProcessing(ClassObj,DataSet)
         end
         
+        function DataSet = preRunProcessing(ClassObj, DataSet) %#ok<MANU>
+            % preRunProcessing - Processing done before runAction()
+            %   Called by run(). Can be overloaded by prtActions to
+            %   store specific information about the DataSet or Classifier
+            %   prior to runAction.
+            %   
+            %   DataSet = preRunProcessing(ClassObj, DataSet)
+        end        
+        
         function DataSetOut = postRunProcessing(ClassObj, DataSetIn, DataSetOut)
-            % postRunProcessing - Processing done after run()
+            % postRunProcessing - Processing done after runAction()
             %   Called by run(). Can be overloaded by prtActions to alter
             %   the results of run() to modify outputs using parameters of
             %   the prtAction.
@@ -395,15 +406,23 @@ classdef prtAction
             %   outlier removal.
             %
             %    DataSetOut = runOnTrainingData(Obj DataSetIn);
-            %
+            
             DataSetOut = runAction(Obj, DataSetIn);
         end
     end
     methods (Hidden)
         function [optimizedAction,performance] = optimize(Obj,DataSet,objFn,parameterName,parameterValues)
-            %[optimizedAction,performance] = optimize(Obj,DataSet,objFn,parameterName,parameterValues)
-            %  objFn = @(act,ds) = prtEvalAuc(act,ds,3);
-            
+            % OPTIMIZE Optimize action parameter by exhaustive function 
+            % maximization.
+            %
+            % Although functional it is currently hidden.
+            % At this point it is not possible to optimize parameters of
+            % parameters. 
+            %
+            % Example:
+            %   objFn = @(act,ds) = prtEvalAuc(act,ds,3);
+            %   [optimizedAction,performance] = optimize(Obj,DataSet,objFn,parameterName,parameterValues)
+            %  
             
             if isnumeric(parameterValues);
                 parameterValues = num2cell(parameterValues);

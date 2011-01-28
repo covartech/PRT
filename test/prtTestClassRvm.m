@@ -84,8 +84,8 @@ result = result & (percentCorr > baselinePercentCorr);
 
 %check learning plot and learning text
 try
-    classifier.learningPlot = 20;
-    classifier.learningVerbose = true;
+    classifier.verbosePlot = 20;
+    classifier.verboseText = true;
     classifier.train(TestDataSet);
     classified = run(classifier, TestDataSet);
     close all;

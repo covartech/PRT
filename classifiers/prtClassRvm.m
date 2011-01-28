@@ -13,9 +13,9 @@ classdef prtClassRvm < prtClass
     %   SetAccess = public:
     %    kernels            - A cell array of prtKernel objects specifying
     %                         the kernels to use
-    %    learningPlot       - Flag indicating whether or not to plot during
+    %    verbosePlot        - Flag indicating whether or not to plot during
     %                         training
-    %    learningVerbose       - Flag indicating whether or not to output
+    %    verboseText        - Flag indicating whether or not to output
     %                         verbose updates during training
     %    learningMaxIterations  - The maximum number of iterations
     %
@@ -32,29 +32,19 @@ classdef prtClassRvm < prtClass
     %
     %    http://en.wikipedia.org/wiki/Relevance_vector_machine
     %
-    %   By default, prtClassRvm uses the Laplacian approximation as found
-    %   in the paper:
+    %    By default, prtClassRvm uses the Laplacian approximation as found
+    %    in the paper:
     %
-    %   Michael E. Tipping. 2001. Sparse bayesian learning and the
-    %   relevance vector machine. J. Mach. Learn. Res. 1 (September 2001),
+    %    Michael E. Tipping. 2001. Sparse bayesian learning and the
+    %    relevance vector machine. J. Mach. Learn. Res. 1 (September 2001),
     %
-    %   The code is based on the algorithm in: 
+    %    The code is based on the algorithm in: 
     %
-    %   Herbrich, Learning Kernel Classifiers, The MIT Press, 2002
-    %   http://www.learning-kernel-classifiers.org/
+    %    Herbrich, Learning Kernel Classifiers, The MIT Press, 2002
+    %    http://www.learning-kernel-classifiers.org/
     %
-    %   For alternative approaches to solving the RVM learning problem,
-    %   see prtClassRvmFigueiredo, and prtClassRvmSequential
-    %
-    %       M. Figueiredo, Adaptive sparseness for supervised learning, 
-    %   IEEE PAMI, vol. 25, no. 9 pp.1150-1159, September 2003.
-    %
-    %   When 'algorithm' is set to 'Sequential' or 'SequentialInMemory',
-    %   the algorithm is based on the work presented in:
-    %       Tipping, M. E. and A. C. Faul (2003). Fast marginal likelihood
-    %   maximisation for sparse Bayesian models. In C. M. Bishop and 
-    %   B. J. Frey (Eds.), Proceedings of the Ninth International Workshop
-    %   on Artificial Intelligence and Statistics, Key West, FL, Jan 3-6.
+    %    For alternative approaches to solving the RVM learning problem,
+    %    see prtClassRvmFigueiredo, and prtClassRvmSequential
     %
     %    A prtClassRvm object inherits the TRAIN, RUN, CROSSVALIDATE and
     %    KFOLDS methods from prtAction. It also inherits the PLOT method
@@ -79,7 +69,6 @@ classdef prtClassRvm < prtClass
     %    TestDataSet = prtDataGenUnimodal;      % Create some test and
     %    TrainingDataSet = prtDataGenUnimodal;  % training data
     %    classifier = prtClassRvm;              % Create a classifier
-    %    classifier.kernels{2} = prtKernelRbfNdimensionScale;
     %    classifier = classifier.train(TrainingDataSet);    % Train
     %    classified = run(classifier, TestDataSet);         % Test
     %    subplot(2,1,1);
@@ -102,8 +91,8 @@ classdef prtClassRvm < prtClass
     properties
         kernels = prtKernelDc & prtKernelRbfNdimensionScale;
         
-        learningVerbose = false;
-        learningPlot = false;
+        verboseText = false;
+        verbosePlot = false;
     end
     
     % Estimated Parameters
@@ -128,20 +117,19 @@ classdef prtClassRvm < prtClass
         end
         
         function Obj = set.kernels(Obj,val)
-            if ~isa(val,'prtKernel')
-                error('need prtKernel');
-            end
+            assert(numel(val)==1 &&  isa(val,'prtKernel'),'prt:prtClassRvm:kernels','kernels must be a prtKernel');
+            
             Obj.kernels = val;
         end
         
-        function Obj = set.learningPlot(Obj,val)
-            assert(isscalar(val) && (islogical(val) || prtUtilIsPositiveInteger(val)),'prt:prtClassRvm:learningPlot','learningPlot must be a logical value or a positive integer');
-            Obj.learningPlot = val;
+        function Obj = set.verbosePlot(Obj,val)
+            assert(isscalar(val) && (islogical(val) || prtUtilIsPositiveInteger(val)),'prt:prtClassRvm:verbosePlot','verbosePlot must be a logical value or a positive integer');
+            Obj.verbosePlot = val;
         end
         
-        function Obj = set.learningVerbose(Obj,val)
-            assert(isscalar(val) && islogical(val),'prt:prtClassRvm:learningVerbose','learningVerbose must be a logical value, but value provided is a %s',class(val));
-            Obj.learningVerbose = val;
+        function Obj = set.verboseText(Obj,val)
+            assert(isscalar(val) && islogical(val),'prt:prtClassRvm:verboseText','verboseText must be a logical value, but value provided is a %s',class(val));
+            Obj.verboseText = val;
         end
         
         function varargout = plot(Obj)
@@ -183,17 +171,14 @@ classdef prtClassRvm < prtClass
             y = Obj.getMinusOneOneTargets(DataSet);
             y(y==-1) = 0;
             
-            %gram = Obj.getGram(DataSet);
             localKernels = Obj.kernels.train(DataSet);
-            gramDataSet = localKernels.run(DataSet);
-            gram = gramDataSet.getObservations;
-            clear gramDataSet;
+            gram = localKernels.run_OutputDoubleArray(DataSet);
             
             theta = ones(size(gram,2),1);
             Obj.beta = zeros(size(theta));
             deltaThetaNorm = ones(Obj.learningMaxIterations,1)*nan;
 
-            if Obj.learningVerbose
+            if Obj.verboseText
                 fprintf('RVM training with %d possible vectors.\n', size(gram,2));
             end
             
@@ -226,7 +211,7 @@ classdef prtClassRvm < prtClass
                 
                 deltaThetaNorm(iteration) = norm(previousTheta-theta)./length(theta);
 
-                if ~mod(iteration,Obj.learningPlot)
+                if ~mod(iteration,Obj.verbosePlot)
                     if DataSet.nFeatures == 2
                         Obj.verboseIterationPlot(DataSet,cRelevant);
                     elseif iteration == 1
@@ -240,20 +225,20 @@ classdef prtClassRvm < prtClass
                     
                     Obj.learningConverged = true;
                     
-                    if Obj.learningVerbose
+                    if Obj.verboseText
                         fprintf('Convergence reached. Exiting...\n\n');
                     end
                     
                     break;
                 end
                 
-                if Obj.learningVerbose
+                if Obj.verboseText
                     fprintf('\t Iteration %d: %d RV''s, Convergence tolerance: %g \n',iteration, sum(cRelevant), deltaThetaNorm(iteration));
                 end
                 
             end
             
-            if Obj.learningVerbose && iteration == Obj.learningMaxIterations
+            if Obj.verboseText && iteration == Obj.learningMaxIterations
                 fprintf('Exiting...Convergence not reached before the maximum allowed iterations was reached.\n\n');
             end
             
@@ -316,7 +301,7 @@ classdef prtClassRvm < prtClass
             %with changes to kernels, or by regularization
             G = gram'*gram;
             while rcond(G) < 1e-6
-                if sigmaSquared == eps && Obj.learningVerbose
+                if sigmaSquared == eps && Obj.verboseText
                     %warning('prt:prtClassRvm:illConditionedG','RVM initial G matrix ill-conditioned; regularizing diagonal of G to resolve; this can be modified by changing kernel parameters\n');
                     fprintf('\n\tRegularizing Gram matrix...\n');
                 end
@@ -331,8 +316,6 @@ classdef prtClassRvm < prtClass
             
             [linGrid, gridSize,xx,yy] = prtPlotUtilGenerateGrid(DsSummary.lowerBounds, DsSummary.upperBounds, Obj.PlotOptions);
             
-            %trainedKernelCell = prtKernel.sparseKernelFactory(Obj.kernels,DataSet,relevantIndices);
-            %cPhi = prtKernel.runMultiKernel(trainedKernelCell,prtDataSetClass([xx(:),yy(:)]));
             localKernels = Obj.kernels.train(DataSet);
             cKernels = localKernels.retainKernelDimensions(relevantIndices);
             cPhiDataSet = cKernels.run(prtDataSetClass([xx(:),yy(:)]));
@@ -344,10 +327,7 @@ classdef prtClassRvm < prtClass
             axis xy
             hold on
             plot(DataSet);
-            %             for iRel = 1:length(trainedKernelCell)
-            %                 trainedKernelCell{iRel}.classifierPlot();
-            %             end
-            %             hold off
+            cKernels.plot();
             hold off;
             
             set(gcf,'color',[1 1 1]);

@@ -616,10 +616,11 @@ classdef prtDataSetClass  < prtDataSetStandard
             fNames = obj.getFeatureNames();
             
             hs = cell(N);
+            axesHandles = zeros(N,N);
             for iFeature = 1:N
                 for jFeature = 1:N
                     
-                    subplot(N, N, (jFeature-1)*N + iFeature)
+                    axesHandles(iFeature,jFeature) = subplot(N, N, (jFeature-1)*N + iFeature);
                     
                     if iFeature == jFeature
                         
@@ -666,6 +667,27 @@ classdef prtDataSetClass  < prtDataSetStandard
                     
                 end
             end
+            
+            
+%             for iFeature = 1:N
+%                 for jFeature = 1:N
+%                     if iFeature > 1
+%                         set(axesHandles(iFeature,jFeature),'YTickLabel',{});
+%                     end
+%                     if jFeature < N
+%                         set(axesHandles(iFeature,jFeature),'XTickLabel',{});
+%                     end
+%                     
+%                     cOP = get(axesHandles(iFeature,jFeature),'OuterPosition');
+%                     cP = get(axesHandles(iFeature,jFeature),'Position');
+%                     
+%                     %cOP = cOP + (cP-cOP)*0.1;
+%                     cOP = cOP + mean((cP-cOP).*[1 1 -1 -1]).*[1 1 -1 -1];
+%                     
+%                     set(axesHandles(iFeature,jFeature),'Position',cOP);
+%                 end
+%             end
+            
             
             if nargout
                 varargout = {hs,legendHandle};
