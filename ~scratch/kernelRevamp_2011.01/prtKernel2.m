@@ -87,8 +87,8 @@ classdef prtKernel2 < prtAction
     end
     
     methods
-        function h = plotOnClassifierContour(Obj)
-           %   do nothing by default; people can overload as they want
+        function h = plot(Obj)
+           %   do nothing by default; other kernels can overload as they want
             holdState = get(gca,'nextPlot');
             h = plot(nan,nan);
             set(gca,'nextPlot',holdState);

@@ -33,6 +33,10 @@ classdef prtKernelRbf2 < prtKernel2
     end
     
     methods
+        function Obj = prtKernelRbf2(varargin)
+            Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
+        end
+        
         function Obj = set.sigma(Obj,value)
             if ~prtUtilIsPostiveScalar(value)
                 error('prtKernelRbf:set','Value of sigma must be a positive scalar');
@@ -61,6 +65,23 @@ classdef prtKernelRbf2 < prtKernel2
             end
             
             Obj.internalDataSet = Obj.internalDataSet.retainObservations(keepLogical);
+        end
+    end
+    
+    
+    methods(Hidden = true)
+        function h = plot(obj)
+            x = obj.internalDataSet.getObservations;
+            switch(size(x,2))
+                case 1
+                    h = plot(x,0,'ko','MarkerSize',8,'LineWidth',2);
+                case 2
+                    h = plot(x(:,1),x(:,2),'ko','MarkerSize',8,'LineWidth',2);
+                case 3
+                    h = plot3(x(:,1),x(:,2),x(:,3),'ko','MarkerSize',8,'LineWidth',2);
+                otherwise
+                    h = nan;
+            end
         end
     end
     

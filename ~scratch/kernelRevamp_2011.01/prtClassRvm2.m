@@ -62,13 +62,9 @@ classdef prtClassRvm2 < prtClass
             HandleStructure = plot@prtClass(Obj);
             
             holdState = get(gca,'nextPlot');
-            
-            %             % Plot the kernels
-            %             hold on
-            %             for iKernel = 1:length(Obj.sparseKernels)
-            %                 Obj.sparseKernels{iKernel}.classifierPlot();
-            %             end
-            %             set(gca, 'nextPlot', holdState);
+            hold on;
+            Obj.sparseKernels.plot;
+            set(gca, 'nextPlot', holdState);
             
             varargout = {};
             if nargout > 0

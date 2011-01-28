@@ -68,6 +68,18 @@ while ~isValidFileName
     else
         className = fileName(9:end);
     end
+    
+    S = which(fileName);
+    if ~isempty(S)
+        if iscell(S)
+            S = S{1};
+        end
+        answer = questdlg(sprintf('The file name provided (%s) will shadow the M-file %s on the MATLAB path; Continue?',fileName,S),'M-file Name Shadows','Yes, Continue (Shadow M-file)','No, choose a new name','No, choose a new name');
+        switch lower(answer)
+            case lower('No, choose a new name')
+                isValidFileName = false;
+        end
+    end
 end
 
 fileString = strrep(templateFileString,'<fileName>',fileName);

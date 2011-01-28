@@ -26,7 +26,10 @@ classdef prtKernelSet < prtKernel2
                 if i == 1
                     dsOut = Obj.internalKernelCell{i}.run(ds);
                 else
-                    dsOut = dsOut.catFeatures(Obj.internalKernelCell{i}.run(ds));
+                    %Note: use getObservations here to make sure that
+                    %there's no confusion when cat'ing features from
+                    %prtDataSetClass and prtDataSetRegress'es
+                    dsOut = dsOut.catFeatures(getObservations(Obj.internalKernelCell{i}.run(ds)));
                 end
             end
         end
@@ -73,6 +76,15 @@ classdef prtKernelSet < prtKernel2
             end
         end
         
+    end
+    
+    methods
+        function h = plot(Obj)
+            %Plot each kernel:
+            for i = 1:length(Obj.internalKernelCell)
+                Obj.internalKernelCell{i}.plot;
+            end
+        end
     end
     methods (Hidden = true)
         function kernelCell = getKernelCell(Obj)
