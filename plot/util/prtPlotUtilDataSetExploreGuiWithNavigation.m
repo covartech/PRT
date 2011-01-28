@@ -34,7 +34,6 @@ end
 plotAxesFig = gcf;
 set(plotAxesFig,'visible','off');
 
-
 navFigSize = [300 250];
 navFigPad = [18 54];
 
@@ -47,10 +46,16 @@ set(plotAxes,'Units','pixels');
 plotAxesOuterPos = get(plotAxes,'outerposition');
 set(plotAxes,'units',oldUnits);
 
-navFigPosTop = plotAxesFigPos(2)+plotAxesOuterPos(2)-1+plotAxesOuterPos(4);
-navFigPosLeft = plotAxesFigPos(1)+plotAxesOuterPos(1)-1+plotAxesOuterPos(3);
+navFigPosTop = plotAxesFigPos(2)+plotAxesOuterPos(2)-1+plotAxesOuterPos(4) + navFigPad(2);
+navFigPosLeft = plotAxesFigPos(1)+plotAxesOuterPos(1)-1+plotAxesOuterPos(3) + navFigPad(1);
 
-navFigPos = cat(2,navFigPosLeft+navFigPad(1), navFigPosTop-navFigSize(2)+navFigPad(2), navFigSize(1), navFigSize(2));
+% Make sure we aren't off the screen
+screenSize = get(0,'screensize');
+navFigPosTop = min([navFigPosTop, screenSize(4)-50]);
+navFigPosLeft = min([navFigPosLeft, screenSize(3)-navFigSize(2)-60]);
+
+
+navFigPos = cat(2,navFigPosLeft, navFigPosTop-navFigSize(2), navFigSize(1), navFigSize(2));
 
 navFigH = figure('Number','Off',...
     'Name','PRT Dataset Explorer Controls',...
