@@ -112,17 +112,18 @@ classdef prtKernelRbf < prtKernel
     
     
     methods(Hidden = true)
-        function h = plot(obj)
+        function varargout = plot(obj)
             x = obj.internalDataSet.getObservations;
-            switch(size(x,2))
-                case 1
-                    h = plot(x,0,'ko','MarkerSize',8,'LineWidth',2);
-                case 2
-                    h = plot(x(:,1),x(:,2),'ko','MarkerSize',8,'LineWidth',2);
-                case 3
-                    h = plot3(x(:,1),x(:,2),x(:,3),'ko','MarkerSize',8,'LineWidth',2);
-                otherwise
-                    h = nan;
+            
+            if size(x,2) <= 3
+                h = prtPlotUtilScatter(x, {}, obj.PlotOptions.symbol, obj.PlotOptions.markerFaceColor, obj.PlotOptions.color, obj.PlotOptions.symbolLineWidth, obj.PlotOptions.symbolSize);
+            else
+                h = nan;
+            end
+            
+            varargout = {};
+            if nargout
+                varargout = {h};
             end
         end
     end
@@ -135,7 +136,7 @@ classdef prtKernelRbf < prtKernel
                 error('size(x,2) must equal size(y,2)');
             end
             
-            %dist2 = prtDistanceLNorm(x,y,2);
+            %dist2 = prtDistanceLNorm(x,y,2); 
             dist2 = repmat(sum((x.^2), 2), [1 n2]) + repmat(sum((y.^2),2), [1 n1]).' - 2*x*(y.');
             
             if numel(sigma) == 1

@@ -43,6 +43,10 @@ classdef prtKernel < prtAction
     %
     % h = kernel.toString; Currently unused
     
+    properties (Hidden = true)
+        PlotOptions = prtKernel.initializePlotOptions();
+    end
+    
     methods
         function obj = prtKernel()
             obj.isCrossValidateValid = false;
@@ -85,14 +89,26 @@ classdef prtKernel < prtAction
     end
     
     methods
-        function h = plot(Obj)
+        function varargout = plot(Obj) %#ok<MANU>
             %   do nothing by default; other kernels can overload as they want
             holdState = get(gca,'nextPlot');
             h = plot(nan,nan);
             set(gca,'nextPlot',holdState);
+            varargout = {};
+           
+            if nargout
+                varargout = {h};
+            end
+            
         end
-        function txt = toString(obj)
+        function txt = toString(obj) %#ok<MANU>
             txt = 'prtKernel';
         end
     end
+    
+    methods (Static, Hidden = true)
+        function PlotOptions = initializePlotOptions()
+            PlotOptions = prtOptionsGet('prtOptionsKernelPlot');
+        end
+    end        
 end

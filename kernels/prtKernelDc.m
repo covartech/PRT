@@ -35,7 +35,7 @@ classdef prtKernelDc < prtKernel
             obj.isTrained = true;
         end
         
-        function yOut = runAction(obj,ds2) %#ok<MANU>
+        function yOut = runAction(obj,ds2)
             if obj.isRetained
                 yOutData = ones(ds2.nObservations,1);
                 yOut = ds2.setObservations(yOutData);

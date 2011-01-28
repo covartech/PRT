@@ -33,9 +33,10 @@ else
     factoryFieldNames = fieldnames(factoryOptions);
     
     newFields = setdiff(factoryFieldNames,loadedFieldNames);
+    
     if ~isempty(newFields)
         for iNew = 1:length(newFields)
-            options.(newFields{iNew}) = factoryFieldNames.(newFields{iNew});
+            options.(newFields{iNew}) = factoryOptions.(newFields{iNew});
         end
         prtOptionsSetDefault(options);
     end

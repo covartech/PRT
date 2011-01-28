@@ -15,7 +15,7 @@ classdef prtRegressRvmSequential < prtRegressRvm
     %   
     %   dataSet = prtDataGenNoisySinc;           % Load a prtDataRegress
     %   dataSet.plot;                    % Display data
-    %   reg = prtRegressRvmSequential;             % Create a prtRegressRvm object
+    %   reg = prtRegressRvmSequential;   % Create a prtRegressRvm object
     %   reg = reg.train(dataSet);        % Train the prtRegressRvm object
     %   reg.plot();                      % Plot the resulting curve
     %   dataSetOut = reg.run(dataSet);   % Run the regressor on the data
@@ -23,7 +23,8 @@ classdef prtRegressRvmSequential < prtRegressRvm
     %   plot(dataSet.getX,dataSetOut.getX,'c.') % Plot, overlaying the
     %                                           % fitted points with the 
     %                                           % curve and original data
-    % legend('Regression curve','Original Points','Fitted points',0)
+    %   hold off;
+    %   legend('Regression curve','Original Points','Selected Relevant Points','Fitted points',0)
     %
     %
     %   See also prtRegress, prtRegressGP, prtRegressLslr
@@ -65,7 +66,7 @@ classdef prtRegressRvmSequential < prtRegressRvm
             nBasis = localKernels.nDimensions;
             Obj.beta = zeros(nBasis,1);
             
-            if Obj.learningVerbose
+            if Obj.verboseText
                 fprintf('Sequential RVM training with %d possible vectors.\n', nBasis);
             end
             
@@ -88,11 +89,11 @@ classdef prtRegressRvmSequential < prtRegressRvm
                 
                 kernelCorrs(cInds) = abs(blockPhiNormalized'*y);
             end
-            [maxVal, maxInd] = max(kernelCorrs);
+            [maxVal, maxInd] = max(kernelCorrs); %#ok<ASGLU>
             
             
             % Start the actual Process
-            if Obj.learningVerbose
+            if Obj.verboseText
                 %fprintf('Sequential RVM training with %d possible vectors.\n', length(trainedKernels));
                 fprintf('\t Iteration 0: Intialized with vector %d.\n', maxInd);
                 
@@ -130,7 +131,7 @@ classdef prtRegressRvmSequential < prtRegressRvm
                     
                     SigmaInvChol = chol(A + sigma2Inv*(cPhi'*cPhi));
                     SigmaChol = inv(SigmaInvChol);
-                    Obj.Sigma = SigmaChol*SigmaChol';
+                    Obj.Sigma = SigmaChol*SigmaChol'; %#ok<MINV>
                     
                     mu = sigma2Inv*(Obj.Sigma*(cPhi'*y)); %mu = sigma2Inv*(SigmaInv\(cPhi'*y));
                     
@@ -210,7 +211,7 @@ classdef prtRegressRvmSequential < prtRegressRvm
                     Obj.learningResults.exitReason = 'No Good Actions';
                     Obj.learningResults.exitValue = maxChangeVal;
                     
-                    if Obj.learningVerbose
+                    if Obj.verboseText
                         fprintf('Convergence criterion met, no necessary actions remaining, maximal change in log-likelihood %g\n\n',maxChangeVal);
                     end
                     
@@ -254,7 +255,7 @@ classdef prtRegressRvmSequential < prtRegressRvm
                 
                 SigmaInvChol = chol(A + sigma2Inv*(cPhi'*cPhi));
                 SigmaChol = inv(SigmaInvChol);
-                Obj.Sigma = SigmaChol*SigmaChol';
+                Obj.Sigma = SigmaChol*SigmaChol'; %#ok<MINV>
                 
                 mu = sigma2Inv*(Obj.Sigma*(cPhi'*y)); %mu = sigma2Inv*(SigmaInv\(cPhi'*y));
                 
@@ -268,7 +269,7 @@ classdef prtRegressRvmSequential < prtRegressRvm
                 Obj.beta = zeros(nBasis,1);
                 Obj.beta(relevantIndices) = mu;
                 
-                if ~mod(iteration,Obj.learningPlot)
+                if ~mod(iteration,Obj.verbosePlot)
                     if DataSet.nFeatures == 1
                         Obj.verboseIterationPlot(DataSet,relevantIndices);
                     elseif iteration == 1
@@ -283,13 +284,13 @@ classdef prtRegressRvmSequential < prtRegressRvm
                     Obj.learningConverged = true;
                     Obj.learningResults.exitReason = 'Alpha Not Changing';
                     Obj.learningResults.exitValue = TOL;
-                    if Obj.learningVerbose
+                    if Obj.verboseText
                         fprintf('Exiting...Precisions no longer changing appreciably.\n\n');
                     end
                     break;
                 end
                 
-                if Obj.learningVerbose
+                if Obj.verboseText
                     actionStrings = {sprintf('Addition: Vector %s has been added.  ', sprintf(sprintf('%%%dd',nVectorsStringLength),bestAddInd));
                         sprintf('Removal:  Vector %s has been removed.', sprintf(sprintf('%%%dd',nVectorsStringLength), bestRemInd));
                         sprintf('Update:   Vector %s has been updated.', sprintf(sprintf('%%%dd',nVectorsStringLength), bestModInd));};
@@ -297,7 +298,7 @@ classdef prtRegressRvmSequential < prtRegressRvm
                 end
             end
             
-            if Obj.learningVerbose && iteration == Obj.learningMaxIterations
+            if Obj.verboseText && iteration == Obj.learningMaxIterations
                 fprintf('Exiting...Convergence not reached before the maximum allowed iterations was reached.\n\n');
             end
             

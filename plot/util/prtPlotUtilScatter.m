@@ -1,6 +1,6 @@
 function h = prtPlotUtilScatter(cX, featureNames, classSymbols, classColors, classEdgeColor, linewidth, markerSize)
-% Internal function
-% xxx Need Help xxx
+% Internal function PRT function
+
 nPlotDimensions = size(cX,2);
 if nPlotDimensions < 1
     warning('prt:prtPlotUtilScatter:NoPlotDimensionality','No plot dimensions requested.');
@@ -13,18 +13,24 @@ end
 switch nPlotDimensions
     case 1
         h = plot(cX,ones(size(cX)),classSymbols,'MarkerFaceColor',classColors,'MarkerEdgeColor',classEdgeColor,'linewidth',linewidth,'MarkerSize',markerSize);
-        xlabel(featureNames{1});
+        if ~isempty(featureNames)
+            xlabel(featureNames{1});
+        end
         set(gca,'YTick',[]);
         grid on
     case 2
         h = plot(cX(:,1),cX(:,2),classSymbols,'MarkerFaceColor',classColors,'MarkerEdgeColor',classEdgeColor,'linewidth',linewidth,'MarkerSize',markerSize);
-        xlabel(featureNames{1});
-        ylabel(featureNames{2});
+        if ~isempty(featureNames)
+            xlabel(featureNames{1});
+            ylabel(featureNames{2});
+        end
         grid on
     case 3
         h = plot3(cX(:,1),cX(:,2),cX(:,3),classSymbols,'MarkerFaceColor',classColors,'MarkerEdgeColor',classEdgeColor,'linewidth',linewidth,'MarkerSize',markerSize);
-        xlabel(featureNames{1});
-        ylabel(featureNames{2});
-        zlabel(featureNames{3});
+        if ~isempty(featureNames)
+            xlabel(featureNames{1});
+            ylabel(featureNames{2});
+            zlabel(featureNames{3});
+        end
         grid on;
 end

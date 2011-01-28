@@ -81,8 +81,9 @@ classdef prtKernelSet < prtKernel
     methods
         function h = plot(Obj)
             %Plot each kernel:
+            h = zeros(length(Obj.internalKernelCell),1);
             for i = 1:length(Obj.internalKernelCell)
-                Obj.internalKernelCell{i}.plot;
+                h(i) = Obj.internalKernelCell{i}.plot;
             end
         end
     end

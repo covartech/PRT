@@ -202,7 +202,7 @@ classdef prtClassRvm < prtClass
                 Obj.beta(cRelevant) = newBeta;
                 
                 SigmaChol = inv(SigmaInvChol);
-                sigma = SigmaChol*SigmaChol';
+                sigma = SigmaChol*SigmaChol'; %#ok<MINV>
                
                 zeta = ones(size(diag(cThetaInv))) - (1./cTheta).*diag(sigma);
 
@@ -285,7 +285,7 @@ classdef prtClassRvm < prtClass
     
     methods (Access=protected)
         
-        function y = getMinusOneOneTargets(Obj, DataSet)
+        function y = getMinusOneOneTargets(Obj, DataSet) %#ok<MANU>
             yMat = double(DataSet.getTargetsAsBinaryMatrix());
             y = nan(size(yMat,1),1);
             y(yMat(:,1) == 1) = -1;
@@ -314,7 +314,7 @@ classdef prtClassRvm < prtClass
         function verboseIterationPlot(Obj,DataSet,relevantIndices)
             DsSummary = DataSet.summarize;
             
-            [linGrid, gridSize,xx,yy] = prtPlotUtilGenerateGrid(DsSummary.lowerBounds, DsSummary.upperBounds, Obj.PlotOptions);
+            [linGrid, gridSize,xx,yy] = prtPlotUtilGenerateGrid(DsSummary.lowerBounds, DsSummary.upperBounds, Obj.PlotOptions); %#ok<ASGLU>
             
             localKernels = Obj.kernels.train(DataSet);
             cKernels = localKernels.retainKernelDimensions(relevantIndices);
