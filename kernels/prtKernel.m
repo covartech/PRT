@@ -69,20 +69,21 @@ classdef prtKernel < prtAction
     
     methods
         function Obj3 = and(Obj1,Obj2)
+            
+            if ~isa(Obj1,'prtKernel') || ~isa(Obj2,'prtKernel')
+                error('prtKernel:And','Invalid input to prtKernel\\and, both arguments must be of type prtKernel');
+            end
+            
             if isa(Obj1,'prtKernelSet')
                 kernelCell1 = Obj1.getKernelCell;
-            elseif isa(Obj1,'prtKernel')
-                kernelCell1 = {Obj1};
             else
-                error('prt:prtKernel','Invalid input to prtKernel\and, both arguments must be of type prtKernel');
+                kernelCell1 = {Obj1};
             end
             
             if isa(Obj2,'prtKernelSet')
                 kernelCell2 = Obj2.getKernelCell;
-            elseif isa(Obj2,'prtKernel')
-                kernelCell2 = {Obj2};
             else
-                error('prt:prtKernel','Invalid input to prtKernel\and, both arguments must be of type prtKernel');
+                kernelCell2 = {Obj2};
             end
             Obj3 = prtKernelSet(kernelCell1{:},kernelCell2{:});
         end
