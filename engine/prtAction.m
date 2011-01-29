@@ -118,13 +118,7 @@ classdef prtAction
         %   DataSet = runAction(Obj, DataSet)
         DataSet = runAction(Obj, DataSet)
     end
-    
-    methods
-        function Obj3 = and(Obj1,Obj2) %#ok<INUSD,MANU,STOUT>
-            error('prtAction:And','the AND (&) operation is only defined for objects of type prtKernel');
-        end
-    end
-    
+        
     methods (Hidden)
         function Obj = plus(in1,in2)
             if isa(in2,'prtAlgorithm')
