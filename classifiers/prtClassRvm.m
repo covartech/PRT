@@ -1,5 +1,5 @@
 classdef prtClassRvm < prtClass
-    % prtClassRvm  Relevance vector machin classifier
+    % prtClassRvm  Relevance vector machine classifier
     %
     %    CLASSIFIER = prtClassRvm returns a relevance vector machine classifier
     %
@@ -10,22 +10,22 @@ classdef prtClassRvm < prtClass
     %    A prtClassRvm object inherits all properties from the abstract class
     %    prtClass. In addition is has the following properties:
     %
-    %   SetAccess = public:
-    %    kernels            - A cell array of prtKernel objects specifying
-    %                         the kernels to use
-    %    verbosePlot        - Flag indicating whether or not to plot during
-    %                         training
-    %    verboseText        - Flag indicating whether or not to output
-    %                         verbose updates during training
+    %    kernels                - A cell array of prtKernel objects specifying
+    %                             the kernels to use
+    %    verbosePlot            - Flag indicating whether or not to plot during
+    %                             training
+    %    verboseText            - Flag indicating whether or not to output
+    %                             verbose updates during training
     %    learningMaxIterations  - The maximum number of iterations
     %
-    %   SetAccess = private/protected:
+    %    A prtClassRvm also has the following read-only properties:
+    %
     %    learningConverged  - Flag indicating if the training converged
-    %    beta          - The regression weights, estimated during training
-    %    sparseBeta    - The sparse regression weights, estimated during
-    %                    training
-    %    sparseKernels - The sparse regression kernels, estimated during
-    %                    training
+    %    beta               - The regression weights, estimated during training
+    %    sparseBeta         - The sparse regression weights, estimated during
+    %                         training
+    %    sparseKernels      - The sparse regression kernels, estimated during
+    %                         training
     %
     %    For information on relevance vector machines, please
     %    refer to the following URL:
@@ -43,9 +43,6 @@ classdef prtClassRvm < prtClass
     %    Herbrich, Learning Kernel Classifiers, The MIT Press, 2002
     %    http://www.learning-kernel-classifiers.org/
     %
-    %    For alternative approaches to solving the RVM learning problem,
-    %    see prtClassRvmFigueiredo, and prtClassRvmSequential
-    %
     %    A prtClassRvm object inherits the TRAIN, RUN, CROSSVALIDATE and
     %    KFOLDS methods from prtAction. It also inherits the PLOT method
     %    from prtClass.
@@ -57,6 +54,7 @@ classdef prtClassRvm < prtClass
     %    classifier = prtClassRvm;              % Create a classifier
     %    classifier = classifier.train(TrainingDataSet);    % Train
     %    classified = run(classifier, TestDataSet);         % Test
+    %    % Plot the results
     %    subplot(2,1,1);
     %    classifier.plot;
     %    subplot(2,1,2);
@@ -64,13 +62,15 @@ classdef prtClassRvm < prtClass
     %    h = plot(pf,pd,'linewidth',3);
     %    title('ROC'); xlabel('Pf'); ylabel('Pd');
     %
-    %    Example (changing kernel):
+    %    % Example 2, using a different kernel ??? Example doesnt actually
+    %    change the kernel
     %
     %    TestDataSet = prtDataGenUnimodal;      % Create some test and
     %    TrainingDataSet = prtDataGenUnimodal;  % training data
     %    classifier = prtClassRvm;              % Create a classifier
     %    classifier = classifier.train(TrainingDataSet);    % Train
     %    classified = run(classifier, TestDataSet);         % Test
+    %    % Plot
     %    subplot(2,1,1);
     %    classifier.plot;
     %    subplot(2,1,2);
@@ -80,7 +80,7 @@ classdef prtClassRvm < prtClass
     % 
     %    See also prtClass, prtClassLogisticDiscriminant, prtClassBagging,
     %    prtClassMap, prtClassCap, prtClassBinaryToMaryOneVsAll, prtClassDlrt,
-    %    prtClassPlsda, prtClassFld, prtClassRvm, prtClassGlrt,  prtClass
+    %    prtClassPlsda, prtClassFld, prtClassRvmFigueiredo, prtClassRvmSequential, prtClassGlrt,  prtClass
     
     properties (SetAccess=private)
         name = 'Relevance Vector Machine'  % Relevance Vector Machine
@@ -89,19 +89,19 @@ classdef prtClassRvm < prtClass
     end
     
     properties
-        kernels = prtKernelDc & prtKernelRbfNdimensionScale;
+        kernels = prtKernelDc & prtKernelRbfNdimensionScale;  % The kernels to be used
         
-        verboseText = false;
-        verbosePlot = false;
+        verboseText = false;  % Whether or not to display text during training
+        verbosePlot = false;  % Whether or not to plot during training
     end
     
     % Estimated Parameters
     properties (GetAccess = public, SetAccess = protected)
-        Sigma = [];
-        beta = [];
-        sparseBeta = [];
-        sparseKernels = {};
-        learningConverged = false;
+        Sigma = [];   % Sigma
+        beta = [];    % Beta
+        sparseBeta = [];  % Sparse Beta
+        sparseKernels = {};  % Sparse Kernel array
+        learningConverged = false;   % Flag indicating whether or not training convereged
     end
     
     properties (Hidden = true)

@@ -1,40 +1,32 @@
 classdef prtCluster < prtAction
-    % prtCluster   Base class for prt clustering (unsupervised
-    %           classification) objects
+    % prtCluster   Base class for prt clustering objects
     %
-    % All prtCluster objects inherit all properities and methods from the
-    % prtActoin object. prtClass objects have no additional properties,
-    % although sub-classes of prtCluster might.
+    %   prtCluster is an abstract class and cannot be instantiated. 
+    %
+    %   All prtCluster objects inherit all properities and methods from the
+    %   prtAction object. 
     %
     %   prtCluster objects have the following methods:
     %
     %   plot          - Plot the output cluster of a trained clustering
-    %                   algorithm (prtCluster trained with ds with <= 3
-    %                   features only)
+    %                   algorithm. Only valid when the clutering algorithm
+    %                   has been trained with a data set of 3 dimensions or
+    %                   less.
     %
-    %   Inherited from prtAction:
-    % 
-    %   train         - Train the clusterer using a prtDataSetClass and
-    %                   output a trained clustering algorithm, e.g.
-    %       myClassifier = myCluster.train(ds);
-    %
-    %   run           - Run the clustering algorithm on a data set, e.g.
-    %       results = myCluster.run(ds);
-    %
-    %   crossValidate, kfolds - See prtAction
-    %
+    %   In addition, ptCluster objects inherit the train, run,
+    %   crossValidate and kfolds methods from prtAction.
     
     properties (SetAccess=private)
-        isNativeMary = true; % Logical, classifier natively produces an output for each unique class
+        isNativeMary = true; % True classifier natively produces an output for each unique class
     end
     properties (Abstract)
-        nClusters
+        nClusters  % The number of clusters
     end
     properties
-        internalDecider = [];
+        internalDecider = [];  % The internal decider
     end
     properties (Dependent)
-        includesDecision
+        includesDecision % Flag indicating if result includes a decision
     end
     properties (SetAccess=protected, Hidden = true)
         yieldsMaryOutput = true; %Clustering algorithms *must*

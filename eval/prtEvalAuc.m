@@ -1,5 +1,5 @@
 function auc = prtEvalAuc(classifier,dataSet,nFolds)
-% prtEvalPfAtPd   Returns the area under the receiver operating curve.
+% prtEvalAuc   Returns the area under the receiver operating curve.
 %
 %   auc = prtEvalAuc(CLASSIFIER, DATASET) returns the area under the
 %   receiver operating curve. DATASET must be a labeled, binary
