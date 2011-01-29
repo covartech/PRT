@@ -28,14 +28,14 @@ classdef <fileName> < prtPreProc
     methods (Access=protected, Hidden = true)
         
         function Obj = trainAction(Obj,DataSet)
-            % Overload this function to perform pre-processor training.  This
+            % Place code here to perform pre-processor training.  This
             % function should set the properties of Obj so that in
             % runAction the pre-processor can output processed data
             
         end
         
         function DataSetOut = runAction(Obj,DataSetIn)
-            % Overload this function to perform pre-processor running.  This
+            % Place code here to perform pre-processor running.  This
             % function should set output a DataSet with observations of size
             % DataSetIn.nObservations x M
             %

@@ -42,14 +42,14 @@ classdef <fileName> < prtKernel
     methods (Access=protected, Hidden = true)
         
         function Obj = trainAction(Obj,DataSet)
-            % Overload this function to perform kernel training.  This
+            % Place code here to perform kernel training.  This
             % function should set the properties of Obj so that in
             % runAction the kernel can output processed data
             
         end
         
         function DataSetOut = runAction(Obj,DataSetIn)
-            % Overload this function to run the kernel.  This
+            % Place code here to run the kernel.  This
             % function should set output a DataSet with observations of size
             % DataSetIn.nObservations x Obj.nDimensions
             %

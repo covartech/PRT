@@ -29,7 +29,7 @@ classdef <fileName> < prtOutlierRemoval
     methods (Access=protected, Hidden = true)
         
         function Obj = trainAction(Obj,DataSet)
-            % Implement this function to perform outlier remover training.  This
+            % Place code here to perform outlier remover training.  This
             % function should set the properties of Obj so that in
             % calculateOutlierIndices the outlier remover can determine which points are outliers
             
@@ -37,7 +37,7 @@ classdef <fileName> < prtOutlierRemoval
         
         
         function outlierIndices = calculateOutlierIndices(Obj,DataSet)
-            % Implement a logical matrix of size DataSet.nObservations x 
+            % Place code here to output a logical matrix of size DataSet.nObservations x 
             % DataSet.nFeatures that takes value "true" at indices of outliers.
             
             % Default: no outliers

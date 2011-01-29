@@ -29,14 +29,14 @@ classdef <fileName> < prtClass
     methods (Access=protected, Hidden = true)
         
         function Obj = trainAction(Obj,DataSet)
-            % Overload this function to perform classifier training.  This
+            % Place code here to perform classifier training.  This
             % function should set the properties of Obj so that in
             % runAction the classifier can output decision statistics
             
         end
         
         function DataSetOut = runAction(Obj,DataSetIn)
-            % Overload this function to perform classifier running.  This
+            % Place code here to perform classifier running.  This
             % function should set output either:
             %
             %   1) A DataSet with observations of size

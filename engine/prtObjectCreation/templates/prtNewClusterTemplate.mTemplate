@@ -29,14 +29,14 @@ classdef <fileName> < prtCluster
     methods (Access=protected, Hidden = true)
         
         function Obj = trainAction(Obj,DataSet)
-            % Overload this function to perform clusterer training.  This
+            % Place code here to perform clusterer training.  This
             % function should set the properties of Obj so that in
             % runAction the clusterer can output decision statistics
             
         end
         
         function DataSetOut = runAction(Obj,DataSetIn)
-            % Overload this function to perform clusterer running.  This
+            % Place code here to perform clusterer running.  This
             % function should set output a data matrix of size 
             % DataSetIn.nObservation x #Clusters where each element of the 
             % array specifies how likely observation is to be from each cluster.

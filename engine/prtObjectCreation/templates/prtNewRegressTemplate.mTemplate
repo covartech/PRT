@@ -29,14 +29,14 @@ classdef <fileName> < prtRegress
     methods (Access=protected, Hidden = true)
         
         function Obj = trainAction(Obj,DataSet)
-            % Implement this function to perform regressor training.  This
+            % Place code here to perform regressor training.  This
             % function should set the properties of Obj so that in
             % runAction the regressor can output decision statistics
             
         end
         
         function DataSetOut = runAction(Obj,DataSetIn)
-            % Implement this function to perform regressor running.  This
+            % Place code here to perform regressor running.  This
             % function should set output a DataSet with observations of size
             % DataSetIn.nObservations x 1 
             %
