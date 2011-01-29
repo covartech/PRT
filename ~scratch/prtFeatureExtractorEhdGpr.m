@@ -25,7 +25,7 @@ classdef prtFeatureExtractorEhdGpr < prtFeatureExtractor
         end            
     end
     
-    methods (Access = protected)
+    methods (Access=protected,Hidden=true)
         
         function obj = ehdInit(obj)
             obj.edgeFilters{1} = fliplr(triu(ones(5)) - tril(ones(5)));

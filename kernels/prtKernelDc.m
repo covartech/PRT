@@ -24,7 +24,7 @@ classdef prtKernelDc < prtKernel
         isSupervised = false;
     end
     
-    properties (Access = 'protected')
+    properties (Access = 'protected', Hidden = true)
         isRetained = true;
     end
     

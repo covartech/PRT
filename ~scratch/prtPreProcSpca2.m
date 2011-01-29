@@ -52,7 +52,7 @@ classdef prtPreProcSpca < prtPreProc
         end
     end
     
-    methods (Access = protected)
+    methods (Access=protected,Hidden=true)
         
         function Obj = trainAction(Obj,DataSet)
 

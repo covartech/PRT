@@ -79,7 +79,7 @@ classdef prtPreProcLda < prtPreProc
         end
     end
     
-    methods (Access = protected)
+    methods (Access=protected,Hidden=true)
         
         function Obj = trainAction(Obj,DataSet)
             if Obj.nComponents > DataSet.nClasses

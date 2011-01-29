@@ -44,7 +44,7 @@ classdef prtFeatSelGeneticAlgorithm < prtFeatSel
         end
     end
     
-    methods (Access = protected)
+    methods (Access=protected,Hidden=true)
         
         % Train %%
         function obj = trainAction(obj,ds)

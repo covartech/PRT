@@ -51,7 +51,7 @@ classdef prtKernelHyperbolicTangent < prtKernel
         c = 0;    % offset
     end
 
-    properties (Hidden)
+    properties (Access = protected, Hidden = true)
         internalDataSet
     end
     

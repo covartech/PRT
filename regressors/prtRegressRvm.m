@@ -252,7 +252,7 @@ classdef prtRegressRvm < prtRegress
         end
     end
     
-    methods (Access=protected)
+    methods (Access=protected,Hidden=true)
         function Obj = verboseIterationPlot(Obj,DataSet,relevantIndices)
             DsSummary = DataSet.summarize;
             

@@ -47,7 +47,7 @@ classdef prtKernelPolynomial < prtKernel
         isSupervised = false;
     end
     
-    properties (Hidden)
+    properties (Access = protected, Hidden = true)
         internalDataSet
     end
     

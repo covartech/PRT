@@ -59,7 +59,7 @@ classdef prtPreProcZmuv < prtPreProc
         end
     end
     
-    methods (Access = protected)
+    methods (Access=protected,Hidden=true)
         
         function Obj = trainAction(Obj,DataSet)
             % Compute the means and standard deviation

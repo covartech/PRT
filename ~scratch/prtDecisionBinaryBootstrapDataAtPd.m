@@ -25,7 +25,7 @@ classdef prtDecisionBinaryBootstrapDataAtPd < prtDecisionBinary
             threshold = Obj.threshold;
         end
     end
-    methods (Access = protected)
+    methods (Access=protected,Hidden=true)
         function Obj = trainAction(Obj, DS)
             
             if isempty(Obj.nBootStrapSamples)

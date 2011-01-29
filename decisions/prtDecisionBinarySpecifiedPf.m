@@ -74,8 +74,7 @@ classdef prtDecisionBinarySpecifiedPf < prtDecisionBinary
             obj = prtUtilAssignStringValuePairs(obj,varargin{:});
         end
     end
-    methods (Access = protected)
-        
+    methods (Access=protected,Hidden=true)
         
         function Obj = trainAction(Obj,dataSet)
             

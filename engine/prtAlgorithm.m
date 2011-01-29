@@ -202,7 +202,7 @@ classdef prtAlgorithm < prtAction
         end
     end
     
-    methods (Access = protected)
+    methods (Access=protected,Hidden=true)
         
         function Obj = trainAction(Obj,DataSet)
             

@@ -46,7 +46,7 @@ classdef prtClassCitationKnnMultiInstance < prtClass
         end
     end
     
-    methods (Access=protected)
+    methods (Access=protected,Hidden=true)
         function Obj = preTrainProcessing(Obj,DataSet)
             if ~Obj.verboseStorage
                 warning('prtClassKnn:verboseStorage:false','prtClassKnn requires verboseStorage to be true; overriding manual settings');

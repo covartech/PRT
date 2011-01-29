@@ -51,7 +51,7 @@ classdef prtKernelRbf < prtKernel
         sigma = 1;
     end 
     
-    properties (Hidden)
+    properties (Access = protected, Hidden = true)
         internalDataSet
     end
     

@@ -6,8 +6,7 @@ classdef prtKernelSet < prtKernel
         isSupervised = false;
     end
     
-    %properties (Access = 'protected') ?
-    properties
+    properties (Access = protected, Hidden = true)
         internalKernelCell
     end
     

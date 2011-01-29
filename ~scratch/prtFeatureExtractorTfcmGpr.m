@@ -12,7 +12,7 @@ classdef prtFeatureExtractorTfcmGpr < prtFeatureExtractor
         preprocFn = @(x)x;
     end
     
-    methods (Access = protected)
+    methods (Access=protected,Hidden=true)
         
         function obj = trainAction(obj,varargin)
             %do nothing

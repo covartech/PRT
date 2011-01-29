@@ -24,7 +24,7 @@ classdef prtPreProcSharpen < prtPreProc
         end
     end
     
-    methods (Access = protected)
+    methods (Access=protected,Hidden=true)
         function Obj = preTrainProcessing(Obj,DataSet)
             if ~Obj.verboseStorage
                 warning('prtClassSharpen:verboseStorage:false','prtClassSharpen requires verboseStorage to be true; overriding manual settings');

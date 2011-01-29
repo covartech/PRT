@@ -206,7 +206,7 @@ classdef prtClassRvm2 < prtClass
         end
     end
     
-    methods (Access=protected)
+    methods (Access=protected,Hidden=true)
         
         function y = getMinusOneOneTargets(Obj, DataSet)
             yMat = double(DataSet.getTargetsAsBinaryMatrix());

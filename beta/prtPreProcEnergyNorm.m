@@ -48,7 +48,7 @@ classdef prtPreProcEnergyNorm < prtPreProc
         end
     end
     
-    methods (Access = protected)
+    methods (Access=protected,Hidden=true)
         
         function Obj = trainAction(Obj,DataSet)
             %do nothing

@@ -82,7 +82,7 @@ classdef prtFeatSelLlnn < prtFeatSel
         end   
     end
     
-    methods (Access = protected)
+    methods (Access=protected,Hidden=true)
         
         % Train %%
         function Obj = trainAction(Obj,DS)

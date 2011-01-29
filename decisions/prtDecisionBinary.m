@@ -20,7 +20,7 @@ classdef prtDecisionBinary < prtDecision
         threshold = getThreshold(Obj) 
         % THRESH = getThreshold returns the objects threshold
     end
-    methods (Access = protected)
+    methods (Access=protected,Hidden=true)
         function DS = runAction(Obj,DS)
             theClasses = Obj.classList;
             DS = DS.setObservations(theClasses((DS.getObservations >= Obj.getThreshold) + 1));

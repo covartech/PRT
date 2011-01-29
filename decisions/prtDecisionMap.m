@@ -57,7 +57,7 @@ classdef prtDecisionMap < prtDecision
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
         end
     end
-    methods (Access = protected)
+    methods (Access=protected,Hidden=true)
         
         function Obj = trainAction(Obj, DS)
             Obj.classList = DS.uniqueClasses;
