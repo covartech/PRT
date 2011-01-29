@@ -93,6 +93,10 @@ classdef prtClassRvm < prtClass
         
         verboseText = false;  % Whether or not to display text during training
         verbosePlot = false;  % Whether or not to plot during training
+        
+        learningMaxIterations = 1000;       %Max # iterations
+        learningConvergedTolerance = 1e-5;  % Learning tolerance; at iteration i, if ||if \theta_{i}-\theta_{i-1}|| / length(theta) < learningConvergedTolerance, learning has converged
+        learningRelevantTolerance = 1e-5;   % Tolerance on \theta; if \theta is < learningConvergedTolerance, the kernel is irrelevant and can be ignored
     end
     
     % Estimated Parameters
@@ -103,10 +107,7 @@ classdef prtClassRvm < prtClass
         learningConverged = false;   % Flag indicating whether or not training convereged
     end
     
-    properties (Hidden = true)
-        learningMaxIterations = 1000;
-        learningConvergedTolerance = 1e-5;
-        learningRelevantTolerance = 1e-3;
+    properties
     end
     
     methods
@@ -114,6 +115,28 @@ classdef prtClassRvm < prtClass
         function Obj = prtClassRvm(varargin)
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
         end
+        
+        function Obj = set.learningMaxIterations(Obj,val)
+            if ~prtUtilIsPositiveInteger(val)
+                error('prt:prtClassRvm:learningMaxIterations','learningMaxIterations must be a positive integer');
+            end
+            Obj.learningMaxIterations = val;
+        end
+        
+        function Obj = set.learningConvergedTolerance(Obj,val)
+            if ~prtUtilIsPostiveScalar(val)
+                error('prt:prtClassRvm:learningConvergedTolerance','learningConvergedTolerance must be a positive scalar');
+            end
+            Obj.learningConvergedTolerance = val;
+        end
+        
+        function Obj = set.learningRelevantTolerance(Obj,val)
+            if ~prtUtilIsPostiveScalar(val)
+                error('prt:prtClassRvm:learningRelevantTolerance','learningRelevantTolerance must be a positive scalar');
+            end
+            Obj.learningRelevantTolerance = val;
+        end
+        
         
         function Obj = set.kernels(Obj,val)
             assert(numel(val)==1 &&  isa(val,'prtKernel'),'prt:prtClassRvm:kernels','kernels must be a prtKernel');
@@ -188,7 +211,7 @@ classdef prtClassRvm < prtClass
                 %%%%
                 
                 %check tolerance for basis removal
-                cRelevant = theta > Obj.learningConvergedTolerance;
+                cRelevant = theta > Obj.learningRelevantTolerance;
                 
                 Obj.beta(~cRelevant) = 0;
 
