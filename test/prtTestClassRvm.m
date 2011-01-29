@@ -86,10 +86,11 @@ result = result & (percentCorr > baselinePercentCorr);
 try
     classifier.verbosePlot = 20;
     classifier.verboseText = true;
-    classifier.train(TestDataSet);
+    classifier = classifier.train(TestDataSet);
     classified = run(classifier, TestDataSet);
     close all;
-catch
+catch ME
+    disp(ME);
     disp('Rvm learning plot/text fail')
     result = false;
 end
