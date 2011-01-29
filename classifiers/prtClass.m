@@ -79,7 +79,7 @@ classdef prtClass < prtAction
     properties
         internalDecider = [];
     end
-    properties (Dependent = true)
+    properties (Dependent = true, Access = 'protected')
         includesDecision
     end
     properties (Hidden = true)

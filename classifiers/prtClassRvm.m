@@ -97,7 +97,6 @@ classdef prtClassRvm < prtClass
     
     % Estimated Parameters
     properties (GetAccess = public, SetAccess = protected)
-        Sigma = [];   % Sigma
         beta = [];    % Beta
         sparseBeta = [];  % Sparse Beta
         sparseKernels = {};  % Sparse Kernel array
