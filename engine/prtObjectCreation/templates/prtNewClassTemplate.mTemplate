@@ -43,7 +43,9 @@ classdef <fileName> < prtClass
             %   DataSetIn.nObservations x 1 (for classifiers with
             %   isNativeMary set to "false").  Higher values should
             %   correspond to data points in DataSetIn which are more
-            %   likely to correspond to the positive hypothesis.
+            %   likely to correspond to the positive hypothesis.  Note that 
+            %   for binary classification problems, the output of class.run 
+            %   should always contain exactly one column.
             %
             %   Or:
             %
@@ -57,6 +59,10 @@ classdef <fileName> < prtClass
             %   the DataSetOut can be created with the following line of
             %   code:
             %   DataSetOut = DataSetIn.setObservations(yOut);
+
+            %By default, do nothing; remove this line to include your 
+            %algorithm
+            DataSetOut = DataSetIn; 
         end
         
     end
