@@ -33,6 +33,8 @@ end
 featSel = prtFeatSelStatic;
 featSel.selectedFeatures = 1;
 
+featSel = featSel.train(dataSetTrain); 
+
 dataSetSelTest = featSel.run(dataSetTest);
 dataSetSelTrain = featSel.run(dataSetTrain);
 
@@ -42,9 +44,7 @@ class = class.train(dataSetSelTrain);
 resultClass = class.run(dataSetSelTest);
 
 % now do the same thing with a prtAlgorithm
-alg = prtAlgorithm;
-alg = alg + featSel;
-alg = alg + prtClassMap;
+alg = featSel + prtClassMap;
 
 alg = alg.train(dataSetTrain);
 resultAlg = alg.run(dataSetTest);
@@ -55,10 +55,11 @@ if(~isequal(resultAlg, resultClass))
 end
 
 %% test a pre-processor, 2 paralell classifiers, followed by a 3rd
-%% classifier, oh my.
+% classifier, oh my.
 
 preProc = prtPreProcZmuv;
 
+preProc = preProc.train(dataSetTrain);
 dataSetTrainPre = preProc.run(dataSetTrain);
 dataSetTestPre = preProc.run(dataSetTest);
 
@@ -80,4 +81,20 @@ class2OutTest = class2.run(dataSetTestPre);
 % create, train and run a 3rd classifier who's input are the outputs of the
 % first 2 classifiers?
 class3 = prtClassMap;
-% what the hell
+class3InputTrain = catFeatures(class1OutTrain,class2OutTrain);
+class3InputTest = catFeatures(class1OutTest,class2OutTest);
+
+class3 = class3.train(class3InputTrain);
+
+class3OutputTrain = class3.run(class3InputTrain);
+class3OutputTest = class3.run(class3InputTest);
+
+%% Do the same thing with an algorithm (look how clean!)
+alg = prtPreProcZmuv + prtClassMap/prtClassGlrt + prtClassMap;
+alg = alg.train(dataSetTrain);
+algOut = alg.run(dataSetTest);
+
+if(~isequal(algOut.getObservations, class3OutputTest.getObservations))
+    result = false;
+    disp('3 stage prtAlgorithm classification fail')
+end

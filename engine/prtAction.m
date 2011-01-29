@@ -188,6 +188,10 @@ classdef prtAction
             %
             %   OUTPUT = OBJ.run(DataSet) runs the prtAction object using
             %   the prtDataSet DataSet. OUTPUT will be a prtDataSet object.
+            
+            if ~Obj.isTrained
+                error('prtAction:run:ActionNotTrained','Attempt to run a prtAction of type %s that was not trained',class(Obj));
+            end
             if isnumeric(DataSetIn)
                 try
                    DataSetIn = prtDataSetStandard(DataSetIn); 
