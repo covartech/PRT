@@ -1,13 +1,49 @@
 classdef prtKernelSet < prtKernel
+    % prtKernelSet  A set of prtKernel Object
+    %
+    %   KC = prtKernelSet(KERNOBJ) creates a prtKernelSet object consisting
+    %   of one prtKenrel KERNOBJ.
+    %
+    %   KC = KERNOBJ1 & KERNOBJ2 creates a prtKernelSet object consisting of
+    %   the prtKernel objects KERNOBJ1, and KERNOBJ2. Additional prtKernel
+    %   object can be included by appending more objects using the AND(&)
+    %   operator.
+    %
+    %   When the TRAIN method is called on a prtKernetSet object, the
+    %   train method of all member prtKernel objects is invoked. 
+    %
+    %   When the RUN method is called on a prtKernelSet object is called,
+    %   the RUN method of all member prtKernel objects is invoked, and the
+    %   output is the concatenation of the results.
+    %
+    %   % Example:
+    %
+    %   ds = prtDataGenBimodal;       % Generate a dataset
+    %   k1 = prtKernelRbf;            % Create a prtKernel object with 
+    %                                 % default value of sigma 
+    %   k2 = prtKernelRbf('sigma',2); % Create a prtKernel object with
+    %                                 % specified value of sigma
+    %       
+    %   kSet = k1&k2;                 % Create a prtKernel object using the
+    %                                 % AND operator 
+    %   kSet =  kSet.train(ds);       % Train
+    %      
+    %   g = kSet.run(ds);             % Evaluate
+    % 
+    %   imagesc(g.getObservations);   %Plot the results
+    %
+    %   See also: prtKernel,prtKernelSet, prtKernelDc, prtKernelDirect,
+    %   prtKernelHyperbolicTangent, prtKernelPolynomial,
+    %   prtKernelRbfNdimensionScale
     
     properties (SetAccess = private)
-        name = 'Kernel Set';
-        nameAbbreviation = 'KernelSet';
-        isSupervised = false;
+        name = 'Kernel Set'; % Kernel Set
+        nameAbbreviation = 'KernelSet'; % KernelSet
+        isSupervised = false;  % False
     end
     
     properties 
-        kernelCell
+        kernelCell % The cell array of prtKenrel objects
     end
     
     methods (Access = protected, Hidden = true)

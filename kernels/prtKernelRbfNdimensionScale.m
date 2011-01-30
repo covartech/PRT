@@ -1,25 +1,34 @@
 classdef prtKernelRbfNdimensionScale < prtKernelRbf
     % prtKernelRbfNdimensionScale  Auto-scale radial basis function kernel
     %
-    %  kernelObj = prtKernelRbfNdimensionScale; Generates a kernel object
-    %  implementing a radial basis function, but with sigma parameter
-    %  scaled by the number of features in the training data set.  Kernel
-    %  objects are widely used in several prt classifiers, such as
-    %  prtClassRvm and prtClassSvm.  RBF kernels implement the following
-    %  function for 1 x N vectors x1 and x2:
+    %  kernelObj = prtKernelRbfNdimensionScale generates a
+    %  prtKenrelNdimensionScale object implementing a radial basis
+    %  function, but with sigma parameter scaled by the number of features
+    %  in the training data set.  Kernel objects are widely used in several
+    %  prt classifiers, such as prtClassRvm and prtClassSvm.  RBF kernels
+    %  implement the following function for 1 x N vectors x1 and x2:
     %
     %   k(x1,x2) = exp(-sum((x1-x2).^2)./(sigma^2*N));
+    %   %   k(x1,x2) = exp(-sum((x1-x2).^2)./sigma.^2);
     %
-    %  kernelObj = prtKernelRbfNdimensionScale(param,value,...) with
-    %  parameter value strings sets the relevant fields of the
-    %  prtKernelRbfNdimensionScale object to have the corresponding values.
-    %  prtKernelRbfNdimensionScale objects have the following user-settable
-    %  properties:
+    %  KERNOBJ = prtKernelRbfNdimensionScale(PROPERTY1, VALUE1, ...) constructs a
+    %  prtKernelRbfNdimensionScale object KERNOBJ with properties as specified by
+    %  PROPERTY/VALUE pairs. prtKernelRbfNdimensionScale objects have the following
+    %  user-settable properties:
     %
     %   sigma   - Positive scalar value specifying the width of the
-    %       Gaussian kernel in the RBF function; this is further scaled by
-    %       the square root of the number of dimensions of the data.
-    %       (Default value is 1)
+    %             Gaussian kernel in the RBF function.  (Default value is 1 )
+    %             This is further scaled by the square root of the number
+    %             of dimensions of the data.
+    %
+    %  Radial basis function kernels are widely used in the machine
+    %  learning literature. For more information on these kernels, please
+    %  refer to:
+    %   
+    %  http://en.wikipedia.org/wiki/Support_vector_machine#Non-linear_classification
+    %
+    %   prtKernelRbfNdimensionScale objects inherit the TRAIN, RUN, and AND
+    %   methods from prtKernel.
     %
     %  Radial basis function kernels are widely used in the machine
     %  learning literature. Auto-scaling these kernels allows for relative
@@ -29,17 +38,26 @@ classdef prtKernelRbfNdimensionScale < prtKernelRbf
     %   
     %  http://en.wikipedia.org/wiki/Support_vector_machine#Non-linear_classification
     %
-    %  % Example usage:
-    %   ds = prtDataGenBimodal;
-    %   k1 = prtKernelRbfNdimensionScale;
+    %  % Example:
+    %   ds = prtDataGenBimodal;            % Load a data set
+    %   k1 = prtKernelRbfNdimensionScale;  % Create two
+    %                                      % prtKernelRbfNdimensionScale
+    %                                      % objects
     %   k2 = prtKernelRbfNdimensionScale('sigma',2);
     %   
-    %   g1 = k1.evaluateGram(ds,ds);
-    %   g2 = k2.evaluateGram(ds,ds);
+     %   k1 = k1.train(ds); % Train
+    %   g1 = k1.run(ds);    % Evaluate
     %
-    %   subplot(2,2,1); imagesc(g1); 
-    %   subplot(2,2,2); imagesc(g2);
+    %   k2 = k2.train(ds); % Train
+    %   g2 = k2.run(ds);   % Evaluate
     %
+    %   subplot(2,1,1); imagesc(g1.getObservations);  %Plot the results
+    %   subplot(2,1,2); imagesc(g2.getObservations);
+    %
+    %   See also: prtKernel,prtKernelSet, prtKernelDc, prtKernelDirect,
+    %   prtKernelHyperbolicTangent, prtKernelPolynomial,
+    %   prtKernelRbf 
+   
     methods
         function Obj = prtKernelRbfNdimensionScale(varargin)
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});

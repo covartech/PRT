@@ -8,10 +8,10 @@ classdef prtKernelPolynomial < prtKernel
     %
     %   k(x1,x2) = (x*y'+c).^d;
     %
-    %  kernelObj = prtKernelPolynomial(param,value,...) with parameter value
-    %  strings sets the relevant fields of the prtKernelPolynomial object to have
-    %  the corresponding values.  prtKernelPolynomial objects have the
-    %  following user-settable properties:
+    %  KERNOBJ = prtKernelPolynomial(PROPERTY1, VALUE1, ...) constructs a
+    %  prtKernelPolynomial object KERNOBJ with properties as specified by
+    %  PROPERTY/VALUE pairs. prtKernelPolynomial objects have the following
+    %  user-settable properties:
     %
     %   d   - Positive scalar value specifying the order of the polynomial.
     %         (Default value is 2)

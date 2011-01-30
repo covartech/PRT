@@ -9,11 +9,10 @@ classdef prtKernelHyperbolicTangent < prtKernel
     %
     %   k(x1,x2) = tanh(kappa*x1*x2'+c);
     %
-    %  kernelObj = prtKernelHyperbolicTangent(param,value,...) with
-    %  parameter value strings sets the relevant fields of the
-    %  prtKernelHyperbolicTangent object to have the corresponding values.
-    %  prtKernelHyperbolicTangent objects have the following user-settable
-    %  properties:
+    %  KERNOBJ = prtKernelHyperbolicTangent(PROPERTY1, VALUE1, ...) constructs a
+    %  prtKernelHyperbolicTangent object KERNOBJ with properties as specified by
+    %  PROPERTY/VALUE pairs. prtKernelHyperbolicTangent objects have the following
+    %  user-settable properties:
     %
     %   kappa   - Positive scalar value specifying the gain on the inner
     %             product between x1 and x2 (default 1)
