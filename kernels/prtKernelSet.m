@@ -71,7 +71,12 @@ classdef prtKernelSet < prtKernel
     end
     methods
         function Obj = prtKernelSet(varargin)
+            %Obj = prtKernelSet(varargin)
+            %   prtKernelSet(kernel1,kernel2,...)
             
+            if nargin == 0
+                error('prt:prtKernelSet:tooFewInputs','prtKernelSet requires at least one prtKernel object as input');
+            end
             c = 1;
             tempKernelCell = {};
             for i = 1:length(varargin)
