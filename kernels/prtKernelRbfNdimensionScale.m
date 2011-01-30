@@ -9,7 +9,6 @@ classdef prtKernelRbfNdimensionScale < prtKernelRbf
     %  implement the following function for 1 x N vectors x1 and x2:
     %
     %   k(x1,x2) = exp(-sum((x1-x2).^2)./(sigma^2*N));
-    %   %   k(x1,x2) = exp(-sum((x1-x2).^2)./sigma.^2);
     %
     %  KERNOBJ = prtKernelRbfNdimensionScale(PROPERTY1, VALUE1, ...) constructs a
     %  prtKernelRbfNdimensionScale object KERNOBJ with properties as specified by

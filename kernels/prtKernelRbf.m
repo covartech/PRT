@@ -12,7 +12,7 @@ classdef prtKernelRbf < prtKernel
     %  prtKernelRbfNdimensionScale object KERNOBJ with properties as specified by
     %  PROPERTY/VALUE pairs. prtKernelRbf objects have the following
     %  user-settable properties:
-
+    %
     %  KERNOBJ = prtKernelRbf(param,value,...) with parameter value
     %  strings sets the relevant fields of the prtKernelRbf object to have
     %  the corresponding values.  prtKernelRbf objects have the following

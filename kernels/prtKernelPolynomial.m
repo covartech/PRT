@@ -6,7 +6,7 @@ classdef prtKernelPolynomial < prtKernel
     %  prt classifiers, such as prtClassRvm and prtClassSvm.  Polynomial kernels
     %  implement the following function for 1 x N vectors x1 and x2:
     %
-    %   k(x1,x2) = (x*y'+c).^d;
+    %   k(x,y) = (x*y'+c).^d;
     %
     %  KERNOBJ = prtKernelPolynomial(PROPERTY1, VALUE1, ...) constructs a
     %  prtKernelPolynomial object KERNOBJ with properties as specified by
