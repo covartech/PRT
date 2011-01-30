@@ -16,31 +16,37 @@ classdef prtKernelHyperbolicTangent < prtKernel
     %  properties:
     %
     %   kappa   - Positive scalar value specifying the gain on the inner
-    %      product between x1 and x2 (default 1)
+    %             product between x1 and x2 (default 1)
     %
     %   c       - Scalar value specifying DC offset in hyperbolic tangent
-    %      function
+    %             function
     %
     %  For more information on these kernels, please refer to:
     %   
     %  http://en.wikipedia.org/wiki/Support_vector_machine#Non-linear_classification
     %
-    %  % Example usage:
-    %   ds = prtDataGenBimodal;
+    %  prtKernelHyperbolicTangent objects inherit the TRAIN, RUN, and AND
+    %  methods from prtKernel.
     %
-    %   k1 = prtKernelHyperbolicTangent;
-    %   k2 = prtKernelHyperbolicTangent('kappa',2);
+    %  % Example:
+    %  ds = prtDataGenBimodal;
+    %
+    %  k1 = prtKernelHyperbolicTangent;
+    %  k2 = prtKernelHyperbolicTangent('kappa',2);
     %   
-    %   k1 = k1.train(ds); % Train
-    %   g1 = k1.run(ds); % Evaluate
+    %  k1 = k1.train(ds); % Train
+    %  g1 = k1.run(ds); % Evaluate
     %
-    %   k2 = k2.train(ds); % Train
-    %   g2 = k2.run(ds); % Evaluate
+    %  k2 = k2.train(ds); % Train
+    %  g2 = k2.run(ds); % Evaluate
     %
-    %   subplot(2,2,1); imagesc(g1.getObservations);  %Plot the results
-    %   subplot(2,2,2); imagesc(g2.getObservations);
+    %  subplot(2,2,1); imagesc(g1.getObservations);  %Plot the results
+    %  subplot(2,2,2); imagesc(g2.getObservations);
     %
+    %   See also: prtKernel,prtKernelSet, prtKernelDc, prtKernelDirect,
+    %   prtKernelPolynomial, prtKernelRbf, prtKernelRbfNdimensionScale, 
     
+
     properties (SetAccess = private)
         name = 'Hyperbolic Tangent Kernel';
         nameAbbreviation = 'TANH';

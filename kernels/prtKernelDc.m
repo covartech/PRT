@@ -1,27 +1,33 @@
 classdef prtKernelDc < prtKernel
     % prtKernelDc  DC kernel object
     %
-    % kernelObj = prtKernelDc; Generates a kernel object implementing a
-    % constant function.  Kernel objects are widely used in several
-    % prt classifiers, such as prtClassRvm and prtClassSvm.  DC kernels
+    % kernelObj = prtKernelDc create a prtKernelDc object that implements a
+    % constant function.  Kernel objects are widely used in several prt
+    % classifiers, such as prtClassRvm and prtClassSvm.  DC kernels are
+    % important in both RVM and SVM classifiers, and are usually included
+    % to account for any DC offset in the target labels. DC kernels
     % implement the following function for 1 x N vectors x1 and x2:
     %
     %  k(x1,x2) = 1;
+    %
+    %   See also: prtKernel,prtKernelSet, prtKernelDirect,
+    %   prtKernelHyperbolicTangent, prtKernelPolynomial, prtKernelRbf,
+    %   prtKernelRbfNdimensionScale, 
+    
+    % Internal help:
     %
     % Note that since prtKernelDc is a prtKernelUnary, it output a single
     % column of the Gram matrix regardless of the dimensionality of the
     % input vectors when using evaluateGram.  This is to ensure that the
     % Gram matrix stays positive definite, and also to save memory and
-    % computation time.  DC kernels are important in both RVM and SVM
-    % classifiers, and are usually included to account for any DC offset in
-    % the target labels.
+    % computation time. 
     %
     %
     
     properties (SetAccess = private)
-        name = 'DC Kernel';
-        nameAbbreviation = 'DCKern';
-        isSupervised = false;
+        name = 'DC Kernel';   % DC Kernel
+        nameAbbreviation = 'DCKern';   % DCKern
+        isSupervised = false; % False
     end
     
     properties (Access = 'protected', Hidden = true)

@@ -12,25 +12,19 @@ classdef prtKernel < prtAction
     %   in dataSet and output the resulting gram matrix in
     %   yOut.getObservations.
     %
-    %   nDims = kernel.nDimensions Output the number of columns that should
-    %   be expected in the output of kernel.run.  For many kernels (RBF,
-    %   Polynomial, HyperbolicTangent), nDimensions is the number of
-    %   observations in the training dataSet.  For other kernels (DC),
-    %   nDimensions is a constant (1).  For other kernels (e.g. Direct),
-    %   the number of columns is the number of features in the training
-    %   data set.
-    %
     %   kernel = and(kernel1,kernel2) Combine two kernels into a
     %   prtKernelSet (also a prtKernel).  This is used to join multiple
     %   kernels together.  Unlike the plus operation for combining
     %   prtActions, the AND operation trains and runs each kernel
     %   individually on the provided data.
     %
-    %   Usually called like: 
-    %       kernels = prtKernelDc & prtKernelRbf;
+    %   % Example syntax of the AND method:
     %
-    %  See also: prtKernelRbf, prtKernelBinary, prtKernelDc, prtKernelDirect,
-    %   prtKernelHyperbolicTangent, prtKernelPolynomial,  prtKernelRbfNdimensionScale,
+    %   kernels = prtKernelDc & prtKernelRbf; % kernels is prtKernelSet
+    %
+    %  See also: prtKernelRbf, prtKernelDc, prtKernelDirect,
+    %   prtKernelHyperbolicTangent, prtKernelPolynomial,
+    %   prtKernelRbfNdimensionScale,
     
     % Internal Help:
     %
@@ -42,6 +36,14 @@ classdef prtKernel < prtAction
     % regression and classification plots.
     %
     % h = kernel.toString; Currently unused
+    %
+    %   nDims = kernel.nDimensions Output the number of columns that should
+    %   be expected in the output of kernel.run.  For many kernels (RBF,
+    %   Polynomial, HyperbolicTangent), nDimensions is the number of
+    %   observations in the training dataSet.  For other kernels (DC),
+    %   nDimensions is a constant (1).  For other kernels (e.g. Direct),
+    %   the number of columns is the number of features in the training
+    %   data set.
     
     properties (Hidden = true)
         PlotOptions = prtKernel.initializePlotOptions();        
@@ -106,7 +108,7 @@ classdef prtKernel < prtAction
     
     methods
         function Obj3 = and(Obj1,Obj2)
-            
+            % Combine 2 prtKernels into a prtKernelSet
             if ~isa(Obj1,'prtKernel') || ~isa(Obj2,'prtKernel')
                 error('prtKernel:And','Invalid input to prtKernel\\and, both arguments must be of type prtKernel');
             end
@@ -140,6 +142,7 @@ classdef prtKernel < prtAction
             
         end
         function txt = toString(obj) %#ok<MANU>
+            % Return a descriptive string
             txt = 'prtKernel';
         end
     end

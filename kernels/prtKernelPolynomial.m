@@ -14,10 +14,13 @@ classdef prtKernelPolynomial < prtKernel
     %  following user-settable properties:
     %
     %   d   - Positive scalar value specifying the order of the polynomial.
-    %       (Default value is 2)
+    %         (Default value is 2)
     %
     %   c   - Positive scalar indicating the offset of the polynomial.
-    %        (Default value is 0)
+    %         (Default value is 0)
+    %
+    %   prtKernelPolynomial objects inherit the TRAIN, RUN, and AND
+    %   methods from prtKernel.
     %
     %  Polynomial kernels are widely used in the machine
     %  learning literature. For more information on these kernels, please
@@ -25,33 +28,36 @@ classdef prtKernelPolynomial < prtKernel
     %   
     %  http://en.wikipedia.org/wiki/Support_vector_machine#Non-linear_classification
     %
-    %  % Example usage:
-    %   ds = prtDataGenBimodal;
-    %   k1 = prtKernelPolynomial;
+    %  % Example:
+    %   ds = prtDataGenBimodal;         % Load a data set
+    %   k1 = prtKernelPolynomial;       % Create 2 kernels to compare
     %   k2 = prtKernelPolynomial('d',3);
     %   
     %   k1 = k1.train(ds); % Train
-    %   g1 = k1.run(ds); % Evaluate
+    %   g1 = k1.run(ds);   % Evaluate
     %
     %   k2 = k2.train(ds); % Train
-    %   g2 = k2.run(ds); % Evaluate
+    %   g2 = k2.run(ds);   % Evaluate
     %
-    %   subplot(2,2,1); imagesc(g1.getObservations);  %Plot the results
-    %   subplot(2,2,2); imagesc(g2.getObservations);
+    %   subplot(2,1,1); imagesc(g1.getObservations);  %Plot the results
+    %   subplot(2,1,2); imagesc(g2.getObservations);
     %
-    %
+    %   See also: prtKernel,prtKernelSet, prtKernelDc, prtKernelDirect,
+    %   prtKernelHyperbolicTangent, prtKernelRbf,
+    %   prtKernelRbfNdimensionScale, 
+    
     
     properties (SetAccess = private)
-        name = 'Hyperbolic Tangent Kernel';
-        nameAbbreviation = 'TANH';
-        isSupervised = false;
+        name = 'Polynomial Kernel'; % Polynomial Kernel
+        nameAbbreviation = 'Poly';  % Poly
+        isSupervised = false; % False
     end
     
     properties
-        d = 2;    % polynomial order
-        c = 0;    % offset
+        d = 2;    % Polynomial order
+        c = 0;    % Offset
     end
-    properties (SetAccess = 'protected')
+    properties (SetAccess = 'protected', Hidden = true)
         kernelCenter = [];   % The kernel center; set during training
     end
     methods

@@ -14,7 +14,7 @@ classdef prtKernelRbf < prtKernel
     %  user-settable properties:
     %
     %   sigma   - Positive scalar value specifying the width of the
-    %       Gaussian kernel in the RBF function.  (Default value is 1)
+    %             Gaussian kernel in the RBF function.  (Default value is 1)
     %
     %  Radial basis function kernels are widely used in the machine
     %  learning literature. For more information on these kernels, please
@@ -22,7 +22,10 @@ classdef prtKernelRbf < prtKernel
     %   
     %  http://en.wikipedia.org/wiki/Support_vector_machine#Non-linear_classification
     %
-    %  % Example
+    %   prtKernelRbf objects inherit the TRAIN, RUN, and AND
+    %   methods from prtKernel.
+    %
+    %   % Example
     %   ds = prtDataGenBimodal;       % Generate a dataset
     %   k1 = prtKernelRbf;            % Create a prtKernel object with 
     %                                 % default value of sigma 
@@ -35,20 +38,20 @@ classdef prtKernelRbf < prtKernel
     %   k2 = k2.train(ds); % Train
     %   g2 = k2.run(ds); % Evaluate
     %
-    %   subplot(2,2,1); imagesc(g1.getObservations);  %Plot the results
-    %   subplot(2,2,2); imagesc(g2.getObservations);
+    %   subplot(2,1,1); imagesc(g1.getObservations);  %Plot the results
+    %   subplot(2,1,2); imagesc(g2.getObservations);
     %
-    %   See also: prtKernel, prtKernelBinary, prtKernelDc, prtKernelDirect,
-    %   prtKernelFeatureDependent, prtKernelHyperbolicTangent,
-    %   prtKernelPolynomial, prtKernelRbfNdimensionScale, prtKernelUnary
+    %   See also: prtKernel,prtKernelSet, prtKernelDc, prtKernelDirect,
+    %   prtKernelHyperbolicTangent, prtKernelPolynomial,
+    %   prtKernelRbfNdimensionScale, 
     
     properties (SetAccess = private)
-        name = 'RBF Kernel';
-        nameAbbreviation = 'RBF';
-        isSupervised = false;
+        name = 'RBF Kernel'; % RBF Kernel
+        nameAbbreviation = 'RBF'; % RBF
+        isSupervised = false; % False
     end
     properties
-        sigma = 1;
+        sigma = 1; % The inverse kernel width
     end 
     
     methods (Access = protected, Hidden = true)

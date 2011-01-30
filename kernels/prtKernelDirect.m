@@ -1,7 +1,7 @@
 classdef prtKernelDirect < prtKernel
     % prtKernelDirect  Direct kernel
     %
-    %  kernelObj = prtKernelDirect; Generates a kernel object implementing a
+    %  kernelObj = prtKernelDirect Generates a prtKernelDirect object implementing a
     %  direct kernel function.  Kernel objects are widely used in several
     %  prt classifiers, such as prtClassRvm and prtClassSvm.  Direct kernels
     %  implement the following function for 1 x N vectors x1 and x2:
@@ -11,24 +11,30 @@ classdef prtKernelDirect < prtKernel
     %  Direct kernel functions can be used sparse machine learning contexts
     %  to perform sparse linear feature selection.
     %   
-    %  % Example usage:
-    %   close all;
-    %   ds = prtDataGenUnimodal;
-    %   k1 = prtKernelDirect;
+    %  prtKernelHyperbolicTangent objects inherit the TRAIN, RUN, and AND
+    %  methods from prtKernel.
+    %
+    %  % Example:
+    %   ds = prtDataGenUnimodal;   % Load a data set
+    %   k1 = prtKernelDirect;      % Create a prtKernelDirect object
     %   
-    %   k1 = k1.train(ds);
-    %   g1 = k1.run(ds);
+    %   k1 = k1.train(ds);         % Train
+    %   g1 = k1.run(ds);           % Run
     %
-    %   subplot(1,1,1); imagesc(g1.getObservations);
+    %   % Plot the results
+    %   imagesc(g1.getObservations);
     %
+    %   See also: prtKernel,prtKernelSet, prtKernelDc,
+    %   prtKernelHyperbolicTangent, prtKernelPolynomial, prtKernelRbf,
+    %   prtKernelRbfNdimensionScale, 
     
     properties (SetAccess = private)
-        name = 'Direct Kernel';
-        nameAbbreviation = 'DirectKernel';
-        isSupervised = false;
+        name = 'Direct Kernel'; % Direct Kernel
+        nameAbbreviation = 'DirectKernel';  % DirectKernel
+        isSupervised = false; % False
      end
     
-    properties (SetAccess = 'protected')
+    properties (SetAccess = 'protected', Hidden = true)
         retainDimensions
     end
     
