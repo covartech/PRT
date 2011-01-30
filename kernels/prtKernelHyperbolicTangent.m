@@ -51,9 +51,6 @@ classdef prtKernelHyperbolicTangent < prtKernel
         c = 0;    % offset
     end
 
-    properties (Access = protected, Hidden = true)
-        internalDataSet
-    end
     
     methods
         function obj = set.kappa(obj,value)
@@ -70,28 +67,6 @@ classdef prtKernelHyperbolicTangent < prtKernel
             obj = prtUtilAssignStringValuePairs(obj,varargin{:});
         end
         
-        function nDimensions = nDimensions(Obj)
-            if ~Obj.isTrained
-                error('prtKernelHyperbolicTangent:nDimensions','Attempt to calculate nDimensions from an untrained kernel; use kernel.train(ds) to train');
-            end
-            nDimensions = Obj.internalDataSet.nObservations;
-        end
-        
-        function Obj = retainKernelDimensions(Obj,keepLogical)
-            if ~Obj.isTrained
-                error('prtKernelHyperbolicTangent:retainKernelDimensions','Attempt to retain dimensions from an untrained kernel; use kernel.train(ds) to train');
-            end
-            if islogical(keepLogical) && length(keepLogical) ~= Obj.nDimensions
-                error('prtKernelHyperbolicTangent:retainKernelDimensions','When using logical indexing for retaining kernels, length of logical vector (%d) must be equal to kernel.nDimensions (%d)',length(keepLogical),Obj.nDimensions);
-            end
-            if ~islogical(keepLogical)
-                temp = false(1,Obj.nDimensions);
-                temp(keepLogical) = true;
-                keepLogical = temp;
-            end
-            
-            Obj.internalDataSet = Obj.internalDataSet.retainObservations(keepLogical);
-        end
     end
     
     methods (Access = protected, Hidden = true)

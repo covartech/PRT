@@ -44,7 +44,20 @@ classdef prtKernel < prtAction
     % h = kernel.toString; Currently unused
     
     properties (Hidden = true)
-        PlotOptions = prtKernel.initializePlotOptions();
+        PlotOptions = prtKernel.initializePlotOptions();        
+    end
+    
+    properties (Access = protected, Hidden = true)
+        internalDataSet
+    end
+        
+    methods (Hidden = true)
+        function kfolds(varargin)
+            error('K-folds not allowed for Kernel objects');
+        end
+        function crossValidate(varargin)
+            error('crossValidate not allowed for Kernel objects');
+        end
     end
     
     methods
@@ -54,11 +67,35 @@ classdef prtKernel < prtAction
         end
     end
     
-    methods (Abstract)
-        nDimensions = nDimensions(Obj)
-        Obj = retainKernelDimensions(Obj,keepLogical)
+    methods (Hidden = true)
+        
+        %Default behaviour for kernels that make one kernel function for
+        %every training input data observation; for kernels that do not do
+        %this (e.g. DC kernel, or Direct), these functions have to be
+        %overloaded to do the right thing:
+        function nDimensions = nDimensions(Obj)
+            if ~Obj.isTrained
+                error('prtKernelHyperbolicTangent:nDimensions','Attempt to calculate nDimensions from an untrained kernel; use kernel.train(ds) to train');
+            end
+            nDimensions = Obj.internalDataSet.nObservations;
+        end
+        
+        function Obj = retainKernelDimensions(Obj,keepLogical)
+            if ~Obj.isTrained
+                error('prtKernelHyperbolicTangent:retainKernelDimensions','Attempt to retain dimensions from an untrained kernel; use kernel.train(ds) to train');
+            end
+            if islogical(keepLogical) && length(keepLogical) ~= Obj.nDimensions
+                error('prtKernelHyperbolicTangent:retainKernelDimensions','When using logical indexing for retaining kernels, length of logical vector (%d) must be equal to kernel.nDimensions (%d)',length(keepLogical),Obj.nDimensions);
+            end
+            if ~islogical(keepLogical)
+                temp = false(1,Obj.nDimensions);
+                temp(keepLogical) = true;
+                keepLogical = temp;
+            end
+            
+            Obj.internalDataSet = Obj.internalDataSet.retainObservations(keepLogical);
+        end
     end
-    
     
     methods (Hidden)  %internal, can make things faster in some classifiers
         function gramMatrix = run_OutputDoubleArray(Obj,DataSet)
@@ -89,7 +126,7 @@ classdef prtKernel < prtAction
         end
     end
     
-    methods
+    methods (Hidden = true)
         function varargout = plot(Obj) %#ok<MANU>
             %   do nothing by default; other kernels can overload as they want
             holdState = get(gca,'nextPlot');

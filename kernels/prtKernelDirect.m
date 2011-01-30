@@ -47,9 +47,12 @@ classdef prtKernelDirect < prtKernel
             kernelObj = prtUtilAssignStringValuePairs(kernelObj,varargin{:});
         end
         
+    end
+    
+    methods (Hidden = true)
         function nDimensions = nDimensions(Obj)
             if ~Obj.isTrained
-                error('prtKernelDirect:getNumDimensions','Attempt to calculate nDimensions from an untrained kernel; use kernel.train(ds) to train');
+                error('prtKernelDirect:nDimensions','Attempt to calculate nDimensions from an untrained kernel; use kernel.train(ds) to train');
             end
             nDimensions = length(find(Obj.retainDimensions));
         end
@@ -58,8 +61,8 @@ classdef prtKernelDirect < prtKernel
             if ~Obj.isTrained
                 error('prtKernelDirect:retainKernelDimensions','Attempt to retain dimensions from an untrained kernel; use kernel.train(ds) to train');
             end
-            if islogical(keepLogical) && length(keepLogical) ~= Obj.getNumDimensions
-                error('prtKernelDirect:retainKernelDimensions','When using logical indexing for retaining kernels, length of logical vector (%d) must be equal to kernel.getNumDimensions (%d)',length(keepLogical),Obj.getNumDimensions);
+            if islogical(keepLogical) && length(keepLogical) ~= Obj.nDimensions
+                error('prtKernelDirect:retainKernelDimensions','When using logical indexing for retaining kernels, length of logical vector (%d) must be equal to kernel.nDimensions (%d)',length(keepLogical),Obj.nDimensions);
             end
             if ~islogical(keepLogical)
                 temp = false(1,Obj.nDimensions);

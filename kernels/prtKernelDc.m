@@ -51,6 +51,9 @@ classdef prtKernelDc < prtKernel
             obj.isTrained = true; %we're always trained...
         end
         
+    end
+    
+    methods (Hidden = true)
         function nDimensions = nDimensions(Obj)
             if ~Obj.isTrained
                 error('prtKernelRbf:nDimensions','Attempt to calculate nDimensions from an untrained kernel; use kernel.train(ds) to train');

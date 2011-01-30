@@ -51,10 +51,6 @@ classdef prtKernelRbf < prtKernel
         sigma = 1;
     end 
     
-    properties (Access = protected, Hidden = true)
-        internalDataSet
-    end
-    
     methods (Access = protected, Hidden = true)
         function Obj = trainAction(Obj,ds)
             Obj.internalDataSet = ds;
@@ -85,31 +81,7 @@ classdef prtKernelRbf < prtKernel
             end
             Obj.sigma = value;
         end
-        
-        function nDimensions = nDimensions(Obj)
-            if ~Obj.isTrained
-                error('prtKernelRbf:nDimensions','Attempt to calculate nDimensions from an untrained kernel; use kernel.train(ds) to train');
-            end
-            nDimensions = Obj.internalDataSet.nObservations;
-        end
-        
-        function Obj = retainKernelDimensions(Obj,keepLogical)
-            if ~Obj.isTrained
-                error('prtKernelRbf:retainKernelDimensions','Attempt to retain dimensions from an untrained kernel; use kernel.train(ds) to train');
-            end
-            if islogical(keepLogical) && length(keepLogical) ~= Obj.nDimensions
-                error('prtKernelRbf:retainKernelDimensions','When using logical indexing for retaining kernels, length of logical vector (%d) must be equal to kernel.nDimensions (%d)',length(keepLogical),Obj.nDimensions);
-            end
-            if ~islogical(keepLogical)
-                temp = false(1,Obj.nDimensions);
-                temp(keepLogical) = true;
-                keepLogical = temp;
-            end
-            
-            Obj.internalDataSet = Obj.internalDataSet.retainObservations(keepLogical);
-        end
     end
-    
     
     methods(Hidden = true)
         function varargout = plot(obj)
