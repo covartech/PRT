@@ -73,6 +73,10 @@ classdef prtClassRvmSequential < prtClassRvm
         learningResults
     end
     
+    properties (Hidden = true)
+        Sigma = [];
+    end
+    
     methods
         function Obj = prtClassRvmSequential(varargin)
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
