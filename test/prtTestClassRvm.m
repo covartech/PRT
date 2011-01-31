@@ -34,7 +34,11 @@ classes  = classified.getX > .5;
 
 percentCorr = prtScorePercentCorrect(classes,TestDataSet.getTargets);
 
-result = result & (percentCorr > baselinePercentCorr);
+if(percentCorr < baselinePercentCorr)
+    result = false;
+    disp('prtTestClass RVM below baseline')
+end
+
 
 % make sure plotting succeeds
 try
@@ -58,7 +62,10 @@ crossVal = classifier.crossValidate(TestDataSet,keys);
 classes  = crossVal.getX > .5;
 percentCorr = prtScorePercentCorrect(classes,TestDataSet.getTargets);
 
-result = result & (percentCorr > baselinePercentCorr);
+if(percentCorr < baselinePercentCorr)
+    result = false;
+    disp('prtTestClass  RVM  cross-val below baseline')
+end
 
 % k-folds
 
@@ -66,26 +73,18 @@ crossVal = classifier.kfolds(TestDataSet,10);
 classes  = crossVal.getX > .5;
 percentCorr = prtScorePercentCorrect(classes,TestDataSet.getTargets);
 
-result = result & (percentCorr > baselinePercentCorr);
+if(percentCorr < baselinePercentCorr)
+    result = false;
+    disp('prtTestClass RVM kfolds below baseline')
+end
 
-% check that i can change the algorithm
-% try
-%     classifier.algorithm = 'Sequential';
-%     classifier = classifier.train(TrainingDataSet);
-%     classified = run(classifier, TestDataSet);
-%     
-%     classifier.algorithm = 'SequentialInMemory';
-%     classifier = classifier.train(TrainingDataSet);
-%     classified = run(classifier, TestDataSet);
-% catch
-%     result = false;
-%     disp('error changing algoritm Rvm classifier')
-% end
+
 
 %check learning plot and learning text
 try
-    classifier.verbosePlot = 20;
+    classifier.verbosePlot = true;
     classifier.verboseText = true;
+    classifier.learningMaxIterations = 10;
     classifier = classifier.train(TestDataSet);
     classified = run(classifier, TestDataSet);
     close all;
@@ -93,6 +92,24 @@ catch ME
     disp(ME);
     disp('Rvm learning plot/text fail')
     result = false;
+end
+
+classifier.verbosePlot = false;
+classifier.verboseText = false;
+classifier.learningMaxIterations = 100;
+% check that i can change the kernels
+kernSet = prtKernelDirect & prtKernelRbf;
+classifier.kernels = kernSet;
+classifier = classifier.train(TrainingDataSet);
+classified = run(classifier, TestDataSet);
+
+classes  = classified.getX > .5;
+
+percentCorr = prtScorePercentCorrect(classes,TestDataSet.getTargets);
+
+if(percentCorr < baselinePercentCorr)
+    result = false;
+    disp('prtTestClass RVM below second baseline for different kernels')
 end
 
 
