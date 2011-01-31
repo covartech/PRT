@@ -1,86 +1,91 @@
 classdef prtClassRvm < prtClass
     % prtClassRvm  Relevance vector machine classifier
     %
-    %    CLASSIFIER = prtClassRvm returns a relevance vector machine classifier
+    %   CLASSIFIER = prtClassRvm returns a relevance vector machine classifier
     %
-    %    CLASSIFIER = prtClassRvm(PROPERTY1, VALUE1, ...) constructs a
-    %    prtClassRvm object CLASSIFIER with properties as specified by
-    %    PROPERTY/VALUE pairs.
+    %   CLASSIFIER = prtClassRvm(PROPERTY1, VALUE1, ...) constructs a
+    %   prtClassRvm object CLASSIFIER with properties as specified by
+    %   PROPERTY/VALUE pairs.
     %
-    %    A prtClassRvm object inherits all properties from the abstract class
-    %    prtClass. In addition is has the following properties:
+    %   A prtClassRvm object inherits all properties from the abstract class
+    %   prtClass. In addition is has the following properties:
     %
-    %    kernels                - A cell array of prtKernel objects specifying
-    %                             the kernels to use
-    %    verbosePlot            - Flag indicating whether or not to plot during
-    %                             training
-    %    verboseText            - Flag indicating whether or not to output
-    %                             verbose updates during training
-    %    learningMaxIterations  - The maximum number of iterations
+    %   kernels                - A cell array of prtKernel objects specifying
+    %                            the kernels to use
+    %   verbosePlot            - Flag indicating whether or not to plot during
+    %                            training
+    %   verboseText            - Flag indicating whether or not to output
+    %                            verbose updates during training
+    %   learningMaxIterations  - The maximum number of iterations
     %
-    %    A prtClassRvm also has the following read-only properties:
+    %   A prtClassRvm also has the following read-only properties:
     %
-    %    learningConverged  - Flag indicating if the training converged
-    %    beta               - The regression weights, estimated during training
-    %    sparseBeta         - The sparse regression weights, estimated during
-    %                         training
-    %    sparseKernels      - The sparse regression kernels, estimated during
-    %                         training
+    %   learningConverged  - Flag indicating if the training converged
+    %   beta               - The regression weights, estimated during training
+    %   sparseBeta         - The sparse regression weights, estimated during
+    %                        training
+    %   sparseKernels      - The sparse regression kernels, estimated during
+    %                        training
     %
-    %    For information on relevance vector machines, please
-    %    refer to the following URL:
+    %   For information on relevance vector machines, please
+    %   refer to the following URL:
     %
-    %    http://en.wikipedia.org/wiki/Relevance_vector_machine
+    %   http://en.wikipedia.org/wiki/Relevance_vector_machine
     %
-    %    By default, prtClassRvm uses the Laplacian approximation as found
-    %    in the paper:
+    %   By default, prtClassRvm uses the Laplacian approximation as found
+    %   in the paper:
     %
-    %    Michael E. Tipping. 2001. Sparse bayesian learning and the
-    %    relevance vector machine. J. Mach. Learn. Res. 1 (September 2001),
+    %   Michael E. Tipping. 2001. Sparse bayesian learning and the
+    %   relevance vector machine. J. Mach. Learn. Res. 1 (September 2001),
     %
-    %    The code is based on the algorithm in: 
+    %   The code is based on the algorithm in: 
     %
-    %    Herbrich, Learning Kernel Classifiers, The MIT Press, 2002
-    %    http://www.learning-kernel-classifiers.org/
+    %   Herbrich, Learning Kernel Classifiers, The MIT Press, 2002
+    %   http://www.learning-kernel-classifiers.org/
     %
-    %    A prtClassRvm object inherits the TRAIN, RUN, CROSSVALIDATE and
-    %    KFOLDS methods from prtAction. It also inherits the PLOT method
-    %    from prtClass.
+    %   A prtClassRvm object inherits the TRAIN, RUN, CROSSVALIDATE and
+    %   KFOLDS methods from prtAction. It also inherits the PLOT method
+    %   from prtClass.
     %
-    %    Example:
+    %   Example:
     %
-    %    TestDataSet = prtDataGenUnimodal;      % Create some test and
-    %    TrainingDataSet = prtDataGenUnimodal;  % training data
-    %    classifier = prtClassRvm;              % Create a classifier
-    %    classifier = classifier.train(TrainingDataSet);    % Train
-    %    classified = run(classifier, TestDataSet);         % Test
-    %    % Plot the results
-    %    subplot(2,1,1);
-    %    classifier.plot;
-    %    subplot(2,1,2);
-    %    [pf,pd] = prtScoreRoc(classified,TestDataSet);
-    %    h = plot(pf,pd,'linewidth',3);
-    %    title('ROC'); xlabel('Pf'); ylabel('Pd');
+    %   TestDataSet = prtDataGenUnimodal;      % Create some test and
+    %   TrainingDataSet = prtDataGenUnimodal;  % training data
+    %   classifier = prtClassRvm;              % Create a classifier
+    %   classifier = classifier.train(TrainingDataSet);    % Train
+    %   classified = run(classifier, TestDataSet);         % Test
+    %   % Plot the results
+    %   subplot(2,1,1);
+    %   classifier.plot;
+    %   subplot(2,1,2);
+    %   [pf,pd] = prtScoreRoc(classified,TestDataSet);
+    %   h = plot(pf,pd,'linewidth',3);
+    %   title('ROC'); xlabel('Pf'); ylabel('Pd');
     %
-    %    % Example 2, using a different kernel ??? Example doesnt actually
-    %    change the kernel
+    %   % Example 2, using a different kernel 
     %
-    %    TestDataSet = prtDataGenUnimodal;      % Create some test and
-    %    TrainingDataSet = prtDataGenUnimodal;  % training data
-    %    classifier = prtClassRvm;              % Create a classifier
-    %    classifier = classifier.train(TrainingDataSet);    % Train
-    %    classified = run(classifier, TestDataSet);         % Test
-    %    % Plot
-    %    subplot(2,1,1);
-    %    classifier.plot;
-    %    subplot(2,1,2);
-    %    [pf,pd] = prtScoreRoc(classified,TestDataSet);
-    %    h = plot(pf,pd,'linewidth',3);
-    %    title('ROC'); xlabel('Pf'); ylabel('Pd');
+    %   TestDataSet = prtDataGenUnimodal;      % Create some test and
+    %   TrainingDataSet = prtDataGenUnimodal;  % training data
+    %   classifier = prtClassRvm;              % Create a classifier
     % 
-    %    See also prtClass, prtClassLogisticDiscriminant, prtClassBagging,
-    %    prtClassMap, prtClassCap, prtClassBinaryToMaryOneVsAll, prtClassDlrt,
-    %    prtClassPlsda, prtClassFld, prtClassRvmFigueiredo, prtClassRvmSequential, prtClassGlrt,  prtClass
+    %   % Create a prtKernelSet object with a different pair of
+    %   % prtKernels and assign them to the classifier
+    %   kernSet = prtKernelDirect & prtKernelRbf;
+    %   classifier.kernels = kernSet;
+    %
+    %   classifier = classifier.train(TrainingDataSet);    % Train
+    %   classified = run(classifier, TestDataSet);         % Test
+    %   % Plot
+    %   subplot(2,1,1);
+    %   classifier.plot;
+    %   subplot(2,1,2);
+    %   [pf,pd] = prtScoreRoc(classified,TestDataSet);
+    %   h = plot(pf,pd,'linewidth',3);
+    %   title('ROC'); xlabel('Pf'); ylabel('Pd');
+    % 
+    %   See also prtClass, prtClassLogisticDiscriminant, prtClassBagging,
+    %   prtClassMap, prtClassCap, prtClassBinaryToMaryOneVsAll, prtClassDlrt,
+    %   prtClassPlsda, prtClassFld, prtClassRvmFigueiredo, prtClassRvmSequential, prtClassGlrt,  prtClass
     
     properties (SetAccess=private)
         name = 'Relevance Vector Machine'  % Relevance Vector Machine
@@ -94,14 +99,18 @@ classdef prtClassRvm < prtClass
         verboseText = false;  % Whether or not to display text during training
         verbosePlot = false;  % Whether or not to plot during training
         
-        learningMaxIterations = 1000;       %Max # iterations
-        learningConvergedTolerance = 1e-5;  % Learning tolerance; at iteration i, if ||if \theta_{i}-\theta_{i-1}|| / length(theta) < learningConvergedTolerance, learning has converged
-        learningRelevantTolerance = 1e-5;   % Tolerance on \theta; if \theta is < learningConvergedTolerance, the kernel is irrelevant and can be ignored
+        learningMaxIterations = 1000;       % The maximum number of iterations
+        learningConvergedTolerance = 1e-5;  % Learning tolerance; 
+        % at iteration i, if ||if \theta_{i}-\theta_{i-1}|| / length(theta)
+        % < learningConvergedTolerance, learning has converged
+        
+        learningRelevantTolerance = 1e-5;   %Tolerance below which a kernel is marked as irrelevant and removed
+        % Tolerance on \theta; if \theta is < learningConvergedTolerance, the kernel is irrelevant and can be ignored
     end
     
     % Estimated Parameters
     properties (GetAccess = public, SetAccess = protected)
-        beta = [];    % Beta
+        beta = [];    % Regression weights
         sparseBeta = [];  % Sparse Beta
         sparseKernels = {};  % Sparse Kernel array
         learningConverged = false;   % Flag indicating whether or not training convereged
@@ -304,9 +313,9 @@ classdef prtClassRvm < prtClass
             DataSetOut = prtDataSetClass(OutputMat);
         end
     end
-    
-    methods (Access=protected,Hidden=true)
-        
+
+    methods (Access=protected, Hidden = true)
+ 
         function y = getMinusOneOneTargets(Obj, DataSet) %#ok<MANU>
             yMat = double(DataSet.getTargetsAsBinaryMatrix());
             y = nan(size(yMat,1),1);

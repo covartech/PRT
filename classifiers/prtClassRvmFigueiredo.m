@@ -1,6 +1,5 @@
 classdef prtClassRvmFigueiredo < prtClassRvm
-    % prtClassRvmFigueiredo  Relevance vector machine classifier using a
-    %   Jefferey's prior
+    % prtClassRvmFigueiredo  Relevance vector machine classifier using a Jefferey's prior
     %
     %    CLASSIFIER = prtClassRvmFigueiredo returns a relevance vector 
     %    machine classifier.
@@ -39,28 +38,28 @@ classdef prtClassRvmFigueiredo < prtClassRvm
     %   Training using the Figueiredo algorithm can provide faster
     %   and more robust convergence under some circumstances.
     %
-    %    A prtClassRvm object inherits the TRAIN, RUN, CROSSVALIDATE and
-    %    KFOLDS methods from prtAction. It also inherits the PLOT method
-    %    from prtClass.
+    %   A prtClassRvm object inherits the TRAIN, RUN, CROSSVALIDATE and
+    %   KFOLDS methods from prtAction. It also inherits the PLOT method
+    %   from prtClass.
     %
-    %    % Example
-    %    TestDataSet = prtDataGenUnimodal;      % Create some test and
-    %    TrainingDataSet = prtDataGenUnimodal;  % training data
+    %   % Example
+    %   TestDataSet = prtDataGenUnimodal;      % Create some test and
+    %   TrainingDataSet = prtDataGenUnimodal;  % training data
+    %    %    % Create a classifier with verbose plotting
+    %   classifier = prtClassRvmFigueiredo('verbosePlot',true); 
+    %   classifier = classifier.train(TrainingDataSet);    % Train
+    %   classified = run(classifier, TestDataSet);         % Test
+    %   % Plot the results
+    %   subplot(2,1,1);
+    %   classifier.plot;
+    %   subplot(2,1,2);
+    %   % figure
+    %   [pf,pd] = prtScoreRoc(classified,TestDataSet);
+    %   h = plot(pf,pd,'linewidth',3);
+    %   title('ROC'); xlabel('Pf'); ylabel('Pd'); 
     %
-    %    % Create a classifier with verbose plotting
-    %    classifier = prtClassRvmFigueiredo('verbosePlot',true); 
-    %    classifier = classifier.train(TrainingDataSet);    % Train
-    %    classified = run(classifier, TestDataSet);         % Test
-    %    % Plot the results
-    %    subplot(2,1,1);
-    %    classifier.plot;
-    %    subplot(2,1,2);
-    %    [pf,pd] = prtScoreRoc(classified,TestDataSet);
-    %    h = plot(pf,pd,'linewidth',3);
-    %    title('ROC'); xlabel('Pf'); ylabel('Pd');
-    %
-    %    See also prtClass,  prtClassRvm, prtClassRvnSeqential,
-    %    prtRegressRvmSequential
+    %   See also prtClass, prtClassRvm, prtClassRvnSequential,
+    %   prtRegressRvmSequential
     
     methods
         function Obj = prtClassRvmFigueiredo(varargin)

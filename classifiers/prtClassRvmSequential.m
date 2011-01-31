@@ -1,53 +1,54 @@
 classdef prtClassRvmSequential < prtClassRvm
-    % prtClassRvmSequential  Relevance vector machin classifier using
-    % sequential training
+    % prtClassRvmSequential  Relevance vector machine classifier using sequential training
     % 
     %   CLASSIFIER = prtClassRvmSequential returns a relevance vector
-    %   machine classifier based on
+    %   machine classifier based using sequential training.
+    %
+    %   CLASSIFIER = prtClassRvmSequential(PROPERTY1, VALUE1, ...)
+    %   constructs a prtClassRvmSequential object CLASSIFIER with properties as
+    %   specified by PROPERTY/VALUE pairs.
+    %
+    %    A prtClassRvmSequential object inherits all properties from the abstract class
+    %    prtClass. In addition is has the following properties:
+    %
+    %    kernels                - A cell array of prtKernel objects specifying
+    %                             the kernels to use
+    %    verbosePlot            - Flag indicating whether or not to plot during
+    %                             training
+    %    verboseText            - Flag indicating whether or not to output
+    %                             verbose updates during training
+    %    learningMaxIterations  - The maximum number of iterations
+    %
+    %    A prtClassRvmSequential also has the following read-only properties:
+    %
+    %    learningConverged  - Flag indicating if the training converged
+    %    beta               - The regression weights, estimated during training
+    %    sparseBeta         - The sparse regression weights, estimated during
+    %                         training
+    %    sparseKernels      - The sparse regression kernels, estimated during
+    %                         training
+    %
+    %   For more information on the algorithm and the above properties, see
+    %   the following reference:
     %
     %   Tipping, M. E. and A. C. Faul (2003). Fast marginal likelihood
     %   maximisation for sparse Bayesian models. In C. M. Bishop and B. J.
     %   Frey (Eds.), Proceedings of the Ninth International Workshop on
     %   Artificial Intelligence and Statistics, Key West, FL, Jan 3-6.
     %
-    %   CLASSIFIER = prtClassRvmSequential(PROPERTY1, VALUE1, ...)
-    %   constructs a prtClassRvm object CLASSIFIER with properties as
-    %   specified by PROPERTY/VALUE pairs.
-    %
-    %   A prtClassRvmSequential object inherits all properties from the
-    %   abstract class prtClass. In addition is has the following
-    %   properties:
-    %
-    %   SetAccess = public:
-    %    kernels            - A cell array of prtKernel objects specifying
-    %                         the kernels to use
-    %    verbosePlot        - Flag indicating whether or not to plot during
-    %                         training
-    %    verboseText        - Flag indicating whether or not to output
-    %                         verbose updates during training
-    %    learningMaxIterations  - The maximum number of iterations
-    %
-    %   SetAccess = private/protected:
-    %    learningConverged  - Flag indicating if the training converged
-    %    beta          - The regression weights, estimated during training
-    %    sparseBeta    - The sparse regression weights, estimated during
-    %                    training
-    %    sparseKernels - The sparse regression kernels, estimated during
-    %                    training
-    %
     %   prtClassRvmSequential is most useful for datasets with a large
     %   number of observations for which the gram matrix can not be held in
     %   memory. The sequential RVM training algorithm is capable of
     %   operating by generating necessary portions of the gram matrix when
     %   needed. The size of the generated portion of the gram matrix is
-    %   determined by the property, largestNumberOfGramColumns.
-    %   Sequential RVM training will attempt to generate portions of the
-    %   gram matrix that are TraingData.nObservations x
-    %   largesNumberofGramColums in size. If the entire gram matrix is this
-    %   size or smaller it need only be generated once. Therefore if the
-    %   entire gram matrix can be stored in memory, training is much
-    %   faster. For quickest operation, largestNumberOfGramColumns should
-    %   be set as large as possible without exceeding RAM limitations.
+    %   determined by the property, largestNumberOfGramColumns. Sequential
+    %   RVM training will attempt to generate portions of the gram matrix
+    %   that are TraingData.nObservations x largesNumberofGramColums in
+    %   size. If the entire gram matrix is this size or smaller it need
+    %   only be generated once. Therefore if the entire gram matrix can be
+    %   stored in memory, training is much faster. For quickest operation,
+    %   largestNumberOfGramColumns should be set as large as possible
+    %   without exceeding RAM limitations.
     %
     %    Example:
     %
@@ -62,14 +63,19 @@ classdef prtClassRvmSequential < prtClassRvm
     %    h = plot(pf,pd,'linewidth',3);
     %    title('ROC'); xlabel('Pf'); ylabel('Pd');
     %
-    
+    %   See also prtClass, prtClassRvm, prtClassRvnFiguerido,
+    %   prtRegressRvmSequential
     properties
         learningPoorlyScaledLikelihoodThreshold = 1e4;
         learningLikelihoodIncreaseThreshold = 1e-6;
         largestNumberOfGramColumns = 1000;
         learningCorrelationRemovalThreshold = 0.99;
-        learningFactorRemove = true;
+        learningFactorRemove = true;   % Remove kernels during train?
         learningRepeatedActionLimit = 25;
+        
+    end
+    
+    properties(Hidden = true)
         learningResults
     end
     

@@ -68,7 +68,7 @@ classdef prtClass < prtAction
     end
     
     properties (SetAccess=private)
-        isSupervised = true;
+        isSupervised = true;  % True
     end
     properties
         twoClassParadigm = 'binary';   %  Whether the classifier is binary or m-ary
@@ -77,10 +77,10 @@ classdef prtClass < prtAction
         yieldsMaryOutput = nan; % Determined in trainProcessing()
     end
     properties
-        internalDecider = [];
+        internalDecider = []; % Optional prtDecider object for making decisions
     end
-    properties (Dependent = true, Access = 'protected')
-        includesDecision
+    properties (Dependent = true, Access = 'protected', Hidden = true)
+        includesDecision   
     end
     properties (Hidden = true)
         PlotOptions = prtClass.initializePlotOptions();
