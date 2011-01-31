@@ -66,7 +66,8 @@ classifier = prtClassMAP;
 try
     classifier.rvs = 1;
     error = false;  % Set it to false if the preceding operation succeeded
-catch
+catch ME
+ 
     % do nothing
     % We can potentially catch and check the error string here
     % For now, just be happy it is erroring out.
@@ -79,14 +80,18 @@ noerror = true;
 
 try
     classifier = prtClassMap('rvs', prtRvMvn);
-catch
+catch ME
+ disp(ME)
+ 
     noerror = false;
 end
 
 try 
     classifier = prtClassMap;
     classifier.rvs = prtRvMvn;
-catch
+catch ME
+ disp(ME)
+ 
     noerror = false;
 end
 %% 

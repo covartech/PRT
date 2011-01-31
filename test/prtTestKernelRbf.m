@@ -5,22 +5,17 @@ result = true;
 
 try
     kern = prtKernelRbf;
-    kern = kern.trainKernel(1);
-    result = kern.evalKernel(1);
-catch
+    ds = prtDataGenBimodal;
+    kern = kern.train(ds);
+    kernOut = kern.run(ds);
+catch ME
+    disp(ME)
     disp('basic rbf kernel failure')
     result = false;
 end
 
-% check higher dim kernel
-try
-    kern = kern.trainKernel([1 2]);
-    kernOut = kern.evalKernel([ 1 2]);
-catch
-    disp('higher dim radial basis kernel fail')
-    result= false;
-end
-if kernOut ~=1
+
+if all(diag(kernOut.getX) ~= ones(size(kernOut.getX,2),1))
     disp('rbf kernel higher dim wrong answer')
     result = false;
 end
@@ -28,23 +23,13 @@ end
 % check to string
 try
     str = kern.toString;
-catch
+catch ME
+    disp(ME)
     disp('rbf kern toString fail')
     result = false;
 end
 if ~isa(str, 'char')
     disp('rbf kernel toString not a string')
-    result = false;
-end
-
-% check this kernel array nonsense
-kern = prtKernelRbf;
-dataSet = prtDataSetStandard;
-dataSet = dataSet.setX ([1 2]');
-kernCell = prtKernel.sparseKernelFactory(kern,dataSet,1:dataSet.nObservations);
-
-if (kernCell{1}.run(1) ~=1) || (kernCell{2}.run(2) ~=1)
-    disp('kernel array error')
     result = false;
 end
 
