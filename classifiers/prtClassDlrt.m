@@ -49,18 +49,6 @@ classdef prtClassDlrt < prtClass
     
     
     
-    
-    % prtClassDlrt - Distance to the K Nearest Neighbor classifer
-    %
-    % prtClassKnn Properties: 
-    %   k - number of neighbors to consider
-    %   distanceFunction - function handle specifying distance metric
-    %
-    % prtClassKnn Methods:
-    %   prtClassKnn - Logistic Discrminant constructor
-    %   train - Logistic discriminant training; see prtAction.train
-    %   run - Logistic discriminant evaluation; see prtAction.run
-    
     properties (SetAccess=private)
         name = 'Distance Likelihood Ratio Test' % Distance Likelihood Ratio Test
         nameAbbreviation = 'DLRT' % DLRT
@@ -77,6 +65,20 @@ classdef prtClassDlrt < prtClass
         function Obj = prtClassDlrt(varargin)
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
             Obj.verboseStorage = true;
+        end
+        
+        function Obj = set.k(Obj,val)
+            if ~prtUtilIsPositiveScalarInteger(val)
+                error('prt:prtClassDlrt:k','k must be a positive scalar integer');
+            end
+            Obj.k = val;
+        end
+        
+        function Obj = set.distanceFunction(Obj,val)
+            if ~isa(val,'function_handle')
+                error('prt:prtClassDlrt:distanceFunction','distanceFunction must be a function handle');
+            end
+            Obj.distanceFunction = val;
         end
     end
     

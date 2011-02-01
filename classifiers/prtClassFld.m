@@ -54,14 +54,14 @@ classdef prtClassFld < prtClass
         isNativeMary = false;  % False
     end
     
-    properties
+    properties (SetAccess = protected)
         % w is a DataSet.nDimensions x 1 vector of projection weights
         % learned during Fld.train(DataSet)
         
         w = []; % The vector of weights, learned during training
         
         % plotting options
-        plotBasis = true; % Flag indicating whether or not to plot the basis
+        plotBasis = false; % Flag indicating whether or not to plot the basis
         plotProjections = false; % Flag indicating whether or not to plot the projections
     end
     

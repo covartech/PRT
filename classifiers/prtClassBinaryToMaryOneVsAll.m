@@ -57,6 +57,13 @@ classdef prtClassBinaryToMaryOneVsAll < prtClass
         function Obj = prtClassBinaryToMaryOneVsAll(varargin)
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
         end
+        
+        function Obj = set.baseClassifier(Obj,classifier)
+            if ~isa(classifier,'prtClass')
+                error('prt:prtClassBinaryToMaryOneVsAll','baseClassifier must be a subclass of prtClass, but classifier provided was a %s',class(classifier));
+            end
+            Obj.baseClassifier = classifier;
+        end
     end
     
     methods (Access = protected,Hidden = true)

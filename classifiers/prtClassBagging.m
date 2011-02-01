@@ -60,10 +60,22 @@ classdef prtClassBagging < prtClass
     methods
         
         function Obj = prtClassBagging(varargin)
-           
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
         end
         
+        function Obj = set.nBags(Obj,val)
+            if ~prtUtilIsPositiveScalarInteger(val)
+               error('prt:prtClassBagging:nBags','nBags must be a positive scalar integer'); 
+            end
+            Obj.nBags = val;
+        end
+        
+        function Obj = set.baseClassifier(Obj,classifier)
+            if ~isa(classifier,'prtClass')
+                error('prt:prtClassBagging','baseClassifier must be a subclass of prtClass, but classifier provided was a %s',class(classifier));
+            end
+            Obj.baseClassifier = classifier;
+        end
     end
     
     methods (Access=protected, Hidden = true)

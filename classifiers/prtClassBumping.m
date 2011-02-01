@@ -76,6 +76,20 @@ classdef prtClassBumping < prtClass
     end
     
     methods
+        function Obj = set.nBags(Obj,val)
+            if ~prtUtilIsPositiveScalarInteger(val)
+               error('prt:prtClassBumping:nBags','nBags must be a positive scalar integer'); 
+            end
+            Obj.nBags = val;
+        end
+        
+        function Obj = set.includeOriginalDataClassifier(Obj,val)
+            if ~prtUtilIsLogicalScalar(val);
+               error('prt:prtClassBumping:includeOriginalDataClassifier','includeOriginalDataClassifier must be a logical scalar'); 
+            end
+            Obj.includeOriginalDataClassifier = val;
+        end
+        
         function Obj = set.baseClassifier(Obj,classifier)
             assert(isa(classifier,'prtClass'),'prt:prtClassBumping','baseClassifier must be a subclass of prtClass, but classifier provided was a %s',class(classifier));
             assert(classifier.includesDecision,'prt:prtClassBumping','baseClassifier must have in internal decision (non-empty internalDecider field), but classifier.includesDecision was false');

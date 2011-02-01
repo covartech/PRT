@@ -80,15 +80,13 @@ end
 noerror = true;
 
 try
-    classifier = prtClassFld('plotProjections', true, 'plotBasis', false);
+    classifier = prtClassFld;
 catch
     noerror = false;
 end
 
 try 
     classifier = prtClassFld;
-    classifier.plotProjections = false;
-    classifier.plotBasis = true;
 catch
     noerror = false;
 end

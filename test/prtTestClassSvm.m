@@ -76,7 +76,7 @@ result = result & (percentCorr > baselinePercentCorr);
 noerror = true;
 
 try
-    classifier = prtClassSvm('kernels', {prtKernelRbf});
+    classifier = prtClassSvm('kernels', prtKernelRbf);
 catch
     noerror = false;
 end

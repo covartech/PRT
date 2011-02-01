@@ -67,11 +67,18 @@ classdef prtClassAdaBoost < prtClass
         end
         % Set function
         function Obj = set.baseClassifier(Obj,val)
-            if(~ isa(val, 'prtClass'))
+            if (~isa(val,'prtClass'))
                 error('prtClassAdaBoost:baseClassifier','baseClassifier parameter must be a prtClass');
-            else
-                Obj.baseClassifier = val;
             end
+            Obj.baseClassifier = val;
+        end
+        
+        
+        function Obj = set.nBoosts(Obj,val)
+            if ~prtUtilIsPositiveScalarInteger(val)
+               error('prt:prtClassAdaBoost:nBoosts','nBoosts must be a positive scalar integer'); 
+            end
+            Obj.nBoosts = val;
         end
     end
     
