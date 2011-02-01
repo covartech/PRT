@@ -101,7 +101,7 @@ end
 noerror = true;
 
 try
-    classifier = prtClassLogisticDiscriminant('handleNonPosDefR', 'normalize','maxIter', 20);
+    classifier = prtClassLogisticDiscriminant('handleNonPosDefR', 'regularize','maxIter', 20);
 catch
     noerror = false;
     disp('LogisticDiscriminant param/val constructor fail');

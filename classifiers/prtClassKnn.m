@@ -56,9 +56,21 @@ classdef prtClassKnn < prtClass
     
     methods
         function Obj = prtClassKnn(varargin)
-            
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
             Obj.verboseStorage = true;
+        end
+        function Obj = set.k(Obj,val)
+            if ~prtUtilIsPositiveScalarInteger(val)
+                error('prt:prtClassKnn:k','k must be a positive scalar integer');
+            end
+            Obj.k = val;
+        end
+        
+        function Obj = set.distanceFunction(Obj,val)
+            if ~isa(val,'function_handle')
+                error('prt:prtClassKnn:distanceFunction','distanceFunction must be a function handle');
+            end
+            Obj.distanceFunction = val;
         end
     end
     

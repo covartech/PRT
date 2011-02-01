@@ -80,7 +80,7 @@ classdef prtClassLogisticDiscriminant < prtClass
         nIterations = nan;  % The number of iterations used in training
         
     end
-    methods
+    properties
         % irlsStepSize 
         %   irlsStepSize can be the string 'hessian', or a double value
         %   (typically << 1).  If irlsStepSize is 'hessian', IRLS is solved
@@ -136,29 +136,45 @@ classdef prtClassLogisticDiscriminant < prtClass
         end
         
         function Obj = set.irlsStepSize(Obj,val)
-            if ~prtUtilIsPositiveScalar(val)
-                error('prt:prtClassLogisticDiscriminant:irlsStepSize','irlsStepSize must be a positive scalar');
+            if ~prtUtilIsPositiveScalar(val) && ~strcmpi(val,'hessian')
+                error('prt:prtClassLogisticDiscriminant:irlsStepSize','irlsStepSize must be a positive scalar (or the string ''hessian'')');
             end
             Obj.irlsStepSize = val;
         end
 
         function Obj = set.maxIter(Obj,val)
-            if ~prtUtilIs
-                error('prt:prtClassLogisticDiscriminant:irlsStepSize','irlsStepSize must be a positive scalar');
+            if ~prtUtilIsPositiveScalarInteger(val)
+                error('prt:prtClassLogisticDiscriminant:maxIter','maxIter must be a positive scalar integer');
             end
-            Obj.irlsStepSize = val;
+            Obj.maxIter = val;
         end
 
         function Obj = set.wInitTechnique(Obj,val)
+            if ~isa(val,'char') || ~any(strcmpi(val,{'fld','randn','manual'}))
+                error('prt:prtClassLogisticDiscriminant:wInitTechnique','wInitTechnique must be a string matching one of ''fld'', ''randn'', or ''manual''');
+            end
+            Obj.wInitTechnique = val;
         end
 
         function Obj = set.manualInitialW(Obj,val)
+            if ~isnumeric(val) || ~isvector(val)
+                error('prt:prtClassLogisticDiscriminant:manualInitialW','manualInitialW must be a numeric vector');
+            end
+            Obj.manualInitialW = val;
         end
 
-        function Obj = set.wTolerance = 1e-2(Obj,val)
+        function Obj = set.wTolerance(Obj,val)
+            if ~prtUtilIsPositiveScalar(val)
+                error('prt:prtClassLogisticDiscriminant:wTolerance','wTolerance must be a positive scalar');
+            end
+            Obj.wTolerance = val;
         end
 
         function Obj = set.handleNonPosDefR(Obj,val)
+            if ~isa(val,'char') || ~any(strcmpi(val,{'exit','regularize'}))
+                error('prt:prtClassLogisticDiscriminant:handleNonPosDefR','handleNonPosDefR must be a string matching one of ''exit'' or ''regularize''');
+            end
+            Obj.handleNonPosDefR = val;
         end
 
     end

@@ -65,6 +65,13 @@ classdef prtClassKmsd < prtClass
             
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
         end
+        
+        function Obj = set.sigma(Obj,val)
+            if ~prtUtilIsPositiveScalar(val)
+                error('prt:prtClassKmsd:sigma','sigma must be a positive scalar');
+            end
+            Obj.sigma = val;
+        end
     end
     
     methods (Access=protected, Hidden = true)

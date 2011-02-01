@@ -13,6 +13,7 @@ classdef prtClassKmeansPrototypes < prtClass
     %    properties:
     %
     %    nClustersPerHypothesis -  The number of clusters per hypothesis
+    %
     %    clusterCenters         -  The cluster centers (set during
     %                              training)
     % 
@@ -50,12 +51,16 @@ classdef prtClassKmeansPrototypes < prtClass
     
     properties
         nClustersPerHypothesis = 2; % Number of clusters per hypothesis
-        clusterCenters = {};        % The cluster centers
-        kmeansHandleEmptyClusters = 'remove';
-        distanceMetricFn = @prtDistanceEuclidean;
     end
+    
+    properties (SetAccess = protected)
+        clusterCenters = {};        % The cluster centers
+    end
+    
     properties (SetAccess = private, Hidden = true)
         uY = [];                    
+        kmeansHandleEmptyClusters = 'remove';
+        distanceMetricFn = @prtDistanceEuclidean;
     end
     
     methods
@@ -63,6 +68,13 @@ classdef prtClassKmeansPrototypes < prtClass
         function Obj = prtClassKmeansPrototypes(varargin)
             % Allow for string, value pairs
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
+        end
+        
+        function Obj = set.nClustersPerHypothesis(Obj,val)
+            if ~prtUtilIsPositiveScalarInteger(val)
+                error('prt:prtClassKmeansPrototypes:nClustersPerHypothesis','nClustersPerHypothesis must be a positive integer scalar');
+            end
+            Obj.nClustersPerHypothesis = val;
         end
         
     end
