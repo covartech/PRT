@@ -133,14 +133,14 @@ classdef prtClassRvm < prtClass
         end
         
         function Obj = set.learningConvergedTolerance(Obj,val)
-            if ~prtUtilIsPostiveScalar(val)
+            if ~prtUtilIsPositiveScalar(val)
                 error('prt:prtClassRvm:learningConvergedTolerance','learningConvergedTolerance must be a positive scalar');
             end
             Obj.learningConvergedTolerance = val;
         end
         
         function Obj = set.learningRelevantTolerance(Obj,val)
-            if ~prtUtilIsPostiveScalar(val)
+            if ~prtUtilIsPositiveScalar(val)
                 error('prt:prtClassRvm:learningRelevantTolerance','learningRelevantTolerance must be a positive scalar');
             end
             Obj.learningRelevantTolerance = val;

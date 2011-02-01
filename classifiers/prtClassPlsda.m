@@ -70,6 +70,13 @@ classdef prtClassPlsda < prtClass
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
         end
         
+        function Obj = set.nComponents(Obj,val)
+            if ~prtUtilIsPositiveInteger(val)
+                error('prt:prtClassPlsda:nComponents','nComponents must be a positive integer');
+            end
+            Obj.nComponents = val;
+        end
+        
     end
     
     methods (Access=protected, Hidden = true)

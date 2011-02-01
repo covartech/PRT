@@ -89,19 +89,19 @@ classdef prtClassRvmSequential < prtClassRvm
         end
         
         function Obj = set.learningPoorlyScaledLikelihoodThreshold(Obj,val)
-            assert(prtUtilIsPostiveScalar(val),'prt:prtClassRvmSequential:learningPoorlyScaledLikelihoodThreshold','learningPoorlyScaledLikelihoodThreshold must be a positive scalar');
+            assert(prtUtilIsPositiveScalar(val),'prt:prtClassRvmSequential:learningPoorlyScaledLikelihoodThreshold','learningPoorlyScaledLikelihoodThreshold must be a positive scalar');
             Obj.learningPoorlyScaledLikelihoodThreshold = val;
         end
         function Obj = set.learningLikelihoodIncreaseThreshold(Obj,val)
-            assert(prtUtilIsPostiveScalar(val),'prt:prtClassRvmSequential:learningLikelihoodIncreaseThreshold','learningLikelihoodIncreaseThreshold must be a positive scalar');
+            assert(prtUtilIsPositiveScalar(val),'prt:prtClassRvmSequential:learningLikelihoodIncreaseThreshold','learningLikelihoodIncreaseThreshold must be a positive scalar');
             Obj.learningLikelihoodIncreaseThreshold = val;
         end
         function Obj = set.largestNumberOfGramColumns(Obj,val)
-            assert(prtUtilIsPositiveInteger(val),'prt:prtClassRvmSequential:largestNumberOfGramColumns','largestNumberOfGramColumns must be a positive integer scalar');
+            assert(prtUtilIsPositiveScalarInteger(val),'prt:prtClassRvmSequential:largestNumberOfGramColumns','largestNumberOfGramColumns must be a positive integer scalar');
             Obj.largestNumberOfGramColumns = val;
         end
         function Obj = set.learningCorrelationRemovalThreshold(Obj,val)
-            assert(prtUtilIsPostiveScalar(val),'prt:prtClassRvmSequential:learningCorrelationRemovalThreshold','learningCorrelationRemovalThreshold must be a positive scalar');
+            assert(prtUtilIsPositiveScalar(val),'prt:prtClassRvmSequential:learningCorrelationRemovalThreshold','learningCorrelationRemovalThreshold must be a positive scalar');
             Obj.learningCorrelationRemovalThreshold = val;
         end
         function Obj = set.learningFactorRemove(Obj,val)
@@ -109,7 +109,7 @@ classdef prtClassRvmSequential < prtClassRvm
             Obj.learningFactorRemove = val;
         end
         function Obj = set.learningRepeatedActionLimit(Obj,val)
-            assert(prtUtilIsPositiveInteger(val),'prt:prtClassRvmSequential:learningRepeatedActionLimit','learningRepeatedActionLimit must be a positive integer scalar');
+            assert(prtUtilIsPositiveScalarInteger(val),'prt:prtClassRvmSequential:learningRepeatedActionLimit','learningRepeatedActionLimit must be a positive integer scalar');
             Obj.learningRepeatedActionLimit = val;
         end
     end

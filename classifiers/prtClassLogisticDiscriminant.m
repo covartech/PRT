@@ -66,13 +66,21 @@ classdef prtClassLogisticDiscriminant < prtClass
         isNativeMary = false;  % True
     end
     
-    properties
+    properties (SetAccess = protected)
         % w  
         %   w is a DataSet.nDimensions + 1 x 1 vector of projection weights
         %   learned during LogDisc.train(DataSet)
         
         w = [];  % Regression weights
         
+        % nIterations
+        %   Number of iterations used in training.  This is set to a number
+        %   between 1 and maxIter during training.
+        
+        nIterations = nan;  % The number of iterations used in training
+        
+    end
+    methods
         % irlsStepSize 
         %   irlsStepSize can be the string 'hessian', or a double value
         %   (typically << 1).  If irlsStepSize is 'hessian', IRLS is solved
@@ -89,11 +97,6 @@ classdef prtClassLogisticDiscriminant < prtClass
         
         maxIter = 500;  % Maxmimuum number of iterations
         
-        % nIterations
-        %   Number of iterations used in training.  This is set to a number
-        %   between 1 and maxIter during training.
-        
-        nIterations = nan;  % The number of iterations used in training
         
         % wInitTechnique 
         %   wInitTechnique specifies how training should initialize the w
@@ -132,6 +135,32 @@ classdef prtClassLogisticDiscriminant < prtClass
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
         end
         
+        function Obj = set.irlsStepSize(Obj,val)
+            if ~prtUtilIsPositiveScalar(val)
+                error('prt:prtClassLogisticDiscriminant:irlsStepSize','irlsStepSize must be a positive scalar');
+            end
+            Obj.irlsStepSize = val;
+        end
+
+        function Obj = set.maxIter(Obj,val)
+            if ~prtUtilIs
+                error('prt:prtClassLogisticDiscriminant:irlsStepSize','irlsStepSize must be a positive scalar');
+            end
+            Obj.irlsStepSize = val;
+        end
+
+        function Obj = set.wInitTechnique(Obj,val)
+        end
+
+        function Obj = set.manualInitialW(Obj,val)
+        end
+
+        function Obj = set.wTolerance = 1e-2(Obj,val)
+        end
+
+        function Obj = set.handleNonPosDefR(Obj,val)
+        end
+
     end
     
     methods (Access=protected, Hidden = true)

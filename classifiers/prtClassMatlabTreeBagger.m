@@ -57,8 +57,11 @@ classdef prtClassMatlabTreeBagger < prtClass
     properties 
         % forest
         nTrees = 100;
-        forest
         treeBaggerParamValuePairs = {};
+    end
+    
+    properties (SetAccess = protected)
+        forest
     end
 
     methods 

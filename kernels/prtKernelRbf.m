@@ -84,7 +84,7 @@ classdef prtKernelRbf < prtKernel
         end
         
         function Obj = set.sigma(Obj,value)
-            if ~prtUtilIsPostiveScalar(value)
+            if ~prtUtilIsPositiveScalar(value)
                 error('prtKernelRbf:set','Value of sigma must be a positive scalar');
             end
             Obj.sigma = value;
