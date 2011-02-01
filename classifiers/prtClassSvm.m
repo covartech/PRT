@@ -82,21 +82,20 @@ classdef prtClassSvm < prtClass
     methods
         
         function Obj = set.kernels(Obj,val)
-            if ~isa(val,'cell')
-                val = {val};
-            end
-            assert(isscalar(val),'prt:prtClassSvm:setKernels','kernels must be a 1x1 prtKernel or a 1x1 cell containing one prtKernel object');
-            assert(isa(val{1},'prtKernel'),'prt:prtClassSvm:setKernels','kernels must be a 1x1 cell array of prtKernels, but value{1} is a %s',class(val{1}));
+            assert(numel(val)==1 &&  isa(val,'prtKernel'),'prt:prtClassSvm:kernels','kernels must be a prtKernel');
             Obj.kernels = val;
         end
+        
         function Obj = set.c(Obj,val)
             assert(isscalar(val) && isnumeric(val) && val > 0,'prt:prtClassSvm:c','c must be a scalar greater than 0, but value provided is %s',mat2str(val));
             Obj.c = val;
         end
+        
         function Obj = set.tol(Obj,val)
             assert(isscalar(val) && isnumeric(val) && val > 0,'prt:prtClassSvm:tol','tol must be a scalar greater than 0, but value provided is %s',mat2str(val));
             Obj.tol = val;
         end
+        
         function Obj = prtClassSvm(varargin)
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
         end

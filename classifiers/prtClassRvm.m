@@ -146,7 +146,6 @@ classdef prtClassRvm < prtClass
             Obj.learningRelevantTolerance = val;
         end
         
-        
         function Obj = set.kernels(Obj,val)
             assert(numel(val)==1 &&  isa(val,'prtKernel'),'prt:prtClassRvm:kernels','kernels must be a prtKernel');
             
