@@ -67,12 +67,18 @@ end
 
 
 try
-    
     RV = prtRvUniform;
     RV.upperBounds = [ 1 1];
     RV.lowerBounds = [ 2 3];
-    disp('prtRVuniform lower higher than upper')
-    result = false;
+    
+    % This is legitimate to do although at this point the RV is not valid.
+    % Attempting to do anything else will result in an error and a nice
+    % message telling you why. I modified this test to check if we actually
+    % think isValid = true. 
+    if RV.isValid 
+        disp('prtRVuniform lower higher than upper')
+        result = false;
+    end
 catch
     % noop
 end

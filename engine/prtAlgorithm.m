@@ -17,7 +17,6 @@ classdef prtAlgorithm < prtAction
     end
     
     methods
-        
         function Obj = set.actionCell(Obj,aCell)
            
             %Check is cell:
@@ -212,6 +211,7 @@ classdef prtAlgorithm < prtAction
             
             for i = 2:length(topoOrder)-1
                 currentInput = catFeatures(input{Obj.connectivityMatrix(i,:)});
+                Obj.actionCell{i-1}.verboseStorage = Obj.verboseStorage;
                 Obj.actionCell{i-1} = train(Obj.actionCell{i-1},currentInput);
                 input{i} = runOnTrainingData(Obj.actionCell{i-1},currentInput);
                 

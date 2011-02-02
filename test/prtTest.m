@@ -14,7 +14,10 @@ if nargin < 1 || isempty(functionNames)
 end
 
 maxStrLength = max(cellfun(@(c)length(c),functionNames));
-functionNames = cellfun(@(c)cat(2,c,repmat(' ',1,maxStrLength-length(c))),functionNames,'uniformoutput',false);
+functionNames = cellfun(@(c)cat(2,strtrim(c),repmat(' ',1,maxStrLength-length(strtrim(c)))),functionNames,'uniformoutput',false);
+
+% Remove prtTestSmoke as it is redundant.
+functionNames = prtUtilRemoveStrCell(functionNames,'prtTestSmoke');
 
 fprintf('\n PRT Test Suit - %d Test Cases\n',length(functionNames));
 overallFailure = false(length(functionNames),1);
@@ -22,7 +25,7 @@ executionFailure = overallFailure;
 for iFun = 1:length(functionNames)
     cFunStr = functionNames{iFun};
     
-    fprintf('\t%d. %s ...',iFun,cFunStr);
+    fprintf('\t%03d. %s ...',iFun,cFunStr);
     
     cStartTime = now;
     cCodeExecuteFailure = false;

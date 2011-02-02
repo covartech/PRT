@@ -87,7 +87,7 @@ classdef prtPreProcPca < prtPreProc
                        
             nSamplesEmThreshold = 1000;
                        
-            Obj.means = nanmean(DataSet.getObservations(),1);
+            Obj.means = prtUtilNanMean(DataSet.getObservations(),1);
             x = bsxfun(@minus,DataSet.getObservations(),Obj.means);
             
             maxComponents = min(size(x));

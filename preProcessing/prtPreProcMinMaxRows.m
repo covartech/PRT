@@ -47,9 +47,6 @@ classdef prtPreProcMinMaxRows < prtPreProc
     properties
         %no properties
     end
-    properties (SetAccess=private)
-        % General Classifier Properties
-    end
     
     methods
         % Allow for string, value pairs

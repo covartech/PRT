@@ -1,6 +1,14 @@
 function Obj = prtUtilAssignStringValuePairs(Obj,varargin)
-% Internal function
-% xxx Need Help xxx
+% prtUtilAssignStringValuePairs - Assings string value pairs to Matlab
+% objects
+% 
+% This function is used in the constructor of many PRT objects to enable
+% string value pairs to be input to the object.
+% This function ensures that a public field exists for each of those being
+% set to the object.
+%
+% Obj = prtUtilAssignStringValuePairs(Obj,paramName1,paramVal1,paramName2,paramVal2,...)
+
 if isempty(varargin)
     return
 end

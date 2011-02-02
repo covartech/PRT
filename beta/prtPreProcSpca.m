@@ -63,7 +63,7 @@ classdef prtPreProcSpca < prtPreProc
         
         function Obj = trainAction(Obj,DataSet)
 
-            Obj.means = nanmean(DataSet.getObservations(),1);
+            Obj.means = prtUtilNanMean(DataSet.getObservations(),1);
             X = bsxfun(@minus,DataSet.getObservations(),Obj.means);
             X = bsxfun(@minus,X,Obj.means);
             

@@ -24,7 +24,7 @@ else
     % are in the options mat file.
     % You might think that we also have to check to see if all of the
     % necessary properties are in the saved options but you don't. You
-    % don't have to because the are MATLAB classes. If the options
+    % don't have to because they are MATLAB classes. If the options
     % classes have changed since they were last saved the new
     % properties will be automatically loaded.
     

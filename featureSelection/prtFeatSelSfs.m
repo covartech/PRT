@@ -13,8 +13,8 @@ classdef prtFeatSelSfs < prtFeatSel
 %    nFeatures             - The number of features to be selected
 %    showProgressBar       - Flag indicating whether or not to show the
 %                            progress bar during feature selection.
-%    EvaluationMetric      - The metric to be used to determine which
-%                            features are selected. EvaluationMetric must
+%    evaluationMetric      - The metric to be used to determine which
+%                            features are selected. evaluationMetric must
 %                            be a function handle. The function handle must
 %                            be in the form:
 %                            @(dataSet)prtEval(prtClass, dataSet, varargin)
@@ -23,7 +23,7 @@ classdef prtFeatSelSfs < prtFeatSel
 %                            represents optional input arguments to a
 %                            prtEval function.
 %
-%    Peformance            - The performance obtained by the using the
+%    peformance            - The performance obtained by the using the
 %                            features selected.
 %    selectedFeatures      - The indices of the features selected that gave
 %                            the best performance.
@@ -43,7 +43,7 @@ classdef prtFeatSelSfs < prtFeatSel
 %   %   Change the scoring function to prtScorePdAtPf, and change the
 %   %   classification method to prtClassMAP
 %
-%   featSel.EvaluationMetric = @(DS)prtEvalPdAtPf(prtClassMap, DS, .9);
+%   featSel.evaluationMetric = @(DS)prtEvalPdAtPf(prtClassMap, DS, .9);
 %
 %   featSel = featSel.train(dataSet);
 %   outDataSet = featSel.run(dataSet);
@@ -61,53 +61,71 @@ classdef prtFeatSelSfs < prtFeatSel
         % General Classifier Properties
         nFeatures = 3;                    % The number of features to be selected
         showProgressBar = true;           % Whether or not the progress bar should be displayed
-        EvaluationMetric = @(DS)prtEvalAuc(prtClassFld,DS);   % The metric used to evaluate performance
-        
-        performance = [];                 % The best performance achieved after training
-        selectedFeatures = [];
+        evaluationMetric = @(DS)prtEvalAuc(prtClassFld,DS);   % The metric used to evaluate performance
+    end
+    
+    properties (SetAccess = protected)
+        performance = [];        % The evalutationMetric for the selected features
+        selectedFeatures = [];   % The integer values of the selected features
     end
     
     
-    
     methods
-        
-        
-        % Constructor %%
-        
-        % Allow for string, value pairs
         function Obj = prtFeatSelSfs(varargin)
             Obj.isCrossValidateValid = false;
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
         end
         
+        function Obj = set.nFeatures(Obj,val)
+            if ~prtUtilIsPositiveScalarInteger(val);
+                error('prt:prtFeatSelSfs','nFeatures must be a positive scalar integer.');
+            end
+            Obj.nFeatures = val;
+        end
+        
+        function Obj = set.showProgressBar(Obj,val)
+            if ~prtUtilIsLogicalScalar(val);
+                error('prt:prtFeatSelSfs','showProgressBar must be a scalar logical.');
+            end
+            Obj.showProgressBar = val;
+        end
+        
+        function Obj = set.evaluationMetric(Obj,val)
+            assert(isa(val, 'function_handle') && nargin(val)>=1,'prt:prtFeatSelExhaustive','evaluationMetric must be a function handle that accepts one input argument.');
+            Obj.evaluationMetric = val;
+        end
         
     end
     methods (Access=protected,Hidden=true)
         
-        % Train %%
         function Obj = trainAction(Obj,DS)
             
             nFeatsTotal = DS.nFeatures;
-            
-            sfsPerformance = zeros(min(nFeatsTotal,Obj.nFeatures),1);
-            sfsSelectedFeatures = [];
-            
+            nSelectFeatures = min(nFeatsTotal,Obj.nFeatures);
             canceled = false;
             try
+                Obj.performance = nan(1,nSelectFeatures);
+                Obj.selectedFeatures = nan(1,nSelectFeatures);
+                
                 h = [];
-                for j = 1:min(nFeatsTotal,Obj.nFeatures);
+                sfsSelectedFeatures = [];
+                for j = 1:nSelectFeatures
+                    
+                    if j > 1
+                        sfsSelectedFeatures = Obj.selectedFeatures(1:(j-1));
+                    end
                     
                     if Obj.showProgressBar
                         h = prtUtilWaitbarWithCancel('SFS');
                     end
                     
                     availableFeatures = setdiff(1:nFeatsTotal,sfsSelectedFeatures);
-                    performance = nan(size(availableFeatures));
+                    cPerformance = nan(size(availableFeatures));
                     for i = 1:length(availableFeatures)
                         currentFeatureSet = cat(2,sfsSelectedFeatures,availableFeatures(i));
                         tempDataSet = DS.retainFeatures(currentFeatureSet);
                         
-                        performance(i) = Obj.EvaluationMetric(tempDataSet);
+                        cPerformance(i) = Obj.evaluationMetric(tempDataSet);
                         
                         if Obj.showProgressBar
                             prtUtilWaitbarWithCancel(i/length(availableFeatures),h);
@@ -127,21 +145,19 @@ classdef prtFeatSelSfs < prtFeatSel
                         break
                     end
                     
-                    if all(~isfinite(performance))
-                        error('prt:prtFeatSelSfs','All evaluation matrics resulted in non-finite values. Check EvalutionMetric');
+                    if all(~isfinite(cPerformance))
+                        error('prt:prtFeatSelSfs','All evaluation matrics resulted in non-finite values. Check evalutionMetric');
                     end
                     
                     % Randomly choose the next feature if more than one provide the same performance
-                    [val,newFeatInd] = max(performance);
-                    newFeatInd = find(performance == val);
+                    val = max(cPerformance);
+                    newFeatInd = find(cPerformance == val);
                     newFeatInd = newFeatInd(max(1,ceil(rand*length(newFeatInd))));
                     
                     % In the (degenerate) case when rand==0, set the index to the first one
-                    sfsPerformance(j) = val;
-                    sfsSelectedFeatures(j) = [availableFeatures(newFeatInd)];
+                    Obj.performance(j) = val;
+                    Obj.selectedFeatures(j) = availableFeatures(newFeatInd);
                 end
-                Obj.performance = sfsPerformance;
-                Obj.selectedFeatures = sfsSelectedFeatures;
                 
             catch ME
                 if ~isempty(h) && ishandle(h)
@@ -151,18 +167,11 @@ classdef prtFeatSelSfs < prtFeatSel
             end
         end
         
-        
-        
-        % Run %
-        function DataSet = runAction(Obj,DataSet) %%
+        function DataSet = runAction(Obj,DataSet)
             if ~Obj.isTrained
                 error('prt:prtFeatSelSfs','Attempt to run a prtFeatSel that is not trained');
             end
             DataSet = DataSet.retainFeatures(Obj.selectedFeatures);
         end
-        
-        
     end
-    
-    
 end

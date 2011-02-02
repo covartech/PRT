@@ -8,11 +8,9 @@ function options = prtOptionsSetFactory
 %
 % See also. prtOptionsGet, prtOptionsSet, prtOptionsGetDefault
 
-fileName = prtOptionsFileName();
-
 options = prtOptionsGetFactory();
         
-save(fileName,'options');
+save(prtOptionsFileName(),'options');
 
 % We must clear the function prtOptionsGet to purge persistent variables
 % which are now out of date.

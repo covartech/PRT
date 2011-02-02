@@ -13,12 +13,12 @@ classdef prtFeatSelExhaustive < prtFeatSel %
 %    nFeatures             - The number of features to be selected
 %    showProgressBar       - Flag indicating whether or not to show the
 %                            progress bar during feature selection.
-%    EvaluationMetric      - The metric to be used to determine which
-%                            features are selected. EvaluationMetric must
+%    evaluationMetric      - The metric to be used to determine which
+%                            features are selected. evaluationMetric must
 %                            be a function handle. The function handle must
 %                            be in the form:
 %                            @(dataSet)prtEval(prtClass, dataSet, varargin)
-%                            where prtEvak is a prtEval function, prtClass
+%                            where prtEval is a prtEval function, prtClass
 %                            is a prt classifier object, and varargin 
 %                            represents optional input arguments to a 
 %                            prtEval function.
@@ -41,7 +41,7 @@ classdef prtFeatSelExhaustive < prtFeatSel %
 %   %   Change the scoring function to prtScorePdAtPf, and change the
 %   %   classification method to prtClassMAP
 %
-%   featSel.EvaluationMetric = @(DS)prtEvalPdAtPf( prtClassMap, DS, .9);
+%   featSel.evaluationMetric = @(DS)prtEvalPdAtPf( prtClassMap, DS, .9);
 %
 %   featSel = featSel.train(dataSet); 
 %   outDataSet = featSel.run(dataSet);
@@ -49,44 +49,56 @@ classdef prtFeatSelExhaustive < prtFeatSel %
 % See Also:  prtFeatSelStatic, prtFeatSelSfs
 
     properties (SetAccess=private)
-        % Required by prtAction
         name = 'Exhaustive Feature Selection'
         nameAbbreviation = 'Efs'
         isSupervised = true;
     end
     
     properties
-        % General Classifier Properties
         nFeatures = 3;                    % The number of features to be selected
         showProgressBar = true;           % Whether or not the progress bar should be displayed
-        EvaluationMetric = @(DS)prtEvalAuc(prtClassFld,DS);   % The metric used to evaluate performance
-        
-        performance = [];                 % The best performance achieved after training
-        selectedFeatures = [];            % The indices of the features selected by the training
+        evaluationMetric = @(DS)prtEvalAuc(prtClassFld,DS);   % The metric used to evaluate performance
+    end
+    
+    properties (SetAccess = protected)
+        performance = [];                 % The best performance of the selected feature set
+        selectedFeatures = [];            % The indices of the features selected 
     end
     
     methods
-        
-        % Constructor %%
-        % Allow for string, value pairs
         function Obj = prtFeatSelExhaustive(varargin)     
             Obj.isCrossValidateValid = false;
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
-        end    
+        end
+        
+        function Obj = set.nFeatures(Obj,val)
+            if ~prtUtilIsPositiveScalarInteger(val);
+                error('prt:prtFeatSelExhaustive','nFeatures must be a positive scalar integer.');
+            end
+            Obj.nFeatures = val;
+        end
+        
+        function Obj = set.showProgressBar(Obj,val)
+            if ~prtUtilIsLogicalScalar(val);
+                error('prt:prtFeatSelExhaustive','showProgressBar must be a scalar logical.');
+            end
+            Obj.showProgressBar = val;
+        end
+        
+        function Obj = set.evaluationMetric(Obj,val)
+            assert(isa(val, 'function_handle') && nargin(val)>=1,'prt:prtFeatSelExhaustive','evaluationMetric must be a function handle that accepts one input argument.');
+            Obj.evaluationMetric = val;
+        end
     end
     
     methods (Access=protected,Hidden=true)
-        
-        % Train %%
         function Obj = trainAction(Obj,DS)
             
             bestPerformance = -inf;
             bestChoose = [];
             
             Obj.nFeatures = min(DS.nFeatures,Obj.nFeatures);
-            %warning off;
             maxIterations = nchoosek(DS.nFeatures,Obj.nFeatures);
-            %warning on;
             
             iterationCount = 1;
             nextChooseFn = prtNextChoose(DS.nFeatures,Obj.nFeatures);
@@ -108,7 +120,7 @@ classdef prtFeatSelExhaustive < prtFeatSel %
                     end
                     
                     tempDataSet = DS.retainFeatures(currChoose);
-                    currPerformance = Obj.EvaluationMetric(tempDataSet);
+                    currPerformance = Obj.evaluationMetric(tempDataSet);
                     
                     if any(currPerformance > bestPerformance) || isempty(bestChoose)
                         bestChoose = currChoose;

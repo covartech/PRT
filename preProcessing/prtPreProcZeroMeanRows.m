@@ -40,10 +40,6 @@ classdef prtPreProcZeroMeanRows < prtPreProc
     properties
         %no properties
     end
-    properties (SetAccess=private)
-        % General Classifier Properties
-        meanVector = [];           % A vector of the means
-    end
     
     methods
         

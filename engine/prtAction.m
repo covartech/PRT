@@ -344,52 +344,92 @@ classdef prtAction
                 varargout = [varargout; {keys}];
             end
         end
+        
+        function Obj = set(Obj,varargin)
+            % set - set properties of prtAction()
+            %   
+            % ActionObj = get(ActionObj,paramNameStr,paramValue);
+            % ActionObj = get(ActionObj,paramNameStr1,paramValue1, paramNameStr2, paramNameValue2, ...); 
+            
+            Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
+        end
+        
+        function out = get(Obj,varargin)
+            % get - get properties of prtAction()
+            %   
+            % paramValue = get(ActionObj,paramNameStr);
+            % paramStruct = get(ActionObj,paramNameStr1,paramNameStr2,...);
+            
+            nameStrs = varargin;
+            
+            assert(iscellstr(nameStrs),'additional input arguments must be property name strings');
+            
+            % No additional inputs, assume all
+            if isempty(nameStrs)
+                nameStrs = properties(Obj);
+            end
+            
+            % Only one property requested
+            % Return value
+            if numel(nameStrs)==1
+                out = Obj.(nameStrs{1});
+                return
+            end
+
+            % Several properties requested
+            % Return structure of values
+            out = struct;
+            for iProp = 1:length(nameStrs)
+                out.(nameStrs{iProp}) = Obj.(nameStrs{iProp});
+            end
+        end
+        
     end
     
     methods (Access=protected, Hidden= true)
-        function ClassObj = preTrainProcessing(ClassObj,DataSet) %#ok<INUSD>
+        function ActionObj = preTrainProcessing(ActionObj,DataSet) %#ok<INUSD>
             % preTrainProcessing - Processing done prior to trainAction()
             %   Called by train(). Can be overloaded by prtActions to
             %   store specific information about the DataSet or Classifier
             %   prior to training.
             %   
-            %   ClassObj = preTrainProcessing(ClassObj,DataSet)
+            %   ActionObj = preTrainProcessing(ActionObj,DataSet)
         end
         
-        function ClassObj = postTrainProcessing(ClassObj,DataSet) %#ok<INUSD>
+        function ActionObj = postTrainProcessing(ActionObj,DataSet) %#ok<INUSD>
             % postTrainProcessing - Processing done after trainAction()
             %   Called by train(). Can be overloaded by prtActions to
             %   store specific information about the DataSet or Classifier
             %   prior to training.
             %   
-            %   ClassObj = postTrainProcessing(ClassObj,DataSet)
+            %   ActionObj = postTrainProcessing(ActionObj,DataSet)
         end
         
-        function DataSet = preRunProcessing(ClassObj, DataSet) %#ok<MANU>
+        function DataSet = preRunProcessing(ActionObj, DataSet) %#ok<MANU>
             % preRunProcessing - Processing done before runAction()
             %   Called by run(). Can be overloaded by prtActions to
             %   store specific information about the DataSet or Classifier
             %   prior to runAction.
             %   
-            %   DataSet = preRunProcessing(ClassObj, DataSet)
+            %   DataSet = preRunProcessing(ActionObj, DataSet)
         end        
         
-        function DataSetOut = postRunProcessing(ClassObj, DataSetIn, DataSetOut)
+        function DataSetOut = postRunProcessing(ActionObj, DataSetIn, DataSetOut)
             % postRunProcessing - Processing done after runAction()
             %   Called by run(). Can be overloaded by prtActions to alter
             %   the results of run() to modify outputs using parameters of
             %   the prtAction.
             %   
-            %   DataSet = postRunProcessing(ClassObj, DataSet)
+            %   DataSet = postRunProcessing(ActionObj, DataSet)
             
             if DataSetIn.nObservations > 0
-                if ClassObj.isCrossValidateValid
+                if ActionObj.isCrossValidateValid
                     if DataSetIn.isLabeled && ~DataSetOut.isLabeled
                         DataSetOut = DataSetOut.setTargets(DataSetIn.getTargets);
                     end
                     DataSetOut = DataSetOut.copyDescriptionFieldsFrom(DataSetIn);
                 end
-                DataSetOut = ClassObj.updateDataSetFeatureNames(DataSetOut);
+                DataSetOut = ActionObj.updateDataSetFeatureNames(DataSetOut);
             end
         end
         

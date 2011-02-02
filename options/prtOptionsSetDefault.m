@@ -23,10 +23,7 @@ else
     options = prtOptionsSet(varargin{:});
 end
 
-saveDir = fullfile(strrep(userpath,';',''),'prt','options');
-optionsFileName = 'prtOptionsSave.mat';
-        
-save(fullfile(saveDir,optionsFileName),'options');
+save(prtOptionsFileName(),'options');
 
 % We must clear the function prtOptionsGet to purge persistent variables
 % which are now out of date.

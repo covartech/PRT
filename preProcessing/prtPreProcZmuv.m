@@ -63,8 +63,8 @@ classdef prtPreProcZmuv < prtPreProc
         
         function Obj = trainAction(Obj,DataSet)
             % Compute the means and standard deviation
-            Obj.stds = nanstd(DataSet.getObservations(),0,1);
-            Obj.means = nanmean(DataSet.getObservations(),1);
+            Obj.stds = prtUtilNanStd(DataSet.getObservations(),1);
+            Obj.means = prtUtilNanMean(DataSet.getObservations(),1);
         end
         
         function DataSet = runAction(Obj,DataSet)

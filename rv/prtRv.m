@@ -116,6 +116,7 @@ classdef prtRv
             % R.plotPdf([xMin yMin (zMin) xMax yMax (zMax)]);  
             
             varargout = {};
+            [isValid, reasonStr] = R.isValid;
             if R.isPlottable
                 
                 if nargin > 1 % Calculate appropriate limits from covariance
@@ -132,10 +133,10 @@ classdef prtRv
                     varargout = {imageHandle};
                 end
             else
-                if R.isValid
+                if isValid
                     error('prt:prtRv:plot','This RV object cannont be plotted because it has too many dimensions.')
                 else
-                    error('prt:prtRv:plot','This RV object cannot be plotted because it is not yet valid.');
+                    error('prt:prtRv:plot','This RV object cannot be plotted. This RV is not yet valid %s.',reasonStr);
                 end
             end
         end
@@ -146,6 +147,7 @@ classdef prtRv
             % R.plotCdf([xMin yMin (zMin) xMax yMax (zMax)]);  
             
             varargout = {};
+            [isValid, reasonStr] = R.isValid;
             if R.isPlottable
                 
                 if nargin > 1 % Calculate appropriate limits from covariance
@@ -162,10 +164,10 @@ classdef prtRv
                     varargout = {imageHandle};
                 end
             else
-                if R.isValid
+                if isValid
                     error('prt:prtRv:plot','This RV object cannont be plotted because it has too many dimensions for plotting.')
                 else
-                    error('prt:prtRv:plot','This RV object cannot be plotted because it is not yet valid.');
+                    error('prt:prtRv:plot','This RV object cannot be plotted. This RV is not yet valid %s.',reasonStr);
                 end
             end
         end

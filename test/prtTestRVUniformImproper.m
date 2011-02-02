@@ -26,7 +26,7 @@ end
 RVspec = prtRvUniformImproper;
 % % Check that I can specify the number of dimensions
 try
-  error;
+  RVspec.nDimensions = 2;
 catch
     disp('prtRVUniformImproper  nDims set fail')
     result=  false;

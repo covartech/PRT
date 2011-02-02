@@ -1,5 +1,6 @@
 function result = prtTestPreProcZmuv
 result = true;
+
 try
     dataSet = prtDataGenProstate;       % Load a data set.
     zmuv = prtPreProcZmuv;           %  Create a zero-mean unit variance

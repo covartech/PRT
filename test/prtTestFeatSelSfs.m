@@ -35,7 +35,7 @@ dataSet = prtDataGenCircles;
 featSel = prtFeatSelSfs;
 featSel.nFeatures = 1;
 try
-    featSel.EvaluationMetric = @(DS)prtEvalPdAtPf(prtClassMap, DS, .9);
+    featSel.evaluationMetric = @(DS)prtEvalPdAtPf(prtClassMap, DS, .9);
     featSel = featSel.train(dataSet);
     outDataSet = featSel.run(dataSet);
 catch
@@ -45,7 +45,7 @@ end
 
 % check param/value constructor
 try
-    featSel = prtFeatSelSfs('nFeatures',2, 'EvaluationMetric', @(DS)prtScorePdAtPf(DS, prtClassMAP, .9));
+    featSel = prtFeatSelSfs('nFeatures',2, 'evaluationMetric', @(DS)prtScorePdAtPf(DS, prtClassMAP, .9));
 catch
     disp('Error #4, param/val constructor fail')
     result = false;

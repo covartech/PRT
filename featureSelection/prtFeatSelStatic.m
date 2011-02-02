@@ -39,26 +39,31 @@ classdef prtFeatSelStatic < prtFeatSel %
     end
     
     methods 
-                
-        % Constructor %%
-        % Allow for string, value pairs
         function Obj = prtFeatSelStatic(varargin) 
             Obj.isCrossValidateValid = false;
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
         end
         
+        function Obj = set.selectedFeatures(Obj,val)
+            assert(isvector(val) && prtUtilIsPositiveInteger(val),'prt:prtFeatSelStatic:selectedFeatures','selectedFeatures must be vector of positive integers');
+            
+            uVals = unique(val);
+            if numel(val) ~= numel(uVals)
+                warning('prt:prtFeatSelStatic:selectedFeatures','selectedFeatures was set with repeated values. The redundant values have been ignored.')
+            end
+            
+            Obj.selectedFeatures = uVals(:)';
+        end
     end
     methods (Access=protected,Hidden=true)
         
-        % Train %%
         function Obj = trainAction(Obj,~)
             if isnan(Obj.selectedFeatures)
                 error('Manually set selectedFeatures field of prtFeatSelStatic to succesfully train and run');
             end
         end
         
-        % Run %               
-        function DataSet = runAction(Obj,DataSet) %%
+        function DataSet = runAction(Obj,DataSet)
             if isnan(Obj.selectedFeatures)
                 error('prt:prtFeatSelStatic','Manually set selectedFeatures field of prtFeatSelStatic to succesfully train and run');
             end

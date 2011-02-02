@@ -21,9 +21,9 @@ classdef prtRvMvn < prtRv
     %                         covariance matrix to estimate or enforce. 
     %                         Valid values are 'full','spherical', or 
     %                         'diagonal'
-    %   mean                - The mean of the distribution, which is
+    %   mu                  - The mean of the distribution, which is
     %                         a 1 x nDimensions vector.
-    %   covariance          - The covariance matrix of the distribution,
+    %   sigma               - The covariance matrix of the distribution,
     %                         which is a nDimensions x nDimensions 
     %                         matrix.
     %   
@@ -46,8 +46,8 @@ classdef prtRvMvn < prtRv
     %
     %  RVspec = prtRvMvn;                   % Create another prtRvMvn
     %                                       % object
-    %  RVspec.mean = [1 2];                 % Specify the mean
-    %  RVspec.covariance = [2 -1; -1 2]     % Specify the covariance
+    %  RVspec.mu = [1 2];                   % Specify the mean
+    %  RVspec.sigma = [2 -1; -1 2]          % Specify the covariance
     %  figure;
     %  RVspec.plotPdf                       % Plot the pdf
     %  sample = RVspec.draw(1)              % Draw 1 random sample from the
@@ -60,12 +60,12 @@ classdef prtRvMvn < prtRv
     
     properties (Dependent)
         covarianceStructure  % The covariance structure
-        mean                 % The mean vector
-        covariance           % The covariance matrix
+        mu                   % The mean vector
+        sigma                % The covariance matrix
     end
     properties (SetAccess = 'private', GetAccess = 'private', Hidden = true)
-        meanDepHelper
-        covarianceDepHelper
+        muDepHelper
+        sigmaDepHelper
         covarianceStructureDepHelper = 'full';
     end
     
@@ -80,7 +80,6 @@ classdef prtRvMvn < prtRv
     
     methods
         function R = prtRvMvn(varargin)
-            
             R.name = 'Multi-Variate Normal';
             R = constructorInputParse(R,varargin{:});
         end
@@ -93,8 +92,8 @@ classdef prtRvMvn < prtRv
 
             X = R.dataInputParse(X); % Basic error checking etc
             
-            R.mean = mean(X);
-            R.covariance = cov(X);
+            R.mu = mean(X);
+            R.sigma = cov(X);
         end
         
         function vals = pdf(R,X)
@@ -115,7 +114,7 @@ classdef prtRvMvn < prtRv
             assert(size(X,2) == R.nDimensions,'Data, RV dimensionality missmatch. Input data, X, has dimensionality %d and this RV has dimensionality %d.', size(X,2), R.nDimensions)
             assert(isnumeric(X) && ndims(X)==2,'X must be a 2D numeric array.');
             
-            vals = exp(prtRvUtilMvnLogPdf(X,R.mean,R.covariance));
+            vals = exp(prtRvUtilMvnLogPdf(X,R.mu,R.sigma));
         end
         
         function vals = logPdf(R,X)
@@ -132,7 +131,7 @@ classdef prtRvMvn < prtRv
             X = R.dataInputParse(X); % Basic error checking etc
             
             assert(size(X,2) == R.nDimensions,'Data, RV dimensionality missmatch. Input data, X, has dimensionality %d and this RV has dimensionality %d.', size(X,2), R.nDimensions)
-            vals = prtRvUtilMvnLogPdf(X,R.mean,R.covariance);
+            vals = prtRvUtilMvnLogPdf(X,R.mu,R.sigma);
         end
         
         function varargout = plotCdf(R,varargin)
@@ -161,7 +160,7 @@ classdef prtRvMvn < prtRv
             X = R.dataInputParse(X); % Basic error checking etc
             
             assert(size(X,2) == R.nDimensions,'Data, RV dimensionality missmatch. Input data, X, has dimensionality %d and this RV has dimensionality %d.', size(X,2), R.nDimensions)
-            vals = prtRvUtilMvnCdf(X,R.mean,R.covariance);
+            vals = prtRvUtilMvnCdf(X,R.mu,R.sigma);
         end
         
         function vals = draw(R,N)
@@ -177,7 +176,7 @@ classdef prtRvMvn < prtRv
             assert(isValid,'DRAW cannot yet be evaluated. This RV is not yet valid %s.',reasonStr);
             
             assert(~R.badCovariance,'Covariance matrix is not positive definite. Consider modifying "covarianceStructure"');
-            vals = prtRvUtilMvnDraw(R.mean,R.covariance,N);
+            vals = prtRvUtilMvnDraw(R.mu,R.sigma,N);
         end
     end
     
@@ -192,20 +191,20 @@ classdef prtRvMvn < prtRv
                 return
             end
             
-            val = ~isempty(R.covariance) && ~isempty(R.mean);
+            val = ~isempty(R.sigma) && ~isempty(R.mu);
             
             if val
                 reasonStr = '';
             else
-                badCov = isempty(R.covariance);
-                badMean = isempty(R.mean);
+                badCov = isempty(R.sigma);
+                badMean = isempty(R.mu);
                 
                 if badCov && ~badMean
-                    reasonStr = 'because covariance has not been set';
+                    reasonStr = 'because sigma has not been set';
                 elseif ~badCov && badMean
-                    reasonStr = 'because mean has not been set';
+                    reasonStr = 'because mu has not been set';
                 elseif badCov && badMean
-                    reasonStr = 'because mean and covariance have not been set';
+                    reasonStr = 'because mu and sigma have not been set';
                 else
                     reasonStr = 'because of an unknown reason';
                 end
@@ -215,8 +214,8 @@ classdef prtRvMvn < prtRv
         function val = plotLimits(R)
             [isValid, reasonStr] = R.isValid;
             if isValid
-                minX = min(R.mean, [], 1)' - 2*sqrt(diag(R.covariance));
-                maxX = max(R.mean, [], 1)' + 2*sqrt(diag(R.covariance));
+                minX = min(R.mu, [], 1)' - 2*sqrt(diag(R.sigma));
+                maxX = max(R.mu, [], 1)' + 2*sqrt(diag(R.sigma));
                 
                 val = zeros(1,2*R.nDimensions);
                 val(1:2:R.nDimensions*2-1) = minX;
@@ -232,9 +231,9 @@ classdef prtRvMvn < prtRv
             weights = weights(:);
             
             Nbar = sum(weights);
-            R.mean = 1/Nbar*sum(bsxfun(@times,X,weights));
-            X = bsxfun(@times,bsxfun(@minus,X,R.mean),sqrt(weights));
-            R.covariance = 1/Nbar*(X'*X);
+            R.mu = 1/Nbar*sum(bsxfun(@times,X,weights));
+            X = bsxfun(@times,bsxfun(@minus,X,R.mu),sqrt(weights));
+            R.sigma = 1/Nbar*(X'*X);
         end
         
         function initMembershipMat = initializeMixtureMembership(Rs,X)
@@ -258,20 +257,20 @@ classdef prtRvMvn < prtRv
     % Get methods
     methods
         function val = get.nDimensions(R)
-            if ~isempty(R.mean)
-                val = length(R.mean);
-            elseif ~isempty(R.covariance)
-                val = size(R.covariance,2);
+            if ~isempty(R.mu)
+                val = length(R.mu);
+            elseif ~isempty(R.sigma)
+                val = size(R.sigma,2);
             else
                 val = [];
             end
         end
         
-        function val = get.mean(R)
-            val = R.meanDepHelper;
+        function val = get.mu(R)
+            val = R.muDepHelper;
         end
-        function val = get.covariance(R)
-            val = R.covarianceDepHelper;
+        function val = get.sigma(R)
+            val = R.sigmaDepHelper;
         end
         function val = get.covarianceStructure(R)
             val = R.covarianceStructureDepHelper;
@@ -300,38 +299,38 @@ classdef prtRvMvn < prtRv
             R.covarianceStructureDepHelper = covarianceStructure;
             
             % Redo the covariance to reflect the updated covarianceStructure
-            if ~isempty(R.covariance)
-                R.covariance = R.trueCovariance; % This will call set.covariance()
+            if ~isempty(R.sigma)
+                R.sigma = R.trueCovariance; % This will call set.sigma()
             end
         end
         
-        function R = set.mean(R,meanVal)
-            if ~isempty(R.covariance) && size(meanVal,2) ~= size(R.covariance,2)
-                error('prtRvMvn:dimensions','Dimensions mismatch between supplied mean and prtRvMvn dimensionality');
+        function R = set.mu(R,meanVal)
+            if ~isempty(R.sigma) && size(meanVal,2) ~= size(R.sigma,2)
+                error('prtRvMvn:dimensions','Dimensions mismatch between supplied mu and prtRvMvn dimensionality');
             end
-            R.meanDepHelper = meanVal;
+            R.muDepHelper = meanVal;
         end
         
-        function R = set.covariance(R,covariance)
-            if size(covariance,1) ~= size(covariance,2)
+        function R = set.sigma(R,sigma)
+            if size(sigma,1) ~= size(sigma,2)
                 error('Covariance matrix must be square.')
             end
             
-            if ~isempty(R.mean) && size(covariance,1) ~= R.nDimensions
-                error('prtRvMvn:dimensions','Dimensions mismatch between covariance and prtRvMvn dimensionality')
+            if ~isempty(R.mu) && size(sigma,1) ~= R.nDimensions
+                error('prtRvMvn:dimensions','Dimensions mismatch between sigma and prtRvMvn dimensionality')
             end
 
-            % Save this input as a true hidden covariance
-            R.trueCovariance = covariance;
+            % Save this input as a true hidden sigma
+            R.trueCovariance = sigma;
             
             % Enforce the covariance structure
             switch lower(R.covarianceStructure)
                 case 'full'
-                    R.covarianceDepHelper = covariance;
+                    R.covarianceDepHelper = sigma;
                 case 'diagonal'
-                    R.covarianceDepHelper = eye(size(covariance)).*covariance;
+                    R.covarianceDepHelper = eye(size(sigma)).*sigma;
                 case 'spherical'
-                    R.covarianceDepHelper = eye(size(covariance))*mean(diag(covariance));
+                    R.covarianceDepHelper = eye(size(sigma))*mean(diag(sigma));
             end
             
             [dontNeed, cholErr] = chol(R.covarianceDepHelper); %#ok<ASGLU>

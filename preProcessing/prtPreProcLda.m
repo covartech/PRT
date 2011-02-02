@@ -72,8 +72,8 @@ classdef prtPreProcLda < prtPreProc
     
     methods
         function Obj = set.nComponents(Obj,nComp)
-            if ~isnumeric(nComp) || ~isscalar(nComp) || nComp < 1 || round(nComp) ~= nComp
-                error('prt:prtPreProcPca','nComponents (%s) must be a positive scalar integer',mat2str(nComp));
+            if ~prtUtilIsPositiveScalarInteger(nComp)
+                error('prt:prtPreProcPca','nComponents must be a positive scalar integer');
             end
             Obj.nComponents = nComp;
         end

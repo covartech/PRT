@@ -59,7 +59,7 @@ classdef prtPreProcZeroMeanColumns < prtPreProc
     methods (Access = protected, Hidden = true)
         
         function Obj = trainAction(Obj,DataSet)
-            Obj.meanVector = nanmean(DataSet.getObservations(),1);
+            Obj.meanVector = prtUtilNanMean(DataSet.getObservations(),1);
         end
         
         function DataSet = runAction(Obj,DataSet)

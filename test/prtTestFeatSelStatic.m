@@ -33,18 +33,20 @@ if ~isequal(outDataSet.getX, dataSet.getFeatures(1));
     disp('Error # 3, wrong feature selected')
 end
 
-try
-    featSel = prtFeatSelExhaustive('selectedFeatures',2);
-catch
-    disp('Error #4, param/val constructor fail')
-    result = false;
-end
+% Cannot set selectedFeatures manually. If you want to do that you want
+% prtFeatSelStatic.
+% try
+%     featSel = prtFeatSelExhaustive('selectedFeatures',2);
+% catch
+%     disp('Error #4, param/val constructor fail')
+%     result = false;
+% end
+
 %% Stuff that should error
 error = true;
 % This errors out messily if you don't train first, should error out clean.
-dataSet = prtDataGenSpiral3;
+dataSet = prtDataGenSpiral3Regress;
 featSel = prtFeatSelStatic; 
-
 
 try
     R = featSel.run(dataSet);
