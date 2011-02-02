@@ -414,17 +414,21 @@ classdef prtDataSetClass  < prtDataSetStandard
             
         end
         
-        function explore(obj)
+        function explore(obj, AdditionalOptions)
             % explore  Explore the prtDataSetObject
             %
             %   dataSet.explore() opens the prtDataSetObject explorer for
             %   visualizing high dimensional data sets.
             
-             try
-                prtPlotUtilDataSetExploreGuiWithNavigation(obj);
-             catch %#ok<CTCH>
-                 error('prt:prtDataSetClassExplore','An unexpected error was encountered with explore(). If this error persists you may want to try using exploreSimple().')
-             end
+            if nargin < 2
+                AdditionalOptions = [];
+            end
+            
+            try
+                prtPlotUtilDataSetExploreGuiWithNavigation(obj,AdditionalOptions);
+            catch %#ok<CTCH>
+                error('prt:prtDataSetClassExplore','An unexpected error was encountered with explore(). If this error persists you may want to try using exploreSimple().')
+            end
         end
         function exploreSimple(obj)
             % exploreSimple Explore the prtDataSetObject using basic

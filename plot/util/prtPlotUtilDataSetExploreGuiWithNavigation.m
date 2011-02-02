@@ -1,6 +1,32 @@
-function prtPlotUtilDataSetExploreGuiWithNavigation(ds,plotInds)
+function prtPlotUtilDataSetExploreGuiWithNavigation(ds,AdditionalOptions)
 % Internal function,
 % xxx Need Help xxx - see prtDataSetClass.explore
+
+% AdditionalOptions must be structure with the field additionalOnClickFunction
+% additionalOnClickFunction is a function handles that accepts 3 input
+% arguments:  DataSet, clickedObsInd, currentlyDisplayedFeatures
+%
+% Example:
+% ds = prtDataGenIris;
+% O.additionalOnClickFunction = @(~,clickInd,~)disp(clickInd);
+% prtPlotUtilDataSetExploreGuiWithNavigation(ds,O)
+% % when you click the index clicked will be displayed in the command
+% % window.
+
+
+if nargin < 2 || isempty(AdditionalOptions)
+    AdditionalOptions.additionalOnClickFunction = @(DataSet,clickedObsInd,currentlyDisplayedFeatures)([]); %Nothign extra
+end
+assert(isstruct(AdditionalOptions) && isscalar(AdditionalOptions) && isfield(AdditionalOptions,'additionalOnClickFunction'),'prt:prtDataSetClassExplore','AdditionalOptions must be a scalar structure with the field "additionalOnClickFunction".');
+assert(isa(AdditionalOptions.additionalOnClickFunction,'function_handle') && nargin(AdditionalOptions.additionalOnClickFunction)==3,'prt:prtDataSetClassExplore','AdditionalOptions.additionalOnClickFunction must be a function handle that accepts two input arguments: DataSet,clickedObsInd,currentlyDisplayedFeatures.');
+
+if ds.nFeatures > 1
+    plotInds = [1 2 0];
+elseif ds.nFeatures > 0
+    plotInds = [1 0 0];
+else
+    error('prt:prtDataSetClassExplore','Dataset has zero features and cannot be explored');
+end
 
 if strcmpi(get(gcf,'tag'),'prtDataSetExplorerControl')
     % Current figure is nav controls
@@ -20,15 +46,6 @@ if strcmpi(get(plotAxes,'tag'),'prtDataSetExploreAxes')
     end
 end
     
-
-if ds.nFeatures > 1
-    plotInds = [1 2 0];
-elseif ds.nFeatures > 0
-    plotInds = [1 0 0];
-else
-    error('prt:prtDataSetClassExplore','Dataset has zero features and cannot be explored');
-end
-
 % Make control panel figure
 % Make axes current
 plotAxesFig = gcf;
@@ -201,6 +218,9 @@ set(navFigH,'visible','on');
         end
         
         displayInfo(clickedObsInd);
+        
+        AdditionalOptions.additionalOnClickFunction(ds,clickedObsInd,plotInds);
+        
     end
 
     function displayInfo(clickedObsInd)
