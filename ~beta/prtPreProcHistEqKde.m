@@ -34,7 +34,6 @@ classdef prtPreProcHistEqKde < prtPreProc
         % Required by prtAction
         name = 'Histogram Equalization KDE'
         nameAbbreviation = 'HistEqKde'
-        isSupervised = false;
     end
     
     properties

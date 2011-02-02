@@ -42,7 +42,6 @@ classdef prtPreProcZmuv < prtPreProc
     properties (SetAccess=private)
         name = 'Zero Mean Unit Variance'  % Zero Mean Unit Variance
         nameAbbreviation = 'ZMUV'  % ZMUV
-        isSupervised = false;  % False
     end
     
     properties (SetAccess=private)

@@ -43,10 +43,8 @@ classdef prtPreProcHistEq < prtPreProc
     %   prtPreProcLogDisc, prtPreProcZmuv, prtPreProcMinMaxRows                    
 
     properties (SetAccess=private)
-        % Required by prtAction
-        name = 'Histogram Equalization' % Histogram Equalization
-        nameAbbreviation = 'HistEq'   % HistEq
-        isSupervised = false; % False
+        name = 'Histogram Equalization'
+        nameAbbreviation = 'HistEq'
     end
     
     properties

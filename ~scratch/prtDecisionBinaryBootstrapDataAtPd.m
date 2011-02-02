@@ -2,7 +2,6 @@ classdef prtDecisionBinaryBootstrapDataAtPd < prtDecisionBinary
     properties (SetAccess = private)
         name = 'BootstrapDataAtPd'
         nameAbbreviation = 'BSDPD';
-        isSupervised = true;
     end
     
     properties

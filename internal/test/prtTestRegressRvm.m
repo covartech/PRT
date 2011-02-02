@@ -25,7 +25,7 @@ try
     close
 catch
     result = false;
-    disp('prtTestRegressRvn basic fail')
+    disp('prtTestRegressRvm basic fail')
 end
 
 % Check that the non-default algo  works
@@ -38,7 +38,7 @@ try
     close
 catch
     result = false;
-    disp('prtTestRegressRvn sequential basic fail')
+    disp('prtTestRegressRvm sequential basic fail')
 end
 
 % Check vs the baseline
@@ -67,7 +67,7 @@ end
 %     close
 % catch
 %     result = false;
-%     disp('prtTestRegressRvn learing plot fail')
+%     disp('prtTestRegressRvm learing plot fail')
 %     close all;
 % end
 
@@ -80,7 +80,7 @@ try
     close
 catch
     result = false;
-    disp('prtTestRegressRvn kfolds fail')
+    disp('prtTestRegressRvm kfolds fail')
 end
 
 %% Some error checks

@@ -30,7 +30,6 @@ classdef prtFeatSelStatic < prtFeatSel %
         % Required by prtAction
         name = 'Static Feature Selection'
         nameAbbreviation = 'StaticFeatSel'
-        isSupervised = false;
     end 
     
     properties 

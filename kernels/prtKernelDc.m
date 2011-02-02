@@ -27,7 +27,6 @@ classdef prtKernelDc < prtKernel
     properties (SetAccess = private)
         name = 'DC Kernel';   % DC Kernel
         nameAbbreviation = 'DCKern';   % DCKern
-        isSupervised = false; % False
     end
     
     properties (Access = 'protected', Hidden = true)

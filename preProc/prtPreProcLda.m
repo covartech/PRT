@@ -1,4 +1,4 @@
-classdef prtPreProcLda < prtPreProc
+classdef prtPreProcLda < prtPreProcClass
     % prtPreProcLda  Linear discriminant analysis processing
     %
     %   preProc = prtPreProcLda creates a linear discriminant pre
@@ -39,10 +39,8 @@ classdef prtPreProcLda < prtPreProc
     %   prtPreProcLogDisc, prtPreProcZmuv, prtPreProcMinMaxRows                    
 
     properties (SetAccess=private)
-        % Required by prtAction
-        name = 'Linear discriminant analysis'
-        nameAbbreviation = 'LDA'
-        isSupervised = true;
+        name = 'Linear discriminant analysis' % Linear discriminant analysis
+        nameAbbreviation = 'LDA' % LDA
     end
     
     properties

@@ -56,6 +56,13 @@ classdef prtDecision < prtAction
         classList
     end
     methods
+        function obj = prtDecision()
+            % As an action subclass we must set the properties to reflect
+            % our dataset requirements
+            obj.classInput = 'prtDataSetStandard';
+            obj.classOutput = 'prtDataSetStandard';
+            obj.classInputOutputRetained = true;
+        end 
         function obj = set.classList(obj,val)
             obj.classList = val(:);
         end

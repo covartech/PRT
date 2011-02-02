@@ -51,7 +51,6 @@ classdef prtFeatSelExhaustive < prtFeatSel %
     properties (SetAccess=private)
         name = 'Exhaustive Feature Selection'
         nameAbbreviation = 'Efs'
-        isSupervised = true;
     end
     
     properties
@@ -101,7 +100,7 @@ classdef prtFeatSelExhaustive < prtFeatSel %
             maxIterations = nchoosek(DS.nFeatures,Obj.nFeatures);
             
             iterationCount = 1;
-            nextChooseFn = prtNextChoose(DS.nFeatures,Obj.nFeatures);
+            nextChooseFn = prtUtilNextChoose(DS.nFeatures,Obj.nFeatures);
             firstChoose = nextChooseFn();
             currChoose = firstChoose;
             

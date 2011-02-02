@@ -14,6 +14,14 @@ classdef prtRegress < prtAction %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     end    
     
     methods
+        function obj = prtRegress()
+            % As an action subclass we must set the properties to reflect
+            % our dataset requirements
+            obj.classInput = 'prtDataSetRegress';
+            obj.classOutput = 'prtDataSetRegress';
+            obj.classInputOutputRetained = true;
+        end        
+        
         function varargout = plot(Obj)
             % PLOT  Plot the output confidence of a prtClass object
             %
@@ -48,6 +56,7 @@ classdef prtRegress < prtAction %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
                 varargout = {HandleStructure};
             end
         end
+        
         function [OutputDataSet, linGrid, gridSize] = runRegressorOnGrid(Obj, upperBounds, lowerBounds)
             
             if nargin < 3 || isempty(lowerBounds)
@@ -60,7 +69,7 @@ classdef prtRegress < prtAction %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             
             [linGrid, gridSize] = prtPlotUtilGenerateGrid(upperBounds, lowerBounds, Obj.PlotOptions.nSamplesPerDim);
             
-            OutputDataSet = run(Obj,prtDataSetClass(linGrid));
+            OutputDataSet = run(Obj,prtDataSetRegress(linGrid));
         end
     end
     methods (Static, Hidden = true)

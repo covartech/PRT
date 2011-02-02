@@ -12,14 +12,11 @@ classdef prtFeatSelGeneticAlgorithm < prtFeatSel
 % 
 % featSelGa = prtFeatSelGeneticAlgorithm;  
 % featSelGa = featSelGa.train(ds);
-%
-    
     
     properties (SetAccess=private)
         % Required by prtAction
         name = 'Genetic Algorithm Feature Selection'
         nameAbbreviation = 'GAFS'
-        isSupervised = true;
     end
     
     properties
@@ -33,11 +30,6 @@ classdef prtFeatSelGeneticAlgorithm < prtFeatSel
     end
     
     methods
-        
-        
-        % Constructor %%
-        
-        % Allow for string, value pairs
         function Obj = prtFeatSelGeneticAlgorithm(varargin)
             Obj.isCrossValidateValid = false;
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});

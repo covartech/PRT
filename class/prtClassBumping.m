@@ -56,12 +56,9 @@ classdef prtClassBumping < prtClass
  
 
     properties (SetAccess=private)
-        % Required by prtAction
-        name = 'Bumping'   %  Bagging Classifier
-        nameAbbreviation = 'Bumping'  %  Bagging
-        %isSupervised = true;          %  True
-        
-        isNativeMary = false;         % False
+        name = 'Bumping'
+        nameAbbreviation = 'Bumping'
+        isNativeMary = false;         
     end
     
     properties

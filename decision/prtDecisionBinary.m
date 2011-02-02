@@ -16,11 +16,15 @@ classdef prtDecisionBinary < prtDecision
     % ptDecisionBinarySpecifiedPf, prtDecisionMap
     
     methods (Abstract)
-        %Returns the objects threshold
         threshold = getThreshold(Obj) 
         % THRESH = getThreshold returns the objects threshold
     end
     methods (Access=protected,Hidden=true)
+        function obj = prtDecisionBinary()
+            obj.classInput = 'prtDataSetClass';
+            obj.classOutput = 'prtDataSetClass';
+        end
+        
         function DS = runAction(Obj,DS)
             theClasses = Obj.classList;
             DS = DS.setObservations(theClasses((DS.getObservations >= Obj.getThreshold) + 1));

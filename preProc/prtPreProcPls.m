@@ -1,4 +1,4 @@
-classdef prtPreProcPls < prtPreProc
+classdef prtPreProcPls < prtPreProcClass
     % prtPreProcPls   Partial least squares
     %
     %   PCA = prtPreProcPls creates a partial least-squares pre-processing
@@ -36,14 +36,12 @@ classdef prtPreProcPls < prtPreProc
     %   prtPreProcLogDisc, prtPreProcZmuv, prtPreProcMinMaxRows                    
         
     properties (SetAccess=private)
-        % Required by prtAction
-        name = 'Partial Least Squares'
-        nameAbbreviation = 'PLS'
-        isSupervised = true;
+        name = 'Partial Least Squares' % Partial Least Squares
+        nameAbbreviation = 'PLS' % PLS
     end
     
     properties
-        nComponents = 2;   % The number of LDA components
+        nComponents = 2;   % The number of Pls components
     end
     properties (SetAccess=private)
         % General Classifier Properties
@@ -80,9 +78,6 @@ classdef prtPreProcPls < prtPreProc
     methods (Access=protected,Hidden=true)
         
         function Obj = trainAction(Obj,DataSet)
-            %             if Obj.nComponents > DataSet.nClasses
-            %                 error('prt:prtPreProcLda','Attempt to train LDA pre-processor with more components (%d) than unique classes in data set (%d)',Obj.nComponents,DataSet.nClasses);
-            %             end
             
             X = DataSet.getObservations;
             if DataSet.nClasses > 2

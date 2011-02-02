@@ -64,6 +64,12 @@ classdef prtKernel < prtAction
     
     methods
         function obj = prtKernel()
+            % As an action subclass we must set the properties to reflect
+            % our dataset requirements
+            obj.classInput = 'prtDataSetStandard';
+            obj.classOutput = 'prtDataSetStandard';
+            obj.classInputOutputRetained = false;
+        
             obj.isCrossValidateValid = false;
             obj.verboseStorage = false;
         end

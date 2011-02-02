@@ -31,10 +31,9 @@ classdef prtClusterGmm < prtCluster %prtClass %prtAction %should extent prtClust
     %   plot(clusterAlgo);
     %   
     
-      properties (SetAccess=private)
-        name = 'GMM Clustering' % K-Means Clustering
-        nameAbbreviation = 'GMMCluster' % K-MeansCluster
-        isSupervised = false;
+    properties (SetAccess=private)
+        name = 'GMM Clustering' 
+        nameAbbreviation = 'GMMCluster'
     end
     
     properties

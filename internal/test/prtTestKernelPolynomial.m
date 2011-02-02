@@ -29,7 +29,7 @@ end
 
 kern.d = 2; kern.c = 0;
 ds = prtDataSetClass;
-ds = ds.setObservations([1 2 3]')
+ds = ds.setObservations([1 2 3]');
 kern = kern.train(ds);
 kernOut = kern.run(ds);
 if kernOut.getX ~= [ 1 4 9; 4 16 36; 9 36 81]

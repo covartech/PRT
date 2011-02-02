@@ -16,6 +16,15 @@ classdef prtPreProc < prtAction
     %   prtPreProcZeroMeanColumns, prtPreProcLda, prtPreProcZeroMeanRows,
     %   prtPreProcLogDisc, prtPreProcZmuv, prtPreProcMinMaxRows                    
 
+    methods
+        function obj = prtPreProc()
+            % As an action subclass we must set the properties to reflect
+            % our dataset requirements
+            obj.classInput = 'prtDataSetStandard';
+            obj.classOutput = 'prtDataSetStandard';
+            obj.classInputOutputRetained = true;
+        end
+    end
     methods (Hidden = true)
         function featureNames = updateFeatureNames(obj,featureNames)
             for i = 1:length(featureNames)

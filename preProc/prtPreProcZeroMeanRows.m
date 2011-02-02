@@ -34,7 +34,6 @@ classdef prtPreProcZeroMeanRows < prtPreProc
     properties (SetAccess=private)
         name = 'Zero-Mean Rows' % Zero-Mean Rows
         nameAbbreviation = 'ZMR' % ZMR
-        isSupervised = false; % False
     end
     
     properties

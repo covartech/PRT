@@ -73,7 +73,7 @@ catch
     result = false;
 end
 
-if ~isa(ds,'prtDataSetClass')
+if ~isa(ds,'prtDataSetStandard')
     disp('prtDataGenOldFaithful wrong class')
     result = false;
 end

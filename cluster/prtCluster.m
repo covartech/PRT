@@ -16,9 +16,6 @@ classdef prtCluster < prtAction
     %   In addition, ptCluster objects inherit the train, run,
     %   crossValidate and kfolds methods from prtAction.
     
-    properties (SetAccess=private)
-        isNativeMary = true; % True classifier natively produces an output for each unique class
-    end
     properties (Abstract)
         nClusters  % The number of clusters
     end
@@ -29,12 +26,10 @@ classdef prtCluster < prtAction
         includesDecision % Flag indicating if result includes a decision
     end
     properties (SetAccess=protected, Hidden = true)
-        yieldsMaryOutput = true; %Clustering algorithms *must*
-        twoClassParadigm = 'm-ary';   %  Whether the classifier is binary or m-ary
+        yieldsMaryOutput = nan; % Determined in trainProcessing()
     end
-
     properties (Hidden = true)
-        PlotOptions = prtClass.initializePlotOptions();  %
+        PlotOptions = prtClass.initializePlotOptions(); 
     end
 
     methods (Hidden = true)
@@ -50,6 +45,14 @@ classdef prtCluster < prtAction
     end
 
     methods
+        function obj = prtCluster()
+            % As an action subclass we must set the properties to reflect
+            % our dataset requirements
+            obj.classInput = 'prtDataSetStandard';
+            obj.classOutput = 'prtDataSetStandard';
+            obj.classInputOutputRetained = true;
+        end
+        
         function obj = set.internalDecider(obj,val)
             if ~isempty(val) && ~isa(val,'prtDecision')
                 error('prtClass:internalDecider','internalDecider must be an empty vector ([]) of type prtDecision, but input is a %s',class(val));
@@ -61,7 +64,7 @@ classdef prtCluster < prtAction
         end
         
         function varargout = plot(Obj)
-            % PLOT  Plot the output confidence of a prtClass object
+            % PLOT  Plot the output of the prtCluster object
             %
             %   OBJ.plot() plots the output confidence of a prtClass
             %   object. This function only operates when the dimensionality
@@ -75,11 +78,16 @@ classdef prtCluster < prtAction
             assert(Obj.DataSetSummary.nFeatures < 4, 'nFeatures in the training dataset must be less than or equal to 3');
             
             if Obj.yieldsMaryOutput
-                % Must produce mary plot
-                HandleStructure = plotMaryClusterConfidence(Obj);
+                % Must have an internal decider
+                Obj = trainAutoDecision(Obj);
+            end
+           
+            HandleStructure = plotBinaryClusterConfidence(Obj);
+                
+            if ~isempty(Obj.DataSet) && ~isempty(Obj.DataSet.name)
+                title(sprintf('%s (%s)',Obj.name,Obj.DataSet.name));
             else
-                % Single binary plot
-                HandleStructure = plotBinaryClusterConfidence(Obj);
+                title(Obj.name);
             end
             
             varargout = {};
@@ -123,7 +131,7 @@ classdef prtCluster < prtAction
         end
         
         % Plotting functions
-        function [OutputDataSet, linGrid, gridSize] = runClassifierOnGrid(Obj, upperBounds, lowerBounds)
+        function [OutputDataSet, linGrid, gridSize] = runClustererOnGrid(Obj, upperBounds, lowerBounds)
 
             if nargin < 3 || isempty(lowerBounds)
                 lowerBounds = Obj.DataSetSummary.lowerBounds;
@@ -141,65 +149,35 @@ classdef prtCluster < prtAction
         
         function HandleStructure = plotBinaryClusterConfidence(Obj)
             
-            [OutputDataSet, linGrid, gridSize] = runClassifierOnGrid(Obj);
-            %added this hack to make M-ary classifiers *with
-            %internalDeciders* output the right colors:
-            if Obj.nClusters > 2
-                imageHandle = prtPlotUtilPlotGriddedEvaledClassifier(OutputDataSet.getObservations(), linGrid, gridSize, Obj.PlotOptions.colorsFunction(Obj.nClusters));
+            [OutputDataSet, linGrid, gridSize] = runClustererOnGrid(Obj);
+            
+            if Obj.DataSetSummary.nClasses > 2
+                %internalDeciders* output the right colors:
+                imageHandle = prtPlotUtilPlotGriddedEvaledClassifier(OutputDataSet.getObservations(), linGrid, gridSize, prtPlotUtilLightenColors(Obj.PlotOptions.colorsFunction(Obj.DataSetSummary.nClasses)));
             else
                 imageHandle = prtPlotUtilPlotGriddedEvaledClassifier(OutputDataSet.getObservations(), linGrid, gridSize, Obj.PlotOptions.twoClassColorMapFunction());
             end
             
             if ~isempty(Obj.DataSet)
                 hold on;
-                [handles,legendStrings] = plot(Obj.DataSet);
+                handles = plot(Obj.DataSet);
                 hold off;
-                HandleStructure.Axes = struct('imageHandle',{imageHandle},'handles',{handles},'legendStrings',{legendStrings});
+                HandleStructure.Axes = struct('imageHandle',{imageHandle},'handles',{handles});
             else
-                HandleStructure.Axes = struct('imageHandle',{imageHandle},'handles',{[]},'legendStrings',{[]});
-            end
-        end
-
-        function HandleStructure = plotMaryClusterConfidence(Obj)
-
-            [OutputDataSet, linGrid, gridSize] = runClassifierOnGrid(Obj);
-
-            % Mary plotting generates a series of subplots that show the
-            % confidence of each individual class.
-
-            [M,N] = prtUtilGetSubplotDimensions(Obj.nClusters);
-            imageHandle = zeros(M*N,1);
-
-            % The confidences are displayed with class specific color maps
-            % These will be lightened up to have contrast with the points
-            classColors = prtPlotUtilLightenColors(Obj.PlotOptions.colorsFunction(OutputDataSet.nFeatures));
-
-            nColorMapSamples = 256;
-
-            for subImage = 1:M*N
-                cMap = prtPlotUtilLinspaceColormap([1 1 1], classColors(subImage,:),nColorMapSamples);
-
-                cAxes = subplot(M,N,subImage);
-                imageHandle(subImage) = prtPlotUtilPlotGriddedEvaledClassifier(OutputDataSet.getObservations(:,subImage), linGrid, gridSize, cMap);
-
-                prtPlotUtilFreezeColors(cAxes);
-            end
-
-            if ~isempty(Obj.DataSet)
-                for subImage = 1:M*N
-                    subplot(M,N,subImage)
-                    hold on;
-                    [handles,legendStrings] = plot(Obj.DataSet);
-                    hold off;
-                    HandleStructure.Axes(subImage) = struct('imageHandle',{imageHandle(subImage)},'handles',{handles},'legendStrings',{legendStrings});
-                end
-            else
-                for subImage = 1:M*N
-                    HandleStructure.Axes(subImage) = struct('imageHandle',{imageHandle(subImage)},'handles',{[]},'legendStrings',{[]});
-                end
+                HandleStructure.Axes = struct('imageHandle',{imageHandle},'handles',{[]});
             end
         end
         
+        function Obj = trainAutoDecision(Obj)
+            if ~isempty(Obj.DataSet)
+                    warning('prt:prtCluster:plot:autoDecision','prtCluster.plot() requires a prtCluster with an internal decider. A prtDecisionMap has been trained and set as the internalDecider to enable plotting.');
+                    Obj.internalDecider =  prtDecisionMap;
+                    Obj = postTrainProcessing(Obj, Obj.DataSet);
+                    Obj.yieldsMaryOutput = false;
+                else
+                    error('prt:prtCluster:plot','prtCluster.plot() requires a prtCluster with an internal decider. A prtDecisionMap cannot be trained and set as the internalDecider to enable plotting because this cluster object does not have verboseStorege turned on and therefore the dataSet used to train the clusterer is unknow. To enable plotting, set an internalDecider and retrain the clusterer.');
+            end
+        end
     end
 
     methods (Static, Hidden = true)

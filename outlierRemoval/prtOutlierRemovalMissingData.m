@@ -35,7 +35,6 @@ classdef prtOutlierRemovalMissingData < prtOutlierRemoval
         % Required by prtAction
         name = 'Missing Data Outlier Removal';  % Missing Data Outlier Removal
         nameAbbreviation = 'MissingDataRemove'   % MissingDataRemove
-        isSupervised = false;  % False
     end
     
     methods

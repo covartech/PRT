@@ -48,7 +48,6 @@ classdef prtDecisionBinaryMinPe < prtDecisionBinary
     properties (SetAccess = private)
         name = 'MinPe'   % MinPe
         nameAbbreviation = 'MINPE';  % MINPE
-        isSupervised = true;  % True
     end
     properties (Hidden = true)
         threshold

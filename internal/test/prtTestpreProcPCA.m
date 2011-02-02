@@ -62,5 +62,5 @@ if ~isequal(lastwarn, 'User specified # PCA components (20) is > number of data 
     disp('error#5, too many components')
 end
 
-result = result && error
+result = result && error;
 

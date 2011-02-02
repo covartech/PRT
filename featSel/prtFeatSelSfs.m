@@ -51,10 +51,8 @@ classdef prtFeatSelSfs < prtFeatSel
  % See Also:  prtFeatSelStatic, prtFeatSelExhaustive
     
     properties (SetAccess=private)
-        % Required by prtAction
-        name = 'Sequentual Feature Selection'
-        nameAbbreviation = 'SFS'
-        isSupervised = true;
+        name = 'Sequentual Feature Selection' % Sequentual Feature Selection
+        nameAbbreviation = 'SFS' % SFS
     end
     
     properties

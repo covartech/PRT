@@ -67,11 +67,8 @@ classdef prtClass < prtAction
         isNativeMary % Logical, classifier natively produces an output for each unique class
     end
     
-    properties (SetAccess=private)
-        isSupervised = true;  % True
-    end
     properties
-        twoClassParadigm = 'binary';   %  Whether the classifier is binary or m-ary
+        twoClassParadigm = 'binary';   %  Whether the classifier retures one output (binary) or two outputs (m-ary) when there are only two unique class labels
     end
     properties (SetAccess=protected, Hidden = true)
         yieldsMaryOutput = nan; % Determined in trainProcessing()
@@ -99,6 +96,14 @@ classdef prtClass < prtAction
     end    
     
     methods
+        function obj = prtClass()
+            % As an action subclass we must set the properties to reflect
+            % our dataset requirements
+            obj.classInput = 'prtDataSetClass';
+            obj.classOutput = 'prtDataSetClass';
+            obj.classInputOutputRetained = true;
+        end
+        
         function obj = set.internalDecider(obj,val)
             if ~isempty(val) && ~isa(val,'prtDecision')
                 error('prtClass:internalDecider','internalDecider must be an empty vector ([]) of type prtDecision, but input is a %s',class(val));

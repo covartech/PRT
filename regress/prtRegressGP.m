@@ -39,10 +39,8 @@ classdef prtRegressGP < prtRegress
     %   See also prtRegress, prtRegressRvm, prtRegressLslr
     
     properties (SetAccess=private)
-        % Required by prtAction
         name = 'Gaussian Process'
         nameAbbreviation = 'GP'
-        isSupervised = true;
     end
     
     properties

@@ -1,10 +1,9 @@
 classdef prtFeatureExtractorGeomGpr < prtFeatureExtractor
     
     properties (SetAccess = private)
-
         name = 'Geometric Features';
     	nameAbbreviation = 'GEOM';
-    	isSupervised = false;
+    	
         maxDtSize = 31;
     end
     properties

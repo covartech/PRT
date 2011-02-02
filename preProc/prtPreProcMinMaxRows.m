@@ -39,9 +39,8 @@ classdef prtPreProcMinMaxRows < prtPreProc
     
     properties (SetAccess=private)
         % Required by prtAction
-        name = 'MinMax Rows'  % MinMax Rows
-        nameAbbreviation = 'MMR' % MMR
-        isSupervised = false;   % False
+        name = 'MinMax Rows'
+        nameAbbreviation = 'MMR'
     end
     
     properties

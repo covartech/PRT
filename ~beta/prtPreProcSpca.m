@@ -18,7 +18,6 @@ classdef prtPreProcSpca < prtPreProc
         % Required by prtAction
         name = 'Sparse Principal Component Analysis'
         nameAbbreviation = 'SPCA'
-        isSupervised = false;
     end
     
     properties

@@ -30,7 +30,6 @@ classdef prtPreProcZeroMinRows < prtPreProc
         % Required by prtAction
         name = 'Zero Min Rows'
         nameAbbreviation = 'ZMR'
-        isSupervised = false;
     end
     
     properties

@@ -61,7 +61,6 @@ classdef prtDecisionBinarySpecifiedPd < prtDecisionBinary
     properties (SetAccess = private)
         name = 'SpecifiedPd'   %SpecifiedPd
         nameAbbreviation = 'SpecPd'; % SpecPd
-        isSupervised = true;  % True
     end
     properties
         pd  % The desired probability of detection

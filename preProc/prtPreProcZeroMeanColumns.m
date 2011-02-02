@@ -34,10 +34,8 @@ classdef prtPreProcZeroMeanColumns < prtPreProc
     %   prtPreProcLogDisc, prtPreProcZmuv, prtPreProcMinMaxRows                    
         
     properties (SetAccess=private)
-      
         name = 'Zero-Mean Columns' % Zero-Mean Columns
         nameAbbreviation = 'ZMC' % ZMC
-        isSupervised = false;  % False
     end
     
     properties

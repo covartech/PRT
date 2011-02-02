@@ -38,7 +38,6 @@ classdef prtClusterKmeans < prtCluster %prtClass %prtAction %should extent prtCl
       properties (SetAccess=private)
         name = 'K-Means Clustering' % K-Means Clustering
         nameAbbreviation = 'K-MeansCluster' % K-MeansCluster
-        isSupervised = false;
     end
     
     properties

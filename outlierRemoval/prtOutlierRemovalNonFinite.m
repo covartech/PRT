@@ -36,7 +36,6 @@ classdef prtOutlierRemovalNonFinite < prtOutlierRemoval
         % Required by prtAction
         name = 'Non Finite Data Outlier Removal';  % NonFinite Data Outlier Removal
         nameAbbreviation = 'NonFiniteDataRemove'   % NonFiniteDataRemove
-        isSupervised = false;  % False
     end
     
     methods

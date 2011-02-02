@@ -41,7 +41,6 @@ classdef prtClassMap < prtClass
     end
     
     properties
-      
         rvs = prtRvMvn; % Random variable object containing mean and variance
     end
     

@@ -50,7 +50,6 @@ classdef prtKernelPolynomial < prtKernel
     properties (SetAccess = private)
         name = 'Polynomial Kernel'; % Polynomial Kernel
         nameAbbreviation = 'Poly';  % Poly
-        isSupervised = false; % False
     end
     
     properties

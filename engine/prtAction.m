@@ -10,8 +10,6 @@ classdef prtAction
     %
     %   name                 - Descriptive name for prtAction object
     %   nameAbbreviation     - Shortened name for prtAction object
-    %   isSupervised         - Indicates whether or not object requires
-    %                          training
     %   isTrained            - Indicates whether the current prtAction 
     %                          object has been trained                          
     %   isCrossValidateValid - Flag indicating whether or not
@@ -46,9 +44,6 @@ classdef prtAction
         
         %  Shortened name for the prtAction object.
         nameAbbreviation 
-        
-        % Specifies if prtAction object requires training.
-        isSupervised % Logical, requires training data to run
     end
     
     properties (Hidden = true)
@@ -59,6 +54,12 @@ classdef prtAction
         % A tag that can be used to reference a specific action within a
         % prtAlgorithm
         tag = '';
+    end
+    
+    properties (Hidden = true, SetAccess=protected, GetAccess=protected)
+        classInput = 'prtDataSetBase';
+        classOutput = 'prtDataSetBase';
+        classInputOutputRetained = false;
     end
     
     methods (Hidden = true)
@@ -166,16 +167,19 @@ classdef prtAction
             if ~isa(DataSet,'prtDataSetBase')
                 error('prt:prtAction:prtDataSetBase','DataSet provided to prtAction %s''s train() is not a prtDataSetBase, DataSet is a %s',class(Obj),class(DataSet));
             end
-            if Obj.isSupervised && ~DataSet.isLabeled
-                error('prt:prtAction:supervisedActionUnLabeledDataSet','The action of type %s is supervised, but the dataSet of type %s, is not labeled',class(Obj),class(DataSet));
+            
+            inputClassType = class(DataSet);
+            if ~isempty(Obj.getClassInput) && ~prtUtilIsSubClass(inputClassType,Obj.getClassInput)
+                error('prt:prtAction:incompatible','This action requires datasets of type %s but the provided input is of type %s',Obj.getClassInput,inputClassType);
             end
-                
+            
             % Default preTrainProcessing() stuff
             Obj.DataSetSummary = summarize(DataSet);
             
             %preTrainProcessing should make sure Obj has the right
             %verboseStorage
             Obj = preTrainProcessing(Obj,DataSet);
+            
             if Obj.verboseStorage
                 Obj.DataSet = DataSet;
             end
@@ -207,6 +211,16 @@ classdef prtAction
             DataSetOut = preRunProcessing(Obj, DataSetIn);
             DataSetOut = runAction(Obj, DataSetOut);
             DataSetOut = postRunProcessing(Obj, DataSetIn, DataSetOut);
+           
+            outputClassName = class(DataSetOut);
+            inputClassName = class(DataSetIn);
+            if ~isempty(Obj.getClassOutput) && ~prtUtilIsSubClass(outputClassName,Obj.getClassOutput)
+                error('prt:prtAction:incompatible','This action specifies that it outputs datasets of type %s but the output is of type %s, which is not a subclass of %s. This may indicate an error with the runAction() method of %s.',Obj.getClassOutput,inputClassName,Obj.getClassOutput,class(Obj));
+            end
+            
+            if Obj.classInputOutputRetained && ~isequal(outputClassName,inputClassName)
+                error('prt:prtAction:incompatible','This action specifies that it retains the class of input datasets however, the class of the output dataset is %s and the class of the input dataset is %s. This may indicate an error with the runAction() method of %s.',Obj.getClassOutput,inputClassName,class(Obj));
+            end
         end
         
         function Obj = set.verboseStorage(Obj,val)
@@ -434,9 +448,20 @@ classdef prtAction
                 DataSetOut = ActionObj.updateDataSetFeatureNames(DataSetOut);
             end
         end
-        
     end
     methods (Access = protected, Hidden)
+        function inClass = getClassInput(Obj)
+            % GETCLASSINPUT  Access method for property 
+            inClass = Obj.classInput;
+        end
+        function outClass = getClassOutput(Obj)
+            % GETCLASSOUT Access method for property 
+            outClass = Obj.classOutput;
+        end
+        function val = getClassInputOutputRetained(Obj)
+            % GETCLASSINPUTOUTRETAINED  Access method for property 
+            val = Obj.classInputOutputRetained;
+        end
         function DataSetOut = runActionOnTrainingData(Obj, DataSetIn)
             % RUNACTIONONTRAININGDATA Run a prtAction object on a prtDataSet object
             %   This method differs from RUN() in that it is called after

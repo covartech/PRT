@@ -5,7 +5,6 @@ classdef prtPreProcSharpen < prtPreProc
         % Required by prtAction
         name = 'Sharpening'
         nameAbbreviation = 'SHARP'
-        isSupervised = false;
     end
     
     properties

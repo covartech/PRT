@@ -47,9 +47,8 @@ classdef prtDecisionMap < prtDecision
     % ptDecisionBinarySpecifiedPf, prtDecisionMap
 
      properties (SetAccess = private)
-        name = 'MAP' % MAP
-        nameAbbreviation = 'MAP';  % Map
-        isSupervised = false;  % False
+        name = 'MAP'
+        nameAbbreviation = 'MAP';
     end
     
     methods

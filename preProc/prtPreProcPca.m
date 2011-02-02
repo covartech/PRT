@@ -37,9 +37,8 @@ classdef prtPreProcPca < prtPreProc
     
     
     properties (SetAccess=private)
-        name = 'Principal Component Analysis'  % Principal Component Analysis
-        nameAbbreviation = 'PCA' % PCA
-        isSupervised = false;   % False
+        name = 'Principal Component Analysis'
+        nameAbbreviation = 'PCA'
     end
     
     properties

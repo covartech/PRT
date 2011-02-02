@@ -1,4 +1,4 @@
-classdef prtPreProcLogDisc < prtPreProc
+classdef prtPreProcLogDisc < prtPreProcClass
     % prtPreProcLogDisc   Histogram equalization processing
     %
     %   LOGDISC = prtPreProcLogDisc creates a logistic discriminant pre
@@ -35,10 +35,8 @@ classdef prtPreProcLogDisc < prtPreProc
 
     
     properties (SetAccess=private)
-        % Required by prtAction
-        name = 'Logistic Discriminant' % Logistic Discriminant
+        name = 'Logistic Discriminant' % 'Logistic Discriminant'
         nameAbbreviation = 'LogDisc' % LogDisc
-        isSupervised = true; % True
     end
     
     properties (SetAccess=private, Hidden = true)

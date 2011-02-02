@@ -31,7 +31,6 @@ classdef prtKernelDirect < prtKernel
     properties (SetAccess = private)
         name = 'Direct Kernel'; % Direct Kernel
         nameAbbreviation = 'DirectKernel';  % DirectKernel
-        isSupervised = false; % False
      end
     
     properties (SetAccess = 'protected', Hidden = true)

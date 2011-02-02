@@ -1,10 +1,8 @@
 classdef prtFeatureExtractorTfcmGpr < prtFeatureExtractor
     
     properties (SetAccess = private)
-
         name = 'Texture feature coding method';
     	nameAbbreviation = 'TFCM';
-    	isSupervised = false;
     end
     properties
         threshold = 1;

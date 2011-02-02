@@ -30,7 +30,6 @@ classdef prtPreProcEnergyNorm < prtPreProc
         % Required by prtAction
         name = 'Energy Norm Rows'
         nameAbbreviation = 'ENR'
-        isSupervised = false;
     end
     
     properties

@@ -55,7 +55,6 @@ classdef prtDecisionBinarySpecifiedPf < prtDecisionBinary
     properties (SetAccess = private)
         name = 'SpecifiedPf'; % SpecifiedPf
         nameAbbreviation = 'SpecPf'; % SpecPf
-        isSupervised = true; % True
     end
     properties
         pf % The desired probability of false alarm

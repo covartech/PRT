@@ -87,6 +87,13 @@ classdef prtOutlierRemoval < prtAction
     end
     
     methods
+        function obj = prtOutlierRemoval()
+            % As an action subclass we must set the properties to reflect
+            % our dataset requirements
+            obj.classInput = 'prtDataSetStandard';
+            obj.classOutput = 'prtDataSetStandard';
+            obj.classInputOutputRetained = true;
+        end
         
         function Obj = set.runOnTrainingMode(Obj,string)
             if ~any(strcmpi(string,Obj.validModes))

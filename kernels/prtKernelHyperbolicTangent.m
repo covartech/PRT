@@ -47,9 +47,8 @@ classdef prtKernelHyperbolicTangent < prtKernel
     
 
     properties (SetAccess = private)
-        name = 'Hyperbolic Tangent Kernel';
-        nameAbbreviation = 'TANH';
-        isSupervised = false;
+        name = 'Hyperbolic Tangent Kernel'; % Hyperbolic Tangent Kernel
+        nameAbbreviation = 'TANH';  % TANH
     end
     properties
         kappa = 1;    % polynomial order

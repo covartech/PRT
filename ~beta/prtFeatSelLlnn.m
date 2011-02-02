@@ -1,4 +1,4 @@
-classdef prtFeatSelLlnn < prtFeatSel
+classdef prtFeatSelLlnn < prtFeatSelClass
     % prtFeatSelLLnn  Local Learning based feature selection
     %
     %   FEATSEL = prtFeatSelLlnn returns a local learning based feature selection
@@ -50,7 +50,6 @@ classdef prtFeatSelLlnn < prtFeatSel
         % Required by prtAction
         name = 'Local Learning Nearest Neighbor'
         nameAbbreviation = 'LLNN'
-        isSupervised = true;
     end
     
     properties

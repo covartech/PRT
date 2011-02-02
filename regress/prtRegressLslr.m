@@ -44,11 +44,8 @@ classdef prtRegressLslr < prtRegress
  
     %
     properties (SetAccess=private)
-        % Required by prtAction
-        
         name = 'Least Squares Linear Regression' % Least Squares Linear Regression
         nameAbbreviation = 'LSLR'                % LSLR
-        isSupervised = true;                     %True
     end
     
     properties (SetAccess = 'protected')

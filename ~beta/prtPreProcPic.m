@@ -25,7 +25,6 @@ classdef prtPreProcPic < prtPreProc
         % Required by prtAction
         name = 'Power Iteration Clustering'
         nameAbbreviation = 'PIC'
-        isSupervised = false;
     end
     
     properties

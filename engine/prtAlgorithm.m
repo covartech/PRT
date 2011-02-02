@@ -136,7 +136,7 @@ classdef prtAlgorithm < prtAction
                 Obj1.connectivityMatrix = newConn;
                 Obj1.actionCell = cat(1,Obj1.actionCell(:),Obj2.actionCell(:));
                 
-                Obj1.isSupervised = any(cellfun(@(c)c.isSupervised,Obj1.actionCell));
+                % Obj1.isSupervised = any(cellfun(@(c)c.isSupervised,Obj1.actionCell));
                 Obj1.isCrossValidateValid = all(cellfun(@(c)c.isCrossValidateValid,Obj1.actionCell));
             else
                 error('prt:prtAlgorithm:plus','prtAlgorithm.plus is only defined for second inputs of type prtAlgorithm or prtAction, but the second input is a %s',class(Obj2));
@@ -185,7 +185,7 @@ classdef prtAlgorithm < prtAction
                 Obj1.connectivityMatrix = newConn;
                 Obj1.actionCell = cat(1,Obj1.actionCell(:),Obj2.actionCell(:));
                 
-                Obj1.isSupervised = any(cellfun(@(c)c.isSupervised,Obj1.actionCell));
+                % Obj1.isSupervised = any(cellfun(@(c)c.isSupervised,Obj1.actionCell));
                 Obj1.isCrossValidateValid = all(cellfun(@(c)c.isCrossValidateValid,Obj1.actionCell));
             else
                 error('prt:prtAlgorithm:plus','prtAlgorithm.plus is only defined for second inputs of type prtAlgorithm or prtAction, but the second input is a %s',class(Obj2));
@@ -209,15 +209,21 @@ classdef prtAlgorithm < prtAction
         function Obj = prtAlgorithm(varargin)
             % One input is a constructor from another prtAction
             
+            % As an action subclass we must set the properties to reflect
+            % our dataset requirements
+            % Because we are an algorithm we actually don't know the
+            % answers, we will figure these out in get
+            obj.classInput = '';
+            obj.classOutput = '';
+            obj.classInputOutputRetained = true;
+            
             if nargin == 1
                 assert(isa(varargin{1},'prtAction'),'prtAlgorithm constructor requires a prtAction input');
                 Obj.connectivityMatrix = false(3);
                 Obj.connectivityMatrix(2,1) = true;
                 Obj.connectivityMatrix(3,2) = true;
                 Obj.actionCell = varargin(1);
-                Obj.isSupervised = varargin{1}.isSupervised;
-            else
-                error('prtAlgorithm:prtAlgorithm','prtAlgorithm constructor requires one prtAction input');
+                %Obj.isSupervised = varargin{1}.isSupervised;
             end
         end
     end

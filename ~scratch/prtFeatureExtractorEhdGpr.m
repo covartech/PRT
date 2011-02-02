@@ -1,10 +1,8 @@
 classdef prtFeatureExtractorEhdGpr < prtFeatureExtractor
     
     properties (SetAccess = private)
-
         name = 'Edge Histogram Features';
     	nameAbbreviation = 'Ehd';
-    	isSupervised = false;
     end
     properties
         

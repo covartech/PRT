@@ -39,7 +39,6 @@ classdef prtKernelSet < prtKernel
     properties (SetAccess = private)
         name = 'Kernel Set'; % Kernel Set
         nameAbbreviation = 'KernelSet'; % KernelSet
-        isSupervised = false;  % False
     end
     
     properties 

@@ -43,11 +43,8 @@ classdef prtOutlierRemovalNStd < prtOutlierRemoval
 
     
     properties (SetAccess=private)
-        % Required by prtAction
         name = 'Standard Deviation Based Outlier Removal'; % Standard Deviation Based Outlier Removal
-        nameAbbreviation = 'nStd'  %nStd
-        isSupervised = false;  % False
-        
+        nameAbbreviation = 'nStd' % nStd
     end
     
     properties

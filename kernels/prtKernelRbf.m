@@ -53,8 +53,8 @@ classdef prtKernelRbf < prtKernel
     properties (SetAccess = private)
         name = 'RBF Kernel'; % RBF Kernel
         nameAbbreviation = 'RBF'; % RBF
-        isSupervised = false; % False
     end
+    
     properties
         sigma = 1; % The inverse kernel width
     end 
