@@ -581,7 +581,7 @@ classdef prtDataSetClass  < prtDataSetStandard
                 
                 for cY = 1:nClasses
                     cPatch = cat(2,cat(1,-F(:,cY),flipud(F(:,cY))), cat(1,xLoc, flipud(xLoc)));
-                    patchH(cY) = patch(cPatch(:,1)+iFeature, cPatch(:,2), colors(cY,:),'edgecolor','none');
+                    patchH(iFeature,cY) = patch(cPatch(:,1)+iFeature, cPatch(:,2), colors(cY,:),'edgecolor','none');
                 end
             end
             
@@ -672,6 +672,11 @@ classdef prtDataSetClass  < prtDataSetStandard
             end
             
             assert(ishghandle(containingHandle),'prt:prtDataSetClass:prtPlotPairs','containingHandle must be a MATLAB handle graphics handle that is a valid parent for MATLAB axes');
+            
+            cChildren = get(containingHandle,'Children');
+            if ~isempty(cChildren)
+                delete(cChildren);
+            end
             
             N = obj.nFeatures;
             Summary = obj.summarize();
