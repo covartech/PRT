@@ -1,6 +1,6 @@
-function C = prtNextChoose(N,K)
-%prtNextChoose Loop through combinations without replacement.
-% prtNextChoose(N,K), when first called, returns a function handle.  This  
+function C = prtUtilNextChoose(N,K)
+%prtUtilNextChoose Loop through combinations without replacement.
+% prtUtilNextChoose(N,K), when first called, returns a function handle.  This  
 % function handle, when called, returns the next combination without 
 % replacement of K elements taken from the set 1:N. This can be useful
 % when the number of such combinations is too large to hold in memory at
@@ -15,7 +15,7 @@ function C = prtNextChoose(N,K)
 %     % To use each combination one at a time, put it in a loop.
 %     N = 4;  % Length of the set.
 %     K = 3;  % Number of samples taken for each sampling.
-%     H = prtNextChoose(N,K);
+%     H = prtUtilNextChoose(N,K);
 %     for ii = 1:(prod(1:N)/(prod(1:(N-K)) * prod(1:K)))
 %         A = H();
 %         % Do stuff with A: use it as an index, etc.
