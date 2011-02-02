@@ -86,7 +86,7 @@ classdef prtFeatSelExhaustive < prtFeatSel %
         end
         
         function Obj = set.evaluationMetric(Obj,val)
-            assert(isa(val, 'function_handle') && nargin(val)>=1,'prt:prtFeatSelExhaustive','evaluationMetric must be a function handle that accepts one input argument.');
+            assert(isa(val, 'function_handle') && nargin(val)>=1,'prt:prtFeatSelExhaustive','evaluationMetric must be a function handle that accepts one input argument; e.g. @(DS)prtEvalPdAtPf( prtClassMap, DS, .9)');
             Obj.evaluationMetric = val;
         end
     end

@@ -39,6 +39,8 @@ classdef prtClusterGmm < prtCluster %prtClass %prtAction %should extent prtClust
     
     properties
         nClusters = 3;
+    end
+    properties (SetAccess = protected)
         clusterCenters = [];
         gmmRv = prtRvGmm;
     end
@@ -47,6 +49,14 @@ classdef prtClusterGmm < prtCluster %prtClass %prtAction %should extent prtClust
     end
     
     methods
+
+        function Obj = set.nClusters(Obj,value)
+            if ~prtUtilIsPositiveScalarInteger(value)
+                error('prt:prtClusterGmm:nClusters','value (%s) must be a positive scalar integer',mat2str(value));
+            end
+            Obj.nClusters = value;
+        end
+        
         function Obj = prtClusterGmm(varargin)
             % Allow for string, value pairs
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});

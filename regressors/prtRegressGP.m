@@ -51,11 +51,11 @@ classdef prtRegressGP < prtRegress
         covarianceFunction = @(x1,x2)prtUtillQuadExpCovariance(x1,x2, 1, 4, 0, 0);
         noiseVariance = 0.01;
         
-        % Infered parameters
-        
+    end
+    % Infered parameters
+    properties (SetAccess = protected)
         CN = [];
         weights = [];
-        
     end
     
     methods

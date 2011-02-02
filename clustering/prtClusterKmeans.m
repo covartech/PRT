@@ -43,8 +43,10 @@ classdef prtClusterKmeans < prtCluster %prtClass %prtAction %should extent prtCl
     
     properties
         nClusters = 3;
-        clusterCenters = [];
         kmeansHandleEmptyClusters = 'remove';
+    end
+    properties (SetAccess = protected)
+        clusterCenters = [];
         distanceMetricFn = @prtDistanceEuclidean;
     end
     properties (SetAccess = private, Hidden = true)
@@ -52,6 +54,21 @@ classdef prtClusterKmeans < prtCluster %prtClass %prtAction %should extent prtCl
     end
     
     methods
+        
+        function Obj = set.nClusters(Obj,value)
+            if ~prtUtilIsPositiveScalarInteger(value)
+                error('prt:prtClusterKmeans:nClusters','value (%s) must be a positive scalar integer',mat2str(value));
+            end
+            Obj.nClusters = value;
+        end
+        
+        function Obj = set.kmeansHandleEmptyClusters(Obj,value)
+            if ~isa(value,'char') || ~any(strcmpi(value,{'exit','regularize'}))
+                error('prt:prtClusterKmeans:kmeansHandleEmptyClusters','value (%s) must be one of ''remove'', or ''random''',mat2str(value));
+            end
+            Obj.kmeansHandleEmptyClusters = value;
+        end
+        
         function Obj = prtClusterKmeans(varargin)
             % Allow for string, value pairs
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});

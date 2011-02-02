@@ -88,8 +88,29 @@ classdef prtRegressRvm < prtRegress
     methods
          % Allow for string, value pairs
         function Obj = prtRegressRvm(varargin)
-           
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
+        end
+        
+        function Obj = set.kernels(Obj,val)
+            if ~isa(val,'prtKernel')
+                error('prt:prtRegressRvm:kernels','kernels must be a prtKernel');
+            end
+            
+            Obj.kernels = val;
+        end
+        
+        function Obj = set.verbosePlot(Obj,val)
+            if ~prtUtilIsLogicalScalar(val)
+                error('prt:prtRegressRvm:verbosePlot','verbosePlot must be a logical value or a positive integer');
+            end
+            Obj.verbosePlot = val;
+        end
+        
+        function Obj = set.verboseText(Obj,val)
+            if ~prtUtilIsLogicalScalar(val)
+                error('prt:prtRegressRvm:verboseText','verboseText must be a logical value or a positive integer');
+            end
+            Obj.verboseText = val;
         end
     end
     

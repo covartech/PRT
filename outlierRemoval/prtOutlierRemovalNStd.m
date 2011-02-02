@@ -71,7 +71,7 @@ classdef prtOutlierRemovalNStd < prtOutlierRemoval
     
     methods
         function Obj = set.nStd(Obj,value)
-            if ~isnumeric(value) || ~isscalar(value) || value < 1 || round(value) ~= value
+            if ~prtUtilIsPositiveScalarInteger(value)
                 error('prt:prtOutlierRemovalNStd','value (%s) must be a positive scalar integer',mat2str(value));
             end
             Obj.nStd = value;
