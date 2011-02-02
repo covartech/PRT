@@ -1,4 +1,4 @@
-function valid = prtUtilCheckIsValidBeta
+function valid = prtUtilCheckIsValidBeta(saltString)
 %valid = prtUtilCheckIsValidBeta
 %   P-code this, and call it where appropriate.  Calls to this function
 %   should also be inside P-code; otherwise there's an easy way to defeat
@@ -22,6 +22,13 @@ websiteAddress = 'www.newFolderConsulting.com';
 
 if isempty(isValid)
     
+    internalSaltString = 'cmbrwwuvphcjlwjpxuwghhgksogwzcafuyeonnyutyycplbotbwmjjimkzuongslqkovjmjovuubmohbsnfvmbymqzxibrzdlzjq';
+    if ~strcmpi(saltString,internalSaltString)
+        isValid = []; %#ok<NASGU> %this ensures we keep erroring on every call when the PRT is invalid
+        h = errordlg('prtUtilCheckIsValidBeta was not called with a correct salt string; please contact newFolderConsulting for additional help','prt:invalidSalt');
+        uiwait(h);
+        error('prt:invalidSalt','prtUtilCheckIsValidBeta was not called with a correct salt string; please contact newFolderConsulting for additional help');
+    end
     betaExpirationDate = datenum(betaDateString);
     todayDate = datenum(date);
     
