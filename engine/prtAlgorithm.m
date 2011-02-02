@@ -1,14 +1,35 @@
 classdef prtAlgorithm < prtAction
-    % xxx NEED HELP xxx
+    % prtAlgorithm  Combine prtActions 
+    %
+    %  ALG = prtAlgorithm creates an empty prtAlgorithm object. prtAction
+    %  objects can be added to the prtAlgorithm object using overloaded
+    %  operators as described below.
+    %
+    %  ALG = prtAlgorithm(ACTIONOBJ) creates a prtAlgorithm object with the
+    %  prtAction object ACTIONOBJ. The algortihm can be further configured
+    %  using overloaded operators.
     %
     %  Algorithms represent combinations of prtActions.
     % 
     %
+    %  Overloaded operators
+    % 
+    %  +   Inserts a prtAction object at the end of the processing chain
+    %
+    %  -   Inserts a prtAction object at the beginning of the procesing chain
+    %
+    %  /   Inserts a prtAction object in parallel with the processing chain
+    %
+    %  \   Inserts a prtAction object in parallel with the processing
+    %      chain. Note that operators \ and / perform the same operation. The
+    %      only difference is where the actions are displayed when the
+    %      prtAlgortihm is plotted.
+    
     properties (SetAccess=private)
         % Required by prtAction
-        name = 'PRT Algorithm'
-        nameAbbreviation = 'ALGO';
-        isSupervised = true; %default to "true", but set in constructor, and as new prtActions are added
+        name = 'PRT Algorithm' % Prt Algorithm
+        nameAbbreviation = 'ALGO';  % ALGO
+        isSupervised = true; % Set to True, but dependent on prtAction components
     end
     
     %This is the public face of the (protected) internalActionCell

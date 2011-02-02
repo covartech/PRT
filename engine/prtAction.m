@@ -1,5 +1,7 @@
 classdef prtAction
-    % prtAction - Base class for PRT components.
+    % prtAction - Base class for many PRT components.
+    % 
+    %  prtAction is an abstract class and cannot be instantiated.
     %
     %   Classification, regression and feature selection techniques are all
     %   sub-classes of prtAction.
@@ -78,7 +80,7 @@ classdef prtAction
     end
     
     properties (SetAccess = protected)
-        % Specifies if prtAction object has been trained.
+        % Indicates if prtAction object has been trained.
         isTrained = false;
         %   Set automatically in prtAction.train().
         
