@@ -18,8 +18,8 @@ for i = 1:size(labels,2)
     mu1 = [1 1] * i1;
     mu0 = -mu1;
     
-    rvH1 = prtRvMvn('mean',mu1,'covariance',eye(2));
-    rvH0 = prtRvMvn('mean',mu0,'covariance',eye(2));
+    rvH1 = prtRvMvn('mu',mu1,'sigma',eye(2));
+    rvH0 = prtRvMvn('mu',mu0,'sigma',eye(2));
     nSamples1 = floor(length(currDataInd)/2);
     nSamples0 = ceil(length(currDataInd)/2);
     

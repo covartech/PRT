@@ -31,8 +31,8 @@ if nargin < 5
     mu1 = [2 2];
     sigma1 = [1 .5; .5 1];
 end
-rv(1) = prtRvMvn('Mean',mu0,'Covariance',sigma0);
-rv(2) = prtRvMvn('Mean',mu1,'Covariance',sigma1);
+rv(1) = prtRvMvn('mu',mu0,'sigma',sigma0);
+rv(2) = prtRvMvn('mu',mu1,'sigma',sigma1);
 
 X = cat(1,draw(rv(1),nSamples),draw(rv(2),nSamples));
 Y = prtUtilY(nSamples,nSamples);

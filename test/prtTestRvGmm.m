@@ -25,10 +25,10 @@ end
 RVspec = prtRvGmm('nComponents',2);
 % Check that I can specify the mean and covar
 try
-    RVspec.components(1).mean = [1 2];                 % Specify the mean
-    RVspec.components(1).covariance = [2 -1; -1 2] ;    % Specify the covariance
-        RVspec.components(2).mean = [1 2];                 % Specify the mean
-    RVspec.components(2).covariance = [2 -1; -1 2] ;    % Specify the covariance
+    RVspec.components(1).mu = [1 2];                 % Specify the mean
+    RVspec.components(1).sigma = [2 -1; -1 2] ;    % Specify the covariance
+        RVspec.components(2).mu = [1 2];                 % Specify the mean
+    RVspec.components(2).sigma = [2 -1; -1 2] ;    % Specify the covariance
 catch
     disp('prtRvGmm mean covar set fail')
     result=  false;

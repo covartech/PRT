@@ -326,14 +326,14 @@ classdef prtRvMvn < prtRv
             % Enforce the covariance structure
             switch lower(R.covarianceStructure)
                 case 'full'
-                    R.covarianceDepHelper = sigma;
+                    R.sigmaDepHelper = sigma;
                 case 'diagonal'
-                    R.covarianceDepHelper = eye(size(sigma)).*sigma;
+                    R.sigmaDepHelper = eye(size(sigma)).*sigma;
                 case 'spherical'
-                    R.covarianceDepHelper = eye(size(sigma))*mean(diag(sigma));
+                    R.sigmaDepHelper = eye(size(sigma))*mean(diag(sigma));
             end
             
-            [dontNeed, cholErr] = chol(R.covarianceDepHelper); %#ok<ASGLU>
+            [dontNeed, cholErr] = chol(R.sigmaDepHelper); %#ok<ASGLU>
             if cholErr ~=0
                 R.badCovariance = true;
                 warning('prt:prtRvMvn','Covariance matrix is not positive definite. This may cause errors. Consider modifying "covarianceStructure".');

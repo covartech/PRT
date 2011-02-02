@@ -29,7 +29,7 @@ classdef prtRvDiscrete < prtRv
     %      plotPdf(rv);
     %
     %      % Plot MVN distributed data as discrete
-    %      rv = mle(prtRvDiscrete,draw(prtRvMvn('Mean',[1 2],'Covariance',2*eye(2)),100));
+    %      rv = mle(prtRvDiscrete,draw(prtRvMvn('mu',[1 2],'sigma',2*eye(2)),100));
     %      plotPdf(rv);
     %
     %   See also: prtRv, prtRvMvn, prtRvGmm, prtRvVq, prtRvKde,

@@ -9,7 +9,8 @@ classdef prtRvIndependent < prtRv
     %
     %   RV = prtRvIndependent('baseRv', VALUE) specifies the type of RV to
     %   be trained on each column of input data.  VALUE must specify a
-    %   valid prtRV class.  By default the baseRv field is a prtRvMvn.
+    %   valid prtRV class.  By default the baseRv field is a
+    %   prtRvIndependent.
     %
     %   RV = prtRvIndependent(PROPERTY1, VALUE1,...) creates a
     %   prtRvIndependent object RV with properties as specified by
@@ -36,8 +37,9 @@ classdef prtRvIndependent < prtRv
     %  % Extract one of the classes from the dataSet
     %  dataSetOneClass = prtDataSetClass(dataSet.getObservationsByClass(1));
     %
-    %  mvnRv = prtRvMvn;                       % Create a prtRvMvn object
-    %  mvnRv = mvnRv.mle(dataSetOneClass);   % Compute the maximum
+    %  mvnRv = prtRvIndependent;            % Create a prtRvIndependent
+    %                                       % object, with mvn components
+    %  mvnRv = mvnRv.mle(dataSetOneClass);  % Compute the maximum
     %                                       % likelihood estimate from the
     %                                       % data
     %
@@ -137,7 +139,7 @@ classdef prtRvIndependent < prtRv
         
         function varargout = plotCdf(R,varargin)
             % PLOTCDF Plots the CDF of the prtRv
-            assert(R.nDimensions == 1,'prtRvMvn.plotCdf can only be used for 1D RV objects.');
+            assert(R.nDimensions == 1,'prtRvIndependent.plotCdf can only be used for 1D RV objects.');
             
             varargout = cell(nargout,1); 
             
@@ -213,7 +215,7 @@ classdef prtRvIndependent < prtRv
                     val = cat(2,val,R.rvArray(i).plotLimits);
                 end
             else
-                error('prtRvMvn:plotLimits','Plotting limits can not be determined for this RV. It is not yet valid %s',reasonStr)
+                error('prtRvIndependent:plotLimits','Plotting limits can not be determined for this RV. It is not yet valid %s',reasonStr)
             end
         end
         

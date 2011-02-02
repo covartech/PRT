@@ -21,8 +21,8 @@ try
     
     %% Mixture with MVN 2D
     
-    N(1) = prtRvMvn('Mean',1*[-1 -1],'Covariance',[2 -0.9; -0.9 1]);
-    N(2) = prtRvMvn('Mean',1*[1 1],'Covariance',[1 0.2; 0.2 2]);
+    N(1) = prtRvMvn('mu',1*[-1 -1],'sigma',[2 -0.9; -0.9 1]);
+    N(2) = prtRvMvn('mu',1*[1 1],'sigma',[1 0.2; 0.2 2]);
     
     GMM = prtRvMixture('components',N,'mixingProportions',prtRvMultinomial('probabilities',[0.7 0.3]));
     
@@ -40,8 +40,8 @@ try
     
     %% Mixture with MVN 1D
     
-    N(1) = prtRvMvn('Mean',-19,'Covariance',2);
-    N(2) = prtRvMvn('Mean',1,'Covariance',1);
+    N(1) = prtRvMvn('mu',-19,'sigma',2);
+    N(2) = prtRvMvn('mu',1,'sigma',1);
     
     GMM = prtRvMixture('components',N,'mixingProportions',prtRvMultinomial('probabilities',[0.7 0.3]));
     
@@ -68,12 +68,12 @@ try
     
     %%
     
-    R = mle(prtRvUniform,draw(prtRvMvn('Mean',[1 2],'Covariance',2*eye(2)),100));
+    R = mle(prtRvUniform,draw(prtRvMvn('mu',[1 2],'sigma',2*eye(2)),100));
     
     plotPdf(R)
     %%
     
-    R = mle(prtRvUniformImproper,draw(prtRvMvn('Mean',[1 2],'Covariance',2*eye(2)),100));
+    R = mle(prtRvUniformImproper,draw(prtRvMvn('mu',[1 2],'sigma',2*eye(2)),100));
     plotPdf(R)
     
     %%
@@ -85,14 +85,14 @@ try
     
     %%
     
-    R = mle(prtRvDiscrete,draw(prtRvMvn('Mean',[1 2],'Covariance',2*eye(2)),100));
+    R = mle(prtRvDiscrete,draw(prtRvMvn('mu',[1 2],'sigma',2*eye(2)),100));
     
     plotPdf(R);
     
     %%
     
-    N(1) = prtRvMvn('Mean',1*[-1 -1],'Covariance',[2 -0.9; -0.9 1]);
-    N(2) = prtRvMvn('Mean',1*[1 1],'Covariance',[1 0.2; 0.2 2]);
+    N(1) = prtRvMvn('mu',1*[-1 -1],'sigma',[2 -0.9; -0.9 1]);
+    N(2) = prtRvMvn('mu',1*[1 1],'sigma',[1 0.2; 0.2 2]);
     
     GMM = prtRvMixture('components',N,'mixingProportions',prtRvMultinomial('probabilities',[0.4 0.6]));
     
@@ -112,8 +112,8 @@ try
     %%
     
     
-    N(1) = prtRvMvn('Mean',1*[-1 -1],'Covariance',[2 -0.9; -0.9 1]);
-    N(2) = prtRvMvn('Mean',1*[1 1],'Covariance',[1 0.2; 0.2 2]);
+    N(1) = prtRvMvn('mu',1*[-1 -1],'sigma',[2 -0.9; -0.9 1]);
+    N(2) = prtRvMvn('mu',1*[1 1],'sigma',[1 0.2; 0.2 2]);
     
     GMM = prtRvMixture('components',N,'mixingProportions',prtRvMultinomial('probabilities',[0.4 0.6]));
     

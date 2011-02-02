@@ -13,7 +13,7 @@ catch
     result= false;
 end
 
-if abs(RV.mean - [2 2] ) > .1
+if abs(RV.mu - [2 2] ) > .1
     result = false;
 end
 % make sure none of these disp out
@@ -29,8 +29,8 @@ end
 RVspec = prtRvMvn;
 % Check that I can specify the mean and covar
 try
-    RVspec.mean = [1 2];                 % Specify the mean
-    RVspec.covariance = [2 -1; -1 2] ;    % Specify the covariance
+    RVspec.mu = [1 2];                 % Specify the mean
+    RVspec.sigma = [2 -1; -1 2] ;    % Specify the covariance
 catch
     disp('prtRvMvn mean covar set fail')
     result=  false;
@@ -60,7 +60,7 @@ catch
 end
 
 % Add a check here to make sure the covar is actually diagonal
-if ~isequal(RV.covariance, diag(diag(RV.covariance),0))
+if ~isequal(RV.sigma, diag(diag(RV.sigma),0))
     disp('prtRvMvn covariance not diagonal')
     result = false;
 end
