@@ -3,10 +3,8 @@ classdef <fileName> < prtRegress
     %
     
     properties (SetAccess=private)
-        
         name = '<className>'                  % Insert the name of the regressor
         nameAbbreviation = '<className>'      % A short abbreviation of the name
-        isSupervised = true;                  % True if training the regressor requires a labeled data set
     end
     
     properties  

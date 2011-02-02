@@ -5,7 +5,6 @@ classdef <fileName> < prtPreProc
     properties (SetAccess=private)
         name = '<className>'                  % Insert the name of the pre-processor
         nameAbbreviation = '<className>'      % A short abbreviation of the name
-        isSupervised = false;      % True if the pre-processor requires training data to be labeled
     end
     
     properties  

@@ -5,7 +5,6 @@ classdef <fileName> < prtKernel
     properties (SetAccess=private)
         name = '<className>'                  % Insert the name of the kernel
         nameAbbreviation = '<className>'      % A short abbreviation of the name
-        isSupervised = false;      % True if the kernel requires training data to be labeled
     end
     
     properties  

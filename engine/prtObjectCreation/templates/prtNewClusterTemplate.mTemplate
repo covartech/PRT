@@ -3,10 +3,8 @@ classdef <fileName> < prtCluster
     %
     
     properties (SetAccess=private)
-        
         name = '<className>'                  % Insert the name of the clusterer
         nameAbbreviation = '<className>'      % A short abbreviation of the name
-        isNativeMary = false;      % True if the clusterer natively handles classification problems with multiple classes
     end
     
     properties  
