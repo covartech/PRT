@@ -93,8 +93,8 @@ classdef prtKernelPolynomial < prtKernel
     
     methods (Static, Hidden = true)
         function gram = kernelFn(x,y,d,c)
-            [n1, dim1] = size(x);
-            [n2, dim2] = size(y);
+            [n1, dim1] = size(x); %#ok<ASGLU>
+            [n2, dim2] = size(y); %#ok<ASGLU>
             if dim1 ~= dim2
                 error('size(x,2) must equal size(y,2)');
             end

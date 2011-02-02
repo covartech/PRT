@@ -1,4 +1,4 @@
-function KLD = mvnKld(muQ,SigmaQ,muP,SigmaP)
+function KLD = prtRvUtilMvnKld(muQ,SigmaQ,muP,SigmaP)
 % MVNKLD  Kulback Liebler Divergence between two Normal densities
 %       KLD(Q||P)
 %

@@ -72,7 +72,7 @@ classdef prtClusterGmm < prtCluster %prtClass %prtAction %should extent prtClust
         
         function DataSet = runAction(Obj,DataSet)
             
-            [p,pCluster] = Obj.gmmRv.pdf(DataSet.getObservations);
+            [p,pCluster] = Obj.gmmRv.pdf(DataSet.getObservations); %#ok<ASGLU>
             pCluster(sum(pCluster,2) == 0,:) = 1./size(pCluster,2);
             pCluster = bsxfun(@rdivide,pCluster,sum(pCluster,2));
             DataSet = DataSet.setObservations(pCluster);

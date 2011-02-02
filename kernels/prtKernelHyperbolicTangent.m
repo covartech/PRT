@@ -96,8 +96,8 @@ classdef prtKernelHyperbolicTangent < prtKernel
     
     methods (Static, Hidden = true)
         function gram = kernelFn(x,y,kappa,c)
-            [n1, d] = size(x);
-            [n2, nin] = size(y);
+            [n1, d] = size(x); %#ok<ASGLU>
+            [n2, nin] = size(y); %#ok<ASGLU>
             if d ~= nin
                 error('size(x,2) must equal size(y,2)');
             end

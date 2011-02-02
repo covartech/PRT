@@ -57,7 +57,7 @@ classdef prtPreProcMinMaxRows < prtPreProc
     
     methods (Access = protected, Hidden = true)
         
-        function Obj = trainAction(Obj,DataSet)
+        function Obj = trainAction(Obj,DataSet) %#ok<INUSD>
             %do nothing
         end
         

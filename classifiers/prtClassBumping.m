@@ -133,7 +133,7 @@ classdef prtClassBumping < prtClass
             if ishandle(waitHandle)
                 delete(waitHandle);
             end
-            [bestPerf,bestClassifier] = max(Obj.baggedPerformance);
+            [bestPerf,bestClassifier] = max(Obj.baggedPerformance); %#ok<ASGLU>
             bestClassifier = bestClassifier(1);
             Obj.Classifier = Classifiers(bestClassifier);
             Obj.name = sprintf('%s (%s)',Obj.name,Obj.baseClassifier.name);

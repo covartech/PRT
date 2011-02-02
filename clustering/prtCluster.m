@@ -38,7 +38,7 @@ classdef prtCluster < prtAction
     end
 
     methods (Hidden = true)
-        function featureNames = updateFeatureNames(obj,featureNames) %#ok<MANU>
+        function featureNames = updateFeatureNames(obj,featureNames)
             if ~obj.includesDecision
                 for i = 1:length(featureNames)
                     featureNames{i} = sprintf('%s Membership in cluster %d',obj.nameAbbreviation,i);

@@ -85,7 +85,7 @@ classdef prtKernelSet < prtKernel
                     tempKernelCell(c:c+length(tempCell)-1) = tempCell;
                     c = c + length(tempCell);
                 elseif isa(varargin{i},'prtKernel')
-                    tempKernelCell{c} = varargin{i};
+                    tempKernelCell{c} = varargin{i}; %#ok<AGROW>  Impossible to tell how big this will get...
                     c = c + 1;
                 end
             end

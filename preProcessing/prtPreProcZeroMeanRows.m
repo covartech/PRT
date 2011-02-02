@@ -51,11 +51,11 @@ classdef prtPreProcZeroMeanRows < prtPreProc
     
     methods (Access = protected, Hidden = true)
         
-        function Obj = trainAction(Obj,DataSet)
+        function Obj = trainAction(Obj,DataSet) %#ok<INUSD>
             %do nothing
         end
         
-        function DataSet = runAction(Obj,DataSet)
+        function DataSet = runAction(Obj,DataSet) %#ok<MANU>
             DataSet = DataSet.setObservations(bsxfun(@minus,DataSet.getObservations,mean(DataSet.getObservations,2)));
         end
         
