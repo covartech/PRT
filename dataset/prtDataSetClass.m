@@ -577,7 +577,7 @@ classdef prtDataSetClass  < prtDataSetStandard
                 
                 for cY = 1:nClasses
                     cPatch = cat(2,cat(1,-F(:,cY),flipud(F(:,cY))), cat(1,xLoc, flipud(xLoc)));
-                    patchH(iFeature,cY) = patch(cPatch(:,1)+iFeature, cPatch(:,2), colors(cY,:),'edgecolor','none');
+                    patchH(cY) = patch(cPatch(:,1)+iFeature, cPatch(:,2), colors(cY,:),'edgecolor','none');
                 end
             end
             
@@ -603,40 +603,101 @@ classdef prtDataSetClass  < prtDataSetStandard
             end
             
         end
-        
-        function varargout = plotPairs(obj)
+        function varargout = plotFeatureDensity(obj,featureInd)
+            % plotFeatureDensity - Plot the densities of a single feature
+            % as a function of class. With one input the supplied dataset
+            % must have only a single feature. Otherwise, the second input
+            % specifies which feature to plot.
+            %
+            % plotHandles = plotFeatureDensity(prtDataSetClassObj)
+            % plotHandles = plotFeatureDensity(prtDataSetClassObj, featureInd)
             
-            N = obj.nFeatures;
+            if nargin > 1 && featureInd
+                assert(prtUtilIsPositiveScalarInteger(featureInd) && featureInd <= obj.nFeatures,'prt:prtDataSetClass:plotFeatureDensity','featureInd must be a scalar, positive integer less than prtDataSetClass.nFeatures')
+                obj = obj.retainFeatures(featureInd);
+            end
+            
+            assert(obj.nFeatures==1,'prt:prtDataSetClass:plotFeatureDensity','prtDataSetClass must have only one feature');
+            
+            nKSDsamples = 500;
             
             Summary = obj.summarize();
-            
             nClasses = obj.nClasses;
-            
             colors = obj.PlotOptions.colorsFunction(nClasses);
+            
+            xLoc = linspace(Summary.lowerBounds, Summary.upperBounds, nKSDsamples);
+                        
+            F = zeros([nKSDsamples, nClasses]);
+            for cY = 1:nClasses;
+                F(:,cY) = pdf(mle(prtRvKde,obj.getObservationsByClassInd(cY)),xLoc(:));
+            end
+                        
+            hs = plot(xLoc,F);
+            for iLine = 1:length(hs)
+                set(hs(iLine),'color',colors(iLine,:));
+            end
+            xlim([Summary.lowerBounds, Summary.upperBounds]);
+            
+            grid on;
+            xlabel(obj.getFeatureNames{1});
+            
+            % Create legend
+            if obj.isLabeled
+                legendStrings = getClassNames(obj);
+                legend(hs,legendStrings,'Location','NorthEast');
+            end
+            
+            if nargout
+                varargout = {hs};
+            end
+        end
+        function varargout = plotPairs(obj,containingHandle)
+            % plotPairs() - Plot each pair of features in feature space
+            %   along the diagonals the densities of the two features are
+            %   plotted. A DataSet.nFeatures x DataSet.nFeatures array of
+            %   axes are created for the plots.
+            %
+            % [plotHandles, axesHandles] = plotPairs(prtDataSetClassObj)
+            % [...] = plotPairs(prtDataSetClassObj, containingHandle);
+            %       containingHandle should be a valid parent for a MATLAB
+            %       axes object such as a uipanel or a figure. The default
+            %       is gcf.
+            
+            if nargin < 2 || isempty(containingHandle)
+                containingHandle = gcf;
+            end
+            
+            assert(ishghandle(containingHandle),'prt:prtDataSetClass:prtPlotPairs','containingHandle must be a MATLAB handle graphics handle that is a valid parent for MATLAB axes');
+            
+            N = obj.nFeatures;
+            Summary = obj.summarize();
+            
             fNames = obj.getFeatureNames();
+            
+            borderH = 0.1;
+            interBorderH = 0.005;
+            borderV = 0.1;
+            interBorderV = 0.005;
+  
+            containerPos = get(containingHandle,'Position');
+            containerAspect = containerPos(3)/containerPos(4);
+            borderV = borderV*containerAspect;
+            interBorderV = interBorderV*containerAspect;
+            
+            sizeH = (1 - borderH*2 - interBorderH*2*(N-1))/N;
+            sizeV = (1 - borderV*2 - interBorderV*2*(N-1))/N;
+            
+            axesStartsH = borderH:(sizeH+interBorderH*2):(1-borderH);
+            axesStartsV = fliplr(borderV:(sizeV+interBorderV*2):(1-borderV));
             
             hs = cell(N);
             axesHandles = zeros(N,N);
             for iFeature = 1:N
                 for jFeature = 1:N
-                    
-                    axesHandles(iFeature,jFeature) = subplot(N, N, (jFeature-1)*N + iFeature);
+                    axesHandles(iFeature,jFeature) = axes('Parent',containingHandle,'Position',[axesStartsH(iFeature) axesStartsV(jFeature) sizeH sizeV]);
                     
                     if iFeature == jFeature
-                        
-                        nKSDsamples = 500;
-                        xLoc = linspace(Summary.lowerBounds(iFeature), Summary.upperBounds(iFeature), nKSDsamples);
-                        
-                        F = zeros([nKSDsamples, nClasses]);
-                        for cY = 1:nClasses;
-                            F(:,cY) = pdf(mle(prtRvKde,obj.getObservationsByClassInd(cY,iFeature)),xLoc(:));
-                        end
-                        
-                        hs{iFeature,jFeature} = plot(xLoc,F);
-                        for iLine = 1:length(hs{iFeature,jFeature})
-                            set(hs{iFeature,jFeature}(iLine),'color',colors(iLine,:));
-                        end
-                        xlim([Summary.lowerBounds(iFeature), Summary.upperBounds(iFeature)]);
+                        hs{iFeature,jFeature} = plotFeatureDensity(obj, iFeature);
                     else
                         hs{iFeature,jFeature} = obj.plot([iFeature jFeature]);
                         axis([Summary.lowerBounds(iFeature), Summary.upperBounds(iFeature) Summary.lowerBounds(jFeature), Summary.upperBounds(jFeature)])
@@ -648,49 +709,40 @@ classdef prtDataSetClass  < prtDataSetStandard
                     
                     legend('off')
                     grid on;
-                    if iFeature == 1
+                    if iFeature == 1 || iFeature == N
                         ylabel(fNames{jFeature})
                     end
-                    if jFeature == N
+                    if ~(iFeature == 1 || iFeature == N)
+                        set(gca,'YTickLabel',{});
+                    end
+                    if iFeature == N && N>1
+                        set(gca,'YAxisLocation','Right')
+                    end
+                    if jFeature == N  || jFeature == 1
                         xlabel(fNames{iFeature})
                     end
+                    if ~(jFeature == 1 || jFeature == N)
+                        set(gca,'XTickLabel',{});
+                    end
+                    if (jFeature == 1)  && N>1
+                        set(gca,'XAxisLocation','Top')
+                    end                    
                     
                     if (iFeature==N && jFeature==N)
-                                    % Create legend
+                        % Create legend
                         if obj.isLabeled
                             legendStrings = getClassNames(obj);
-                            legendHandle = legend(hs{iFeature,jFeature},legendStrings,'Location','SouthEast');
+                            legendHandle = legend(hs{iFeature,jFeature},legendStrings,'Location','SouthEast'); %#ok<NASGU>
                         else
-                            legendHandle = [];
+                            legendHandle = []; %#ok<NASGU>
                         end
                     end
                     
                 end
             end
             
-            
-%             for iFeature = 1:N
-%                 for jFeature = 1:N
-%                     if iFeature > 1
-%                         set(axesHandles(iFeature,jFeature),'YTickLabel',{});
-%                     end
-%                     if jFeature < N
-%                         set(axesHandles(iFeature,jFeature),'XTickLabel',{});
-%                     end
-%                     
-%                     cOP = get(axesHandles(iFeature,jFeature),'OuterPosition');
-%                     cP = get(axesHandles(iFeature,jFeature),'Position');
-%                     
-%                     %cOP = cOP + (cP-cOP)*0.1;
-%                     cOP = cOP + mean((cP-cOP).*[1 1 -1 -1]).*[1 1 -1 -1];
-%                     
-%                     set(axesHandles(iFeature,jFeature),'Position',cOP);
-%                 end
-%             end
-            
-            
             if nargout
-                varargout = {hs,legendHandle};
+                varargout = {hs,axesHandles};
             end
         end
          function varargout = plotStar(obj,featureIndices)
