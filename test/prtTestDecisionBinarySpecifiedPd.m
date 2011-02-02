@@ -1,4 +1,4 @@
-function prtTestDecisionBinarySpecifiedPd
+function result = prtTestDecisionBinarySpecifiedPd
 result = true;
 
 dsTrain = prtDataGenUnimodal;

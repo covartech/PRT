@@ -1,4 +1,4 @@
-function prtTestDecisionBinaryMinPe
+function result = prtTestDecisionBinaryMinPe
 result = true;
 
 dsTrain = prtDataGenUnimodal;

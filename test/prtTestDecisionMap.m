@@ -1,4 +1,4 @@
-function prtTestDecisionMap
+function result = prtTestDecisionMap
 result = true;
 
 dsTrain = prtDataGenMary;
