@@ -414,6 +414,8 @@ classdef prtDataSetClass  < prtDataSetStandard
             
         end
         
+        %PLOT:
+        
         function explore(obj, AdditionalOptions)
             % explore  Explore the prtDataSetObject
             %
@@ -430,6 +432,7 @@ classdef prtDataSetClass  < prtDataSetStandard
                 error('prt:prtDataSetClassExplore','An unexpected error was encountered with explore(). If this error persists you may want to try using exploreSimple().')
             end
         end
+        
         function exploreSimple(obj)
             % exploreSimple Explore the prtDataSetObject using basic
             % controls
@@ -438,7 +441,6 @@ classdef prtDataSetClass  < prtDataSetStandard
             %   explorer for visualizing high dimensional data sets.
             prtPlotUtilDataSetExploreGuiSimple(obj)
         end
-        
         
         function varargout = plotAsTimeSeries(obj,featureIndices,xData)
             % plotAsTimeSeries  Plot the data set as time series data
@@ -607,7 +609,8 @@ classdef prtDataSetClass  < prtDataSetStandard
             end
             
         end
-        function varargout = plotFeatureDensity(obj,featureInd)
+        
+        function varargout = plotFeatureDensity(obj,featureInd,varargin)
             % plotFeatureDensity - Plot the densities of a single feature
             % as a function of class. With one input the supplied dataset
             % must have only a single feature. Otherwise, the second input
@@ -615,15 +618,58 @@ classdef prtDataSetClass  < prtDataSetStandard
             %
             % plotHandles = plotFeatureDensity(prtDataSetClassObj)
             % plotHandles = plotFeatureDensity(prtDataSetClassObj, featureInd)
+            % [...] = plotFeatureDensity(prtDataSetClassObj, featureInd, 'PARMNAME', PARAMVALUE,...)
+            %
+            %   Additional parameters:
+            %       nDensitySamples        - Number of linearly spaced 
+            %                                samples used to construct the 
+            %                                density estimate. Default 500.
+            %       minimumKernelBandwidth - minimumBandwidth parameter of 
+            %                                prtRvKde that is used to
+            %                                estimate each density. default
+            %                                eps.
+            %
+            % Example:
+            %    ds = prtDataGenMary;
+            %    plotDensity(ds,2)
+            %
+            %    ds = prtDataGenIris;
+            %    plotFeatureDensity(ds,1,'minimumKernelBandwidth',5e-3);
+            %
+            %    plotFeatureDensity(ds.retainFeatures(2),'nDensitySamples',20);
             
-            if nargin > 1 && featureInd
+            inputs = varargin;
+            if mod(length(inputs),2) && ischar(featureInd)
+                % featureInd was skipped
+                inputs = cat(1,{featureInd},inputs(:));
+                featureInd = [];
+            end
+            
+            if nargin > 1 && ~isempty(featureInd)
                 assert(prtUtilIsPositiveScalarInteger(featureInd) && featureInd <= obj.nFeatures,'prt:prtDataSetClass:plotFeatureDensity','featureInd must be a scalar, positive integer less than prtDataSetClass.nFeatures')
                 obj = obj.retainFeatures(featureInd);
             end
             
             assert(obj.nFeatures==1,'prt:prtDataSetClass:plotFeatureDensity','prtDataSetClass must have only one feature');
             
-            nKSDsamples = 500;
+            % Parse Options (additional string value pairs)
+            Options.nDensitySamples = 500;
+            Options.minimumKernelBandwidth = eps;
+            
+            if nargin > 1
+                assert(mod(length(inputs),2)==0,'Additional inputs must be string value pairs')
+                
+                paramNames = inputs(1:2:end);
+                paramValues = inputs(2:2:end);
+                
+                optionFieldNames = fieldnames(Options);
+                for iPair = 1:length(paramNames)
+                    assert(ismember(paramNames{iPair},optionFieldNames),'%s is not a valid parameter name for plotDensity() (These parameters are case sensitive.)',paramNames{iPair});
+                    Options.(paramNames{iPair}) = paramValues{iPair};
+                end
+            end
+            
+            nKSDsamples =  Options.nDensitySamples;
             
             Summary = obj.summarize();
             nClasses = obj.nClasses;
@@ -633,7 +679,7 @@ classdef prtDataSetClass  < prtDataSetStandard
                         
             F = zeros([nKSDsamples, nClasses]);
             for cY = 1:nClasses;
-                F(:,cY) = pdf(mle(prtRvKde,obj.getObservationsByClassInd(cY)),xLoc(:));
+                F(:,cY) = pdf(mle(prtRvKde('minimumBandwidth',Options.minimumKernelBandwidth),obj.getObservationsByClassInd(cY)),xLoc(:));
             end
                         
             hs = plot(xLoc,F);
@@ -655,6 +701,7 @@ classdef prtDataSetClass  < prtDataSetStandard
                 varargout = {hs};
             end
         end
+        
         function varargout = plotPairs(obj,containingHandle)
             % plotPairs() - Plot each pair of features in feature space
             %   along the diagonals the densities of the two features are
@@ -754,7 +801,8 @@ classdef prtDataSetClass  < prtDataSetStandard
                 varargout = {hs,axesHandles};
             end
         end
-         function varargout = plotStar(obj,featureIndices)
+        
+        function varargout = plotStar(obj,featureIndices)
             % plotStar   Create a star plot
             %
             %   dataSet.plotStar() creates a star plot of the data
@@ -919,7 +967,6 @@ classdef prtDataSetClass  < prtDataSetStandard
             end
         end
         
-        %PLOT:
         function varargout = plot(obj, featureIndices)
             % Plot   Plot the prtDataSetClass object
             %
@@ -982,6 +1029,7 @@ classdef prtDataSetClass  < prtDataSetStandard
                 varargout = {handleArray,legendStrings};
             end
         end
+        
         
         function Summary = summarize(Obj)
             % Summarize   Summarize the prtDataSetClass object
