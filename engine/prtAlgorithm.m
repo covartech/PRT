@@ -106,9 +106,8 @@ classdef prtAlgorithm < prtAction
             end
             
             if isa(Obj2,'prtAlgorithm')
-                
-                % Set inputClass & outputClass
-                keyboard
+
+                [Obj1, Obj2] = prtAlgorithm.checkCompatibility(Obj1, Obj2);
                 
                 in1 = Obj1.inputNodes;
                 out1 = Obj1.outputNodes;
@@ -164,6 +163,8 @@ classdef prtAlgorithm < prtAction
             
             if isa(Obj2,'prtAlgorithm')
                 
+                [Obj1, Obj2] = prtAlgorithm.checkCompatibility(Obj1, Obj2);
+                
                 in1 = Obj1.inputNodes;
                 out1 = Obj1.outputNodes;
                 
@@ -213,12 +214,8 @@ classdef prtAlgorithm < prtAction
         end
         
         function Obj = prtAlgorithm(varargin)
-            % One input is a constructor from another prtAction
             
-            % As an action subclass we must set the properties to reflect
-            % our dataset requirements
-            % Because we are an algorithm we actually don't know the
-            % answers, we will figure these out in get
+            % One input is a constructor from another prtAction
             if nargin == 1
                 assert(isa(varargin{1},'prtAction'),'prtAlgorithm constructor requires a prtAction input');
                 Obj.connectivityMatrix = false(3);
@@ -227,8 +224,8 @@ classdef prtAlgorithm < prtAction
                 Obj.actionCell = varargin(1);
                 Obj.isSupervised = varargin{1}.isSupervised;
                 
-                Obj.classInput = varargin{1}.getClassInput;
-                Obj.classOutput = varargin{1}.getClassOutput;
+                Obj.classInput = varargin{1}.classInput;
+                Obj.classOutput = varargin{1}.classOutput;
                 Obj.classInputOutputRetained = varargin{1}.classInputOutputRetained;
             end
         end
@@ -246,10 +243,8 @@ classdef prtAlgorithm < prtAction
                 currentInput = catFeatures(input{Obj.connectivityMatrix(i,:)});
                 Obj.actionCell{i-1}.verboseStorage = Obj.verboseStorage;
                 Obj.actionCell{i-1} = train(Obj.actionCell{i-1},currentInput);
-                input{i} = runOnTrainingData(Obj.actionCell{i-1},currentInput);
+                input{i} = runOnTrainingData(Obj.actionCell{i-1},currentInput);                
                 
-                %Fixed by having runOnTrainingData call postRunProcessing
-                %input{i} = input{i}.setTargets(input{1}.getTargets);
             end
         end
         
@@ -273,6 +268,48 @@ classdef prtAlgorithm < prtAction
         function plotHelper(actionObj)
             figure
             plot(actionObj)
+        end
+        
+        function [Obj1, Obj2] = checkCompatibility(Obj1, Obj2)
+            % [Obj1, Obj2] = checkCompatibility(Obj1, Obj2)
+            % Checks the input and output data types of the two
+            % prtAlgorithms and ensures that all inputs and outputs are of
+            % acceptable types
+%             
+%             keyboard
+%             
+%             outputClassIndsInActionCell1 = find(Obj1.connectivityMatrix(outputNodes(Obj1),:))-1;
+%             inputClassIndsInActionCell2 = find(Obj2.connectivityMatrix(:,inputNodes(Obj2)))-1;
+%             
+%             obj1OutputClasses = cellfun(@(c)c.classInput,Obj1.actionCell(outputClassIndsInActionCell1),'uniformOutput',false);
+%             obj2InputClasses = cellfun(@(c)c.classInput,Obj2.actionCell(inputClassIndsInActionCell2),'uniformOutput',false);
+%             
+%             if length(obj1OutputClasses) > 1
+%                 % There are multiple outputs from obj1, on these we will
+%                 % call catFeatures()
+%                 % How do we know what the data type will be?
+%                 
+%                 
+%                 
+%                 
+%             end
+            
+            % Set inputClass & outputClass
+%                 if Obj1.classInputOutputRetained
+%                     % The left side algorithm retains higher ranking class
+%                     if prtUtilIsSubClass(Obj1.classOutput,Obj1.classInput)
+%                         algo1OutputClass = Obj1.classInput;
+%                     else
+%                         algo1OutputClass = Obj1.classOutput;
+%                     end
+%                 else
+%                     algo1OutputClass = Obj1.classOutput;
+%                 end
+%                 
+%                 assert(prtUtilIsSubClass(algo1OutputClass,Obj2.classInput),'prt:prtAlgorithm:invalidAlgorithm','Invalid prtAlgorithm. Input and output class mismatch. The output of a %s is a %s but this type of input is not accepted by a %s.',class(Obj1.actionCell{end}),algo1OutputClass,class(Obj2.actionCell{1}));
+                % Obj1.classOutput = Obj2.getClassOutput; % Obj1 will be the new algorithm
+                % Obj1.classInputOutputRetained = Obj2.getClassInputOutputRetained; % Obj1 will be the new algorithm
+                
         end
     end
     

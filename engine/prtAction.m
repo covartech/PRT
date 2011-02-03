@@ -174,9 +174,13 @@ classdef prtAction
             end
             
             inputClassType = class(DataSet);
-            if ~isempty(Obj.getClassInput) && ~prtUtilIsSubClass(inputClassType,Obj.getClassInput)
-                error('prt:prtAction:incompatible','This action requires datasets of type %s but the provided input is of type %s',Obj.getClassInput,inputClassType);
+            if ~isempty(Obj.classInput) && ~prtUtilDataSetClassCheck(inputClassType,Obj.classInput)
+                error('prt:prtAction:incompatible','This action requires datasets of type %s but the provided input is of type %s',Obj.classInput,inputClassType);
             end
+            
+            if Obj.isSupervised && ~DataSet.isLabeled
+                error('prt:prtAction:noLabels','%s is a supervised action and therefore requires that the training dataset is labeled',class(Obj));
+            end 
             
             % Default preTrainProcessing() stuff
             Obj.DataSetSummary = summarize(DataSet);
@@ -219,12 +223,12 @@ classdef prtAction
            
             outputClassName = class(DataSetOut);
             inputClassName = class(DataSetIn);
-            if ~isempty(Obj.getClassOutput) && ~prtUtilIsSubClass(outputClassName,Obj.getClassOutput)
-                error('prt:prtAction:incompatible','This action specifies that it outputs datasets of type %s but the output is of type %s, which is not a subclass of %s. This may indicate an error with the runAction() method of %s.',Obj.getClassOutput,inputClassName,Obj.getClassOutput,class(Obj));
+            if ~isempty(Obj.classOutput) && ~prtUtilDataSetClassCheck(outputClassName,Obj.classOutput)
+                error('prt:prtAction:incompatible','This action specifies that it outputs datasets of type %s but the output is of type %s, which is not a subclass of %s. This may indicate an error with the runAction() method of %s.',Obj.classOutput,inputClassName,Obj.classOutput,class(Obj));
             end
             
             if Obj.classInputOutputRetained && ~isequal(outputClassName,inputClassName)
-                error('prt:prtAction:incompatible','This action specifies that it retains the class of input datasets however, the class of the output dataset is %s and the class of the input dataset is %s. This may indicate an error with the runAction() method of %s.',Obj.getClassOutput,inputClassName,class(Obj));
+                error('prt:prtAction:incompatible','This action specifies that it retains the class of input datasets however, the class of the output dataset is %s and the class of the input dataset is %s. This may indicate an error with the runAction() method of %s.',Obj.classOutput,inputClassName,class(Obj));
             end
         end
         
@@ -455,18 +459,6 @@ classdef prtAction
         end
     end
     methods (Access = protected, Hidden)
-        function inClass = getClassInput(Obj)
-            % GETCLASSINPUT  Access method for property 
-            inClass = Obj.classInput;
-        end
-        function outClass = getClassOutput(Obj)
-            % GETCLASSOUT Access method for property 
-            outClass = Obj.classOutput;
-        end
-        function val = getClassInputOutputRetained(Obj)
-            % GETCLASSINPUTOUTRETAINED  Access method for property 
-            val = Obj.classInputOutputRetained;
-        end
         function DataSetOut = runActionOnTrainingData(Obj, DataSetIn)
             % RUNACTIONONTRAININGDATA Run a prtAction object on a prtDataSet object
             %   This method differs from RUN() in that it is called after
