@@ -677,6 +677,15 @@ classdef prtDataSetStandard < prtDataSetBase
             %
             % nObjervations = dataSet.nObservations() returns the number of
             % observations from the dataSet object.
+            nFeatures = determineNumFeatures(obj);
+        end
+        
+        function nFeatures = determineNumFeatures(obj)
+            % nFeatures  Return the number of features from a
+            % prtDataSetStandard object
+            %
+            % nObjervations = dataSet.nObservations() returns the number of
+            % observations from the dataSet object.
             nFeatures = size(obj.data,2);
         end
         
