@@ -155,18 +155,18 @@ classdef prtClassTreeBaggingCap < prtClass
         
         function ClassifierResults = runAction(Obj,PrtDataSet)
             
-            Yout = zeros(PrtDataSet.nObservations,Obj.DataSetSummary.nClasses);
+            Yout = zeros(PrtDataSet.nObservations,Obj.dataSetSummary.nClasses);
             x = PrtDataSet.getObservations;
             theRoot = Obj.root;
             
             if Obj.useMex
                 for iTree = 1:Obj.nTrees
-                    Yout = Yout + prtUtilEvalCapTreeMex(theRoot(iTree), x, Obj.DataSetSummary.nClasses);
+                    Yout = Yout + prtUtilEvalCapTreeMex(theRoot(iTree), x, Obj.dataSetSummary.nClasses);
                 end
             else
                 for jSample = 1:PrtDataSet.nObservations
                     for iTree = 1:Obj.nTrees
-                        Yout(jSample,:) = Yout(jSample,:) + prtUtilEvalCAPtree(theRoot(iTree),x(jSample,:),Obj.DataSetSummary.nClasses);
+                        Yout(jSample,:) = Yout(jSample,:) + prtUtilEvalCAPtree(theRoot(iTree),x(jSample,:),Obj.dataSetSummary.nClasses);
                     end
                 end
             end
@@ -203,8 +203,8 @@ classdef prtClassTreeBaggingCap < prtClass
                     
                     exportStruct.nTrees = obj.nTrees;
                     exportStruct.nFeatures = obj.nFeatures;
-                    exportStruct.DataSetSummary.nFeatures = obj.DataSetSummary.nFeatures;
-                    exportStruct.DataSetSummary.nClasses = obj.DataSetSummary.nClasses;
+                    exportStruct.dataSetSummary.nFeatures = obj.dataSetSummary.nFeatures;
+                    exportStruct.dataSetSummary.nClasses = obj.dataSetSummary.nClasses;
                     exportStruct.twoClassParadigm = obj.twoClassParadigm;
                     exportStruct.root = obj.root;
 
@@ -233,8 +233,8 @@ classdef prtClassTreeBaggingCap < prtClass
                     %
                     %                     exportStruct.nTrees = obj.nTrees;
                     %                     exportStruct.nFeatures = obj.nFeatures;
-                    %                     exportStruct.DataSetSummary.nFeatures = obj.DataSetSummary.nFeatures;
-                    %                     exportStruct.DataSetSummary.nClasses = obj.DataSetSummary.nClasses;
+                    %                     exportStruct.dataSetSummary.nFeatures = obj.dataSetSummary.nFeatures;
+                    %                     exportStruct.dataSetSummary.nClasses = obj.dataSetSummary.nClasses;
                     %                     exportStruct.twoClassParadigm = obj.twoClassParadigm;
                     %                     exportStruct.root = obj.root;
                     %

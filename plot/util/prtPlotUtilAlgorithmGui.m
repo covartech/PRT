@@ -116,7 +116,7 @@ set(gcf,'NextPlot','new')
             case 'open'
                 % Nothing for now
                 BlockObject = Layout.Blocks(blockIndex).Object;
-                if ~isempty(BlockObject) && BlockObject.isTrained && prtUtilIsMethodIncludeHidden(BlockObject,'plot') && BlockObject.DataSetSummary.nFeatures < 4
+                if ~isempty(BlockObject) && BlockObject.isTrained && prtUtilIsMethodIncludeHidden(BlockObject,'plot') && BlockObject.dataSetSummary.nFeatures < 4
                     plot(BlockObject);
                 end
                 
@@ -176,7 +176,7 @@ set(gcf,'NextPlot','new')
         Layout.Blocks(iBlock).polygonPosition = position;
         Layout.Blocks(iBlock).handle = rectangle('Position',[position,blockSize,blockSize],'Curvature',[0.25, 0.25],'FaceColor',blockColor,'LineWidth',2);
         
-        if ~isempty(BlockObject) && BlockObject.isTrained && prtUtilIsMethodIncludeHidden(BlockObject,'plot') && BlockObject.DataSetSummary.nFeatures < 4
+        if ~isempty(BlockObject) && BlockObject.isTrained && prtUtilIsMethodIncludeHidden(BlockObject,'plot') && BlockObject.dataSetSummary.nFeatures < 4
             %set(Layout.Blocks(iBlock).handle,'lineWidth',2,'EdgeColor',[1 1 0.1]);
             set(Layout.Blocks(iBlock).handle,'lineWidth',4);
         end

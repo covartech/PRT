@@ -187,8 +187,8 @@ classdef prtRvDiscrete < prtRv
                 case 2
                     z = R.InternalMultinomial.probabilities(:);
                     
-                    colorMapInds = gray2ind(mat2gray(z),R.PlotOptions.nColorMapSamples);
-                    cMap = R.PlotOptions.colorMapFunction(R.PlotOptions.nColorMapSamples);
+                    colorMapInds = gray2ind(mat2gray(z),R.plotOptions.nColorMapSamples);
+                    cMap = R.plotOptions.colorMapFunction(R.plotOptions.nColorMapSamples);
                     
                     cMap = prtPlotUtilDarkenColors(cMap);
                     

@@ -316,12 +316,12 @@ classdef prtRvKde < prtRv
                 
                 tooBigNObservations = [2000 500 100];
                 if size(R.trainingData,1) > tooBigNObservations(size(R.trainingData,2))
-                    [linGrid,gridSize] = prtPlotUtilGenerateGrid(plotLims(1:2:end), plotLims(2:2:end), R.PlotOptions.nSamplesPerDim);
+                    [linGrid,gridSize] = prtPlotUtilGenerateGrid(plotLims(1:2:end), plotLims(2:2:end), R.plotOptions.nSamplesPerDim);
                 else
-                    [linGrid,gridSize] = prtPlotUtilGenerateGrid(plotLims(1:2:end), plotLims(2:2:end), R.PlotOptions.nSamplesPerDim, R.trainingData);
+                    [linGrid,gridSize] = prtPlotUtilGenerateGrid(plotLims(1:2:end), plotLims(2:2:end), R.plotOptions.nSamplesPerDim, R.trainingData);
                 end
                 
-                imageHandle = prtPlotUtilPlotGriddedEvaledFunction(R.pdf(linGrid), linGrid, gridSize, R.PlotOptions.colorMapFunction(R.PlotOptions.nColorMapSamples));
+                imageHandle = prtPlotUtilPlotGriddedEvaledFunction(R.pdf(linGrid), linGrid, gridSize, R.plotOptions.colorMapFunction(R.plotOptions.nColorMapSamples));
                 
                 if nargout
                     varargout = {imageHandle};

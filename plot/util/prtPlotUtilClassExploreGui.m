@@ -2,7 +2,7 @@ function prtPlotUtilClassExploreGui(class)
 % PRTPLOTUTILCLASSEXPLOREGUI
 
 assert(~isempty(class.isTrained),'prtPlotUtilClassExploreGui is only for trained classifiers.');
-assert(~isempty(class.DataSet),'prtPlotUtilClassExploreGui requires that verboseStorage is true and therefore a prtDataSet is stored within the classifier.');
+assert(~isempty(class.dataSet),'prtPlotUtilClassExploreGui requires that verboseStorage is true and therefore a prtDataSet is stored within the classifier.');
 assert(~class.yieldsMaryOutput,'prtPlotUtilClassExploreGui is currently only for binary classifiers or classifiers that have an internal decider.');
 
 if strcmpi(get(gcf,'tag'),'prtClassExploreControl')
@@ -24,20 +24,20 @@ if strcmpi(get(plotAxes,'tag'),'prtClassExploreAxes')
 end
     
 
-if class.DataSetSummary.nFeatures > 1
+if class.dataSetSummary.nFeatures > 1
     plotInds = [1 2 0];
-elseif class.DataSetSummary.nFeatures > 0
+elseif class.dataSetSummary.nFeatures > 0
     plotInds = [1 0 0];
 else
     error('prt:prtPlotUtilClassExploreGui','Dataset has zero features and cannot be explored');
 end
 
 
-featureNames = class.DataSet.getFeatureNames;
-classNames = class.DataSet.getClassNames;
+featureNames = class.dataSet.getFeatureNames;
+classNames = class.dataSet.getClassNames;
 
 % Set Values
-setValues = mean(cat(1,class.DataSetSummary.upperBounds,class.DataSetSummary.lowerBounds),1);
+setValues = mean(cat(1,class.dataSetSummary.upperBounds,class.dataSetSummary.lowerBounds),1);
 
 % Make control panel figure
 % Make axes current
@@ -92,8 +92,8 @@ remakePlot();
 set(plotAxesFig,'visible','on');
 set(navFigH,'visible','on');
 
-yFeatureInds = setdiff(1:class.DataSetSummary.nFeatures,plotInds(1));
-zFeatureInds = setdiff(1:class.DataSetSummary.nFeatures,plotInds(plotInds>0));
+yFeatureInds = setdiff(1:class.dataSetSummary.nFeatures,plotInds(1));
+zFeatureInds = setdiff(1:class.dataSetSummary.nFeatures,plotInds(plotInds>0));
 
     function plotAxesDeleteFunction(myHandle, evenData) %#ok<INUSD>
         try %#ok<TRYNC>
@@ -157,13 +157,13 @@ zFeatureInds = setdiff(1:class.DataSetSummary.nFeatures,plotInds(plotInds>0));
         imageHandle = class.plotBinaryConfidenceWithFixedFeatures(actualPlotDims,setValues);
         set(imageHandle.imageHandle,'HitTest','off');
         hold on
-        subDataSet = class.DataSet.retainFeatures(actualPlotDims);
+        subDataSet = class.dataSet.retainFeatures(actualPlotDims);
         subDataSet = subDataSet.setFeatureNames(featureNames(actualPlotDims));
         PlotHandles = plot(subDataSet);
         
         if ~isempty(clickedOnInd)
-            symbols = class.DataSet.PlotOptions.symbolsFunction(class.DataSetSummary.nClasses);
-            plot(setValues(actualPlotDims(1)), setValues(actualPlotDims(2)), symbols(class.DataSet.getTargetsClassInd(clickedOnInd)),'MarkerSize',class.DataSet.PlotOptions.symbolSize,'color',[0 0 0]);
+            symbols = class.dataSet.plotOptions.symbolsFunction(class.dataSetSummary.nClasses);
+            plot(setValues(actualPlotDims(1)), setValues(actualPlotDims(2)), symbols(class.dataSet.getTargetsClassInd(clickedOnInd)),'MarkerSize',class.dataSet.plotOptions.symbolSize,'color',[0 0 0]);
         end
         
         hold off
@@ -194,10 +194,10 @@ zFeatureInds = setdiff(1:class.DataSetSummary.nFeatures,plotInds(plotInds>0));
         displayLogical = cat(1,cData{:,2});
         
         if all(displayLogical)
-            data = class.DataSet.getFeatures(actualPlotDims);
+            data = class.dataSet.getFeatures(actualPlotDims);
         else
-            actualInds = ismember(class.DataSet.getTargetsClassInd, find(displayLogical));
-            data = class.DataSet.getObservations(actualInds,actualPlotDims);
+            actualInds = ismember(class.dataSet.getTargetsClassInd, find(displayLogical));
+            data = class.dataSet.getObservations(actualInds,actualPlotDims);
         end
 
         [rP,rD] = rotateDataAndClick(data);
@@ -212,21 +212,21 @@ zFeatureInds = setdiff(1:class.DataSetSummary.nFeatures,plotInds(plotInds>0));
         
         displayInfo(clickedObsInd);
 
-        setValues = class.DataSet.getObservations(clickedObsInd);
+        setValues = class.dataSet.getObservations(clickedObsInd);
         clickedOnInd = clickedObsInd;
         
         remakePlot();
         moveZAxesLine();
     end
     function displayInfo(clickedObsInd)
-        obsName = class.DataSet.getObservationNames(clickedObsInd);
+        obsName = class.dataSet.getObservationNames(clickedObsInd);
         
-        cClassInd = class.DataSet.getTargetsClassInd(clickedObsInd);
+        cClassInd = class.dataSet.getTargetsClassInd(clickedObsInd);
         
         if isempty(cClassInd)
             cString = sprintf('Closest Observation:\n\t Name: %s',obsName{1});
         else
-            className = class.DataSet.getClassNamesByClassInd(cClassInd);
+            className = class.dataSet.getClassNamesByClassInd(cClassInd);
             cString = sprintf('Closest Observation:\n\t Name: %s\t\nClass: %s',obsName{1},className{1});
         end
         
@@ -384,7 +384,7 @@ zFeatureInds = setdiff(1:class.DataSetSummary.nFeatures,plotInds(plotInds>0));
         axes(H.zAxes) %#ok<MAXES>
         hold on
         H.zLinePlot = plot(H.zAxes,0,1,'k'); %Will be quickly changed. 
-        H.zDensityLinePlot = plot(H.zAxes,zeros(2,1),ones(2,class.DataSetSummary.nClasses),'w'); %Will be quickly changed. 
+        H.zDensityLinePlot = plot(H.zAxes,zeros(2,1),ones(2,class.dataSetSummary.nClasses),'w'); %Will be quickly changed. 
         hold off
         
         set(H.xPopUp,'value',plotInds(1))
@@ -428,7 +428,7 @@ zFeatureInds = setdiff(1:class.DataSetSummary.nFeatures,plotInds(plotInds>0));
     end
 
     function setZString(H)
-        if class.DataSetSummary.nFeatures < 3
+        if class.dataSetSummary.nFeatures < 3
             set(H.zPopUp,'value',1,'string',{'Not Available'},'Enable','off');
             return
         end
@@ -436,7 +436,7 @@ zFeatureInds = setdiff(1:class.DataSetSummary.nFeatures,plotInds(plotInds>0));
         oldString = get(H.zPopUp,'string');
         oldStringVal = oldString{oldVal};
         
-        featureVec = 1:class.DataSetSummary.nFeatures;
+        featureVec = 1:class.dataSetSummary.nFeatures;
         newFeatureVec = setdiff(featureVec,plotInds(plotInds>0));
         newString = featureNames(newFeatureVec);
         
@@ -453,7 +453,7 @@ zFeatureInds = setdiff(1:class.DataSetSummary.nFeatures,plotInds(plotInds>0));
         
     end
     function setYString(H)
-        if class.DataSetSummary.nFeatures < 2
+        if class.dataSetSummary.nFeatures < 2
             set(H.yPopUp,'value',1,'string',{'Not Available'},'Enable','off');
             return
         end
@@ -462,7 +462,7 @@ zFeatureInds = setdiff(1:class.DataSetSummary.nFeatures,plotInds(plotInds>0));
         oldString = get(H.yPopUp,'string');
         oldStringVal = oldString{oldVal};
         
-        featureVec = 1:class.DataSetSummary.nFeatures;
+        featureVec = 1:class.dataSetSummary.nFeatures;
         newFeatureVec = setdiff(featureVec,plotInds(1));
         newString = featureNames(newFeatureVec);
         
@@ -478,7 +478,7 @@ zFeatureInds = setdiff(1:class.DataSetSummary.nFeatures,plotInds(plotInds>0));
 
     function H = setZAxes(H)
         
-        if class.DataSetSummary.nFeatures < 3
+        if class.dataSetSummary.nFeatures < 3
             set(H.zAxes,'visible','off');
             return
         end
@@ -487,14 +487,14 @@ zFeatureInds = setdiff(1:class.DataSetSummary.nFeatures,plotInds(plotInds>0));
         iFeature = zFeatureInds(get(H.zPopUp,'value'));
         
         nKSDsamples = 500;
-        nClasses = class.DataSetSummary.nClasses;
-        xLoc = linspace(class.DataSetSummary.lowerBounds(iFeature), class.DataSetSummary.upperBounds(iFeature), nKSDsamples);
+        nClasses = class.dataSetSummary.nClasses;
+        xLoc = linspace(class.dataSetSummary.lowerBounds(iFeature), class.dataSetSummary.upperBounds(iFeature), nKSDsamples);
                         
         F = zeros([nKSDsamples, nClasses]);
         for cY = 1:nClasses
-            F(:,cY) = pdf(mle(prtRvKde,class.DataSet.getObservationsByClassInd(cY,iFeature)),xLoc(:));
+            F(:,cY) = pdf(mle(prtRvKde,class.dataSet.getObservationsByClassInd(cY,iFeature)),xLoc(:));
         end
-        colors = class.DataSet.PlotOptions.colorsFunction(class.DataSetSummary.nClasses);
+        colors = class.dataSet.plotOptions.colorsFunction(class.dataSetSummary.nClasses);
         
         if any(ishandle(H.zDensityLinePlot))
             delete(H.zDensityLinePlot(ishandle(H.zDensityLinePlot)));
@@ -505,7 +505,7 @@ zFeatureInds = setdiff(1:class.DataSetSummary.nFeatures,plotInds(plotInds>0));
         for iLine = 1:length(lineHandles)
             set(lineHandles(iLine),'color',colors(iLine,:));
         end
-        xlim([class.DataSetSummary.lowerBounds(iFeature), class.DataSetSummary.upperBounds(iFeature)]);
+        xlim([class.dataSetSummary.lowerBounds(iFeature), class.dataSetSummary.upperBounds(iFeature)]);
                
         H.zDensityLinePlot = lineHandles;
         
@@ -520,7 +520,7 @@ zFeatureInds = setdiff(1:class.DataSetSummary.nFeatures,plotInds(plotInds>0));
     end
 
     function moveZAxesLine()
-        if class.DataSetSummary.nFeatures < 3
+        if class.dataSetSummary.nFeatures < 3
             % Everything is disabled so we don't do anything.
             return
         end

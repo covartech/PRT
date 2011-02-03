@@ -205,10 +205,10 @@ s = struct('Sam',{'Rules', 'Man'}, 'Man', {'Hot' 'damn'});
 dataSet = prtDataSetStandard;
 dataSet = dataSet.setObservationsAndTargets([1 2; 3 4; ], [1; 2; ]);
 try
-    dataSet.ObservationInfo = s;
-    if ~isequal(dataSet.ObservationInfo, s(:))
+    dataSet.observationInfo = s;
+    if ~isequal(dataSet.observationInfo, s(:))
         result = false;
-        disp('failed test #24, Userdata')
+        disp('failed test #24, observationInfo')
     end
 catch
     result = false;

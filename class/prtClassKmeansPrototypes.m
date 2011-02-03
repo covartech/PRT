@@ -114,7 +114,7 @@ classdef prtClassKmeansPrototypes < prtClass
             
             DataSet = DataSet.setObservations(binaryMatrix);
             
-            DataSet.ActionData.selectedKMeansIndexes = selectedKMeansIndexes;
+            DataSet.actionData.selectedKMeansIndexes = selectedKMeansIndexes;
         end
     end
 end

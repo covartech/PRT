@@ -65,7 +65,7 @@ classdef prtDataSetClass  < prtDataSetStandard
     end
     
     properties (Hidden = true)
-        PlotOptions = prtDataSetClass.initializePlotOptions();
+        plotOptions = prtDataSetClass.initializePlotOptions();
     end
     
     methods
@@ -458,8 +458,8 @@ classdef prtDataSetClass  < prtDataSetStandard
             end
             
             nClasses = obj.nClasses;
-            classColors = obj.PlotOptions.colorsFunction(obj.nClasses);
-            lineWidth = obj.PlotOptions.symbolLineWidth;
+            classColors = obj.plotOptions.colorsFunction(obj.nClasses);
+            lineWidth = obj.plotOptions.symbolLineWidth;
             
             handleArray = zeros(nClasses,1);
             
@@ -673,7 +673,7 @@ classdef prtDataSetClass  < prtDataSetStandard
             
             Summary = obj.summarize();
             nClasses = obj.nClasses;
-            colors = obj.PlotOptions.colorsFunction(nClasses);
+            colors = obj.plotOptions.colorsFunction(nClasses);
             
             xLoc = linspace(Summary.lowerBounds, Summary.upperBounds, nKSDsamples);
                         
@@ -832,7 +832,7 @@ classdef prtDataSetClass  < prtDataSetStandard
             maxVal = max(abs(obj.getObservations(:,featureIndices)));
             
             nFeats = length(featureIndices);
-            classColors = obj.PlotOptions.colorsFunction(obj.nClasses);
+            classColors = obj.plotOptions.colorsFunction(obj.nClasses);
             
             uClasses = obj.uniqueClasses;
             holdState = get(gca,'nextPlot');
@@ -846,7 +846,7 @@ classdef prtDataSetClass  < prtDataSetStandard
                 
                 ppoints = cat(2,points,points(:,1));
                 
-                h = plot([repmat(centerI,nFeats,1),points(1,:)']',[repmat(centerJ,nFeats,1),points(2,:)']',ppoints(1,:)',ppoints(2,:)','lineWidth',obj.PlotOptions.starLineWidth);
+                h = plot([repmat(centerI,nFeats,1),points(1,:)']',[repmat(centerJ,nFeats,1),points(2,:)']',ppoints(1,:)',ppoints(2,:)','lineWidth',obj.plotOptions.starLineWidth);
                 classInd = obj.getTargets(i) == uClasses;
                 set(h,'color',classColors(classInd,:));
             end
@@ -924,7 +924,7 @@ classdef prtDataSetClass  < prtDataSetStandard
             maxVal = max(abs(obj.getObservations(:,featureIndices)));
             
             nFeats = length(featureIndices);
-            classColors = obj.PlotOptions.colorsFunction(obj.nClasses);
+            classColors = obj.plotOptions.colorsFunction(obj.nClasses);
             
             uClasses = obj.uniqueClasses;
             holdState = get(gca,'nextPlot');
@@ -937,7 +937,7 @@ classdef prtDataSetClass  < prtDataSetStandard
                 
                 ppoints = cat(2,points,points(:,1));
                 
-                h = plot([repmat(centerI,nFeats,1),points(1,:)']',[repmat(centerJ,nFeats,1),points(2,:)']',ppoints(1,:)',ppoints(2,:)','lineWidth',obj.PlotOptions.starLineWidth);
+                h = plot([repmat(centerI,nFeats,1),points(1,:)']',[repmat(centerJ,nFeats,1),points(2,:)']',ppoints(1,:)',ppoints(2,:)','lineWidth',obj.plotOptions.starLineWidth);
                 classInd = obj.getTargets(i) == uClasses;
                 if isempty(classInd) %unlabeled dataset
                     classInd = 1;
@@ -990,10 +990,10 @@ classdef prtDataSetClass  < prtDataSetStandard
             end
             nClasses = obj.nClasses;
             
-            classColors = obj.PlotOptions.colorsFunction(obj.nClasses);
-            classSymbols = obj.PlotOptions.symbolsFunction(obj.nClasses);
-            lineWidth = obj.PlotOptions.symbolLineWidth;
-            markerSize = obj.PlotOptions.symbolSize;
+            classColors = obj.plotOptions.colorsFunction(obj.nClasses);
+            classSymbols = obj.plotOptions.symbolsFunction(obj.nClasses);
+            lineWidth = obj.plotOptions.symbolLineWidth;
+            markerSize = obj.plotOptions.symbolSize;
             
             handleArray = zeros(nClasses,1);
             
@@ -1004,7 +1004,7 @@ classdef prtDataSetClass  < prtDataSetStandard
             % Loop through classes and plot
             for i = 1:nClasses
                 cX = obj.getObservationsByClassInd(i, featureIndices);
-                classEdgeColor = obj.PlotOptions.symbolEdgeModificationFunction(classColors(i,:));
+                classEdgeColor = obj.plotOptions.symbolEdgeModificationFunction(classColors(i,:));
                 
                 handleArray(i) = prtPlotUtilScatter(cX,obj.getFeatureNames(featureIndices),classSymbols(i),classColors(i,:),classEdgeColor,lineWidth, markerSize);
                 
@@ -1136,8 +1136,8 @@ classdef prtDataSetClass  < prtDataSetStandard
         end
     end
     methods (Static, Hidden = true)
-        function PlotOptions = initializePlotOptions()
-            PlotOptions = prtOptionsGet('prtOptionsDataSetClassPlot');
+        function plotOptions = initializePlotOptions()
+            plotOptions = prtOptionsGet('prtOptionsDataSetClassPlot');
         end
     end
     methods (Hidden = true)
@@ -1205,11 +1205,11 @@ classdef prtDataSetClass  < prtDataSetStandard
                 return
             end
             nClasses = obj.nClasses;
-            classColors = obj.PlotOptions.colorsFunctionBw(obj.nClasses);
-            classSymbols = obj.PlotOptions.symbolsFunctionBw(obj.nClasses);
+            classColors = obj.plotOptions.colorsFunctionBw(obj.nClasses);
+            classSymbols = obj.plotOptions.symbolsFunctionBw(obj.nClasses);
             
-            lineWidth = obj.PlotOptions.symbolLineWidth;
-            markerSize = obj.PlotOptions.symbolSize;
+            lineWidth = obj.plotOptions.symbolLineWidth;
+            markerSize = obj.plotOptions.symbolSize;
             
             handleArray = zeros(nClasses,1);
             

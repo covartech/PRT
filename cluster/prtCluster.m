@@ -29,7 +29,7 @@ classdef prtCluster < prtAction
         yieldsMaryOutput = nan; % Determined in trainProcessing()
     end
     properties (Hidden = true)
-        PlotOptions = prtClass.initializePlotOptions(); 
+        plotOptions = prtClass.initializePlotOptions(); 
     end
     properties (SetAccess = protected)
         isSupervised = false;
@@ -78,7 +78,7 @@ classdef prtCluster < prtAction
             %   See also: prtClass\plotDecision
             
             assert(Obj.isTrained,'Clusterer must be trained before it can be plotted.');
-            assert(Obj.DataSetSummary.nFeatures < 4, 'nFeatures in the training dataset must be less than or equal to 3');
+            assert(Obj.dataSetSummary.nFeatures < 4, 'nFeatures in the training dataset must be less than or equal to 3');
             
             if Obj.yieldsMaryOutput
                 % Must have an internal decider
@@ -87,8 +87,8 @@ classdef prtCluster < prtAction
            
             HandleStructure = plotBinaryClusterConfidence(Obj);
                 
-            if ~isempty(Obj.DataSet) && ~isempty(Obj.DataSet.name)
-                title(sprintf('%s (%s)',Obj.name,Obj.DataSet.name));
+            if ~isempty(Obj.dataSet) && ~isempty(Obj.dataSet.name)
+                title(sprintf('%s (%s)',Obj.name,Obj.dataSet.name));
             else
                 title(Obj.name);
             end
@@ -137,14 +137,14 @@ classdef prtCluster < prtAction
         function [OutputDataSet, linGrid, gridSize] = runClustererOnGrid(Obj, upperBounds, lowerBounds)
 
             if nargin < 3 || isempty(lowerBounds)
-                lowerBounds = Obj.DataSetSummary.lowerBounds;
+                lowerBounds = Obj.dataSetSummary.lowerBounds;
             end
 
             if nargin < 2 || isempty(upperBounds)
-                upperBounds = Obj.DataSetSummary.upperBounds;
+                upperBounds = Obj.dataSetSummary.upperBounds;
             end
 
-            [linGrid, gridSize] = prtPlotUtilGenerateGrid(upperBounds, lowerBounds, Obj.PlotOptions.nSamplesPerDim);
+            [linGrid, gridSize] = prtPlotUtilGenerateGrid(upperBounds, lowerBounds, Obj.plotOptions.nSamplesPerDim);
 
             OutputDataSet = run(Obj,prtDataSetClass(linGrid));
         end
@@ -154,16 +154,16 @@ classdef prtCluster < prtAction
             
             [OutputDataSet, linGrid, gridSize] = runClustererOnGrid(Obj);
             
-            if Obj.DataSetSummary.nClasses > 2
+            if Obj.dataSetSummary.nClasses > 2
                 %internalDeciders* output the right colors:
-                imageHandle = prtPlotUtilPlotGriddedEvaledClassifier(OutputDataSet.getObservations(), linGrid, gridSize, prtPlotUtilLightenColors(Obj.PlotOptions.colorsFunction(Obj.DataSetSummary.nClasses)));
+                imageHandle = prtPlotUtilPlotGriddedEvaledClassifier(OutputDataSet.getObservations(), linGrid, gridSize, prtPlotUtilLightenColors(Obj.plotOptions.colorsFunction(Obj.dataSetSummary.nClasses)));
             else
-                imageHandle = prtPlotUtilPlotGriddedEvaledClassifier(OutputDataSet.getObservations(), linGrid, gridSize, Obj.PlotOptions.twoClassColorMapFunction());
+                imageHandle = prtPlotUtilPlotGriddedEvaledClassifier(OutputDataSet.getObservations(), linGrid, gridSize, Obj.plotOptions.twoClassColorMapFunction());
             end
             
-            if ~isempty(Obj.DataSet)
+            if ~isempty(Obj.dataSet)
                 hold on;
-                handles = plot(Obj.DataSet);
+                handles = plot(Obj.dataSet);
                 hold off;
                 HandleStructure.Axes = struct('imageHandle',{imageHandle},'handles',{handles});
             else
@@ -172,10 +172,10 @@ classdef prtCluster < prtAction
         end
         
         function Obj = trainAutoDecision(Obj)
-            if ~isempty(Obj.DataSet)
+            if ~isempty(Obj.dataSet)
                     warning('prt:prtCluster:plot:autoDecision','prtCluster.plot() requires a prtCluster with an internal decider. A prtDecisionMap has been trained and set as the internalDecider to enable plotting.');
                     Obj.internalDecider =  prtDecisionMap;
-                    Obj = postTrainProcessing(Obj, Obj.DataSet);
+                    Obj = postTrainProcessing(Obj, Obj.dataSet);
                     Obj.yieldsMaryOutput = false;
                 else
                     error('prt:prtCluster:plot','prtCluster.plot() requires a prtCluster with an internal decider. A prtDecisionMap cannot be trained and set as the internalDecider to enable plotting because this cluster object does not have verboseStorege turned on and therefore the dataSet used to train the clusterer is unknow. To enable plotting, set an internalDecider and retrain the clusterer.');
@@ -184,8 +184,8 @@ classdef prtCluster < prtAction
     end
 
     methods (Static, Hidden = true)
-        function PlotOptions = initializePlotOptions()
-            PlotOptions = prtOptionsGet('prtOptionsClusterPlot');
+        function plotOptions = initializePlotOptions()
+            plotOptions = prtOptionsGet('prtOptionsClusterPlot');
         end
     end
 end

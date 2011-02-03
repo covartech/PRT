@@ -88,7 +88,7 @@ classdef prtClass < prtAction
     end
     
     properties (Hidden = true)
-        PlotOptions = prtClass.initializePlotOptions();
+        plotOptions = prtClass.initializePlotOptions();
     end
     
     methods (Hidden = true)
@@ -134,7 +134,7 @@ classdef prtClass < prtAction
             %   See also: prtClass\explore()
             
             assert(Obj.isTrained,'Classifier must be trained before it can be plotted.');
-            assert(Obj.DataSetSummary.nFeatures < 4, 'nFeatures in the training dataset must be less than or equal to 3');
+            assert(Obj.dataSetSummary.nFeatures < 4, 'nFeatures in the training dataset must be less than or equal to 3');
             
             if Obj.yieldsMaryOutput
                 % Must have an internal decider
@@ -143,8 +143,8 @@ classdef prtClass < prtAction
            
             HandleStructure = plotBinaryClassifierConfidence(Obj); % This handles both the binary classifier confidence plot and binary and m-ary decision plots.
            
-            if ~isempty(Obj.DataSet) && ~isempty(Obj.DataSet.name)
-                title(sprintf('%s (%s)',Obj.name,Obj.DataSet.name));
+            if ~isempty(Obj.dataSet) && ~isempty(Obj.dataSet.name)
+                title(sprintf('%s (%s)',Obj.name,Obj.dataSet.name));
             else
                 title(Obj.name);
             end
@@ -177,7 +177,7 @@ classdef prtClass < prtAction
             
             
             assert(~isempty(Obj.isTrained),'explore() is only for trained classifiers.');
-            assert(~isempty(Obj.DataSet),'explore() requires that verboseStorage is true and therefore a prtDataSet is stored within the classifier.');
+            assert(~isempty(Obj.dataSet),'explore() requires that verboseStorage is true and therefore a prtDataSet is stored within the classifier.');
             if Obj.yieldsMaryOutput
                 Obj = trainAutoDecision(Obj);
             end
@@ -191,31 +191,31 @@ classdef prtClass < prtAction
             assert(~Obj.yieldsMaryOutput,'plotWithFixedFeatures is currently only for classifiers that return a single decision statistic');
             assert(numel(freeDims)==2 || numel(freeDims)==3,'Two or three freeDims must be specified.')
             
-            if length(featureValues) == Obj.DataSetSummary.nFeatures
-                featureValues = featureValues(setdiff(1:Obj.DataSetSummary.nFeatures,freeDims));
+            if length(featureValues) == Obj.dataSetSummary.nFeatures
+                featureValues = featureValues(setdiff(1:Obj.dataSetSummary.nFeatures,freeDims));
             else
-                assert(numel(featureValues) == (Obj.DataSetSummary.nFeatures-length(freeDims)),'Invalid feature values specified.');
+                assert(numel(featureValues) == (Obj.dataSetSummary.nFeatures-length(freeDims)),'Invalid feature values specified.');
             end
             
-            [linGrid,gridSize] = prtPlotUtilGenerateGrid(Obj.DataSetSummary.lowerBounds(freeDims), Obj.DataSetSummary.upperBounds(freeDims), Obj.PlotOptions.nSamplesPerDim);
+            [linGrid,gridSize] = prtPlotUtilGenerateGrid(Obj.dataSetSummary.lowerBounds(freeDims), Obj.dataSetSummary.upperBounds(freeDims), Obj.plotOptions.nSamplesPerDim);
             
-            XLinGrid = nan(size(linGrid,1), Obj.DataSetSummary.nFeatures);
+            XLinGrid = nan(size(linGrid,1), Obj.dataSetSummary.nFeatures);
             XLinGrid(:,freeDims) = linGrid;
-            XLinGrid(:,setdiff(1:Obj.DataSetSummary.nFeatures,freeDims)) = repmat(featureValues(:)',size(linGrid,1),1);
+            XLinGrid(:,setdiff(1:Obj.dataSetSummary.nFeatures,freeDims)) = repmat(featureValues(:)',size(linGrid,1),1);
             
             OutputDataSet = run(Obj,prtDataSetClass(XLinGrid));
             
-            if Obj.DataSetSummary.nClasses > 2
+            if Obj.dataSetSummary.nClasses > 2
                 %internalDeciders output the right colors:
-                imageHandle = prtPlotUtilPlotGriddedEvaledClassifier(OutputDataSet.getObservations(), linGrid, gridSize, prtPlotUtilLightenColors(Obj.PlotOptions.colorsFunction(Obj.DataSetSummary.nClasses)));
+                imageHandle = prtPlotUtilPlotGriddedEvaledClassifier(OutputDataSet.getObservations(), linGrid, gridSize, prtPlotUtilLightenColors(Obj.plotOptions.colorsFunction(Obj.dataSetSummary.nClasses)));
             else
-                imageHandle = prtPlotUtilPlotGriddedEvaledClassifier(OutputDataSet.getObservations(), linGrid, gridSize, Obj.PlotOptions.twoClassColorMapFunction());
+                imageHandle = prtPlotUtilPlotGriddedEvaledClassifier(OutputDataSet.getObservations(), linGrid, gridSize, Obj.plotOptions.twoClassColorMapFunction());
             end
             
             HandleStructure.imageHandle = imageHandle;
             
-            if ~isempty(Obj.DataSet) && ~isempty(Obj.DataSet.name)
-                title(sprintf('%s (%s)',Obj.name,Obj.DataSet.name));
+            if ~isempty(Obj.dataSet) && ~isempty(Obj.dataSet.name)
+                title(sprintf('%s (%s)',Obj.name,Obj.dataSet.name));
             else
                 title(Obj.name);
             end
@@ -287,7 +287,7 @@ classdef prtClass < prtAction
                     % Mary classifier output mary decision statistics
                     % enforce that it has output one for each class in the
                     % training data set.
-                    assert(OutputDataSet.nFeatures == ClassObj.DataSetSummary.nClasses,'M-ary classifiers must yield observations with nFeatures equal to the number of unique classes in the training data set. This classifier must be modified to output observations with the proper dimensionality. If integer outputs are desired, output a binary matrix.');
+                    assert(OutputDataSet.nFeatures == ClassObj.dataSetSummary.nClasses,'M-ary classifiers must yield observations with nFeatures equal to the number of unique classes in the training data set. This classifier must be modified to output observations with the proper dimensionality. If integer outputs are desired, output a binary matrix.');
                 else
                     % Run Function provided mary output but ClassObj knows
                     % not to supply this. We must run
@@ -313,14 +313,14 @@ classdef prtClass < prtAction
         function [OutputDataSet, linGrid, gridSize] = runClassifierOnGrid(Obj, upperBounds, lowerBounds)
             
             if nargin < 3 || isempty(lowerBounds)
-                lowerBounds = Obj.DataSetSummary.lowerBounds;
+                lowerBounds = Obj.dataSetSummary.lowerBounds;
             end
             
             if nargin < 2 || isempty(upperBounds)
-                upperBounds = Obj.DataSetSummary.upperBounds;
+                upperBounds = Obj.dataSetSummary.upperBounds;
             end
             
-            [linGrid, gridSize] = prtPlotUtilGenerateGrid(upperBounds, lowerBounds, Obj.PlotOptions.nSamplesPerDim);
+            [linGrid, gridSize] = prtPlotUtilGenerateGrid(upperBounds, lowerBounds, Obj.plotOptions.nSamplesPerDim);
             
             OutputDataSet = run(Obj,prtDataSetClass(linGrid));
         end
@@ -329,16 +329,16 @@ classdef prtClass < prtAction
             
             [OutputDataSet, linGrid, gridSize] = runClassifierOnGrid(Obj);
             
-            if Obj.DataSetSummary.nClasses > 2
+            if Obj.dataSetSummary.nClasses > 2
                 %internalDeciders* output the right colors:
-                imageHandle = prtPlotUtilPlotGriddedEvaledClassifier(OutputDataSet.getObservations(), linGrid, gridSize, prtPlotUtilLightenColors(Obj.PlotOptions.colorsFunction(Obj.DataSetSummary.nClasses)));
+                imageHandle = prtPlotUtilPlotGriddedEvaledClassifier(OutputDataSet.getObservations(), linGrid, gridSize, prtPlotUtilLightenColors(Obj.plotOptions.colorsFunction(Obj.dataSetSummary.nClasses)));
             else
-                imageHandle = prtPlotUtilPlotGriddedEvaledClassifier(OutputDataSet.getObservations(), linGrid, gridSize, Obj.PlotOptions.twoClassColorMapFunction());
+                imageHandle = prtPlotUtilPlotGriddedEvaledClassifier(OutputDataSet.getObservations(), linGrid, gridSize, Obj.plotOptions.twoClassColorMapFunction());
             end
             
-            if ~isempty(Obj.DataSet)
+            if ~isempty(Obj.dataSet)
                 hold on;
-                handles = plot(Obj.DataSet);
+                handles = plot(Obj.dataSet);
                 hold off;
                 HandleStructure.Axes = struct('imageHandle',{imageHandle},'handles',{handles});
             else
@@ -346,10 +346,10 @@ classdef prtClass < prtAction
             end
         end
         function Obj = trainAutoDecision(Obj)
-            if ~isempty(Obj.DataSet)
+            if ~isempty(Obj.dataSet)
                     warning('prt:prtClass:plot:autoDecision','prtClass.plot() requires a binary prtClass or a prtClass with an internal decider. A prtDecisionMap has been trained and set as the internalDecider to enable plotting.');
                     Obj.internalDecider =  prtDecisionMap;
-                    Obj = postTrainProcessing(Obj, Obj.DataSet);
+                    Obj = postTrainProcessing(Obj, Obj.dataSet);
                     Obj.yieldsMaryOutput = false;
                 else
                     error('prt:prtClass:plot','prtClass.plot() requires a binary prtClass or a prtClass with an internal decider. A prtDecisionMap cannot be trained and set as the internalDecider to enable plotting because this classifier object does not have verboseStorege turned on and therefore the dataSet used to train the classifier is unknow. To enable plotting, set an internalDecider and retrain the classifier.');
@@ -359,8 +359,8 @@ classdef prtClass < prtAction
     end
     
     methods (Static, Hidden = true)
-        function PlotOptions =initializePlotOptions()
-            PlotOptions = prtOptionsGet('prtOptionsClassPlot');
+        function plotOptions =initializePlotOptions()
+            plotOptions = prtOptionsGet('prtOptionsClassPlot');
         end
     end
 end

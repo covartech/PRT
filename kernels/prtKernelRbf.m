@@ -96,7 +96,7 @@ classdef prtKernelRbf < prtKernel
             x = obj.internalDataSet.getObservations;
             
             if size(x,2) <= 3
-                h = prtPlotUtilScatter(x, {}, obj.PlotOptions.symbol, obj.PlotOptions.markerFaceColor, obj.PlotOptions.color, obj.PlotOptions.symbolLineWidth, obj.PlotOptions.symbolSize);
+                h = prtPlotUtilScatter(x, {}, obj.plotOptions.symbol, obj.plotOptions.markerFaceColor, obj.plotOptions.color, obj.plotOptions.symbolLineWidth, obj.plotOptions.symbolSize);
             else
                 h = nan;
             end

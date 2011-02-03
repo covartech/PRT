@@ -2,7 +2,7 @@ classdef prtRegress < prtAction %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % prtRegress is an abstract base class for all regression objects.
 
     properties
-        PlotOptions = prtRegress.initializePlotOptions(); % Plotting Options
+        plotOptions = prtRegress.initializePlotOptions(); % Plotting Options
     end
     
     properties (SetAccess = protected)
@@ -37,18 +37,18 @@ classdef prtRegress < prtAction %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             
             
             assert(Obj.isTrained,'Regressor must be trained before it can be plotted.');
-            assert(Obj.DataSetSummary.nFeatures < 2, 'nFeatures in the training dataset must be 1');
+            assert(Obj.dataSetSummary.nFeatures < 2, 'nFeatures in the training dataset must be 1');
             
             [OutputDataSet, linGrid] = runRegressorOnGrid(Obj);
             
-            colors = Obj.PlotOptions.colorsFunction(Obj.DataSetSummary.nTargetDimensions);
-            lineWidth = Obj.PlotOptions.lineWidth;
+            colors = Obj.plotOptions.colorsFunction(Obj.dataSetSummary.nTargetDimensions);
+            lineWidth = Obj.plotOptions.lineWidth;
             HandleStructure.regressorPlotHandle = plot(linGrid,OutputDataSet.getObservations,'color',colors(1,:),'lineWidth',lineWidth);
             
             holdState = get(gca,'nextPlot');
-            if ~isempty(Obj.DataSet)
+            if ~isempty(Obj.dataSet)
                 hold on
-                HandleStructure.dataSetPlotHandle = plot(Obj.DataSet);
+                HandleStructure.dataSetPlotHandle = plot(Obj.dataSet);
             end
             set(gca,'nextPlot',holdState);
             
@@ -64,21 +64,21 @@ classdef prtRegress < prtAction %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         function [OutputDataSet, linGrid, gridSize] = runRegressorOnGrid(Obj, upperBounds, lowerBounds)
             
             if nargin < 3 || isempty(lowerBounds)
-                lowerBounds = Obj.DataSetSummary.lowerBounds;
+                lowerBounds = Obj.dataSetSummary.lowerBounds;
             end
             
             if nargin < 2 || isempty(upperBounds)
-                upperBounds = Obj.DataSetSummary.upperBounds;
+                upperBounds = Obj.dataSetSummary.upperBounds;
             end
             
-            [linGrid, gridSize] = prtPlotUtilGenerateGrid(upperBounds, lowerBounds, Obj.PlotOptions.nSamplesPerDim);
+            [linGrid, gridSize] = prtPlotUtilGenerateGrid(upperBounds, lowerBounds, Obj.plotOptions.nSamplesPerDim);
             
             OutputDataSet = run(Obj,prtDataSetRegress(linGrid));
         end
     end
     methods (Static, Hidden = true)
-        function PlotOptions = initializePlotOptions()
-            PlotOptions = prtOptionsGet('prtOptionsRegressPlot');
+        function plotOptions = initializePlotOptions()
+            plotOptions = prtOptionsGet('prtOptionsRegressPlot');
         end
     end
 end

@@ -6,7 +6,7 @@ classdef prtRv
     %   properties:
     %
     %   name           - Name of the random variable.
-    %   UserData       - Structure for holding additional related to the
+    %   userData       - Structure for holding additional related to the
     %                    random variable.
     %   nDimensions    - Number of dimensions of the vector space
     %                    represented by the random variable.
@@ -40,8 +40,8 @@ classdef prtRv
     
     properties
         name        % The name of the prtRv
-        UserData    % User specified data
-        PlotOptions  = prtRv.initializePlotOptions()
+        userData    % User specified data
+        plotOptions  = prtRv.initializePlotOptions()
     end
     properties (Abstract = true, Hidden = true, Dependent = true)
         nDimensions % The number of dimensions
@@ -125,9 +125,9 @@ classdef prtRv
                     plotLims = plotLimits(R);
                 end
                 
-                [linGrid,gridSize] = prtPlotUtilGenerateGrid(plotLims(1:2:end), plotLims(2:2:end), R.PlotOptions.nSamplesPerDim);
+                [linGrid,gridSize] = prtPlotUtilGenerateGrid(plotLims(1:2:end), plotLims(2:2:end), R.plotOptions.nSamplesPerDim);
                 
-                imageHandle = prtPlotUtilPlotGriddedEvaledFunction(R.pdf(linGrid), linGrid, gridSize, R.PlotOptions.colorMapFunction(R.PlotOptions.nColorMapSamples));
+                imageHandle = prtPlotUtilPlotGriddedEvaledFunction(R.pdf(linGrid), linGrid, gridSize, R.plotOptions.colorMapFunction(R.plotOptions.nColorMapSamples));
                 
                 if nargout
                     varargout = {imageHandle};
@@ -156,9 +156,9 @@ classdef prtRv
                     plotLims = plotLimits(R);
                 end
                 
-                [linGrid,gridSize] = prtPlotUtilGenerateGrid(plotLims(1:2:end), plotLims(2:2:end), R.PlotOptions.nSamplesPerDim);
+                [linGrid,gridSize] = prtPlotUtilGenerateGrid(plotLims(1:2:end), plotLims(2:2:end), R.plotOptions.nSamplesPerDim);
                 
-                imageHandle = prtPlotUtilPlotGriddedEvaledFunction(R.cdf(linGrid), linGrid, gridSize, R.PlotOptions.colorMapFunction(R.PlotOptions.nColorMapSamples));
+                imageHandle = prtPlotUtilPlotGriddedEvaledFunction(R.cdf(linGrid), linGrid, gridSize, R.plotOptions.colorMapFunction(R.plotOptions.nColorMapSamples));
                 
                 if nargout
                     varargout = {imageHandle};
@@ -203,8 +203,8 @@ classdef prtRv
         end
     end
     methods (Access = 'private',Hidden = true,Static = true)
-        function PlotOptions = initializePlotOptions()
-            PlotOptions = prtOptionsGet('prtOptionsRvPlot');
+        function plotOptions = initializePlotOptions()
+            plotOptions = prtOptionsGet('prtOptionsRvPlot');
         end
     end
     methods (Access = 'protected', Hidden = true)

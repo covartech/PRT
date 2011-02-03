@@ -238,7 +238,7 @@ set(navFigH,'visible','on');
         
         set(tabGroupH.infoText,'string',cString);
         
-        if length(ds.ObservationInfo) > clickedObsInd
+        if length(ds.observationInfo) > clickedObsInd
             infoClickedInd = clickedObsInd;
             set(tabGroupH.infoButton,'enable','on');
         else
@@ -249,7 +249,7 @@ set(navFigH,'visible','on');
 
     function infoToWorkspaceCallback(myHandle,eventData)  %#ok<INUSD>
         
-        c = ds.ObservationInfo(infoClickedInd);
+        c = ds.observationInfo(infoClickedInd);
         
         assignin('base','prtPlotUtilDataSetExploreGuiWithNavigationTempVar',c);
         openvar('prtPlotUtilDataSetExploreGuiWithNavigationTempVar');

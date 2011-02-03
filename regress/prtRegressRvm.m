@@ -275,7 +275,7 @@ classdef prtRegressRvm < prtRegress
         function Obj = verboseIterationPlot(Obj,DataSet,relevantIndices)
             DsSummary = DataSet.summarize;
             
-            [linGrid, gridSize] = prtPlotUtilGenerateGrid(DsSummary.lowerBounds, DsSummary.upperBounds, Obj.PlotOptions);
+            [linGrid, gridSize] = prtPlotUtilGenerateGrid(DsSummary.lowerBounds, DsSummary.upperBounds, Obj.plotOptions);
             
             trainedKernel = train(Obj.kernels, DataSet);
             trainedKernel = trainedKernel.retainKernelDimensions(relevantIndices);
@@ -283,8 +283,8 @@ classdef prtRegressRvm < prtRegress
             
             yHat = reshape(cPhi*Obj.beta(relevantIndices),gridSize);
             
-            colors = Obj.PlotOptions.colorsFunction(Obj.DataSetSummary.nTargetDimensions);
-            lineWidth = Obj.PlotOptions.lineWidth;
+            colors = Obj.plotOptions.colorsFunction(Obj.dataSetSummary.nTargetDimensions);
+            lineWidth = Obj.plotOptions.lineWidth;
             plot(linGrid,yHat,'color',colors(1,:),'lineWidth',lineWidth);
             hold on
             plot(DataSet);

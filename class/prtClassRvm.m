@@ -344,7 +344,7 @@ classdef prtClassRvm < prtClass
         function verboseIterationPlot(Obj,DataSet,relevantIndices)
             DsSummary = DataSet.summarize;
             
-            [linGrid, gridSize,xx,yy] = prtPlotUtilGenerateGrid(DsSummary.lowerBounds, DsSummary.upperBounds, Obj.PlotOptions); %#ok<ASGLU>
+            [linGrid, gridSize,xx,yy] = prtPlotUtilGenerateGrid(DsSummary.lowerBounds, DsSummary.upperBounds, Obj.plotOptions); %#ok<ASGLU>
             
             localKernels = Obj.kernels.train(DataSet);
             cKernels = localKernels.retainKernelDimensions(relevantIndices);
@@ -353,7 +353,7 @@ classdef prtClassRvm < prtClass
             
             confMap = reshape(prtRvUtilNormCdf(cPhi*Obj.beta(relevantIndices)),gridSize);
             imagesc(xx(1,:),yy(:,1),confMap,[0,1])
-            colormap(Obj.PlotOptions.twoClassColorMapFunction());
+            colormap(Obj.plotOptions.twoClassColorMapFunction());
             axis xy
             hold on
             plot(DataSet);
@@ -362,9 +362,6 @@ classdef prtClassRvm < prtClass
             
             set(gcf,'color',[1 1 1]);
             drawnow;
-            
-            % Obj.UserData.movieFrames(iteration) = getframe(gcf);
         end
-        
     end
 end

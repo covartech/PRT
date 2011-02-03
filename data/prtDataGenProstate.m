@@ -60,12 +60,12 @@ colNames = varNames(featureInd);
 varNames = cellfun(@(c)c{1},varNames,'uniformoutput',false);
 colNames = varNames(featureInd);
 
-UserData = struct('column6IntegerExplanations',{col8Labels},...
+userData = struct('column6IntegerExplanations',{col8Labels},...
     'column10IntegerExplanations',{col12Labels});
 
 DataSet = prtDataSetClass(X,Y,'name','UCI Prostate Data');
 DataSet = DataSet.setFeatureNames(colNames);
-DataSet.UserData = UserData;
+DataSet.userData = userData;
 DataSet = DataSet.setClassNames(col5Labels);
 
 function cellData = prostateFixEstrogen(cellData)

@@ -41,7 +41,7 @@ elseif nargin == 2 && isa(varargin{1},'prtDataSetRegress')
     emulate = false;
     return;
 elseif isa(varargin{1},'prtClass')
-    DataSetSummary = varargin{1}.DataSetSummary;
+    DataSetSummary = varargin{1}.dataSetSummary;
     maryData = false;
     if isfield(DataSetSummary,'isMary')
         maryData = DataSetSummary.isMary;

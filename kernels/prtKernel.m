@@ -46,7 +46,7 @@ classdef prtKernel < prtAction
     %   data set.
     
     properties (Hidden = true)
-        PlotOptions = prtKernel.initializePlotOptions();        
+        plotOptions = prtKernel.initializePlotOptions();        
     end
     
     properties (SetAccess = protected)
@@ -158,8 +158,8 @@ classdef prtKernel < prtAction
     end
     
     methods (Static, Hidden = true)
-        function PlotOptions = initializePlotOptions()
-            PlotOptions = prtOptionsGet('prtOptionsKernelPlot');
+        function plotOptions = initializePlotOptions()
+            plotOptions = prtOptionsGet('prtOptionsKernelPlot');
         end
     end        
 end

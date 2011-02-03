@@ -16,11 +16,11 @@ classdef prtAction
     %                          cross-validation is a valid operation on 
     %                          this prtAction object.
     %   verboseStorage       - Flag to allow or disallow verbose storage
-    %   DataSetSummary       - A struct, set during training, containing
+    %   dataSetSummary       - A struct, set during training, containing
     %                          information about the training data set
-    %   DataSet              - A prtDataSet, containing the training data,
+    %   dataSet              - A prtDataSet, containing the training data,
     %                          only used if verboseStorage is true
-    %   UserData             - A struct containing user specified data
+    %   userData             - A struct containing user specified data
     %
     %   All prtAction objects have the following methods:
     %
@@ -91,13 +91,13 @@ classdef prtAction
         %   Set automatically in prtAction.train().
         
         % Structure that summarizes prtDataSet.
-        DataSetSummary = [];
+        dataSetSummary = [];
         %   Produced by prtDataSet.summarize() and stored in
         %   prtAction.train(). Used to characterize the dataset for
         %   plotting when prtAction.verboseStorage == false
         
         %  The training prtDataSet, only stored if verboseStorage is true. 
-        DataSet = []; 
+        dataSet = []; 
          %   Only stored if prtAction.verboseStorage == true. Otherwise it
         %   is empty.
         
@@ -107,14 +107,14 @@ classdef prtAction
     
     properties
         % Specifies whether or not to store the training prtDataset.
-        % If true the training prtDataSet is stored internally prtAction.DataSet.
+        % If true the training prtDataSet is stored internally prtAction.dataSet.
         verboseStorage = true;
         
         
         % User specified data
-        UserData = [];
+        userData = struct;
         %   Some prtActions store additional information from
-        %   prtAction.run() as a structure in prtAction.UserData()
+        %   prtAction.run() as a structure in prtAction.userData()
     end
     
     methods (Abstract, Access = protected, Hidden = true)
@@ -180,14 +180,14 @@ classdef prtAction
             end 
             
             % Default preTrainProcessing() stuff
-            Obj.DataSetSummary = summarize(DataSet);
+            Obj.dataSetSummary = summarize(DataSet);
             
             %preTrainProcessing should make sure Obj has the right
             %verboseStorage
             Obj = preTrainProcessing(Obj,DataSet);
             
             if Obj.verboseStorage
-                Obj.DataSet = DataSet;
+                Obj.dataSet = DataSet;
             end
             
             Obj = trainAction(Obj, DataSet);

@@ -7,8 +7,8 @@ if nargin < 1 || isempty(n)
 end
 
 if nargin < 2 || isempty(colors)
-    PlotOptions = prtOptionsGet('prtOptionsDataSetClassPlot');
-    colors = feval(PlotOptions.colorsFunction,2);
+    plotOptions = prtOptionsGet('prtOptionsDataSetClassPlot');
+    colors = feval(plotOptions.colorsFunction,2);
 end
 
 % Lighten the colors

@@ -13,13 +13,13 @@ catch
 end
 
 ObsInfo = genObsInfo(ds);
-ds.ObservationInfo = ObsInfo;
+ds.observationInfo = ObsInfo;
 
 try
     ds = ds.retainObservations(1:3:ds.nObservations);
     
-    if ~isequal(ds.ObservationInfo(3).obsName,'Obs #7')
-        error('retainObsertions failed ro retain ObservationInfo correctly');
+    if ~isequal(ds.observationInfo(3).obsName,'Obs #7')
+        error('retainObsertions failed ro retain observationInfo correctly');
     end
 catch ME
     result = false;
@@ -30,8 +30,8 @@ try
     n = ds.nObservations;
     ds = ds.catObservations(ds);
     
-    if ~isequal(ds.ObservationInfo(1),ds.ObservationInfo(n+1))
-        error('catObservations failed ro retain ObservationInfo correctly');
+    if ~isequal(ds.observationInfo(1),ds.observationInfo(n+1))
+        error('catObservations failed ro retain observationInfo correctly');
     end
 catch ME
     result = false;
@@ -242,8 +242,8 @@ ObsInfo = struct('obsName',obsName,'mod2',mod2,'randInt',randInt);
 % dataSet = prtDataSetStandard;
 % dataSet = dataSet.setObservationsAndTargets([1 2; 3 4; ], [1; 2; ]);
 % try
-%     dataSet.ObservationInfo = s;
-%     if ~isequal(dataSet.ObservationInfo, s(:))
+%     dataSet.observationInfo = s;
+%     if ~isequal(dataSet.observationInfo, s(:))
 %         result = false;
 %         disp('failed test #24, Userdata')
 %     end

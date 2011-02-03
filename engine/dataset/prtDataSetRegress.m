@@ -20,7 +20,7 @@ classdef prtDataSetRegress < prtDataSetStandard
     %   See also prtDataSetStandard, prtDataSetClass, prtDataSetBase
     
     properties (Hidden = true)
-        PlotOptions = prtDataSetRegress.initializePlotOptions()
+        plotOptions = prtDataSetRegress.initializePlotOptions()
     end
     
     methods
@@ -57,13 +57,13 @@ classdef prtDataSetRegress < prtDataSetStandard
             
             holdState = get(gca,'nextPlot');
             
-            classColors = obj.PlotOptions.colorsFunction(1);
-            markerSize = obj.PlotOptions.symbolSize;
-            lineWidth = obj.PlotOptions.symbolLineWidth;
-            classSymbols = obj.PlotOptions.symbolsFunction(1);
+            classColors = obj.plotOptions.colorsFunction(1);
+            markerSize = obj.plotOptions.symbolSize;
+            lineWidth = obj.plotOptions.symbolLineWidth;
+            classSymbols = obj.plotOptions.symbolsFunction(1);
             
             iPlot = 1;
-            classEdgeColor = obj.PlotOptions.symbolEdgeModificationFunction(classColors(iPlot,:));
+            classEdgeColor = obj.plotOptions.symbolEdgeModificationFunction(classColors(iPlot,:));
             
             h = plot(obj.getObservations(:,featureIndices),obj.getTargets, classSymbols(iPlot), 'MarkerFaceColor', classColors(iPlot,:), 'MarkerEdgeColor', classEdgeColor,'linewidth',lineWidth,'MarkerSize',markerSize);
             
@@ -100,8 +100,8 @@ classdef prtDataSetRegress < prtDataSetStandard
         end
     end
     methods (Static, Hidden = true)
-        function PlotOptions = initializePlotOptions()
-            PlotOptions = prtOptionsGet('prtOptionsDataSetRegressPlot');
+        function plotOptions = initializePlotOptions()
+            plotOptions = prtOptionsGet('prtOptionsDataSetRegressPlot');
         end
     end
 end

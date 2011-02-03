@@ -4,14 +4,14 @@ classdef prtDataSetBase
     % This is an abstract class from which all prt data sets inherit from.
     % It can not be instantiated. It contains the following properties:
     %
-    %   name           - Data set descriptive name
-    %   description    - Description of the data set
-    %   UserData       - Structure for holding additional related to the
-    %                    data set
-    %   ActionData     - Structure for prtActions to place additional data
+    %   name            - Data set descriptive name
+    %   description     - Description of the data set
+    %   userData        - Structure for holding additional related to the
+    %                     data set
+    %   actionData      - Structure for prtActions to place additional data
     %
-    %   ObservationDependentUserData - Structure array holding additional
-    %                                  data per related to each observation
+    %   observationInfo - Structure array holding additional
+    %                     data per related to each observation
     %
     %   nObservations     - Number of observations in the data set
     %   nTargetDimensions - Number of target dimensions
@@ -72,11 +72,11 @@ classdef prtDataSetBase
     properties  %public, for now
         name = ''             % A string naming the data set
         description = ''      % A string with a verbose description of the data set
-        UserData = struct;    % Additional data per data set
+        userData = struct;    % Additional data per data set
     end
     
     properties(Hidden)
-        ActionData = struct;      % Data stored by a prtAction
+        actionData = struct;      % Data stored by a prtAction
     end
     
     % Only prtDataSetBase knows about these, use getObs... and getFeat.. to
@@ -419,7 +419,7 @@ classdef prtDataSetBase
                 obj = obj.setTargetNames(dataSet.getTargetNames);
             end
             obj.name = dataSet.name;
-            obj.UserData = dataSet.UserData;
+            obj.userData = dataSet.userData;
         end
         
         

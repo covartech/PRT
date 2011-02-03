@@ -8,9 +8,9 @@ function output = prtEmlClassTreeBaggingCapRun(inputX,prtEmlClassTreeBaggingCapS
 
 %#eml
 internalX = inputX(:);
-internalOutput = zeros(1,prtEmlClassTreeBaggingCapStruct.DataSetSummary.nClasses);
+internalOutput = zeros(1,prtEmlClassTreeBaggingCapStruct.dataSetSummary.nClasses);
 
-provideOnlyOneOutput = prtEmlClassTreeBaggingCapStruct.DataSetSummary.nClasses==2 && prtEmlClassTreeBaggingCapStruct.twoClassParadigm(1)=='b';
+provideOnlyOneOutput = prtEmlClassTreeBaggingCapStruct.dataSetSummary.nClasses==2 && prtEmlClassTreeBaggingCapStruct.twoClassParadigm(1)=='b';
 
 for treeIndex = 1:prtEmlClassTreeBaggingCapStruct.nTrees
     tree = prtEmlClassTreeBaggingCapStruct.root(treeIndex);

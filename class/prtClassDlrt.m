@@ -92,19 +92,19 @@ classdef prtClassDlrt < prtClass
         end
         function Obj = trainAction(Obj,~)
             %Do nothing; we've already specified "verboseStorage = true",
-            %so the ".DataSet" field will be set when it comes time to test
+            %so the ".dataSet" field will be set when it comes time to test
             
             % Just one error check to make sure that we have enough
             % training data for our value of k
-            assert(all(Obj.DataSet.nObservationsByClass >= Obj.k),'prtClassDlrt:trainAction','prtClassDlrt requires a training set with at least k observations from each class.');
+            assert(all(Obj.dataSet.nObservationsByClass >= Obj.k),'prtClassDlrt:trainAction','prtClassDlrt requires a training set with at least k observations from each class.');
         end
         
         function DataSetOut = runAction(Obj,TestDataSet)
             
             n = TestDataSet.nObservations;
 
-            uClasses = Obj.DataSet.uniqueClasses;
-            classCounts = histc(double(Obj.DataSet.getTargets),double(uClasses));
+            uClasses = Obj.dataSet.uniqueClasses;
+            classCounts = histc(double(Obj.dataSet.getTargets),double(uClasses));
             n0 = classCounts(1);
             n1 = classCounts(2);
             
@@ -116,19 +116,19 @@ classdef prtClassDlrt < prtClass
                 for start = 1:memBlock:n
                     indices = start:min(start+memBlock-1,n);
                     
-                    dH0 = sort(Obj.distanceFunction(Obj.DataSet.getObservationsByClassInd(1), TestDataSet.getObservations(indices)),1,'ascend');
+                    dH0 = sort(Obj.distanceFunction(Obj.dataSet.getObservationsByClassInd(1), TestDataSet.getObservations(indices)),1,'ascend');
                     dH0 = dH0(Obj.k,:)';
                     
-                    dH1 = sort(Obj.distanceFunction(Obj.DataSet.getObservationsByClassInd(2), TestDataSet.getObservations(indices)),1,'ascend');
+                    dH1 = sort(Obj.distanceFunction(Obj.dataSet.getObservationsByClassInd(2), TestDataSet.getObservations(indices)),1,'ascend');
                     dH1 = dH1(Obj.k,:)';
                     
                     y(indices) = log(n0./n1) + TestDataSet.nFeatures*log(dH0./dH1);
                 end
             else
-                dH0 = sort(Obj.distanceFunction(Obj.DataSet.getObservationsByClassInd(1), TestDataSet.getObservations),1,'ascend');
+                dH0 = sort(Obj.distanceFunction(Obj.dataSet.getObservationsByClassInd(1), TestDataSet.getObservations),1,'ascend');
                 dH0 = dH0(Obj.k,:)';
                 
-                dH1 = sort(Obj.distanceFunction(Obj.DataSet.getObservationsByClassInd(2), TestDataSet.getObservations),1,'ascend');
+                dH1 = sort(Obj.distanceFunction(Obj.dataSet.getObservationsByClassInd(2), TestDataSet.getObservations),1,'ascend');
                 dH1 = dH1(Obj.k,:)';
                 
                 y = log(n0./n1) + TestDataSet.nFeatures*log(dH0./dH1);

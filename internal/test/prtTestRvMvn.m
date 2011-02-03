@@ -2,7 +2,7 @@ function result = prtTestRvMvn
 result = true;
 
 % Test the basic operation
-dataSet    = prtDataGenUnimodal;
+dataSet    = prtDataGenUnimodal(500);
 dataSetOneClass = prtDataSetClass(dataSet.getObservationsByClass(1));
 
 try
@@ -13,7 +13,7 @@ catch
     result= false;
 end
 
-if abs(RV.mu - [2 2] ) > .1
+if any(abs(RV.mu - [2 2] ) > .1)
     result = false;
 end
 % make sure none of these disp out

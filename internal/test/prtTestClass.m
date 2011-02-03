@@ -67,7 +67,7 @@ end
 noerror = true;
 
 try
-    classifier.UserData = 'sam';   
+    classifier.userData = 'sam';   
 catch
     noerror = false;
 end
@@ -79,7 +79,7 @@ catch
 end
 
 try
-    classifier.PlotOptions = prtOptions.prtOptionsDataSetClassPlot;   
+    classifier.plotOptions = prtOptions.prtOptionsDataSetClassPlot;   
 catch
     noerror = false;
 end

@@ -10,10 +10,10 @@ classdef prtDataSetStandard < prtDataSetBase
     %   A prtDataSetStandard object inherits all properties from the
     %   prtDataSetBase class. In addition, it has the following properties:
     %
-    %   Observations     - A matrix of observations that has size nObservations
+    %   observations     - A matrix of observations that has size nObservations
     %                      by nFeatures, i.e. each row contains one observation
     %                      made up of nFeatures.
-    %   Targets          - The class corresponding to each observation. The
+    %   targets          - The class corresponding to each observation. The
     %                      number of targets must be empty, or equal the
     %                      number of observations.
     %   nObservations    - The number of observations, read-only.
@@ -22,7 +22,7 @@ classdef prtDataSetStandard < prtDataSetBase
     %                      read only.
     %   name             - String variable containing the name of the data set
     %   description      - Description of data set
-    %   UserData         - Additional data user may include with data set
+    %   userData         - Additional data user may include with data set
     %
     %
     %   See also: prtDataSetBase, prtDataSetClass, prtDataSetRegress,
@@ -32,11 +32,11 @@ classdef prtDataSetStandard < prtDataSetBase
         nObservations         % The number of observations
         nFeatures             % The number of features
         nTargetDimensions     % The number of dimensions of the target data
-        ObservationInfo       % Additional data per observation
+        observationInfo       % Additional data per observation
     end
     
     properties (GetAccess = 'private',SetAccess = 'private', Hidden=true)
-        ObservationInfoDepHelper
+        observationInfoDepHelper
     end
     
     properties (SetAccess='protected',GetAccess ='protected')
@@ -532,8 +532,8 @@ classdef prtDataSetStandard < prtDataSetBase
                     obj.targets = obj.targets(retainedIndices,:);
                 end
                 
-                if ~isempty(obj.ObservationInfo)
-                    obj.ObservationInfo = obj.ObservationInfo(retainedIndices);
+                if ~isempty(obj.observationInfo)
+                    obj.observationInfo = obj.observationInfo(retainedIndices);
                 end
                 
                 % Updated chached target info
@@ -686,7 +686,7 @@ classdef prtDataSetStandard < prtDataSetBase
         end
         
         
-        function obj = set.ObservationInfo(obj,Struct)
+        function obj = set.observationInfo(obj,Struct)
             
             if isempty(Struct)
                 % Empty is ok.
@@ -694,14 +694,14 @@ classdef prtDataSetStandard < prtDataSetBase
                 return
             end
             
-            errorMsg = 'ObservationInfo must be an nObservations x 1 structure array. It cannot be set through indexing.';
+            errorMsg = 'observationInfo must be an nObservations x 1 structure array. It cannot be set through indexing.';
             assert(isa(Struct,'struct'),errorMsg);
             assert(numel(Struct)==obj.nObservations,errorMsg);
             
-            obj.ObservationInfoDepHelper = Struct(:);
+            obj.observationInfoDepHelper = Struct(:);
         end
-        function val = get.ObservationInfo(obj)
-            val = obj.ObservationInfoDepHelper;
+        function val = get.observationInfo(obj)
+            val = obj.observationInfoDepHelper;
         end
         
         
@@ -721,9 +721,9 @@ classdef prtDataSetStandard < prtDataSetBase
             %
             % Examples:
             %   ds = prtDataGenIris;
-            %   ds = ds.setObservationInfo('asdf',randn(ds.nObservations,1));
+            %   ds = ds.setobservationInfo('asdf',randn(ds.nObservations,1));
             %   
-            %   dsSmallObservationInfoSelect = ds.select(@(ObsInfo)ObsInfo.asdf > 0.5);
+            %   dsSmallobservationInfoSelect = ds.select(@(ObsInfo)ObsInfo.asdf > 0.5);
             %   
             %   dsSmallObservationSelect = ds.select(@(inputDs)inputDs.getObservations(:,1)>6);
 
@@ -735,14 +735,14 @@ classdef prtDataSetStandard < prtDataSetBase
                 assert(size(keep,1)==obj.nObservations);
                 assert(islogical(keep) || (isnumeric(keep) && all(ismember(keep,[0 1]))));
             catch %#ok<CTCH>
-                if isempty(obj.ObservationInfo)
-                    error('prt:prtDataSetStandard:select','selectFunction did not return a logical vector with nObservation elements and this data set object does not contain ObservationInfo. Therefore this selecFunction is not valid.')
+                if isempty(obj.observationInfo)
+                    error('prt:prtDataSetStandard:select','selectFunction did not return a logical vector with nObservation elements and this data set object does not contain observationInfo. Therefore this selecFunction is not valid.')
                 end
                 
                 keep = false(obj.nObservations,1);
                 for iObs = 1:obj.nObservations
                     try
-                        cOut = selectFunction(obj.ObservationInfo(iObs));
+                        cOut = selectFunction(obj.observationInfo(iObs));
                     catch %#ok<CTCH>
                         error('prt:prtDataSetStandard:select','selectFunction did not return a logical vector with nObservation elements and there was an evaluation error using this function. See help prtDataSetStandard/select');
                     end
@@ -765,8 +765,8 @@ classdef prtDataSetStandard < prtDataSetBase
             nIn = length(varargin);
             if nIn == 1
                 % should be a struct. if it isn't will just
-                % let set.ObservationInfo() spit the error
-                obj.ObservationInfo = varargin{1};
+                % let set.observationInfo() spit the error
+                obj.observationInfo = varargin{1};
                 return
             end
             
@@ -777,7 +777,7 @@ classdef prtDataSetStandard < prtDataSetBase
             
             assert(iscellstr(paramNames), errorMsg)
             
-            cStruct = obj.ObservationInfo;
+            cStruct = obj.observationInfo;
             if isempty(cStruct)
                 startingFieldNames = {};
             else
@@ -788,12 +788,12 @@ classdef prtDataSetStandard < prtDataSetBase
                 
                 cVal = params{iParam};
                 cName = paramNames{iParam};
-                assert(isvarname(cName),'ObservationInfo fields must be valid MATLAB variable names. %s is not.',cName);
+                assert(isvarname(cName),'observationInfo fields must be valid MATLAB variable names. %s is not.',cName);
                 
                 if ismember(cName,startingFieldNames)
-                    warning('prt:observationInfoNameCollision','An ObservationInfo field named %s already exists. The data is now overwritten.', cName)
+                    warning('prt:observationInfoNameCollision','An observationInfo field named %s already exists. The data is now overwritten.', cName)
                 end
-                assert(size(cVal,1) == obj.nObservations,'ObservationInfo values must have nObservations rows.');
+                assert(size(cVal,1) == obj.nObservations,'observationInfo values must have nObservations rows.');
                 
                 cValSet = mat2cell(cVal,ones(size(cVal,1),1),size(cVal,2));
                 
@@ -806,20 +806,20 @@ classdef prtDataSetStandard < prtDataSetBase
                 end
             end
             
-            obj.ObservationInfo = cStruct;
+            obj.observationInfo = cStruct;
         end
         
         function obj = catObservationInfo(obj, newDataSet)
             
-            if isempty(newDataSet.ObservationInfo) && isempty(obj.ObservationInfo)
+            if isempty(newDataSet.observationInfo) && isempty(obj.observationInfo)
                 return;
             end
             
-            if ~isequal(fieldnames(obj.ObservationInfo),fieldnames(newDataSet.ObservationInfo))
-                error('prt:prtDataSetStandard:catObservationInfo','ObservationInfo structures for these datasets do not match.');
+            if ~isequal(fieldnames(obj.observationInfo),fieldnames(newDataSet.observationInfo))
+                error('prt:prtDataSetStandard:catObservationInfo','observationInfo structures for these datasets do not match.');
             end
             
-            obj.ObservationInfo = cat(1,obj.ObservationInfo,newDataSet.ObservationInfo);
+            obj.observationInfo = cat(1,obj.observationInfo,newDataSet.observationInfo);
         end
         
         
@@ -904,7 +904,7 @@ classdef prtDataSetStandard < prtDataSetBase
             %Actions; the outputs of a Action are not guaranteed to have
             %the same number of features!
             
-            obj.ObservationInfo = dataSet.ObservationInfo;
+            obj.observationInfo = dataSet.observationInfo;
             obj = copyDescriptionFieldsFrom@prtDataSetBase(obj,dataSet);
         end
         

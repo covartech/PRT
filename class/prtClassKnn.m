@@ -43,7 +43,7 @@ classdef prtClassKnn < prtClass
        
         name = 'K-Nearest Neighbor'   % K-Nearest Neighbor
         nameAbbreviation = 'KNN'      % KNN  
-        isNativeMary = true;         % False
+        isNativeMary = true;          % true
         
     end
     
@@ -84,7 +84,7 @@ classdef prtClassKnn < prtClass
         end
         function Obj = trainAction(Obj,~)
             %Do nothing; we've already specified "verboseStorage = true",
-            %so the ".DataSet" field will be set when it comes time to test
+            %so the ".dataSet" field will be set when it comes time to test
         end
         
         function ClassifierResults = runAction(Obj,PrtDataSet)
@@ -92,12 +92,12 @@ classdef prtClassKnn < prtClass
             x = getObservations(PrtDataSet);
             n = PrtDataSet.nObservations;
             
-            nClasses = Obj.DataSet.nClasses;
-            uClasses = Obj.DataSet.uniqueClasses;
-            labels = getTargets(Obj.DataSet);
+            nClasses = Obj.dataSet.nClasses;
+            uClasses = Obj.dataSet.uniqueClasses;
+            labels = getTargets(Obj.dataSet);
             y = zeros(n,nClasses);
             
-            xTrain = getObservations(Obj.DataSet);
+            xTrain = getObservations(Obj.dataSet);
             
             largestMatrixSize = prtOptionsGet('prtOptionsComputation','largestMatrixSize');
             memBlock = max(floor(largestMatrixSize/size(xTrain,1)),1);
