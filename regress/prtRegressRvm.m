@@ -57,10 +57,8 @@ classdef prtRegressRvm < prtRegress
     
     
     properties (SetAccess=private)
-       
         name = 'Relevance Vector Machine'  % Relevance Vector Machine
         nameAbbreviation = 'RVM'           % RVM
-        isSupervised = true;               % True
     end
     
     properties

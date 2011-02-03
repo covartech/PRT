@@ -25,13 +25,6 @@ catch
 end
 
 try
-    classifier.isSupervised = 1;
-    error = false;
-catch
-    % do nothing
-end
-
-try
     classifier.isMary = 1;
     error = false;
 catch

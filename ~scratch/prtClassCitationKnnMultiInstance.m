@@ -4,7 +4,6 @@ classdef prtClassCitationKnnMultiInstance < prtClass
         % Required by prtAction
         name = 'K-Nearest Neighbor'
         nameAbbreviation = 'KNN'
-        isSupervised = true;
         
         % Required by prtClass
         isNativeMary = false;

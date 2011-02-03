@@ -261,7 +261,7 @@ classdef prtClass < prtAction
         function ClassObj = preTrainProcessing(ClassObj, DataSet)
             % Overload preTrainProcessing() so that we can determine mary
             % output status
-            assert(isa(DataSet,'prtDataSetBase'),'DataSet must be a prtDataSetBase DataSet');
+            assert(DataSet.isLabeled & DataSet.nClasses > 1,'The prtDataSetClass input to prtClass.train() must have non-empty targets and have more than one class.');
             
             ClassObj.yieldsMaryOutput = determineMaryOutput(ClassObj,DataSet);
             
