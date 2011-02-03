@@ -334,7 +334,11 @@ classdef prtRvMixture < prtRv
                 end
             end
             
-            R.mixingProportions = mle(prtRvMultinomial,membershipMat);
+            try
+                R.mixingProportions = mle(prtRvMultinomial,membershipMat);
+            catch  %#ok<CTCH>
+                error('prt:prtRvMixture:maximizeParameters','An error was encountered while maximizing the parameters of the mixture. Perhaps the number of components is too high.')
+            end
         end
         
         function [R, membershipMat, componentRemoved] = removeComponents(R,X,membershipMat)

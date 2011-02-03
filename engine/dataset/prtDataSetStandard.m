@@ -694,8 +694,57 @@ classdef prtDataSetStandard < prtDataSetBase
             nTargetDimensions = size(obj.targets,2); %use InMem's .data field
         end
         
-        
+
+        function obj = setObservationInfoEntry(obj,inds,fieldName,val)
+            % setObservationInfoEntry - set observationInfo for specified
+            % observations
+            %
+            % ds = prtDataGenUnimodal;
+            % obsInfoPart.field1 = 0.2;
+            % ds = ds.setObservationInfoEntry(1,obsInfoPart);
+            % ds = ds.setObservationInfoEntry(1,'field1',obsInfoPart.field1)
+            
+            assert(nargin >= 3, 'prt:prtDataSetStandard:setObservationInfoEntry','invalid number of inputs');
+            
+            if ~isstruct(fieldName)
+                if nargin > 3
+                    obsInfoPart.(fieldName) = val;
+                else
+                    error('prt:prtDataSetStandard:setObservationInfoEntry','setObservationInfoEntry with two aditional inputs requires that the second is a structure');
+                end
+            else
+                obsInfoPart = fieldName;
+            end
+            
+            newFieldNames = fieldnames(obsInfoPart);
+            
+            structInputs = cell(length(newFieldNames)*2,1);
+            structInputs(1:2:end) = newFieldNames;
+            newObsInfo = repmat(struct(structInputs{:}),obj.nObservations,1);
+            try
+                newObsInfo(inds) = obsInfoPart;
+            catch ME
+                % Bad indexes supplied
+                keyboard
+            end
+            
+            % Quick exit if we didn't have anything
+            if isempty(obj.observationInfo)
+                obj.observationInfo = newObsInfo;
+                return
+            end
+            
+            cObsInfo = obj.observationInfo;
+            
+            keyboard
+            
+            % newObsInfo = prtUtilMergeStructures(newObsInfo,cObsInfo);
+            
+            
+        end
+            
         function obj = set.observationInfo(obj,Struct)
+            % Error checks for setting observationInfo in batch mode
             
             if isempty(Struct)
                 % Empty is ok.
@@ -705,7 +754,15 @@ classdef prtDataSetStandard < prtDataSetBase
             
             errorMsg = 'observationInfo must be an nObservations x 1 structure array. It cannot be set through indexing.';
             assert(isa(Struct,'struct'),errorMsg);
-            assert(numel(Struct)==obj.nObservations,errorMsg);
+            
+            if numel(Struct) == 1
+                % We are probably trying to set an individual enetry of
+                % observation info. Provide a nice message explaining to
+                % use setObservationInfoEntry
+                error('prt:prtDataSetStandard:observationInfo','The observationInfo for a single observation cannot be set in this manner. Instead use setObservationInfoEntry().')
+            else
+                assert(numel(Struct)==obj.nObservations,errorMsg);
+            end
             
             obj.observationInfoDepHelper = Struct(:);
         end
@@ -762,6 +819,27 @@ classdef prtDataSetStandard < prtDataSetBase
                 end
             end
             obj = obj.retainObservations(keep);
+        end
+        
+        function val = getObservationInfo(obj,fieldName)
+            % Allow for fast retrieval of observation info by specifying
+            % the field name(fieldName)
+            % 
+            % DS = prtDataGenIris;
+            % DS = DS.setObservationInfo('asdf',randn(DS.nObservations,1),'qwer',randn(DS.nObservations,1),'poiu',randn(DS.nObservations,10),'lkjh',mat2cell(randn(DS.nObservations,1),ones(DS.nObservations,1),1),'mnbv',mat2cell(randn(DS.nObservations,10),ones(DS.nObservations,1),10));
+            % vals = DS.getObservationInfo('asdf');
+            
+            assert(isfield(obj.observationInfo,fieldName),'prt:prtDataSetStandard:getObservationInfo','%s is not a field name of observationInfo for this dataset');
+            try
+                val = cat(1,obj.observationInfo.(fieldName));
+            catch % This failed because of invalid matrix dimensions
+                try
+                    val = {obj.observationInfo.(fieldName)}';
+                catch 
+                    error('prt:prtDataSetStandard:getObservationInfo','getObservationInfo failed to trieve the necessary field for an unknown reason');
+                end
+            end
+            
         end
         
         function obj = setObservationInfo(obj,varargin)
