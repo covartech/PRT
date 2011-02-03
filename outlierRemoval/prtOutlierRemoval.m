@@ -85,6 +85,9 @@ classdef prtOutlierRemoval < prtAction
     properties (Constant = true)
         validModes = {'noAction','replaceWithNan','removeObservation','removeFeature'};
     end
+    properties (SetAccess = protected)
+        isSupervised = false;
+    end
     
     methods
         function obj = prtOutlierRemoval()

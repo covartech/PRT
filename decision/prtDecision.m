@@ -55,6 +55,11 @@ classdef prtDecision < prtAction
     properties (Hidden)
         classList
     end
+    
+    properties (SetAccess = protected)
+        isSupervised = false;
+    end
+    
     methods
         function obj = prtDecision()
             % As an action subclass we must set the properties to reflect

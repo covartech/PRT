@@ -49,6 +49,10 @@ classdef prtKernel < prtAction
         PlotOptions = prtKernel.initializePlotOptions();        
     end
     
+    properties (SetAccess = protected)
+        isSupervised = false;
+    end
+    
     properties (Access = protected, Hidden = true)
         internalDataSet
     end

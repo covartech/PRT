@@ -19,15 +19,30 @@ classdef prtDecisionBinary < prtDecision
         threshold = getThreshold(Obj) 
         % THRESH = getThreshold returns the objects threshold
     end
-    methods (Access=protected,Hidden=true)
+    methods
         function obj = prtDecisionBinary()
             obj.classInput = 'prtDataSetClass';
             obj.classOutput = 'prtDataSetClass';
+            
+            obj.isSupervised = true;
         end
-        
+    end
+    
+    methods (Access=protected,Hidden=true)
         function DS = runAction(Obj,DS)
             theClasses = Obj.classList;
             DS = DS.setObservations(theClasses((DS.getObservations >= Obj.getThreshold) + 1));
         end
     end
+    
+    methods (Access = protected, Hidden = true)
+        function ClassObj = preTrainProcessing(ClassObj, DataSet)
+            % Overload preTrainProcessing() so that we can determine mary
+            % output status
+            assert(DataSet.isLabeled & DataSet.nClasses > 1,'The prtDataSetClass input to the train() method of a prtDecisionBinary must have non-empty targets and have more than one class.');
+            
+            ClassObj = preTrainProcessing@prtAction(ClassObj,DataSet);
+        end
+    end
+    
 end

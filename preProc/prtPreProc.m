@@ -16,6 +16,10 @@ classdef prtPreProc < prtAction
     %   prtPreProcZeroMeanColumns, prtPreProcLda, prtPreProcZeroMeanRows,
     %   prtPreProcLogDisc, prtPreProcZmuv, prtPreProcMinMaxRows                    
 
+    properties (SetAccess = protected)
+        isSupervised = false;
+    end
+    
     methods
         function obj = prtPreProc()
             % As an action subclass we must set the properties to reflect

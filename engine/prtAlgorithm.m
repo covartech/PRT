@@ -29,7 +29,10 @@ classdef prtAlgorithm < prtAction
         % Required by prtAction
         name = 'PRT Algorithm' % Prt Algorithm
         nameAbbreviation = 'ALGO';  % ALGO
-        isSupervised = true; % Set to True, but dependent on prtAction components
+    end
+    
+    properties (SetAccess=protected)
+        isSupervised = true; % Set to true, but dependent on prtAction components
     end
     
     %This is the public face of the (protected) internalActionCell
@@ -104,6 +107,9 @@ classdef prtAlgorithm < prtAction
             
             if isa(Obj2,'prtAlgorithm')
                 
+                % Set inputClass & outputClass
+                keyboard
+                
                 in1 = Obj1.inputNodes;
                 out1 = Obj1.outputNodes;
                 
@@ -136,7 +142,7 @@ classdef prtAlgorithm < prtAction
                 Obj1.connectivityMatrix = newConn;
                 Obj1.actionCell = cat(1,Obj1.actionCell(:),Obj2.actionCell(:));
                 
-                % Obj1.isSupervised = any(cellfun(@(c)c.isSupervised,Obj1.actionCell));
+                Obj1.isSupervised = any(cellfun(@(c)c.isSupervised,Obj1.actionCell));
                 Obj1.isCrossValidateValid = all(cellfun(@(c)c.isCrossValidateValid,Obj1.actionCell));
             else
                 error('prt:prtAlgorithm:plus','prtAlgorithm.plus is only defined for second inputs of type prtAlgorithm or prtAction, but the second input is a %s',class(Obj2));
@@ -185,7 +191,7 @@ classdef prtAlgorithm < prtAction
                 Obj1.connectivityMatrix = newConn;
                 Obj1.actionCell = cat(1,Obj1.actionCell(:),Obj2.actionCell(:));
                 
-                % Obj1.isSupervised = any(cellfun(@(c)c.isSupervised,Obj1.actionCell));
+                Obj1.isSupervised = any(cellfun(@(c)c.isSupervised,Obj1.actionCell));
                 Obj1.isCrossValidateValid = all(cellfun(@(c)c.isCrossValidateValid,Obj1.actionCell));
             else
                 error('prt:prtAlgorithm:plus','prtAlgorithm.plus is only defined for second inputs of type prtAlgorithm or prtAction, but the second input is a %s',class(Obj2));
@@ -213,17 +219,17 @@ classdef prtAlgorithm < prtAction
             % our dataset requirements
             % Because we are an algorithm we actually don't know the
             % answers, we will figure these out in get
-            obj.classInput = '';
-            obj.classOutput = '';
-            obj.classInputOutputRetained = true;
-            
             if nargin == 1
                 assert(isa(varargin{1},'prtAction'),'prtAlgorithm constructor requires a prtAction input');
                 Obj.connectivityMatrix = false(3);
                 Obj.connectivityMatrix(2,1) = true;
                 Obj.connectivityMatrix(3,2) = true;
                 Obj.actionCell = varargin(1);
-                %Obj.isSupervised = varargin{1}.isSupervised;
+                Obj.isSupervised = varargin{1}.isSupervised;
+                
+                Obj.classInput = varargin{1}.getClassInput;
+                Obj.classOutput = varargin{1}.getClassOutput;
+                Obj.classInputOutputRetained = varargin{1}.classInputOutputRetained;
             end
         end
     end

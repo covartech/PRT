@@ -1,11 +1,15 @@
 classdef prtFeatSel < prtAction 
-    % prtFeatSel 
+    % prtFeatSel
+    properties (SetAccess = protected)
+        isSupervised = true;
+    end
+    
     methods
         function obj = prtFeatSel()
             % As an action subclass we must set the properties to reflect
             % our dataset requirements
-            obj.classInput = 'prtDataSetStandard';
-            obj.classOutput = 'prtDataSetStandard';
+            obj.classInput = 'prtDataSetClass';
+            obj.classOutput = 'prtDataSetClass';
             obj.classInputOutputRetained = true;
         end
     end

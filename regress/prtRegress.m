@@ -5,8 +5,12 @@ classdef prtRegress < prtAction %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         PlotOptions = prtRegress.initializePlotOptions(); % Plotting Options
     end
     
+    properties (SetAccess = protected)
+        isSupervised = true;
+    end
+    
     methods (Hidden = true)
-        function featureNames = updateFeatureNames(obj,featureNames) %#ok<MANU>
+        function featureNames = updateFeatureNames(obj,featureNames)
             for i = 1:length(featureNames)
                 featureNames{i} = sprintf('%s Output_{%d}',obj.nameAbbreviation,i);
             end

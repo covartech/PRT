@@ -42,8 +42,13 @@ classdef prtAction
         % Descriptive name of prtAction object.
         name 
         
-        %  Shortened name for the prtAction object.
+        % Shortened name for the prtAction object.
         nameAbbreviation 
+    end
+    
+    properties (Abstract, SetAccess = protected)
+        % Specifies if the prtAction requires a labeled dataSet
+        isSupervised
     end
     
     properties (Hidden = true)

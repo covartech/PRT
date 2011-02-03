@@ -31,6 +31,9 @@ classdef prtCluster < prtAction
     properties (Hidden = true)
         PlotOptions = prtClass.initializePlotOptions(); 
     end
+    properties (SetAccess = protected)
+        isSupervised = false;
+    end
 
     methods (Hidden = true)
         function featureNames = updateFeatureNames(obj,featureNames)

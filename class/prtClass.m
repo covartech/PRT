@@ -70,15 +70,23 @@ classdef prtClass < prtAction
     properties
         twoClassParadigm = 'binary';   %  Whether the classifier retures one output (binary) or two outputs (m-ary) when there are only two unique class labels
     end
+    
     properties (SetAccess=protected, Hidden = true)
         yieldsMaryOutput = nan; % Determined in trainProcessing()
     end
+    
     properties
         internalDecider = []; % Optional prtDecider object for making decisions
     end
+    
+    properties (SetAccess = protected)
+        isSupervised = true;
+    end
+    
     properties (Dependent = true, Access = 'protected', Hidden = true)
         includesDecision   
     end
+    
     properties (Hidden = true)
         PlotOptions = prtClass.initializePlotOptions();
     end
@@ -261,7 +269,7 @@ classdef prtClass < prtAction
         function ClassObj = preTrainProcessing(ClassObj, DataSet)
             % Overload preTrainProcessing() so that we can determine mary
             % output status
-            assert(DataSet.isLabeled & DataSet.nClasses > 1,'The prtDataSetClass input to prtClass.train() must have non-empty targets and have more than one class.');
+            assert(DataSet.isLabeled & DataSet.nClasses > 1,'The prtDataSetClass input to the train() method of a prtClass must have non-empty targets and have more than one class.');
             
             ClassObj.yieldsMaryOutput = determineMaryOutput(ClassObj,DataSet);
             
