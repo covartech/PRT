@@ -169,13 +169,10 @@ classdef prtAction
             if ~isscalar(Obj)
                 error('prt:prtAction:NonScalarAction','train method expects scalar prtAction objects, prtAction provided was of size %s',mat2str(size(Obj)));
             end
-            if ~isa(DataSet,'prtDataSetBase')
-                error('prt:prtAction:prtDataSetBase','DataSet provided to prtAction %s''s train() is not a prtDataSetBase, DataSet is a %s',class(Obj),class(DataSet));
-            end
-            
+
             inputClassType = class(DataSet);
             if ~isempty(Obj.classInput) && ~prtUtilDataSetClassCheck(inputClassType,Obj.classInput)
-                error('prt:prtAction:incompatible','This action requires datasets of type %s but the provided input is of type %s',Obj.classInput,inputClassType);
+                error('prt:prtAction:incompatible','%s requires datasets of type %s but the provided input is of type %s',class(Obj),Obj.classInput,inputClassType);
             end
             
             if Obj.isSupervised && ~DataSet.isLabeled
