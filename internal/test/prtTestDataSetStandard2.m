@@ -47,6 +47,10 @@ try
         error('catObservations failed to update observationInfo correctly');
     end
     
+    if ~isequal(ds.observationInfo(3).obsName,'Obs #7')
+        error('catObservations failed ro retain observationInfo correctly');
+    end    
+    
 catch ME
     result = false;
     disp(ME);

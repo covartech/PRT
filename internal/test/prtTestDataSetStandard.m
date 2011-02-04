@@ -206,7 +206,7 @@ dataSet = prtDataSetStandard;
 dataSet = dataSet.setObservationsAndTargets([1 2; 3 4; ], [1; 2; ]);
 try
     dataSet.userData = s;
-    if ~isequal(dataSet.userData, s(:))
+    if ~isequal(dataSet.userData, s)
         result = false;
         disp('failed test #24, Userdata')
     end

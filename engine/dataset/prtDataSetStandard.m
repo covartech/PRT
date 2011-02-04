@@ -545,34 +545,51 @@ classdef prtDataSetStandard < prtDataSetBase
             % OBSERVATIONS must have the same number of features as the
             % dataSet object.
             
+            % name, description and userData are only retained for the
+            % first input. 
+            
             if nargin == 1
                 return;
             end
             
             for argin = 1:length(varargin)
+                objClass = class(obj);
                 currInput = varargin{argin};
-                if isa(currInput,class(obj.data))
-                    if isempty(obj.targets)
-                        obj.data = cat(1,obj.data, currInput);
-                    else
-                        error('prt:prtDataSetStandard:CatObservations','Attempt to cat observations using a double matrix to a prtDataSetStandard that has targets; this will result in target/observation mis-match');
-                    end
-                elseif isa(currInput,class(obj))
-                    oldObservationInfo = obj.observationInfo;
-                    if isempty(obj.data) %handle empty data set
-                        obj.data = currInput.data;
-                        obj.targets = currInput.targets;
-                    elseif (isempty(obj.targets) && isempty(currInput.targets)) || (~isempty(obj.targets) && ~isempty(currInput.targets))
-                        obj.data = cat(1,obj.data,currInput.getObservations);
-                        obj.targets = cat(1,obj.targets,currInput.getTargets);
-                    else
-                        error('prt:prtDataSetStandard:CatObservations','Attempt to cat observations for data sets with different sized targets');
-                    end
-                    obj = obj.catObservationNames(currInput);
-                    obj = obj.catObservationInfo(oldObservationInfo,currInput);
-                else
-                    error('fix me');
+                
+                if isnumeric(currInput) && isempty(obj.targets)
+                    % Catting with a double matrix is allowed because
+                    % targets are empty
+                    currInput = setObservations(eval(class(obj)),currInput);
+                    % Proceed as below.
                 end
+                
+                isStandard = isa(currInput,'prtDataSetStandard');
+                assert(isStandard,'prt:prtDataSetStandard:catObservations','catObservations() additional inputs must be either double matrices or prtDataSetStandards and they can only be double matrices if the dataSet has empty targets');
+                
+                if ~isa(currInput,objClass)
+                    % Not the same subclass as the original object
+                    % but we are only dealing with things in
+                    % prtDataSetStandard so we will continue as normal.
+                    % after throwing a warning
+                    
+                    warning('prt:prtDataSetStandard:catObservations','Class mismatch between inputs to catObservations(). Input 1 is a %s and input 2 is a %s. The returned class is that of input 1.',objClass,class(currInput));
+                end
+                
+                % The standard procedure
+                assert(obj.nFeatures==currInput.nFeatures,'Attempt to cat observations for data sets with different numbers of features');
+                
+                oldObservationInfo = obj.observationInfo;
+                if isempty(obj.data) %handle empty data set
+                    obj.data = currInput.data;
+                    obj.targets = currInput.targets;
+                elseif (isempty(obj.targets) && isempty(currInput.targets)) || (~isempty(obj.targets) && ~isempty(currInput.targets))
+                    obj.data = cat(1,obj.data,currInput.getObservations);
+                    obj.targets = cat(1,obj.targets,currInput.getTargets);
+                else
+                    error('prt:prtDataSetStandard:CatObservations','Attempt to cat observations for data sets with different sized targets');
+                end
+                obj = obj.catObservationNames(currInput);
+                obj = obj.catObservationInfo(oldObservationInfo,currInput);
             end
             
             % Updated chached target info
@@ -697,19 +714,44 @@ classdef prtDataSetStandard < prtDataSetBase
             % dataSet = dataSet.catFeatures(FEATURES) concatenates the
             % FEATURES to the features of the dataSet object. FEATURES must
             % have the same number of observations as the dataSet object.
+            % 
+            % dataSet = dataSet.catFeatures(dataSet2) concatenates the
+            % features from the two dataSets into one dataSet
             
             if nargin == 1
                 return;
             end
+            
             for argin = 1:length(varargin)
+                objClass = class(obj);
                 currInput = varargin{argin};
-                if isa(currInput,class(obj.data))
-                    obj.data = cat(2,obj.data, currInput);
-                elseif isa(currInput,class(obj))
-                    obj = obj.catFeatureNames(currInput);
-                    obj.data = cat(2,obj.data,currInput.getObservations);
+                
+                if isnumeric(currInput)
+                    % Catting with a double matrix is allowed because
+                    % targets are empty
+                    currInput = setObservations(eval(class(obj)),currInput);
+                    % Proceed as below.
                 end
+                
+                isStandard = isa(currInput,'prtDataSetStandard');
+                assert(isStandard,'prt:prtDataSetStandard:catObservations','catFeatures() additional inputs must be either double matrices or prtDataSetStandards.');
+                
+                if ~isa(currInput,objClass)
+                    % Not the same subclass as the original object
+                    % but we are only dealing with things in
+                    % prtDataSetStandard so we will continue as normal.
+                    % after throwing a warning
+                    
+                    warning('prt:prtDataSetStandard:catObservations','Class mismatch between inputs to catFeatures(). Input 1 is a %s and input 2 is a %s. The returned class is that of input 1.',objClass,class(currInput));
+                end
+                
+                assert(obj.nObservations==currInput.nObservations,'Attempt to cat features for data sets with different numbers of observations');
+                
+                % Standard procedure
+                obj = obj.catFeatureNames(currInput);
+                obj.data = cat(2,obj.data,currInput.getObservations);
             end
+            
             % Updated chached data info
             obj = updateObservationsCache(obj);
         end

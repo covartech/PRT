@@ -25,7 +25,6 @@ baselinePercentCorr = .7400;
 TestDataSet = prtDataGenMary;
 TrainingDataSet = prtDataGenMary;
 
-
 classifier = prtClassKmeansPrototypes;
 classifier = classifier.train(TrainingDataSet);
 classified = run(classifier, TestDataSet);
