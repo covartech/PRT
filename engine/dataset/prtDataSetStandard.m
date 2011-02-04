@@ -37,11 +37,15 @@ classdef prtDataSetStandard < prtDataSetBase
     
     properties (GetAccess = 'private',SetAccess = 'private', Hidden=true)
         observationInfoDepHelper
+        dataDepHelper
+        targetsDepHelper
+    end
+    properties (Dependent,SetAccess='protected',GetAccess ='protected')
+        data                % The observations
+        targets             % The targets
     end
     
     properties (SetAccess='protected',GetAccess ='protected')
-        data                % The observations
-        targets             % The targets
         featureNames        % The feature names
     end
     
@@ -502,6 +506,36 @@ classdef prtDataSetStandard < prtDataSetBase
             % %             obj = updateTargetsCache(obj);
         end
         
+        function obj = set.data(obj,newData)
+            if size(obj.data,1) ~= size(newData,1)
+                % # of observations is changing therefore, observationInfo
+                % is no longer valid
+                obj.dataDepHelper = newData;
+                obj.observationInfo = repmat(struct,size(newData,1),1);
+            else
+                obj.dataDepHelper = newData;
+            end
+        end
+        
+        function obj = set.targets(obj,newTargets)
+            if size(obj.targets,1) ~= size(newTargets,1)
+                % # of observations is changing therefore, observationInfo
+                % is no longer valid
+                obj.observationInfo = repmat(struct,size(newTargets,1),1);
+                obj.targetsDepHelper = newTargets;
+            else
+                obj.targetsDepHelper = newTargets;
+            end
+        end        
+        
+        function val = get.data(obj)
+            val = obj.dataDepHelper;
+        end
+        
+        function val = get.targets(obj)
+            val = obj.targetsDepHelper;
+        end
+        
         function obj = catObservations(obj, varargin)
             %catObservations  Concatenate to the observations of a
             %prtDataSetStandard object
@@ -736,7 +770,7 @@ classdef prtDataSetStandard < prtDataSetBase
         
         function nTargetDimensions = get.nTargetDimensions(obj)
             %nTargetDimensions = get.nTargetDimensions(obj)
-            nTargetDimensions = size(obj.targets,2); %use InMem's .data field
+            nTargetDimensions = size(obj.targets,2); %use .targets field
         end
         
 
@@ -788,31 +822,20 @@ classdef prtDataSetStandard < prtDataSetBase
             
         function obj = set.observationInfo(obj,Struct)
             % Error checks for setting observationInfo in batch mode
-            
             if isempty(Struct)
                 % Empty is ok.
                 % It has to be for loading and saving.
                 return
             end
             
-            errorMsg = 'observationInfo must be an nObservations x 1 structure array. It cannot be set through indexing.';
-            assert(isa(Struct,'struct'),errorMsg);
+            assert(isa(Struct,'struct') && ndims(Struct)==2 && size(Struct,1)==obj.nObservations && size(Struct,2)==1, 'prt:prtDataSetStandard:observationInfo', 'observationInfo must be an nObservations x 1 structure array.');
             
-            if numel(Struct) == 1
-                % We are probably trying to set an individual enetry of
-                % observation info. Provide a nice message explaining to
-                % use setObservationInfoEntry
-                error('prt:prtDataSetStandard:observationInfo','The observationInfo for a single observation cannot be set in this manner. Instead use setObservationInfoEntry().')
-            else
-                assert(numel(Struct)==obj.nObservations,errorMsg);
-            end
-            
-            obj.observationInfoDepHelper = Struct(:);
+            obj.observationInfoDepHelper = Struct;
         end
+        
         function val = get.observationInfo(obj)
             val = obj.observationInfoDepHelper;
         end
-        
         
         function obj = select(obj, selectFunction)
             % Select observations to retain by specifying a function
