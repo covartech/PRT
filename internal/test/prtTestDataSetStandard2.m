@@ -38,6 +38,21 @@ catch ME
     disp(ME);
 end
 
+
+% catObservaitons with different observationInfo structures
+try
+    ds2 = ds.catObservations(prtDataGenUnimodal);
+    
+    if ~isequal(fieldnames(ds.observationInfo),fieldnames(ds2.observationInfo))
+        error('catObservations failed to update observationInfo correctly');
+    end
+    
+catch ME
+    result = false;
+    disp(ME);
+end
+
+
 function ObsInfo = genObsInfo(ds)
 
 for i = 1:ds.nObservations;

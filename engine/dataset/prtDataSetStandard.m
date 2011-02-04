@@ -558,7 +558,7 @@ classdef prtDataSetStandard < prtDataSetBase
                         error('prt:prtDataSetStandard:CatObservations','Attempt to cat observations using a double matrix to a prtDataSetStandard that has targets; this will result in target/observation mis-match');
                     end
                 elseif isa(currInput,class(obj))
-                    
+                    oldObservationInfo = obj.observationInfo;
                     if isempty(obj.data) %handle empty data set
                         obj.data = currInput.data;
                         obj.targets = currInput.targets;
@@ -569,7 +569,9 @@ classdef prtDataSetStandard < prtDataSetBase
                         error('prt:prtDataSetStandard:CatObservations','Attempt to cat observations for data sets with different sized targets');
                     end
                     obj = obj.catObservationNames(currInput);
-                    obj = obj.catObservationInfo(currInput);
+                    obj = obj.catObservationInfo(oldObservationInfo,currInput);
+                else
+                    error('fix me');
                 end
             end
             
@@ -605,15 +607,19 @@ classdef prtDataSetStandard < prtDataSetBase
             % by INDICES
             
             try
+                % We need to get a copy of observation info because it will
+                % get set to an empty when we reset data
+                % after that we can put it back.
+                oldObservationInfo = obj.observationInfo;
+                
                 obj = obj.retainObservationNames(retainedIndices);
                 obj.data = obj.data(retainedIndices,:);
                 if obj.isLabeled
                     obj.targets = obj.targets(retainedIndices,:);
                 end
                 
-                %                 if ~isempty(obj.observationInfo)
-                %                     obj.observationInfo = obj.observationInfo(retainedIndices);
-                %                 end
+                % Put observation info back.
+                obj.observationInfo = oldObservationInfo(retainedIndices);
                 
                 % Updated chached target info
                 obj = updateTargetsCache(obj);
@@ -774,53 +780,6 @@ classdef prtDataSetStandard < prtDataSetBase
             nTargetDimensions = size(obj.targets,2); %use .targets field
         end
         
-
-        function obj = setObservationInfoEntry(obj,inds,fieldName,val)
-            % setObservationInfoEntry - set observationInfo for specified
-            % observations
-            %
-            % ds = prtDataGenUnimodal;
-            % obsInfoPart.field1 = 0.2;
-            % ds = ds.setObservationInfoEntry(1,obsInfoPart);
-            % ds = ds.setObservationInfoEntry(1,'field1',obsInfoPart.field1)
-            
-            assert(nargin >= 3, 'prt:prtDataSetStandard:setObservationInfoEntry','invalid number of inputs');
-            
-            if ~isstruct(fieldName)
-                if nargin > 3
-                    obsInfoPart.(fieldName) = val;
-                else
-                    error('prt:prtDataSetStandard:setObservationInfoEntry','setObservationInfoEntry with two aditional inputs requires that the second is a structure');
-                end
-            else
-                obsInfoPart = fieldName;
-            end
-            
-            newFieldNames = fieldnames(obsInfoPart);
-            structInputs = cell(length(newFieldNames)*2,1);
-            structInputs(1:2:end) = newFieldNames;
-            newObsInfo = repmat(struct(structInputs{:}),obj.nObservations,1);
-            
-            try
-                newObsInfo(inds) = obsInfoPart;
-            catch %#ok<CTCH>
-                error('prt:prtDataSetStandard:setObservationInfoEntry','setObservationInfoEntry encountered a problem with the specified indices.');
-            end
-            
-            % Quick exit if we didn't have anything
-            if isempty(obj.observationInfo)
-                obj.observationInfo = newObsInfo;
-                return
-            end
-            
-            cObsInfo = obj.observationInfo;
-            
-            newObsInfo = prtUtilMergeStructureArrays(newObsInfo,cObsInfo,inds);
-            
-            obj.observationInfo = newObsInfo;
-            
-        end
-            
         function obj = set.observationInfo(obj,Struct)
             % Error checks for setting observationInfo in batch mode
             if isempty(Struct)
@@ -829,9 +788,9 @@ classdef prtDataSetStandard < prtDataSetBase
                 return
             end
             
-            assert(isa(Struct,'struct') && ndims(Struct)==2 && size(Struct,1)==obj.nObservations && size(Struct,2)==1, 'prt:prtDataSetStandard:observationInfo', 'observationInfo must be an nObservations x 1 structure array.');
+            assert(isa(Struct,'struct') && isvector(Struct) && numel(Struct)==obj.nObservations, 'prt:prtDataSetStandard:observationInfo', 'observationInfo must be an nObservations x 1 structure array.');
             
-            obj.observationInfoDepHelper = Struct;
+            obj.observationInfoDepHelper = Struct(:);
         end
         
         function val = get.observationInfo(obj)
@@ -937,7 +896,7 @@ classdef prtDataSetStandard < prtDataSetBase
                 return
             end
             
-            errorMsg = 'Invalid input. If more than one input is specified, the inputs must be string value pairs. Did you mean setObservationInfoEntry?';
+            errorMsg = 'Invalid input. If more than one input is specified, the inputs must be string value pairs.';
             assert(mod(length(varargin),2)==0, errorMsg)
             paramNames = varargin(1:2:end);
             params = varargin(2:2:end);
@@ -958,7 +917,8 @@ classdef prtDataSetStandard < prtDataSetBase
                 assert(isvarname(cName),'observationInfo fields must be valid MATLAB variable names. %s is not.',cName);
                 
                 if ismember(cName,startingFieldNames)
-                    warning('prt:observationInfoNameCollision','An observationInfo field named %s already exists. The data is now overwritten.', cName)
+                    % warning('prt:observationInfoNameCollision','An observationInfo field named %s already exists. The data is now overwritten.', cName)
+                    % This warning is unnecessary
                 end
                 assert(size(cVal,1) == obj.nObservations,'observationInfo values must have nObservations rows.');
                 
@@ -975,20 +935,6 @@ classdef prtDataSetStandard < prtDataSetBase
             
             obj.observationInfo = cStruct;
         end
-        
-        function obj = catObservationInfo(obj, newDataSet)
-            
-            if isempty(newDataSet.observationInfo) && isempty(obj.observationInfo)
-                return;
-            end
-            
-            if ~isequal(fieldnames(obj.observationInfo),fieldnames(newDataSet.observationInfo))
-                error('prt:prtDataSetStandard:catObservationInfo','observationInfo structures for these datasets do not match.');
-            end
-            
-            obj.observationInfo = cat(1,obj.observationInfo,newDataSet.observationInfo);
-        end
-        
         
         function obj = catTargets(obj, varargin)
             % catTargets  Concatenate the targets of a prtDataSetStandard
@@ -1060,6 +1006,17 @@ classdef prtDataSetStandard < prtDataSetBase
             % By default do nothing
             % This is can be overloaded in sub-classes
         end
+        
+        function obj = catObservationInfo(obj, oldObservationInfo, newDataSet)
+            
+            if isempty(fieldnames(oldObservationInfo)) && isempty(fieldnames(newDataSet.observationInfo))
+                % No observationInfo was set in either dataset so just exit
+                % and accept the default empty
+                return;
+            end
+            
+            obj.observationInfo = prtUtilStructVCatMergeFields(oldObservationInfo,newDataSet.observationInfo);
+        end       
     end
     
     methods (Hidden = true)
