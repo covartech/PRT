@@ -726,6 +726,10 @@ classdef prtDataSetStandard < prtDataSetBase
                 objClass = class(obj);
                 currInput = varargin{argin};
                 
+                if isempty(currInput)
+                    continue
+                end
+                    
                 if isnumeric(currInput)
                     % Catting with a double matrix is allowed because
                     % targets are empty
@@ -745,7 +749,7 @@ classdef prtDataSetStandard < prtDataSetBase
                     warning('prt:prtDataSetStandard:catObservations','Class mismatch between inputs to catFeatures(). Input 1 is a %s and input 2 is a %s. The returned class is that of input 1.',objClass,class(currInput));
                 end
                 
-                assert(obj.nObservations==currInput.nObservations,'Attempt to cat features for data sets with different numbers of observations');
+                assert(obj.nObservations==0 || obj.nObservations==currInput.nObservations,'Attempt to cat features for data sets with different numbers of observations');
                 
                 % Standard procedure
                 obj = obj.catFeatureNames(currInput);
