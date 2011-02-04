@@ -717,10 +717,15 @@ classdef prtDataSetStandard < prtDataSetBase
             end
             
             newFieldNames = fieldnames(obsInfoPart);
-            
             structInputs = cell(length(newFieldNames)*2,1);
             structInputs(1:2:end) = newFieldNames;
             newObsInfo = repmat(struct(structInputs{:}),obj.nObservations,1);
+            
+            try
+                newObsInfo(inds) = obsInfoPart;
+            catch %#ok<CTCH>
+                error('prt:prtDataSetStandard:setObservationInfoEntry','setObservationInfoEntry encountered a problem with the specified indices.');
+            end
             
             % Quick exit if we didn't have anything
             if isempty(obj.observationInfo)
@@ -822,17 +827,30 @@ classdef prtDataSetStandard < prtDataSetBase
             % DS = DS.setObservationInfo('asdf',randn(DS.nObservations,1),'qwer',randn(DS.nObservations,1),'poiu',randn(DS.nObservations,10),'lkjh',mat2cell(randn(DS.nObservations,1),ones(DS.nObservations,1),1),'mnbv',mat2cell(randn(DS.nObservations,10),ones(DS.nObservations,1),10));
             % vals = DS.getObservationInfo('asdf');
             
-            assert(isfield(obj.observationInfo,fieldName),'prt:prtDataSetStandard:getObservationInfo','%s is not a field name of observationInfo for this dataset');
+            assert(nargin==2,'prt:prtDataSetStandard:getObservationInfo','invalid number of input arguments, only one input argument should be specified.');
+            
+            assert(ischar(fieldName),'prt:prtDataSetStandard:getObservationInfo','fieldName must be a string');
+            
+            assert(isfield(obj.observationInfo,fieldName),'prt:prtDataSetStandard:getObservationInfo','%s is not a field name of observationInfo for this dataset',fieldName);
+            
             try
                 val = cat(1,obj.observationInfo.(fieldName));
-            catch % This failed because of invalid matrix dimensions
+            catch %#ok<CTCH>
+                % This failed because of invalid matrix dimensions
+            end
+            if size(val,1) == obj.nObservations
+                % Everything worked out, value in observationInfo 
+                % is a row vector of contstant size
+                % leave now
+                return
+            else
+                % Failure, or invalid size, so we return a cell
                 try
                     val = {obj.observationInfo.(fieldName)}';
-                catch 
-                    error('prt:prtDataSetStandard:getObservationInfo','getObservationInfo failed to trieve the necessary field for an unknown reason');
+                catch %#ok<CTCH>
+                    error('prt:prtDataSetStandard:getObservationInfo','getObservationInfo failed to retrieve the necessary field for an unknown reason');
                 end
             end
-            
         end
         
         function obj = setObservationInfo(obj,varargin)
@@ -850,7 +868,7 @@ classdef prtDataSetStandard < prtDataSetBase
                 return
             end
             
-            errorMsg = 'If more than one input is specified, the inputs must be string value pairs.';
+            errorMsg = 'Invalid input. If more than one input is specified, the inputs must be string value pairs. Did you mean setObservationInfoEntry?';
             assert(mod(length(varargin),2)==0, errorMsg)
             paramNames = varargin(1:2:end);
             params = varargin(2:2:end);
