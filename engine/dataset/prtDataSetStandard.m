@@ -611,17 +611,18 @@ classdef prtDataSetStandard < prtDataSetBase
                     obj.targets = obj.targets(retainedIndices,:);
                 end
                 
-                if ~isempty(obj.observationInfo)
-                    obj.observationInfo = obj.observationInfo(retainedIndices);
-                end
+                %                 if ~isempty(obj.observationInfo)
+                %                     obj.observationInfo = obj.observationInfo(retainedIndices);
+                %                 end
                 
                 % Updated chached target info
                 obj = updateTargetsCache(obj);
 
                 % Updated chached data info
                 obj = updateObservationsCache(obj);
-            catch  %#ok<CTCH>
+            catch  ME
                 retainedIndices = prtDataSetBase.parseIndices(obj.nObservations ,retainedIndices);
+                throw
             end
             
         end
