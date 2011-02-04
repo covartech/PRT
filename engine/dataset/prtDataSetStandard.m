@@ -721,12 +721,6 @@ classdef prtDataSetStandard < prtDataSetBase
             structInputs = cell(length(newFieldNames)*2,1);
             structInputs(1:2:end) = newFieldNames;
             newObsInfo = repmat(struct(structInputs{:}),obj.nObservations,1);
-            try
-                newObsInfo(inds) = obsInfoPart;
-            catch ME
-                % Bad indexes supplied
-                keyboard
-            end
             
             % Quick exit if we didn't have anything
             if isempty(obj.observationInfo)
@@ -736,10 +730,9 @@ classdef prtDataSetStandard < prtDataSetBase
             
             cObsInfo = obj.observationInfo;
             
-            keyboard
+            newObsInfo = prtUtilMergeStructureArrays(newObsInfo,cObsInfo,inds);
             
-            % newObsInfo = prtUtilMergeStructures(newObsInfo,cObsInfo);
-            
+            obj.observationInfo = newObsInfo;
             
         end
             
