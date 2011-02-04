@@ -109,6 +109,7 @@ classdef prtDataSetStandard < prtDataSetBase
         
         % Constructor
         function obj = prtDataSetStandard(varargin)
+            
             obj.featureNames = prtUtilIntegerAssociativeArray;
             
             if nargin == 0
@@ -169,7 +170,6 @@ classdef prtDataSetStandard < prtDataSetBase
                 end
             end
             
-            obj = prtUtilAssignStringValuePairs(obj,varargin{:});
         end
         
         function featNames = getFeatureNames(obj,varargin)
@@ -347,6 +347,7 @@ classdef prtDataSetStandard < prtDataSetBase
                 obj.data = data;
             else
                 try
+                    nObservationsPrev = obj.nObservations;
                     switch nargin
                         case 3
                             obj.data(varargin{1},:) = data;
@@ -354,6 +355,10 @@ classdef prtDataSetStandard < prtDataSetBase
                             obj.data(varargin{1},varargin{2}) = data;
                         otherwise
                             error('prt:prtDataSetStandard:setObservations','setObservations expects 1 or 2 sets of indices; %d indices provided',nargin-2);
+                    end
+                    nObservationsAfter = obj.nObservations;
+                    if nObservationsAfter ~= nObservationsPrev
+                        error('prt:prtDataSetStandard:invalidDataSize','Attempt to change number of observaitons in dataSet from %d to %d',nObservationsPrev,nObservationsAfter);
                     end
                 catch ME
                     %this should error with a meaningful message:
@@ -380,7 +385,6 @@ classdef prtDataSetStandard < prtDataSetBase
             
             %[data,targets] = getTargets(obj,indices1,indices2)
             % XXX Leaving un-doc'd for now
-            
             
             if nargin == 1
                 % No indicies identified. Quick exit
@@ -421,40 +425,81 @@ classdef prtDataSetStandard < prtDataSetBase
             %obj = setTargets(obj,targets,indices1,indices2)
             % XXX leaving un-doc'd for now
             
-            
-            % Setting only specified entries of the matrix
-            [indices1, indices2] = prtDataSetBase.parseIndices([obj.nObservations, obj.nTargetDimensions],varargin{:});
-            
-            %Handle empty targets (2-D)
-            if isempty(indices2)
-                indices2 = 1:size(targets,2);
-            end
-            %Handle empty targets (1-D)
-            if isempty(indices1) && ~isempty(targets);
-                indices1 = 1:obj.nObservations;
-            end
-            
-            if ~isempty(targets)
-                if nargin < 3
-                    if ~isequal(obj.nObservations,size(targets,1))
-                        error('prt:prtDataSetStandard:InvalidTargetSize','nObservations is %d, but targets are of size %s, corresponding to %d observations',obj.nObservations,mat2str(size(targets)),size(targets,1));
-                    end
-                end
-                if ~isequal([length(indices1),length(indices2)],size(targets))
-                    if isempty(obj.targets) && nargin < 3
-                        error('prtDataSetStandard:InvalidTargetSize','Attempt to set targets to matrix of size %s, but indices are of size [%d %d]',mat2str(size(targets)),length(indices1),length(indices2))
-                    else
-                        error('prtDataSetStandard:InvalidTargetSize','Attempt to set targets to matrix of size %s, but targets is size %s',mat2str(size(targets)),mat2str(size(obj.targets)));
-                    end
+            if nargin < 3
+                
+                if isempty(targets)
+                    %un-labeling data
+                    obj.targets = targets;
+                    obj = updateTargetsCache(obj);
+                    return;
                 end
                 
-                obj.targets(indices1,indices2) = targets;
+                % Setting the entire data matrix
+                if obj.nObservations ~= size(targets,1)
+                    error('prtDataSet:invalidDataTargetSet','Attempt to change number of observations in a data set by changing targets without changing observations; use setObservationsAndTargets to change both simultaneously');
+                end
+                obj.targets = targets;
+                obj = updateTargetsCache(obj);
+                return
             else
-                obj.targets = [];
+                try
+                    nObservationsPrev = obj.nObservations;
+                    switch nargin
+                        case 3
+                            obj.targets(varargin{1},:) = targets;
+                        case 4
+                            obj.targets(varargin{1},varargin{2}) = targets;
+                        otherwise
+                            error('prt:prtDataSetStandard:setTargets','setTargets expects 1 or 2 sets of indices; %d indices provided',nargin-2);
+                    end
+                    nObservationsAfter = size(obj.getTargets,1);
+                    if nObservationsAfter ~= nObservationsPrev
+                        error('prt:prtDataSetStandard:invalidDataSize','Attempt to change number of targets in a dataSet with %d observations to have %d targets',nObservationsPrev,nObservationsAfter);
+                    end
+                catch ME
+                    %this should error with a meaningful message:
+                    prtDataSetBase.parseIndices([obj.nObservations, obj.nFeatures],varargin{:});
+                    %Otherwise, something else happened; show the user
+                    throw(ME);
+                end
             end
-            
-            % Updated chached target info
+            % Reset the data cache
             obj = updateTargetsCache(obj);
+            
+            % %
+            % %             % Setting only specified entries of the matrix
+            % %             [indices1, indices2] = prtDataSetBase.parseIndices([obj.nObservations, obj.nTargetDimensions],varargin{:});
+            % %
+            % %             %Handle empty targets (2-D)
+            % %             if isempty(indices2)
+            % %                 indices2 = 1:size(targets,2);
+            % %             end
+            % %             %Handle empty targets (1-D)
+            % %             if isempty(indices1) && ~isempty(targets);
+            % %                 indices1 = 1:obj.nObservations;
+            % %             end
+            % %
+            % %             if ~isempty(targets)
+            % %                 if nargin < 3
+            % %                     if ~isequal(obj.nObservations,size(targets,1))
+            % %                         error('prt:prtDataSetStandard:InvalidTargetSize','nObservations is %d, but targets are of size %s, corresponding to %d observations',obj.nObservations,mat2str(size(targets)),size(targets,1));
+            % %                     end
+            % %                 end
+            % %                 if ~isequal([length(indices1),length(indices2)],size(targets))
+            % %                     if isempty(obj.targets) && nargin < 3
+            % %                         error('prtDataSetStandard:InvalidTargetSize','Attempt to set targets to matrix of size %s, but indices are of size [%d %d]',mat2str(size(targets)),length(indices1),length(indices2))
+            % %                     else
+            % %                         error('prtDataSetStandard:InvalidTargetSize','Attempt to set targets to matrix of size %s, but targets is size %s',mat2str(size(targets)),mat2str(size(obj.targets)));
+            % %                     end
+            % %                 end
+            % %
+            % %                 obj.targets(indices1,indices2) = targets;
+            % %             else
+            % %                 obj.targets = [];
+            % %             end
+            % %
+            % %             % Updated chached target info
+            % %             obj = updateTargetsCache(obj);
         end
         
         function obj = catObservations(obj, varargin)

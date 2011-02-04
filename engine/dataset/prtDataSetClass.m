@@ -1164,6 +1164,9 @@ classdef prtDataSetClass  < prtDataSetStandard
                 obj.targetsCacheNClasses = 1; % If unlabeled we really have one class
                 obj.targetsCacheHist = obj.nObservations;
             else
+                if islogical(obj.targets)
+                    obj.targets = double(obj.targets);
+                end
                 obj.targetsCacheUnique = unique(obj.targets,'rows');
                 obj.targetsCacheNClasses = length(obj.targetsCacheUnique);
                 obj.targetsCacheHist = histc(obj.targets,obj.targetsCacheUnique);
