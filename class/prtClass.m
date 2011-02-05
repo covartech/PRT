@@ -117,6 +117,12 @@ classdef prtClass < prtAction
                 error('prtClass:internalDecider','internalDecider must be an empty vector ([]) of type prtDecision, but input is a %s',class(val));
             end
             obj.internalDecider = val;
+            if ~obj.internalDecider.isTrained && obj.isTrained
+                %Make obj.isTrained false:
+                obj.isTrained = false;
+                %warn user?
+                warning('prt:internalDecider:isTrained','Setting the internalDecider property of a prtClass object with an un-trained internalDecider sets the prtClass object''s isTrained to false');
+            end
         end
         function has = get.includesDecision(obj)
             has = ~isempty(obj.internalDecider);
