@@ -59,7 +59,7 @@ classdef prtDecisionMap < prtDecision
     methods (Access=protected,Hidden=true)
         
         function Obj = trainAction(Obj, DS)
-            if isa(Obj,'prtDataSetClass')
+            if isa(DS,'prtDataSetClass')
                 Obj.classList = DS.uniqueClasses;
             else
                 Obj.classList = 1:DS.nFeatures;
