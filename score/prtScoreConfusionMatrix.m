@@ -5,13 +5,17 @@ function varargout = prtScoreConfusionMatrix(guess,truth,nClasses,labelsIn)
 %   guess and truth should be either n x 1 doubles, or dataSets with proper
 %   observations and targets
 
+if (nargin == 1 || isempty(truth)) && isa(guess,'prtDataSetClass')
+    truth = guess;
+end
+
 [guess,truth,labels] = prtUtilScoreParseFirstTwoInputs(guess,truth);
 if nargin > 3
     labels = labelsIn;
 end
 
 guess = guess(:);
-if nargin == 2
+if nargin < 3
     nClasses = length(unique(cat(1,truth(:),guess(:))));
 end
 
