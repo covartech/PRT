@@ -211,9 +211,9 @@ classdef prtAlgorithm < prtAction
         
         function Obj = prtAlgorithm(varargin)
             
-            Obj.classInput = '';
-            Obj.classOutput = '';
-            Obj.classInputOutputRetained = true;
+            Obj.classTrain = '';
+            Obj.classRun = '';
+            Obj.classRunRetained = true;
             
             % One input is a constructor from another prtAction
             if nargin == 1

@@ -24,9 +24,9 @@ classdef prtPreProc < prtAction
         function obj = prtPreProc()
             % As an action subclass we must set the properties to reflect
             % our dataset requirements
-            obj.classInput = 'prtDataSetStandard';
-            obj.classOutput = 'prtDataSetStandard';
-            obj.classInputOutputRetained = true;
+            obj.classTrain = 'prtDataSetStandard';
+            obj.classRun = 'prtDataSetStandard';
+            obj.classRunRetained = true;
         end
     end
     methods (Hidden = true)

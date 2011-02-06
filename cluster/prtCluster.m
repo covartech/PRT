@@ -19,8 +19,11 @@ classdef prtCluster < prtAction
     properties (Abstract)
         nClusters  % The number of clusters
     end
-    properties
-        internalDecider = [];  % The internal decider
+    properties (Dependent)
+        internalDecider  % Optional prtDecider object for making decisions
+    end
+    properties (SetAccess = private, GetAccess = private, Hidden=true)
+        internalDeciderDepHelper = [];
     end
     properties (Dependent)
         includesDecision % Flag indicating if result includes a decision
@@ -51,17 +54,41 @@ classdef prtCluster < prtAction
         function obj = prtCluster()
             % As an action subclass we must set the properties to reflect
             % our dataset requirements
-            obj.classInput = 'prtDataSetStandard';
-            obj.classOutput = 'prtDataSetStandard';
-            obj.classInputOutputRetained = true;
+            obj.classTrain = 'prtDataSetClass';
+            obj.classRun = 'prtDataSetStandard';
+            obj.classRunRetained = true;
         end
         
+        function val = get.internalDecider(obj)
+            val = obj.internalDeciderDepHelper;
+        end
         function obj = set.internalDecider(obj,val)
             if ~isempty(val) && ~isa(val,'prtDecision')
                 error('prtClass:internalDecider','internalDecider must be an empty vector ([]) of type prtDecision, but input is a %s',class(val));
             end
-            obj.internalDecider = val;
+            
+            if ~isempty(val) && ~val.isTrained && obj.isTrained
+                % We are adding a non-trained decision to a trained
+                % classifier if we have verboseStorage = true we can train
+                % the decider. If we don't we have to untrain and warn
+                
+                if ~isempty(obj.dataSet)
+                    % We have the dataset
+                    obj.internalDeciderDepHelper = val;
+                    obj = postTrainProcessing(obj, obj.dataSet);
+                    obj.yieldsMaryOutput = false;
+                else
+                    %Make obj.isTrained false:
+                    obj.isTrained = false;
+                    %warn user?
+                    warning('prt:internalDecider:isTrained','Setting the internalDecider property of a prtClass object with an un-trained internalDecider sets the prtClass object''s isTrained to false');
+                end
+            else
+                obj.internalDeciderDepHelper = val;
+            end
+            
         end
+        
         function has = get.includesDecision(obj)
             has = ~isempty(obj.internalDecider);
         end
@@ -81,10 +108,14 @@ classdef prtCluster < prtAction
             assert(Obj.dataSetSummary.nFeatures < 4, 'nFeatures in the training dataset must be less than or equal to 3');
             
             if Obj.yieldsMaryOutput
-                % Must have an internal decider
-                Obj = trainAutoDecision(Obj);
+                if ~isempty(Obj.dataSet)
+                    warning('prt:prtClass:plot:autoDecision','prtCluster.plot() requires a prtCluster with an internal decider. A prtDecisionMap has been trained and set as the internalDecider to enable plotting.');
+                else
+                    error('prt:prtClass:plot','prtCluster.plot() requires a prtCluster with an internal decider. A prtDecisionMap cannot be trained and set as the internalDecider to enable plotting because this classifier object does not have verboseStorege turned on and therefore the dataSet used to train the classifier is unknow. To enable plotting, set an internalDecider and retrain the classifier.');
+                end
+                Obj.internalDecider = prtDecisionMap;
             end
-           
+            
             HandleStructure = plotBinaryClusterConfidence(Obj);
                 
             if ~isempty(Obj.dataSet) && ~isempty(Obj.dataSet.name)
@@ -154,12 +185,8 @@ classdef prtCluster < prtAction
             
             [OutputDataSet, linGrid, gridSize] = runClustererOnGrid(Obj);
             
-            if Obj.dataSetSummary.nClasses > 2
-                %internalDeciders* output the right colors:
-                imageHandle = prtPlotUtilPlotGriddedEvaledClassifier(OutputDataSet.getObservations(), linGrid, gridSize, prtPlotUtilLightenColors(Obj.plotOptions.colorsFunction(Obj.dataSetSummary.nClasses)));
-            else
-                imageHandle = prtPlotUtilPlotGriddedEvaledClassifier(OutputDataSet.getObservations(), linGrid, gridSize, Obj.plotOptions.twoClassColorMapFunction());
-            end
+            %internalDeciders* output the right colors:
+            imageHandle = prtPlotUtilPlotGriddedEvaledClassifier(OutputDataSet.getObservations(), linGrid, gridSize, prtPlotUtilLightenColors(Obj.plotOptions.colorsFunction(Obj.nClusters)));
             
             if ~isempty(Obj.dataSet)
                 hold on;

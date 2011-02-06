@@ -85,19 +85,6 @@ classdef prtDataSetRegress < prtDataSetStandard
                 varargout = {h};
             end
         end
-        
-        function Summary = summarize(Obj)
-            % Summarize   Summarize the prtDataSetRegress object
-            %
-            % SUMMARY = dataSet.summarize() Summarizes the dataSetRegress
-            % object and returns the result in the struct SUMMARY.
-            
-            Summary.upperBounds = max(Obj.getObservations());
-            Summary.lowerBounds = min(Obj.getObservations());
-            Summary.nFeatures = Obj.nFeatures;
-            Summary.nTargetDimensions = Obj.nTargetDimensions;
-            Summary.nObservations = Obj.nObservations;
-        end
     end
     methods (Static, Hidden = true)
         function plotOptions = initializePlotOptions()

@@ -165,9 +165,12 @@ set(gcf,'NextPlot','new')
         elseif isa(BlockObject,'prtDecision')
             blockColor = Options.BlockColors.decision;
             textColor = Options.BlockTextColors.decision;
-        elseif isa(BlockObject,'prtOR')
+        elseif isa(BlockObject,'prtOutlierRemoval')
             blockColor = Options.BlockColors.outlierRemoval ;
             textColor = Options.BlockTextColors.outlierRemoval ;
+        elseif isa(BlockObject,'prtCluster')
+            blockColor = Options.BlockColors.cluster ;
+            textColor = Options.BlockTextColors.cluster ;
         else
             blockColor = [1 1 1];
             textColor = [0 0 0];
@@ -420,7 +423,7 @@ set(gcf,'NextPlot','new')
 
     function Options = localGetOptions()
         
-        colors = prtPlotUtilClassColors(5);
+        colors = prtPlotUtilClassColors(6);
         
         Options.initialCanvasLimits = [-0.1 1.1 -0.1 1.1];
         Options.blockSize = blockSize*[1 1];
@@ -433,6 +436,7 @@ set(gcf,'NextPlot','new')
         Options.BlockColors.classifier = colors(3,:);
         Options.BlockColors.decision = colors(4,:);
         Options.BlockColors.outlierRemoval = colors(5,:);
+        Options.BlockColors.cluster = colors(5,:);
         
         Options.BlockTextColors.dataSet = [0 0 0];
         Options.BlockTextColors.preProcessor = [1 1 1];
@@ -440,7 +444,7 @@ set(gcf,'NextPlot','new')
         Options.BlockTextColors.classifier = [1 1 1];
         Options.BlockTextColors.decision = [0 0 0];
         Options.BlockTextColors.outlierRemoval = [1 1 1];
-        
+        Options.BlockTextColors.cluster = [1 1 1];
         
     end
 

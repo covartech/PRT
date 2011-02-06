@@ -2,8 +2,7 @@ classdef prtPreProcClass < prtPreProc
     
     methods
         function obj = prtPreProcClass()
-            obj.classInput = 'prtDataSetClass';
-            obj.classOutput = 'prtDataSetClass';
+            obj.classTrain = 'prtDataSetClass';
             
             obj.isSupervised = true; % Overload this here.
         end

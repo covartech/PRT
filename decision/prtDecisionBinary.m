@@ -21,8 +21,9 @@ classdef prtDecisionBinary < prtDecision
     end
     methods
         function obj = prtDecisionBinary()
-            obj.classInput = 'prtDataSetClass';
-            obj.classOutput = 'prtDataSetClass';
+            obj.classTrain = 'prtDataSetClass';
+            obj.classRun = 'prtDataSetStandard';
+            obj.classRunRetained = true;
             
             obj.isSupervised = true;
         end

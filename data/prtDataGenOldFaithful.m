@@ -22,7 +22,7 @@ function DS = prtDataGenOldFaithful
 
 
 
-DS = prtDataSetStandard(getData(),'name','Old Faithful');
+DS = prtDataSetClass(getData(),[],'name','Old Faithful');
 DS = DS.setFeatureNames({'Eruption time (m)','Waiting time (m)'});
 
 end

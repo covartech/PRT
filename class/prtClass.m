@@ -75,8 +75,12 @@ classdef prtClass < prtAction
         yieldsMaryOutput = nan; % Determined in trainProcessing()
     end
     
-    properties
-        internalDecider = []; % Optional prtDecider object for making decisions
+    properties (Dependent)
+        internalDecider  % Optional prtDecider object for making decisions
+    end
+    
+    properties (SetAccess = private, GetAccess = private, Hidden=true)
+        internalDeciderDepHelper = [];
     end
     
     properties (SetAccess = protected)
@@ -107,22 +111,38 @@ classdef prtClass < prtAction
         function obj = prtClass()
             % As an action subclass we must set the properties to reflect
             % our dataset requirements
-            obj.classInput = 'prtDataSetClass';
-            obj.classOutput = 'prtDataSetClass';
-            obj.classInputOutputRetained = true;
+            obj.classTrain = 'prtDataSetClass';
+            obj.classRun = 'prtDataSetStandard';
+            obj.classRunRetained = true;
         end
-        
+        function val = get.internalDecider(obj)
+            val = obj.internalDeciderDepHelper;
+        end
         function obj = set.internalDecider(obj,val)
             if ~isempty(val) && ~isa(val,'prtDecision')
                 error('prtClass:internalDecider','internalDecider must be an empty vector ([]) of type prtDecision, but input is a %s',class(val));
             end
-            obj.internalDecider = val;
-            if ~isempty(val) && ~obj.internalDecider.isTrained && obj.isTrained
-                %Make obj.isTrained false:
-                obj.isTrained = false;
-                %warn user?
-                warning('prt:internalDecider:isTrained','Setting the internalDecider property of a prtClass object with an un-trained internalDecider sets the prtClass object''s isTrained to false');
+            
+            if ~isempty(val) && ~val.isTrained && obj.isTrained
+                % We are adding a non-trained decision to a trained
+                % classifier if we have verboseStorage = true we can train
+                % the decider. If we don't we have to untrain and warn
+                
+                if ~isempty(obj.dataSet)
+                    % We have the dataset
+                    obj.internalDeciderDepHelper = val;
+                    obj = postTrainProcessing(obj, obj.dataSet);
+                    obj.yieldsMaryOutput = false;
+                else
+                    %Make obj.isTrained false:
+                    obj.isTrained = false;
+                    %warn user?
+                    warning('prt:internalDecider:isTrained','Setting the internalDecider property of a prtClass object with an un-trained internalDecider sets the prtClass object''s isTrained to false');
+                end
+            else
+                obj.internalDeciderDepHelper = val;
             end
+            
         end
         function has = get.includesDecision(obj)
             has = ~isempty(obj.internalDecider);
@@ -143,8 +163,12 @@ classdef prtClass < prtAction
             assert(Obj.dataSetSummary.nFeatures < 4, 'nFeatures in the training dataset must be less than or equal to 3');
             
             if Obj.yieldsMaryOutput
-                % Must have an internal decider
-                Obj = trainAutoDecision(Obj);
+                if ~isempty(Obj.dataSet)
+                    warning('prt:prtClass:plot:autoDecision','prtClass.plot() requires a binary prtClass or a prtClass with an internal decider. A prtDecisionMap has been trained and set as the internalDecider to enable plotting.');
+                else
+                    error('prt:prtClass:plot','prtClass.plot() requires a binary prtClass or a prtClass with an internal decider. A prtDecisionMap cannot be trained and set as the internalDecider to enable plotting because this classifier object does not have verboseStorege turned on and therefore the dataSet used to train the classifier is unknow. To enable plotting, set an internalDecider and retrain the classifier.');
+                end
+                Obj.internalDecider = prtDecisionMap;
             end
            
             HandleStructure = plotBinaryClassifierConfidence(Obj); % This handles both the binary classifier confidence plot and binary and m-ary decision plots.
@@ -351,17 +375,6 @@ classdef prtClass < prtAction
                 HandleStructure.Axes = struct('imageHandle',{imageHandle},'handles',{[]});
             end
         end
-        function Obj = trainAutoDecision(Obj)
-            if ~isempty(Obj.dataSet)
-                    warning('prt:prtClass:plot:autoDecision','prtClass.plot() requires a binary prtClass or a prtClass with an internal decider. A prtDecisionMap has been trained and set as the internalDecider to enable plotting.');
-                    Obj.internalDecider =  prtDecisionMap;
-                    Obj = postTrainProcessing(Obj, Obj.dataSet);
-                    Obj.yieldsMaryOutput = false;
-                else
-                    error('prt:prtClass:plot','prtClass.plot() requires a binary prtClass or a prtClass with an internal decider. A prtDecisionMap cannot be trained and set as the internalDecider to enable plotting because this classifier object does not have verboseStorege turned on and therefore the dataSet used to train the classifier is unknow. To enable plotting, set an internalDecider and retrain the classifier.');
-            end
-        end
-        
     end
     
     methods (Static, Hidden = true)

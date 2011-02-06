@@ -1089,8 +1089,18 @@ classdef prtDataSetStandard < prtDataSetBase
         function h = plot(obj,varargin) %#ok<STOUT,MANU>
             error('prt:prtDataSetStandard:plot','prtDataSetStandard does not implement a plot() function; did you mean to use a prtDataSetClass or prtDataSetRegress?');
         end
-        function s = summarize(obj,varargin) %#ok<STOUT,MANU>
-            error('prt:prtDataSetStandard:summarize','prtDataSetStandard does not implement a summarize() function; did you mean to use a prtDataSetClass or prtDataSetRegress?');
+        
+        function Summary = summarize(Obj)
+            % Summarize   Summarize the prtDataSetStandard object
+            %
+            % SUMMARY = dataSet.summarize() Summarizes the prtDataSetStandard
+            % object and returns the result in the struct SUMMARY.
+            
+            Summary.upperBounds = max(Obj.getObservations());
+            Summary.lowerBounds = min(Obj.getObservations());
+            Summary.nFeatures = Obj.nFeatures;
+            Summary.nTargetDimensions = Obj.nTargetDimensions;
+            Summary.nObservations = Obj.nObservations;
         end
     end
     

@@ -94,6 +94,10 @@ classdef prtRvUniform < prtRv
         end
         
         function vals = draw(R,N)
+            if nargin < 2
+                N = 1;
+            end
+            
             assert(numel(N)==1 && N==floor(N) && N > 0,'N must be a positive integer scalar.')
             
             [isValid, reasonStr] = R.isValid;

@@ -8,9 +8,9 @@ classdef prtFeatSel < prtAction
         function obj = prtFeatSel()
             % As an action subclass we must set the properties to reflect
             % our dataset requirements
-            obj.classInput = 'prtDataSetClass';
-            obj.classOutput = 'prtDataSetClass';
-            obj.classInputOutputRetained = true;
+            obj.classTrain = 'prtDataSetClass';
+            obj.classRun = 'prtDataSetStandard';
+            obj.classRunRetained = true;
         end
     end
     

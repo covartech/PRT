@@ -62,9 +62,9 @@ classdef prtAction
     end
     
     properties (Hidden = true, SetAccess=protected, GetAccess=protected)
-        classInput = 'prtDataSetBase';
-        classOutput = 'prtDataSetBase';
-        classInputOutputRetained = false;
+        classTrain = 'prtDataSetBase';
+        classRun = 'prtDataSetBase';
+        classRunRetained = false;
     end
     
     methods (Hidden = true)
@@ -171,8 +171,8 @@ classdef prtAction
             end
 
             inputClassType = class(DataSet);
-            if ~isempty(Obj.classInput) && ~prtUtilDataSetClassCheck(inputClassType,Obj.classInput)
-                error('prt:prtAction:incompatible','%s requires datasets of type %s but the provided input is of type %s',class(Obj),Obj.classInput,inputClassType);
+            if ~isempty(Obj.classTrain) && ~prtUtilDataSetClassCheck(inputClassType,Obj.classTrain)
+                error('prt:prtAction:incompatible','%s.train() requires datasets of type %s but the input is of type %s, which is not a subclass of %s', class(Obj), Obj.classTrain, inputClassType, Obj.classTrain);
             end
             
             if Obj.isSupervised && ~DataSet.isLabeled
@@ -204,30 +204,36 @@ classdef prtAction
             if ~Obj.isTrained
                 error('prtAction:run:ActionNotTrained','Attempt to run a prtAction of type %s that was not trained',class(Obj));
             end
-            if isnumeric(DataSetIn)
-                try
-                   DataSetIn = prtDataSetStandard(DataSetIn); 
-                catch %#ok<CTCH>
-                    error('prt:prtAction:prtDataSetBase','DataSet provided to prtAction %s''s run() was a prtDataSetBase, DataSet is a %s',class(Obj),class(DataSetIn));
-                end
-            elseif ~isa(DataSetIn,'prtDataSetBase')
-                error('prt:prtAction:prtDataSetBase','DataSet provided to prtAction %s''s run() was a prtDataSetBase, DataSet is a %s',class(Obj),class(DataSetIn));
-            end
                 
+            inputClassName = class(DataSetIn);
+            
+            if ~isempty(Obj.classRun) && ~prtUtilDataSetClassCheck(inputClassName,Obj.classRun)
+                error('prt:prtAction:incompatible','%s.run() requires datasets of type %s but the input is of type %s, which is not a subclass of %s.',class(Obj), Obj.classRun, inputClassName, Obj.classRun);
+            end            
+            
             DataSetOut = preRunProcessing(Obj, DataSetIn);
             DataSetOut = runAction(Obj, DataSetOut);
             DataSetOut = postRunProcessing(Obj, DataSetIn, DataSetOut);
            
             outputClassName = class(DataSetOut);
-            inputClassName = class(DataSetIn);
-            if ~isempty(Obj.classOutput) && ~prtUtilDataSetClassCheck(outputClassName,Obj.classOutput)
-                error('prt:prtAction:incompatible','This action specifies that it outputs datasets of type %s but the output is of type %s, which is not a subclass of %s. This may indicate an error with the runAction() method of %s.',Obj.classOutput,inputClassName,Obj.classOutput,class(Obj));
-            end
             
-            if Obj.classInputOutputRetained && ~isequal(outputClassName,inputClassName)
-                error('prt:prtAction:incompatible','This action specifies that it retains the class of input datasets however, the class of the output dataset is %s and the class of the input dataset is %s. This may indicate an error with the runAction() method of %s.',Obj.classOutput,inputClassName,class(Obj));
+            if Obj.classRunRetained && ~isequal(outputClassName,inputClassName)
+                error('prt:prtAction:incompatible','%s specifies that it retains the class of input datasets however, the class of the output dataset is %s and the class of the input dataset is %s. This may indicate an error with the runAction() method of %s.', class(Obj), Obj.classRun, inputClassName, class(Obj));
             end
         end
+        
+        function Obj = set.classRun(Obj,val)
+            assert(ischar(val),'prt:prtAction:classRun','classRun must be a string.');
+            Obj.classRun = val;
+        end
+        function Obj = set.classTrain(Obj,val)
+            assert(ischar(val),'prt:prtAction:classTrain','classTrain must be a string.');
+            Obj.classTrain = val;
+        end
+        function Obj = set.classRunRetained(Obj,val)
+            assert(prtUtilIsLogicalScalar(val),'prt:prtAction:classRunRetained','classRunRetained must be a scalar logical.');
+            Obj.classRunRetained = val;
+        end        
         
         function Obj = set.verboseStorage(Obj,val)
             assert(numel(val)==1 && (islogical(val) || (isnumeric(val) && (val==0 || val==1))),'prtAction:invalidVerboseStorage','verboseStorage must be a logical');

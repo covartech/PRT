@@ -21,9 +21,9 @@ classdef prtRegress < prtAction %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         function obj = prtRegress()
             % As an action subclass we must set the properties to reflect
             % our dataset requirements
-            obj.classInput = 'prtDataSetRegress';
-            obj.classOutput = 'prtDataSetRegress';
-            obj.classInputOutputRetained = true;
+            obj.classTrain = 'prtDataSetRegress';
+            obj.classRun = 'prtDataSetStandard';
+            obj.classRunRetained = true;
         end        
         
         function varargout = plot(Obj)
