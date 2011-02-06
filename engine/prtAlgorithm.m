@@ -236,10 +236,32 @@ classdef prtAlgorithm < prtAction
             input{1} = DataSet;
             
             for i = 2:length(topoOrder)-1
+                %Note; here we assume that we have the correct input cell
+                %element was already made (at the end of this loop).  This
+                %can be slow for classifiers with slow "runs" - e.g. KMSD,
+                %KNN, etc.
+                %
+                % It would be better to generate the needed results
+                %*here* when they are needed to avoid needlessly generating
+                %results we don't need.  The check at the end of this loop
+                %fixes this problem for algorithms that end with a single
+                %prtAction, but not for algorithms that end with multiple;
+                %e.g. prtClassZmuv + prtClassKmsd/prtClassFld.  The speed
+                %of training that algorithm will be slower than training
+                %prtClassZmuv + prtClassFld/prtClassKmsd b/c we can tell
+                %that the output of prtClassKmsd isn't needed in the second
+                %version, but not in the first.  This requires a
+                %significant overhaul to fix.
                 currentInput = catFeatures(input{Obj.connectivityMatrix(i,:)});
                 Obj.actionCell{i-1}.verboseStorage = Obj.verboseStorage;
                 Obj.actionCell{i-1} = train(Obj.actionCell{i-1},currentInput);
-                input{i} = runOnTrainingData(Obj.actionCell{i-1},currentInput);                
+                
+                %We can at least be smart about the *last* action and not
+                %run it.  This fixes 90% of the speed problems described in the
+                %comment above
+                if i < length(topoOrder)-1
+                    input{i} = runOnTrainingData(Obj.actionCell{i-1},currentInput);                
+                end
                 
             end
         end

@@ -184,7 +184,7 @@ classdef prtClassKmsd < prtClass
             end
             dist2 = repmat(sum((x1.^2)', 1), [N2 1])' + ...
                 repmat(sum((x2.^2)',1), [N1 1]) - ...
-                2*x1*(x2'); %#ok<UDIM>
+                2*x1*(x2');
             gram = exp(-dist2/(nin*sigma));
             
             nBasis = size(gram,2);
