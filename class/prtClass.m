@@ -117,7 +117,7 @@ classdef prtClass < prtAction
                 error('prtClass:internalDecider','internalDecider must be an empty vector ([]) of type prtDecision, but input is a %s',class(val));
             end
             obj.internalDecider = val;
-            if ~obj.internalDecider.isTrained && obj.isTrained
+            if ~isempty(val) && ~obj.internalDecider.isTrained && obj.isTrained
                 %Make obj.isTrained false:
                 obj.isTrained = false;
                 %warn user?
