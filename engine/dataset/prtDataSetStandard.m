@@ -1055,7 +1055,7 @@ classdef prtDataSetStandard < prtDataSetBase
         
         function obj = catObservationInfo(obj, oldObservationInfo, newDataSet)
             
-            if isempty(fieldnames(oldObservationInfo)) && isempty(fieldnames(newDataSet.observationInfo))
+            if isempty(oldObservationInfo) || (isempty(fieldnames(oldObservationInfo)) && isempty(fieldnames(newDataSet.observationInfo)))
                 % No observationInfo was set in either dataset so just exit
                 % and accept the default empty
                 return;
