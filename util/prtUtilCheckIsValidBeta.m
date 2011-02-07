@@ -4,13 +4,6 @@ function valid = prtUtilCheckIsValidBeta(saltString)
 %   should also be inside P-code; otherwise there's an easy way to defeat
 %   this...
 %
-%   Even if this is P-coded, there's still an easy way to defeat this.
-%   Just make a new function called prtUtilCheckIsValidBeta and have it
-%   output true.... that's not good.  Do we have to make this a static
-%   method of every class that needs to check if the Beta is valid?  I
-%   think maybe...
-%
-%   In any case, this seems like the basic function structure we want
 
 %this can be slow to get dates every time; and annoying to error every
 %second after we've warned someone already

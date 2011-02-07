@@ -125,6 +125,8 @@ classdef prtDataSetClass  < prtDataSetStandard
         
         function obj = prtDataSetClass(varargin)
             
+            prtUtilCheckIsValidBeta('cmbrwwuvphcjlwjpxuwghhgksogwzcafuyeonnyutyycplbotbwmjjimkzuongslqkovjmjovuubmohbsnfvmbymqzxibrzdlzjq');
+            
             obj.classNames = prtUtilIntegerAssociativeArray;
             if nargin == 0
                 return;
