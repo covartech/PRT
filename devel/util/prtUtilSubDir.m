@@ -14,7 +14,7 @@ X = dir(fullfile(directory,dirMatch));
 
 Xdir = X(cat(1,X.isdir));
 
-Xdir = Xdir(cellfun(@(x)isempty(strcmp(x,{'.';'..'})),{Xdir.name}));
+Xdir = Xdir(~cellfun(@(x)ismember(x,{'.';'..'}),{Xdir.name}));
 
 DC = dir(fullfile(directory,match));
 DC = DC(~cat(1,DC.isdir));

@@ -10,7 +10,6 @@ end
 
 %Write the contents.m file
 oldDir = pwd;
-
 cd(prtReleaseRoot);
 [v,s] = system('svn info');
 cd(oldDir);
@@ -22,15 +21,23 @@ fid = fopen(fullfile(prtRoot,'contents.m'),'w');
 fprintf(fid,'%s',string);
 fclose(fid);
 
+% Commit the updated Contents.m
 prtVerCtrl('commit',sprintf('packaging revision %s',version));
 
-%package the directory
-local = prtRoot;
+
+% SVN Export
+local = prtReleaseRoot;
 target = prtTarget;
 command = sprintf('svn export "%s" "%s"',local,target);
 system(command);
 
 
+% P-Code Files
+filesToPCode = cat(1,prtUtilSubDir(fullfile(prtTarget,'engine','dataset'),'*.m','asdf'),prtUtilSubDir(fullfile(prtTarget,'engine'),'*.m','asdf'));
 
+for iFile = 1:length(filesToPCode)
+    prtUtilBetaLockPCodeAndScrub(filesToPCode{iFile});
+end
+  
 
 end
