@@ -1,0 +1,69 @@
+#!/bin/sh
+################################################################
+#
+# $Header:$
+#
+#
+# DESCRIPTION:
+#  Generator for the ring-norm dataset. See L Breiman tec report
+#  460 Stats department University of California for details
+#   
+# PROJECT:  Delve
+#
+# $Author:$
+#
+###############################################################
+
+dim=20
+
+gawk -v NUM=$1 -v DIM=$dim ' BEGIN {
+
+  DIM=20
+  a = 2 / sqrt(20);
+
+  srand(300);
+
+  m[0] = 0.0
+  m[1] = a;
+  var[0] = 4;
+  var[1] = 1;
+
+  for (i = 0 ; i <  NUM ; ++i)
+  {
+
+    class = int(rand() * 2);
+
+    for (j = 0 ; j < DIM ; ++j)
+    {
+       printf("%7.4f ", gasdev(m[class], var[class]));
+
+     }
+
+     printf("%d\n", class);
+   }
+}
+
+function gasdev(mean, var) {
+    if  (iset == 0) 
+    {
+        do
+        {
+            v1 = 2.0 * rand() - 1.0;
+            v2 = 2.0 * rand() -  1.0;
+
+            r=v1*v1+v2*v2;
+
+        } while (r >= 1.0);
+        fac=sqrt(-2.0*log(r)/r);
+        gset=v1*fac;
+        iset=1;
+        return (v2*fac*sqrt(var))+mean;
+    } 
+    else
+    {
+        iset=0;
+        return gset*sqrt(var)+mean;
+    }
+}
+
+ '
