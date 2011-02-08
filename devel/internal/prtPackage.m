@@ -1,12 +1,15 @@
 function prtPackage(prtTarget)
 
+
+prtReleaseRoot = 'C:\Users\pete\Documents\MATLAB\toolboxes\nfPrt\release\';
+matlab32exe = 'C:\Program Files (x86)\MATLAB\R2010b\bin\win32\MATLAB.exe';
+
 if nargin == 0
     prtTarget = 'C:\Users\Pete\Desktop\nfPrtExport';
 end
 
-disp('boo ya');
 %Write the contents.m file
-cd(prtRoot);
+cd(prtReleaseRoot);
 [v,s] = system('svn info');
 s = textscan(s,'%s');
 version = s{1}{12};
