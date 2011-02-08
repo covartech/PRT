@@ -4,6 +4,7 @@ if nargin == 0
     prtTarget = 'C:\Users\Pete\Desktop\nfPrtExport';
 end
 
+disp('boo ya');
 %Write the contents.m file
 cd(prtRoot);
 [v,s] = system('svn info');
