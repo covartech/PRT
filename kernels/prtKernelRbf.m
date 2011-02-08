@@ -96,7 +96,12 @@ classdef prtKernelRbf < prtKernel
             x = obj.internalDataSet.getObservations;
             
             if size(x,2) <= 3
-                h = prtPlotUtilScatter(x, {}, obj.plotOptions.symbol, obj.plotOptions.markerFaceColor, obj.plotOptions.color, obj.plotOptions.symbolLineWidth, obj.plotOptions.symbolSize);
+                if size(x,2) == 1 && obj.internalDataSet.isLabeled
+                    xy = cat(2,x,obj.internalDataSet.getTargets);
+                    h = prtPlotUtilScatter(xy, {}, obj.plotOptions.symbol, obj.plotOptions.markerFaceColor, obj.plotOptions.color, obj.plotOptions.symbolLineWidth, obj.plotOptions.symbolSize);
+                else
+                    h = prtPlotUtilScatter(x, {}, obj.plotOptions.symbol, obj.plotOptions.markerFaceColor, obj.plotOptions.color, obj.plotOptions.symbolLineWidth, obj.plotOptions.symbolSize);
+                end
             else
                 h = nan;
             end

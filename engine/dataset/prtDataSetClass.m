@@ -1004,11 +1004,17 @@ classdef prtDataSetClass  < prtDataSetStandard
             % exist
             
             % Loop through classes and plot
+            uniqueClasses = obj.uniqueClasses;
             for i = 1:nClasses
                 cX = obj.getObservationsByClassInd(i, featureIndices);
                 classEdgeColor = obj.plotOptions.symbolEdgeModificationFunction(classColors(i,:));
                 
-                handleArray(i) = prtPlotUtilScatter(cX,obj.getFeatureNames(featureIndices),classSymbols(i),classColors(i,:),classEdgeColor,lineWidth, markerSize);
+                featureNames = obj.getFeatureNames(featureIndices);
+                if size(cX,2) == 1
+                    cX = cat(2,cX,repmat(uniqueClasses(i),size(cX,1),1));
+                    featureNames{end+1} = 'Target';
+                end
+                handleArray(i) = prtPlotUtilScatter(cX,featureNames,classSymbols(i),classColors(i,:),classEdgeColor,lineWidth, markerSize);
                 
                 if i == 1
                     hold on;
@@ -1045,6 +1051,7 @@ classdef prtDataSetClass  < prtDataSetStandard
             Summary.nTargetDimensions = Obj.nTargetDimensions;
             Summary.nObservations = Obj.nObservations;
             
+            Summary.uniqueClasses = Obj.uniqueClasses;
             Summary.nClasses = Obj.nClasses;
             Summary.isMary = Obj.isMary;
         end

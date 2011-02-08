@@ -1,11 +1,12 @@
-function imageHandle = prtPlotUtilPlotGriddedEvaledClassifier(DS, linGrid, gridSize, cMap)
+function imageHandle = prtPlotUtilPlotGriddedEvaledClassifier(DS, linGrid, gridSize, cMap, prtAction)
 % Internal function
 % xxx Need Help xxx
 
 nDims = size(linGrid,2);
 switch nDims
     case 1
-        imageHandle = imagesc(linGrid,ones(size(linGrid)),DS');
+        DS = repmat(DS,1,max(prtAction.dataSetSummary.uniqueClasses));
+        imageHandle = imagesc(linGrid,[min(prtAction.dataSetSummary.uniqueClasses),max(prtAction.dataSetSummary.uniqueClasses)]',DS');
         set(gca,'YTickLabel',[])
         colormap(cMap)
     case 2
