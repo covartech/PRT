@@ -45,8 +45,7 @@ catch
     % no-op
 end
 
-dataSet = prtDataGenSpiral3Regress;
-dataSet = dataSet.retainFeatures(1);
+dataSet = prtDataGenNoisySinc;
 try
     dataSet.plot()
     close;

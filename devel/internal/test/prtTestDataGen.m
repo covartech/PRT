@@ -102,30 +102,30 @@ if ~isa(ds,'prtDataSetClass')
     result = false;
 end
    
-try
-    ds = prtDataGenSpiral3Regress;
-catch
-    disp('prtDataGenSpiral3Regress error');
-    result = false;
-end
-
-if ~isa(ds,'prtDataSetRegress')
-    disp('prtDataGenSpiral3Regress wrong class')
-    result = false;
-end
+% try
+%     ds = prtDataGenSpiral3Regress;
+% catch
+%     disp('prtDataGenSpiral3Regress error');
+%     result = false;
+% end
+% 
+% if ~isa(ds,'prtDataSetRegress')
+%     disp('prtDataGenSpiral3Regress wrong class')
+%     result = false;
+% end
    
 
-try
-    ds = prtDataGenSwissRoll;
-catch
-    disp('prtDataGenSwissRoll error');
-    result = false;
-end
-
-if ~isa(ds,'prtDataSetRegress')
-    disp('prtDataGenSwissRoll wrong class')
-    result = false;
-end
+% try
+%     ds = prtDataGenSwissRoll;
+% catch
+%     disp('prtDataGenSwissRoll error');
+%     result = false;
+% end
+% 
+% if ~isa(ds,'prtDataSetRegress')
+%     disp('prtDataGenSwissRoll wrong class')
+%     result = false;
+% end
    
 try
     ds = prtDataGenUnimodal;

@@ -52,7 +52,7 @@ catch
 end
 %% Stuff that should error
 error = true;
-dataSet = prtDataGenSpiral3Regress;
+dataSet = prtDataGenSpiral;
 featSel = prtFeatSelExhaustive;
 featSel.nFeatures = 1;
 

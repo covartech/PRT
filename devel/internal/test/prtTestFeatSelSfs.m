@@ -53,7 +53,7 @@ end
 %% Stuff that should error
 error = true;
 % This errors out messily if you don't train first, should error out clean.
-dataSet = prtDataGenSpiral3Regress;
+dataSet = prtDataGenSpiral;
 featSel = prtFeatSelSfs;
 featSel.nFeatures = 1;
 
