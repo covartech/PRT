@@ -6,6 +6,7 @@ addpath(P);
 
 %Remove some paths we don't need (we remove all directories that start with
 % a . or a ~
+
 removePath = [];
 [string,remString] = strtok(P,pathsep);
 while ~isempty(string);
