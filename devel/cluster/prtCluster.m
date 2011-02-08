@@ -186,7 +186,7 @@ classdef prtCluster < prtAction
             [OutputDataSet, linGrid, gridSize] = runClustererOnGrid(Obj);
             
             %internalDeciders* output the right colors:
-            imageHandle = prtPlotUtilPlotGriddedEvaledClassifier(OutputDataSet.getObservations(), linGrid, gridSize, prtPlotUtilLightenColors(Obj.plotOptions.colorsFunction(Obj.nClusters)));
+            imageHandle = prtPlotUtilPlotGriddedEvaledClassifier(OutputDataSet.getObservations(), linGrid, gridSize, prtPlotUtilLightenColors(Obj.plotOptions.colorsFunction(Obj.nClusters)),Obj);
             
             if ~isempty(Obj.dataSet)
                 hold on;
