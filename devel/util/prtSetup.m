@@ -1,3 +1,12 @@
+function prtSetup
+% prtSetup - Guide user through setup process for the prt.
 
-% Build mex functions for your system
-mex('-outdir',fullfile(prtRoot,'util','mex','prtUtilEvalCapTreeMex'),'-output','prtUtilEvalCapTreeMex',fullfile(prtRoot,'util','mex','prtUtilEvalCapTreeMex','prtUtilEvalCapTreeMex.c'))
+mexExtForThisSystem = mexext;
+
+% Check for the following files
+% svmpredict
+
+
+% Build help
+builddocsearchdb(fullfile(prtRoot,'doc'));
+

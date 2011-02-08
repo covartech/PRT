@@ -14,11 +14,11 @@
     <!-- matlab, toolbox, simulink, blockset, links_targets  -->
     <type>toolbox</type>
     <!-- (Optional) icon file to display in the Start button -->
-    <icon>./doc/favicon.ico</icon>
+    <icon>./doc/newFolder.gif</icon>
     <!-- (Required if you supply help) relative path to help (HTML) folder -->
     <help_location>./doc/</help_location>
     <!-- (Required if you supply help) icon used in the Help browser TOC -->
-    <help_contents_icon>$toolbox/matlab/icons/bookicon.gif</help_contents_icon>
+    <help_contents_icon>$toolbox/matlab/icons/book_mat.gif</help_contents_icon>
     
     <!-- - - - - - - - - - - - -  Start menu - - - - - - - - - - - - - - - -->
     <!-- Optional list of entries to display on Start Menu -->
@@ -32,7 +32,7 @@
             <!-- This callback is a command to open your documentation -->
             <callback>web(fullfile(prtRoot,'doc','prtDocLanding.html'),'-helpbrowser')</callback>
               <!-- Menu item icon (a toolbox icon from the help browser ) -->
-              <icon>$toolbox/matlab/icons/bookicon.gif</icon>
+              <icon>$toolbox/matlab/icons/book_mat.gif</icon>
         </listitem>
         <listitem>
              <!-- Include call to open your Web site, if any -->
