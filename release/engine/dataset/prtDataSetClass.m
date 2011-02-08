@@ -1011,7 +1011,12 @@ classdef prtDataSetClass  < prtDataSetStandard
                 
                 featureNames = obj.getFeatureNames(featureIndices);
                 if size(cX,2) == 1
-                    cX = cat(2,cX,repmat(uniqueClasses(i),size(cX,1),1));
+                    if ~isempty(uniqueClasses)
+                        cX = cat(2,cX,repmat(uniqueClasses(i),size(cX,1),1));
+                    else
+                        %Default behaviour:
+                        cX = cat(2,cX,ones(size(cX,1),1));
+                    end
                     featureNames{end+1} = 'Target';
                 end
                 handleArray(i) = prtPlotUtilScatter(cX,featureNames,classSymbols(i),classColors(i,:),classEdgeColor,lineWidth, markerSize);

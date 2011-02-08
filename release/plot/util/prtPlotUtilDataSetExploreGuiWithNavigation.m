@@ -23,7 +23,7 @@ assert(isa(AdditionalOptions.additionalOnClickFunction,'function_handle') && nar
 if ds.nFeatures > 1
     plotInds = [1 2 0];
 elseif ds.nFeatures > 0
-    plotInds = [1 0 0];
+    plotInds = [1 1 0];
 else
     error('prt:prtDataSetClassExplore','Dataset has zero features and cannot be explored');
 end
