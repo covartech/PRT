@@ -31,7 +31,7 @@ function DataSet = prtDataGenProstate(prostateFile)
 % http://lib.stat.cmu.edu/S/Harrell/data/descriptions/prostate.html
 
 if nargin == 0
-    prostateFile = fullfile(prtRoot,'data','prostate','prostate.csv');
+    prostateFile = fullfile(prtRoot,'dataGen','dataStorage','prostate','prostate.csv');
 end
 
 fid = fopen(prostateFile,'r');

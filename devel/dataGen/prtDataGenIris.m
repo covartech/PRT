@@ -24,7 +24,7 @@ function DataSet = prtDataGenIris
 % (see: iris.UCI in <<prtRoot>>\data\)
 %
 
-irisFile = fullfile(prtRoot,'data','iris','iris.UCI');
+irisFile = fullfile(prtRoot,'dataGen','dataStorage','iris','iris.UCI');
 if ~exist(irisFile,'file')
     error('prtDataGenIris:MissingIrisFile','The UCI Iris file, iris.UCI, was not found in %s',irisFile);
 end
