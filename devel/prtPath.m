@@ -35,7 +35,7 @@ if isempty(startupFile)
     h = warndlg('The M-file startup.m was not found on your MATLAB Path; to include all of the functionality of the PRT including HTML documentation, a startup.m file should include code to add the PRT to the MATLAB path. For more information about startup files, please see: http://www.mathworks.com/help/techdoc/ref/startup.html','prtPath: Not in startup.m');
 else
     
-    startupCommand = sprintf('prtPath;');
+    startupCommand = sprintf('prtPath');
     
     fid = fopen(startupFile,'r');
     s = fscanf(fid,'%c');
