@@ -1,7 +1,7 @@
 function prtUtilClassNameToHtmlDoc(topic,packageRoot)
 % prtUtilClassNameToHtmlDoc
 
-if nagrin < 2
+if nargin < 2
     packageRoot = prtRoot;
 end
 
@@ -80,6 +80,6 @@ subPropsAndMethods = cat(1,subPropsAndMethods(:),subPropsAndMethods2(:),subProps
 for iRef = 1:length(subPropsAndMethods)
     nextFile = cat(2,fullfile(saveDir,strrep(subPropsAndMethods{iRef},'.',filesep)),'.html');
     if ~exist(nextFile,'file')
-        prtUtilClassNameToHtmlDoc(subPropsAndMethods{iRef});
+        prtUtilClassNameToHtmlDoc(subPropsAndMethods{iRef},packageRoot);
     end
 end
