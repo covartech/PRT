@@ -26,8 +26,8 @@ classdef prtDataSetClass  < prtDataSetStandard
     %   getTargetsAsBinaryMatrix   - Return a binary matrix of targets.
     %   explore                    - Explore the prtDataSetClass object
     %   plot                       - Plot the data set
-    %   plotbw                     - Plot the data set in a manner that
-    %                                will remain clear in black and white
+    %   plotFeatureDensity         - Plot the probability density estimate 
+    %                                of a single feature, labeled by class.
     %   plotStar                   - Create a star plot to visualize higher
     %                                dimensional data
     %   plotAsTimeSeries           - Plot the prtDataSetClass object as a
@@ -38,8 +38,7 @@ classdef prtDataSetClass  < prtDataSetStandard
     %   plotDensity                - Plot the density of each feature
     %                                independently as a volume
     % 
-    %   See also: prtDataSetBase, prtDataSetStandard, prtDataSetRegress,
-    %   prtDataSetFile
+    %   See also: prtDataSetBase, prtDataSetStandard, prtDataSetRegress
     
     % Copyright 2011, New Folder Consulting, L.L.C.
     

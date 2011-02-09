@@ -18,7 +18,6 @@
     <!-- (Required if you supply help) relative path to help (HTML) folder -->
     <help_location>./doc/</help_location>
     <!-- (Required if you supply help) icon used in the Help browser TOC -->
-    <help_contents_icon>$toolbox/matlab/icons/book_mat.gif</help_contents_icon>
     
     <!-- - - - - - - - - - - - -  Start menu - - - - - - - - - - - - - - - -->
     <!-- Optional list of entries to display on Start Menu -->

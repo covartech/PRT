@@ -35,7 +35,9 @@ commandStr = cat(2,commandStr,' -o "',tempLayoutFileName,'" "',tempDotFileName,'
 [systemStatus, systemResult] = system(commandStr); %#ok<NASGU>
 
 if systemStatus
-    error('prtPlotUtilGraphVizRun:graphvizIssue','Problem running Graphviz. Do you have it installed and on the system path? Try >>system(''dot -V'') to see.')
+    error('prtPlotUtilGraphVizRun:graphvizIssue','Problem running Graphviz. Graphviz must be installed and on the system path to enable prtAlgorithm plotting. Go to http://www.graphviz.org/ and follow the installation instructions for your operating system.')
+    % Do you have it installed and on the system path? Try >>system(''dot -V'') to see.
+    % You may need to restart.
 end
 
 % Read file from graphviz

@@ -17,7 +17,7 @@ classdef prtDataSetRegress < prtDataSetStandard
     %   plot      - Plot the prtDataSetRegress object
     %   summarize - Summarize the prtDataSetRegress object.
     % 
-    %   See also prtDataSetStandard, prtDataSetClass, prtDataSetBase
+    %   See also: prtDataSetStandard, prtDataSetClass, prtDataSetBase
     
     properties (Hidden = true)
         plotOptions = prtDataSetRegress.initializePlotOptions()
