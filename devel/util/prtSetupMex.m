@@ -1,11 +1,16 @@
-function prtSetupMex(overRideCheck)
+function prtSetupMex(overRideCheck, overRideBuild)
 % prtSetupMex Compile mex files for this system
 
-if nargin < 1
+if nargin < 1 || isempty(overRideCheck)
     overRideCheck = false;
 end
 
+if nargin < 2 || isempty(overRideBuild)
+    overRideBuild = false;
+end
+
 assert(prtUtilIsLogicalScalar(overRideCheck),'overRideCheck must be a scalar logical');
+assert(prtUtilIsLogicalScalar(overRideBuild) ,'overRideBuild must be a scalar logical');
 
 if ~overRideCheck
     % Get selected c compiler information;
@@ -33,20 +38,20 @@ end
 
 % prtUtilEvalCapTreeMex
 mexFile = which('prtUtilEvalCapTreeMex');
-if isempty(mexFile) 
-    mex('-outdir',fullfile(prtRoot,'util','mex','prtUtilEvalCapTreeMex'),'-output','prtUtilEvalCapTreeMex',fullfile(prtRoot,'util','mex','prtUtilEvalCapTreeMex','prtUtilEvalCapTreeMex.c'),extraInputs{:});
+if isempty(mexFile) || overRideBuild
+    mex('-outdir',fullfile(prtRoot,'util','mex','prtUtilEvalCapTreeMex'),'-output','prtUtilEvalCapTreeMex',fullfile(prtRoot,'util','mex','prtUtilEvalCapTreeMex','prtUtilEvalCapTreeMex.c'));
 end
 
 % prtUtilSumExp
 mexFile = which('prtUtilSumExp');
-if isempty(mexFile) 
-    mex('-outdir',fullfile(prtRoot,'util','mex','prtUtilSumExp'),'-output','prtUtilSumExp',fullfile(prtRoot,'util','mex','prtUtilSumExp','prtUtilSumExp.c'),extraInputs{:});
+if isempty(mexFile) || overRideBuild
+    mex('-outdir',fullfile(prtRoot,'util','mex','prtUtilSumExp'),'-output','prtUtilSumExp',fullfile(prtRoot,'util','mex','prtUtilSumExp','prtUtilSumExp.c'));
 end
 
 % LIBS SVM
 mexFile1 = which('prtExternal.libsvm.libsvmread');
 mexFile2 = which('prtExternal.libsvm.libsvmwrite');
-if isempty(mexFile1) || isempty(mexFile2)
+if isempty(mexFile1) || isempty(mexFile2) || overRideBuild
     mex('-O','-c','-outdir',fullfile(prtRoot,'external','+prtExternal','+libsvm'),fullfile(prtRoot,'external','+prtExternal','+libsvm','svm.cpp'),extraInputs{:});
     mex('-O','-c','-outdir',fullfile(prtRoot,'external','+prtExternal','+libsvm'),fullfile(prtRoot,'external','+prtExternal','+libsvm','svm_model_matlab.c'),extraInputs{:});
 

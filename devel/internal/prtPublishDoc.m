@@ -17,3 +17,6 @@ for i = 1:length(mfilelist)
     publish(mfilelist{i},PublishOptions);
 end
 close all;
+
+prtUtilCreateFunctionList;
+prtUtilCreateFunctionReference;
