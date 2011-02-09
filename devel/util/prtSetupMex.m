@@ -13,6 +13,9 @@ if ~overRideCheck
     try %#ok<TRYNC>
         cc = mex.getCompilerConfigurations('c','selected');
         hasMexSetup = ~isempty(cc);
+        
+        cc = mex.getCompilerConfigurations('cpp','selected');
+        hasMexSetup = hasMexSetup && ~isempty(cc);
     end
     
     if ~hasMexSetup
@@ -22,29 +25,34 @@ end
 
 
 % Build mex functions for your system
-mexFile = which('prtUtilEvalCapTreeMex');
-if isempty(mexFile)
-    mex('-outdir',fullfile(prtRoot,'util','mex','prtUtilEvalCapTreeMex'),'-output','prtUtilEvalCapTreeMex',fullfile(prtRoot,'util','mex','prtUtilEvalCapTreeMex','prtUtilEvalCapTreeMex.c'))
+if ~isempty(strfind(computer,'64'))
+    extraInputs = {'-largeArrayDims'};
+else
+    extraInputs = {};
 end
 
+% prtUtilEvalCapTreeMex
+mexFile = which('prtUtilEvalCapTreeMex');
+if isempty(mexFile) 
+    mex('-outdir',fullfile(prtRoot,'util','mex','prtUtilEvalCapTreeMex'),'-output','prtUtilEvalCapTreeMex',fullfile(prtRoot,'util','mex','prtUtilEvalCapTreeMex','prtUtilEvalCapTreeMex.c'),extraInputs{:});
+end
 
+% prtUtilSumExp
+mexFile = which('prtUtilSumExp');
+if isempty(mexFile) 
+    mex('-outdir',fullfile(prtRoot,'util','mex','prtUtilSumExp'),'-output','prtUtilSumExp',fullfile(prtRoot,'util','mex','prtUtilSumExp','prtUtilSumExp.c'),extraInputs{:});
+end
 
-% libSvm
-% 
-% % add -largeArrayDims on 64-bit machines
-% 
-% mex -O -c svm.cpp
-% mex -O -c svm_model_matlab.c
-% mex -O svmtrain.c svm.obj svm_model_matlab.obj
-% mex -O svmpredict.c svm.obj svm_model_matlab.obj
-% mex -O libsvmread.c
-% mex -O libsvmwrite.c
-% 
-% %%
-% % mex -O -c svm.cpp -largeArrayDims
-% % mex -O -c svm_model_matlab.c -largeArrayDims
-% % mex -O svmtrain.c svm.obj svm_model_matlab.obj -largeArrayDims
-% % mex -O svmpredict.c svm.obj svm_model_matlab.obj -largeArrayDims
-% % mex -O libsvmread.c -largeArrayDims
-% % mex -O libsvmwrite.c -largeArrayDims
-% 
+% LIBS SVM
+mexFile1 = which('prtExternal.libsvm.libsvmread');
+mexFile2 = which('prtExternal.libsvm.libsvmwrite');
+if isempty(mexFile1) || isempty(mexFile2)
+    mex('-O','-c','-outdir',fullfile(prtRoot,'external','+prtExternal','+libsvm'),fullfile(prtRoot,'external','+prtExternal','+libsvm','svm.cpp'),extraInputs{:});
+    mex('-O','-c','-outdir',fullfile(prtRoot,'external','+prtExternal','+libsvm'),fullfile(prtRoot,'external','+prtExternal','+libsvm','svm_model_matlab.c'),extraInputs{:});
+
+    mex('-O','-outdir',fullfile(prtRoot,'external','+prtExternal','+libsvm'),fullfile(prtRoot,'external','+prtExternal','+libsvm','svmtrain.c'),fullfile(prtRoot,'external','+prtExternal','+libsvm','svm.obj'),fullfile(prtRoot,'external','+prtExternal','+libsvm','svm_model_matlab.obj'),extraInputs{:});
+    mex('-O','-outdir',fullfile(prtRoot,'external','+prtExternal','+libsvm'),fullfile(prtRoot,'external','+prtExternal','+libsvm','svmpredict.c'),fullfile(prtRoot,'external','+prtExternal','+libsvm','svm.obj'),fullfile(prtRoot,'external','+prtExternal','+libsvm','svm_model_matlab.obj'),extraInputs{:});
+
+    mex('-outdir',fullfile(prtRoot,'external','+prtExternal','+libsvm'),'-output','libsvmread',fullfile(prtRoot,'external','+prtExternal','+libsvm','libsvmread.c'),extraInputs{:});
+    mex('-outdir',fullfile(prtRoot,'external','+prtExternal','+libsvm'),'-output','libsvmwrite',fullfile(prtRoot,'external','+prtExternal','+libsvm','libsvmwrite.c'),extraInputs{:});
+end
