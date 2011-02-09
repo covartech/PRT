@@ -1,7 +1,7 @@
 function prtPackage(prtTarget)
+% prtPackage - Package the release of the PRT into a zip file.
 
-prtReleaseRoot = fullfile(prtRoot,'..','release');
-%matlab32exe = 'C:\Program Files (x86)\MATLAB\R2010b\bin\win32\MATLAB.exe';
+prtReleaseRoot = fullfile(prtRoot,'..','release'); % Assumes we are working in devel
 
 if nargin == 0
     prtTarget = fullfile(getenv('userprofile'),'desktop','prt');
@@ -48,6 +48,8 @@ end
 
 % Copy over documenation
 copyfile(fullfile(prtRoot,'doc'),fullfile(prtTarget,'doc'));
+rmdir(fullfile(prtTarget,'doc','.svn'),'s')
 
+zip(cat(2,prtTarget,'.zip'),prtTarget)
 
 end
