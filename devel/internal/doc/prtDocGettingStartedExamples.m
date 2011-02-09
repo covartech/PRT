@@ -1,39 +1,41 @@
 %% Getting Started Examples
-% Some examples of code using the PRT.
-%%
+% This document provides some examples of how to use the PRT to jump right
+% in to developing data sets and performing classification.  
+%
+%% Data Generation: prtDataSets
 % Let's get started by generating and visualizing data in MATLAB.  All data
 % that the PRT can utilize is stored in MATLAB objects called prtDataSets.
 % When we call any function that starts with prtDataGen... the output will
-% be a prtDataSet of some sort.  Let's try this.  First, clear your
-% workspace, and let's close all windows.
+% be a prtDataSet of some sort.  To get started, clear your
+% workspace, and close all MATLAB figures:
 
 clear all;
 close all;
 format compact;
 clc;
 
-ds = prtDataGenUnimodal;  %Generate uni-modal data under two hypotheses
-whos('ds');
+dataSet = prtDataGenUnimodal;  %Generate uni-modal data under two hypotheses
+whos('dataSet');
 
 %% 
-% The output above tells us that the string 'ds' represents a variable in
+% The output above tells us that the string 'dataSet' represents a variable in
 % the MATLAB workspace, which is of type prtDataSetClass, and it takes up
-% about 10000 bytes of memory.  But what can we do with this ds variable?
-% We can take a look at the public properties of the ds variable by using
+% about 10000 bytes of memory.  But what can we do with this dataSet variable?
+% We can take a look at the public properties of the dataSet variable by using
 % the disp() function, or by failing to end any MATLAB statement with a
 % semicolon. 
 
-disp(ds)
+disp(dataSet)
 
 %% 
-% This output shows us all of the public fields that ds has by virtue of
+% This output shows us all of the public fields that dataSet has by virtue of
 % being a prtDataSetClass.  You can see fields like nClasses, which
 % represents the number of unique object types represented in this data
 % set, nObservations, and nFeatures.  We won't go into too much detail here
 % about the prtDataSetClass, but let's take a look at the methods
-% available for processing prtDataSetBase objects also:
+% available for processing prtDataSetBase objects:
 
-methods(ds)
+methods(dataSet)
 
 %% 
 % There are a lot of methods there, and most have pretty self-explanatory
@@ -47,10 +49,10 @@ methods(ds)
 % using getObservations (equivalently getX) or getTargets (equivalently
 % getY):
 
-myObs = ds.getX;
+myObs = dataSet.getObservations;
 whos('myObs');
 
-myTargets = ds.getTargets;
+myTargets = dataSet.getTargets;
 whos('myTargets');
 
 %% Visualization
@@ -62,13 +64,13 @@ whos('myTargets');
 % the retainFeatures method of the prtDataSetClass class to reduve the
 % dimensionality of the data from 4 to 3 or visualization:
 
-ds = prtDataGenIris;
-ds = ds.retainFeatures(1:3);
-plot(ds);  % See note below
+dataSet = prtDataGenIris;
+dataSet = dataSet.retainFeatures(1:3);
+plot(dataSet);  % See note below
 
 %% A Little Object Oriented Programming
 % Those last commands make the plot you can see directly above.  Note what
-% happened here - the prtDataSet ds knows what the name of the data set is,
+% happened here - the prtDataSet dataSet knows what the name of the data set is,
 % and uses that as the title of the figure.  It knows the names of the
 % classes of flowers the data was collected on, and uses those in the
 % legend.  And if the data set knew the names of the features, it would
@@ -80,14 +82,14 @@ plot(ds);  % See note below
 % used to seeing it called more like so:
 %   x = 1:10;
 %   h = plot(x,x.^2,'b');
-% So, how did we call plot on the ds object?  That's a factor of object
+% So, how did we call plot on the dataSet object?  That's a factor of object
 % oriented programming, and we cover a little of that later in this book,
 % but if you want to know more, the MATLAB website has a good reference on
 % how OO programming works.  For now, just trust us - you can call
-% plot(ds), and MATLAB knows what to do.
+% plot(dataSet), and MATLAB knows what to do.
 %
 
-%% plotPairs
+%% More Visualization (plotPairs)
 % When we wanted to plot the data in the Iris data set, we had to 
 % artificially reduce the dimensionality of the data using retainFeatures.
 % That's because the prtDataSetClass plot command doesn't work for data
@@ -95,10 +97,10 @@ plot(ds);  % See note below
 % approaches to data visualization that are applicable in higher
 % dimensions.  Let's take a look at a few below.  We'll start with plotPairs: 
 
-ds = prtDataGenIris; %4-dimensional data
-ds.plotPairs;
+dataSet = prtDataGenIris; %4-dimensional data
+dataSet.plotPairs;
 
-%% plotStar
+%% More Visualization (plotStar)
 % As you can see, the plotPairs method of the prtDataGenIris enables us to
 % visualize higher dimensional data by plotting all of the pair-wise
 % combinations of the features in a grid.  The diagonal elements of the
@@ -107,13 +109,13 @@ ds.plotPairs;
 % Pair-wise plotting can be slow for very high dimensional data.
 % 
 % Up next is a technique that plots each observation as a shape with 
-% nFeatures vertices (in this case since ds has four feature dimensions,
+% nFeatures vertices (in this case since dataSet has four feature dimensions,
 % the resulting shapes are quadrilaterals).  This technique illustrates the
 % differences between high dimensional data in a simple and easy to
 % understand way.
 
 close all;
-ds.plotStar;
+dataSet.plotStar;
 
 %% Explore
 % Finally, the explore method of the prtDataSets enables interactive
@@ -121,7 +123,7 @@ ds.plotStar;
 % controls.  You can start the explore GUI using the command below, and
 % you'll be greated by the GUI Figure below.
 
-explore(ds);
+explore(dataSet);
 
 %% Data Processing
 % Now that we've explored some of the techniques available to visualize
@@ -139,17 +141,17 @@ explore(ds);
 
 close all;
 % Generate a data set and a PCA pre-processing function:
-ds = prtDataGenIris;
-ds = ds.retainFeatures(1:3); %retain the first 3 dimensions of the Iris data
+dataSet = prtDataGenIris;
+dataSet = dataSet.retainFeatures(1:3); %retain the first 3 dimensions of the Iris data
 myPca = prtPreProcPca;
 myPca.nComponents = 2;  %I'd like to use the first 2 principal components
 
 % Train the PCA to learn the principal components of the data:
-myPca = myPca.train(ds);
-dsPca = myPca.run(ds);   %Run the PCA analysis on the data
+myPca = myPca.train(dataSet);
+dsPca = myPca.run(dataSet);   %Run the PCA analysis on the data
 
 % plot the data.
-figure(1); plot(ds);
+figure(1); plot(dataSet);
 figure(2); plot(dsPca);
 
 %% Building a Classifier
@@ -157,7 +159,7 @@ figure(2); plot(dsPca);
 % like to generate a classifier that can tell the difference between the
 % types of flowers in the Iris data set.  Since the Iris data set has
 % multiple classes (types of flowers, you can tell this is the case since
-% ds.nClasses > 2), we need to use a classifier that can handle multiple
+% dataSet.nClasses > 2), we need to use a classifier that can handle multiple
 % hypothesis data.  KNN classification algorithms are a decent choice in
 % this case.  Let's build and visualize a KNN classifier on the 3-PC
 % projected Iris data.
@@ -168,10 +170,9 @@ plot(knnClassifier)
 
 %%
 % The plot command shows the results of classification for each hypothesis
-% in three separate axes.  Dark colors represent certainty in each
-% respective class.  The multiple-axis view is the default way of displaying 
-% decision contours for multiple-hypothesis data.  For binary classification
-% problems, in contrast, the results are plotted on a single axis.
+% in one 2-D axes.  Red regions of the axes correspond to regions where the
+% classification algorithm's most likely guess is "Iris-versicolor", and
+% similarly for blue regions (Iris-setosa) and green (Iris-virginica).
 
 %% Evaluating the Classifier
 % Now that we have a classifier, and are comfortable with the decision
@@ -180,7 +181,6 @@ plot(knnClassifier)
 % realistic test scenario.
 
 truth = dsPca.getTargets; %the true class labels
-
 yOutKfolds = knnClassifier.kfolds(dsPca,10); %10-Fold cross-validation
 
 %We need to parse the output of the KNN classifier to turn vote counts into
@@ -191,17 +191,6 @@ yOutKfolds = knnClassifier.kfolds(dsPca,10); %10-Fold cross-validation
 subplot(1,1,1); %don't plot in the last figure window.
 prtScoreConfusionMatrix(guess,truth,dsPca.nClasses,dsPca.getClassNames);
 title('Iris Classification Confusion Matrix');
-
-%%
-% These results show pretty good performance for separating Iris-setosa
-% from the other two classes, and less separation between versicolor and
-% virginica (your results may vary depending on the random folds chosen in
-% kfolds.
-%
-% So far so good.  At this point you're pretty ready to start playing with
-% the PRT.  Definitely check out the rest of the documentation, which is
-% extensive, and make sure to check the help entries for specific M-files
-% using the built-in MATLAB help command.  Oh... 
 
 %% One More Thing...
 % Above, we had to do a bunch of work after we ran our classification to
@@ -240,7 +229,54 @@ yOutAlgoKfolds = algo.kfolds(dsIris,10);
 prtScoreConfusionMatrix(yOutAlgoKfolds,dsIris);
 title('Iris Classification Confusion Matrix');
 
-%%
-% You can learn more about... 
+
+%% Data Generation: Using Your Own Data
 %
-% Copyright 2011 New Folder Consulting L.L.C.
+% In many cases, you will already have some data you've collected that
+% you'd like to work with in the PRT.  If the data is a classification data
+% set (i.e. each observation has a corresponding class label -
+% "target"/"non-target", or "type 1"/"type 2"/"type 3") it's easy to make a
+% prtDataSetClass object from your data.  
+%
+% To get started using your data, you'll need to have your data stored in
+% two matrices.  Your observations should be in a matrix of size
+% nObservations x nFeatures, and class labels should be in a vector of size
+% nObservations x 1.  Each element of the class labels vector should
+% correspond to a class index.  For binary classification problems, y
+% should take values 0 and 1.  For M-ary classification problems, and set
+% of M unique values will work.  
+%
+% For example, the following code generates a prtDataSetClass using raw
+% data in matrices x and y:
+
+nSamplesPerClass = 100;
+nFeatures = 2;
+
+mean_0 = 0;
+mean_1 = 2;
+
+x_0 = randn(nSamplesPerClass,nFeatures) + mean_0;
+y_0 = zeros(nSamplesPerClass,1);
+
+x_1 = randn(nSamplesPerClass,nFeatures) + mean_1;
+y_1 = ones(nSamplesPerClass,1);
+
+x = cat(1,x_0,x_1);
+y = cat(1,y_0,y_1);
+
+dataSet = prtDataSetClass(x,y);
+plot(dataSet);
+
+
+%%
+% These results show pretty good performance for separating Iris-setosa
+% from the other two classes, and less separation between versicolor and
+% virginica (your results may vary depending on the random folds chosen in
+% kfolds.
+%
+% So far so good.  At this point you're pretty ready to start playing with
+% the PRT.  Definitely check out the rest of the documentation, which is
+% small,. but growing.  If you have any questions about a specific M-file,
+% make sure to check the M-file's help entry with "help MFILE" or "doc MFILE".
+%
+% 
