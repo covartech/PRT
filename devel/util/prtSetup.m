@@ -6,7 +6,6 @@ mexExtForThisSystem = mexext;
 % Check for the following files
 % svmpredict
 
-
 % Build help
 builddocsearchdb(fullfile(prtRoot,'doc'));
 

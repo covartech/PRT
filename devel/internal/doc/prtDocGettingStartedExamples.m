@@ -32,8 +32,8 @@ disp(dataSet)
 % being a prtDataSetClass.  You can see fields like nClasses, which
 % represents the number of unique object types represented in this data
 % set, nObservations, and nFeatures.  We won't go into too much detail here
-% about the prtDataSetClass, but let's take a look at the methods
-% available for processing prtDataSetBase objects:
+% about the prtDataSetClass properties, but let's take a look at the
+% methods that are available for processing prtDataSetClass:
 
 methods(dataSet)
 
@@ -61,8 +61,8 @@ whos('myTargets');
 % visualization easy and intuitive. Let's start off by loading a different
 % data set - this one is the famous Iris data set, with data collected for
 % telling the difference between 3 classes of flowers.  For now, we'll use
-% the retainFeatures method of the prtDataSetClass class to reduve the
-% dimensionality of the data from 4 to 3 or visualization:
+% the retainFeatures method of the prtDataSetClass class to reduce the
+% dimensionality of the data from 4 to 3 for visualization:
 
 dataSet = prtDataGenIris;
 dataSet = dataSet.retainFeatures(1:3);
@@ -121,7 +121,7 @@ dataSet.plotStar;
 % Finally, the explore method of the prtDataSets enables interactive
 % visualization of different dimensions of the data sets using GUI
 % controls.  You can start the explore GUI using the command below, and
-% you'll be greated by the GUI Figure below.
+% you'll be greeted by the GUI Figure below.
 
 explore(dataSet);
 
@@ -229,6 +229,10 @@ yOutAlgoKfolds = algo.kfolds(dsIris,10);
 prtScoreConfusionMatrix(yOutAlgoKfolds,dsIris);
 title('Iris Classification Confusion Matrix');
 
+% These results show pretty good performance for separating Iris-setosa
+% from the other two classes, and less separation between versicolor and
+% virginica (your results may vary depending on the random folds chosen in
+% kfolds.
 
 %% Data Generation: Using Your Own Data
 %
@@ -269,14 +273,11 @@ plot(dataSet);
 
 
 %%
-% These results show pretty good performance for separating Iris-setosa
-% from the other two classes, and less separation between versicolor and
-% virginica (your results may vary depending on the random folds chosen in
-% kfolds.
 %
-% So far so good.  At this point you're pretty ready to start playing with
-% the PRT.  Definitely check out the rest of the documentation, which is
-% small,. but growing.  If you have any questions about a specific M-file,
-% make sure to check the M-file's help entry with "help MFILE" or "doc MFILE".
+% At this point you're pretty ready to start playing with the PRT. 
+% Definitely check out the rest of the documentation, which is small,
+% but growing.  If you have any questions about a specific M-file,
+% make sure to check the M-file's help entry with "help MFILE" or
+% "prtDoc MFILE".
 %
 % 

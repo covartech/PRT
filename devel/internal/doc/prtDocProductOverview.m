@@ -42,7 +42,7 @@
 %
 % To simplify finding the M-file a user is looking for, the PRT implements
 % a hierarchical M-file naming scheme, so that all PRT M-files of a
-% particular type start with "prtType" wheree _Type_ is replaced by a
+% particular type start with "prtType" where _Type_ is replaced by a
 % short mnemonic describing the object or function implemented in the
 % M-file. 
 %

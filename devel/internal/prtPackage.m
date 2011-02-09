@@ -44,7 +44,7 @@ for iFile = 1:length(filesToPCode)
     prtUtilPCode(filesToPCode{iFile});
 end
 
-prtUtilCreateFunctionReference(prtTarget);
+%prtUtilCreateFunctionReference(prtTarget);
 
 
 end

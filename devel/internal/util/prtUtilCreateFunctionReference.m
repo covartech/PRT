@@ -4,6 +4,11 @@ if nargin < 1
     saveRoot = prtRoot;
 end
 
+if isdir(fullfile(prtRoot,'doc','functionReference'))
+    rmdir(fullfile(prtRoot,'doc','functionReference'),'s');
+end
+
+prtUtilClassNameToHtmlDoc('prtDataSetBase',saveRoot)
 prtUtilClassNameToHtmlDoc('prtDataSetStandard',saveRoot)
 prtUtilClassNameToHtmlDoc('prtDataSetRegress',saveRoot)
 prtUtilClassNameToHtmlDoc('prtDataSetClass',saveRoot)

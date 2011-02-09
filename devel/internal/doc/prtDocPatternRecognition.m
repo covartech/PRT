@@ -25,7 +25,7 @@
 % The goals of _learning_ in pattern recognition are to develop the
 % function, f, given only a (possibly small) set of training data, $$ X = \{\{x_{i},y_{i}\}\} $$ , $$i = 1...N$ .  As such, pattern recognition is fundamentally
 % an ill-posed problem, since it is trivially easy to define a function
-% that performs arbitrarilyt well on the training data ( $$f(x_{j}) = y_{j})
+% that performs arbitrarily well on the training data ( $$f(x_{j}) = y_{j})
 % \forall {x_{j},y_{j}} \in X$ ).
 %
 % Since learning in pattern recognition is ill-posed, a wide number of

@@ -7,7 +7,24 @@ end
 
 saveDir = fullfile(packageRoot,'doc','functionReference');
 
-outStr = help2html(topic,topic,'-doc');
+[outStr, found] = help2html(topic,topic,'-doc');
+
+if ~found
+    return
+end
+
+if isempty(outStr)
+    
+    str = fileread(fullfile(prtRoot,'internal','util','prtUtilDefaultHtml.html'));
+    str = strrep(str,'<funcName>',topic);
+    
+    cssStr = cat(2,repmat('../',1,sum(topic=='.')+1),'helpwin.css');
+    
+    str = strrep(str,'<cssFile>',cssStr);
+    
+    writeHtml(saveDir,topic,str);
+    
+end
 
 % Now outStr is a big block of html
 % Problem is, it contains calls to matlab:helpwin(...) but since we are
@@ -57,17 +74,7 @@ cssStr = cat(2,repmat('../',1,sum(topic=='.')+1),'helpwin.css');
 
 outStr = regexprep(outStr,'<link rel="stylesheet" .*?>',sprintf('<link rel="stylesheet" href="./%s">',cssStr));
     
-% Write the html file
-newFullFileName = cat(2,fullfile(saveDir,strrep(topic,'.',filesep)),'.html');
-
-newPathName = fileparts(newFullFileName);
-if ~isdir(newPathName)
-    mkdir(newPathName);
-end
-
-fid = fopen(newFullFileName,'w+');
-fwrite(fid,outStr);
-fclose(fid);
+writeHtml(saveDir,topic,outStr);
 
 if isempty(subPropsAndMethods)
     return
@@ -82,4 +89,21 @@ for iRef = 1:length(subPropsAndMethods)
     if ~exist(nextFile,'file')
         prtUtilClassNameToHtmlDoc(subPropsAndMethods{iRef},packageRoot);
     end
+end
+end
+
+function writeHtml(saveDir,topic,outStr)
+
+
+% Write the html file
+newFullFileName = cat(2,fullfile(saveDir,strrep(topic,'.',filesep)),'.html');
+
+newPathName = fileparts(newFullFileName);
+if ~isdir(newPathName)
+    mkdir(newPathName);
+end
+
+fid = fopen(newFullFileName,'w+');
+fwrite(fid,outStr);
+fclose(fid);
 end
