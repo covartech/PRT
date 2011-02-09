@@ -1,12 +1,65 @@
 %% What is Pattern Recognition?
 % 
 % Pattern recognition is the science of making inferences based on data.
-% Two primary forms of pattern recognition are _classification_ and
+% Two of the main forms of pattern recognition are _classification_ and
 % _regression_.  In classification problems, data are collected and given
 % discrete class labels.  In a regression problem, on the other hand,
 % data labels are typically continuous values, not categorical.  
 %
-% In both cases, let \mathcal{X} = {x_{i},y_{i}} where x_{i} represents the data
-% collected, and y_{i} represents the corresponding data label for each
-% sample x_{i}.  Usually, x_{i} is an N-dimensional real vector.  Each
+% Basic pattern recognition approaches seek a function, f, that takes an
+% observation x_{j} and predicts the unseen label, y_{j}:
+%
+%   \hat{y}_{j} = f(x_{j})
+%
+% Given the function f(x_{j}), inference is trivial.  The goals of
+% _learning_ in pattern recognition are to develop the function, f, given
+% only a (possibly small) set of training data, X = {{x_{i},y_{i}}, i =
+% 1...N.  As such, pattern recognition is fundamentally an ill-posed problem, since it is
+% trivially easy to define a function that performs arbitrarilyt well on
+% the training data (f(x_{j}) = y_{j}) \forall j \in X).  
+%
+%   
+%
+%% A Simple Example
+%
+% Considering a simple example can often make the problem of pattern
+% recognition clearer.  Assume that we run a scrap metal processing yard,
+% and we'd like to have a machine automatically sort pieces of scrap metal
+% into different piles depending on if they are zinc or copper.  As pieces
+% of metal move down our conveyor belt, we use our Trusty ACME DensAndRef
+% machine to measure the density of each piece of scrap, and it's
+% reflectance at a particular wavelength (how much light the object
+% reflects).  As pieces come down the conveyor belt, we need to make
+% decisions (copper or zinc) based on these two pieces of data.
+% 
+% Since we might know something ahead of time about the reflectance and
+% densities of these two types of metal, it might make sense to make up
+% some rules even if we haven't seen any data from our sensors.  For
+% example, we might develop an algorithm that says:
+%
+% if (density < 0.15 lb/in^3) and (reflectance > 80%)
+%       object is aluminum
+%
+% However making decision boundaries like this is an error-prone approach.
+% First of all, we haven't incorporated any information about our actual
+% sensing apparatus into these rules.  It might turn out that our sensing
+% apparatus has a strong bias, and all reflectances are measured at 1/2
+% their true reflectances.  Or we might find out that our density measuring
+% equipment has a large degree of noise, so that densities of very light
+% objects are sometimes recorded as very large.  Second, we haven't
+% incorporated any information about the kind of data we might actually
+% see.  The equations above are suitable for accurate and precise
+% measurements of pure metals, but is not suitable for detecting some
+% amount of aluminum mixed in alloys with other components.  To overcome
+% these limitations, we need to have some _training data_.
+%
+% Luckily, in most learning tasks, data will be available on which we can
+% perform learning.  This data will typically consist of N sets of _observations_ and
+% _labels_ (or _targets_).  Usually observation vectors are designated with
+% x_{i} and targets or labels with y_{i}, where i indexes each
+% observation/target pair.  A set of N measurements can then be denoted X =
+% {x_{i},y_{i}} for i = 1...N.  In our example, the x_{i} are 1 x 2 vectors
+% where x_{i}(1) is the mesaured density, and x_{i}(2) is the measured
+% reflectance.  y_{i} in our case is a binary variable where 0 represents
+% "measured from copper", and 1 represents "measured from aluminum".
 %
