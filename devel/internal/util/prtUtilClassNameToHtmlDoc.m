@@ -9,9 +9,11 @@ saveDir = fullfile(packageRoot,'doc','functionReference');
 
 [outStr, found] = help2html(topic,topic,'-doc');
 
-if ~found
-    return
-end
+% if ~found
+%     return
+% end
+
+outStr = strtrim(outStr);
 
 if isempty(outStr)
     
@@ -23,7 +25,7 @@ if isempty(outStr)
     str = strrep(str,'<cssFile>',cssStr);
     
     writeHtml(saveDir,topic,str);
-    
+    return
 end
 
 % Now outStr is a big block of html
