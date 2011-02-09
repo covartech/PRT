@@ -38,7 +38,7 @@ classdef prtDataSetClass  < prtDataSetStandard
     %   plotDensity                - Plot the density of each feature
     %                                independently as a volume
     % 
-    %   See also, prtDataSetBase, prtDataSetStandard, prtDataSetRegress,
+    %   See also: prtDataSetBase, prtDataSetStandard, prtDataSetRegress,
     %   prtDataSetFile
     
     % Copyright 2011, New Folder Consulting, L.L.C.

@@ -15,4 +15,6 @@ while ~isempty(string);
     end
     [string,remString] = strtok(remString,pathsep); %#ok
 end
-rmpath(removePath);
+if ~isempty(removePath)
+    rmpath(removePath);
+end
