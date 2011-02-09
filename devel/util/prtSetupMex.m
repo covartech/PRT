@@ -1,5 +1,5 @@
 function prtSetupMex(overRideCheck)
-% prtSetupMex Compile mex files for this system;
+% prtSetupMex Compile mex files for this system
 
 if nargin < 1
     overRideCheck = false;

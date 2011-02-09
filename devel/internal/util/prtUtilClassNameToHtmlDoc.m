@@ -7,11 +7,21 @@ end
 
 saveDir = fullfile(packageRoot,'doc','functionReference');
 
-[outStr, found] = help2html(topic,topic,'-doc');
+periodLoc = find(topic=='.',1,'first');
+if ~isempty(periodLoc)
+    mFileOnly = topic(1:periodLoc-1);
+else
+    mFileOnly = topic;
+end
 
-% if ~found
-%     return
-% end
+mFilePath = which(mFileOnly);
+
+if isempty(mFilePath) || isempty(strfind(mFilePath,packageRoot))
+    % File doesn't exist or is not in packageRoot
+    return
+end
+
+outStr = help2html(topic,topic,'-doc');
 
 outStr = strtrim(outStr);
 
@@ -42,22 +52,29 @@ subPropsAndMethods = cellfun(@(c)c{1}(1:end-1),subPropsAndMethods(:),'uniformout
 for iRef = 1:length(subPropsAndMethods)
     cStr = sprintf('matlab:helpwin(''%s'')',subPropsAndMethods{iRef});
     cStartInd = strfind(outStr,cStr);
+    
+    linkStr = topicToLink(topic,subPropsAndMethods{iRef});
+    
     if strcmpi(outStr((cStartInd-6):(cStartInd-1)),'href="');
         % Already have the href
-        outStr = strrep(outStr,cStr,sprintf('./%s.html',strrep(subPropsAndMethods{iRef},'.','/')));
+        %outStr = regexprep(outStr,cat(2,'"',cStr,'?"'),cat(2,'"',sprintf('./%s.html',strrep(subPropsAndMethods{iRef},'.','/')),'"'));
+        outStr = strrep(outStr,cat(2,'<a href="',cStr,'">'),sprintf('<a href="%s">',linkStr));
     else
         % Need to add the href ourselves
-        outStr = strrep(outStr,cStr,sprintf('<a href="./%s.html">%s</a>',strrep(subPropsAndMethods{iRef},'.','/'),subPropsAndMethods{iRef}));
+        outStr = strrep(outStr,cStr,sprintf('<a href="%s">%s</a>',linkStr,subPropsAndMethods{iRef}));
     end
 end
 
-subPropsAndMethods2 = regexp(outStr,'matlab:doc (?<funcNames>[\w\.]+)?"','tokens');
+subPropsAndMethods2 = regexp(outStr,'matlab:doc (?<funcNames>[\w\.\/]+)?"','tokens');
 subPropsAndMethods2 = cellfun(@(c)c{1},subPropsAndMethods2(:),'uniformoutput',false);
 for iRef = 1:length(subPropsAndMethods2)
     cStr = sprintf('matlab:doc %s',subPropsAndMethods2{iRef});
+
+    linkStr = topicToLink(topic,subPropsAndMethods2{iRef});
+       
     
-    % Need to add the href ourselves
-    outStr = strrep(outStr,cStr,sprintf('./%s.html',strrep(subPropsAndMethods2{iRef},'.','/')));
+    % No need to add the href ourselves
+    outStr = regexprep(outStr,cat(2,'"',cStr,'?"'),cat(2,'"',linkStr,'"'));
 end
 
 subPropsAndMethods3 = regexp(outStr,'matlab:helpwin (?<funcNames>[\w\.]+)?"','tokens');
@@ -65,8 +82,10 @@ subPropsAndMethods3 = cellfun(@(c)c{1},subPropsAndMethods3(:),'uniformoutput',fa
 for iRef = 1:length(subPropsAndMethods3)
     cStr = sprintf('matlab:helpwin %s',subPropsAndMethods3{iRef});
     
-    % Need to add the href ourselves
-    outStr = strrep(outStr,cStr,sprintf('./%s.html',strrep(subPropsAndMethods3{iRef},'.','/')));
+    linkStr = topicToLink(topic,subPropsAndMethods3{iRef});
+    
+    % No need to add the href ourselves
+    outStr = regexprep(outStr,cat(2,'"',cStr,'?"'),cat(2,'"',linkStr,'"'));
 end
 
 outStr = regexprep(outStr,'<td class="subheader-left">.*?</td>','');
@@ -78,24 +97,26 @@ outStr = regexprep(outStr,'<link rel="stylesheet" .*?>',sprintf('<link rel="styl
     
 writeHtml(saveDir,topic,outStr);
 
+subPropsAndMethods = cat(1,subPropsAndMethods(:),subPropsAndMethods2(:),subPropsAndMethods3(:));
+
 if isempty(subPropsAndMethods)
     return
 end
 
-subPropsAndMethods = cat(1,subPropsAndMethods(:),subPropsAndMethods2(:),subPropsAndMethods3(:));
-
 % For each of these properties and methods we must also make the
-% documenation (if it doesn't already exist).
+% documenation (if it doesn't already exist). % And it's in the PRT
 for iRef = 1:length(subPropsAndMethods)
     nextFile = cat(2,fullfile(saveDir,strrep(subPropsAndMethods{iRef},'.',filesep)),'.html');
-    if ~exist(nextFile,'file')
+    
+    if ~exist(nextFile,'file') && ~isempty(strfind(nextFile,packageRoot))
         prtUtilClassNameToHtmlDoc(subPropsAndMethods{iRef},packageRoot);
     end
 end
+
 end
 
-function writeHtml(saveDir,topic,outStr)
 
+function writeHtml(saveDir,topic,outStr)
 
 % Write the html file
 newFullFileName = cat(2,fullfile(saveDir,strrep(topic,'.',filesep)),'.html');
@@ -108,4 +129,11 @@ end
 fid = fopen(newFullFileName,'w+');
 fwrite(fid,outStr);
 fclose(fid);
+end
+
+function linkStr = topicToLink(pageTopic,linkTopic)
+
+linkStr = cat(2,'./',repmat('../',1,sum(pageTopic=='.')),strrep(linkTopic,'.','/'),'.html');
+
+
 end

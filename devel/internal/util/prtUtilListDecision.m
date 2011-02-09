@@ -1,3 +1,5 @@
+function varargout = prtUtilListDecision
+% prtUtilListDecision - List all prtDecision* files.
 % 
 % See also: prtDecision, prtDecisionBinary, prtDecisionBinaryMinPe,
 % prtDecisionBinarySpecifiedPd, prtDecisionBinarySpecifiedPf,
@@ -6,10 +8,14 @@
 
 g = subDir(fullfile(prtRoot,'decision'),'*.m');
 
-fprintf('See also: ');
-for i = 1:length(g); 
-    [p,f] = fileparts(g{i}); 
-    fprintf('%s, ',f);
-end; 
-fprintf('\b\b');
-fprintf('\n');
+if nargout == 0
+    fprintf('See also: ');
+    for i = 1:length(g);
+        [p,f] = fileparts(g{i});
+        fprintf('%s, ',f);
+    end;
+    fprintf('\b\b');
+    fprintf('\n');
+else
+    varargout = {g};
+end

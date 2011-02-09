@@ -9,5 +9,6 @@
 %
 % * <prtDocGettingStarted.html Getting Started>
 % * <prtDocReleaseNotes.html Release Notes>
+% * <prtDocFunctionList.html A Categorized List of Popular Functions>
 %
 % Copyright 2011 New Folder Consulting L.L.C.

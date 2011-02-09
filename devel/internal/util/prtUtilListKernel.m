@@ -1,14 +1,20 @@
+function varargout = prtUtilListKernel
+% prtUtilListKernel - List all prtKernel* files.
 % 
 % See also: prtKernel, prtKernelDc, prtKernelDirect,
 % prtKernelHyperbolicTangent, prtKernelPolynomial, prtKernelRbf,
 % prtKernelRbfNdimensionScale, prtKernelSet
 
-g = subDir(fullfile(prtRoot,'kernel'),'*.m');
+g = subDir(fullfile(prtRoot,'kernels'),'*.m');
 
-fprintf('See also: ');
-for i = 1:length(g); 
-    [p,f] = fileparts(g{i}); 
-    fprintf('%s, ',f);
-end; 
-fprintf('\b\b');
-fprintf('\n');
+if nargout == 0
+    fprintf('See also: ');
+    for i = 1:length(g);
+        [p,f] = fileparts(g{i});
+        fprintf('%s, ',f);
+    end;
+    fprintf('\b\b');
+    fprintf('\n');
+else
+    varargout = {g};
+end

@@ -1,16 +1,21 @@
+function varargout = prtUtilListRv
+% prtUtilListRv - List all prtRv* files.
 % 
 % See also: prtRv, prtRvDiscrete, prtRvGmm, prtRvIndependent, prtRvKde,
 % prtRvMixture, prtRvMultinomial, prtRvMvn, prtRvUniform,
 % prtRvUniformImproper, prtRvVq
 %
 
-g = subDir(fullfile(prtRoot,'rv'),'*.m');
-g = prtUtilRemoveStrCell(g,'util');
+g = subDir(fullfile(prtRoot,'rv'),'*.m','asdf');
 
-fprintf('See also: ');
-for i = 1:length(g); 
-    [p,f] = fileparts(g{i}); 
-    fprintf('%s, ',f);
-end; 
-fprintf('\b\b');
-fprintf('\n');
+if nargout == 0
+    fprintf('See also: ');
+    for i = 1:length(g);
+        [p,f] = fileparts(g{i});
+        fprintf('%s, ',f);
+    end;
+    fprintf('\b\b');
+    fprintf('\n');
+else
+    varargout = {g};
+end

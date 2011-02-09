@@ -29,4 +29,5 @@ fclose(fid);
 % copyfile(fullfile(tempdir,cat(2,cFuncName,'.p')),pFileName);
 
 pFileName = cat(2,fullfile(pathName,cFuncName),'.p');
-system(sprintf('copy /b "%s" +,,',pFileName));
+system(sprintf('copy /b "%s" +,,',pFileName)); % Touch file and put it in current dir
+movefile(fullfile(pwd,cat(2,cFuncName,'.p')),pFileName); % move it to the right place

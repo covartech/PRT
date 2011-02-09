@@ -3,6 +3,8 @@ function prtPublishDoc
 %   Utility function to publish all prtPublish* M-files in prtRoot\doc to
 %   HTML files.
 
+prtUtilCreateFunctionList;
+
 docHtmlDir = fullfile(prtRoot,'doc');
 docMDir = fullfile(prtRoot,'internal','doc');
 
