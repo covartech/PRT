@@ -196,7 +196,7 @@ classdef prtClassLibSvm < prtClass
             Obj.libSvmOptions = Obj.libSvmOptionString(DataSet);
             Obj.libSvmOptionsTest = Obj.libSvmOptionStringTest(DataSet);
             
-            Obj.trainedSvm = svmtrain(training_label_vector, training_instance_matrix, Obj.libSvmOptions);
+            Obj.trainedSvm = prtExternal.libsvm.svmtrain(training_label_vector, training_instance_matrix, Obj.libSvmOptions);
             
             %Need to figure out whether to flip SVM outputs:
             yOut = runAction(Obj,DataSet);
@@ -213,7 +213,7 @@ classdef prtClassLibSvm < prtClass
                 testing_label_vector = zeros(DataSet.nObservations,1);
             end
             testing_instance_matrix = DataSet.getObservations;
-            [dontNeed, dontNeed, decision_values] = svmpredict(testing_label_vector, testing_instance_matrix, Obj.trainedSvm, Obj.libSvmOptionsTest); %#ok<ASGLU>
+            [dontNeed, dontNeed, decision_values] = prtExternal.libsvm.svmpredict(testing_label_vector, testing_instance_matrix, Obj.trainedSvm, Obj.libSvmOptionsTest); %#ok<ASGLU>
             
             DataSetOut = DataSet;
             DataSetOut = DataSetOut.setObservations(decision_values*Obj.gain);

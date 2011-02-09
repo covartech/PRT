@@ -46,5 +46,8 @@ end
 
 %prtUtilCreateFunctionReference(prtTarget);
 
+% Copy over documenation
+copyfile(fullfile(prtRoot,'doc'),fullfile(prtTarget,'doc'));
+
 
 end
