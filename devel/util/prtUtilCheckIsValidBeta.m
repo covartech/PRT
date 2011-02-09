@@ -11,7 +11,7 @@ persistent isValid
 
 nDaysWarning = 30;
 betaDateString = 'January 1, 2012';
-websiteAddress = 'www.newFolderConsulting.com';
+websiteAddress = 'www.newFolderConsulting.com/prt';
 
 if isempty(isValid)
     
