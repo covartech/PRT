@@ -1,0 +1,94 @@
+<html><head><title>R: Prostate Cancer Data</title>
+<link href="Prostate_files/R.css" type="text/css" rel="stylesheet">
+
+<!-- Kerio Popup Killer - script has been inserted by KPF -->
+<script type="text/javascript">
+<!--
+var NoPopupsDone = 0;var CurrWindowOpen = window.open;var CurrWindowOpen2 = window.open;var orig_setTimeout = window.setTimeout;var orig_setInterval = window.setInterval;if ( window.showModelessDialog ) { var orig_showModelessDialog = window.showModelessDialog;} if ( window.showModalDialog ) { var orig_showModalDialog = window.showModalDialog;} 
+var cnt = 0;var popupType = "direct";var KPF_LOG_URL = "http://127.0.0.1:44501/pl.html?";var KPF_TIMEOUT = 100;var onUnloadFlag = false;var KPF_CompleteLoaded = false;
+function nullMethod() {}function nullWindow() {	 this.window = new Object(); this.document = new Object(); this.document.open=this.document.close=this.document.write=this.document.writeln=nullMethod; this.alert=this.back=this.blur=this.captureEvents=this.clearInterval=this.clearTimeout=this.close=this.confirm=this.dump=this.escape=this.focus=this.forward=this.GetAttention=this.getSelection=this.home=this.moveBy=this.moveTo=this.open=this.print=this.prompt=this.releaseEvents=this.resizeBy=this.resizeTo=this.scroll=this.scrollBy=this.scrollByLines=this.scrollByPages=this.scrollTo=this.setCursor=this.setInterval=this.setTimeout=this.sizeToContent=this.stop=this.unescape=this.updateCommands=nullMethod;}
+function destroyIframe(ifr){ if (ifr != document.getElementById("kpfLogFrame"))   { var x = ifr.parentNode.removeChild(ifr);    delete x;  };}
+function sendStream(s, idx, kpf_pt){ try {        var ifr = document.getElementById("kpfLogFrame");   var tmp = ifr.cloneNode(true);   tmp.id  = "ifr_" + idx;   var s2 = "srv=" + document.location + "&url=" + s + "&pty=" + kpf_pt;   tmp.src = KPF_LOG_URL + escape(s2);   document.body.appendChild(tmp); } catch (e) {   orig_setTimeout("sendStream('" + s + "', " + idx + ",'" + kpf_pt + "')", KPF_TIMEOUT); }}
+function sendUrl(url){ if (onUnloadFlag)   sendStream(url, cnt++, popupType); else  {  try {   orig_setTimeout("sendStream('" + url + "', cnt++,'" + popupType + "')", KPF_TIMEOUT);  }   catch (e)   {}	  }}
+function newOpen(url, name, atr) {wnd = new nullWindow();wnd.focus = nullWindow;wnd.opener = this.window;sendUrl(url);return(wnd); }
+function newOpen2(url, name, atr) { sendUrl(url); return(new nullWindow());}
+function stopPopups(kpf_pt) { popupType = kpf_pt; CurrWindowOpen = window.open; window.open = newOpen2; }
+function startPopups(kpf_pt) { window.open = CurrWindowOpen;  popupType = kpf_pt;}
+function my_setTimeout(one, two) { try {  return orig_setTimeout("stopPopups('ontimer');"+one+";startPopups('direct');", two); }  catch (e)  {}}
+function my_setInterval(one, two) { try {  return orig_setInterval("stopPopups('ontimer');"+one+";startPopups('direct');", two); }  catch (e)  { }}
+function my_onload() { var my_retcode = true; stopPopups("onload"); if(orig_onload)  my_retcode = orig_onload(); startPopups("direct"); KPF_CompleteLoaded = true; return my_retcode; }
+function my_unload() {  var my_retcode = true; var cnt = 0; stopPopups("onunload"); onUnloadFlag = true; if(orig_onunload)   my_retcode = orig_onunload(); startPopups("direct"); return my_retcode;}
+function my_windowopen(url, name, atr){ if ( (! KPF_CompleteLoaded) || (document.all && event != null && event.type == "mouseover") )  {  if ( ! KPF_CompleteLoaded) {   popupType = "direct";  }  else {   popupType = "mouseover";  }  sendUrl(url);  popupType = "direct"; } else {   try {   return CurrWindowOpen2(url, name, atr);  }   catch (e)   {}  }}
+function my_showModelessDialog (url , arguments , features) { if (!NoPopupsDone) {   var wnd = new nullWindow();  popupType = "direct_dialog";  sendUrl(url);  popupType = "direct";  return wnd; } if (popupType!="direct" | (event && event.type == "mouseover") ) {   var curr_popup = popupType;  if (event && event.type == "mouseover") {   popupType = "mouseover";  }    popupType = popupType+"_dialog";  sendUrl(url);  popupType = curr_popup;  return ( new nullWindow() ); } else {   return ( orig_showModelessDialog(url , arguments , features) );  } }
+function my_showModalDialog (url , arguments , features) { if (!NoPopupsDone) {   popupType = "direct_dialog";  sendUrl(url);  popupType = "direct";  return ""; } if (popupType!="direct" | (event && event.type == "mouseover") ) {   var curr_popup = popupType;  if (event && event.type == "mouseover") {   popupType = "mouseover";  }    popupType = popupType+"_dialog";  sendUrl(url);  popupType = curr_popup;  return ""; } else {   return ( orig_showModalDialog(url , arguments , features) );  } }
+function nopopups() { if(!NoPopupsDone)   {  NoPopupsDone = 1;  orig_onload = window.onload;  orig_onunload = window.onunload;  window.onload = my_onload;  window.onunload = my_unload;  window.open = my_windowopen;  }}
+window.setTimeout = my_setTimeout;window.setInterval = my_setInterval;window.open = newOpen;if ( orig_showModelessDialog ) { window.showModelessDialog = my_showModelessDialog;}if ( orig_showModalDialog ) { window.showModalDialog = my_showModalDialog;}
+//-->
+</script>
+<!-- Kerio Popup Killer - end of the script inserted by KPF -->
+<script language="JavaScript1.2" src="Prostate_files/Webcuts.js" type="text/javascript"></script></head><body><div style="border: 1px solid black; position: absolute; width: auto; height: auto; right: 0px; top: 0px; background-color: lightgreen; font-size: x-small; visibility: hidden;" id="webcutsLabel"><small></small></div>
+
+<table summary="page for Prostate {lasso2}" width="100%"><tbody><tr><td>Prostate {lasso2}</td><td align="right">R Documentation</td></tr></tbody></table>
+<h2>Prostate Cancer Data</h2>
+
+
+<h3>Description</h3>
+
+<p>
+These data come from a study that examined the correlation between the
+level of prostate specific antigen and a number of clinical measures
+in men who were about to receive a radical prostatectomy.  It is data
+frame with 97 rows and 9 columns.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>data(Prostate)
+</pre>
+
+
+<h3>Format</h3>
+
+<p>
+The data frame has the following components:
+</p><dl><dt><code>lcavol</code></dt><dd>log(cancer volume)</dd><dt><code>lweight</code></dt><dd>log(prostate weight)</dd><dt><code>age</code></dt><dd>age</dd><dt><code>lbph</code></dt><dd>log(benign prostatic hyperplasia amount)</dd><dt><code>svi</code></dt><dd>seminal vesicle invasion</dd><dt><code>lcp</code></dt><dd>log(capsular penetration)</dd><dt><code>gleason</code></dt><dd>Gleason score</dd><dt><code>pgg45</code></dt><dd>percentage Gleason scores 4 or 5</dd><dt><code>lpsa</code></dt><dd>log(prostate specific antigen)</dd></dl>
+
+<h3>Source</h3>
+
+<p>
+Stamey, T.A., Kabalin, J.N., McNeal, J.E., Johnstone, I.M., Freiha,
+F., Redwine, E.A. and Yang, N. (1989)<br>
+Prostate specific antigen in the diagnosis and treatment of
+adenocarcinoma of the prostate: II. radical prostatectomy treated
+patients,
+<em>Journal of Urology</em> <b>141</b>(5), 1076&#8211;1083.
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>data(Prostate)
+attach(Prostate)
+pairs(Prostate, col = 1+svi, pch = gleason - 5,
+      main = paste("Prostate data, n = ", nrow(Prostate)))
+detach()
+
+l1c.P &lt;- l1ce(lcavol ~ ., data = Prostate)
+coef(l1c.P)[coef(l1c.P) != 0] ## only age, lcp, lpsa (+ intercept)
+summary(l1c.P)
+</pre>
+
+
+
+<hr><div align="center"><a href="http://www.maths.lth.se/help/R/.R/library/lasso2/html/00Index.html">[Package Contents]</a></div>
+
+<br><br><small>Last updated with <a href="http://www.maths.lth.se/tools/webcuts/">Webcuts</a> support: Thu Nov 27 17:31:33 MET 2003</small></body></html><!-- Kerio Popup Killer - script has been appended by KPF -->
+<iframe id="kpfLogFrame" src="http://127.0.0.1:44501/pl.html?START_LOG" onload="destroyIframe(this)" style="display:none;">
+</iframe>
+<script type="text/javascript">
+<!--
+	nopopups();
+//-->
+</script>
+<!-- Kerio Popup Killer - end of the script appended by KPF-->
