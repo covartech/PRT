@@ -1,0 +1,47 @@
+classdef <fileName> < prtOutlierRemoval
+    %<fileName> Insert description of class here
+    %
+    
+    properties (SetAccess=private)
+        name = '<className>'                  % Insert the name of the outlier remover
+        nameAbbreviation = '<className>'      % A short abbreviation of the name
+    end
+    
+    properties  
+       % Place definitions of properties that your outlier remover requires here
+    end
+    
+    methods
+        
+        %Define a constructor
+        function Obj = <fileName>(varargin)
+            %Uncomment this line to enable parameter/value setting of public
+            %properties for your outlier remover
+            % Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
+        end
+        
+        % Put additional methods here (set, get methods, and any other
+        % methods your outlier remover requires)
+    end
+    
+    methods (Access=protected, Hidden = true)
+        
+        function Obj = trainAction(Obj,DataSet)
+            % Place code here to perform outlier remover training.  This
+            % function should set the properties of Obj so that in
+            % calculateOutlierIndices the outlier remover can determine which points are outliers
+            
+        end
+        
+        
+        function outlierIndices = calculateOutlierIndices(Obj,DataSet)
+            % Place code here to output a logical matrix of size DataSet.nObservations x 
+            % DataSet.nFeatures that takes value "true" at indices of outliers.
+            
+            % Default: no outliers
+            outlierIndices = false(DataSet.nObservations,DataSet.nFeatures); 
+        end
+        
+    end
+    
+end
