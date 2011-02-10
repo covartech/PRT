@@ -10,27 +10,16 @@
 
 %% Installation
 %
-% To install the PRT, simply un-zip the PRT folder into your working MATLAB
-% directory.  This should create a folder called "prt".  To ensure that all
-% of the PRT functions are on your MATLAB path, edit your startup.m file to
-% include the folder "prt" on your path, and then run "prtPath".  On a
-% typical windows system, these lines in your startup.m might look like
-% this:
-%
-%   addpath C:\Users\theUser\Documents\MATLAB\prt
-%   prtPath;
-%
-% Note: if the above lines are not placed in your startup.m, but are run
-% after MATLAB has started, the PRT will not be available in the MATLAB
-% help browser.
-%
+% Please see: <prtDocInstallation.html Installing the PRT>
 
 %% Using This Guide
 %
 % If you are new to pattern recognition in general, start out by reading
 % <prtDocPatternRecognition.html What is Pattern Recognition?>.  Otherwise,
 % if you want to dive right into the PRT, see
-% <prtDocGettingStartedExamples.html Some examples of using the PRT>.
+% <prtDocGettingStartedExamples.html Some examples of using the PRT>.  For
+% installation and documentation questions, please see
+% <prtDocInstallation.html Installing the PRT>.
 
 %% PRT Organization
 % The PRT provides several hundred MATLAB M-files implementing various
