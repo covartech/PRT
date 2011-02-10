@@ -56,7 +56,7 @@ classdef prtFeatSelStatic < prtFeatSel %
     end
     methods (Access=protected,Hidden=true)
         
-        function Obj = trainAction(Obj,~)
+        function Obj = trainAction(Obj,twiddle)
             if isnan(Obj.selectedFeatures)
                 error('Manually set selectedFeatures field of prtFeatSelStatic to succesfully train and run');
             end

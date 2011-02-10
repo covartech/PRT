@@ -109,9 +109,9 @@ classdef prtPreProcPca < prtPreProc
             %Figure out whether to use regular, HD, or EM PCA:
             if useHD
                 if useEM
-                    [~, Obj.pcaVectors] = prtUtilPcaEm(x,Obj.nComponents);
+                    [twiddle, Obj.pcaVectors] = prtUtilPcaEm(x,Obj.nComponents);
                 else
-                    [~, Obj.pcaVectors] = prtUtilPcaHd(x,Obj.nComponents);
+                    [twiddle, Obj.pcaVectors] = prtUtilPcaHd(x,Obj.nComponents);
                 end
             else
                 Obj.pcaVectors = prtUtilPca(x,Obj.nComponents);

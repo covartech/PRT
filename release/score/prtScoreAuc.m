@@ -35,7 +35,9 @@ nNansH0 = sum(nanSpots & isH0);
 nH1NonNans = nH1-nNansH1;
 nH0NonNans = nH0-nNansH0;
 
-auc = (nansum(dsRank(isH1)) - nH1NonNans*(nH1NonNans+1)/2) / (nH0NonNans*nH1NonNans);
+%nansum is only in 2010... need to be compatible with 2009A
+%auc = (nansum(dsRank(isH1)) - nH1NonNans*(nH1NonNans+1)/2) / (nH0NonNans*nH1NonNans);
+auc = (sum(dsRank(isH1 & ~isnan(dsRank))) - nH1NonNans*(nH1NonNans+1)/2) / (nH0NonNans*nH1NonNans);
 
 if any(nanSpots)
     % With nans we need to correct for the uncovered region

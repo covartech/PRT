@@ -79,7 +79,7 @@ classdef prtPreProcHistEq < prtPreProc
                 end
             else
                 for dim = 1:DataSet.nFeatures
-                    [~,Obj.binEdges(:,dim)] = hist(DataSet.getFeatures(dim),Obj.nSamples);
+                    [twiddle,Obj.binEdges(:,dim)] = hist(DataSet.getFeatures(dim),Obj.nSamples);
                 end
             end
             

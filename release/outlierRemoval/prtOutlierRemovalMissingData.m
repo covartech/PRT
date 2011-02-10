@@ -52,7 +52,7 @@ classdef prtOutlierRemovalMissingData < prtOutlierRemoval
     
     methods (Access = protected, Hidden = true)
         
-        function Obj = trainAction(Obj,~)
+        function Obj = trainAction(Obj,twiddle)
             %Nothing to do
         end
         

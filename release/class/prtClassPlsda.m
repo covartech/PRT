@@ -97,7 +97,7 @@ classdef prtClassPlsda < prtClass
             X = bsxfun(@minus, X, Obj.xMeans);
             Y = bsxfun(@minus, Y, Obj.yMeans);
             
-            [Obj.Bpls, ~, Obj.xFactors, Obj.yFactors, Obj.loadings] = prtUtilSimpls(X,Y,Obj.nComponents);
+            [Obj.Bpls, twiddle, Obj.xFactors, Obj.yFactors, Obj.loadings] = prtUtilSimpls(X,Y,Obj.nComponents);
         end
         
         function DataSet = runAction(Obj,DataSet)

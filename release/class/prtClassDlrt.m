@@ -90,7 +90,7 @@ classdef prtClassDlrt < prtClass
             Obj.verboseStorage = true;
             Obj = preTrainProcessing@prtClass(Obj,DataSet);
         end
-        function Obj = trainAction(Obj,~)
+        function Obj = trainAction(Obj,twiddle)
             %Do nothing; we've already specified "verboseStorage = true",
             %so the ".dataSet" field will be set when it comes time to test
             

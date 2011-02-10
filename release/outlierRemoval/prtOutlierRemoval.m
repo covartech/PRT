@@ -152,7 +152,7 @@ classdef prtOutlierRemoval < prtAction
         end
         
         %Overloads prtAction/postRunProcessing
-        function DataSetOut = postRunProcessing(ClassObj, ~, DataSetOut, ~) %#ok<MANU>
+        function DataSetOut = postRunProcessing(ClassObj, twiddle, DataSetOut, twiddle2) %#ok<MANU>
             %
             
             %It's not necessary to do anything; but we can't rely on
