@@ -59,6 +59,10 @@ end
 copyfile(fullfile(prtRoot,'doc'),fullfile(prtTarget,'doc'));
 rmdir(fullfile(prtTarget,'doc','.svn'),'s') % Delete .svn
 
+if isdir(fullfile(prtTarget,'doc','helpsearch'))
+    rmdir(fullfile(prtTarget,'doc','helpsearch'),'s');
+end
+
 zip(cat(2,prtTarget,'.zip'),prtTarget)
 
 end
