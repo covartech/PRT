@@ -21,8 +21,11 @@ releaseSvnRoot = 'http://svn.newfolderconsulting.com/prt/release';
 
 % Merge
 system(sprintf('svn merge %s %s %s --ignore-ancestry',develSvnRoot,releaseSvnRoot,prtReleaseRoot));
-% Marke conflicts
-system(sprintf('svn resolve --accept=mine-conflict %s',prtReleaseRoot));
+% Mark conflicts
+system(sprintf('svn resolve -R --accept=working %s',prtReleaseRoot));
+% Commit Release
+system(sprintf('svn commit %s -m "merging for package"',prtReleaseRoot));
+
 
 % Branch
 newSvnRoot = sprintf('http://svn.newfolderconsulting.com/prt/release%s',datestr(now,'yyyymmdd'));
