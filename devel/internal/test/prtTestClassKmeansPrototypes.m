@@ -29,7 +29,7 @@ classifier = prtClassKmeansPrototypes;
 classifier = classifier.train(TrainingDataSet);
 classified = run(classifier, TestDataSet);
 
-[~,classInds] = max(classified.getX(),[],2);
+[twiddle,classInds] = max(classified.getX(),[],2);
 classes = TestDataSet.uniqueClasses(classInds);
 
 percentCorr = prtScorePercentCorrect(classes,TestDataSet.getTargets);
@@ -50,7 +50,7 @@ classifier = prtClassKmeansPrototypes;
 % cross-val
 keys = mod(1:300,2);
 crossVal = classifier.crossValidate(TestDataSet,keys);
-[~,classInds] = max(crossVal.getX(),[],2);
+[twiddle,classInds] = max(crossVal.getX(),[],2);
 classes = TestDataSet.uniqueClasses(classInds);
 percentCorr = prtScorePercentCorrect(classes,TestDataSet.getTargets);
 
@@ -62,7 +62,7 @@ end
 % k-folds
 
 crossVal = classifier.kfolds(TestDataSet,10);
-[~,classInds] = max(crossVal.getX(),[],2);
+[twiddle,classInds] = max(crossVal.getX(),[],2);
 classes = TestDataSet.uniqueClasses(classInds);
 
 percentCorr = prtScorePercentCorrect(classes,TestDataSet.getTargets);

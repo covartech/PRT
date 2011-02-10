@@ -21,8 +21,19 @@ nSamples = 100;
 noiseVar = 0.1;
 
 t = linspace(-10,10,1000);
-x = randsample(t,nSamples)';
+x = prtUtilRandSample(t,nSamples)';
 t = sinc(x/pi);
 y = t + noiseVar*randn(size(x));
 
 DataSet = prtDataSetRegress(x,y,'name','Noisy Sinc');
+
+function y = sinc(x)
+
+y = sin(pi*x)./(pi*x);
+y(x == 0) = 1;
+
+function x = prtUtilRandSample(vector,nSamples)
+
+ind = randperm(length(vector));
+ind = ind(1:nSamples);
+x = vector(sort(ind));

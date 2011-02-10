@@ -42,7 +42,7 @@ else
         guess = results.getObservations;
     else
         %Naive MAP decision:
-        [~,guess] = max(results.getObservations,[],2);
+        [twiddle,guess] = max(results.getObservations,[],2);
     end
     confusionMatrix = prtScoreConfusionMatrix(guess,dataSet.getTargets);
     percentCorrect = prtUtilConfusion2PercentCorrect(confusionMatrix);

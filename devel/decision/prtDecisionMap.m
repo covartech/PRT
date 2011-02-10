@@ -68,7 +68,7 @@ classdef prtDecisionMap < prtDecision
         function DS = runAction(Obj,DS)
             yOut = DS.getObservations;
             if size(yOut,2) > 1
-                [~,index] = max(yOut,[],2);
+                [twiddle,index] = max(yOut,[],2);
             else
                 error('prt:prtDecisionMap','Cannot run prtDecisionMap on algorithms with single-column output; use prtDecisionBinaryMinPe instead');
             end

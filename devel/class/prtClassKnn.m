@@ -82,7 +82,7 @@ classdef prtClassKnn < prtClass
             Obj.verboseStorage = true;
             Obj = preTrainProcessing@prtClass(Obj,DataSet);
         end
-        function Obj = trainAction(Obj,~)
+        function Obj = trainAction(Obj,twiddle)
             %Do nothing; we've already specified "verboseStorage = true",
             %so the ".dataSet" field will be set when it comes time to test
         end
@@ -108,7 +108,7 @@ classdef prtClassKnn < prtClass
                     
                     distanceMat = feval(Obj.distanceFunction,xTrain,x(indices,:));
                     
-                    [~,I] = sort(distanceMat,1,'ascend');
+                    [twiddle,I] = sort(distanceMat,1,'ascend');
                     I = I(1:Obj.k,:);
                     L = labels(I)';
                     
@@ -119,7 +119,7 @@ classdef prtClassKnn < prtClass
             else
                 distanceMat = feval(Obj.distanceFunction,xTrain,x);
                 
-                [~,I] = sort(distanceMat,1,'ascend');
+                [twiddle,I] = sort(distanceMat,1,'ascend');
                 I = I(1:Obj.k,:);
                 L = labels(I)';
                 

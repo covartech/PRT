@@ -54,8 +54,8 @@ classdef prtRvUniform < prtRv
         
         function R = mle(R,X)
             X = R.dataInputParse(X); % Basic error checking etc
-            R.upperBounds = nanmax(X,[],1);
-            R.lowerBounds = nanmin(X,[],1);
+            R.upperBounds = max(X,[],1);
+            R.lowerBounds = min(X,[],1);
         end
         
         function vals = pdf(R,X)

@@ -97,3 +97,9 @@ catch
 end
 
 result=  result && error;
+
+
+function y = sinc(x)
+
+y = sin(pi*x)./(pi*x);
+y(x == 0) = 1;

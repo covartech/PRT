@@ -35,7 +35,7 @@ classdef prtKernelDc < prtKernel
     
     methods (Access = protected, Hidden = true)
         
-        function obj = trainAction(obj,~)
+        function obj = trainAction(obj,twiddle)
             %do nothing
             obj.isTrained = true;
         end

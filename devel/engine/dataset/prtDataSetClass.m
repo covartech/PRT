@@ -258,7 +258,7 @@ classdef prtDataSetClass  < prtDataSetStandard
             if ~isempty(setdiff(classes,uniqueClasses))
                 error('Input classes array (%s) contains class numbers not in uniqueClasses (%s)',mat2str(classes),mat2str(uniqueClasses));
             end
-            [~,~,ib] = intersect(classes,uniqueClasses);
+            [twiddle,twiddle,ib] = intersect(classes,uniqueClasses);
             tn = getClassNamesByClassInd(obj,ib);
         end
         
@@ -291,7 +291,7 @@ classdef prtDataSetClass  < prtDataSetStandard
             if ~isempty(setdiff(classes,uniqueClasses))
                 error('classes contains classes not in uniqueClasses');
             end
-            [~,~,ib] = intersect(classes,uniqueClasses);
+            [twiddle,twiddle,ib] = intersect(classes,uniqueClasses);
             
             obj = setClassNamesByClassInd(obj,names,ib);
         end
