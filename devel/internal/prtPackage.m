@@ -13,7 +13,8 @@ writeContents(prtRoot,version);
 % Commit this new Contents.m
 prtVerCtrl('commit','packaging... Updating Contents.m');
 
-% Merge Devel and Release and Create a Release branch marked with the date
+% Merge Devel and Release and Create a Release branch marked with the
+% version
 prtReleaseRoot = fullfile(prtRoot,'..','release'); % Assumes we are working in devel which we have to be because prtPackage doesn't live anywhere else
 
 develSvnRoot = 'http://svn.newfolderconsulting.com/prt/devel';
@@ -28,7 +29,7 @@ system(sprintf('svn commit %s -m "merging for package"',prtReleaseRoot));
 
 
 % Branch
-newSvnRoot = sprintf('http://svn.newfolderconsulting.com/prt/release%s',datestr(now,'yyyymmdd'));
+newSvnRoot = sprintf('http://svn.newfolderconsulting.com/prt/release%s',version);
 system(sprintf('svn copy %s %s -m "package"',releaseSvnRoot,newSvnRoot));
 
 % Ok now are ready to actually package things up
