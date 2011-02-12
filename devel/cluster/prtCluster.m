@@ -13,8 +13,10 @@ classdef prtCluster < prtAction
     %                   has been trained with a data set of 3 dimensions or
     %                   less.
     %
-    %   In addition, ptCluster objects inherit the train, run,
-    %   crossValidate and kfolds methods from prtAction.
+    %   A prtCluster object inherits the TRAIN, RUN, CROSSVALIDATE and KFOLDS
+    %   functions from the prtAction object.
+    %
+    %   See also prtClusterGmm, prtClusterKmeans
     
     properties (Abstract)
         nClusters  % The number of clusters
@@ -35,7 +37,7 @@ classdef prtCluster < prtAction
         plotOptions = prtClass.initializePlotOptions(); 
     end
     properties (SetAccess = protected)
-        isSupervised = false;
+        isSupervised = false;  % False
     end
 
     methods (Hidden = true)
