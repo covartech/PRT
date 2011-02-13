@@ -54,10 +54,10 @@ classdef prtClusterKmeans < prtCluster %prtClass %prtAction %should extent prtCl
     properties
         nClusters = 3;  % The number of clusters to find
         kmeansHandleEmptyClusters = 'remove';  % Action to take when an empty cluster occurs 
+        distanceMetricFn = @prtDistanceEuclidean;  % The distance metric; should be a function like D = prtDistanceEuclidean(dataSet1,dataSet2)
     end
     properties (SetAccess = protected)
         clusterCenters = [];   % The cluster centers
-        distanceMetricFn = @prtDistanceEuclidean;  % The distance metric
     end
     properties (SetAccess = private, Hidden = true)
         uY = [];
@@ -79,6 +79,14 @@ classdef prtClusterKmeans < prtCluster %prtClass %prtAction %should extent prtCl
             Obj.kmeansHandleEmptyClusters = value;
         end
         
+        function Obj = set.distanceMetricFn(Obj,value)
+            if ~isa(value,'function_handle')
+                error('prt:prtClusterKmeans:distanceMetricFn','distanceMetricFn must be a function handle');
+            elseif nargin(value) ~= 2
+                error('prt:prtClusterKmeans:distanceMetricFn','distanceMetricFn must be a function handle');            
+            end
+            Obj.distanceMetricFn = value;
+        end
         function Obj = prtClusterKmeans(varargin)
             % Allow for string, value pairs
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
@@ -95,6 +103,10 @@ classdef prtClusterKmeans < prtCluster %prtClass %prtAction %should extent prtCl
             
             fn = Obj.distanceMetricFn;
             distance = fn(DataSet.getObservations,Obj.clusterCenters);
+            
+            if size(distance,1) ~= DataSet.nObservations || size(distance,2) ~= size(Obj.clusterCenters,1)
+                error('prt:prtClusterKmeans:badDistanceMetric','Expected a matrix of size %s from the distance metric, but distance metric function output a matrix of size %s',mat2str([DataSet.nObservations, size(Obj.clusterCenters,1)]),mat2str(size(distance)));
+            end
             
             %The smallest distance is the expected class:
             [dontNeed,clusters] = min(distance,[],2);  %#ok<ASGLU>
