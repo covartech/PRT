@@ -40,7 +40,7 @@ classdef prtAction
     
     properties (Abstract, SetAccess = private)
         % Descriptive name of prtAction object.
-        name 
+        name
         
         % Shortened name for the prtAction object.
         nameAbbreviation 
@@ -49,6 +49,9 @@ classdef prtAction
     properties (Abstract, SetAccess = protected)
         % Specifies if the prtAction requires a labeled dataSet
         isSupervised
+        
+        % Indicates whether or not cross-validation is a valid operation
+        isCrossValidateValid
     end
     
     properties (Hidden = true)
@@ -101,8 +104,6 @@ classdef prtAction
          %   Only stored if prtAction.verboseStorage == true. Otherwise it
         %   is empty.
         
-        % Indicates whether or not cross-validation is a valid operation
-        isCrossValidateValid = true;
     end
     
     properties

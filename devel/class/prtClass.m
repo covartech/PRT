@@ -85,6 +85,7 @@ classdef prtClass < prtAction
     
     properties (SetAccess = protected)
         isSupervised = true;  % True
+        isCrossValidateValid = true; % True
     end
     
     properties (Dependent = true, Access = 'protected', Hidden = true)

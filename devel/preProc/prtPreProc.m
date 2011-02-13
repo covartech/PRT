@@ -18,6 +18,7 @@ classdef prtPreProc < prtAction
 
     properties (SetAccess = protected)
         isSupervised = false;
+        isCrossValidateValid = true; % True
     end
     
     methods

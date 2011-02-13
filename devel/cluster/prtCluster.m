@@ -38,6 +38,7 @@ classdef prtCluster < prtAction
     end
     properties (SetAccess = protected)
         isSupervised = false;  % False
+        isCrossValidateValid = true; % True
     end
 
     methods (Hidden = true)

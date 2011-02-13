@@ -32,7 +32,8 @@ classdef prtAlgorithm < prtAction
     end
     
     properties (SetAccess=protected)
-        isSupervised = true; % Set to true, but dependent on prtAction components
+        isSupervised = true; % Default to true, but dependent on prtAction components
+        isCrossValidateValid = true; % Default to true, but dependent on prtAction components
     end
     
     %This is the public face of the (protected) internalActionCell

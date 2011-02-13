@@ -86,7 +86,8 @@ classdef prtOutlierRemoval < prtAction
         validModes = {'noAction','replaceWithNan','removeObservation','removeFeature'};
     end
     properties (SetAccess = protected)
-        isSupervised = false;
+        isSupervised = false; % False
+        isCrossValidateValid = false; % False
     end
     
     methods

@@ -57,7 +57,8 @@ classdef prtDecision < prtAction
     end
     
     properties (SetAccess = protected)
-        isSupervised = false;
+        isSupervised = false; % False
+        isCrossValidateValid = true; % True
     end
     
     methods
