@@ -83,7 +83,7 @@ classdef prtClusterKmeans < prtCluster %prtClass %prtAction %should extent prtCl
             if ~isa(value,'function_handle')
                 error('prt:prtClusterKmeans:distanceMetricFn','distanceMetricFn must be a function handle');
             elseif nargin(value) ~= 2
-                error('prt:prtClusterKmeans:distanceMetricFn','distanceMetricFn must be a function handle');            
+                error('prt:prtClusterKmeans:distanceMetricFn','distanceMetricFn must be a function handle that takes two input arguments');            
             end
             Obj.distanceMetricFn = value;
         end
