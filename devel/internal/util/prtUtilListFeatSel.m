@@ -5,7 +5,7 @@ function varargout = prtUtilListFeatSel
 % prtFeatSelStatic
 %
 
-g = subDir(fullfile(prtRoot,'featsel'),'*.m');
+g = prtUtilSubDir(fullfile(prtRoot,'featsel'),'*.m');
 
 if nargout == 0
     fprintf('See also: ');

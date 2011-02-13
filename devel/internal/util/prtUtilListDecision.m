@@ -6,7 +6,7 @@ function varargout = prtUtilListDecision
 % prtDecisionMap
 % 
 
-g = subDir(fullfile(prtRoot,'decision'),'*.m');
+g = prtUtilSubDir(fullfile(prtRoot,'decision'),'*.m');
 
 if nargout == 0
     fprintf('See also: ');

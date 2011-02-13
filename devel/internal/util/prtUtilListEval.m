@@ -5,7 +5,7 @@ function varargout = prtUtilListEval
 % prtEvalPercentCorrect, prtEvalPfAtPd
 %
 
-g = subDir(fullfile(prtRoot,'eval'),'*.m');
+g = prtUtilSubDir(fullfile(prtRoot,'eval'),'*.m');
 
 if nargout == 0
     fprintf('See also: ');

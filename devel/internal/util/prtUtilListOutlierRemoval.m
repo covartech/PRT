@@ -4,7 +4,7 @@ function varargout = prtUtilListOutlierRemoval
 % See also: prtOutlierRemoval, prtOutlierRemovalMissingData,
 % prtOutlierRemovalNStd, prtOutlierRemovalNonFinite,
 
-g = subDir(fullfile(prtRoot,'outlierremoval'),'*.m');
+g = prtUtilSubDir(fullfile(prtRoot,'outlierremoval'),'*.m');
 
 if nargout == 0
     fprintf('See also: ');

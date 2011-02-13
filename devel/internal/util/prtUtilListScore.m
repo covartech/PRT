@@ -4,7 +4,7 @@ function varargout = prtUtilListScore
 % See also: prtScoreAuc, prtScoreConfusionMatrix, prtScoreCost,
 % prtScorePercentCorrect, prtScoreRmse, prtScoreRoc, prtScoreRocNfa
 
-g = subDir(fullfile(prtRoot,'score'),'*.m');
+g = prtUtilSubDir(fullfile(prtRoot,'score'),'*.m');
 
 if nargout == 0
     fprintf('See also: ');

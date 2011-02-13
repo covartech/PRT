@@ -25,7 +25,7 @@ classdef prtPreProcLogDisc < prtPreProcClass
     %   subplot(2,1,2); plot(dataSetNew);
     %   title('LogDisc Data');
     %
-        %   See Also: prtPreProc,
+    %   See Also: prtPreProc,
     %   prtOutlierRemoval,prtPreProcNstdOutlierRemove,
     %   prtOutlierRemovalMissingData,
     %   prtPreProcNstdOutlierRemoveTrainingOnly, prtOutlierRemovalNStd,

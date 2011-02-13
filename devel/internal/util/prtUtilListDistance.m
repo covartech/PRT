@@ -6,7 +6,7 @@ function varargout = prtUtilListDistance
 % prtDistanceMahalanobis, prtDistanceSquare
 % 
 
-g = subDir(fullfile(prtRoot,'distance'),'*.m');
+g = prtUtilSubDir(fullfile(prtRoot,'distance'),'*.m');
 
 if nargout == 0
     fprintf('See also: ');

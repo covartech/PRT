@@ -5,7 +5,7 @@ function varargout = prtUtilListRegress
 % prtRegressRvmSequential
 
 
-g = subDir(fullfile(prtRoot,'regress'),'*.m');
+g = prtUtilSubDir(fullfile(prtRoot,'regress'),'*.m');
 
 if nargout == 0
     fprintf('See also: ');

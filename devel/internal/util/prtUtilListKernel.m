@@ -5,7 +5,7 @@ function varargout = prtUtilListKernel
 % prtKernelHyperbolicTangent, prtKernelPolynomial, prtKernelRbf,
 % prtKernelRbfNdimensionScale, prtKernelSet
 
-g = subDir(fullfile(prtRoot,'kernels'),'*.m');
+g = prtUtilSubDir(fullfile(prtRoot,'kernels'),'*.m');
 
 if nargout == 0
     fprintf('See also: ');

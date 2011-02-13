@@ -6,7 +6,7 @@ function varargout = prtUtilListDataGen
 % prtDataGenProstate, prtDataGenSpiral, prtDataGenUnimodal, prtDataGenXor,
 
 
-g = subDir(fullfile(prtRoot,'dataGen'),'*.m');
+g = prtUtilSubDir(fullfile(prtRoot,'dataGen'),'*.m');
 
 if nargout == 0
     fprintf('See also: ');

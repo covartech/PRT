@@ -6,7 +6,7 @@ function varargout = prtUtilListRv
 % prtRvUniformImproper, prtRvVq
 %
 
-g = subDir(fullfile(prtRoot,'rv'),'*.m','asdf');
+g = prtUtilSubDir(fullfile(prtRoot,'rv'),'*.m','asdf');
 
 if nargout == 0
     fprintf('See also: ');

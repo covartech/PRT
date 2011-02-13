@@ -6,7 +6,7 @@ function varargout = prtUtilListPreProc
 % prtPreProcZeroMeanColumns, prtPreProcZeroMeanRows, prtPreProcZmuv
 %
 
-g = subDir(fullfile(prtRoot,'preproc'),'*.m');
+g = prtUtilSubDir(fullfile(prtRoot,'preproc'),'*.m');
 
 if nargout == 0
     fprintf('See also: ');

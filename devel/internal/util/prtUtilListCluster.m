@@ -3,7 +3,7 @@ function varargout = prtUtilListCluster
 % 
 % See also: prtCluster, prtClusterGmm, prtClusterKmeans
 
-g = subDir(fullfile(prtRoot,'cluster'),'*.m');
+g = prtUtilSubDir(fullfile(prtRoot,'cluster'),'*.m');
 
 if nargout == 0
     

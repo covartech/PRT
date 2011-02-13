@@ -7,7 +7,7 @@ function varargout = prtUtilListEngine
 % prtAlgorithm
 %
 
-g = subDir(fullfile(prtRoot,'engine'),'*.m');
+g = prtUtilSubDir(fullfile(prtRoot,'engine'),'*.m');
 
 if nargout == 0
     fprintf('See also: ');
