@@ -258,7 +258,7 @@ classdef prtDataSetClass  < prtDataSetStandard
             if ~isempty(setdiff(classes,uniqueClasses))
                 error('Input classes array (%s) contains class numbers not in uniqueClasses (%s)',mat2str(classes),mat2str(uniqueClasses));
             end
-            [twiddle,twiddle,ib] = intersect(classes,uniqueClasses);
+            [twiddle,twiddle,ib] = intersect(classes,uniqueClasses); %#ok<ASGLU>
             tn = getClassNamesByClassInd(obj,ib);
         end
         
@@ -291,7 +291,7 @@ classdef prtDataSetClass  < prtDataSetStandard
             if ~isempty(setdiff(classes,uniqueClasses))
                 error('classes contains classes not in uniqueClasses');
             end
-            [twiddle,twiddle,ib] = intersect(classes,uniqueClasses);
+            [twiddle,twiddle,ib] = intersect(classes,uniqueClasses); %#ok<ASGLU>
             
             obj = setClassNamesByClassInd(obj,names,ib);
         end
@@ -414,6 +414,84 @@ classdef prtDataSetClass  < prtDataSetStandard
             binaryMatTargets = binaryMatTargets(indices1,indices2);
             
         end
+        
+        function obj = retainClasses(obj,classes)
+            % retainClasses retain observations corresponding to specified
+            % classes
+            %
+            %   subDataSet = dataSet.retainClasses(targetVals) returns a
+            %   data set subDataSet containing only the observations that
+            %   have targets equal to the specied values
+            
+            assert(isnumeric(classes) && isvector(classes),'classes must be a numeric vector');
+            [isActuallyAClass, classInds] = ismember(classes,obj.uniqueClasses); %#ok<ASGLU>
+            
+            % I am not sure if we want to enforce this.
+            % I don't think we do.
+            % assert(all(isActuallyAClass),'all classes to retain must be represented in dataSet')
+            
+            obj = retainClassesByInd(obj,classInds);
+        end
+        
+        function obj = removeClasses(obj,classes)
+            % removeClasses remove observations corresponding to
+            % specified classes
+            %
+            %   subDataSet = dataSet.removeClasses(targetVals) returns a
+            %   data set subDataSet containing only the observations that
+            %   have DO NOT have targets equal to the specied values
+            
+            assert(isnumeric(classes) && isvector(classes),'classes must be a numeric vector');
+            [isActuallyAClass, classInds] = ismember(classes,obj.uniqueClasses); %#ok<ASGLU>            
+            
+            % I am not sure if we want to enforce this.
+            % I don't think we do.
+            % assert(all(isActuallyAClass),'all classes to retain must be represented in dataSet')            
+            
+            obj = obj.removeClassesByInd(classInds);
+        end
+        
+        function obj = retainClassesByInd(obj,classInds)
+            % retainClassesByInd retain observations corresponding to
+            % specified class indexes
+            %
+            %   subDataSet = dataSet.retainClassesByInd(classInds) returns
+            %   a data set subDataSet containing only the observations that
+            %   have targets with values that corresped to the specified
+            %   class indexes.
+            
+            % Allows for logical indexing into classInds
+            % Also performance error checking
+            classInds = prtDataSetBase.parseIndices(obj.nClasses, classInds);
+            
+            allClassInds = 1:obj.nClasses;
+            classInds = allClassInds(classInds);
+            
+            obj = obj.retainObservations(ismember(obj.getTargetsClassInd,classInds));
+        end        
+        
+        function obj = removeClassesByInd(obj,classInds)
+            % removeClasses remove observations corresponding to
+            % specified class indexes
+            %
+            %   subDataSet = dataSet.removeClassesByInd(classInds) returns
+            %   a data set subDataSet containing only the observations that
+            %   DO NOT have targets with values that corresped to the
+            %   specified class indexes.
+            
+            % Allows for logical indexing into classInds
+            % Also performance error checking
+            classInds = prtDataSetBase.parseIndices(obj.nClasses, classInds);
+            
+            % Flip logical representation so we can call retainClassesByInd
+            if islogical(classInds)
+                classInds = ~classInds;
+            else
+                classInds = setdiff(1:obj.nClasses,classInds);
+            end
+            
+            obj = obj.retainClassesByInd(classInds);
+        end        
         
         %PLOT:
         
@@ -1016,7 +1094,7 @@ classdef prtDataSetClass  < prtDataSetStandard
                         %Default behaviour:
                         cX = cat(2,cX,ones(size(cX,1),1));
                     end
-                    featureNames{end+1} = 'Target';
+                    featureNames{end+1} = 'Target'; %#ok<AGROW>
                 end
                 handleArray(i) = prtPlotUtilScatter(cX,featureNames,classSymbols(i),classColors(i,:),classEdgeColor,lineWidth, markerSize);
                 
