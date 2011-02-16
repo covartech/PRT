@@ -221,7 +221,7 @@ classdef prtAction
             
             if ~isempty(Obj.classRun) && ~prtUtilDataSetClassCheck(inputClassName,Obj.classRun)
                 error('prt:prtAction:incompatible','%s.run() requires datasets of type %s but the input is of type %s, which is not a subclass of %s.',class(Obj), Obj.classRun, inputClassName, Obj.classRun);
-            end            
+            end
             
             DataSetOut = preRunProcessing(Obj, DataSetIn);
             DataSetOut = runAction(Obj, DataSetOut);
