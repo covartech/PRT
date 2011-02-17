@@ -29,7 +29,7 @@ cluster = prtClusterKmeans;
 cluster = cluster.train(TrainingDataSet);
 classified = run(cluster, TestDataSet);
 
-[~,classInds] = max(classified.getX(),[],2);
+[garbage,classInds] = max(classified.getX(),[],2);
 classes = TestDataSet.uniqueClasses(classInds);
 
 percentCorr = prtScorePercentCorrect(classes,TestDataSet.getTargets);
@@ -50,7 +50,7 @@ cluster = prtClusterKmeans;
 % cross-val
 keys = mod(1:300,2);
 crossVal = cluster.crossValidate(TestDataSet,keys);
-[~,classInds] = max(crossVal.getX(),[],2);
+[garbage,classInds] = max(crossVal.getX(),[],2);
 classes = TestDataSet.uniqueClasses(classInds);
 percentCorr = prtScorePercentCorrect(classes,TestDataSet.getTargets);
 
@@ -62,7 +62,7 @@ end
 % k-folds
 
 crossVal = cluster.kfolds(TestDataSet,10);
-[~,classInds] = max(crossVal.getX(),[],2);
+[garbage,classInds] = max(crossVal.getX(),[],2);
 classes = TestDataSet.uniqueClasses(classInds);
 
 percentCorr = prtScorePercentCorrect(classes,TestDataSet.getTargets);

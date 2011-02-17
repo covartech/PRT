@@ -98,7 +98,7 @@ classdef prtPreProcPls < prtPreProcClass
             X = bsxfun(@minus, X, Obj.xMeanVector);
             Y = bsxfun(@minus, Y, Obj.yMeanVector);
             
-            [~,~, P] = prtUtilSimpls(X,Y,Obj.nComponents);
+            [garbage,garbage, P] = prtUtilSimpls(X,Y,Obj.nComponents);
             
             Obj.projectionMatrix = pinv(P');
             Obj.projectionMatrix = bsxfun(@rdivide,Obj.projectionMatrix,sqrt(sum(Obj.projectionMatrix.^2,1)));
