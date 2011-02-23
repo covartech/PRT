@@ -111,12 +111,7 @@ classdef prtCluster < prtAction
             assert(Obj.dataSetSummary.nFeatures < 4, 'nFeatures in the training dataset must be less than or equal to 3');
             
             if Obj.yieldsMaryOutput
-                if ~isempty(Obj.dataSet)
-                    warning('prt:prtClass:plot:autoDecision','prtCluster.plot() requires a prtCluster with an internal decider. A prtDecisionMap has been trained and set as the internalDecider to enable plotting.');
-                else
-                    error('prt:prtClass:plot','prtCluster.plot() requires a prtCluster with an internal decider. A prtDecisionMap cannot be trained and set as the internalDecider to enable plotting because this classifier object does not have verboseStorege turned on and therefore the dataSet used to train the classifier is unknow. To enable plotting, set an internalDecider and retrain the classifier.');
-                end
-                Obj.internalDecider = prtDecisionMap;
+                Obj = trainAutoDecision(Obj);
             end
             
             HandleStructure = plotBinaryClusterConfidence(Obj);
@@ -149,9 +144,8 @@ classdef prtCluster < prtAction
         function ClassObj = preTrainProcessing(ClassObj, DataSet)
             % Overload preTrainProcessing() so that we can determine mary
             % output status
-            assert(isa(DataSet,'prtDataSetBase'),'DataSet must be a prtDataSetBase DataSet');
-
-            ClassObj.yieldsMaryOutput = ~ClassObj.includesDecision; %determineMaryOutput(ClassObj,DataSet);
+            
+            ClassObj.yieldsMaryOutput = ~ClassObj.includesDecision;
 
             ClassObj = preTrainProcessing@prtAction(ClassObj,DataSet);
         end
@@ -203,12 +197,27 @@ classdef prtCluster < prtAction
         
         function Obj = trainAutoDecision(Obj)
             if ~isempty(Obj.dataSet)
-                    warning('prt:prtCluster:plot:autoDecision','prtCluster.plot() requires a prtCluster with an internal decider. A prtDecisionMap has been trained and set as the internalDecider to enable plotting.');
-                    Obj.internalDecider =  prtDecisionMap;
-                    Obj = postTrainProcessing(Obj, Obj.dataSet);
-                    Obj.yieldsMaryOutput = false;
-                else
-                    error('prt:prtCluster:plot','prtCluster.plot() requires a prtCluster with an internal decider. A prtDecisionMap cannot be trained and set as the internalDecider to enable plotting because this cluster object does not have verboseStorege turned on and therefore the dataSet used to train the clusterer is unknow. To enable plotting, set an internalDecider and retrain the clusterer.');
+                % warning('prt:prtCluster:plot:autoDecision','prtCluster.plot() requires a prtCluster with an internal decider. A prtDecisionMap has been trained and set as the internalDecider to enable plotting.');
+                
+                % It is much easier (and safer) to just train the
+                % prtDecisionMap
+                Obj.internalDecider =  prtDecisionMap;
+                Obj = postTrainProcessing(Obj, Obj.dataSet);
+                Obj.yieldsMaryOutput = false;
+            else
+                % warning('prt:prtCluster:plot:autoDecision','prtCluster.plot() requires a prtCluster with an internal decider. A prtDecisionMap has been trained and set as the internalDecider to enable plotting.');
+                % error('prt:prtCluster:plot','prtCluster.plot() requires a prtCluster with an internal decider. A prtDecisionMap cannot be trained and set as the internalDecider to enable plotting because this cluster object does not have verboseStorege turned on and therefore the dataSet used to train the clusterer is unknow. To enable plotting, set an internalDecider and retrain the clusterer.');
+                
+                % Since we don't have the dataset we just mock train
+                % This is slightly dangerous in the case when
+                % prtDecisionMap changes to include more parameters.
+                tempInternalDecider = prtDecisionMap;
+                tempInternalDecider.isTrained = true;
+                tempInternalDecider.classList = 1:Obj.nClusters;
+                tempInternalDecider.dataSetSummary = Obj.dataSetSummary;
+                tempInternalDecider.dataSetSummary.nFeatures = Obj.nClusters;
+                
+                Obj.internalDecider = tempInternalDecider;
             end
         end
     end

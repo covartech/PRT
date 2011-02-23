@@ -85,9 +85,14 @@ classdef prtKernelRbf < prtKernel
         
         function Obj = set.sigma(Obj,value)
             if ~prtUtilIsPositiveScalar(value)
-                error('prtKernelRbf:set','Value of sigma must be a positive scalar');
+                assert(isnumeric(value) && all(value>0) && isvector(value),'sigma must be a positive numeric vector')
+                if isempty(Obj.internalDataSet) || Obj.internalDataSet.nObservations==0
+                    error('prtKernelRbf:set','Value of sigma must be a positive scalar');
+                else
+                    assert(Obj.internalDataSet.nObservations==numel(value),'When setting sigma to be an array of values the internalDataSet must be set and the number of observations and the length of sigma must match');
+                end
             end
-            Obj.sigma = value;
+            Obj.sigma = value(:);
         end
     end
     
@@ -127,7 +132,7 @@ classdef prtKernelRbf < prtKernel
             if numel(sigma) == 1
                 gram = exp(-dist2/(sigma.^2));
             else
-                gram = exp(-bsxfun(@rdivide,dist2,sigma.^2));
+                gram = exp(-bsxfun(@rdivide,dist2,(sigma.^2)'));
             end
         end
     end

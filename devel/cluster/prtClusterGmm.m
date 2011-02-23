@@ -40,11 +40,7 @@ classdef prtClusterGmm < prtCluster %prtClass %prtAction %should extent prtClust
         nClusters = 3;
     end
     properties (SetAccess = protected)
-        clusterCenters = [];
         gmmRv = prtRvGmm;
-    end
-    properties (SetAccess = private, Hidden = true)
-        uY = [];
     end
     
     methods

@@ -5,6 +5,7 @@ classdef <fileName> < prtClass
     properties (SetAccess=private)
         name = '<className>'                  % Insert the name of the classifier
         nameAbbreviation = '<className>'      % A short abbreviation of the name
+		isNativeMary = false;          	      % Change to true to create an M-ary classifier
     end
     
     properties  
