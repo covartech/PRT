@@ -8,13 +8,10 @@ classdef prtPreProc < prtAction
     % A prtPreProc object inherits all methods and properties from the
     % prtAction class
     %
-    %   See Also: prtPreProc,
-    %   prtOutlierRemoval,prtPreProcNstdOutlierRemove,
-    %   prtOutlierRemovalMissingData,
-    %   prtPreProcNstdOutlierRemoveTrainingOnly, prtOutlierRemovalNStd,
-    %   prtPreProcPca, prtPreProcPls, prtPreProcHistEq,
-    %   prtPreProcZeroMeanColumns, prtPreProcLda, prtPreProcZeroMeanRows,
-    %   prtPreProcLogDisc, prtPreProcZmuv, prtPreProcMinMaxRows                    
+    %   See Also: prtPreProc, prtPreProcPca, prtPreProcPls,
+    %   prtPreProcHistEq, prtPreProcZeroMeanColumns, prtPreProcLda,
+    %   prtPreProcZeroMeanRows, prtPreProcLogDisc, prtPreProcZmuv,
+    %   prtPreProcMinMaxRows
 
     properties (SetAccess = protected)
         isSupervised = false;

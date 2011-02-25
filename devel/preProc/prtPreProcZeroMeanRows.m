@@ -22,14 +22,10 @@ classdef prtPreProcZeroMeanRows < prtPreProc
     %   subplot(2,1,1); plot(dataSet);
     %   subplot(2,1,2); plot(dataSetNew);
     %
-    %   See Also: prtPreProc,
-    %   prtOutlierRemoval,prtPreProcNstdOutlierRemove,
-    %   prtOutlierRemovalMissingData,
-    %   prtPreProcNstdOutlierRemoveTrainingOnly, prtOutlierRemovalNStd,
-    %   prtPreProcPca, prtPreProcPls, prtPreProcHistEq,
-    %   prtPreProcZeroMeanColumns, prtPreProcLda, prtPreProcZeroMeanRows,
-    %   prtPreProcLogDisc, prtPreProcZmuv, prtPreProcMinMaxRows                    
-        
+    %   See Also: prtPreProc, prtPreProcPca, prtPreProcPls,
+    %   prtPreProcHistEq, prtPreProcZeroMeanColumns, prtPreProcLda,
+    %   prtPreProcZeroMeanRows, prtPreProcLogDisc, prtPreProcZmuv,
+    %   prtPreProcMinMaxRows        
     
     properties (SetAccess=private)
         name = 'Zero-Mean Rows' % Zero-Mean Rows

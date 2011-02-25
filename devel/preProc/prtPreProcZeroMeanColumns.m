@@ -25,14 +25,11 @@ classdef prtPreProcZeroMeanColumns < prtPreProc
     %   subplot(2,1,2); plot(dataSetNew);
     %   title(sprintf('Mean: %s',mat2str(mean(dataSetNew.getObservations),2)))
     %
-    %   See Also: prtPreProc,
-    %   prtOutlierRemoval,prtPreProcNstdOutlierRemove,
-    %   prtOutlierRemovalMissingData,
-    %   prtPreProcNstdOutlierRemoveTrainingOnly, prtOutlierRemovalNStd,
-    %   prtPreProcPca, prtPreProcPls, prtPreProcHistEq,
-    %   prtPreProcZeroMeanColumns, prtPreProcLda, prtPreProcZeroMeanRows,
-    %   prtPreProcLogDisc, prtPreProcZmuv, prtPreProcMinMaxRows                    
-        
+    %   See Also: prtPreProc, prtPreProcPca, prtPreProcPls,
+    %   prtPreProcHistEq, prtPreProcZeroMeanColumns, prtPreProcLda,
+    %   prtPreProcZeroMeanRows, prtPreProcLogDisc, prtPreProcZmuv,
+    %   prtPreProcMinMaxRows
+    
     properties (SetAccess=private)
         name = 'Zero-Mean Columns' % Zero-Mean Columns
         nameAbbreviation = 'ZMC' % ZMC

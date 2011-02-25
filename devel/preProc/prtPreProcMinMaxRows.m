@@ -29,18 +29,15 @@ classdef prtPreProcMinMaxRows < prtPreProc
     %   subplot(2,1,2); plot(dataSetNew);
     %   title('MinMaxRows Data');
     %
-        %   See Also: prtPreProc,
-    %   prtOutlierRemoval,prtPreProcNstdOutlierRemove,
-    %   prtOutlierRemovalMissingData,
-    %   prtPreProcNstdOutlierRemoveTrainingOnly, prtOutlierRemovalNStd,
-    %   prtPreProcPca, prtPreProcPls, prtPreProcHistEq,
-    %   prtPreProcZeroMeanColumns, prtPreProcLda, prtPreProcZeroMeanRows,
-    %   prtPreProcLogDisc, prtPreProcZmuv, prtPreProcMinMaxRows                    
+    %   See Also: prtPreProc, prtPreProcPca, prtPreProcPls,
+    %   prtPreProcHistEq, prtPreProcZeroMeanColumns, prtPreProcLda,
+    %   prtPreProcZeroMeanRows, prtPreProcLogDisc, prtPreProcZmuv,
+    %   prtPreProcMinMaxRows
     
     properties (SetAccess=private)
-        % Required by prtAction
-        name = 'MinMax Rows'
-        nameAbbreviation = 'MMR'
+        
+        name = 'MinMax Rows'  %  MinMax Rows
+        nameAbbreviation = 'MMR'  % MMR
     end
     
     properties
@@ -48,7 +45,7 @@ classdef prtPreProcMinMaxRows < prtPreProc
     end
     
     methods
-        % Allow for string, value pairs
+        
         function Obj = prtPreProcMinMaxRows(varargin)
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
         end

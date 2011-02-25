@@ -27,25 +27,21 @@ classdef prtPreProcPca < prtPreProc
     %   subplot(2,1,2); plot(dataSetNew);
     %   title('PCA Projected Data');
     %
-    %   See Also: prtPreProc,
-    %   prtOutlierRemoval,prtPreProcNstdOutlierRemove,
-    %   prtOutlierRemovalMissingData,
-    %   prtPreProcNstdOutlierRemoveTrainingOnly, prtOutlierRemovalNStd,
-    %   prtPreProcPca, prtPreProcPls, prtPreProcHistEq,
-    %   prtPreProcZeroMeanColumns, prtPreProcLda, prtPreProcZeroMeanRows,
-    %   prtPreProcLogDisc, prtPreProcZmuv, prtPreProcMinMaxRows                    
-    
+    %   See Also: prtPreProc, prtPreProcPca, prtPreProcPls,
+    %   prtPreProcHistEq, prtPreProcZeroMeanColumns, prtPreProcLda,
+    %   prtPreProcZeroMeanRows, prtPreProcLogDisc, prtPreProcZmuv,
+    %   prtPreProcMinMaxRows    
     
     properties (SetAccess=private)
-        name = 'Principal Component Analysis'
-        nameAbbreviation = 'PCA'
+        name = 'Principal Component Analysis' % Principal Component Analysis
+        nameAbbreviation = 'PCA'  % PCA
     end
     
     properties
         nComponents = 3;   % The number of PCA components
     end
     properties (SetAccess=private)
-        % General Classifier Properties
+
         means = [];           % A vector of the means
         pcaVectors = [];      % The PCA vectors.
       

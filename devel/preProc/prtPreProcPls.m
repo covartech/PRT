@@ -27,14 +27,11 @@ classdef prtPreProcPls < prtPreProcClass
     %   subplot(2,1,2); plot(dataSetNew);
     %   title('PLS Projected Data');
     %
-    %   See Also: prtPreProc,
-    %   prtOutlierRemoval,prtPreProcNstdOutlierRemove,
-    %   prtOutlierRemovalMissingData,
-    %   prtPreProcNstdOutlierRemoveTrainingOnly, prtOutlierRemovalNStd,
-    %   prtPreProcPca, prtPreProcPls, prtPreProcHistEq,
-    %   prtPreProcZeroMeanColumns, prtPreProcLda, prtPreProcZeroMeanRows,
-    %   prtPreProcLogDisc, prtPreProcZmuv, prtPreProcMinMaxRows                    
-        
+    %   See Also: prtPreProc, prtPreProcPca, prtPreProcPls,
+    %   prtPreProcHistEq, prtPreProcZeroMeanColumns, prtPreProcLda,
+    %   prtPreProcZeroMeanRows, prtPreProcLogDisc, prtPreProcZmuv,
+    %   prtPreProcMinMaxRows
+    
     properties (SetAccess=private)
         name = 'Partial Least Squares' % Partial Least Squares
         nameAbbreviation = 'PLS' % PLS
@@ -44,10 +41,10 @@ classdef prtPreProcPls < prtPreProcClass
         nComponents = 2;   % The number of Pls components
     end
     properties (SetAccess=private)
-        % General Classifier Properties
-        projectionMatrix = [];
-        xMeanVector = [];
-        yMeanVector = [];
+    
+        projectionMatrix = [];  % Projection Matrix
+        xMeanVector = [];  % X means
+        yMeanVector = [];  % Y means
     end
     
     methods

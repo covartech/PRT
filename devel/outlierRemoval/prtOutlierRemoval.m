@@ -55,13 +55,9 @@ classdef prtOutlierRemoval < prtAction
     %   A prtOutlierRemoval object inherits the TRAIN, RUN, CROSSVALIDATE
     %   and KFOLDS functions from the prtAction class.
     %
-    %   See Also: prtPreProc, prtOutlierRemovalMissingData,
-    %   prtOutlierRemovalNStd, prtPreProcHistEq, prtPreProcLda,
-    %   prtPreProcLogDisc, prtPreProcMinMaxRows,
-    %   prtPreProcNstdOutlierRemove,
-    %   prtPreProcNstdOutlierRemoveTrainingOnly, prtPreProcPca,
-    %   prtPreProcPls, prtPreProcZeroMeanColumns, prtPreProcZeroMeanRows,
-    %   prtPreProcZmuv
+    %   See Also:  prtOutlierRemoval, prtOutlierRemovalMissingData
+    %   prtOutlierRemovalNonFinite,prtOutlierRemovalNstd
+    
     %
     %   prtOutlierRemoval objects have the following Abstract methods:
     %

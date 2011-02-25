@@ -386,8 +386,15 @@ classdef prtAction
         end
         
         function Obj = set(Obj,varargin)
-            % set - set properties of prtAction()
+            % set - set the object properties
             %   
+            % OBJ = OBJ.set(PARAM, VALUE) sets the parameter PARAM of OBJ
+            % to the value VALUE. PARAM must be a string indicating the
+            % parameter to be set.
+            %
+            % OBJ = OBJ.set(PARAM1, VALUE1, PARAM2, VALUE2....) sets all
+            % the desired parameters to the specified values.
+            
             % ActionObj = get(ActionObj,paramNameStr,paramValue);
             % ActionObj = get(ActionObj,paramNameStr1,paramValue1, paramNameStr2, paramNameValue2, ...); 
             
@@ -395,8 +402,16 @@ classdef prtAction
         end
         
         function out = get(Obj,varargin)
-            % get - get properties of prtAction()
-            %   
+            % get - get the object properties
+            % 
+            % val = obj.get(PARAM) retutns the value of the parameter
+            % specified by the string PARAM.
+            %
+            % vals = obj.get(PARAM1, PARAM2....) returns a structure
+            % containing the values of all the parameters specified by the
+            % PARAM strings
+            
+            
             % paramValue = get(ActionObj,paramNameStr);
             % paramStruct = get(ActionObj,paramNameStr1,paramNameStr2,...);
             

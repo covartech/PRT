@@ -1,36 +1,32 @@
 function D = prtDistanceMahalanobis(dataSet1,dataSet2,covar)
 % prtDistanceMahalanobis   Mahalanobis distance.
 %
-%   dist = prtDistanceMahalanobis(d1,d2) for data sets or double matrices d1
-%   and d2 calculates the Mahalanobis distance from all the observations in
-%   d1 to d2, and ouputs a distance matrix of size d1.nObservations x
-%   d2.nObservations (size(d1,1) x size(d2,1) for double matrices).  The
+%   DIST = prtDistanceMahalanobis(DS1,DS2) calculates the Mahalanobis
+%   distance from all the observations in datasets DS1 to DS2, and ouputs a
+%   distance matrix of size DS1.nObservations x DS2.nObservations.  The
 %   covariance matrix in the Mahalanobis is estimated from both the data in
-%   dataSet1 and dataSet2.
-%  
-%   d1 and d2 should have the same dimensionality, i.e. d1.nFeatures ==
-%   d2.nFeatures (size(d1,2) == size(d2,2) for double matrices).
+%   DS1 and DS2. DS1 and DS2 should have the same number of features. DS1
+%   and DS2 should be prtDataSet objects.
 %
-%   dist = prtDistanceMahalanobis(d1,d2,covar) specifies the covariance
+%   DIST = prtDistanceMahalanobis(DS1,DS2, COVAR) specifies the covariance
 %   matrix to use.
-%   
-% Example:
-%   
-%  X = [0 0; 1 1];
-%  Y = [1 0; 2 2; 3 3;];
-%  covMat = [1 0; 0 2;];
-%  D = prtDistanceMahalanobis(X,Y,covMat)
 %
-%  % prtDistanceMahalanobis also accepts prtDataSet inputs:
+%   For more information on the Mahalanobis distance, see:
+%   http://en.wikipedia.org/wiki/Mahalanobis_distance
+%   
+%  % Example:
+%   
+%  X = [0 0; 1 1];      % Create some data, store  in prtDataSetStandard
+%  Y = [1 0; 2 2; 3 3;];
 %  dsx = prtDataSetStandard(X);
 %  dsy = prtDataSetStandard(Y);
-%  distance = prtDistanceMahalanobis(dsx,dsy,covMat);
+%  covMat = [1 0; 0 2;];         % Specify the covariance matrix
+%  % Compute the distance
+%  distance = prtDistanceMahalanobis(dsx,dsy,covMat)
 %
-%   For more information, see:
-%   http://en.wikipedia.org/wiki/Mahalanobis_distance
 %
-% See also: prtDistance, prtDistanceCityBlock, prtDistanceLNorm,
-% prtDistanceEuclidean, prtDistanceSquare, prtDistanceChebychev
+% See also: prtDistanceCityBlock, prtDistanceLNorm, prtDistanceEuclidean,
+% prtDistanceSquare, prtDistanceChebychev
 
 % Copyright 2010, New Folder Consulting, L.L.C.
 

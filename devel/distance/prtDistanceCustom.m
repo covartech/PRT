@@ -1,36 +1,31 @@
 function D = prtDistanceCustom(dataSet1,dataSet2,singleDistanceFunction)
 % prtDistanceCustom   Custom distance function
 % 
-%   dist = prtDistanceCityBlock(d1,d2,singleDistanceFunction) for data sets 
-%   or double matrices d1 and d2 calculates the distance from all the 
-%   observations in d1 to d2, using the function singleDistanceFunction, 
-%   and ouputs a distance matrix of size d1.nObservations x d2.nObservations 
-%   (size(d1,1) x size(d2,1) for double matrices).
+%   DIST = prtDistanceCityBlock(D1,D2,DISTFUNHANDLE)  calculates the
+%   distance from all the observations in dataset D1 to dataset D2, using
+%   the function handle DISTFUNHANDLE. The output is a distance matrix of
+%   size D1.nObservations x D2.nObservations. D1 and D2 must have the same
+%   number of features.
 %
-%   singleDistanceFunction should be a function handle that accepts two 1xn
+%   DISTFUNHANDLE should be a function handle that accepts two 1xn
 %   vectors and outputs the scalar distance between them.  For example, 
 %
-%   singleDistanceFunction = @(x,y)sqrt(sum((x-y).^2,2)); %euclidean distance
+%   DISTFUNHANDLE = @(x,y)sqrt(sum((x-y).^2,2)); %euclidean distance
 %
 %   Note: This is provided as an example only, use prtDistanceEuclidean to
 %   calculate Euclidean distances, as it is significantly faster than
 %   prtDistanceCustom.
-%  
-%   d1 and d2 should have the same dimensionality, i.e. d1.nFeatures ==
-%   d2.nFeatures (size(d1,2) == size(d2,2) for double matrices).
 %   
-%    Example:
-%      X = [0 0; 1 1];
-%      Y = [1 0; 2 2; 3 3;];
-%      D = prtDistanceCustom(X,Y,@(x,y)sqrt(sum((x-y).^2,2)))
+%   %  Example:
 %
-%      % prtDistanceCustom also accepts prtDataSet inputs:
-%      dsx = prtDataSetStandard(X);
-%      dsy = prtDataSetStandard(Y);
-%      distance = prtDistanceCustom(dsx,dsy,@(x,y)sqrt(sum((x-y).^2,2)))
+%   % Create 2 data sets
+%   dsx = prtDataSetStandard('Observations',[0 0; 1 1]);
+%   dsy = prtDataSetStandard('Observations',[1 0; 2 2; 3 3;]);
+%   % Compute their distance based on function handle
+%   distance = prtDistanceCustom(dsx,dsy,@(x,y)sqrt(sum((x-y).^2,2)))
 %
-%   See Also:  prtDistance prtDistanceChebychev prtDistanceCityBlock
-%   prtDistanceEuclidean prtDistanceMahalanobis prtDistanceSquare
+%   See Also: prtDistanceChebychev, prtDistanceCityBlock,
+%   prtDistanceEuclidean, prtDistanceMahalanobis, prtDistanceSquare
 
 [data1,data2] = prtUtilDistanceParseInputs(dataSet1,dataSet2);
 

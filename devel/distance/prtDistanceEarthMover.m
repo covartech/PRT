@@ -1,31 +1,24 @@
 function distance = prtDistanceEarthMover(dataSet1,dataSet2,X1,X2)
 % prtDistanceEarthMover   Earth mover distance
 %
-%   dist = prtDistanceEarthMover(d1,d2) for data sets or double matrices d1
-%   and d2 calculates the earth mover distance from all the observations in
-%   d1 to d2, and ouputs a distance matrix of size d1.nObservations x
-%   d2.nObservations (size(d1,1) x size(d2,1) for double matrices).  With
-%   two input arguments, prtDistanceEarthMover assumes that columns
+%   DIST = prtDistanceEarthMover(DS1,DS2) calculates the Earth Mover
+%   distance from all the observations in DS1 to DS2, and ouputs a distance
+%   matrix of size DS1.nObservations x DS2.nObservations.  DS1 and DS2
+%   should be prtDataSet objecgts. The covariance matrix in the Mahalanobis
+%   is estimated from both the data in DS1 and DS2. DS1 and DS2 should have
+%   the same number of features. prtDistanceEarthMover assumes that columns
 %   represent weights for equally spaced points at locations
 %   1:dataSet.nFeatures.
-%  
-%   d1 and d2 should have the same dimensionality, i.e. d1.nFeatures ==
-%   d2.nFeatures (size(d1,2) == size(d2,2) for double matrices).
 %   
 %   Earth mover's distance requires that the values in d1 and d2 are
 %   positive, and they should have constant row sums for the distance to be
 %   meaningful.
 %
-%   distance = prtDistanceEarthMover(dataSet1,dataSet2,X1,X2) where X1 and 
+%   DIST = prtDistanceEarthMover(DS1,DS2,X1,X2) where X1 and 
 %   X2 are double matrices of size dataSet1.nObservations x
 %   dataSet1.nFeatures and dataSet2.nObservations x dataSet2.nFeatures
 %   allows the user to specify the locations of the points in each of the
 %   data sets.
-%
-%   Example:
-%       d = rand(20,3);
-%       d = bsxfun(@rdivide,d,sum(d,2));
-%       distance = prtDistanceEarthMover(d,d);
 %
 %   For more information, see:
 %   
@@ -33,6 +26,20 @@ function distance = prtDistanceEarthMover(dataSet1,dataSet2,X1,X2)
 %
 %   See also: Rubner, Tomasi, Guibas.  The Earth Mover's Distance as a Metric
 %   for Image Retrieval. 
+%
+%
+%   Example:
+%
+%       d = rand(5,3);                    % Generate some random data
+%       d = bsxfun(@rdivide,d,sum(d,2));   % Normalize
+%
+%       % Store data in prtDataSetStandard
+%       DS = prtDataSetStandard('Observations',d);
+%       % Compute distance
+%       distance = prtDistanceEarthMover(DS,DS);
+%
+% See also: prtDistanceCityBlock, prtDistanceLNorm, prtDistanceEuclidean,
+% prtDistanceSquare, prtDistanceChebychev
 
 [data1,data2] = prtUtilDistanceParseInputs(dataSet1,dataSet2,false);
 if nargin < 4

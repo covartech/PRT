@@ -10,8 +10,8 @@ classdef prtClusterGmm < prtCluster %prtClass %prtAction %should extent prtClust
     %    A prtClusterGmm object inherits all properties from the abstract
     %    class prtCluster. In addition is has the following properties:
     %
-    %    nClusters          - Number of cluster centers to learn (default =
-    %                         3)
+    %    nClusters          - Number of cluster centers to learn. The
+    %                         default is 3.
     %
     %    A prtClusterGmm clustering algorithm trains a prtRvGmm random
     %    variable on training data, and at run time, the clustering
@@ -24,23 +24,28 @@ classdef prtClusterGmm < prtCluster %prtClass %prtAction %should extent prtClust
     %
     %   Example:
     %
-    %   ds = prtDataGenIris;
-    %   ds = ds.retainFeatures(2:3);
-    %   clusterAlgo = prtClusterGmm;
-    %   clusterAlgo = clusterAlgo.train(ds);
-    %   plot(clusterAlgo);
+    %   ds = prtDataGenUnimodal;         % Load a data set
+    %   clusterAlgo = prtClusterGmm;     % Create a prtClusterGmm 
+    %   clusterAlgo.nClusters = 2;       % Set the number of clusters to 2
+    %
+    %   % Set the internal decider to MAP to enable plotting
+    %   clusterAlgo.internalDecider = prtDecisionMap;
+    %    
+    %   clusterAlgo = clusterAlgo.train(ds);  % Train
+    %   plot(clusterAlgo);                    % Plot
     %   
+    %   See Also: prtCluster, prtClusterKmeans
     
     properties (SetAccess=private)
-        name = 'GMM Clustering' 
-        nameAbbreviation = 'GMMCluster'
+        name = 'GMM Clustering'   % Gmm Clustering
+        nameAbbreviation = 'GMMCluster'   % GMMCluster
     end
     
     properties
-        nClusters = 3;
+        nClusters = 3;  % The number of clusters to learn
     end
     properties (SetAccess = protected)
-        gmmRv = prtRvGmm;
+        gmmRv = prtRvGmm; % The Gaussian mixture model found during training
     end
     
     methods
@@ -51,9 +56,9 @@ classdef prtClusterGmm < prtCluster %prtClass %prtAction %should extent prtClust
             end
             Obj.nClusters = value;
         end
-        
+
+        % Allow for string, value pairs
         function Obj = prtClusterGmm(varargin)
-            % Allow for string, value pairs
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
         end
     end

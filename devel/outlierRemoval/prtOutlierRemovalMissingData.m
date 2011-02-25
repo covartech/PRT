@@ -17,19 +17,13 @@ classdef prtOutlierRemovalMissingData < prtOutlierRemoval
     %   dataSet = catObservations(dataSet,outlier); % an Outlier
     %
     %   % Create the prtOutlierRemoval object
-    %   nStdRemove = prtOutlierRemovalNStd('runMode','removeObservation');
+    %   nStdRemove = prtOutlierRemovalMissingData('runMode','removeObservation');
     %
     %   nStdRemove = nStdRemove.train(dataSet);    % Train and run
     %   dataSetNew = nStdRemove.run(dataSet);
     %
-    %   See Also: prtPreProc,
-    %   prtOutlierRemoval,prtPreProcNstdOutlierRemove,
-    %   prtOutlierRemovalMissingData,
-    %   prtPreProcNstdOutlierRemoveTrainingOnly, prtOutlierRemovalNStd,
-    %   prtPreProcPca, prtPreProcPls, prtPreProcHistEq,
-    %   prtPreProcZeroMeanColumns, prtPreProcLda, prtPreProcZeroMeanRows,
-    %   prtPreProcLogDisc, prtPreProcZmuv, prtPreProcMinMaxRows
-    
+    %   See Also:  prtOutlierRemoval,
+    %   prtOutlierRemovalNonFinite,prtOutlierRemovalNstd
     
     properties (SetAccess=private)
         % Required by prtAction

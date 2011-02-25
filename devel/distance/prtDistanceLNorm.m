@@ -1,30 +1,26 @@
 function D = prtDistanceLNorm(dataSet1,dataSet2,Lnorm)
 % prtDistanceLNorm   L Norm distance function.
-%
-%   dist = prtDistanceLNorm(d1,d2,Lnorm) for data sets or double matrices d1
-%   and d2 calculates the Lnorm distance from all the observations in
-%   d1 to d2, and ouputs a distance matrix of size d1.nObservations x
-%   d2.nObservations (size(d1,1) x size(d2,1) for double matrices).
-%  
-%   d1 and d2 should have the same dimensionality, i.e. d1.nFeatures ==
-%   d2.nFeatures (size(d1,2) == size(d2,2) for double matrices).
 %   
-%    Example:
-%      X = [0 0; 1 1];
-%      Y = [1 0; 2 2; 3 3;];
-%      DIST = prtDistanceLNorm(X,Y,3)
-%
-%     % prtDistanceLNorm also accepts prtDataSet inputs:
-%     dsx = prtDataSetStandard(X);
-%     dsy = prtDataSetStandard(Y);
-%     distance = prtDistanceLNorm(dsx,dsy);
-%
+%   DIST = prtDistanceCityBlock(DS1,DS2) calculates the LNorm distance
+%   from all the observations in datasets DS1 to DS2, and ouputs a distance
+%   matrix of size DS1.nObservations x DS2.nObservations. DS1 and DS2
+%   should have the same number of features. DS1 and DS2 should be
+%   prtDataSet objects.
+%   
 %   For more information, see:
-%
+%   
 %   http://en.wikipedia.org/wiki/Norm_(mathematics)#p-norm
 %
-% See also: prtDistance, prtDistanceCityBlock, prtDistanceEuclidean,
-% prtDistanceMahalanobis, prtDistanceSquare, prtDistanceChebychev, norm
+% Example:
+%
+%   % Create 2 data sets
+%   dsx = prtDataSetStandard('Observations', [0 0; 1 1]);
+%   dsy = prtDataSetStandard('Observations', [1 0;2 2; 3 3]);
+%   % Compute distance
+%   distance = prtDistanceLnorm(dsx,dsy)
+%
+% See also: prtDistanceCityBlock, prtDistanceChebychev
+% prtDistanceMahalanobis, prtDistanceSquare, prtDistanceEuclidean
 
 % Copyright 2010, New Folder Consulting, L.L.C.
 
