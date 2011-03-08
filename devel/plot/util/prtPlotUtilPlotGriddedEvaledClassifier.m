@@ -3,6 +3,7 @@ function imageHandle = prtPlotUtilPlotGriddedEvaledClassifier(DS, linGrid, gridS
 % xxx Need Help xxx
 
 nDims = size(linGrid,2);
+
 switch nDims
     case 1
         DS = repmat(DS,1,max(prtActor.dataSetSummary.uniqueClasses));

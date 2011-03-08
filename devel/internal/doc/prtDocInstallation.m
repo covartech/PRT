@@ -73,7 +73,7 @@
 %% That's it!
 %
 % Congratulations!  You've successfully installed the PRT and it should be
-% working properly know.  To learn more, please check out the rest of the
+% working properly now.  To learn more, please check out the rest of the
 % documentation, including:
 %
 % * <prtDocProductOverview.html Product Overview>
