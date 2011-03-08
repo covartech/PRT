@@ -24,7 +24,7 @@ if ~overRideCheck
     end
     
     if ~hasMexSetup
-        error('prt:prtSetupMex','prtSetupMex did not find that your MATLAB is setup to create mex files. If you think this is a mistake rerun prtSetupMex as >> prtSetupMex(true)')
+        error('prt:prtSetupMex','prtSetupMex did not find that your MATLAB is setup to create mex files. If you have not previously setup mex compilation on this computer see the <a href="matlab:doc mex">MATLAB mex documentation</a>. If you think this is a mistake rerun prtSetupMex as >> prtSetupMex(true)')
     end
 end
 

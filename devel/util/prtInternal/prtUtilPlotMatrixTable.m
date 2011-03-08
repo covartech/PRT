@@ -67,7 +67,8 @@ horizontalLineHandles = zeros(nCols,1);
 hold on;
 
 %textCMapInds = gray2ind(mat2gray(X,cLim),size(textCMap,1))+1;
-[dontNeed, textCMapInds] = histc( (X-min(X(:)))./(max(X(:))-min(X(:))) , linspace(0,1+eps,size(textCMap,1)+1));
+[dontNeed, textCMapInds] = histc( (X-cLim(1))./(cLim(2)-cLim(1)) , linspace(0,1+eps,size(textCMap,1)+1));
+textCMapInds(textCMapInds==0 | ~isfinite(textCMapInds)) = size(textCMap,1);
 
 for iRow = 1:nRows
     for jCol = 1:nCols

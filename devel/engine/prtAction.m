@@ -360,6 +360,8 @@ classdef prtAction
                 K = DataSet.nObservations;
             end
             
+            assert(prtUtilIsPositiveScalarInteger(K),'prt:prtAction:kfolds','K must be a positive scalar integer');
+            
             nObs = DataSet.nObservations;
             if K > nObs;
                 warning('prt:prtAction:kfolds:nFolds','Number of folds (%d) is greater than number of data points (%d); assuming Leave One Out training and testing',K,nObs);
