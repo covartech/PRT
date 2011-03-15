@@ -223,6 +223,11 @@ classdef prtAction
                 error('prt:prtAction:incompatible','%s.run() requires datasets of type %s but the input is of type %s, which is not a subclass of %s.',class(Obj), Obj.classRun, inputClassName, Obj.classRun);
             end
             
+            if isempty(DataSetIn)
+                DataSetOut = DataSetIn;
+                return
+            end
+            
             DataSetOut = preRunProcessing(Obj, DataSetIn);
             DataSetOut = runAction(Obj, DataSetOut);
             DataSetOut = postRunProcessing(Obj, DataSetIn, DataSetOut);

@@ -45,6 +45,16 @@ classdef prtPreProcPca < prtPreProc
         means = [];           % A vector of the means
         pcaVectors = [];      % The PCA vectors.
       
+        trainingTotalVariance = []; % The total variance contained in the
+                                    % training data
+        totalVariance = []; % The variance contained in the reduced
+                            % dimension data.
+        totalVarianceCumulative = []; % The variance contained in the
+                                      % reduced dimension data as a
+                                      % function of the number of
+                                      % components
+        
+        
     end
     
     properties( SetAccess = private, Hidden = true)
@@ -105,13 +115,19 @@ classdef prtPreProcPca < prtPreProc
             %Figure out whether to use regular, HD, or EM PCA:
             if useHD
                 if useEM
-                    [twiddle, Obj.pcaVectors] = prtUtilPcaEm(x,Obj.nComponents);
+                    [twiddle, Obj.pcaVectors] = prtUtilPcaEm(x,Obj.nComponents); %#ok<ASGLU>
                 else
-                    [twiddle, Obj.pcaVectors] = prtUtilPcaHd(x,Obj.nComponents);
+                    [twiddle, Obj.pcaVectors] = prtUtilPcaHd(x,Obj.nComponents); %#ok<ASGLU>
                 end
             else
                 Obj.pcaVectors = prtUtilPca(x,Obj.nComponents);
             end
+            
+            Obj.trainingTotalVariance = sum(var(x));
+            pcaVariance = cumsum(var(x*Obj.pcaVectors));
+            
+            Obj.totalVarianceCumulative = pcaVariance;
+            Obj.totalVariance = Obj.totalVarianceCumulative(end);
             
             %For debugging: if you want to compare to SVD decomposition.
             %SVD is marginally faster for smaller matrices, but EM and HD

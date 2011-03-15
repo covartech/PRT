@@ -579,6 +579,113 @@ classdef prtDataSetClass  < prtDataSetStandard
             end
         end
         
+        function varargout = plotBeeSwarm(ds,varargin)
+            % Plot the density of each feature independently as a scatter
+            %
+            % plotBeeSwarm(ds)
+            % patchHandles = plotBeeSwarm(ds);
+            % [patchHandles, boxHandles] = plotBeeSwarm(ds);
+            %
+            % plotBeeSwarm(ds,'PARMNAME',PARAMVALUE)
+            %   Additional parameters:
+            %       minimumKernelBandwidth - minimumBandwidth parameter of 
+            %                                prtRvKde that is used to
+            %                                estimate each density. default
+            %                                eps.
+            %
+            % Example:
+            %    ds = prtDataGenIris;
+            %    plotBeeSwarm(ds)
+            %
+            %    ds = prtDataGenIris;
+            %    plotBeeSwarm(ds,'minimumKernelBandwidth',5e-3);
+            
+            Options.minimumKernelBandwidth = eps;
+            
+            if nargin > 1
+                assert(mod(length(varargin),2)==0,'Additional inputs must be string value pairs')
+                
+                paramNames = varargin(1:2:end);
+                paramValues = varargin(2:2:end);
+                
+                optionFieldNames = fieldnames(Options);
+                for iPair = 1:length(paramNames)
+                    assert(ismember(paramNames{iPair},optionFieldNames),'%s is not a valid parameter name for plotBeeSwarm() (These parameters are case sensitive.)',paramNames{iPair});
+                    Options.(paramNames{iPair}) = paramValues{iPair};
+                end
+            end            
+            
+            Summary = ds.summarize();
+            
+            holdState = get(gca,'NextPlot');
+            
+            if strcmpi(get(gcf,'NextPlot'),'New')
+                figure
+            end
+            
+            if strcmp(holdState,'replace')
+                cla; % Clear axes since patch doesn't automatically
+            end
+            
+            % Estimate each features density and plot
+            F = nan([Summary.nObservations, Summary.nFeatures]);
+            for iFeature = 1:Summary.nFeatures
+                F(:,iFeature) = pdf(mle(prtRvKde('minimumBandwidth',Options.minimumKernelBandwidth),ds.getObservations(:,iFeature)),ds.getObservations(:,iFeature));
+            end            
+            F = bsxfun(@rdivide,F,max(F))/4;
+            FLeft = F;
+            F = bsxfun(@plus,F,1:Summary.nFeatures);
+            FLeft = bsxfun(@plus,-FLeft,1:Summary.nFeatures);
+            centeredX = bsxfun(@minus,bsxfun(@rdivide,ds.getObservations(),Summary.upperBounds),Summary.lowerBounds./Summary.upperBounds);
+            
+            
+            % Plot Box Plots
+            boxColor = [0.8 0.8 0.8];
+            boxEdgeColor = [0 0 0];
+            centerLineColor = [0 0 0];
+            
+            boxHandles = zeros(Summary.nFeatures,2);
+            
+            boxIndexes = round(Summary.nObservations.*[0.25 0.5 0.75]);
+            for iFeature = 1:Summary.nFeatures
+            
+                sortedX = sort(centeredX(:,iFeature));
+                
+                cBottom = sortedX(boxIndexes(1));
+                cMiddle = sortedX(boxIndexes(2));
+                cTop = sortedX(boxIndexes(3));
+                
+                boxHandles(iFeature,1) = patch([-1 -1 1 1]*1/3 + iFeature, [cBottom, cTop, cTop, cBottom], boxColor,'edgecolor',boxEdgeColor);
+                boxHandles(iFeature,2) = line([-1 1]*1/3 + iFeature,[cMiddle, cMiddle],'color',centerLineColor,'linewidth',2);
+            end
+            
+            
+            % Plot using prtDataSetClass.plot() with the densities and the
+            % feature indexes as the data
+            % Each observation is actually two points, one on the left and
+            % one on the right.
+            hold on;
+            ds = ds.setObservationsAndTargets(cat(2,cat(1,F(:),FLeft(:)),repmat(centeredX(:),2,1)),repmat(ds.getTargets(),Summary.nFeatures*2,1));
+            plotHandles = plot(ds);
+            
+            xlabel('Feature');
+            ylabel('Normalized Feature Value');
+            
+            set(gca,'NextPlot',holdState,'YTick',[]);
+            
+            set(legend,'location','best');
+            
+            if Summary.nFeatures < 10
+                set(gca,'XTick',1:Summary.nFeatures,'XTickLabel',ds.getFeatureNames());
+            end
+            xlim([0.5 Summary.nFeatures+0.5]);
+            
+            
+            if nargout
+                varargout = {plotHandles, boxHandles};
+            end
+        end
+        
         function varargout = plotDensity(ds,varargin)
             % Plot the density of each feature independently as a volume.
             %
@@ -605,7 +712,7 @@ classdef prtDataSetClass  < prtDataSetStandard
             %
             %    ds = prtDataGenIris;
             %    plotDensity(ds,'minimumKernelBandwidth',5e-3);
-            % 
+            
             Options.nDensitySamples = 500;
             Options.faceAlpha = 0.7;
             Options.minimumKernelBandwidth = eps;
