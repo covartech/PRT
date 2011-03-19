@@ -536,5 +536,22 @@ classdef prtAction
             optimizedAction = train(Obj,DataSet);
             
         end
+        
+        function [outputObj, creationString] = gui(obj)
+            % GUI Graphical method to set properties of prtAction
+            %
+            % [outputObj, creationString] = gui(obj)
+            % 
+            % outputObj - Object with specified parameters
+            % creationString - code to recreate gui actions
+            %
+            % Not all properties are currently able to be set using gui
+            %
+            % Example:
+            %   knn = prtClassKnn;
+            %   knn.gui
+            
+            [outputObj, creationString] = prtUtilObjectGuiSimple(obj);
+        end
     end
 end
