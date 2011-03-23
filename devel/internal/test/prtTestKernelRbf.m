@@ -20,6 +20,31 @@ if all(diag(kernOut.getX) ~= ones(size(kernOut.getX,2),1))
     result = false;
 end
 
+% check answer for scalar
+
+ds = prtDataSetStandard('observations',1);
+ds1 = prtDataSetStandard('observations', 2);
+kern = prtKernelRbf;
+kern = kern.train(ds);
+out = kern.run(ds1);
+
+if ~isequal(out.getX, exp(-1))
+    disp('prt kernel rbf wrong answer for scalar')
+    result = false;
+end
+
+% Check it for 1 element vector
+ds = prtDataSetStandard('observations',[1 1]);
+ds1 = prtDataSetStandard('observations', [2 2]);
+kern = prtKernelRbf;
+kern = kern.train(ds);
+out = kern.run(ds1);
+
+dist = prtDistanceEuclidean([1 1], [2 2 ]);
+if  (exp(-(dist.^2)) - out.getX) > 1e-15
+    result = false;
+    disp('prt rbf kernel wrong answer vector')
+end
 % check to string
 try
     str = kern.toString;
