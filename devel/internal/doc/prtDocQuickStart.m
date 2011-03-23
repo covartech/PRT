@@ -166,8 +166,8 @@ yOut = fld.kfolds(dataSet,3);   % Call KFOLDS with 3 folds
 [pfFldKfolds,pdFldKfolds] = prtScoreRoc(yOut); 
 
 %%
-% Note that since algorithms are also prtAction objects, KFOLDS in the same
-% manner:
+% Note that since algorithms are also prtAction objects, KFOLDS works in
+% the same manner:
 
 % Create an algorithm
 pcaFldAlgorithm = prtPreProcPca('nComponents',2) + prtClassFld;
