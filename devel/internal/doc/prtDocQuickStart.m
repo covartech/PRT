@@ -44,7 +44,7 @@ y = [y_0;y_1];
 
 %% Creating and Plotting Data Sets (Using x and y)
 % Given data like x and y from above, it's easy to make a prtDataSetClass
-% from data and class labels, - if your data is in a matrix x of size
+% from data and class labels, if your data is in a matrix x of size
 % nObservations x nFeatures, and the labels are in a vector y of size
 % nObservations x 1 (with y == 1 indicating class 1, and y == 0 indicating
 % class 0, for example), just call:
@@ -59,20 +59,19 @@ plot(dataSet);
 % your data.
 %
 % Almost everything you can do in the PRT is implemented as a prtAction,
-% and all prtActions can be trained and run. Training and running are the
-% fundamental operations of all prtActions. Training is the activity of
+% and all prtActions can be trained and run. Training is the activity of
 % inferring parameters from a set of data (for example, training a PCA
 % object consists of inferring the principal component loadings). Running
 % an action results in applying the trained object to a set of data (for
-% example, running a classifier object assigns labels to the data).
+% example, running a classifier object assigns confidences to each observation).
 %
 % The input to a TRAIN method should be the data set to be used for
 % training, and the output of training any action is an object of the same
 % type as the original action, but with additional fields set based on the
 % training data.
 %
-% For a concrete example, consider the PRT implementation of Principle
-% Component Analysis, the prtPreProcPca object.  prtPreProcPca is a
+% For a concrete example, consider the PRT implementation of principle
+% component analysis, the prtPreProcPca object.  prtPreProcPca is a
 % prtAction, so it has a train and a run method, and we can do the
 % following:
 
