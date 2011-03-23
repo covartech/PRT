@@ -358,6 +358,10 @@ classdef prtAction
             %    Obj.KFOLDS(DATASET, K)  outputs the trained prtAction
             %    objects TRAINEDACTIONS, and the generated cross-validation
             %    keys CROSSVALKEYS.
+            %
+            %    To manually set which observations correspond are in 
+            %    which fold see crossValidate.
+            
             
             assert(isa(DataSet,'prtDataSetBase'),'First input must by a prtDataSet.');
             
