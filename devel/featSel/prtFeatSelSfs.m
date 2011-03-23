@@ -35,7 +35,7 @@ classdef prtFeatSelSfs < prtFeatSel
 %
 %   dataSet = prtDataGenFeatureSelection;         % Generate a data set
 %   featSel = prtFeatSelSfs;          % Create a feature selction object
-%   featSel.nFeatures = 1;            % Select only one feature of the data
+%   featSel.nFeatures = 3;            % Select only one feature of the data
 %   featSel = featSel.train(dataSet); % Train the feature selection object
 %   outDataSet = featSel.run(dataSet);% Extract the data set with only the
 %                                     % selected features
