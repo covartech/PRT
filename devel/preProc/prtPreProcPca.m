@@ -15,16 +15,14 @@ classdef prtPreProcPca < prtPreProc
     %
     %   Example:
     %
-    %   dataSet = prtDataGenUnimodal;   % Load a data set
+    %   dataSet = prtDataGenFeatureSelection;    % Load a data set
     %   pca = prtPreProcPca;            % Create a prtPreProcPca object
     %                        
     %   pca = pca.train(dataSet);       % Train the prtPreProcPca object
     %   dataSetNew = pca.run(dataSet);  % Run
     % 
     %   % Plot
-    %   subplot(2,1,1); plot(dataSet);
-    %   title('Original Data');
-    %   subplot(2,1,2); plot(dataSetNew);
+    %   plot(dataSetNew);
     %   title('PCA Projected Data');
     %
     %   See Also: prtPreProc, prtPreProcPca, prtPreProcPls,
@@ -38,7 +36,7 @@ classdef prtPreProcPca < prtPreProc
     end
     
     properties
-        nComponents = 3;   % The number of PCA components
+        nComponents = 3;   % The number of principle components
     end
     properties (SetAccess=private)
 

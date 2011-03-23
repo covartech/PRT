@@ -11,14 +11,14 @@ classdef prtPreProcZeroMeanColumns < prtPreProc
     %
     %   Example:
     %
-    %   dataSet = prtDataGenIris;             % Load a data set and 
+    %   dataSet = prtDataGenIris;             % Load a data set and
     %   dataSet = dataSet.retainFeatures(1:2);% Retain the first 2 features
     %   zmc = prtPreProcZeroMeanColumns;      % Create a
     %                                         % prtPreProcZeroMeanColumns object
-    %                                    
+    %
     %   zmc = zmc.train(dataSet);             % Train
     %   dataSetNew = zmc.run(dataSet);        % Run
-    % 
+    %
     %   % Plot
     %   subplot(2,1,1); plot(dataSet);
     %   title(sprintf('Mean: %s',mat2str(mean(dataSet.getObservations),2)))
@@ -40,12 +40,12 @@ classdef prtPreProcZeroMeanColumns < prtPreProc
     end
     properties (SetAccess=private)
         % General Classifier Properties
-        meanVector = [];           % A vector of the means
+        meanVector = [];           % The vector of the means
     end
     
     methods
         
-          % Allow for string, value pairs
+        % Allow for string, value pairs
         function Obj = prtPreProcZeroMeanColumns(varargin)
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
         end

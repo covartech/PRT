@@ -1,12 +1,12 @@
 classdef prtPreProcHistEq < prtPreProc
-% prtPreProcHistEq   Histogram equalization pre-processing
-%
+    % prtPreProcHistEq   Histogram equalization pre-processing
+    %
     %   HISTEQ = prtPreProcHistEq creates a histogram equalization pre
     %   processing object. A prtPreProcHistEq object processes the input
     %   data
     %   so that the distribution of each feature is approximately uniform
-    %   in the range [0,1].  
-    % 
+    %   in the range [0,1].
+    %
     %   prtPreProcHistEq has the following properties:
     %
     %   nSamples    - The number of samples to use when learning the
@@ -24,10 +24,10 @@ classdef prtPreProcHistEq < prtPreProc
     %                                          % Features
     %   histEq = prtPreProcHistEq;             % Create the
     %                                          % prtPreProcHistEq Object
-    %                        
+    %
     %   histEq = histEq.train(dataSet);        % Train the object
     %   dataSetNew = histEq.run(dataSet);      % Equalize the histogram
-    % 
+    %
     %   % Plot
     %   subplot(2,1,1); plot(dataSet);
     %   title('Original Data');

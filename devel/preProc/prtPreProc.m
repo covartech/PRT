@@ -14,7 +14,7 @@ classdef prtPreProc < prtAction
     %   prtPreProcMinMaxRows
 
     properties (SetAccess = protected)
-        isSupervised = false;
+        isSupervised = false;  % False
         isCrossValidateValid = true; % True
     end
     
