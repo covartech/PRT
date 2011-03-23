@@ -22,9 +22,9 @@ classdef prtKernel < prtAction
     %
     %   kernels = prtKernelDc & prtKernelRbf; % kernels is prtKernelSet
     %
-    %  See also: prtKernelRbf, prtKernelDc, prtKernelDirect,
-    %   prtKernelHyperbolicTangent, prtKernelPolynomial,
-    %   prtKernelRbfNdimensionScale,
+    %  See also: prtKernelRbf, prtKernelSet, prtKernelDc, prtKernelDirect,
+    %  prtKernelHyperbolicTangent, prtKernelPolynomial,
+    %  prtKernelRbfNdimensionScale,
     
     % Internal Help:
     %
