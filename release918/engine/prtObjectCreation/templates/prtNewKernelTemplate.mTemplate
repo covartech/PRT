@@ -1,0 +1,68 @@
+classdef <fileName> < prtKernel
+    %<fileName> Insert description of kernel here
+    %
+    
+    properties (SetAccess=private)
+        name = '<className>'                  % Insert the name of the kernel
+        nameAbbreviation = '<className>'      % A short abbreviation of the name
+    end
+    
+    properties  
+       % Place definitions of properties that your kernel requires here
+    end
+    
+    methods
+        
+        %Define a constructor
+        function Obj = <fileName>(varargin)
+            %Uncomment this line to enable parameter/value setting of public
+            %properties for your kernel
+            % Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
+        end
+        
+        % Put additional methods here (set, get methods, and any other
+        % methods your kernel requires)
+    end
+    
+    methods
+        function nDimensions = nDimensions(Obj)
+            % Output the number of dimensions that the kernel will output.
+            % For many kernels (e.g. RBF, Polynomial) nDimensions is the
+            % number of observations in the input training dataSet.
+            nDimensions = nan;
+        end
+        
+        function Obj = retainKernelDimensions(Obj,keepLogical)
+            % Update the object so it will only run the selected dimensions
+            % of the kernel.
+        end
+    end
+    
+    methods (Access=protected, Hidden = true)
+        
+        function Obj = trainAction(Obj,DataSet)
+            % Place code here to perform kernel training.  This
+            % function should set the properties of Obj so that in
+            % runAction the kernel can output processed data
+            
+        end
+        
+        function DataSetOut = runAction(Obj,DataSetIn)
+            % Place code here to run the kernel.  This
+            % function should set output a DataSet with observations of size
+            % DataSetIn.nObservations x Obj.nDimensions
+            %
+            % If yOut is a vector or matrix containing the output values,
+            % the DataSetOut can be created with the following line of
+            % code:
+            %
+            %   DataSetOut = DataSetIn.setObservations(yOut);
+
+            %By default, do nothing; remove this line to include your 
+            %algorithm
+            DataSetOut = DataSetIn; 
+        end
+        
+    end
+    
+end
