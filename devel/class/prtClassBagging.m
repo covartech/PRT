@@ -82,6 +82,21 @@ classdef prtClassBagging < prtClass
             Obj.nBags = val;
         end
         
+        function Obj = set.nSamplesPerBag(Obj,val)
+            if ~prtUtilIsPositiveScalarInteger(val) && ~isempty(val)
+               error('prt:prtClassBagging:nSamplesPerBag','nSamplesPerBag must be empty, or a positive scalar integer'); 
+            end
+            Obj.nSamplesPerBag = val;
+        end
+        
+        
+        function Obj = set.bootstrapByClass(Obj,val)
+            if ~prtUtilIsLogicalScalar(val)
+               error('prt:prtClassBagging:bootstrapByClass','bootstrapByClass must be a logical scalar'); 
+            end
+            Obj.bootstrapByClass = val;
+        end
+        
         function Obj = set.baseClassifier(Obj,classifier)
             if ~isa(classifier,'prtClass')
                 error('prt:prtClassBagging','baseClassifier must be a subclass of prtClass, but classifier provided was a %s',class(classifier));
