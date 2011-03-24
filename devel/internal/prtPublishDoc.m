@@ -7,7 +7,7 @@ function prtPublishDoc
 docHtmlDir = fullfile(prtRoot,'doc');
 docMDir = fullfile(prtRoot,'internal','doc');
 
-mfilelist = subDir(docMDir,'prtDoc*.m');
+mfilelist = prtUtilSubDir(docMDir,'prtDoc*.m');
 
 PublishOptions.format = 'html';
 PublishOptions.outputDir = docHtmlDir;

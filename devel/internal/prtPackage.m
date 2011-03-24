@@ -63,6 +63,14 @@ if isdir(fullfile(prtTarget,'doc','helpsearch'))
     rmdir(fullfile(prtTarget,'doc','helpsearch'),'s');
 end
 
+% Copy the web doc over.
+docTarget = fullfile(prtTarget,'..','webDoc');
+copyfile(fullfile(prtTarget,'doc'), docTarget);
+% Copy over the webOnlyDocFiles
+copyfile(fullfile(prtRoot,'internal','doc','docWebOnlyFiles'), docTarget);
+rmdir(fullfile(docTarget,'.svn'),'s') % Delete .svn
+
+
 zip(cat(2,prtTarget,'.zip'),prtTarget)
 
 end

@@ -35,6 +35,7 @@
 %% prtDataGen
 % * <./functionReference/prtDataGenBimodal.html prtDataGenBimodal>
 % * <./functionReference/prtDataGenCircles.html prtDataGenCircles>
+% * <./functionReference/prtDataGenFeatureSelection.html prtDataGenFeatureSelection>
 % * <./functionReference/prtDataGenIris.html prtDataGenIris>
 % * <./functionReference/prtDataGenMary.html prtDataGenMary>
 % * <./functionReference/prtDataGenNoisySinc.html prtDataGenNoisySinc>

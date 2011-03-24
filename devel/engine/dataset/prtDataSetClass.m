@@ -541,6 +541,7 @@ classdef prtDataSetClass  < prtDataSetStandard
             lineWidth = obj.plotOptions.symbolLineWidth;
             
             handleArray = zeros(nClasses,1);
+            allHandles = cell(nClasses,1);
             
             holdState = get(gca,'nextPlot');
             
@@ -557,6 +558,8 @@ classdef prtDataSetClass  < prtDataSetStandard
                 
                 h = prtPlotUtilLinePlot(xInd,cX,classColors(i,:),lineWidth);
                 handleArray(i) = h(1);
+                allHandles{i} = h(:);
+                
                 if i == 1
                     hold on;
                 end
@@ -575,7 +578,7 @@ classdef prtDataSetClass  < prtDataSetStandard
             % Handle Outputs
             varargout = {};
             if nargout > 0
-                varargout = {handleArray,legendStrings};
+                varargout = {handleArray, legendStrings, allHandles};
             end
         end
         
