@@ -10,8 +10,18 @@ classdef prtClassBagging < prtClass
     %    A prtClassBagging object inherits all properties from the abstract
     %    class prtClass. In addition is has the following properties:
     %
-    %    baseClassifier  - The classifier to be used 
-    %    nBags           - The number of bagging sampes to use
+    %    baseClassifier  - The base classifier to be used 
+    %    nBags           - The number of bags to aggregate over
+    %    nSamplesPerBag  - The number of bootstrap samples to use per bag.
+    %           When nSamplesPerBag is an empty matrix (the default),
+    %           the number of bootstrap samples is set to the number of
+    %           observations in the training data set.
+    %    bootstrapByClass - A logical describing whether to enforce an
+    %           equal number of bootstrap samples from each class in the
+    %           training data set. If bootstrapByClass is true,
+    %           floor(nSamplesPerBag/nClasses) samples per class are used
+    %           when training each classifier.  bootstrapByClass defaults
+    %           to false.
     % 
     %    Bagging classifiers are meta-classifiers that attempt to develop
     %    more robust decision boundaries by aggregating outputs over
@@ -51,7 +61,9 @@ classdef prtClassBagging < prtClass
     
     properties
         baseClassifier = prtClassFld;  % The classifier to be bagged
-        nBags = 100;                  % The number of bags
+        nBags = 100;                   % The number of bags
+        nSamplesPerBag = [];           % The number of bootstrap samples to use in each bag
+        bootstrapByClass = false;      % Whether to force an equal number of bootstrap samples per class
     end
     properties (SetAccess=protected, Hidden = true)
         Classifiers
@@ -83,11 +95,27 @@ classdef prtClassBagging < prtClass
         function Obj = trainAction(Obj,DataSet)
 
             Obj.nameAbbreviation = sprintf('Bagging_{%s}',Obj.baseClassifier.nameAbbreviation);
+            %Infer the number of boostrap samples; if nSamplesPerBag is 
+            %empty, default to nObservations 
+            nBootstrapSamples = Obj.nSamplesPerBag;
+            if isempty(nBootstrapSamples)
+                nBootstrapSamples = DataSet.nObservations;
+            end
             for i = 1:Obj.nBags
-                if i == 1
-                    Obj.Classifiers = train(Obj.baseClassifier,DataSet.bootstrap(DataSet.nObservations));
+                %Figure out which bootstrap function to call, and how many
+                %samples we need
+                if Obj.bootstrapByClass
+                    %To make approximately nBootstrapSamples total, use
+                    %nBootstrapSamples/DataSet.nClasses per class
+                    bootstrapData = DataSet.bootstrapByClass(floor(nBootstrapSamples/DataSet.nClasses));
                 else
-                    Obj.Classifiers(i) = train(Obj.baseClassifier,DataSet.bootstrap(DataSet.nObservations));
+                    bootstrapData = DataSet.bootstrap(nBootstrapSamples);
+                end
+                
+                if i == 1
+                    Obj.Classifiers = train(Obj.baseClassifier,bootstrapData);
+                else
+                    Obj.Classifiers(i) = train(Obj.baseClassifier,bootstrapData);
                 end
             end
         end
