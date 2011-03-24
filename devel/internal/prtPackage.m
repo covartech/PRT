@@ -1,6 +1,13 @@
 function prtPackage(prtTarget)
 % prtPackage - Package the release of the PRT into a zip file.
 
+if nargin < 1
+    prtTarget = fullfile(getenv('userprofile'),'Desktop','prt');
+    if ~isdir(prtTarget)
+        mkdir(prtTarget)
+    end
+end
+
 %Write the Contents.m file in the current directory
 disp('Updating contents .m');
 oldDir = pwd;
