@@ -60,13 +60,16 @@ classdef prtClassBagging < prtClass
     end
     
     properties
-        baseClassifier = prtClassFld;  % The classifier to be bagged
         nBags = 100;                   % The number of bags
         nSamplesPerBag = [];           % The number of bootstrap samples to use in each bag
         bootstrapByClass = false;      % Whether to force an equal number of bootstrap samples per class
     end
     properties (SetAccess=protected, Hidden = true)
         Classifiers
+        internalBaseClassifier = prtClassFld;
+    end
+    properties (Dependent)
+        baseClassifier                 % The classifier to be bagged
     end
     
     methods
@@ -101,8 +104,14 @@ classdef prtClassBagging < prtClass
             if ~isa(classifier,'prtClass')
                 error('prt:prtClassBagging','baseClassifier must be a subclass of prtClass, but classifier provided was a %s',class(classifier));
             end
-            Obj.baseClassifier = classifier;
+            Obj.isNativeMary = classifier.isNativeMary;
+            Obj.internalBaseClassifier = classifier;
         end
+        
+        function value = get.baseClassifier(Obj)
+            value = Obj.internalBaseClassifier;
+        end
+        
     end
     
     methods (Access=protected, Hidden = true)
