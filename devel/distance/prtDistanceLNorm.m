@@ -75,12 +75,20 @@ if (nDim1>1) && ((nSamples1*nSamples2*nDim1)<=chunkSize)
             D = max(abs(bsxfun(@minus,reshape(data1,[nSamples1,1,nDim1]),reshape(data2,[1,nSamples2,nDim1]))),[],3);
         case 0
             D = min(abs(bsxfun(@minus,reshape(data1,[nSamples1,1,nDim1]),reshape(data2,[1,nSamples2,nDim1]))),[],3);
-        case 2
-            %un-rolled((x-y)^2)) - sqrt below; this takes less time than
-            %the generic code below for the most common L-norm (2)
             
-            %D = repmat(sum((data1.^2), 2), [1 nSamples2]) + repmat(sum((data2.^2),2), [1 nSamples1]).' - 2*data1*(data2.');
-            D = bsxfun(@minus,bsxfun(@plus,sum((data1.^2), 2),sum((data2.^2),2).'),2*data1*(data2.'));
+            % This code has overflow problems for large data1 and data2
+            %         case 2
+            %             %un-rolled((x-y)^2)) - sqrt below; this takes less time than
+            %             %the generic code below for the most common L-norm (2)
+            %
+            %             %D = repmat(sum((data1.^2), 2), [1 nSamples2]) + repmat(sum((data2.^2),2), [1 nSamples1]).' - 2*data1*(data2.');
+            %
+            %             %             %Handle overflow issues for large data2
+            %             %             muData2 = prtUtilNanMean(data2);
+            %             %             data2 = bsxfun(@minus,data2,muData2);
+            %             %             data1 = bsxfun(@minus,data1,muData2);
+            %
+            %             D = bsxfun(@minus,bsxfun(@plus,sum((data1.^2), 2),sum((data2.^2),2).'),2*data1*(data2.'));
         otherwise
             D = sum(bsxfun(@minus,reshape(data1,[nSamples1,1,nDim1]),reshape(data2,[1,nSamples2,nDim1])).^Lnorm,3);
     end
