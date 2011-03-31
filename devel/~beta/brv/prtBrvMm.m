@@ -36,7 +36,7 @@ classdef prtBrvMm < prtBrv & prtBrvVb & prtBrvVbOnline
             [obj, priorObj, training] = vbInitialize(obj, x);
             
             if obj.vbVerboseText
-                fprintf('\Iterating VB Updates\n')
+                fprintf('\tIterating VB Updates\n')
             end
             
             for iteration = 1:obj.vbMaxIterations

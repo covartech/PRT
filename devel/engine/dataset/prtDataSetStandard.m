@@ -636,16 +636,18 @@ classdef prtDataSetStandard < prtDataSetBase
                 end
                 
                 % Put observation info back.
-                obj.observationInfo = oldObservationInfo(retainedIndices);
+                newObservationInfo = oldObservationInfo(retainedIndices);
+                obj.observationInfo = newObservationInfo;
                 
+                    
                 % Updated chached target info
                 obj = updateTargetsCache(obj);
 
                 % Updated chached data info
                 obj = updateObservationsCache(obj);
             catch  ME
-                retainedIndices = prtDataSetBase.parseIndices(obj.nObservations ,retainedIndices);
-                throw
+                retainedIndices = prtDataSetBase.parseIndices(obj.nObservations ,retainedIndices); %#ok<NASGU>
+                rethrow(ME);
             end
             
         end
@@ -828,7 +830,7 @@ classdef prtDataSetStandard < prtDataSetBase
         
         function obj = set.observationInfo(obj,Struct)
             % Error checks for setting observationInfo in batch mode
-            if isempty(Struct)
+            if size(Struct,1)~=obj.nObservations && isempty(Struct)
                 % Empty is ok.
                 % It has to be for loading and saving.
                 return

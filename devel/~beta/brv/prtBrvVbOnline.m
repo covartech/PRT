@@ -2,8 +2,11 @@ classdef prtBrvVbOnline
     properties
         vbOnlineD = 100;
         vbOnlineTau = 20;
-        vbOnlineKappa = 0.01;
+        vbOnlineKappa = 0.; % (0.5 1] to ensure convergence
         vbOnlineT = 0;
+        
+        vbOnlineUseStaticLambda = false; % false uses Sato method
+        vbOnlineStaticLambda = 0.9;
         
         vbOnlineBatchSize = 10;
     end
@@ -12,8 +15,11 @@ classdef prtBrvVbOnline
     end
     methods
         function val = get.vbOnlineLambda(obj)
-            %val = (obj.vbOnlineTau + obj.vbOnlineT)^(-obj.vbOnlineKappa); % 1 - 1./((obj.vbOnlineT -2)*obj.vbOnlineKappa + obj.vbOnlineTau);
-            val = 0.001;
+            if ~obj.vbOnlineUseStaticLambda
+                val = (obj.vbOnlineTau + obj.vbOnlineT)^(-obj.vbOnlineKappa); % 1 - 1./((obj.vbOnlineT -2)*obj.vbOnlineKappa + obj.vbOnlineTau);
+            else
+                val = obj.vbOnlineStaticLambda;
+            end
         end
         function  [obj, training] = vbOnline(obj, x)
             

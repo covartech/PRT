@@ -103,7 +103,7 @@ classdef prtBrvMvn < prtBrvObsModel & prtBrvVbOnlineObsModel
             % We want to do simply this
             %muBar = 1./N_bar.*sum(bsxfun(@times,X,weights));
             % but to avoid divide by zero warnings we do this.
-            muBar = sum(bsxfun(@times,x,weights));
+            muBar = sum(bsxfun(@times,x,weights),1);
             if N_bar > 0
                 muBar = muBar./N_bar;
             else
@@ -206,27 +206,28 @@ classdef prtBrvMvn < prtBrvObsModel & prtBrvVbOnlineObsModel
         
         function [obj, training] = vbOnlineWeightedUpdate(obj, x, weights, lambda, D)
             S = size(x,1);
+            priorObj = obj;
             
-            updatedObj = obj.weightedConjugateUpdate(obj, x, D/S*weights);
+            muBar = sum(bsxfun(@times,x,weights),1);
             
-            updatedMeanBeta = updatedObj.model.meanBeta;
-            oldMeanBeta = obj.model.meanBeta;
+            N_bar = sum(weights,1)*D/S;
             
-            updatedMeanMeanUnNorm = updatedObj.model.meanMean * updatedMeanBeta;
-            oldMeanMeanUnNorm = obj.model.meanMean * oldMeanBeta;
+            if sum(weights) > 0
+                muBar = muBar./N_bar;
+            else
+                muBar = zeros(1,size(x,2));
+            end
             
-            updatedCovPhi = updatedObj.model.covPhi;
-            oldCovPhi = obj.model.covPhi;
+            xWeightedDemeaned = bsxfun(@times,bsxfun(@minus,x,muBar),sqrt(weights));
+            sigmaBar = xWeightedDemeaned'*xWeightedDemeaned;
             
-            updatedCovNu = updatedObj.model.covNu;
-            oldCovNu = obj.model.covNu;
+            obj.model = priorObj.model;
+            obj.model.meanBeta = lambda*N_bar + (1-lambda)*priorObj.model.meanBeta;
+            obj.model.meanMean = (muBar.*N_bar*lambda + (1-lambda)*priorObj.model.meanMean.*priorObj.model.meanBeta) ./ obj.model.meanBeta;
+            obj.model.covNu = lambda*N_bar + (1-lambda)*priorObj.model.covNu;
+            obj.model.covPhi = sigmaBar*D/S*lambda + lambda*N_bar.*priorObj.model.meanBeta.*(muBar - priorObj.model.meanMean)'*(muBar - priorObj.model.meanMean)./(lambda*N_bar + (1-lambda)*priorObj.model.meanBeta) + (1-lambda)*priorObj.model.covPhi;
             
-            obj.model.meanBeta = lambda*oldMeanBeta + (1-lambda)*updatedMeanBeta;
-            obj.model.meanMean = (lambda*oldMeanMeanUnNorm + (1-lambda)*updatedMeanMeanUnNorm)/obj.model.meanBeta;
-            
-            obj.model.covPhi = lambda*oldCovPhi + (1-lambda)*updatedCovPhi;
-            obj.model.covNu = lambda*oldCovNu + (1-lambda)*updatedCovNu;
-            
+
             training = struct([]);
         end
     end

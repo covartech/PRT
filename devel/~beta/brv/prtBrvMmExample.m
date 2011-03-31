@@ -2,7 +2,7 @@ clear classes
 ds = prtDataGenOldFaithful; x = ds.getX;
 %x = draw(prtRvGmm('components',cat(1,prtRvMvn('mu',[0 0],'sigma',eye(2)),prtRvMvn('mu',[3 3],'sigma',eye(2))),'mixingProportions',[0.6 0.4]),200);
 
-mm = prtBrvMm(repmat(prtBrvMvn(2),25,1));
+mm = prtBrvMm(repmat(prtBrvMvn(2),10,1));
 mm.vbVerboseText = true;
 mm.vbVerbosePlot = true;
 [mmLearned, training] = mm.vb(x);
@@ -53,6 +53,11 @@ initSamples = 10;
 
 [mmLearnedOnline, mmLearnedOnlinePrior, training] = mm.vbInitialize(x(1:initSamples,:));
 mmLearnedOnline = mmLearnedOnline.vbM(mmLearnedOnlinePrior, x(1:initSamples,:), training);
+
+mmLearnedOnline.vbOnlineUseStaticLambda = true;
+mmLearnedOnline.vbOnlineStaticLambda = 0.1;
+mmLearnedOnline.vbOnlineD = 1;
+
 %%
 for iX = (initSamples+1):size(x,1)
     mmLearnedOnline = mmLearnedOnline.vbOnlineUpdate(x(iX,:));
