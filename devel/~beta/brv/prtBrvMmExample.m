@@ -30,7 +30,7 @@ x2 = draw(prtRvMvn('mu',[-2 -2],'sigma',eye(2)),100);
 mmLearned.vbOnlineKappa = 0.1;
 mmLearned.vbOnlineTau = 10;
 mmLearned.vbVerbosePlot = true;
-[mmLearnedAgain, training] = mmLearned.vbOnlineUpdate(x2);
+[mmLearnedAgain, training] = mmLearned.vbOnlineUpdate(mm,x2);
 
 %%
 
@@ -56,9 +56,8 @@ mmLearnedOnline = mmLearnedOnline.vbM(mmLearnedOnlinePrior, x(1:initSamples,:), 
 
 mmLearnedOnline.vbOnlineUseStaticLambda = true;
 mmLearnedOnline.vbOnlineStaticLambda = 0.1;
-mmLearnedOnline.vbOnlineD = 1;
+mmLearnedOnline.vbOnlineD = 25;
 
-%%
 for iX = (initSamples+1):size(x,1)
-    mmLearnedOnline = mmLearnedOnline.vbOnlineUpdate(x(iX,:));
+    mmLearnedOnline = mmLearnedOnline.vbOnlineUpdate(mm,x(iX,:));
 end

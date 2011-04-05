@@ -518,7 +518,7 @@ classdef prtDataSetStandard < prtDataSetBase
         end
         
         function obj = set.targets(obj,newTargets)
-            if size(obj.targets,1) ~= size(newTargets,1)
+            if obj.nObservations ~= size(newTargets,1)
                 % # of observations is changing therefore, observationInfo
                 % is no longer valid
                 obj.observationInfo = repmat(struct,size(newTargets,1),1);
@@ -913,6 +913,7 @@ classdef prtDataSetStandard < prtDataSetBase
                 val = cat(1,obj.observationInfo.(fieldName));
             catch %#ok<CTCH>
                 % This failed because of invalid matrix dimensions
+                val = [];
             end
             if size(val,1) == obj.nObservations
                 % Everything worked out, value in observationInfo 

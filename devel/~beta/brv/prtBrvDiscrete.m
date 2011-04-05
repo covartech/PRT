@@ -112,10 +112,10 @@ classdef prtBrvDiscrete < prtBrvObsModel & prtBrvVbOnlineObsModel
 
         end
         
-        function [obj, training] = vbOnlineWeightedUpdate(obj, x, weights, lambda, D) %#ok<INUSL>
+        function [obj, training] = vbOnlineWeightedUpdate(obj, priorObj, x, weights, lambda, D) %#ok<INUSL>
             S = size(x,1);
             
-            obj.model.lambda = obj.model.lambda*lambda + D/S*sum(x,1)*(1-lambda);
+            obj.model.lambda = obj.model.lambda*(1-lambda) + (D/S*sum(x,1) + priorObj.model.lambda)*lambda;
             
             training = struct([]);
         end
