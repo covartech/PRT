@@ -98,6 +98,10 @@ classdef prtBrvMvn < prtBrvObsModel & prtBrvVbOnlineObsModel
         end
         
         function obj = weightedConjugateUpdate(obj, priorObj, x, weights)
+            if nargin < 4 || isempty(weights)
+                weights = ones(size(x,1),1);
+            end
+            
             N_bar = sum(weights);
             
             % We want to do simply this
@@ -118,6 +122,7 @@ classdef prtBrvMvn < prtBrvObsModel & prtBrvVbOnlineObsModel
             obj.model.meanMean = (muBar.*N_bar + priorObj.model.meanMean.*priorObj.model.meanBeta) ./ (N_bar + priorObj.model.meanBeta);
             obj.model.covNu = N_bar + priorObj.model.covNu;
             obj.model.covPhi = sigmaBar + N_bar.*priorObj.model.meanBeta.*(muBar - priorObj.model.meanMean)'*(muBar - priorObj.model.meanMean)./(N_bar + priorObj.model.meanBeta) + priorObj.model.covPhi;
+            
         end
         
         function kld = conjugateKld(obj, priorObj)
@@ -172,8 +177,10 @@ classdef prtBrvMvn < prtBrvObsModel & prtBrvVbOnlineObsModel
                     set(h,'color',colors(s,:));
                     hold on
                 end
+                hold off
                 v = axis;
                 ylim([0 v(4)]);
+                title('Posterior Mean Source PDFs');
                 
             elseif nDimensions == 2
                 for s = 1:nComponents
@@ -204,30 +211,53 @@ classdef prtBrvMvn < prtBrvObsModel & prtBrvVbOnlineObsModel
             end
         end
         
-        function [obj, training] = vbOnlineWeightedUpdate(obj, priorObj, x, weights, lambda, D)
+        function [obj, training] = vbOnlineWeightedUpdate(obj, priorObj, x, weights, lambda, D, prevObj)
             S = size(x,1);
-            prevObj = obj;
+            
+            N_barNoWeighting = sum(weights,1);
+            N_bar = N_barNoWeighting*D/S;
             
             muBar = sum(bsxfun(@times,x,weights),1);
-            
-            N_bar = sum(weights,1)*D/S;
-            
             if sum(weights) > 0
                 muBar = muBar./sum(weights,1);
             else
                 muBar = zeros(1,size(x,2));
             end
             
-            xWeightedDemeaned = bsxfun(@times,bsxfun(@minus,x,muBar),sqrt(weights));
-            sigmaBar = xWeightedDemeaned'*xWeightedDemeaned;
+%             obj.model = prevObj.model;
+%             obj.model.meanBeta = lambda*(N_bar + priorObj.model.meanBeta)  + (1-lambda)*prevObj.model.meanBeta;
+%             obj.model.meanMean = ((muBar.*N_bar + priorObj.model.meanMean.*priorObj.model.meanBeta)*lambda + (1-lambda)*prevObj.model.meanMean*prevObj.model.meanBeta) ./ obj.model.meanBeta;
+%             obj.model.covNu = lambda*(N_bar + priorObj.model.covNu) + (1-lambda)*prevObj.model.covNu;
+%             
+%             %xWeightedDemeaned = bsxfun(@times,bsxfun(@minus,x,muBar),sqrt(weights));
+%             %sigmaBar = xWeightedDemeaned'*xWeightedDemeaned;
+%             %obj.model.covPhi = (sigmaBar*D/S + N_bar.*priorObj.model.meanBeta./(N_bar + priorObj.model.meanBeta).*((muBar - priorObj.model.meanMean)'*(muBar - priorObj.model.meanMean)) + priorObj.model.covPhi)*lambda + (1-lambda)*prevObj.model.covPhi;
+%             
+%             xWeightedSqrt = bsxfun(@times,x,sqrt(weights));
+%             priorSumOfSquares = priorObj.model.meanMean'*priorObj.model.meanMean*priorObj.model.meanBeta + priorObj.model.covPhi;
+%             prevSumOfSquares = prevObj.model.meanMean'*prevObj.model.meanMean*prevObj.model.meanBeta + prevObj.model.covPhi;
+%             
+%             newSumOfSquares = (xWeightedSqrt'*xWeightedSqrt*D/S + priorSumOfSquares)*lambda + prevSumOfSquares*(1-lambda);
+%             
+%             obj.model.covPhi = newSumOfSquares - obj.model.meanMean'*obj.model.meanMean*obj.model.meanBeta;
             
             obj.model = prevObj.model;
             obj.model.meanBeta = lambda*(N_bar + priorObj.model.meanBeta)  + (1-lambda)*prevObj.model.meanBeta;
-            obj.model.meanMean = ((muBar.*N_bar + priorObj.model.meanMean.*priorObj.model.meanBeta) ./ (N_bar + priorObj.model.meanBeta))*lambda + (1-lambda)*prevObj.model.meanMean;
-            % (lambda*(muBar*N_bar + priorObj.model.meanMean*priorObj.model.meanBeta) + (1-lambda)*prevObj.model.meanMean.*prevObj.model.meanBeta) ./ obj.model.meanBeta;
+            obj.model.meanMean = ((muBar.*N_bar + priorObj.model.meanMean.*priorObj.model.meanBeta)*lambda + (1-lambda)*prevObj.model.meanMean*prevObj.model.meanBeta) ./ obj.model.meanBeta;
             obj.model.covNu = lambda*(N_bar + priorObj.model.covNu) + (1-lambda)*prevObj.model.covNu;
-            obj.model.covPhi = (sigmaBar*D/S + N_bar.*priorObj.model.meanBeta.*(muBar - priorObj.model.meanMean)'*(muBar - priorObj.model.meanMean)./(N_bar + priorObj.model.meanBeta) + priorObj.model.covPhi)*lambda + (1-lambda)*prevObj.model.covPhi;
             
+            %xWeightedDemeaned = bsxfun(@times,bsxfun(@minus,x,muBar),sqrt(weights));
+            %sigmaBar = xWeightedDemeaned'*xWeightedDemeaned;
+            %obj.model.covPhi = (sigmaBar*D/S + N_bar.*priorObj.model.meanBeta./(N_bar + priorObj.model.meanBeta).*((muBar - priorObj.model.meanMean)'*(muBar - priorObj.model.meanMean)) + priorObj.model.covPhi)*lambda + (1-lambda)*prevObj.model.covPhi;
+            
+            xWeightedSqrt = bsxfun(@times,x,sqrt(weights));
+            priorSumOfSquares = priorObj.model.meanMean'*priorObj.model.meanMean*priorObj.model.meanBeta + priorObj.model.covPhi;
+            prevSumOfSquares = prevObj.model.meanMean'*prevObj.model.meanMean*prevObj.model.meanBeta + prevObj.model.covPhi;
+            
+            newSumOfSquares = (xWeightedSqrt'*xWeightedSqrt*D/S + priorSumOfSquares)*lambda + prevSumOfSquares*(1-lambda);
+            
+            obj.model.covPhi = newSumOfSquares - obj.model.meanMean'*obj.model.meanMean*obj.model.meanBeta;
+
             training = struct([]);
         end
     end

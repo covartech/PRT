@@ -3,7 +3,9 @@ classdef prtBrvVb
         vbConvergenceThreshold = 1e-6; % This is a percentage of the total change in NFE
         vbMaxIterations = 1e3; % Maximum number of iterations
         vbVerboseText = false; % display text
-        vbVerbosePlot = false;
+        vbVerbosePlot = false; % plot after each iteration
+        vbVerboseMovie = false; % make a movie with each frame of plotting
+        vbVerboseMovieFrames = []; % Where we store the frames
     end
     
     methods (Hidden)

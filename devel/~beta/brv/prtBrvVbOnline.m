@@ -2,10 +2,10 @@ classdef prtBrvVbOnline
     properties
         vbOnlineD = 100;
         vbOnlineTau = 100;
-        vbOnlineKappa = 0.01; % (0.5 1] to ensure convergence
+        vbOnlineKappa = 0.95; % (0.5 1] to ensure convergence
         vbOnlineT = 0;
         
-        vbOnlineUseStaticLambda = false; % false uses Sato method
+        vbOnlineUseStaticLambda = false; % false uses Blei method
         vbOnlineStaticLambda = 0.9;
         
         vbOnlineBatchSize = 1;
@@ -18,7 +18,7 @@ classdef prtBrvVbOnline
         function val = get.vbOnlineLambda(obj)
             if ~obj.vbOnlineUseStaticLambda
                 % This is the Blei adaptation.
-                val = 1-(obj.vbOnlineTau + obj.vbOnlineT)^(-obj.vbOnlineKappa);
+                val = (obj.vbOnlineTau + obj.vbOnlineT)^(-obj.vbOnlineKappa);
                 
                 % This is the SATO version and is only correct if we
                 % actually update using eta not lambda (see equation 3.9)
@@ -36,15 +36,41 @@ classdef prtBrvVbOnline
                     cX = x(prtRvUtilRandomSample(D,obj.vbOnlineInitialBatchSize),:);
                     
                     [obj, priorObj, training] = obj.vbInitialize(cX);
-                    obj = obj.vbM(priorObj, cX, training);
+                    obj.nSamples = 0;
+                    
+                    [obj, training] = obj.vbOnlineUpdate(priorObj, cX, training);
                     
                 else
+                    
                     cX = x(prtRvUtilRandomSample(D,obj.vbOnlineBatchSize),:);
                     [obj, training] = obj.vbOnlineUpdate(priorObj, cX);
+                    
                 end
                 
-                if obj.vbVerbosePlot
+                % Calculate NFE
+%                 [nfe, eLogLikelihood, kld, kldDetails] = vbNfe(obj, priorObj, x, training);
+%                 
+%                 % Update training information
+%                 training.previousNegativeFreeEnergy = training.negativeFreeEnergy;
+%                 training.negativeFreeEnergy = nfe;
+%                 training.iterations.negativeFreeEnergy(iteration) = nfe;
+%                 training.iterations.eLogLikelihood(iteration) = eLogLikelihood;
+%                 training.iterations.kld(iteration) = kld;
+%                 training.iterations.kldDetails(iteration) = kldDetails;
+%                 training.nIterations = iteration;
+                
+                
+                if mod(iStep-1,obj.vbVerbosePlot)==0 || iStep == obj.vbMaxIterations
                     vbIterationPlot(obj, priorObj, cX, training);
+                    
+                    if obj.vbVerboseMovie
+                        if isempty(obj.vbVerboseMovieFrames)
+                            obj.vbVerboseMovieFrames = getframe(gcf);
+                        else
+                            obj.vbVerboseMovieFrames(end+1) = getframe(gcf);
+                        end
+                    end
+                    
                 end
                 
             end

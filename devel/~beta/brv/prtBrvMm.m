@@ -68,8 +68,16 @@ classdef prtBrvMm < prtBrv & prtBrvVb & prtBrvVbOnline
                 end
             
                 % Plot
-                if mod(iteration,obj.vbVerbosePlot) == 0
+                if mod(iteration-1,obj.vbVerbosePlot) == 0
                     vbIterationPlot(obj, priorObj, x, training);
+                    
+                    if obj.vbVerboseMovie
+                        if isempty(obj.vbVerboseMovieFrames)
+                            obj.vbVerboseMovieFrames = getframe(gcf);
+                        else
+                            obj.vbVerboseMovieFrames(end+1) = getframe(gcf);
+                        end
+                    end
                 end
                 
                 if converged
@@ -92,29 +100,57 @@ classdef prtBrvMm < prtBrv & prtBrvVb & prtBrvVbOnline
             training.stopTime = now;
         end
         
-        function [obj, training] = vbOnlineUpdate(obj, priorObj, x)
+        function [obj, training] = vbOnlineUpdate(obj, priorObj, x, training, prevObj)
             
-            training.startTime = true;
-            training.iterations.negativeFreeEnergy = [];
-            training.iterations.eLogLikelihood = [];
-            training.iterations.kld = [];
+            if nargin < 5 || isempty(prevObj)
+                prevObj = obj;
+            end
+            
+            if nargin < 4 || isempty(training)
+                training.startTime = now;
+                training.iterations.negativeFreeEnergy = [];
+                training.iterations.eLogLikelihood = [];
+                training.iterations.kld = [];                
+                [obj, training] = obj.vbE(priorObj, x, training);
+            end
             
             obj.nSamples = obj.nSamples + size(x,1);
             obj.vbOnlineT = obj.nSamples;
             
-            [obj, training] = obj.vbE(priorObj, x, training);
-            
             % Update components
             for s = 1:obj.nComponents
-                obj.components(s) = obj.components(s).vbOnlineWeightedUpdate(priorObj.components(s), x, training.phiMat(:,s), obj.vbOnlineLambda, obj.vbOnlineD);
+                obj.components(s) = obj.components(s).vbOnlineWeightedUpdate(priorObj.components(s), x, training.phiMat(:,s), obj.vbOnlineLambda, obj.vbOnlineD, prevObj.components(s));
             end
-            obj.mixingProportions = obj.mixingProportions.vbOnlineWeightedUpdate(priorObj.mixingProportions, training.phiMat, [], obj.vbOnlineLambda, obj.vbOnlineD);
-            
-            if obj.vbVerbosePlot
-                vbIterationPlot(obj, priorObj, x, training);
-            end
+            obj.mixingProportions = obj.mixingProportions.vbOnlineWeightedUpdate(priorObj.mixingProportions, training.phiMat, [], obj.vbOnlineLambda, obj.vbOnlineD, prevObj.mixingProportions);
             
         end
+        
+        function [obj, training] = vbNonStationaryUpdate(obj, priorObj, x, training, prevObj)
+            
+            if nargin < 5 || isempty(prevObj)
+                prevObj = obj;
+            end
+            
+            if nargin < 4 || isempty(training)
+                training.startTime = now;
+                training.iterations.negativeFreeEnergy = [];
+                training.iterations.eLogLikelihood = [];
+                training.iterations.kld = [];                
+                [obj, training] = obj.vbE(priorObj, x, training);
+            end
+            
+            obj.nSamples = obj.nSamples + size(x,1);
+            obj.vbOnlineT = obj.nSamples;
+                        
+            % Update components
+            for s = 1:obj.nComponents
+                cBaseDensity = prevObj.components(s).weightedConjugateUpdate(prevObj.components(s),x,training.phiMat(:,s));
+                obj.components(s) = obj.components(s).vbOnlineWeightedUpdate(priorObj.components(s), x, training.phiMat(:,s), obj.vbOnlineLambda, obj.vbOnlineD, cBaseDensity);
+            end
+            cBaseDensity = prevObj.mixingProportions.weightedConjugateUpdate(prevObj.mixingProportions,training.phiMat,[]);
+            obj.mixingProportions = obj.mixingProportions.vbOnlineWeightedUpdate(priorObj.mixingProportions, training.phiMat, [], obj.vbOnlineLambda, obj.vbOnlineD, cBaseDensity);
+
+        end        
     end
     methods (Hidden)
         function [obj, priorObj, training] = vbInitialize(obj, x)
@@ -184,6 +220,8 @@ classdef prtBrvMm < prtBrv & prtBrvVb & prtBrvVbOnline
         function vbIterationPlot(obj, priorObj, x, training) %#ok<INUSL>
             
             colors = prtPlotUtilClassColors(obj.nComponents);
+            
+            set(gcf,'color',[1 1 1]);
             
             subplot(3,2,1)
             mixingPropPostMean = obj.mixingProportions.posteriorMeanStruct;

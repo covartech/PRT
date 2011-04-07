@@ -55,6 +55,9 @@ classdef prtBrvDiscrete < prtBrvObsModel & prtBrvVbOnlineObsModel
         end
         
         function obj = weightedConjugateUpdate(obj, priorObj, x, weights)
+            if isempty(weights)
+                weights = ones(size(x,1),1);
+            end
             obj.model.lambda = priorObj.model.lambda + sum(bsxfun(@times,x,weights),1);
         end
         
@@ -112,10 +115,10 @@ classdef prtBrvDiscrete < prtBrvObsModel & prtBrvVbOnlineObsModel
 
         end
         
-        function [obj, training] = vbOnlineWeightedUpdate(obj, priorObj, x, weights, lambda, D) %#ok<INUSL>
+        function [obj, training] = vbOnlineWeightedUpdate(obj, priorObj, x, weights, lambda, D, prevObj) %#ok<INUSL>
             S = size(x,1);
             
-            obj.model.lambda = obj.model.lambda*(1-lambda) + (D/S*sum(x,1) + priorObj.model.lambda)*lambda;
+            obj.model.lambda = prevObj.model.lambda*(1-lambda) + (D/S*sum(x,1) + priorObj.model.lambda)*lambda;
             
             training = struct([]);
         end
