@@ -26,4 +26,8 @@ paramNames = varargin(2:3:end);
 assert(iscellstr(subOptionsNames),'options types must be strings.');
 assert(iscellstr(paramNames),'options parameter names must be strings.');
         
+% Feed inputs to prtOptionsGet using undocumented calling syntax
+% The function prtOptionsGet holds the persistantly loaded options
+% structure, since we are only setting the parameters temporarly, we modify
+% them in the prtOptionsGet workspace.
 options = prtOptionsGet([], [], varargin{:});

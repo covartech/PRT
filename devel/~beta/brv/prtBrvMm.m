@@ -115,7 +115,7 @@ classdef prtBrvMm < prtBrv & prtBrvVb & prtBrvVbOnline
             end
             
             obj.nSamples = obj.nSamples + size(x,1);
-            obj.vbOnlineT = obj.nSamples;
+            obj.vbOnlineT = obj.vbOnlineT + 1;
             
             % Update components
             for s = 1:obj.nComponents

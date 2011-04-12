@@ -109,7 +109,7 @@ classdef prtAction
     properties
         % Specifies whether or not to store the training prtDataset.
         % If true the training prtDataSet is stored internally prtAction.dataSet.
-        verboseStorage = true;
+        verboseStorage = prtAction.getVerboseStorage();
         
         
         % User specified data
@@ -556,6 +556,12 @@ classdef prtAction
             %   knn.gui
             
             [outputObj, creationString] = prtUtilObjectGuiSimple(obj);
+        end
+    end
+    
+    methods (Hidden, Static)
+        function val = getVerboseStorage()
+            val = prtOptionsGet('prtOptionsComputation','verboseStorage');
         end
     end
 end
