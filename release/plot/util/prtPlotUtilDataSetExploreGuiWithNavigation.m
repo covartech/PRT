@@ -51,6 +51,8 @@ end
 plotAxesFig = gcf;
 set(plotAxesFig,'visible','off');
 
+legend('off');
+
 navFigSize = [300 250];
 navFigPad = [18 54];
 

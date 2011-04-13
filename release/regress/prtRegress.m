@@ -6,7 +6,8 @@ classdef prtRegress < prtAction %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     end
     
     properties (SetAccess = protected)
-        isSupervised = true;
+        isSupervised = true; % True
+        isCrossValidateValid = true; % True
     end
     
     methods (Hidden = true)

@@ -1,30 +1,26 @@
 function D = prtDistanceCityBlock(dataSet1,dataSet2)
 % prtDistanceCityBlock   City block distance
 % 
-%   dist = prtDistanceCityBlock(d1,d2) for data sets or double matrices d1
-%   and d2 calculates the City block distance from all the observations in
-%   d1 to d2, and ouputs a distance matrix of size d1.nObservations x
-%   d2.nObservations (size(d1,1) x size(d2,1) for double matrices).
-%  
-%   d1 and d2 should have the same dimensionality, i.e. d1.nFeatures ==
-%   d2.nFeatures (size(d1,2) == size(d2,2) for double matrices).
+%   DIST = prtDistanceCityBlock(DS1,DS2) calculates the City Block distance
+%   from all the observations in datasets DS1 to DS2, and ouputs a distance
+%   matrix of size DS1.nObservations x DS2.nObservations. DS1 and DS2
+%   should have the same number of features. DS1 and DS2 should be
+%   prtDataSet objects.
 %   
 %   For more information, see:
 %   
 %   http://en.wikipedia.org/wiki/Taxicab_geometry
 %
-%    Example:
-%      X = [0 0; 1 1];
-%      Y = [1 0; 2 2; 3 3;];
-%      D = prtDistanceCityBlock(X,Y)
-%   
-%      % prtDistanceCityBlock also accepts prtDataSet inputs:
-%      dsx = prtDataSetStandard(X);
-%      dsy = prtDataSetStandard(Y);
-%      distance = prtDistanceCityBlock(dsx,dsy);
+% Example:
 %
-% See also: prtDistance, prtDistanceMahalanobis, prtDistanceLNorm.
-% prtDistanceEuclidean, prtDistanceSquare, prtDistanceChebychev
+%   % Create 2 data sets
+%   dsx = prtDataSetStandard('Observations', [0 0; 1 1]);
+%   dsy = prtDataSetStandard('Observations', [1 0;2 2; 3 3]);
+%   % Compute distance
+%   distance = prtDistanceCityBlock(dsx,dsy)
+%
+% See also:  prtDistanceChebychev, prtDistanceEuclidean,
+% prtDistanceMahalanobis, prtDistanceSquare, prtDistanceLnorm
 
 [data1,data2] = prtUtilDistanceParseInputs(dataSet1,dataSet2);
 D = prtDistanceCustom(data1,data2,@(x1,x2)sum(abs(x1-x2)));

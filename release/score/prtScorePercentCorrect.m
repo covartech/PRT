@@ -15,8 +15,7 @@ function percentCorrect = prtScorePercentCorrect(dataSet1,dataSet2)
 %   classes  = classified.getX > .5;
 %   percentCorr = prtScorePercentCorrect(classes,TestDataSet.getTargets)
 %
-%   See also prtScoreConfusionMatrix, prtScoreRoc, prtScoreRmse,
-%   prtScoreRocBayesianBootstrap, prtScoreRocBayesianBootstrapNfa
+%   See also prtScoreConfusionMatrix, prtScoreRoc, prtScoreRmse
 
 if nargin < 2
     dataSet2 = dataSet1;
@@ -25,7 +24,7 @@ end
 [guesses,targets] = prtUtilScoreParseFirstTwoInputs(dataSet1,dataSet2);
 
 if size(guesses,2) ~= 1 
-    error('prt:prtScorePercentCorrect','Requires dataSet1 to be a n x 1 integer vector of class guesses');
+    error('prt:prtScorePercentCorrect','GUESS must be a N x 1 integer vector of class guesses');
 else
     confusionMatrix = prtScoreConfusionMatrix(guesses,targets);
     percentCorrect = prtUtilConfusion2PercentCorrect(confusionMatrix);

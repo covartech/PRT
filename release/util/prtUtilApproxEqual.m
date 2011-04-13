@@ -1,8 +1,9 @@
 function eq = prtUtilApproxEqual(x,y,eqThreshold)
-% xxx Need Help xxx
 %eq = prtUtilApproxEqual(x,y)
-%   Returns true when all elements of x and y are within eps of one
-%   another.
+%   For same size matrix x and y (or scalar y), return true where abs(x-y) < eps
+%
+%eq = prtUtilApproxEqual(x,y,eqThreshold)
+%   Use eqThreshold in place of eps
 %
 %
 
@@ -10,4 +11,4 @@ if nargin < 3
     eqThreshold = eps;
 end
 
-eq = all(abs(x-y) < eqThreshold);
+eq = (abs(x-y) < eqThreshold);

@@ -12,24 +12,20 @@ classdef prtPreProcZeroMeanRows < prtPreProc
     %   Example:
     %
     %   dataSet = prtDataGenIris;              % Load a data set
-    %   dataSet = dataSet.retainFeatures(1:3); % Use only the first 3 features 
+    %   dataSet = dataSet.retainFeatures(1:3); % Use only the first 3 features
     %   zmr = prtPreProcZeroMeanRows;          % Create a
-    %                                          %  prtPreProcZeroMeanRows object                                   
-    %   zmr = zmr.train(dataSet);              % Train 
+    %                                          %  prtPreProcZeroMeanRows object
+    %   zmr = zmr.train(dataSet);              % Train
     %   dataSetNew = zmr.run(dataSet);         % Run
-    % 
+    %
     %   % Plot
     %   subplot(2,1,1); plot(dataSet);
     %   subplot(2,1,2); plot(dataSetNew);
     %
-    %   See Also: prtPreProc,
-    %   prtOutlierRemoval,prtPreProcNstdOutlierRemove,
-    %   prtOutlierRemovalMissingData,
-    %   prtPreProcNstdOutlierRemoveTrainingOnly, prtOutlierRemovalNStd,
-    %   prtPreProcPca, prtPreProcPls, prtPreProcHistEq,
-    %   prtPreProcZeroMeanColumns, prtPreProcLda, prtPreProcZeroMeanRows,
-    %   prtPreProcLogDisc, prtPreProcZmuv, prtPreProcMinMaxRows                    
-        
+    %   See Also: prtPreProc, prtPreProcPca, prtPreProcPls,
+    %   prtPreProcHistEq, prtPreProcZeroMeanColumns, prtPreProcLda,
+    %   prtPreProcZeroMeanRows, prtPreProcLogDisc, prtPreProcZmuv,
+    %   prtPreProcMinMaxRows        
     
     properties (SetAccess=private)
         name = 'Zero-Mean Rows' % Zero-Mean Rows
@@ -42,7 +38,7 @@ classdef prtPreProcZeroMeanRows < prtPreProc
     
     methods
         
-          % Allow for string, value pairs
+        % Allow for string, value pairs
         function Obj = prtPreProcZeroMeanRows(varargin)
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
         end

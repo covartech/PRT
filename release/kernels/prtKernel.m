@@ -22,9 +22,9 @@ classdef prtKernel < prtAction
     %
     %   kernels = prtKernelDc & prtKernelRbf; % kernels is prtKernelSet
     %
-    %  See also: prtKernelRbf, prtKernelDc, prtKernelDirect,
-    %   prtKernelHyperbolicTangent, prtKernelPolynomial,
-    %   prtKernelRbfNdimensionScale,
+    %  See also: prtKernelRbf, prtKernelSet, prtKernelDc, prtKernelDirect,
+    %  prtKernelHyperbolicTangent, prtKernelPolynomial,
+    %  prtKernelRbfNdimensionScale,
     
     % Internal Help:
     %
@@ -51,6 +51,7 @@ classdef prtKernel < prtAction
     
     properties (SetAccess = protected)
         isSupervised = false;
+        isCrossValidateValid = false; % False
     end
     
     properties (Access = protected, Hidden = true)
@@ -74,7 +75,6 @@ classdef prtKernel < prtAction
             obj.classRun = 'prtDataSetStandard';
             obj.classRunRetained = false;
         
-            obj.isCrossValidateValid = false;
             obj.verboseStorage = false;
         end
     end

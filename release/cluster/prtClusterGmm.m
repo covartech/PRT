@@ -1,4 +1,4 @@
-classdef prtClusterGmm < prtCluster %prtClass %prtAction %should extent prtCluster
+classdef prtClusterGmm < prtCluster 
     % prtClusterGmm   Gaussian mixture model clustering object
     %
     %    CLUSTER = prtClusterGmm returns a GMM clustering object.
@@ -10,8 +10,7 @@ classdef prtClusterGmm < prtCluster %prtClass %prtAction %should extent prtClust
     %    A prtClusterGmm object inherits all properties from the abstract
     %    class prtCluster. In addition is has the following properties:
     %
-    %    nClusters          - Number of cluster centers to learn (default =
-    %                         3)
+    %    nClusters          - Number of cluster centers to learn 
     %
     %    A prtClusterGmm clustering algorithm trains a prtRvGmm random
     %    variable on training data, and at run time, the clustering
@@ -24,27 +23,30 @@ classdef prtClusterGmm < prtCluster %prtClass %prtAction %should extent prtClust
     %
     %   Example:
     %
-    %   ds = prtDataGenIris;
-    %   ds = ds.retainFeatures(2:3);
-    %   clusterAlgo = prtClusterGmm;
-    %   clusterAlgo = clusterAlgo.train(ds);
-    %   plot(clusterAlgo);
+    %   ds = prtDataGenUnimodal         % Load a data set
+    %   clusterAlgo = prtClusterGmm;    % Create a clustering object
+    %   clusterAlgo.nClusters = 2;      % Set the number of clusters
+    %
+    %   % Set the internal decision rule to be MAP. Not required for
+    %   % clustering, but necessary to plot the results.
+    %   clusterAlgo.internalDecider = prtDecisionMap;
+    % 
+    %   clusterAlgo = clusterAlgo.train(ds);  % Train
+    %   plot(clusterAlgo);                    % Plot the trained object
     %   
+    %   See Also: prtCluster, prtClusterKmeans
     
     properties (SetAccess=private)
-        name = 'GMM Clustering' 
-        nameAbbreviation = 'GMMCluster'
+        name = 'GMM Clustering' % GMM Clustering
+        nameAbbreviation = 'GMMCluster' % GMMCluster
     end
     
     properties
-        nClusters = 3;
+        nClusters = 3; % The number of clusters
     end
     properties (SetAccess = protected)
-        clusterCenters = [];
-        gmmRv = prtRvGmm;
-    end
-    properties (SetAccess = private, Hidden = true)
-        uY = [];
+        clusterCenters = [];  % The cluster centers
+        gmmRv = prtRvGmm;     % The Gaussian mixture model found during training
     end
     
     methods
@@ -55,9 +57,11 @@ classdef prtClusterGmm < prtCluster %prtClass %prtAction %should extent prtClust
             end
             Obj.nClusters = value;
         end
-        
+
+        % Allow for string, value pairs
+        % Allow for string, value pairs
         function Obj = prtClusterGmm(varargin)
-            % Allow for string, value pairs
+            
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
         end
     end

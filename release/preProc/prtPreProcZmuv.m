@@ -31,13 +31,10 @@ classdef prtPreProcZmuv < prtPreProc
     %   subplot(2,1,2); plot(dataSetNew);
     %   title(sprintf('Mean: %s; Stdev: %s',mat2str(mean(dataSetNew.getObservations),2),mat2str(std(dataSetNew.getObservations),2)))
     %
-    %   See Also: prtPreProc, prtOutlierRemoval,
-    %   prtOutlierRemovalMissingData, prtOutlierRemovalNStd,
-    %   prtPreProcHistEq, prtPreProcLda, prtPreProcLogDisc,
-    %   prtPreProcMinMaxRows, prtPreProcNstdOutlierRemove,
-    %   prtPreProcNstdOutlierRemoveTrainingOnly, prtPreProcPca,
-    %   prtPreProcPls, prtPreProcZeroMeanColumns, prtPreProcZeroMeanRows
-  
+     %   See Also: prtPreProc, prtPreProcPca, prtPreProcPls,
+    %   prtPreProcHistEq, prtPreProcZeroMeanColumns, prtPreProcLda,
+    %   prtPreProcZeroMeanRows, prtPreProcLogDisc, prtPreProcZmuv,
+    %   prtPreProcMinMaxRows 
     
     properties (SetAccess=private)
         name = 'Zero Mean Unit Variance'  % Zero Mean Unit Variance
@@ -50,9 +47,10 @@ classdef prtPreProcZmuv < prtPreProc
         stds = [];    % The original data standard deviation
     end
     
-    methods
+    
         % Allow for string, value pairs
         % There are no user settable options though.
+    methods
         function Obj = prtPreProcZmuv(varargin)
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
         end

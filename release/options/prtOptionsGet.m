@@ -82,6 +82,10 @@ switch nargin
             options.(subOptionsNames{iParam}).(paramNames{iParam}) = paramValues{iParam};
         end
         output = options;
+        
+        % At this point we changed some options. 
+        clear prtAction prtClass prtRegress prtPreProc prtCluster ...
+              prtDataSetStandard prtDataSetClass prtDataSetRegress
 end
 
 

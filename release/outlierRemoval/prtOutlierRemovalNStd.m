@@ -33,14 +33,8 @@ classdef prtOutlierRemovalNStd < prtOutlierRemoval
     %   subplot(2,1,2); plot(dataSetNew);
     %   title('NstdOutlierRemove Data');
     %
-    %   See Also: prtPreProc,
-    %   prtOutlierRemoval,prtPreProcNstdOutlierRemove,
-    %   prtOutlierRemovalMissingData,
-    %   prtPreProcNstdOutlierRemoveTrainingOnly, prtOutlierRemovalNStd,
-    %   prtPreProcPca, prtPreProcPls, prtPreProcHistEq,
-    %   prtPreProcZeroMeanColumns, prtPreProcLda, prtPreProcZeroMeanRows,
-    %   prtPreProcLogDisc, prtPreProcZmuv, prtPreProcMinMaxRows                    
-
+    %   See Also:  prtOutlierRemoval,
+    %   prtOutlierRemovalNonFinite,prtOutlierRemovalMissingData
     
     properties (SetAccess=private)
         name = 'Standard Deviation Based Outlier Removal'; % Standard Deviation Based Outlier Removal

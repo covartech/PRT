@@ -40,7 +40,7 @@ classdef prtAction
     
     properties (Abstract, SetAccess = private)
         % Descriptive name of prtAction object.
-        name 
+        name
         
         % Shortened name for the prtAction object.
         nameAbbreviation 
@@ -49,6 +49,9 @@ classdef prtAction
     properties (Abstract, SetAccess = protected)
         % Specifies if the prtAction requires a labeled dataSet
         isSupervised
+        
+        % Indicates whether or not cross-validation is a valid operation
+        isCrossValidateValid
     end
     
     properties (Hidden = true)
@@ -101,14 +104,12 @@ classdef prtAction
          %   Only stored if prtAction.verboseStorage == true. Otherwise it
         %   is empty.
         
-        % Indicates whether or not cross-validation is a valid operation
-        isCrossValidateValid = true;
     end
     
     properties
         % Specifies whether or not to store the training prtDataset.
         % If true the training prtDataSet is stored internally prtAction.dataSet.
-        verboseStorage = true;
+        verboseStorage = prtAction.getVerboseStorage();
         
         
         % User specified data
@@ -135,6 +136,17 @@ classdef prtAction
                 Obj = prtAlgorithm(in1) + prtAlgorithm(in2);
             else
                 error('prt:prtAction:plus','prtAction.plus is only defined for second inputs of type prtAlgorithm or prtAction, but the second input is a %s',class(in2));
+            end
+        end
+        
+        
+        function Obj = mldivide(in1,in2)
+            if isa(in2,'prtAlgorithm')
+                Obj = in2 / in1; % Use prtAlgorithm(use MLDIVIDE to flip left/right)
+            elseif isa(in2,'prtAction')
+                Obj = prtAlgorithm(in1) \ prtAlgorithm(in2);
+            else
+                error('prt:prtAction:mldivide','prtAction.mldivide is only defined for second inputs of type prtAlgorithm or prtAction, but the second input is a %s',class(in2));
             end
         end
         
@@ -209,7 +221,12 @@ classdef prtAction
             
             if ~isempty(Obj.classRun) && ~prtUtilDataSetClassCheck(inputClassName,Obj.classRun)
                 error('prt:prtAction:incompatible','%s.run() requires datasets of type %s but the input is of type %s, which is not a subclass of %s.',class(Obj), Obj.classRun, inputClassName, Obj.classRun);
-            end            
+            end
+            
+            if isempty(DataSetIn)
+                DataSetOut = DataSetIn;
+                return
+            end
             
             DataSetOut = preRunProcessing(Obj, DataSetIn);
             DataSetOut = runAction(Obj, DataSetOut);
@@ -341,12 +358,18 @@ classdef prtAction
             %    Obj.KFOLDS(DATASET, K)  outputs the trained prtAction
             %    objects TRAINEDACTIONS, and the generated cross-validation
             %    keys CROSSVALKEYS.
+            %
+            %    To manually set which observations correspond are in 
+            %    which fold see crossValidate.
+            
             
             assert(isa(DataSet,'prtDataSetBase'),'First input must by a prtDataSet.');
             
             if nargin == 2 || isempty(K)
                 K = DataSet.nObservations;
             end
+            
+            assert(prtUtilIsPositiveScalarInteger(K),'prt:prtAction:kfolds','K must be a positive scalar integer');
             
             nObs = DataSet.nObservations;
             if K > nObs;
@@ -374,8 +397,15 @@ classdef prtAction
         end
         
         function Obj = set(Obj,varargin)
-            % set - set properties of prtAction()
+            % set - set the object properties
             %   
+            % OBJ = OBJ.set(PARAM, VALUE) sets the parameter PARAM of OBJ
+            % to the value VALUE. PARAM must be a string indicating the
+            % parameter to be set.
+            %
+            % OBJ = OBJ.set(PARAM1, VALUE1, PARAM2, VALUE2....) sets all
+            % the desired parameters to the specified values.
+            
             % ActionObj = get(ActionObj,paramNameStr,paramValue);
             % ActionObj = get(ActionObj,paramNameStr1,paramValue1, paramNameStr2, paramNameValue2, ...); 
             
@@ -383,8 +413,16 @@ classdef prtAction
         end
         
         function out = get(Obj,varargin)
-            % get - get properties of prtAction()
-            %   
+            % get - get the object properties
+            % 
+            % val = obj.get(PARAM) retutns the value of the parameter
+            % specified by the string PARAM.
+            %
+            % vals = obj.get(PARAM1, PARAM2....) returns a structure
+            % containing the values of all the parameters specified by the
+            % PARAM strings
+            
+            
             % paramValue = get(ActionObj,paramNameStr);
             % paramStruct = get(ActionObj,paramNameStr1,paramNameStr2,...);
             
@@ -501,6 +539,29 @@ classdef prtAction
             Obj.(parameterName) = parameterValues{maxPerformanceInd};
             optimizedAction = train(Obj,DataSet);
             
+        end
+        
+        function [outputObj, creationString] = gui(obj)
+            % GUI Graphical method to set properties of prtAction
+            %
+            % [outputObj, creationString] = gui(obj)
+            % 
+            % outputObj - Object with specified parameters
+            % creationString - code to recreate gui actions
+            %
+            % Not all properties are currently able to be set using gui
+            %
+            % Example:
+            %   knn = prtClassKnn;
+            %   knn.gui
+            
+            [outputObj, creationString] = prtUtilObjectGuiSimple(obj);
+        end
+    end
+    
+    methods (Hidden, Static)
+        function val = getVerboseStorage()
+            val = prtOptionsGet('prtOptionsComputation','verboseStorage');
         end
     end
 end

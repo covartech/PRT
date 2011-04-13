@@ -1,30 +1,26 @@
 function D = prtDistanceLNorm(dataSet1,dataSet2,Lnorm)
 % prtDistanceLNorm   L Norm distance function.
-%
-%   dist = prtDistanceLNorm(d1,d2,Lnorm) for data sets or double matrices d1
-%   and d2 calculates the Lnorm distance from all the observations in
-%   d1 to d2, and ouputs a distance matrix of size d1.nObservations x
-%   d2.nObservations (size(d1,1) x size(d2,1) for double matrices).
-%  
-%   d1 and d2 should have the same dimensionality, i.e. d1.nFeatures ==
-%   d2.nFeatures (size(d1,2) == size(d2,2) for double matrices).
 %   
-%    Example:
-%      X = [0 0; 1 1];
-%      Y = [1 0; 2 2; 3 3;];
-%      DIST = prtDistanceLNorm(X,Y,3)
-%
-%     % prtDistanceLNorm also accepts prtDataSet inputs:
-%     dsx = prtDataSetStandard(X);
-%     dsy = prtDataSetStandard(Y);
-%     distance = prtDistanceLNorm(dsx,dsy);
-%
+%   DIST = prtDistanceCityBlock(DS1,DS2) calculates the LNorm distance
+%   from all the observations in datasets DS1 to DS2, and ouputs a distance
+%   matrix of size DS1.nObservations x DS2.nObservations. DS1 and DS2
+%   should have the same number of features. DS1 and DS2 should be
+%   prtDataSet objects.
+%   
 %   For more information, see:
-%
+%   
 %   http://en.wikipedia.org/wiki/Norm_(mathematics)#p-norm
 %
-% See also: prtDistance, prtDistanceCityBlock, prtDistanceEuclidean,
-% prtDistanceMahalanobis, prtDistanceSquare, prtDistanceChebychev, norm
+% Example:
+%
+%   % Create 2 data sets
+%   dsx = prtDataSetStandard('Observations', [0 0; 1 1]);
+%   dsy = prtDataSetStandard('Observations', [1 0;2 2; 3 3]);
+%   % Compute distance
+%   distance = prtDistanceLnorm(dsx,dsy)
+%
+% See also: prtDistanceCityBlock, prtDistanceChebychev
+% prtDistanceMahalanobis, prtDistanceSquare, prtDistanceEuclidean
 
 % Copyright 2010, New Folder Consulting, L.L.C.
 
@@ -79,12 +75,20 @@ if (nDim1>1) && ((nSamples1*nSamples2*nDim1)<=chunkSize)
             D = max(abs(bsxfun(@minus,reshape(data1,[nSamples1,1,nDim1]),reshape(data2,[1,nSamples2,nDim1]))),[],3);
         case 0
             D = min(abs(bsxfun(@minus,reshape(data1,[nSamples1,1,nDim1]),reshape(data2,[1,nSamples2,nDim1]))),[],3);
-        case 2
-            %un-rolled((x-y)^2)) - sqrt below; this takes less time than
-            %the generic code below for the most common L-norm (2)
             
-            %D = repmat(sum((data1.^2), 2), [1 nSamples2]) + repmat(sum((data2.^2),2), [1 nSamples1]).' - 2*data1*(data2.');
-            D = bsxfun(@minus,bsxfun(@plus,sum((data1.^2), 2),sum((data2.^2),2).'),2*data1*(data2.'));
+            % This code has overflow problems for large data1 and data2
+            %         case 2
+            %             %un-rolled((x-y)^2)) - sqrt below; this takes less time than
+            %             %the generic code below for the most common L-norm (2)
+            %
+            %             %D = repmat(sum((data1.^2), 2), [1 nSamples2]) + repmat(sum((data2.^2),2), [1 nSamples1]).' - 2*data1*(data2.');
+            %
+            %             %             %Handle overflow issues for large data2
+            %             %             muData2 = prtUtilNanMean(data2);
+            %             %             data2 = bsxfun(@minus,data2,muData2);
+            %             %             data1 = bsxfun(@minus,data1,muData2);
+            %
+            %             D = bsxfun(@minus,bsxfun(@plus,sum((data1.^2), 2),sum((data2.^2),2).'),2*data1*(data2.'));
         otherwise
             D = sum(bsxfun(@minus,reshape(data1,[nSamples1,1,nDim1]),reshape(data2,[1,nSamples2,nDim1])).^Lnorm,3);
     end

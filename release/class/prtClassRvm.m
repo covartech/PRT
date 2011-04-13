@@ -226,7 +226,10 @@ classdef prtClassRvm < prtClass
                 cGram = gram(:,cRelevant);
                 cTheta = theta(cRelevant);
                 cThetaInv = diag(1./cTheta);
-
+                
+                if isempty(cGram)
+                    error('prt:prtClassRvm:noRelevantVectors','No relevant vectors were retained; this indicates a kernel that is scaled improperly with regards to the classification problem.  Please try choosing a different kernel or modifying the kernel parameters');
+                end
                 [newBeta, SigmaInvChol] = prtUtilPenalizedIrls(y,cGram,Obj.beta(cRelevant),cThetaInv);
                      
                 Obj.beta(cRelevant) = newBeta;

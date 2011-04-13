@@ -6,7 +6,7 @@ classdef prtKernelDirect < prtKernel
     %  prt classifiers, such as prtClassRvm and prtClassSvm.  Direct kernels
     %  implement the following function for 1 x N vectors x1 and x2:
     %
-    %   k(x1,x2) = x2(obj.featureDimension)
+    %   k(x1,x2) = x2;
     %
     %  Direct kernel functions can be used sparse machine learning contexts
     %  to perform sparse linear feature selection.

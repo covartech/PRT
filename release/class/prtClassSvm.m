@@ -10,13 +10,13 @@ classdef prtClassSvm < prtClass
     %    A prtClassSvm object inherits all properties from the abstract class
     %    prtClass. In addition is has the following properties:
     %
-    %   SetAccess = public:
-    %    c      - Slack variable weight (see prtUtilSmo for reference)
-    %    tol    - tolerance on learning updates (see prtUtilSmo for reference)
+    %    c      - Slack variable weight 
+    %    tol    - tolerance on learning updates 
     %
-    %   SetAccess = private/protected:
-    %    alpha  - vector of SVM weights
-    %    beta   - SVM DC offset
+    %    The following properties are read-only.
+    %
+    %    alpha  - Vector of support vector machine weights
+    %    beta   - Support vector machine DC offset
     %
     %    For information on relevance vector machines, please
     %    refer to the following URL:
@@ -24,16 +24,11 @@ classdef prtClassSvm < prtClass
     %    http://en.wikipedia.org/wiki/Support_vector_machine
     %
     %    The prtClassSvm object makes use of the sequential minimal
-    %    optimization as described in Reference: 
+    %    optimization as described in Reference:
+    %
     %     J. Platt, Sequential Minimal Optimization: A Fast Algorithm
     %     for Training Support Vector Machines, Microsoft Research Technical
     %     Report MSR-TR-98-14, (1998).
-    %
-    %    And implemented in prtUtilSmo.m.  Because this is an M-file
-    %    implementation, the SVM convergence can be slow; future releases
-    %    of the PRT will inclide a MEX'd version of this code which should
-    %    run faster.  An alternative for faster training is to use
-    %    prtClassLibSvm
     %
     %    A prtClassSvm object inherits the TRAIN, RUN, CROSSVALIDATE and
     %    KFOLDS methods from prtAction. It also inherits the PLOT method
@@ -73,8 +68,8 @@ classdef prtClassSvm < prtClass
         kernels = prtKernelRbfNdimensionScale;  % Kernels
     end
     properties (SetAccess = 'protected',GetAccess = 'public')
-        alpha 
-        beta
+        alpha % Vector of support vector machine weights
+        beta % Support vector machine DC offset
         sparseKernels   % Trained kernels
         sparseAlpha
     end

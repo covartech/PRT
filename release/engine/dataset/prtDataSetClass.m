@@ -258,7 +258,7 @@ classdef prtDataSetClass  < prtDataSetStandard
             if ~isempty(setdiff(classes,uniqueClasses))
                 error('Input classes array (%s) contains class numbers not in uniqueClasses (%s)',mat2str(classes),mat2str(uniqueClasses));
             end
-            [twiddle,twiddle,ib] = intersect(classes,uniqueClasses);
+            [twiddle,twiddle,ib] = intersect(classes,uniqueClasses); %#ok<ASGLU>
             tn = getClassNamesByClassInd(obj,ib);
         end
         
@@ -291,7 +291,7 @@ classdef prtDataSetClass  < prtDataSetStandard
             if ~isempty(setdiff(classes,uniqueClasses))
                 error('classes contains classes not in uniqueClasses');
             end
-            [twiddle,twiddle,ib] = intersect(classes,uniqueClasses);
+            [twiddle,twiddle,ib] = intersect(classes,uniqueClasses); %#ok<ASGLU>
             
             obj = setClassNamesByClassInd(obj,names,ib);
         end
@@ -415,6 +415,84 @@ classdef prtDataSetClass  < prtDataSetStandard
             
         end
         
+        function obj = retainClasses(obj,classes)
+            % retainClasses retain observations corresponding to specified
+            % classes
+            %
+            %   subDataSet = dataSet.retainClasses(targetVals) returns a
+            %   data set subDataSet containing only the observations that
+            %   have targets equal to the specied values
+            
+            assert(isnumeric(classes) && isvector(classes),'classes must be a numeric vector');
+            [isActuallyAClass, classInds] = ismember(classes,obj.uniqueClasses); %#ok<ASGLU>
+            
+            % I am not sure if we want to enforce this.
+            % I don't think we do.
+            % assert(all(isActuallyAClass),'all classes to retain must be represented in dataSet')
+            
+            obj = retainClassesByInd(obj,classInds);
+        end
+        
+        function obj = removeClasses(obj,classes)
+            % removeClasses remove observations corresponding to
+            % specified classes
+            %
+            %   subDataSet = dataSet.removeClasses(targetVals) returns a
+            %   data set subDataSet containing only the observations that
+            %   have DO NOT have targets equal to the specied values
+            
+            assert(isnumeric(classes) && isvector(classes),'classes must be a numeric vector');
+            [isActuallyAClass, classInds] = ismember(classes,obj.uniqueClasses); %#ok<ASGLU>            
+            
+            % I am not sure if we want to enforce this.
+            % I don't think we do.
+            % assert(all(isActuallyAClass),'all classes to retain must be represented in dataSet')            
+            
+            obj = obj.removeClassesByInd(classInds);
+        end
+        
+        function obj = retainClassesByInd(obj,classInds)
+            % retainClassesByInd retain observations corresponding to
+            % specified class indexes
+            %
+            %   subDataSet = dataSet.retainClassesByInd(classInds) returns
+            %   a data set subDataSet containing only the observations that
+            %   have targets with values that corresped to the specified
+            %   class indexes.
+            
+            % Allows for logical indexing into classInds
+            % Also performance error checking
+            classInds = prtDataSetBase.parseIndices(obj.nClasses, classInds);
+            
+            allClassInds = 1:obj.nClasses;
+            classInds = allClassInds(classInds);
+            
+            obj = obj.retainObservations(ismember(obj.getTargetsClassInd,classInds));
+        end        
+        
+        function obj = removeClassesByInd(obj,classInds)
+            % removeClasses remove observations corresponding to
+            % specified class indexes
+            %
+            %   subDataSet = dataSet.removeClassesByInd(classInds) returns
+            %   a data set subDataSet containing only the observations that
+            %   DO NOT have targets with values that corresped to the
+            %   specified class indexes.
+            
+            % Allows for logical indexing into classInds
+            % Also performance error checking
+            classInds = prtDataSetBase.parseIndices(obj.nClasses, classInds);
+            
+            % Flip logical representation so we can call retainClassesByInd
+            if islogical(classInds)
+                classInds = ~classInds;
+            else
+                classInds = setdiff(1:obj.nClasses,classInds);
+            end
+            
+            obj = obj.retainClassesByInd(classInds);
+        end        
+        
         %PLOT:
         
         function explore(obj, AdditionalOptions)
@@ -463,6 +541,7 @@ classdef prtDataSetClass  < prtDataSetStandard
             lineWidth = obj.plotOptions.symbolLineWidth;
             
             handleArray = zeros(nClasses,1);
+            allHandles = cell(nClasses,1);
             
             holdState = get(gca,'nextPlot');
             
@@ -479,6 +558,8 @@ classdef prtDataSetClass  < prtDataSetStandard
                 
                 h = prtPlotUtilLinePlot(xInd,cX,classColors(i,:),lineWidth);
                 handleArray(i) = h(1);
+                allHandles{i} = h(:);
+                
                 if i == 1
                     hold on;
                 end
@@ -497,7 +578,114 @@ classdef prtDataSetClass  < prtDataSetStandard
             % Handle Outputs
             varargout = {};
             if nargout > 0
-                varargout = {handleArray,legendStrings};
+                varargout = {handleArray, legendStrings, allHandles};
+            end
+        end
+        
+        function varargout = plotBeeSwarm(ds,varargin)
+            % Plot the density of each feature independently as a scatter
+            %
+            % plotBeeSwarm(ds)
+            % patchHandles = plotBeeSwarm(ds);
+            % [patchHandles, boxHandles] = plotBeeSwarm(ds);
+            %
+            % plotBeeSwarm(ds,'PARMNAME',PARAMVALUE)
+            %   Additional parameters:
+            %       minimumKernelBandwidth - minimumBandwidth parameter of 
+            %                                prtRvKde that is used to
+            %                                estimate each density. default
+            %                                eps.
+            %
+            % Example:
+            %    ds = prtDataGenIris;
+            %    plotBeeSwarm(ds)
+            %
+            %    ds = prtDataGenIris;
+            %    plotBeeSwarm(ds,'minimumKernelBandwidth',5e-3);
+            
+            Options.minimumKernelBandwidth = eps;
+            
+            if nargin > 1
+                assert(mod(length(varargin),2)==0,'Additional inputs must be string value pairs')
+                
+                paramNames = varargin(1:2:end);
+                paramValues = varargin(2:2:end);
+                
+                optionFieldNames = fieldnames(Options);
+                for iPair = 1:length(paramNames)
+                    assert(ismember(paramNames{iPair},optionFieldNames),'%s is not a valid parameter name for plotBeeSwarm() (These parameters are case sensitive.)',paramNames{iPair});
+                    Options.(paramNames{iPair}) = paramValues{iPair};
+                end
+            end            
+            
+            Summary = ds.summarize();
+            
+            holdState = get(gca,'NextPlot');
+            
+            if strcmpi(get(gcf,'NextPlot'),'New')
+                figure
+            end
+            
+            if strcmp(holdState,'replace')
+                cla; % Clear axes since patch doesn't automatically
+            end
+            
+            % Estimate each features density and plot
+            F = nan([Summary.nObservations, Summary.nFeatures]);
+            for iFeature = 1:Summary.nFeatures
+                F(:,iFeature) = pdf(mle(prtRvKde('minimumBandwidth',Options.minimumKernelBandwidth),ds.getObservations(:,iFeature)),ds.getObservations(:,iFeature));
+            end            
+            F = bsxfun(@rdivide,F,max(F))/4;
+            FLeft = F;
+            F = bsxfun(@plus,F,1:Summary.nFeatures);
+            FLeft = bsxfun(@plus,-FLeft,1:Summary.nFeatures);
+            centeredX = bsxfun(@minus,bsxfun(@rdivide,ds.getObservations(),Summary.upperBounds),Summary.lowerBounds./Summary.upperBounds);
+            
+            
+            % Plot Box Plots
+            boxColor = [0.8 0.8 0.8];
+            boxEdgeColor = [0 0 0];
+            centerLineColor = [0 0 0];
+            
+            boxHandles = zeros(Summary.nFeatures,2);
+            
+            boxIndexes = round(Summary.nObservations.*[0.25 0.5 0.75]);
+            for iFeature = 1:Summary.nFeatures
+            
+                sortedX = sort(centeredX(:,iFeature));
+                
+                cBottom = sortedX(boxIndexes(1));
+                cMiddle = sortedX(boxIndexes(2));
+                cTop = sortedX(boxIndexes(3));
+                
+                boxHandles(iFeature,1) = patch([-1 -1 1 1]*1/3 + iFeature, [cBottom, cTop, cTop, cBottom], boxColor,'edgecolor',boxEdgeColor);
+                boxHandles(iFeature,2) = line([-1 1]*1/3 + iFeature,[cMiddle, cMiddle],'color',centerLineColor,'linewidth',2);
+            end
+            
+            
+            % Plot using prtDataSetClass.plot() with the densities and the
+            % feature indexes as the data
+            % Each observation is actually two points, one on the left and
+            % one on the right.
+            hold on;
+            ds = ds.setObservationsAndTargets(cat(2,cat(1,F(:),FLeft(:)),repmat(centeredX(:),2,1)),repmat(ds.getTargets(),Summary.nFeatures*2,1));
+            plotHandles = plot(ds);
+            
+            xlabel('Feature');
+            ylabel('Normalized Feature Value');
+            
+            set(gca,'NextPlot',holdState,'YTick',[]);
+            
+            set(legend,'location','best');
+            
+            if Summary.nFeatures < 10
+                set(gca,'XTick',1:Summary.nFeatures,'XTickLabel',ds.getFeatureNames());
+            end
+            xlim([0.5 Summary.nFeatures+0.5]);
+            
+            
+            if nargout
+                varargout = {plotHandles, boxHandles};
             end
         end
         
@@ -527,7 +715,7 @@ classdef prtDataSetClass  < prtDataSetStandard
             %
             %    ds = prtDataGenIris;
             %    plotDensity(ds,'minimumKernelBandwidth',5e-3);
-            % 
+            
             Options.nDensitySamples = 500;
             Options.faceAlpha = 0.7;
             Options.minimumKernelBandwidth = eps;
@@ -1016,7 +1204,7 @@ classdef prtDataSetClass  < prtDataSetStandard
                         %Default behaviour:
                         cX = cat(2,cX,ones(size(cX,1),1));
                     end
-                    featureNames{end+1} = 'Target';
+                    featureNames{end+1} = 'Target'; %#ok<AGROW>
                 end
                 handleArray(i) = prtPlotUtilScatter(cX,featureNames,classSymbols(i),classColors(i,:),classEdgeColor,lineWidth, markerSize);
                 

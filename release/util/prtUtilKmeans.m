@@ -86,7 +86,7 @@ for iter = 1:inputStructure.maxIterations
     end
     
     distanceMat = inputStructure.distanceMetricFn(data,classMeans);
-    [twiddle,clusterIndex] = min(distanceMat,[],2);
+    [twiddle,clusterIndex] = min(distanceMat,[],2); %#ok<ASGLU>
     
     %Handle empty clusters:
     if length(unique(clusterIndex)) ~= nClusters
@@ -97,12 +97,12 @@ for iter = 1:inputStructure.maxIterations
                 classMeans = classMeans(validClusters,:);
                 nClusters = nClusters - length(invalidClusters);
                 distanceMat = distanceMat(:,validClusters);
-                [twiddle,clusterIndex] = min(distanceMat,[],2);
+                [twiddle,clusterIndex] = min(distanceMat,[],2); %#ok<ASGLU>
             case 'random'
                 randInds = max(1,ceil(rand(1,length(invalidClusters))*nSamples));
                 classMeans(invalidClusters,:) = data(randInds,:);
                 distanceMat =  inputStructure.distanceMetricFn(data,classMeans);
-                [twiddle,clusterIndex] = min(distanceMat,[],2);
+                [twiddle,clusterIndex] = min(distanceMat,[],2); %#ok<ASGLU>
             otherwise
                 error('invalid');
         end
@@ -125,7 +125,7 @@ function prtUtilKmeansPlotVisualization(data,classMeans,clusterIndex,inputStruct
 [nSamples,nDimensions] = size(data); %#ok<ASGLU>
 if iter == 1
     distanceMat =  inputStructure.distanceMetricFn(data,classMeans);
-    [twiddle,clusterIndex] = min(distanceMat,[],2);
+    [twiddle,clusterIndex] = min(distanceMat,[],2); %#ok<ASGLU>
 end
 if nDimensions > 3
     warning('prt:prtUtilKmeans','plotVisualization is true, but dimensionality of data (%d) is > 3',nDimensions);

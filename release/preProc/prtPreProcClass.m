@@ -1,5 +1,12 @@
 classdef prtPreProcClass < prtPreProc
-    
+    % prtPreProcClass
+    %
+    % prtPreProcClass is an abstract class and cannot be instantiated.
+    %
+    %   See Also: prtPreProc, prtPreProcPca, prtPreProcPls,
+    %   prtPreProcHistEq, prtPreProcZeroMeanColumns, prtPreProcLda,
+    %   prtPreProcZeroMeanRows, prtPreProcLogDisc, prtPreProcZmuv,
+    %   prtPreProcMinMaxRows
     methods
         function obj = prtPreProcClass()
             obj.classTrain = 'prtDataSetClass';

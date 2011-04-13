@@ -22,13 +22,8 @@ classdef prtOutlierRemovalNonFinite < prtOutlierRemoval
     %   nonFiniteRemove = nonFiniteRemove.train(dataSet);    % Train and run
     %   dataSetNew = nonFiniteRemove.run(dataSet);
     %
-    %   See Also: prtPreProc,
-    %   prtOutlierRemoval,prtPreProcNstdOutlierRemove,
-    %   prtOutlierRemovalMissingData,
-    %   prtPreProcNstdOutlierRemoveTrainingOnly, prtOutlierRemovalNStd,
-    %   prtPreProcPca, prtPreProcPls, prtPreProcHistEq,
-    %   prtPreProcZeroMeanColumns, prtPreProcLda, prtPreProcZeroMeanRows,
-    %   prtPreProcLogDisc, prtPreProcZmuv, prtPreProcMinMaxRows
+    %   See Also:  prtOutlierRemoval,
+    %   prtOutlierRemovalMissingData ,prtOutlierRemovalNstd
     
     % Copyright 2011, New Folder Consulting, L.L.C.
     
