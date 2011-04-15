@@ -82,6 +82,29 @@ classdef prtAlgorithm < prtAction
             
             %At least this is true for single-stream Algorithms
         end
+        
+        function Obj = setVerboseStorage(Obj,val)
+            assert(numel(val)==1 && (islogical(val) || (isnumeric(val) && (val==0 || val==1))),'prtAction:invalidVerboseStorage','verboseStorage must be a logical');
+            Obj.verboseStorageInternal = logical(val);
+            
+            % Also set each actionCells
+            for iAction = 1:length(Obj.actionCell)
+                Obj.actionCell{iAction}.verboseStorage = val;
+            end
+            
+        end
+        function Obj = setShowProgressBar(Obj,val)
+            if ~prtUtilIsLogicalScalar(val);
+                error('prt:prtAction','showProgressBar must be a scalar logical.');
+            end
+            Obj.showProgressBarInternal = val;
+            
+            % Also set each actionCells
+            for iAction = 1:length(Obj.actionCell)
+                Obj.actionCell{iAction}.showProgressBar = val;
+            end
+        end
+        
     end
     
     methods

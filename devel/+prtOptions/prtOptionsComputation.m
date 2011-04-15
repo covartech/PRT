@@ -1,9 +1,10 @@
 classdef prtOptionsComputation
     properties
         largestMatrixSize = 9e6; % Total number of elements in the matrix (3000 x 3000)
-        verboseStorage = true; % Save's the training dataset within each action
-                               % True enables easier plotting and data
-                               % exploration
+        verboseStorage = true;   % Save's the training dataset within each
+                                 % action. True enables easier plotting
+                                 % and data exploration.
+        showProgressBar = true;
     end
     
     methods

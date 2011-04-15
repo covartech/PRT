@@ -55,7 +55,6 @@ classdef prtFeatSelExhaustive < prtFeatSel %
     
     properties
         nFeatures = 3;                    % The number of features to be selected
-        showProgressBar = true;           % Whether or not the progress bar should be displayed
         evaluationMetric = @(DS)prtEvalAuc(prtClassFld,DS);   % The metric used to evaluate performance
     end
     
@@ -75,13 +74,6 @@ classdef prtFeatSelExhaustive < prtFeatSel %
                 error('prt:prtFeatSelExhaustive','nFeatures must be a positive scalar integer.');
             end
             Obj.nFeatures = val;
-        end
-        
-        function Obj = set.showProgressBar(Obj,val)
-            if ~prtUtilIsLogicalScalar(val);
-                error('prt:prtFeatSelExhaustive','showProgressBar must be a scalar logical.');
-            end
-            Obj.showProgressBar = val;
         end
         
         function Obj = set.evaluationMetric(Obj,val)
@@ -107,54 +99,43 @@ classdef prtFeatSelExhaustive < prtFeatSel %
             finishedFunction = @(current) isequal(current,firstChoose);
             
             if Obj.showProgressBar
-                h = prtUtilWaitbarWithCancel('Exhaustive Feature Selection');
+                h = prtUtilProgressBar(0,sprintf('Exhaustive Feature Selection - %d Features', Obj.nFeatures),'autoClose',true);
             end
             
             notFinished = true;
-            canceled = false;
-            try
-                while notFinished;
-                    if Obj.showProgressBar
-                        prtUtilWaitbarWithCancel(iterationCount/maxIterations,h);
-                    end
-                    
-                    tempDataSet = DS.retainFeatures(currChoose);
-                    currPerformance = Obj.evaluationMetric(tempDataSet);
-                    
-                    if any(currPerformance > bestPerformance) || isempty(bestChoose)
-                        bestChoose = currChoose;
-                        bestPerformance = currPerformance;
-                    elseif currPerformance == bestPerformance
-                        bestChoose = cat(1,bestChoose,currChoose);
-                        bestPerformance = cat(1,bestPerformance,currPerformance);
-                    end
-                    currChoose = nextChooseFn();
-                    notFinished = ~finishedFunction(currChoose);
-                    iterationCount = iterationCount + 1;
-                    
-                    if ~ishandle(h)
-                        canceled = true;
-                        break
-                    end
-                end
+            while notFinished;
+                tempDataSet = DS.retainFeatures(currChoose);
+                currPerformance = Obj.evaluationMetric(tempDataSet);
                 
-                if Obj.showProgressBar && ~canceled
-                    delete(h);
+                if any(currPerformance > bestPerformance) || isempty(bestChoose)
+                    bestChoose = currChoose;
+                    bestPerformance = currPerformance;
+                elseif currPerformance == bestPerformance
+                    bestChoose = cat(1,bestChoose,currChoose);
+                    bestPerformance = cat(1,bestPerformance,currPerformance);
                 end
-                drawnow;
+                currChoose = nextChooseFn();
+                notFinished = ~finishedFunction(currChoose);
                 
-                if size(bestChoose,1) > 1
-                    warning('prt:exaustiveSetsTie','Multiple identical performing feature sets found with performance %f; randomly selecting one feature set for output',bestPerformance(1));
-                    index = max(ceil(rand*size(bestChoose,1)),1);
-                    bestChoose = bestChoose(index,:);
-                    bestPerformance = bestPerformance(index,:);
+                if Obj.showProgressBar && notFinished
+                    h.update(iterationCount/maxIterations);
                 end
-                Obj.performance = bestPerformance;
-                Obj.selectedFeatures = bestChoose;
-            catch ME
-                delete(h);
-                throw(ME);
+                iterationCount = iterationCount + 1;
             end
+            
+            if Obj.showProgressBar
+                % Make sure it's closed.
+                h.update(1);
+            end
+            
+            if size(bestChoose,1) > 1
+                warning('prt:exaustiveSetsTie','Multiple identical performing feature sets found with performance %f; randomly selecting one feature set for output',bestPerformance(1));
+                index = max(ceil(rand*size(bestChoose,1)),1);
+                bestChoose = bestChoose(index,:);
+                bestPerformance = bestPerformance(index,:);
+            end
+            Obj.performance = bestPerformance;
+            Obj.selectedFeatures = bestChoose;
         end
         
          % Run %        

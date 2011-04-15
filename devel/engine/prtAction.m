@@ -68,6 +68,16 @@ classdef prtAction
         classTrain = 'prtDataSetBase';
         classRun = 'prtDataSetBase';
         classRunRetained = false;
+        
+        verboseStorageInternal = prtAction.getVerboseStorage();
+        showProgressBarInternal = prtAction.getShowProgressBar();
+    end
+    
+    properties (Dependent)
+        % Specifies whether or not to store the training prtDataset.
+        % If true the training prtDataSet is stored internally prtAction.dataSet.
+        verboseStorage
+        showProgressBar
     end
     
     methods (Hidden = true)
@@ -107,11 +117,6 @@ classdef prtAction
     end
     
     properties
-        % Specifies whether or not to store the training prtDataset.
-        % If true the training prtDataSet is stored internally prtAction.dataSet.
-        verboseStorage = prtAction.getVerboseStorage();
-        
-        
         % User specified data
         userData = struct;
         %   Some prtActions store additional information from
@@ -253,8 +258,18 @@ classdef prtAction
         end        
         
         function Obj = set.verboseStorage(Obj,val)
-            assert(numel(val)==1 && (islogical(val) || (isnumeric(val) && (val==0 || val==1))),'prtAction:invalidVerboseStorage','verboseStorage must be a logical');
-            Obj.verboseStorage = logical(val);
+            Obj = Obj.setVerboseStorage(val);
+        end
+        
+        function Obj = set.showProgressBar(Obj,val)
+            Obj = Obj.setShowProgressBar(val);
+        end
+        
+        function val = get.verboseStorage(Obj)
+            val = Obj.verboseStorageInternal;
+        end
+        function val = get.showProgressBar(Obj)
+            val = Obj.showProgressBarInternal;
         end
         
         function [OutputDataSet, TrainedActions] = crossValidate(Obj, DataSet, validationKeys)
@@ -288,8 +303,18 @@ classdef prtAction
             
             uKeys = unique(validationKeys);
             
+            actuallyShowProgressBar = Obj.showProgressBar && (length(uKeys) > 1);
+            
+            if actuallyShowProgressBar
+                waitBarObj = prtUtilProgressBar(0,sprintf('Crossvalidating - %s',Obj.name),'autoClose',true);
+            end
+            
             for uInd = 1:length(uKeys);
                     
+                if actuallyShowProgressBar
+                    waitBarObj.update((uInd-1)/length(uKeys));
+                end
+                
                 %get the testing indices:
                 if isa(uKeys(uInd),'cell')
                     cTestLogical = strcmp(uKeys(uInd),validationKeys);
@@ -336,6 +361,9 @@ classdef prtAction
                     end
                 end
             end	
+            if actuallyShowProgressBar
+                waitBarObj.update(1);
+            end
             
             OutputDataSet = DataSet;
             OutputDataSet = OutputDataSet.setObservations(OutputMat);
@@ -559,9 +587,26 @@ classdef prtAction
         end
     end
     
+    methods (Hidden = true)
+        function Obj = setVerboseStorage(Obj,val)
+            assert(numel(val)==1 && (islogical(val) || (isnumeric(val) && (val==0 || val==1))),'prtAction:invalidVerboseStorage','verboseStorage must be a logical');
+            Obj.verboseStorageInternal = logical(val);
+        end
+        function Obj = setShowProgressBar(Obj,val)
+            if ~prtUtilIsLogicalScalar(val);
+                error('prt:prtAction','showProgressBar must be a scalar logical.');
+            end
+            Obj.showProgressBarInternal = val;
+        end
+    end
+    
     methods (Hidden, Static)
         function val = getVerboseStorage()
             val = prtOptionsGet('prtOptionsComputation','verboseStorage');
         end
+        function val = getShowProgressBar()
+            val = prtOptionsGet('prtOptionsComputation','showProgressBar');
+        end
+        
     end
 end

@@ -65,6 +65,10 @@ classdef prtUtilProgressBar
     properties (Hidden = true)
         allowStop = false;
         isDead = false;
+        
+        % Restricted update parameters
+        minTimeBetweenUpdates = 0.2; % in seconds
+        minPercentBetweenUpdates = 0; % in percent [0 100] (0 ignores this)
     end
     properties (Constant = true, GetAccess = protected);
         % Graphics parameters
@@ -93,6 +97,7 @@ classdef prtUtilProgressBar
     
     properties (Hidden = true)
         barIndex
+        
     end
     
     methods
@@ -208,8 +213,16 @@ classdef prtUtilProgressBar
             set(bar.foregroundPatchHandle,'Position',[cPatchPosition(1:2), min(max(0.1,totalPatchArea*percentage),totalPatchArea), cPatchPosition(4)]);
                 
             % Update texts
-            timeChanges = diff(bar.lastIterationsTimes);
-            percentChanges = diff(bar.lastIterationsPercentages);
+            if sum(isfinite(bar.lastIterationsTimes)) == 1
+                % First update with percetage > 0
+                % Must reference start time instead of previously saved
+                % iteration times
+                timeChanges = currentTime - bar.startTime;
+                percentChanges = percentage;
+            else
+                timeChanges = diff(bar.lastIterationsTimes);
+                percentChanges = diff(bar.lastIterationsPercentages);
+            end
             
             % Remove negative steps...
             percentChanges = percentChanges(percentChanges>=0);
@@ -251,22 +264,26 @@ classdef prtUtilProgressBar
             % Always update the center 
             set(bar.centerTextHandle,'string', sprintf('%d%%',round(percentage*100)));
             
+            if ((currentTime-bar.timeLastGraphicsUpdate) > Obj.minTimeBetweenUpdates) || ((percentage-bar.percentLastGraphicsUpdate) > Obj.minPercentBetweenUpdates)
+                bar.timeLastGraphicsUpdate = currentTime;
+                bar.percentLastGraphicsUpdate = percentage;
+                set(Obj.figureHandle,'Name',Obj.titleStr);
+                drawnow;
+            end
+             
             % Save bar data in figure
             prtUtilProgressBarData.bars(Obj.barIndex) = bar;
             guidata(Obj.figureHandle,prtUtilProgressBarData);
             
-            drawnow;
-             
             if all(abs(percentage-1)<1e-9)
-                % Allow the object to be closed manually by reseting to the
-                % default
-                %set(Obj.figureHandle,'CloseRequestFcn',@(x,y)closereq(x,y));
                 
                 if Obj.autoClose
                     % close the object
                     Obj.close();
                 end
             end
+            
+            
         end
         
         function Obj = close(Obj)
@@ -293,7 +310,10 @@ classdef prtUtilProgressBar
             Obj.titleStr = titleStr;
             if ishandle(Obj.figureHandle) %#ok<MCSUP>
                 set(Obj.figureHandle,'Name',titleStr); %#ok<MCSUP>
+                prtUtilProgressBarData = guidata(Obj.figureHandle); %#ok<MCSUP>
+                set(prtUtilProgressBarData.bars(Obj.barIndex).topTextHandle,'string',Obj.titleStr); %#ok<MCSUP>
             end
+            
         end
     end
     
@@ -358,6 +378,8 @@ classdef prtUtilProgressBar
             prtUtilProgressBarData.cancelButtonHandle = cancelButtonHandle;
             prtUtilProgressBarData.bars = struct([]);
             prtUtilProgressBarData.isCanceled = false;
+            prtUtilProgressBarData.nBarsSpace = 0;
+            
             guidata(Obj.figureHandle,prtUtilProgressBarData);
             
         end
@@ -371,32 +393,19 @@ classdef prtUtilProgressBar
             
             prtUtilProgressBarData.nBars = prtUtilProgressBarData.nBars - 1;
             nBars = prtUtilProgressBarData.nBars; % Shorthand
-            
+            nBarsSpace = prtUtilProgressBarData.nBarsSpace;
             % Derived Graphics parameters
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             
             hasStop = ~isempty(prtUtilProgressBarData.cancelButtonHandle);
             
             if hasStop
-                windowHeight = Obj.windowBottomMargin + Obj.windowTopMargin + Obj.cancelButtonHeight + Obj.cancelButtonVertMargin + (nBars-1)*Obj.barVertMargin + nBars*Obj.barHeight;
+                barYStarts = Obj.windowBottomMargin + Obj.cancelButtonHeight + Obj.cancelButtonVertMargin + ((1:nBarsSpace)-1)*(Obj.barHeight + Obj.barVertMargin);
             else
-                windowHeight = Obj.windowBottomMargin + Obj.windowTopMargin + Obj.cancelButtonVertMargin + (nBars-1)*Obj.barVertMargin + nBars*Obj.barHeight;
-            end
-            windowSize = [Obj.windowWidth windowHeight];
-            
-            screenSize = get(0,'ScreenSize');
-            set(Obj.figureHandle,'Position',[floor((screenSize(3:4)-windowSize)/2) windowSize]);% Center window
-            
-            set(prtUtilProgressBarData.axesHandle,'Position',[0 0 1 1],...
-                                                   'XLim',[0 windowSize(1)],...
-                                                   'YLim',[0 windowSize(2)]);
-            
-            if hasStop
-                barYStarts = Obj.windowBottomMargin + Obj.cancelButtonHeight + Obj.cancelButtonVertMargin + ((1:nBars)-1)*(Obj.barHeight + Obj.barVertMargin);
-            else
-                barYStarts = Obj.windowBottomMargin + ((1:nBars)-1)*(Obj.barHeight + Obj.barVertMargin);
+                barYStarts = Obj.windowBottomMargin + ((1:nBarsSpace)-1)*(Obj.barHeight + Obj.barVertMargin);
             end
             barYStarts = flipud(barYStarts(:));
+            barYStarts = barYStarts(1:nBars);
             
             for iBar = 1:nBars
                 cBarYStart = barYStarts(iBar);
@@ -444,6 +453,7 @@ classdef prtUtilProgressBar
             
             prtUtilProgressBarData.nBars = prtUtilProgressBarData.nBars + 1;
             nBars = prtUtilProgressBarData.nBars; % Shorthand
+            nBarsSpace = prtUtilProgressBarData.nBarsSpace; % Shorthand
             cBar = nBars;
             
             % Derived Graphics parameters
@@ -461,19 +471,24 @@ classdef prtUtilProgressBar
             
             hasStop = ~isempty(prtUtilProgressBarData.cancelButtonHandle);
             
-            if hasStop
-                windowHeight = Obj.windowBottomMargin + Obj.windowTopMargin + Obj.cancelButtonHeight + Obj.cancelButtonVertMargin + (nBars-1)*Obj.barVertMargin + nBars*Obj.barHeight;
-            else
-                windowHeight = Obj.windowBottomMargin + Obj.windowTopMargin + Obj.cancelButtonVertMargin + (nBars-1)*Obj.barVertMargin + nBars*Obj.barHeight;
-            end
-            windowSize = [Obj.windowWidth windowHeight];
+            if nBars > nBarsSpace
+                % Expand window
+                if hasStop
+                    windowHeight = Obj.windowBottomMargin + Obj.windowTopMargin + Obj.cancelButtonHeight + Obj.cancelButtonVertMargin + (nBars-1)*Obj.barVertMargin + nBars*Obj.barHeight;
+                else
+                    windowHeight = Obj.windowBottomMargin + Obj.windowTopMargin + Obj.cancelButtonVertMargin + (nBars-1)*Obj.barVertMargin + nBars*Obj.barHeight;
+                end
+                windowSize = [Obj.windowWidth windowHeight];
             
-            screenSize = get(0,'ScreenSize');
-            set(Obj.figureHandle,'Position',[floor((screenSize(3:4)-windowSize)/2) windowSize]);% Center window
+                screenSize = get(0,'ScreenSize');
+                set(Obj.figureHandle,'Position',[floor((screenSize(3:4)-windowSize)/2) windowSize]);% Center window
             
-            set(prtUtilProgressBarData.axesHandle,'Position',[0 0 1 1],...
+                set(prtUtilProgressBarData.axesHandle,'Position',[0 0 1 1],...
                                                    'XLim',[0 windowSize(1)],...
                                                    'YLim',[0 windowSize(2)]);
+                
+                prtUtilProgressBarData.nBarsSpace = nBars; % Shorthand
+            end
             
             if hasStop
                 barYStarts = cancelButtonYStart + Obj.cancelButtonHeight + Obj.cancelButtonVertMargin + ((1:nBars)-1)*(Obj.barHeight + Obj.barVertMargin);
@@ -481,6 +496,7 @@ classdef prtUtilProgressBar
                 barYStarts = cancelButtonYStart + ((1:nBars)-1)*(Obj.barHeight + Obj.barVertMargin);
             end
             barYStarts = flipud(barYStarts(:));
+            barYStarts = barYStarts(1:nBars);
             
             for iBar = 1:nBars
                 cBarYStart = barYStarts(iBar);
@@ -513,6 +529,10 @@ classdef prtUtilProgressBar
                     BarStruct.estimatedRemainingTime = inf;
                     BarStruct.percentage = 0;
                     
+                    
+                    BarStruct.timeLastGraphicsUpdate = -Inf;
+                    BarStruct.percentLastGraphicsUpdate = -Inf;
+                
                     if isempty(prtUtilProgressBarData.bars)
                         prtUtilProgressBarData.bars = BarStruct;
                     else
@@ -552,6 +572,7 @@ classdef prtUtilProgressBar
             end
             
             guidata(Obj.figureHandle,prtUtilProgressBarData);
+            
             
         end
     end
