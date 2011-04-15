@@ -559,10 +559,21 @@ classdef prtAction
                 parameterValues = num2cell(parameterValues);
             end
             performance = nan(length(parameterValues),1);
+            
+            if Obj.showProgressBar
+                h = prtUtilProgressBar(0,sprintf('Optimizing %s.%s',class(Obj),parameterName),'autoClose',true);
+            end
+            
             for i = 1:length(performance)
                 Obj.(parameterName) = parameterValues{i};
                 performance(i) = objFn(Obj,DataSet);
+                h.update(i/length(performance));
             end
+            if Obj.showProgressBar
+                % Force close
+                h.update(1);
+            end
+            
             [maxPerformance,maxPerformanceInd] = max(performance); %#ok<ASGLU>
             Obj.(parameterName) = parameterValues{maxPerformanceInd};
             optimizedAction = train(Obj,DataSet);
