@@ -63,6 +63,8 @@ try
     error = false;
     disp('Error #4a, unlabeled data set')
 catch
+    % Close waitbar
+    prtUtilProgressBar.forceClose();
     % no-op
 end
 

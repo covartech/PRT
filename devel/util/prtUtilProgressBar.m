@@ -593,5 +593,14 @@ classdef prtUtilProgressBar
             delete(barStruct.foregroundPatchHandle);
             delete(barStruct.topTextHandle);
         end
+        
+        function forceClose()
+            
+            figHandle = findobj('tag','PrtProgressBar');
+            
+            if ~isempty(figHandle)
+                close(figHandle)
+            end
+        end       
     end
 end
