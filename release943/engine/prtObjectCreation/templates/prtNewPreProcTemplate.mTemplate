@@ -1,0 +1,67 @@
+classdef <fileName> < prtPreProc
+    %<fileName> Insert description of pre-processor here
+    %
+    
+    properties (SetAccess=private)
+        name = '<className>'                  % Insert the name of the pre-processor
+        nameAbbreviation = '<className>'      % A short abbreviation of the name
+    end
+    
+    properties  
+       % Place definitions of properties that your classifier requires here
+    end
+    
+    methods
+        
+        %Define a constructor
+        function Obj = <fileName>(varargin)
+            %Uncomment this line to enable parameter/value setting of public
+            %properties for your pre-processor
+            % Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
+        end
+        
+        % Put additional methods here (set, get methods, and any other
+        % methods your pre-processor requires)
+    end
+    
+    methods (Access=protected, Hidden = true)
+        
+        function Obj = trainAction(Obj,DataSet)
+            % Place code here to perform pre-processor training.  This
+            % function should set the properties of Obj so that in
+            % runAction the pre-processor can output processed data
+            
+        end
+        
+        function DataSetOut = runAction(Obj,DataSetIn)
+            % Place code here to perform pre-processor running.  This
+            % function should set output a DataSet with observations of size
+            % DataSetIn.nObservations x M
+            %
+            % If yOut is a vector or matrix containing the output values,
+            % the DataSetOut can be created with the following line of
+            % code:
+            %
+            %   DataSetOut = DataSetIn.setObservations(yOut);
+
+            %By default, do nothing; remove this line to include your 
+            %algorithm
+            DataSetOut = DataSetIn; 
+        end
+        
+    end
+    
+    methods (Hidden = true)
+        function featureNames = updateFeatureNames(obj,featureNames) %#ok<MANU>
+            %  Overload this method to replace feature names if you want 
+            %the output data sets to have re-named features.
+
+            % For example, for PCA the code for updateFeatureNames looks like:
+            % for i = 1:length(featureNames)
+            %     featureNames{i} = sprintf('PC Score %d',i);
+            % end
+        end
+    end
+    
+    
+end
