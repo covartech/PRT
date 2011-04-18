@@ -88,7 +88,7 @@ classdef prtClass < prtAction
         isCrossValidateValid = true; % True
     end
     
-    properties (Dependent = true, Access = 'protected', Hidden = true)
+    properties (Dependent = true, Hidden = true)
         includesDecision   
     end
     

@@ -6,6 +6,14 @@ function y = prtUtilNanMean(x,dim)
 
 if nargin < 2 || isempty(dim)
     dim = 1; % Default of sum
+    
+    if isvector(x)
+        if size(x,1) > size(x,2) 
+            dim = 1;
+        else
+            dim = 2;
+        end
+    end
 end
 
 nanBool = isnan(x);

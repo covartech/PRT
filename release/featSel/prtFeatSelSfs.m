@@ -58,7 +58,6 @@ classdef prtFeatSelSfs < prtFeatSel
     properties
         % General Classifier Properties
         nFeatures = 3;                    % The number of features to be selected
-        showProgressBar = true;           % Whether or not the progress bar should be displayed
         evaluationMetric = @(DS)prtEvalAuc(prtClassFld,DS);   % The metric used to evaluate performance
     end
     
@@ -81,13 +80,6 @@ classdef prtFeatSelSfs < prtFeatSel
             Obj.nFeatures = val;
         end
         
-        function Obj = set.showProgressBar(Obj,val)
-            if ~prtUtilIsLogicalScalar(val);
-                error('prt:prtFeatSelSfs','showProgressBar must be a scalar logical.');
-            end
-            Obj.showProgressBar = val;
-        end
-        
         function Obj = set.evaluationMetric(Obj,val)
             assert(isa(val, 'function_handle') && nargin(val)>=1,'prt:prtFeatSelExhaustive','evaluationMetric must be a function handle that accepts one input argument.');
             Obj.evaluationMetric = val;
@@ -100,68 +92,68 @@ classdef prtFeatSelSfs < prtFeatSel
             
             nFeatsTotal = DS.nFeatures;
             nSelectFeatures = min(nFeatsTotal,Obj.nFeatures);
-            canceled = false;
-            try
-                Obj.performance = nan(1,nSelectFeatures);
-                Obj.selectedFeatures = nan(1,nSelectFeatures);
+            
+            Obj.performance = nan(1,nSelectFeatures);
+            Obj.selectedFeatures = nan(1,nSelectFeatures);
+            
+            sfsSelectedFeatures = [];
+            
+            if Obj.showProgressBar
+                h = prtUtilProgressBar(0,'Feature Selection - SFS','autoClose',true);
+            end
+            
+            for j = 1:nSelectFeatures
                 
-                h = [];
-                sfsSelectedFeatures = [];
-                for j = 1:nSelectFeatures
+                if Obj.showProgressBar && j == 1
+                    h2 = prtUtilProgressBar(0,sprintf('Selecting Feature %d',j),'autoClose',false);
+                else
+                    h2.titleStr = sprintf('Selecting Feature %d',j);
+                    h2.update(0);
+                end
+                
+                if j > 1
+                    sfsSelectedFeatures = Obj.selectedFeatures(1:(j-1));
+                end
+                
+                availableFeatures = setdiff(1:nFeatsTotal,sfsSelectedFeatures);
+                cPerformance = nan(size(availableFeatures));
+                for i = 1:length(availableFeatures)
+                    currentFeatureSet = cat(2,sfsSelectedFeatures,availableFeatures(i));
+                    tempDataSet = DS.retainFeatures(currentFeatureSet);
                     
-                    if j > 1
-                        sfsSelectedFeatures = Obj.selectedFeatures(1:(j-1));
-                    end
+                    cPerformance(i) = Obj.evaluationMetric(tempDataSet);
                     
                     if Obj.showProgressBar
-                        h = prtUtilWaitbarWithCancel('SFS');
+                        h2.update(i/length(availableFeatures));
                     end
-                    
-                    availableFeatures = setdiff(1:nFeatsTotal,sfsSelectedFeatures);
-                    cPerformance = nan(size(availableFeatures));
-                    for i = 1:length(availableFeatures)
-                        currentFeatureSet = cat(2,sfsSelectedFeatures,availableFeatures(i));
-                        tempDataSet = DS.retainFeatures(currentFeatureSet);
-                        
-                        cPerformance(i) = Obj.evaluationMetric(tempDataSet);
-                        
-                        if Obj.showProgressBar
-                            prtUtilWaitbarWithCancel(i/length(availableFeatures),h);
-                        end
-                        
-                        if ~ishandle(h)
-                            canceled = true;
-                            break
-                        end
-                    end
-                    
-                    if Obj.showProgressBar && ~canceled
-                        close(h);
-                    end
-                    
-                    if canceled
-                        break
-                    end
-                    
-                    if all(~isfinite(cPerformance))
-                        error('prt:prtFeatSelSfs','All evaluation matrics resulted in non-finite values. Check evalutionMetric');
-                    end
-                    
-                    % Randomly choose the next feature if more than one provide the same performance
-                    val = max(cPerformance);
-                    newFeatInd = find(cPerformance == val);
-                    newFeatInd = newFeatInd(max(1,ceil(rand*length(newFeatInd))));
-                    
-                    % In the (degenerate) case when rand==0, set the index to the first one
-                    Obj.performance(j) = val;
-                    Obj.selectedFeatures(j) = availableFeatures(newFeatInd);
                 end
                 
-            catch ME
-                if ~isempty(h) && ishandle(h)
-                    close(h);
+                if Obj.showProgressBar
+                    % Make sure it's closed.
+                    h2.update(1);
                 end
-                throw(ME);
+                
+                if all(~isfinite(cPerformance))
+                    error('prt:prtFeatSelSfs','All evaluation matrics resulted in non-finite values. Check evalutionMetric');
+                end
+                
+                % Randomly choose the next feature if more than one provide the same performance
+                val = max(cPerformance);
+                newFeatInd = find(cPerformance == val);
+                newFeatInd = newFeatInd(max(1,ceil(rand*length(newFeatInd))));
+                
+                % In the (degenerate) case when rand==0, set the index to the first one
+                Obj.performance(j) = val;
+                Obj.selectedFeatures(j) = availableFeatures(newFeatInd);
+                
+                if Obj.showProgressBar
+                    h.update(j/nSelectFeatures);
+                end
+                
+            end
+            if Obj.showProgressBar
+                % Make sure it's closed.
+                h.update(1);
             end
         end
         

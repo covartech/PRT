@@ -33,10 +33,12 @@ classdef prtDataSetStandard < prtDataSetBase
         nFeatures             % The number of features
         nTargetDimensions     % The number of dimensions of the target data
         observationInfo       % Additional data per observation
+        featureInfo           % Additional data per feature
     end
     
     properties (GetAccess = 'private',SetAccess = 'private', Hidden=true)
         observationInfoDepHelper
+        featureInfoDepHelper
         dataDepHelper
         targetsDepHelper
     end
@@ -507,12 +509,23 @@ classdef prtDataSetStandard < prtDataSetBase
         end
         
         function obj = set.data(obj,newData)
+            done = false;
             if size(obj.data,1) ~= size(newData,1)
                 % # of observations is changing therefore, observationInfo
                 % is no longer valid
                 obj.dataDepHelper = newData;
                 obj.observationInfo = repmat(struct,size(newData,1),1);
-            else
+                done = true;
+            end
+            if length(obj.featureInfo) ~= size(newData,2)
+                % # of features is changing therefore, featureInfo
+                % is no longer valid
+                obj.dataDepHelper = newData;
+                obj.featureInfo = repmat(struct,1,size(newData,2));
+                done = true;
+            end
+            
+            if ~done
                 obj.dataDepHelper = newData;
             end
         end
@@ -677,8 +690,13 @@ classdef prtDataSetStandard < prtDataSetBase
             % INDICES
             
             retainedFeatures = prtDataSetBase.parseIndices(obj.nFeatures ,retainedFeatures);
+            oldFeatureInfo = obj.featureInfo;
+            
             obj = obj.retainFeatureNames(retainedFeatures);
+            
             obj.data = obj.data(:,retainedFeatures);
+            
+            obj.featureInfo = oldFeatureInfo(retainedFeatures);
             
             % Updated chached data info
             obj = updateObservationsCache(obj);
@@ -753,9 +771,12 @@ classdef prtDataSetStandard < prtDataSetBase
                 
                 assert(obj.nObservations==0 || obj.nObservations==currInput.nObservations,'Attempt to cat features for data sets with different numbers of observations');
                 
+                oldFeatureInfo = obj.featureInfo;
+                
                 % Standard procedure
                 obj = obj.catFeatureNames(currInput);
                 obj.data = cat(2,obj.data,currInput.getObservations);
+                obj = obj.catFeatureInfo(oldFeatureInfo, currInput);
             end
             
             % Updated chached data info
@@ -845,6 +866,23 @@ classdef prtDataSetStandard < prtDataSetBase
             val = obj.observationInfoDepHelper;
         end
         
+        function obj = set.featureInfo(obj,Struct)
+            % Error checks for setting observationInfo in batch mode
+            if size(Struct,2)~=obj.nFeatures && isempty(Struct)
+                % Empty is ok.
+                % It has to be for loading and saving.
+                return
+            end
+            
+            assert(isa(Struct,'struct') && isvector(Struct) && numel(Struct)==obj.nFeatures, 'prt:prtDataSetStandard:featureInfo', 'featureInfo must be an 1 x nFeatures structure array.');
+            
+            obj.featureInfoDepHelper = Struct(:)';
+        end        
+        
+        function val = get.featureInfo(obj)
+            val = obj.featureInfoDepHelper;
+        end
+        
         function obj = select(obj, selectFunction)
             % Select observations to retain by specifying a function
             %   The specified function is evaluated on each obesrvation.
@@ -930,6 +968,43 @@ classdef prtDataSetStandard < prtDataSetBase
             end
         end
         
+        
+        function val = getFeatureInfo(obj,fieldName)
+            % Allow for fast retrieval of feature info by specifying
+            % the field name(fieldName)
+            % 
+            % DS = prtDataGenIris;
+            % DS = DS.setFeatureInfo('asdf',randn(DS.nFeatures,1),'qwer',randn(DS.nFeatures,1),'poiu',randn(10,DS.nFeatures),'lkjh',mat2cell(randn(1,DS.nFeatures),1,ones(1,DS.nFeatures)),'mnbv',mat2cell(randn(10,DS.nFeatures),10,ones(DS.nFeatures,1)));
+            % vals = DS.getFeatureInfo('asdf');
+            
+            assert(nargin==2,'prt:prtDataSetStandard:getFeatureInfo','invalid number of input arguments, only one input argument should be specified.');
+            
+            assert(ischar(fieldName),'prt:prtDataSetStandard:getFeatureInfo','fieldName must be a string');
+            
+            assert(isfield(obj.featureInfo,fieldName),'prt:prtDataSetStandard:getFeatureInfo','%s is not a field name of featureInfo for this dataset',fieldName);
+            
+            try
+                val = cat(2,obj.featureInfo.(fieldName));
+            catch %#ok<CTCH>
+                % This failed because of invalid matrix dimensions
+                val = [];
+            end
+            if size(val,2) == obj.nFeatures
+                % Everything worked out, value in observationInfo 
+                % is a row vector of contstant size
+                % leave now
+                return
+            else
+                % Failure, or invalid size, so we return a cell
+                try
+                    val = {obj.featureInfo.(fieldName)};
+                catch %#ok<CTCH>
+                    error('prt:prtDataSetStandard:getFeatureInfo','getFeatureInfo failed to retrieve the necessary field for an unknown reason');
+                end
+            end
+        end
+        
+        
         function obj = setObservationInfo(obj,varargin)
             % Allow setting of observation info by specifying string value
             % pairs
@@ -983,6 +1058,64 @@ classdef prtDataSetStandard < prtDataSetBase
             end
             
             obj.observationInfo = cStruct;
+        end
+        
+        function obj = setFeatureInfo(obj,varargin)
+            % Allow setting of feature info by specifying string value
+            % pairs
+            % 
+            % DS = prtDataGenIris;
+            % DS = DS.setFeatureInfo('asdf',randn(DS.nFeatures,1),'qwer',randn(DS.nFeatures,1),'poiu',randn(10,DS.nFeatures),'lkjh',mat2cell(randn(1,DS.nFeatures),1,ones(1,DS.nFeatures)),'mnbv',mat2cell(randn(10,DS.nFeatures),10,ones(DS.nFeatures,1)));
+            
+            nIn = length(varargin);
+            if nIn == 1
+                % should be a struct. if it isn't we'll just
+                % let set.featureInfo() spit the error
+                obj.featureInfo = varargin{1};
+                return
+            end
+            
+            errorMsg = 'Invalid input. If more than one input is specified, the inputs must be string value pairs.';
+            assert(mod(length(varargin),2)==0, errorMsg)
+            paramNames = varargin(1:2:end);
+            params = varargin(2:2:end);
+            
+            assert(iscellstr(paramNames), errorMsg)
+            
+            cStruct = obj.featureInfo;
+            if isempty(cStruct)
+                startingFieldNames = {};
+            else
+                startingFieldNames = fieldnames(cStruct);
+            end
+            
+            for iParam = 1:length(paramNames)
+                
+                cVal = params{iParam};
+                cName = paramNames{iParam};
+                assert(isvarname(cName),'featureInfo fields must be valid MATLAB variable names. %s is not.',cName);
+                
+                if ismember(cName,startingFieldNames)
+                    % warning('prt:observationInfoNameCollision','An observationInfo field named %s already exists. The data is now overwritten.', cName)
+                    % This warning is unnecessary
+                end
+                if isvector(cVal)
+                    cVal = cVal(:)';
+                end
+                assert(size(cVal,2) == obj.nFeatures,'featureInfo values must have nFeatures columns.');
+                
+                cValSet = mat2cell(cVal,size(cVal,1),ones(1,size(cVal,2)));
+                
+                if isempty(cStruct)
+                    cStruct = struct(cName,cValSet);
+                else
+                    for iFeat = 1:obj.nFeatures
+                        cStruct(iFeat).(cName) = cValSet{:,iFeat};
+                    end
+                end
+            end
+            
+            obj.featureInfo = cStruct;
         end
         
         function obj = catTargets(obj, varargin)
@@ -1065,7 +1198,18 @@ classdef prtDataSetStandard < prtDataSetBase
             end
             
             obj.observationInfo = prtUtilStructVCatMergeFields(oldObservationInfo,newDataSet.observationInfo);
-        end       
+        end
+        
+        function obj = catFeatureInfo(obj, oldFeatureInfo, newDataSet)
+            
+            if isempty(oldFeatureInfo) || (isempty(fieldnames(oldFeatureInfo)) && isempty(fieldnames(newDataSet.featureInfo)))
+                % No featureInfo was set in either dataset so just exit
+                % and accept the default empty
+                return;
+            end
+            
+            obj.featureInfo = prtUtilStructVCatMergeFields(oldFeatureInfo',(newDataSet.featureInfo)')';
+        end    
     end
     
     methods (Hidden = true)
