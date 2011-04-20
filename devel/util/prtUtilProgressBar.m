@@ -130,8 +130,7 @@ classdef prtUtilProgressBar
             
             % Attempt to locate parent
             oldFigureHandle = findobj('tag','PrtProgressBar','HandleVisibility','off');
-            keyboard
-            
+           
             if Obj.reset && ~isempty(oldFigureHandle)
                 close(oldFigureHandle)
                 oldFigureHandle = [];
