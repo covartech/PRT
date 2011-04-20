@@ -1,0 +1,55 @@
+classdef <fileName> < prtRegress
+    %<fileName> Insert description of class here
+    %
+    
+    properties (SetAccess=private)
+        name = '<className>'                  % Insert the name of the regressor
+        nameAbbreviation = '<className>'      % A short abbreviation of the name
+    end
+    
+    properties  
+       % Place definitions of properties that your regressor requires here
+    end
+    
+    methods
+        
+        %Define a constructor
+        function Obj = <fileName>(varargin)
+            %Uncomment this line to enable parameter/value setting of public
+            %properties for your regressor
+            % Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
+        end
+        
+        % Put additional methods here (set, get methods, and any other
+        % methods your regressor requires)
+    end
+    
+    methods (Access=protected, Hidden = true)
+        
+        function Obj = trainAction(Obj,DataSet)
+            % Place code here to perform regressor training.  This
+            % function should set the properties of Obj so that in
+            % runAction the regressor can output decision statistics
+            
+        end
+        
+        function DataSetOut = runAction(Obj,DataSetIn)
+            % Place code here to perform regressor running.  This
+            % function should set output a DataSet with observations of size
+            % DataSetIn.nObservations x 1 
+            %
+            %   If yOut is a vector containing the output values,
+            %   the DataSetOut can be created with the following line of
+            %   code:
+            %
+            %   DataSetOut = DataSetIn.setObservations(yOut);
+
+            %By default, output a random data set; replace this line to
+            % include your algorithm
+            yOut = randn(DataSetIn.nObservations,1);
+            DataSetOut = DataSetIn.setObservations(yOut); 
+        end
+        
+    end
+    
+end
