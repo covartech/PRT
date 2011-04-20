@@ -196,6 +196,9 @@ classdef prtClassLibSvm < prtClass
             Obj.libSvmOptions = Obj.libSvmOptionString(DataSet);
             Obj.libSvmOptionsTest = Obj.libSvmOptionStringTest(DataSet);
             
+            if DataSet.nClasses ~= 2
+                error('prt:prtClassLibSvm:UnaryData','prtClassLibSvm requires binary data for training');
+            end
             Obj.trainedSvm = prtExternal.libsvm.svmtrain(training_label_vector, training_instance_matrix, Obj.libSvmOptions);
             
             %Need to figure out whether to flip SVM outputs:

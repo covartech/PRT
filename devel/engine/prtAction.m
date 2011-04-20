@@ -551,7 +551,7 @@ classdef prtAction
             % parameters. 
             %
             % Example:
-            %   objFn = @(act,ds) = prtEvalAuc(act,ds,3);
+            %   objFn = @(act,ds)prtEvalAuc(act,ds,3);
             %   [optimizedAction,performance] = optimize(Obj,DataSet,objFn,parameterName,parameterValues)
             %  
             

@@ -41,7 +41,7 @@ if (nargin == 1 || isempty(y)) && isa(ds,'prtDataSetClass')
     y = ds;
 end
 
-[ds,y] = prtUtilScoreParseFirstTwoInputs(ds,y);
+[ds,y] = prtUtilScoreParseFirstTwoInputs(ds,y,mfilename);
 
 %Handle multi-dimensional input DS (numeric or prtDataSetClass)
 if size(ds,2) > 1
