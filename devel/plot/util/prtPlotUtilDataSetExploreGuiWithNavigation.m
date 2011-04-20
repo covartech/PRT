@@ -23,7 +23,7 @@ assert(isa(AdditionalOptions.additionalOnClickFunction,'function_handle') && nar
 if ds.nFeatures > 1
     plotInds = [1 2 0];
 elseif ds.nFeatures > 0
-    plotInds = [1 1 0];
+    plotInds = [1 0 0];
 else
     error('prt:prtDataSetClassExplore','Dataset has zero features and cannot be explored');
 end
@@ -122,7 +122,7 @@ set(navFigH,'visible','on');
         cVal = get(myHandle,'value');
         axisInd = varargin{1};
         
-        if axisInd > 2
+        if axisInd > 1
             cVal = cVal - 1;
         end
         plotInds(axisInd) = cVal;
@@ -204,10 +204,23 @@ set(navFigH,'visible','on');
         
         if all(displayLogical)
             data = ds.getFeatures(actualPlotDims);
+            
+            if size(data,2) == 1
+                data = cat(2,data,ds.getTargets());
+            end
+            
         else
             actualInds = ismember(ds.getTargetsClassInd, find(displayLogical));
             data = ds.getObservations(actualInds,actualPlotDims);
+        
+            if size(data,2) == 1
+                data = cat(2,data,ds.getTargets(actualInds));
+            end
+            
         end
+        
+        
+        
 
         [rP,rD] = rotateDataAndClick(data);
 
@@ -375,7 +388,7 @@ set(navFigH,'visible','on');
         H.yPopUp = uicontrol(H.navTab(1),'style','popup',...
             'units','normalized',...
             'position',[0.025 0.325 0.95 0.225],...
-            'string',featureNames,...
+            'string',cat(1,{'None'}, featureNames),...
             'FontUnits','normalized',...
             'FontSize',0.5,...
             'callback',{@featureSelectPopupCallback 2});
