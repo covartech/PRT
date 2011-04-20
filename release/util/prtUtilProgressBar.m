@@ -129,8 +129,8 @@ classdef prtUtilProgressBar
             Obj = prtUtilAssignStringValuePairs(Obj, varargin{:});
             
             % Attempt to locate parent
-            oldFigureHandle = findobj('tag','PrtProgressBar');
-            
+            oldFigureHandle = findobj('tag','PrtProgressBar','HandleVisibility','off');
+           
             if Obj.reset && ~isempty(oldFigureHandle)
                 close(oldFigureHandle)
                 oldFigureHandle = [];
@@ -337,7 +337,7 @@ classdef prtUtilProgressBar
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             screenSize = get(0,'ScreenSize');
             Obj.figureHandle = figure('DoubleBuffer','on',...
-                                      'HandleVisibility','on',...
+                                      'HandleVisibility','off',...
                                       'MenuBar','none',...
                                       'NumberTitle','off',...
                                       'Resize','off',...
