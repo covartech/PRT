@@ -129,8 +129,11 @@ classdef prtUtilProgressBar
             Obj = prtUtilAssignStringValuePairs(Obj, varargin{:});
             
             % Attempt to locate parent
+            oldHandleVisilibity = get(0,'ShowHiddenHandles');
+            set(0,'ShowHiddenHandles','on');
             oldFigureHandle = findobj('tag','PrtProgressBar','HandleVisibility','off');
-           
+            set(0,'ShowHiddenHandles',oldHandleVisilibity);
+            
             if Obj.reset && ~isempty(oldFigureHandle)
                 close(oldFigureHandle)
                 oldFigureHandle = [];
