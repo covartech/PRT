@@ -1,4 +1,6 @@
-classdef prtBrvMvnPrior
+% PRTBRVMVNHIERARCHY - PRT BRV MVN Hierarchical model structure
+%   Has parameters that specify a Normal-Inverse-Wishart Density
+classdef prtBrvMvnHierarchy
     properties
         meanMean
         meanBeta
@@ -7,7 +9,7 @@ classdef prtBrvMvnPrior
     end
     
     methods
-        function obj = prtBrvMvnPrior(varargin)
+        function obj = prtBrvMvnHierarchy(varargin)
             if nargin < 1
                 return
             end

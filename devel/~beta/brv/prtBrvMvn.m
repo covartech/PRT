@@ -1,12 +1,32 @@
+% PRTBRVMVN - PRT BRV Multivariate Normal Observation Model
+%
+% Constructor takes the dimesionality
+%
+% Impliments all abstract properties and methods from prtBrvObsModel.
+%
+% Additional Properties:
+%   model - prtBrvMvnHierarchy object that contains the parameters of the
+%       prior/posterior
+% Additional Hidden Properties:
+%   initFuzzyFactor - Used to weaken the results of kmeans in the
+%       mixture initialization process. Between 0 and 1 (inclusivly) and
+%       probably greater than 0.9. Default 1.
+%   initModifiyPrior - Specifies weather to modify the covariance of the
+%       prior to more closely match that of the training data during
+%       mixture initialization.
+%
+% Also inherits from prtBrvVbOnlineObsModel and therefore impliments
+%   vbOnlineWeightedUpdate
+
 classdef prtBrvMvn < prtBrvObsModel & prtBrvVbOnlineObsModel
     properties
         name = 'MVN';
         
-        model = prtBrvMvnPrior
+        model = prtBrvMvnHierarchy;
     end
     
     properties (Hidden)
-        initFuzzyFactor = 1; % Between zero and 1, probably > 0.9
+        initFudgeFactor = 1; % Between zero and 1, probably > 0.9
         initModifiyPrior = true;
     end
     
@@ -15,7 +35,7 @@ classdef prtBrvMvn < prtBrvObsModel & prtBrvVbOnlineObsModel
             if nargin < 1
                 return
             end
-            obj.model = prtBrvMvnPrior(varargin{1});
+            obj.model = prtBrvMvnHierarchy(varargin{1});
         end
         
         function val = nDimensions(obj)
@@ -25,8 +45,6 @@ classdef prtBrvMvn < prtBrvObsModel & prtBrvVbOnlineObsModel
         function y = conjugateVariationalAverageLogLikelihood(obj, x)
             nDims = size(x,2);
             
-            %lnDetGammaTilde = sum(psi((Q.covNu + 1 - (1:nDims)')./2)) - log(det(Q.covPhi)) + nDims*log(2);
-            %lnDetGammaTilde = sum(psi((Q.covNu + 1 - (1:nDims)')./2)) - logdet(Q.covPhi) - nDims*log(2);
             innerPsiTerm = (obj.model.covNu + 1 - (1:nDims)')./2;
             lnDetGammaTilde = sum(psi(innerPsiTerm)) - prtUtilLogDet(obj.model.covPhi) - nDims*log(2);
 
@@ -37,14 +55,13 @@ classdef prtBrvMvn < prtBrvObsModel & prtBrvVbOnlineObsModel
             term = sum(xNorm.^2,2);
             
             y = 1/2*lnDetGammaTilde - 1/2*term(:) - nDims/2/obj.model.meanBeta;
-
         end
         
         function [phiMat, priorObjs] = mixtureInitialize(objs, priorObjs, x) % Vector of objects
             
             nClusters = length(objs);
             
-            fuzzyFactor = objs(1).initFuzzyFactor;
+            fuzzyFactor = objs(1).initFudgeFactor;
             modifyPrior = objs(1).initModifiyPrior;
             
             if nClusters < size(x,1)
@@ -152,11 +169,13 @@ classdef prtBrvMvn < prtBrvObsModel & prtBrvVbOnlineObsModel
             model.mean = prtRvUtilMvnDraw(obj.model.meanMean,model.covariance/obj.model.meanBeta);
         end
         
-        function plot(objs)
+        function plot(objs,colors)
             
             nComponents = length(objs);
             
-            colors = prtPlotUtilClassColors(nComponents);
+            if nargin < 2
+                colors = prtPlotUtilClassColors(nComponents);
+            end
             
             nDimensions = objs(1).nDimensions;
             
@@ -224,32 +243,11 @@ classdef prtBrvMvn < prtBrvObsModel & prtBrvVbOnlineObsModel
                 muBar = zeros(1,size(x,2));
             end
             
-%             obj.model = prevObj.model;
-%             obj.model.meanBeta = lambda*(N_bar + priorObj.model.meanBeta)  + (1-lambda)*prevObj.model.meanBeta;
-%             obj.model.meanMean = ((muBar.*N_bar + priorObj.model.meanMean.*priorObj.model.meanBeta)*lambda + (1-lambda)*prevObj.model.meanMean*prevObj.model.meanBeta) ./ obj.model.meanBeta;
-%             obj.model.covNu = lambda*(N_bar + priorObj.model.covNu) + (1-lambda)*prevObj.model.covNu;
-%             
-%             %xWeightedDemeaned = bsxfun(@times,bsxfun(@minus,x,muBar),sqrt(weights));
-%             %sigmaBar = xWeightedDemeaned'*xWeightedDemeaned;
-%             %obj.model.covPhi = (sigmaBar*D/S + N_bar.*priorObj.model.meanBeta./(N_bar + priorObj.model.meanBeta).*((muBar - priorObj.model.meanMean)'*(muBar - priorObj.model.meanMean)) + priorObj.model.covPhi)*lambda + (1-lambda)*prevObj.model.covPhi;
-%             
-%             xWeightedSqrt = bsxfun(@times,x,sqrt(weights));
-%             priorSumOfSquares = priorObj.model.meanMean'*priorObj.model.meanMean*priorObj.model.meanBeta + priorObj.model.covPhi;
-%             prevSumOfSquares = prevObj.model.meanMean'*prevObj.model.meanMean*prevObj.model.meanBeta + prevObj.model.covPhi;
-%             
-%             newSumOfSquares = (xWeightedSqrt'*xWeightedSqrt*D/S + priorSumOfSquares)*lambda + prevSumOfSquares*(1-lambda);
-%             
-%             obj.model.covPhi = newSumOfSquares - obj.model.meanMean'*obj.model.meanMean*obj.model.meanBeta;
-            
             obj.model = prevObj.model;
             obj.model.meanBeta = lambda*(N_bar + priorObj.model.meanBeta)  + (1-lambda)*prevObj.model.meanBeta;
             obj.model.meanMean = ((muBar.*N_bar + priorObj.model.meanMean.*priorObj.model.meanBeta)*lambda + (1-lambda)*prevObj.model.meanMean*prevObj.model.meanBeta) ./ obj.model.meanBeta;
             obj.model.covNu = lambda*(N_bar + priorObj.model.covNu) + (1-lambda)*prevObj.model.covNu;
-            
-            %xWeightedDemeaned = bsxfun(@times,bsxfun(@minus,x,muBar),sqrt(weights));
-            %sigmaBar = xWeightedDemeaned'*xWeightedDemeaned;
-            %obj.model.covPhi = (sigmaBar*D/S + N_bar.*priorObj.model.meanBeta./(N_bar + priorObj.model.meanBeta).*((muBar - priorObj.model.meanMean)'*(muBar - priorObj.model.meanMean)) + priorObj.model.covPhi)*lambda + (1-lambda)*prevObj.model.covPhi;
-            
+
             xWeightedSqrt = bsxfun(@times,x,sqrt(weights));
             priorSumOfSquares = priorObj.model.meanMean'*priorObj.model.meanMean*priorObj.model.meanBeta + priorObj.model.covPhi;
             prevSumOfSquares = prevObj.model.meanMean'*prevObj.model.meanMean*prevObj.model.meanBeta + prevObj.model.covPhi;

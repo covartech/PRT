@@ -1,3 +1,9 @@
+% PRTBRVVBONLINE - PRT BRV Variational Bayes Online Inference parameters
+%   Contains properties and methods that are useful for prtBrv objects that
+%   impliment online Variational Bayes methods. It abstracts that the
+%   method vbOnlineUpdate and impliments vbOnline().
+%
+% This is currently in alpha and should not be used.
 classdef prtBrvVbOnline
     properties
         vbOnlineD = 100;
@@ -46,19 +52,6 @@ classdef prtBrvVbOnline
                     [obj, training] = obj.vbOnlineUpdate(priorObj, cX);
                     
                 end
-                
-                % Calculate NFE
-%                 [nfe, eLogLikelihood, kld, kldDetails] = vbNfe(obj, priorObj, x, training);
-%                 
-%                 % Update training information
-%                 training.previousNegativeFreeEnergy = training.negativeFreeEnergy;
-%                 training.negativeFreeEnergy = nfe;
-%                 training.iterations.negativeFreeEnergy(iteration) = nfe;
-%                 training.iterations.eLogLikelihood(iteration) = eLogLikelihood;
-%                 training.iterations.kld(iteration) = kld;
-%                 training.iterations.kldDetails(iteration) = kldDetails;
-%                 training.nIterations = iteration;
-                
                 
                 if mod(iStep-1,obj.vbVerbosePlot)==0 || iStep == obj.vbMaxIterations
                     vbIterationPlot(obj, priorObj, cX, training);

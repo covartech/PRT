@@ -1,12 +1,42 @@
-classdef prtBrvMm < prtBrv & prtBrvVb & prtBrvVbOnline
-    properties
+% PRTBRVMM - PRT BRV Mixture Model
+%   A dirichlet density is used as the model for the mixing proportions. 
+%   
+%   Inherits from (prtBrv & prtBrvIVb & prtBrvVbOnline) and impliments all
+%   required methods.
+%
+%   The construtor takes an array of prtBrvObsModel objects
+%
+%   obj = prtBrvMm(repmat(prtBrvMvn(2),3,1)); % A mixture with 3 2d MVNs
+%
+% Properties
+%   mixingProportions - prtBrvDiscrete object representing the dirichlet
+%       density.
+%   components - array of prtBrvObsModel components
+%   nComponents - number of components in the mixture (Read only)
+%
+% Methods:
+%   vb - Perform VB inference for the mixture
+%   vbOnlineUpdate - Used within vbOnline() (Alpha release, be careful!)
+%   vbNonStationaryUpdate - Performs one iteration of VB updating with
+%       stabilized forgetting. (Alpha release, be careful!)
+
+
+classdef prtBrvMm < prtBrv & prtBrvIVb & prtBrvVbOnline
+    properties (Dependent) % Act as non-dependent
         mixingProportions
         components
-        nSamples = 0;
     end
     properties (Dependent, SetAccess='private')
         nComponents
     end
+    properties (Hidden, SetAccess='private', GetAccess='private');
+        internalMixingProportions
+        internalComponents
+    end
+    properties (Hidden)
+        plotComponentMembershipThreshold = 1; % Must have 1 total sample
+    end
+    
     methods
         
         function obj = prtBrvMm(varargin)
@@ -21,11 +51,7 @@ classdef prtBrvMm < prtBrv & prtBrvVb & prtBrvVbOnline
         function val = nDimensions(obj)
             val = obj.components(1).nDimensions;
         end
-        
-        function val = get.nComponents(obj)
-            val = length(obj.components);
-        end
-        
+                
         function [obj, training] = vb(obj, x)
             
             % Initialize
@@ -114,7 +140,6 @@ classdef prtBrvMm < prtBrv & prtBrvVb & prtBrvVbOnline
                 [obj, training] = obj.vbE(priorObj, x, training);
             end
             
-            obj.nSamples = obj.nSamples + size(x,1);
             obj.vbOnlineT = obj.vbOnlineT + 1;
             
             % Update components
@@ -162,8 +187,6 @@ classdef prtBrvMm < prtBrv & prtBrvVb & prtBrvVbOnline
             priorObj = obj;
             [training.phiMat, priorObj.components] = mixtureInitialize(obj.components, obj.components, x);
             
-            obj.nSamples = obj.nSamples + size(x,1);
-            
             training.variationalClusterLogLikelihoods = zeros(size(x,1),obj.nComponents);
             training.negativeFreeEnergy = 0;
             training.previousNegativeFreeEnergy = nan;
@@ -194,8 +217,10 @@ classdef prtBrvMm < prtBrv & prtBrvVb & prtBrvVbOnline
                 obj.components(iSource) = obj.components(iSource).weightedConjugateUpdate(priorObj.components(iSource), x, training.phiMat(:,iSource));
             end
     
+            training.nSamplesPerCluster = sum(training.phiMat,1);
+            
             % Updated mixingProportions
-            obj.mixingProportions = obj.mixingProportions.conjugateUpdate(priorObj.mixingProportions, sum(training.phiMat,1));
+            obj.mixingProportions = obj.mixingProportions.conjugateUpdate(priorObj.mixingProportions, training.nSamplesPerCluster);
             
         end
         
@@ -248,7 +273,8 @@ classdef prtBrvMm < prtBrv & prtBrvVb & prtBrvVbOnline
             xlabel('Iteration')
 
             subplot(3,1,2)
-            plot(obj.components);
+            componentsToPlot = training.nSamplesPerCluster > obj.plotComponentMembershipThreshold;
+            plot(obj.components(training.nSamplesPerCluster > obj.plotComponentMembershipThreshold),colors(componentsToPlot,:));
             
             subplot(3,1,3)
             if obj.nDimensions < 4
@@ -269,6 +295,30 @@ classdef prtBrvMm < prtBrv & prtBrvVb & prtBrvVbOnline
             end
             
             drawnow;
+        end
+    end
+    methods
+        function obj = set.components(obj,components)
+            assert( isa(components,'prtBrvObsModel'),'components must be a prtBrvObsModel')
+            
+            obj.internalComponents = components;
+        end
+        function val = get.components(obj)
+            val = obj.internalComponents;
+        end
+        
+        function obj = set.mixingProportions(obj,mix)
+            assert( isa(mix,'prtBrvDiscrete'),'mixingProportions must be a prtBrvDiscrete')
+            
+            obj.internalMixingProportions = mix;
+        end
+        
+        function val = get.mixingProportions(obj)
+            val = obj.internalMixingProportions;
+        end
+        
+        function val = get.nComponents(obj)
+            val = length(obj.components);
         end
     end
 end

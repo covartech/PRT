@@ -1,4 +1,19 @@
-classdef prtBrvVb
+% PRTBRVIVB - PRT BRV Iterative Variational Bayes Object
+%   Contains properties and methods for prtBrv objects that impliment
+%   iterative variational Bayesian algorithms.
+%
+% Properties:
+%   vbConvergenceThreshold = 1e-6; % This is a percentage of the total change in NFE
+%   vbMaxIterations = 1e3; % Maximum number of iterations
+%   vbVerboseText = false; % display text
+%   vbVerbosePlot = false; % plot after each iteration
+%   vbVerboseMovie = false; % make a movie with each frame of plotting
+%   vbVerboseMovieFrames = []; % Where we store the frames
+% Methods:
+%   vbCheckConvergence - Used to check convergence at the end of each VB
+%       iteration. Checks the percentage change in negative free energy.
+
+classdef prtBrvIVb
     properties
         vbConvergenceThreshold = 1e-6; % This is a percentage of the total change in NFE
         vbMaxIterations = 1e3; % Maximum number of iterations
@@ -25,8 +40,7 @@ classdef prtBrvVb
                     fprintf('\t\tDecrease in negative free energy occured!!! Exiting.\n')
                 end
                 converged = false;
-                %err = true;
-                err = false;
+                err = true;
             else
                 err = false;
             end

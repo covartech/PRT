@@ -1,8 +1,21 @@
+% PRTBRVDISCRETEMVN - PRT BRV Discrete Observation Model
+%
+% Constructor takes the dimesionality (number of unique outputs)
+%
+% Impliments all abstract properties and methods from prtBrvObsModel.
+%
+% Additional Properties:
+%   model - prtBrvDiscreteHierarchy object that contains the parameters of
+%       the prior/posterior
+%
+% Also inherits from prtBrvVbOnlineObsModel and therefore impliments
+%   vbOnlineWeightedUpdate
+
 classdef prtBrvDiscrete < prtBrvObsModel & prtBrvVbOnlineObsModel
     properties
         name = 'Discrete';
         
-        model = prtBrvDiscretePrior
+        model = prtBrvDiscreteHierarchy;
     end
     
     methods
@@ -10,7 +23,7 @@ classdef prtBrvDiscrete < prtBrvObsModel & prtBrvVbOnlineObsModel
             if nargin < 1
                 return
             end
-            obj.model = prtBrvDiscretePrior(varargin{1});
+            obj.model = prtBrvDiscreteHierarchy(varargin{1});
         end        
         
         function val = nDimensions(obj)
@@ -82,13 +95,14 @@ classdef prtBrvDiscrete < prtBrvObsModel & prtBrvVbOnlineObsModel
             model.probabilities = prtRvUtilDirichletRnd(obj.model.lambda);
         end
         
-        function plot(objs)
+        function plot(objs, colors)
             
             nComponents = length(objs);
             
-            cMap = jet(128);
-            colors = cMap(gray2ind(mat2gray(1:nComponents),size(cMap,1))+1,:);
-            
+            if nargin < 2
+                cMap = jet(128);
+                colors = cMap(gray2ind(mat2gray(1:nComponents),size(cMap,1))+1,:);
+            end
             
             nDimensions = length(objs(1).model.lambda);
             
