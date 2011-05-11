@@ -1,4 +1,4 @@
-classdef prtFeatSelLlnn < prtFeatSelClass
+classdef prtFeatSelLlnn < prtFeatSel
     % prtFeatSelLLnn  Local Learning based feature selection
     %
     %   FEATSEL = prtFeatSelLlnn returns a local learning based feature selection
