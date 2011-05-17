@@ -146,7 +146,5 @@ classdef prtPreProcPca < prtPreProc
             X = bsxfun(@minus,X,Obj.means);
             DataSet = DataSet.setObservations(X*Obj.pcaVectors);
         end
-        
     end
-    
 end

@@ -609,6 +609,93 @@ classdef prtAction
             end
             Obj.showProgressBarInternal = val;
         end
+        
+        function varargout = export(obj,exportType,varargin)
+            % export(obj,fileSpec);
+            % S = export(obj,'struct');
+            if nargin < 2
+                error('prt:prtAction:export','exportType must be specified');
+            end
+                
+            switch lower(exportType)
+                case {'struct','structure'}
+                    varargout{1} = toStructure(obj);
+                    
+                case {'yaml'}
+                    if nargin < 3
+                        error('prt:prtAction:exportYaml','fileName must be specified to export YAML');
+                    end
+                    file = varargin{1};
+                    
+                    objStruct = toStructure(obj);
+                    
+                    prtExternal.yaml.WriteYaml(file,objStruct);
+                    
+                    varargout = {};
+                    
+                case {'eml'}
+                    if length(varargin) < 2
+                        structureName = cat(2,class(obj),'Structure');
+                    else
+                        structureName = varargin{2};
+                    end
+                    if length(varargin) < 1
+                        file = sprintf('%sCreate',structureName);
+                    else
+                        file = varargin{1};
+                    end
+                    
+                    [filePath, file, fileExt] = fileparts(file); %#ok<NASGU>
+                    
+                    if ~isvarname(file)
+                        error('prt:prtAction:export','When using EML export, file must be a string that is a valid MATLAB function name (optionally it can also contain a path.)');
+                    end
+                    
+                    fileWithMExt = cat(2,file,'.m');
+                    
+                    exportStruct = obj.toStructure();
+
+                    exportString = prtUtilStructToStr(exportStruct,structureName);
+                    
+                    % Add a function declaration name to the beginning
+                    exportString = cat(1, {sprintf('function [%s] = %s()',structureName,file)}, {''}, exportString);
+                    
+                    fid = fopen(fullfile(filePath,fileWithMExt),'w');
+                    fprintf(fid,'%s\n',exportString{:});
+                    fclose(fid);
+    
+                otherwise
+                    error('prt:prtAction:export','Invalid file formal specified');
+            end
+        end
+        
+        function S = toStructure(obj)
+            % toStructure(obj)
+            % This default prtAction method adds all properties defined in
+            % the class of obj into the structure, that are:
+            %   GetAccess: public
+            %   Hidden: false
+            % other prtActions (that are properties, contained in cells,
+            %   or fields of structures) are also converted to structures.
+            
+            MetaInfo = meta.class.fromName(class(obj));
+            
+            propNames = {};
+            for iProperty = 1:length(MetaInfo.Properties)
+                if isequal(MetaInfo.Properties{iProperty}.DefiningClass,MetaInfo) && strcmpi(MetaInfo.Properties{iProperty}.GetAccess,'public') && ~MetaInfo.Properties{iProperty}.Hidden
+                    propNames{end+1} = MetaInfo.Properties{iProperty}.Name; %#ok<AGROW>
+                end
+            end
+            
+            S.prtActionType = class(obj);
+            S.isSupervised = obj.isSupervised;
+            S.dataSetSummary = obj.dataSetSummary;
+            for iProp = 1:length(propNames)
+                cVal = prtUtilFintPrtActionsAndConvertToStructures(obj.(propNames{iProp}));
+                S.(propNames{iProp}) = cVal;
+            end
+            S.userData = obj.userData;
+        end
     end
     
     methods (Hidden, Static)
@@ -617,7 +704,6 @@ classdef prtAction
         end
         function val = getShowProgressBar()
             val = prtOptionsGet('prtOptionsComputation','showProgressBar');
-        end
-        
+        end        
     end
 end

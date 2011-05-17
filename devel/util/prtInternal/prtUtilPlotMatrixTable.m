@@ -66,8 +66,7 @@ verticleLineHandles = zeros(nRows,1);
 horizontalLineHandles = zeros(nCols,1);
 hold on;
 
-%textCMapInds = gray2ind(mat2gray(X,cLim),size(textCMap,1))+1;
-[dontNeed, textCMapInds] = histc( (X-cLim(1))./(cLim(2)-cLim(1)) , linspace(0,1+eps,size(textCMap,1)+1));
+[dontNeed, textCMapInds] = histc( (X-cLim(1))./(cLim(2)-cLim(1)) , linspace(0,1+eps,size(textCMap,1)+1)); %#ok<ASGLU>
 textCMapInds(textCMapInds==0 | ~isfinite(textCMapInds)) = size(textCMap,1);
 textCMapInds(textCMapInds==0 | ~isfinite(textCMapInds)) = 1;
 
@@ -81,7 +80,7 @@ for iRow = 1:nRows
             
             cTextString = num2str(cNum,num2strFormat);
             
-            % Some smart decimal place pruning
+            % Some decimal place pruning
             done = false;
             while ~done
                 if length(cTextString) > 1 && strcmpi(cTextString(end),'0')
@@ -95,25 +94,9 @@ for iRow = 1:nRows
                 cTextString(end) = [];
             end
             
-%             % Some smart decimal place pruning
-%             cDecimalPlace = find(cTextString=='.',1,'first');
-%             if ~isempty(cDecimalPlace)
-%                 lastZero = find(cTextString((cDecimalPlace+1):end)=='0',1,'first');
-%                 if ~isempty(lastZero)
-%                     cTextString = cTextString(1:(lastZero+cDecimalPlace-1));
-%                 end
-%                 
-%                 if isequal(cTextString(end),'.')
-%                     cTextString = cTextString(1:end-1);
-%                 end
-%             end
-            
-            %if ~isequal(cTextString,'0')
-                textHandles(jCol,iRow) = text(jCol,iRow,cTextString,...
-                    'color',cTextColor,'horizontalAlignment','center',...
-                    'fontsize',fontSize,'clipping','on','visible','on');
-            %end
-            
+            textHandles(jCol,iRow) = text(jCol,iRow,cTextString,...
+                'color',cTextColor,'horizontalAlignment','center',...
+                'fontsize',fontSize,'clipping','on','visible','on');
         end
         
         if iRow == 1
@@ -134,6 +117,23 @@ if nargout > 0
     varargout = {gca, textHandles, verticleLineHandles, horizontalLineHandles};
 end
 
+f = ancestor(gca,'figure');
+addlistener(f,'SizeChange',@(src,evt)setBestFontSize(gca,textHandles));
+
+function setBestFontSize(imAxes,textHandles)
+
+if ~ishandle(imAxes)
+    return
+end
+
+fs = getBestFontSize(imAxes);
+
+for iHandle = 1:numel(textHandles)
+    if ishandle(textHandles(iHandle))
+        set(textHandles(iHandle),'FontSize',fs);
+    end
+end
+    
 
 function fs = getBestFontSize(imAxes)
 % I found this little gem in a MATLAB central file heatmaptext.m
@@ -142,7 +142,12 @@ function fs = getBestFontSize(imAxes)
 %
 % 31-Jan-2008 - I have modified this so it checks the extent of the axes
 % instead of the figure. This allows the fontsize to change relative to a
-% subplot.
+% subplot. - KDM
+%
+% 17-May-2011 - I have modified this to check the minimumum of both ratios
+% so that resized plots look good. Also added a listener above so that the
+% resize will call this function again.
+% 
 % 
 % Apparently this is copyright the MathWorks as is stated in the funciton.
 %
@@ -150,26 +155,25 @@ function fs = getBestFontSize(imAxes)
 %
 
 % Try to keep font size reasonable for text
-
-maxFontSize = 9;
-magicNumber = 80;
-
 nrows = diff(get(imAxes,'YLim'));
 ncols = diff(get(imAxes,'XLim'));
 
 set(imAxes,'units','pixels');
 extent = get(imAxes,'Position');
 set(imAxes,'units','normalized');
-ratioNum = extent(end);
+ratioNum = extent(3:4);
+
+magicNumber = 80;
 if ncols < magicNumber && nrows < magicNumber
-    ratio = ratioNum/max(nrows,ncols);
+    ratio = min(ratioNum./[nrows,ncols]);
 elseif ncols < magicNumber
-    ratio = ratioNum/ncols;
+    ratio = ratioNum(4)/ncols;
 elseif nrows < magicNumber
-    ratio = ratioNum/nrows;
+    ratio = ratioNum(3)/nrows;
 else
     ratio = 1;
 end
+
 %fs = min(maxFontSize,ceil(ratio/4));    % the gold formula
 fs = ceil(ratio/4);
 if fs < 4 % Font sizes less than 4 still look like crap

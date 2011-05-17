@@ -46,7 +46,7 @@ str = cell(0,1);
 for iField = 1:length(fnames)
     cVal = S.(fnames{iField});
     
-    if isnumeric(cVal)
+    if isnumeric(cVal) || islogical(cVal)
         cValStr = mat2str(cVal);
         cValStr = sprintf('%s.%s = %s;',varName,fnames{iField},cValStr);
         
@@ -70,4 +70,3 @@ for iField = 1:length(fnames)
     
     str = cat(1,str,cValStr);
 end
-

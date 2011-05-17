@@ -69,8 +69,10 @@ classdef prtAlgorithm < prtAction
         end
     end
     
-    properties (SetAccess=protected)
+    properties (SetAccess=protected,GetAccess=protected,Hidden)
         internalActionCell = {};
+    end
+    properties (SetAccess=protected)
         connectivityMatrix = [];
     end
     
