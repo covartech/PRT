@@ -303,5 +303,104 @@ classdef prtAlgorithm < prtAction
             plot(actionObj)
         end
     end
-    
+
+    methods (Hidden)
+        function [optimizedAlgorithm,performance] = optimize(Obj,DataSet,objFn,tag,parameterName,parameterValues)
+            % OPTIMIZE Optimize action parameter by exhaustive function 
+            % maximization. 
+            %
+            % [optimizedAlgorithm,performance] = optimize(Obj,DataSet,objFn,tag,parameterName,parameterValues)
+            %
+            % A prtActions within the algorithm is identified using either
+            % the nameAbbreviation property or the tag property. 
+            % The nameAbbreviation property takes presidence. If there are
+            % multiple matches or no matches the tag preperty is
+            % investigated, if there are still multiple matches or no
+            % matches an error is thrown.
+            %
+            % Although functional this method is currently hidden.
+            %
+            % Examples:
+            %   % Simple finding by nameAbbreviation
+            %   ds = prtDataGenFeatureSelection;
+            %   algo = prtPreProcZmuv + prtClassPlsda + prtClassLogisticDiscriminant;
+            %   objFn = @(act,ds)prtEvalAuc(act,ds,3);
+            %   [optimizedAlgorithm, performance] = optimize(algo,ds,objFn,'plsda','nComponents',2:10);
+            %
+            %   % Finding by tag
+            %   ds = prtDataGenFeatureSelection;
+            %   algo = prtPreProcZmuv('tag','asdf') + prtClassPlsda('tag','qwer') + prtClassLogisticDiscriminant('tag','zxcv');
+            %   objFn = @(act,ds)prtEvalAuc(act,ds,25);
+            %   [optimizedAlgorithm, performance] = optimize(algo,ds,objFn,'qwer','nComponents',2:30);
+            
+            if isnumeric(parameterValues) || islogical(parameterValues)
+                parameterValues = num2cell(parameterValues);
+            end
+            performance = nan(length(parameterValues),1);
+            
+            %%%%%%%%
+            %%%%%%%% Figure out what action we are talking about
+            %%%%%%%%
+            % First try to find using abbreviation
+            actionAbbrevs = cellfun(@(c)c.nameAbbreviation,Obj.actionCell,'uniformOutput',false);
+            
+            actionCellInds = find(cellfun(@(c)~isempty(c),strfind(lower(actionAbbrevs),lower(tag))));
+            if isempty(actionCellInds)
+                % Cannot use simple tag mode, cant find it
+                useRealTags = true;
+            elseif length(actionCellInds) == 1
+                actionCellInd = actionCellInds;
+                useRealTags = false;
+            else
+                % Cannot use simple tag mode, we have used some actions
+                % more than once
+                useRealTags = true;
+            end
+            
+            % Unsucessful based on tag
+            if useRealTags 
+                tags = cellfun(@(c)c.tag,Obj.actionCell,'uniformOutput',false);
+                
+                tagCellInds = find(cellfun(@(c)~isempty(c),strfind(lower(tags),lower(tag))));
+                if isempty(tagCellInds)
+                    if isempty(actionCellInds)
+                        error('prt:prtAlgorithm:optimize','Could not find a prtAction within this prtAlgorithm with a tag or a nameAbbreviation that matches %s.',tag);
+                    else
+                        error('prt:prtAlgorithm:optimize','Multiple prtActions fitting the nameAbbreviation %s exist within this prtAlgorithm therefore acronym tagging cannot be used. There are no prtActions within this prtAlgorithm with the tag %s.',tag,tag);
+                    end
+                elseif length(tagCellInds) == 1
+                    actionCellInd = tagCellInds;
+                else
+                    if isempty(actionCellInds)
+                        error('prt:prtAlgorithm:optimize','Could not find a prtAction within this prtAlgorithm with a nameAbbreviation that matches %s but there are multiple prtActions that match the tag %s',tag);
+                    else
+                        error('prt:prtAlgorithm:optimize','The tag %s is not specific enough to identify a single prtAction within this prtAlgorithm.',tag);
+                    end
+                end
+            end
+            %%%%%%%%
+            %%%%%%%%
+            
+            
+            % Optimize
+            if Obj.showProgressBar
+                h = prtUtilProgressBar(0,sprintf('Optimizing %s.%s',class(Obj),parameterName),'autoClose',true);
+            end
+            
+            for i = 1:length(performance)
+                Obj.actionCell{actionCellInd}.(parameterName) = parameterValues{i};
+                performance(i) = objFn(Obj,DataSet);
+                h.update(i/length(performance));
+            end
+            if Obj.showProgressBar
+                % Force close
+                h.update(1);
+            end
+            
+            [maxPerformance,maxPerformanceInd] = max(performance); %#ok<ASGLU>
+            Obj.actionCell{actionCellInd}.(parameterName) = parameterValues{maxPerformanceInd};
+            optimizedAlgorithm = train(Obj,DataSet);
+            
+        end
+    end        
 end

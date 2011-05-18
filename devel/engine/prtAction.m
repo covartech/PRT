@@ -553,9 +553,8 @@ classdef prtAction
             % Example:
             %   objFn = @(act,ds)prtEvalAuc(act,ds,3);
             %   [optimizedAction,performance] = optimize(Obj,DataSet,objFn,parameterName,parameterValues)
-            %  
             
-            if isnumeric(parameterValues);
+            if isnumeric(parameterValues) || islogical(parameterValues)
                 parameterValues = num2cell(parameterValues);
             end
             performance = nan(length(parameterValues),1);

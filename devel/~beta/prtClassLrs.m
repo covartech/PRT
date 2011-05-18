@@ -26,13 +26,9 @@ classdef prtClassLrs < prtClassLr
             weightsVec = weights(1:end-1,:)';
             weightsVec = weightsVec(:);
             
-%             Y = diag(sqrt(abs(weightsVec)));
-%             newWeights = Y*inv(Y*B*Y-self.lambda*eye(size(B)))*Y*(B*weightsVec - g(1:length(weightsVec)));
-
             w = sqrt(abs(weightsVec));
             newWeights = bsxfun(@times,bsxfun(@times,w,inv(bsxfun(@times,bsxfun(@times,w,B),w')-self.lambda*eye(size(B)))),w')*(B*weightsVec - g(1:length(weightsVec)));
                         
-            %weights(1:(end-1),:) = reshape(newWeights,[size(weights,1)-1 size(weights,2)]);
             weights(1:(end-1),:) = reshape(newWeights,[size(weights,2) size(weights,1)-1])';
         end
         
