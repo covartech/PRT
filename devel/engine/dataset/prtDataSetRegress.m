@@ -140,5 +140,6 @@ classdef prtDataSetRegress < prtDataSetStandard
                 otherwise
                     error('prt:prtDataSetRegress:loadObj','Unknown prtDataSetBase version %d, object cannot be laoded.',inputVersion);
             end
+        end
     end
 end
