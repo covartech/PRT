@@ -1,5 +1,6 @@
 function tf = prtUtilIsSubClass(proposedSubClass,proposedSuperClass)
 % PRTUTILISSUBCLASS Determine if a class is a subclass of another
+%   Reports true for inputs of the same class
 %
 % tf = prtUtilIsSubClass(proposedSubClassName,proposedSuperClassName)
 %

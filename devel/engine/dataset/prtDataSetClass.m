@@ -53,8 +53,12 @@ classdef prtDataSetClass  < prtDataSetStandard
         isZeroOne              % True if the uniqueClasses are 0 and 1
     end
     
+    properties (Dependent, Hidden)
+        classNames             % Provides quick access to set/get ClassNames
+    end
+    
     properties (Access = 'private')
-        classNames
+        classNamesInternal
     end
     
     properties (Hidden=true, Access='private')
@@ -108,12 +112,12 @@ classdef prtDataSetClass  < prtDataSetStandard
                 %if the current data set doesn't have this key, and the
                 %other data set does, well, use the other data set's name
                 %for this class
-                if ~obj.classNames.containsKey(newUniqueClasses(i)) && newDataSet.classNames.containsKey(newUniqueClasses(i));
-                    obj.classNames = obj.classNames.put(newUniqueClasses(i),newDataSet.classNames.get(newUniqueClasses(i)));
+                if ~obj.classNamesInternal.containsKey(newUniqueClasses(i)) && newDataSet.classNamesInternal.containsKey(newUniqueClasses(i));
+                    obj.classNamesInternal = obj.classNamesInternal.put(newUniqueClasses(i),newDataSet.classNamesInternal.get(newUniqueClasses(i)));
                     %If both the data sets have the key, and the strings
                     %don't match...
-                elseif (obj.classNames.containsKey(newUniqueClasses(i)) && newDataSet.classNames.containsKey(newUniqueClasses(i))) && ...
-                        ~strcmpi(newDataSet.classNames.get(newUniqueClasses(i)),obj.classNames.get(newUniqueClasses(i)))
+                elseif (obj.classNamesInternal.containsKey(newUniqueClasses(i)) && newDataSet.classNamesInternal.containsKey(newUniqueClasses(i))) && ...
+                        ~strcmpi(newDataSet.classNamesInternal.get(newUniqueClasses(i)),obj.classNamesInternal.get(newUniqueClasses(i)))
                     warning('prt:prtDataSetClass:IncompatibleClassNames','Incompatible class names encountered; retaining original data sets class names');
                 end
             end
@@ -126,7 +130,7 @@ classdef prtDataSetClass  < prtDataSetStandard
             
             prtUtilCheckIsValidBeta('cmbrwwuvphcjlwjpxuwghhgksogwzcafuyeonnyutyycplbotbwmjjimkzuongslqkovjmjovuubmohbsnfvmbymqzxibrzdlzjq');
             
-            obj.classNames = prtUtilIntegerAssociativeArray;
+            obj.classNamesInternal = prtUtilIntegerAssociativeArray;
             if nargin == 0
                 return;
             end
@@ -212,8 +216,8 @@ classdef prtDataSetClass  < prtDataSetStandard
             
             tn = cell(length(indices1),1);
             for i = 1:length(indices1)
-                if obj.classNames.containsKey(uniqueClasses(indices1(i)))
-                    tn{i} = obj.classNames.get(uniqueClasses(indices1(i)));
+                if obj.classNamesInternal.containsKey(uniqueClasses(indices1(i)))
+                    tn{i} = obj.classNamesInternal.get(uniqueClasses(indices1(i)));
                 else
                     tn(i) = prtDataSetClass.generateDefaultClassNames(uniqueClasses(indices1(i)));
                 end
@@ -242,7 +246,7 @@ classdef prtDataSetClass  < prtDataSetStandard
             uniqueClasses = obj.uniqueClasses;
             
             for i = 1:length(indices1)
-                obj.classNames = obj.classNames.put(uniqueClasses(indices1(i)),classNames{i});
+                obj.classNamesInternal = obj.classNamesInternal.put(uniqueClasses(indices1(i)),classNames{i});
             end
         end
         
@@ -1349,7 +1353,7 @@ classdef prtDataSetClass  < prtDataSetStandard
             obj = copyDescriptionFieldsFrom@prtDataSetStandard(obj,dataSet);
         end
         function has = hasClassNames(obj)
-            has = ~isempty(obj.classNames);
+            has = ~isempty(obj.classNamesInternal);
         end
     end
     methods (Hidden=true, Access='protected')
@@ -1445,6 +1449,71 @@ classdef prtDataSetClass  < prtDataSetStandard
             varargout = {};
             if nargout > 0
                 varargout = {handleArray};
+            end
+        end
+    end
+    
+    % Ease of use properties and methods, perhaps these should be
+    % moved to prtDataSetStandardClass
+    methods
+        function obj = set.classNames(obj,val)
+            obj = obj.setClassNames(val);
+        end
+        function val = get.classNames(obj)
+            val = obj.getClassNames();
+        end
+    end
+    methods (Static)
+        function obj = loadobj(obj)
+            
+            if ~isfield(obj,'version')
+                % Version 0 - we didn't even specify version
+                inputVersion = 0;
+            else
+                inputVersion = obj.version;
+            end
+
+            currentVersionObj = prtDataSetClass;
+            
+            if inputVersion == currentVersionObj.version
+                % Returning now will cause MATLAB to ignore this entire
+                % loadobj() function and perform the default actions
+                return
+            end
+            
+            % The input version is less than the current version
+            % We need to 
+            inObj = obj;
+            obj = currentVersionObj;
+            switch inputVersion
+                case 0
+                    % The oldest version of prtDataSetBase
+                    % We need to set the appropriate fields from the
+                    % structure (inObj) into the prtDataSetClass of the
+                    % current version
+                    obj = obj.setObservationsAndTargets(inObj.dataDepHelper,inObj.targetsDepHelper);
+                    obj.observationInfo = inObj.observationInfoDepHelper;
+                    obj.featureInfo = inObj.featureInfoDepHelper;
+                    if ~isempty(inObj.classNames.cellValues)
+                        obj = obj.setClassNames(inObj.classNames.cellValues);
+                    end
+                    if ~isempty(inObj.featureNames.cellValues)
+                        obj = obj.setFeatureNames(inObj.featureNames.cellValues);
+                    end
+                    if ~isempty(inObj.observationNames.cellValues)
+                        obj = obj.setObservationNames(inObj.observationNames.cellValues);
+                    end
+                    if ~isempty(inObj.targetNames.cellValues)
+                        obj = obj.setTargetNames(inObj.targetNames.cellValues);
+                    end
+                    obj.plotOptions = inObj.plotOptions;
+                    obj.name = inObj.name;
+                    obj.description = inObj.description;
+                    obj.userData = inObj.userData;
+                    obj.actionData = inObj.actionData;
+                        
+                otherwise
+                    error('prt:prtDataSetClass:loadObj','Unknown prtDataSetBase version %d, object cannot be laoded.',inputVersion);
             end
         end
     end

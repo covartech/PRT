@@ -32,8 +32,16 @@ classdef prtDataSetStandard < prtDataSetBase
         nObservations         % The number of observations
         nFeatures             % The number of features
         nTargetDimensions     % The number of dimensions of the target data
-        observationInfo       % Additional data per observation
-        featureInfo           % Additional data per feature
+        observationInfo       % Additional data (structure) per observation
+        featureInfo           % Additional data (structure) per feature
+    end
+    
+    properties (Dependent, Hidden)
+        featureNames          % Feature names
+        observationNames      % Observation names (rows)
+        targetNames           % Target dimension names
+        X                     % Shortcut to observations
+        Y                     % Shortcut to targets
     end
     
     properties (GetAccess = 'private',SetAccess = 'private', Hidden=true)
@@ -41,14 +49,11 @@ classdef prtDataSetStandard < prtDataSetBase
         featureInfoDepHelper
         dataDepHelper
         targetsDepHelper
+        featureNamesDepHelper
     end
     properties (Dependent,SetAccess='protected',GetAccess ='protected')
         data                % The observations
         targets             % The targets
-    end
-    
-    properties (SetAccess='protected',GetAccess ='protected')
-        featureNames        % The feature names
     end
     
     methods (Access = 'protected', Hidden = true)
@@ -56,10 +61,10 @@ classdef prtDataSetStandard < prtDataSetBase
         function obj = catTargetNames(obj,newDataSet)
             
             for i = 1:newDataSet.nTargetDimensions;
-                currTargName = newDataSet.targetNames.get(i);
+                currTargName = newDataSet.targetNamesInternal.get(i);
                 
                 if ~isempty(currTargName)
-                    obj.targetNames = obj.targetNames.put(i + obj.nTargetDimensions,currTargName);
+                    obj.targetNamesInternal = obj.targetNamesInternal.put(i + obj.nTargetDimensions,currTargName);
                 end
             end
         end
@@ -76,19 +81,19 @@ classdef prtDataSetStandard < prtDataSetBase
             %newHash = java.util.Hashtable;
             newHash = prtUtilIntegerAssociativeArray;
             for retainInd = 1:length(retainIndices);
-                if obj.targetNames.containsKey(retainIndices(retainInd));
-                    newHash = newHash.put(retainInd,obj.targetNames.get(retainIndices(retainInd)));
+                if obj.targetNamesInternal.containsKey(retainIndices(retainInd));
+                    newHash = newHash.put(retainInd,obj.targetNamesInternal.get(retainIndices(retainInd)));
                 end
             end
             
-            obj.targetNames = newHash;
+            obj.targetNamesInternal = newHash;
         end
         
         function obj = catFeatureNames(obj,newDataSet)
             for i = 1:newDataSet.nFeatures;
-                currFeatName = newDataSet.featureNames.get(i);
+                currFeatName = newDataSet.featureNamesDepHelper.get(i);
                 if ~isempty(currFeatName)
-                    obj.featureNames = obj.featureNames.put(i + obj.nFeatures,currFeatName);
+                    obj.featureNamesDepHelper = obj.featureNamesDepHelper.put(i + obj.nFeatures,currFeatName);
                 end
             end
         end
@@ -104,11 +109,11 @@ classdef prtDataSetStandard < prtDataSetBase
             %copy the hash with new indices
             newHash = prtUtilIntegerAssociativeArray;
             for retainInd = 1:length(retainIndices);
-                if obj.featureNames.containsKey(retainIndices(retainInd));
-                    newHash = newHash.put(retainInd,obj.featureNames.get(retainIndices(retainInd)));
+                if obj.featureNamesDepHelper.containsKey(retainIndices(retainInd));
+                    newHash = newHash.put(retainInd,obj.featureNamesDepHelper.get(retainIndices(retainInd)));
                 end
             end
-            obj.featureNames = newHash;
+            obj.featureNamesDepHelper = newHash;
         end
     end
     methods
@@ -116,7 +121,7 @@ classdef prtDataSetStandard < prtDataSetBase
         % Constructor
         function obj = prtDataSetStandard(varargin)
             
-            obj.featureNames = prtUtilIntegerAssociativeArray;
+            obj.featureNamesDepHelper = prtUtilIntegerAssociativeArray;
             
             if nargin == 0
                 return;
@@ -199,7 +204,7 @@ classdef prtDataSetStandard < prtDataSetBase
             
             featNames = cell(length(indices2),1);
             for i = 1:length(indices2)
-                featNames{i} = obj.featureNames.get(indices2(i));
+                featNames{i} = obj.featureNamesDepHelper.get(indices2(i));
                 if isempty(featNames{i})
                     featNames(i) = prtDataSetStandard.generateDefaultFeatureNames(indices2(i));
                 end
@@ -233,7 +238,7 @@ classdef prtDataSetStandard < prtDataSetBase
             indices2 = prtDataSetBase.parseIndices(obj.nFeatures,varargin{:});
             if nargin < 3
                 %clear the old feature names:
-                obj.featureNames = prtUtilIntegerAssociativeArray;
+                obj.featureNamesDepHelper = prtUtilIntegerAssociativeArray;
                 if size(featNames,1) ~= length(indices2)
                     error('prt:dataSetStandard:setFeatureNames','setFeatureNames with one input requires that size(names,1) (%d) equals number of features (%d)',size(featNames,1),obj.nFeatures);
                 end
@@ -249,7 +254,7 @@ classdef prtDataSetStandard < prtDataSetBase
             %Put the default string names in there; otherwise we might end
             %up with empty elements in the cell array
             for i = 1:length(indices2)
-                obj.featureNames = obj.featureNames.put(indices2(i),featNames{i});
+                obj.featureNamesDepHelper = obj.featureNamesDepHelper.put(indices2(i),featNames{i});
             end
         end
         
@@ -1226,7 +1231,7 @@ classdef prtDataSetStandard < prtDataSetBase
         end
         
         function has = hasFeatureNames(obj)
-            has = ~isempty(obj.featureNames);
+            has = ~isempty(obj.featureNamesDepHelper);
         end
         
         function v = export(obj,varargin) %#ok<STOUT,MANU>
@@ -1251,4 +1256,89 @@ classdef prtDataSetStandard < prtDataSetBase
         end
     end
     
+    % Easy of use methods. These assume that the data is in memory
+    % therefore they are implemented here in prtDataSetStandard
+    methods
+        function X = get.X(obj)
+            X = obj.getX();
+        end
+        function obj = set.X(obj,val)
+            obj = obj.setX(val);
+        end
+        function Y = get.Y(obj)
+            Y = obj.getY();
+        end
+        function obj = set.Y(obj,val)
+            obj = obj.setY(val);
+        end
+        function obj = set.featureNames(obj,val)
+            obj = obj.setFeatureNames(val);
+        end
+        function val = get.featureNames(obj)
+            val = obj.getFeatureNames();
+        end
+        function obj = set.observationNames(obj,val)
+            obj = obj.setObservationNames(val);
+        end
+        function val = get.observationNames(obj)
+            val = obj.getObservationNames();
+        end
+        function obj = set.targetNames(obj,val)
+            obj = obj.setTargetNames(val);
+        end
+        function val = get.targetNames(obj)
+            val = obj.getTargetNames();
+        end        
+    end
+    methods (Static)
+        function obj = loadobj(obj)
+            
+            if ~isfield(obj,'version')
+                % Version 0 - we didn't even specify version
+                inputVersion = 0;
+            else
+                inputVersion = obj.version;
+            end
+
+            currentVersionObj = prtDataSetStandard;
+            
+            if inputVersion == currentVersionObj.version
+                % Returning now will cause MATLAB to ignore this entire
+                % loadobj() function and perform the default actions
+                return
+            end
+            
+            % The input version is less than the current version
+            % We need to 
+            inObj = obj;
+            obj = currentVersionObj;
+            switch inputVersion
+                case 0
+                    % The oldest version of prtDataSetBase
+                    % We need to set the appropriate fields from the
+                    % structure (inObj) into the prtDataSetClass of the
+                    % current version
+                    obj = obj.setObservationsAndTargets(inObj.dataDepHelper,inObj.targetsDepHelper);
+                    obj.observationInfo = inObj.observationInfoDepHelper;
+                    obj.featureInfo = inObj.featureInfoDepHelper;
+                    if ~isempty(inObj.featureNames.cellValues)
+                        obj = obj.setFeatureNames(inObj.featureNames.cellValues);
+                    end
+                    if ~isempty(inObj.observationNames.cellValues)
+                        obj = obj.setObservationNames(inObj.observationNames.cellValues);
+                    end
+                    if ~isempty(inObj.targetNames.cellValues)
+                        obj = obj.setTargetNames(inObj.targetNames.cellValues);
+                    end
+                    obj.plotOptions = inObj.plotOptions;
+                    obj.name = inObj.name;
+                    obj.description = inObj.description;
+                    obj.userData = inObj.userData;
+                    obj.actionData = inObj.actionData;
+                        
+                otherwise
+                    error('prt:prtDataSetStandard:loadObj','Unknown prtDataSetBase version %d, object cannot be laoded.',inputVersion);
+            end
+        end
+    end
 end

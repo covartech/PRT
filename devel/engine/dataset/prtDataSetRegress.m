@@ -91,4 +91,54 @@ classdef prtDataSetRegress < prtDataSetStandard
             plotOptions = prtOptionsGet('prtOptionsDataSetRegressPlot');
         end
     end
+    methods (Static)
+        function obj = loadobj(obj)
+            
+            if ~isfield(obj,'version')
+                % Version 0 - we didn't even specify version
+                inputVersion = 0;
+            else
+                inputVersion = obj.version;
+            end
+
+            currentVersionObj = prtDataSetRegress;
+            
+            if inputVersion == currentVersionObj.version
+                % Returning now will cause MATLAB to ignore this entire
+                % loadobj() function and perform the default actions
+                return
+            end
+            
+            % The input version is less than the current version
+            % We need to 
+            inObj = obj;
+            obj = currentVersionObj;
+            switch inputVersion
+                case 0
+                    % The oldest version of prtDataSetBase
+                    % We need to set the appropriate fields from the
+                    % structure (inObj) into the prtDataSetClass of the
+                    % current version
+                    obj = obj.setObservationsAndTargets(inObj.dataDepHelper,inObj.targetsDepHelper);
+                    obj.observationInfo = inObj.observationInfoDepHelper;
+                    obj.featureInfo = inObj.featureInfoDepHelper;
+                    if ~isempty(inObj.featureNames.cellValues)
+                        obj = obj.setFeatureNames(inObj.featureNames.cellValues);
+                    end
+                    if ~isempty(inObj.observationNames.cellValues)
+                        obj = obj.setObservationNames(inObj.observationNames.cellValues);
+                    end
+                    if ~isempty(inObj.targetNames.cellValues)
+                        obj = obj.setTargetNames(inObj.targetNames.cellValues);
+                    end
+                    obj.plotOptions = inObj.plotOptions;
+                    obj.name = inObj.name;
+                    obj.description = inObj.description;
+                    obj.userData = inObj.userData;
+                    obj.actionData = inObj.actionData;
+                        
+                otherwise
+                    error('prt:prtDataSetRegress:loadObj','Unknown prtDataSetBase version %d, object cannot be laoded.',inputVersion);
+            end
+    end
 end
