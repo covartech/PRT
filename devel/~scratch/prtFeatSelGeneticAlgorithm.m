@@ -21,7 +21,6 @@ classdef prtFeatSelGeneticAlgorithm < prtFeatSel
     
     properties
         % General Classifier Properties
-        showProgressBar = true;           % Whether or not the progress bar should be displayed
         geneEvaluationMetric = @(binaryString,ds)prtEvalAuc(prtClassFld,ds.retainFeatures(find(binaryString)));   % The metric used to evaluate performance
         
         performance = [];                 % The best performance achieved after training

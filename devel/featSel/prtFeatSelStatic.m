@@ -40,6 +40,7 @@ classdef prtFeatSelStatic < prtFeatSel %
     methods 
         function Obj = prtFeatSelStatic(varargin) 
             Obj.isCrossValidateValid = false;
+            Obj.isTrained = true;
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
         end
         
