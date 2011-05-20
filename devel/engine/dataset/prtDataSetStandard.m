@@ -477,40 +477,6 @@ classdef prtDataSetStandard < prtDataSetBase
             % Reset the data cache
             obj = updateTargetsCache(obj);
             
-            % %
-            % %             % Setting only specified entries of the matrix
-            % %             [indices1, indices2] = prtDataSetBase.parseIndices([obj.nObservations, obj.nTargetDimensions],varargin{:});
-            % %
-            % %             %Handle empty targets (2-D)
-            % %             if isempty(indices2)
-            % %                 indices2 = 1:size(targets,2);
-            % %             end
-            % %             %Handle empty targets (1-D)
-            % %             if isempty(indices1) && ~isempty(targets);
-            % %                 indices1 = 1:obj.nObservations;
-            % %             end
-            % %
-            % %             if ~isempty(targets)
-            % %                 if nargin < 3
-            % %                     if ~isequal(obj.nObservations,size(targets,1))
-            % %                         error('prt:prtDataSetStandard:InvalidTargetSize','nObservations is %d, but targets are of size %s, corresponding to %d observations',obj.nObservations,mat2str(size(targets)),size(targets,1));
-            % %                     end
-            % %                 end
-            % %                 if ~isequal([length(indices1),length(indices2)],size(targets))
-            % %                     if isempty(obj.targets) && nargin < 3
-            % %                         error('prtDataSetStandard:InvalidTargetSize','Attempt to set targets to matrix of size %s, but indices are of size [%d %d]',mat2str(size(targets)),length(indices1),length(indices2))
-            % %                     else
-            % %                         error('prtDataSetStandard:InvalidTargetSize','Attempt to set targets to matrix of size %s, but targets is size %s',mat2str(size(targets)),mat2str(size(obj.targets)));
-            % %                     end
-            % %                 end
-            % %
-            % %                 obj.targets(indices1,indices2) = targets;
-            % %             else
-            % %                 obj.targets = [];
-            % %             end
-            % %
-            % %             % Updated chached target info
-            % %             obj = updateTargetsCache(obj);
         end
         
         function obj = set.data(obj,newData)
@@ -973,7 +939,6 @@ classdef prtDataSetStandard < prtDataSetBase
             end
         end
         
-        
         function val = getFeatureInfo(obj,fieldName)
             % Allow for fast retrieval of feature info by specifying
             % the field name(fieldName)
@@ -1008,7 +973,6 @@ classdef prtDataSetStandard < prtDataSetBase
                 end
             end
         end
-        
         
         function obj = setObservationInfo(obj,varargin)
             % Allow setting of observation info by specifying string value
@@ -1293,51 +1257,55 @@ classdef prtDataSetStandard < prtDataSetBase
     methods (Static)
         function obj = loadobj(obj)
             
-            if ~isfield(obj,'version')
-                % Version 0 - we didn't even specify version
-                inputVersion = 0;
-            else
-                inputVersion = obj.version;
-            end
-
-            currentVersionObj = prtDataSetStandard;
-            
-            if inputVersion == currentVersionObj.version
-                % Returning now will cause MATLAB to ignore this entire
-                % loadobj() function and perform the default actions
-                return
-            end
-            
-            % The input version is less than the current version
-            % We need to 
-            inObj = obj;
-            obj = currentVersionObj;
-            switch inputVersion
-                case 0
-                    % The oldest version of prtDataSetBase
-                    % We need to set the appropriate fields from the
-                    % structure (inObj) into the prtDataSetClass of the
-                    % current version
-                    obj = obj.setObservationsAndTargets(inObj.dataDepHelper,inObj.targetsDepHelper);
-                    obj.observationInfo = inObj.observationInfoDepHelper;
-                    obj.featureInfo = inObj.featureInfoDepHelper;
-                    if ~isempty(inObj.featureNames.cellValues)
-                        obj = obj.setFeatureNames(inObj.featureNames.cellValues);
-                    end
-                    if ~isempty(inObj.observationNames.cellValues)
-                        obj = obj.setObservationNames(inObj.observationNames.cellValues);
-                    end
-                    if ~isempty(inObj.targetNames.cellValues)
-                        obj = obj.setTargetNames(inObj.targetNames.cellValues);
-                    end
-                    obj.plotOptions = inObj.plotOptions;
-                    obj.name = inObj.name;
-                    obj.description = inObj.description;
-                    obj.userData = inObj.userData;
-                    obj.actionData = inObj.actionData;
+            if isstruct(obj)
+                if ~isfield(obj,'version')
+                    % Version 0 - we didn't even specify version
+                    inputVersion = 0;
+                else
+                    inputVersion = obj.version;
+                end
+                
+                currentVersionObj = prtDataSetStandard;
+                
+                if inputVersion == currentVersionObj.version
+                    % Returning now will cause MATLAB to ignore this entire
+                    % loadobj() function and perform the default actions
+                    return
+                end
+                
+                % The input version is less than the current version
+                % We need to
+                inObj = obj;
+                obj = currentVersionObj;
+                switch inputVersion
+                    case 0
+                        % The oldest version of prtDataSetBase
+                        % We need to set the appropriate fields from the
+                        % structure (inObj) into the prtDataSetClass of the
+                        % current version
+                        obj = obj.setObservationsAndTargets(inObj.dataDepHelper,inObj.targetsDepHelper);
+                        obj.observationInfo = inObj.observationInfoDepHelper;
+                        obj.featureInfo = inObj.featureInfoDepHelper;
+                        if ~isempty(inObj.featureNames.cellValues)
+                            obj = obj.setFeatureNames(inObj.featureNames.cellValues);
+                        end
+                        if ~isempty(inObj.observationNames.cellValues)
+                            obj = obj.setObservationNames(inObj.observationNames.cellValues);
+                        end
+                        if ~isempty(inObj.targetNames.cellValues)
+                            obj = obj.setTargetNames(inObj.targetNames.cellValues);
+                        end
+                        obj.plotOptions = inObj.plotOptions;
+                        obj.name = inObj.name;
+                        obj.description = inObj.description;
+                        obj.userData = inObj.userData;
+                        obj.actionData = inObj.actionData;
                         
-                otherwise
-                    error('prt:prtDataSetStandard:loadObj','Unknown prtDataSetBase version %d, object cannot be laoded.',inputVersion);
+                    otherwise
+                        error('prt:prtDataSetStandard:loadObj','Unknown prtDataSetBase version %d, object cannot be laoded.',inputVersion);
+                end
+            else
+                % Nothin special
             end
         end
     end

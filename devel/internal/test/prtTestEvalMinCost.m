@@ -68,6 +68,7 @@ try
     disp('Error #4, unlabeled data set')
 catch
     % no-op
+    prtTestClassRvmFigueiredo
 end
     
 
@@ -79,5 +80,6 @@ try
      disp('Error #5, input arg check')
 catch
     % no0op
+    prtTestClassRvmFigueiredo
 end
 result = result & error;

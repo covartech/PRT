@@ -65,6 +65,8 @@ classdef prtDataSetClass  < prtDataSetStandard
         targetsCacheUnique = [];
         targetsCacheHist = []; 
         targetsCacheNClasses = 1;
+        targetsCacheHasNans = false;
+        targetsCacheNNans = 0;
     end
     
     properties (Hidden = true)
@@ -259,10 +261,14 @@ classdef prtDataSetClass  < prtDataSetStandard
                 classes = obj.uniqueClasses;
             end
             uniqueClasses = obj.uniqueClasses;
-            if ~isempty(setdiff(classes,uniqueClasses))
-                error('Input classes array (%s) contains class numbers not in uniqueClasses (%s)',mat2str(classes),mat2str(uniqueClasses));
+            leftOverClasses = setdiff(classes,uniqueClasses);
+            if ~isempty(leftOverClasses)
+                if ~all(isnan(leftOverClasses))
+                    error('Input classes array (%s) contains class numbers not in uniqueClasses (%s)',mat2str(classes),mat2str(uniqueClasses));
+                end
             end
             [twiddle,twiddle,ib] = intersect(classes,uniqueClasses); %#ok<ASGLU>
+            
             tn = getClassNamesByClassInd(obj,ib);
         end
         
@@ -286,9 +292,9 @@ classdef prtDataSetClass  < prtDataSetStandard
             names = names(:);
             if nargin < 3
                 classes = obj.uniqueClasses;
-                if size(names,1) ~= length(classes)
-                    error('prt:dataSetClass:setClassNames','setClassNames with one input requires that size(names,1) (%d) equals number of unique classes (%d)',size(names,1),length(classes));
-                end
+                %if size(names,1) ~= length(classes)
+                %    error('prt:dataSetClass:setClassNames','setClassNames with one input requires that size(names,1) (%d) equals number of unique classes (%d)',size(names,1),length(classes));
+                %end
             end
             uniqueClasses = obj.uniqueClasses;
             
@@ -369,6 +375,26 @@ classdef prtDataSetClass  < prtDataSetStandard
                 end
             else
                 d = obj.getObservations(obj.getTargets == obj.uniqueClasses(classInd),featureIndices);
+            end
+        end
+        function d = getObservationsUnlabeled(obj, featureIndices)
+            % getObservationsUnlabeled  Return the observations that
+            %   have the a target value that is NaN. If no target values
+            %   are contained in the dataset all observations are returned.
+            %   If targets is multidimensional observations that have any 
+            %   dimensions of targets with NaN values will be returned.
+            %
+            %   OBS = dataSet.getObservationsUnlabeled() returns the
+            %   observations OBS of the prtDataSetClass object that have
+            %   targets that are NaN
+            
+            if nargin < 2 || isempty(featureIndices)
+                featureIndices = 1:obj.nFeatures;
+            end
+            if ~obj.isLabeled
+                d = obj.getObservations(:,featureIndices);
+            else
+                d = obj.getObservations(any(isnan(obj.getTargets(:)),2),featureIndices);
             end
         end
         
@@ -1368,13 +1394,27 @@ classdef prtDataSetClass  < prtDataSetStandard
                 obj.targetsCacheUnique = [];
                 obj.targetsCacheNClasses = 1; % If unlabeled we really have one class
                 obj.targetsCacheHist = obj.nObservations;
+                obj.targetsCacheHasNans = false;
+                obj.targetsCacheNNans = 0;
             else
                 if islogical(obj.targets)
                     obj.targets = double(obj.targets);
                 end
                 obj.targetsCacheUnique = unique(obj.targets,'rows');
+                
+                % Handle nan targets (un/semi/supervised)
+                isNanVals = isnan(obj.targetsCacheUnique);
+                obj.targetsCacheHasNans = any(isNanVals);
+                hasNans = obj.targetsCacheHasNans;
+                if hasNans
+                    % Remove nans from unique targetsCache
+                    obj.targetsCacheUnique(isNanVals) = [];
+                end
+                
                 obj.targetsCacheNClasses = length(obj.targetsCacheUnique);
-                obj.targetsCacheHist = histc(obj.targets,obj.targetsCacheUnique);
+                    obj.targetsCacheHist = histc(obj.targets,obj.targetsCacheUnique);
+                obj.targetsCacheNNans = sum(isNanVals);
+                
             end
         end
         function obj = updateObservationsCache(obj)
@@ -1466,54 +1506,63 @@ classdef prtDataSetClass  < prtDataSetStandard
     methods (Static)
         function obj = loadobj(obj)
             
-            if ~isfield(obj,'version')
-                % Version 0 - we didn't even specify version
-                inputVersion = 0;
-            else
-                inputVersion = obj.version;
-            end
-
-            currentVersionObj = prtDataSetClass;
-            
-            if inputVersion == currentVersionObj.version
-                % Returning now will cause MATLAB to ignore this entire
-                % loadobj() function and perform the default actions
-                return
-            end
-            
-            % The input version is less than the current version
-            % We need to 
-            inObj = obj;
-            obj = currentVersionObj;
-            switch inputVersion
-                case 0
-                    % The oldest version of prtDataSetBase
-                    % We need to set the appropriate fields from the
-                    % structure (inObj) into the prtDataSetClass of the
-                    % current version
-                    obj = obj.setObservationsAndTargets(inObj.dataDepHelper,inObj.targetsDepHelper);
-                    obj.observationInfo = inObj.observationInfoDepHelper;
-                    obj.featureInfo = inObj.featureInfoDepHelper;
-                    if ~isempty(inObj.classNames.cellValues)
-                        obj = obj.setClassNames(inObj.classNames.cellValues);
-                    end
-                    if ~isempty(inObj.featureNames.cellValues)
-                        obj = obj.setFeatureNames(inObj.featureNames.cellValues);
-                    end
-                    if ~isempty(inObj.observationNames.cellValues)
-                        obj = obj.setObservationNames(inObj.observationNames.cellValues);
-                    end
-                    if ~isempty(inObj.targetNames.cellValues)
-                        obj = obj.setTargetNames(inObj.targetNames.cellValues);
-                    end
-                    obj.plotOptions = inObj.plotOptions;
-                    obj.name = inObj.name;
-                    obj.description = inObj.description;
-                    obj.userData = inObj.userData;
-                    obj.actionData = inObj.actionData;
+            if isstruct(obj)
+                if ~isfield(obj,'version')
+                    % Version 0 - we didn't even specify version
+                    inputVersion = 0;
+                else
+                    inputVersion = obj.version;
+                end
+                
+                currentVersionObj = prtDataSetClass;
+                if inputVersion == currentVersionObj.version
+                    % Returning now will cause MATLAB to ignore this entire
+                    % loadobj() function and perform the default actions
+                    return
+                end
+                
+                % The input version is less than the current version
+                % We need to
+                inObj = obj;
+                obj = currentVersionObj;
+                switch inputVersion
+                    case 0
+                        % The oldest version of prtDataSetBase
+                        % We need to set the appropriate fields from the
+                        % structure (inObj) into the prtDataSetClass of the
+                        % current version
+                        obj = obj.setObservationsAndTargets(inObj.dataDepHelper,inObj.targetsDepHelper);
+                        obj.observationInfo = inObj.observationInfoDepHelper;
+                        obj.featureInfo = inObj.featureInfoDepHelper;
+                        if ~isempty(inObj.classNames.cellValues)
+                            obj = obj.setClassNames(inObj.classNames.cellValues);
+                        end
+                        if ~isempty(inObj.featureNames.cellValues)
+                            obj = obj.setFeatureNames(inObj.featureNames.cellValues);
+                        end
+                        if ~isempty(inObj.observationNames.cellValues)
+                            obj = obj.setObservationNames(inObj.observationNames.cellValues);
+                        end
+                        if ~isempty(inObj.targetNames.cellValues)
+                            obj = obj.setTargetNames(inObj.targetNames.cellValues);
+                        end
+                        obj.plotOptions = inObj.plotOptions;
+                        obj.name = inObj.name;
+                        obj.description = inObj.description;
+                        obj.userData = inObj.userData;
+                        obj.actionData = inObj.actionData;
                         
-                otherwise
-                    error('prt:prtDataSetClass:loadObj','Unknown prtDataSetBase version %d, object cannot be laoded.',inputVersion);
+                        obj = obj.updateTargetsCache();
+                        obj = obj.updateObservationsCache();
+                        
+                    otherwise
+                        error('prt:prtDataSetClass:loadObj','Unknown prtDataSetBase version %d, object cannot be laoded.',inputVersion);
+                end
+            else 
+                % Object was loaded
+                % This happens when the current definition matches
+                obj = obj.updateTargetsCache();
+                obj = obj.updateObservationsCache();
             end
         end
     end

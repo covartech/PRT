@@ -50,6 +50,7 @@ try
     disp('Error #4, unlabeled data set')
 catch
     % no-op
+    prtUtilProgressBar.forceClose();
 end
     
 
@@ -60,6 +61,7 @@ try
      error = false;
      disp('Error #5, input arg check')
 catch
+    prtUtilProgressBar.forceClose();
     % no0op
 end
 result = result & error;

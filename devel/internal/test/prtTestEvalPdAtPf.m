@@ -50,6 +50,7 @@ try
     disp('Error #4, unlabeled data set')
 catch
     % no-op
+    prtUtilProgressBar.forceClose();
 end
     
 

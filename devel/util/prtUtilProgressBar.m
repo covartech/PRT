@@ -599,7 +599,10 @@ classdef prtUtilProgressBar
         
         function forceClose()
             
-            figHandle = findobj('tag','PrtProgressBar');
+            oldHandleVisilibity = get(0,'ShowHiddenHandles');
+            set(0,'ShowHiddenHandles','on');
+            figHandle = findobj('tag','PrtProgressBar','HandleVisibility','off');
+            set(0,'ShowHiddenHandles',oldHandleVisilibity);
             
             if ~isempty(figHandle)
                 close(figHandle)

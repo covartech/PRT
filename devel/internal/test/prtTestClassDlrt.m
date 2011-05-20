@@ -96,7 +96,7 @@ noerror = true;
 try
     classifier = prtClassDlrt('k', 4);
 catch
-    noerror = false;
+    noerror = false;    
 end
 % %% 
  result = result & noerror & error;
