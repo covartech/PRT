@@ -18,7 +18,7 @@ classdef prtClassNaiveBayes < prtClass
  %    data under each hypothesis and assumes independence between the data
  %    features (columns) to simplify inference.  
  %
- %    A prtClassFld object inherits the TRAIN, RUN, CROSSVALIDATE and
+ %    A prtClassNaiveBayes object inherits the TRAIN, RUN, CROSSVALIDATE and
  %    KFOLDS methods from prtAction. It also inherits the PLOT method from
  %    prtClass.
  %
@@ -43,14 +43,14 @@ classdef prtClassNaiveBayes < prtClass
 
  
     properties
-        baseRv = prtRvMvn;
+        baseRv = prtRvMvn;   % The base randon variable
     end
     properties (SetAccess=private)
         
-        name = 'Naive Bayes Classifier' % Fisher Linear Discriminant
-        nameAbbreviation = 'NBC'        % FLD
+        name = 'Naive Bayes Classifier' % Naive Bayes Classifier
+        nameAbbreviation = 'NBC'        % NBC
         isNativeMary = true;            % true
-        naiveRv = prtRvIndependent;
+        naiveRv = prtRvIndependent;     % The naive random variable
     end
     
     methods

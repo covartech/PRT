@@ -1,70 +1,73 @@
 classdef prtClassBumping < prtClass
- %prtClassBumping Bumping (Bootstrap Selection) Classifier
- % 
- %    CLASSIFIER = prtClassBumping returns a Bumping classifier
+    %prtClassBumping Bumping (Bootstrap Selection) Classifier
+    %
+    %    CLASSIFIER = prtClassBumping returns a Bumping classifier
+    %
+    %    CLASSIFIER = prtClassBumping(PROPERTY1, VALUE1, ...) constructs a
+    %    prtClassBumping object CLASSIFIER with properties as specified by
+    %    PROPERTY/VALUE pairs.
+    %
+    % A prtClassBumping object inherits all properties from the abstract class
+    % prtClass. In addition is has the following properties:
+    %
+    %      baseClassifier    - The base classifier to be re-trained with bootstrap
+    %                          samples
+    %      nBags             - The number of bagging samples to use
+    %
+    %      includeOriginalDataClassifier - Boolean value specifying whether to
+    %                                      include a classifier trained with
+    %                                      all the available data (not a
+    %                                      bootstrap sample) in comparison.
+    %                                      Defaults to "false" since training
+    %                                      with all the available data can
+    %                                      result in over-training.
+    %
+    % After training, a Bump classifier contains a field "Classifier" with the
+    % best trained classification algorithm, and a vector baggedPerformance
+    % with the percent correct found for each bagging sample.
+    %
+    % A Bumping classifier is a meta-classifier that chooses one of several
+    % classifiers trained on a bootstrap sampled version of the input training
+    % data.  In this case, the classifier chosen is the classifier trained on
+    % the bootstrap sample that results in the smallest percent error when
+    % tested on the original data set.  Bumping classifiers can be useful when
+    % the data set under consideration has a small number of significant
+    % outliers; some of the bagging samples will be free of at least some of
+    % the outliers and may provide better generalization performance.
+    %
+    % For more information on Bumping classifiers, see:
+    %  Hastie, Tibshirani, and Friedman, The Elements of Statistical Learning
+    %  Theory.
+    %
+    % % Example:
+    % ds = prtDataGenUnimodal;
+    % % add a significant outlier to the data:
+    % ds = ds.setXY(cat(1,ds.getObservations,[-30 -10]),cat(1,ds.getTargets,1));
+    % fld = prtClassFld('internalDecider',prtDecisionBinaryMinPe);
+    % fld = fld.train(ds);
+    %
+    % bumpingFld = prtClassBumping('baseClassifier',fld);
+    % bumpingFld = bumpingFld.train(ds);
+    %
+    % subplot(2,1,1); plot(fld);
+    % subplot(2,1,2); plot(bumpingFld);
  %
- %    CLASSIFIER = prtClassBumping(PROPERTY1, VALUE1, ...) constructs a
- %    prtClassBumping object CLASSIFIER with properties as specified by
- %    PROPERTY/VALUE pairs.
- %
- % A prtClassBumping object inherits all properties from the abstract class
- % prtClass. In addition is has the following properties:
- %
- %      baseClassifier    - The base classifier to be re-trained with bootstrap 
- %                          samples
- %      nBags             - The number of bagging samples to use
- %
- %      includeOriginalDataClassifier - Boolean value specifying whether to
- %                                      include a classifier trained with
- %                                      all the available data (not a
- %                                      bootstrap sample) in comparison.
- %                                      Defaults to "false" since training
- %                                      with all the available data can
- %                                      result in over-training.
- %
- % After training, a Bump classifier contains a field "Classifier" with the
- % best trained classification algorithm, and a vector baggedPerformance
- % with the percent correct found for each bagging sample.
- %
- % A Bumping classifier is a meta-classifier that chooses one of several
- % classifiers trained on a bootstrap sampled version of the input training
- % data.  In this case, the classifier chosen is the classifier trained on
- % the bootstrap sample that results in the smallest percent error when
- % tested on the original data set.  Bumping classifiers can be useful when
- % the data set under consideration has a small number of significant
- % outliers; some of the bagging samples will be free of at least some of
- % the outliers and may provide better generalization performance.
- % 
- % For more information on Bumping classifiers, see:
- %  Hastie, Tibshirani, and Friedman, The Elements of Statistical Learning
- %  Theory.
- %
- % % Example:
- % ds = prtDataGenUnimodal;
- % % add a significant outlier to the data:
- % ds = ds.setXY(cat(1,ds.getObservations,[-30 -10]),cat(1,ds.getTargets,1));
- % fld = prtClassFld('internalDecider',prtDecisionBinaryMinPe);
- % fld = fld.train(ds);
- %
- % bumpingFld = prtClassBumping('baseClassifier',fld);
- % bumpingFld = bumpingFld.train(ds);
- %
- % subplot(2,1,1); plot(fld);
- % subplot(2,1,2); plot(bumpingFld);
- %
- % See also: 
+    %    See also prtClass, prtClassLogisticDiscriminant, prtClassBagging,
+    %    prtClassMap, prtClassFld, prtClassBinaryToMaryOneVsAll, prtClassDlrt,
+    %    prtClassPlsda, prtClassFld, prtClassRvm, prtClassGlrt,  prtClassSvm,
+    %    prtClassTreeBaggingCap, prtClassKmsd, prtClassKnn
  
 
     properties (SetAccess=private)
-        name = 'Bumping'
-        nameAbbreviation = 'Bumping'
-        isNativeMary = false;         
+        name = 'Bumping'  % Bumping
+        nameAbbreviation = 'Bumping'  % Bumping
+        isNativeMary = false;         % False
     end
     
     properties
         baseClassifier = prtClassFld('internalDecider',prtDecisionBinaryMinPe);  % The classifier to be bagged
         nBags = 100;                                    % The number of bags
-        includeOriginalDataClassifier = false;          %run one additional classifier with the original data?  
+        includeOriginalDataClassifier = false;          %Whether or not to run one additional classifier with the original data.  
                                                         %(Default to NO since this can give over trained results)
     end
     properties (SetAccess=protected)

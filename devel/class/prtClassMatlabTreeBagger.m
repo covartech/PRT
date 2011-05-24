@@ -1,6 +1,5 @@
 classdef prtClassMatlabTreeBagger < prtClass
-    % prtClassMatlabTreeBagger  TreeBagger classifier using the MATLAB
-    % function "treeBagger.m" (requires statistics toolbox)
+    % prtClassMatlabTreeBagger  TreeBagger classifier using the MATLAB function "treeBagger.m" (requires statistics toolbox)
     %
     %  CLASSIFIER = prtClassMatlabTreeBagger returns a tree-bagger
     %  classifier build using the MATLAB Statistics toolbox (additonal 
@@ -49,14 +48,14 @@ classdef prtClassMatlabTreeBagger < prtClass
     %
     
     properties (SetAccess=private)
-        name = 'MATLAB Tree Bagger';
-        nameAbbreviation = 'MLTB';
-        isNativeMary = true;
+        name = 'MATLAB Tree Bagger';  % MATLAB Tree Bagger
+        nameAbbreviation = 'MLTB'; % MLTB
+        isNativeMary = true; % False
     end
     
     properties 
-        % forest
-        nTrees = 100;
+        
+        nTrees = 100;  % The number of trees
         treeBaggerParamValuePairs = {};
     end
     

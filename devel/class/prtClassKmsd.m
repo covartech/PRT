@@ -10,7 +10,7 @@ classdef prtClassKmsd < prtClass
     %    A prtClassKmsd object inherits all properties from the abstract class
     %    prtClass. In addition is has the following properties:
     %
-    %    sigma  - Inverse kernel width for guassian radial basis function
+    %    sigma  - Inverse kernel width for Gaussian radial basis function
     % 
     %    For more information on Kmsd classifiers, refer to the
     %    following URL:

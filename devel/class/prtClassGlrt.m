@@ -14,11 +14,6 @@ classdef prtClassGlrt < prtClass
     %           hypothesis 0.
     %    rvH1 - A prtRvMvn object representing the mean and variance of
     %           hypothesis 0.
-    % 
-    %    For more information on Glrt classifiers, refer to the
-    %    following URL:
-    %  
-    %    XXX Need ref
     %
     %    A prtClassGlrt object inherits the TRAIN, RUN, CROSSVALIDATE and
     %    KFOLDS methods from prtAction. It also inherits the PLOT method
