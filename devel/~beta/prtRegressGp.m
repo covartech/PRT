@@ -1,4 +1,4 @@
-classdef prtRegressGP < prtRegress
+classdef prtRegressGp < prtRegress
     % prtRegresGP  Gaussian Process regression object
     %
     %   REGRESS = prtRegressGP returns a prtRegressGP object
@@ -67,7 +67,12 @@ classdef prtRegressGP < prtRegress
         function Obj = set.covarianceFunction(Obj,value)
             assert(isa(value,'function_handle'),'Invalid covarianceFunction specified; noise variance must be a function_handle, but specified value is a %s',class(value));
         end
-
+        function Obj = setVerboseStorage(Obj,value)
+            assert(prtUtilIsLogicalScalar(value),'verboseStorage must be a scalar logical');
+            if ~value
+                warning('prt:prtRegressGp:verboseStorage','prtRegressGp requires verboseStorage to be true. Ignoring request to set to false.');
+            end
+        end                
     end
     
     methods (Access = protected, Hidden = true)

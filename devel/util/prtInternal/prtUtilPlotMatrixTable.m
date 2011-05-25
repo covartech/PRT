@@ -118,7 +118,7 @@ if nargout > 0
 end
 
 f = ancestor(gca,'figure');
-addlistener(f,'SizeChange',@(src,evt)setBestFontSize(gca,textHandles));
+set(f,'ResizeFcn',@(src,evt)setBestFontSize(gca,textHandles));
 
 function setBestFontSize(imAxes,textHandles)
 
@@ -130,7 +130,12 @@ fs = getBestFontSize(imAxes);
 
 for iHandle = 1:numel(textHandles)
     if ishandle(textHandles(iHandle))
-        set(textHandles(iHandle),'FontSize',fs);
+        if fs > 0
+            set(textHandles(iHandle),'FontSize',fs);
+            set(textHandles(iHandle),'visible','on');
+        else
+            set(textHandles(iHandle),'visible','off');
+        end
     end
 end
     
