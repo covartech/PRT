@@ -1,7 +1,7 @@
 classdef prtFeatSel < prtAction 
     % prtFeatSel
     properties (SetAccess = protected)
-        isSupervised = true;
+        isSupervised = true   %True
         isCrossValidateValid = true; % False
     end
     

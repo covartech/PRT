@@ -46,7 +46,7 @@ end
 %Handle multi-dimensional input DS (numeric or prtDataSetClass)
 if size(ds,2) > 1
     for iRoc = 1:size(ds,2)
-        [pf{iRoc},pd{iRoc},thresholds{iRoc},auc{iRoc}] = prtScoreRoc(ds(:,iRoc),y,varargin{:}); %#ok<NASGU,AGROW>
+        [pf{iRoc},pd{iRoc},thresholds{iRoc},auc{iRoc}] = prtScoreRoc(ds(:,iRoc),y,varargin{:}); %#ok<AGROW>
     end
     if nargout == 0
         colors = prtPlotUtilClassColors(size(ds,2));

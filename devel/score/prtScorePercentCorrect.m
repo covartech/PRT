@@ -7,13 +7,14 @@ function percentCorrect = prtScorePercentCorrect(dataSet1,dataSet2)
 %   TRUTH and GUESS should be binary or interger class labels.
 %
 %   Example:
-%   TestDataSet = prtDataGenUniModal;       % Create some test and
-%   TrainingDataSet = prtDataGenUniModal;   % training data
+%   TestDataSet = prtDataGenUnimodal;       % Create some test and
+%   TrainingDataSet = prtDataGenUnimodal;   % training data
 %   classifier = prtClassMap;               % Create a classifier
+%   % Use minimum probablity of error rule
+%   classifier.internalDecider = prtDecisionBinaryMinPe;
 %   classifier = classifier.train(TrainingDataSet);    % Train
 %   classified = run(classifier, TestDataSet);         % Test
-%   classes  = classified.getX > .5;
-%   percentCorr = prtScorePercentCorrect(classes,TestDataSet.getTargets)
+%   percentCorr = prtScorePercentCorrect(classified,TestDataSet)
 %
 %   See also prtScoreConfusionMatrix, prtScoreRoc, prtScoreRmse
 

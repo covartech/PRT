@@ -61,12 +61,12 @@ classdef prtRvIndependent < prtRv
     %   prtRvUniformImproper, prtRvVq, prtRvDiscrete
     
     properties (Hidden = true, Dependent = true)
-        nDimensions
+        nDimensions  % Number of dimensions
     end
 
     properties
-        baseRv
-        rvArray
+        baseRv  % The base random variable
+        rvArray  % The array of random variables
     end
     
     methods

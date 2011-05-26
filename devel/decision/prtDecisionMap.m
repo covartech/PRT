@@ -41,14 +41,11 @@ classdef prtDecisionMap < prtDecision
     % subplot(2,1,2); plot(classifier); title('KNN + Decision');
     %    	
     % See also: prtDecisionBinary, prtDecisionBinarySpecifiedPd,
-    % ptDecisionBinarySpecifiedPf, prtDecisionMap
-
-    % See also: prtDecisionBinaryMinPe, prtDecisionBinarySpecifiedPd,
-    % ptDecisionBinarySpecifiedPf, prtDecisionMap
+    % prtDecisionBinarySpecifiedPf, prtDecisionMap
 
      properties (SetAccess = private)
-        name = 'MAP'
-        nameAbbreviation = 'MAP';
+        name = 'MAP'  % MAP
+        nameAbbreviation = 'MAP';  % MAP
     end
     
     methods

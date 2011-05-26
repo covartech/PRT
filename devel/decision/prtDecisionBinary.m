@@ -13,7 +13,7 @@ classdef prtDecisionBinary < prtDecision
     %                threshold
     %
     % See also: prtDecisionBinaryMinPe, prtDecisionBinarySpecifiedPd,
-    % ptDecisionBinarySpecifiedPf, prtDecisionMap
+    % prtDecisionBinarySpecifiedPf, prtDecisionMap
     
     methods (Abstract)
         threshold = getThreshold(Obj) 

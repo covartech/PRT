@@ -1,9 +1,27 @@
 function varargout = prtScoreConfusionMatrix(guess,truth,nClasses,labelsIn)
 %[confMat,occurances,labels] = prtScoreConfusionMatrix(guess,truth,nClasses)
+% prtScoreConfusionMatrix Plot or return the confusion matrix
 %
-% xxx Need Help xxx
-%   guess and truth should be either n x 1 doubles, or dataSets with proper
-%   observations and targets
+%   CONFMAT = prtScoreConfusionMatrix(GUESS, TRUTH) returns the confusion matrix that
+%   results from comparing  GUESS as compared to the truth in TRUTH.
+%   GUESS and TRUTH should both be Nx1 vectors. The elements of both TRUTH
+%   and GUESS should be binary or interger class labels.
+%
+%   prtScoreConfustionMatrix(GUESS,TRUTH) called without any output
+%   arguments plots the confusion matrix.
+%
+%    Example:     
+%    TestDataSet = prtDataGenMary;        % Create some test and
+%    TrainingDataSet = prtDataGenMary;   % training data
+%    classifier = prtClassMap;             % Create a classifier
+%    classifier.internalDecider = prtDecisionMap;
+%    classifier = classifier.train(TrainingDataSet);    % Train
+%    classified = run(classifier, TestDataSet);     
+%    %  Display the confusion matrix
+%    prtScoreConfusionMatrix(classified, TestDataSet)
+%
+%    See also: prtScoreoc, prtScoreRmse, prtScoreRocNfa,
+%    prtScorePercentCorrect, prtScoreAuc
 
 if (nargin == 1 || isempty(truth)) && isa(guess,'prtDataSetClass')
     truth = guess;

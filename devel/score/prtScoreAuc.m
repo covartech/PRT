@@ -1,8 +1,24 @@
 function auc = prtScoreAuc(ds,y)
 % prtScoreAuc Calculates the area under the ROC curve
 %
-% See:
-% http://www.springerlink.com/content/nn141j42838n7u21/fulltext.pdf
+%   AUC  = prtScoreAuc(GUESS, TRUTH) returns the
+%   percent of correct guesses in GUESS as compared to the truth in TRUTH.
+%   GUESS and TRUTH should both be Nx1 vectors. The elements of both
+%   TRUTH and GUESS should be binary or interger class labels.
+%
+%   For a reference,  see:
+%   http://www.springerlink.com/content/nn141j42838n7u21/fulltext.pdf
+%
+%   Example:
+%   TestDataSet = prtDataGenUnimodal;       % Create some test and
+%   TrainingDataSet = prtDataGenUnimodal;   % training data
+%   classifier = prtClassMap;               % Create a classifier
+%   classifier = classifier.train(TrainingDataSet);    % Train
+%   classified = run(classifier, TestDataSet);         % Test
+%   auc = prtScoreAuc(classified,TestDataSet)
+%
+%   See also prtScoreConfusionMatrix, prtScoreRoc, prtScoreRmse
+
 
 if nargin < 2
     y = [];

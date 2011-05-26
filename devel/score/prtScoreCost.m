@@ -22,7 +22,6 @@ function [cost,pf,pd] = prtScoreCost(ds,y,costMatrix)
 %    C = prtScoreCost(classified.getX, TestDataSet.getY, [1 .1; .1 1]);
 %
 %   See also prtScoreConfusionMatrix, prtScoreRmse,
-%   prtScoreRocBayesianBootstrap, prtScoreRocBayesianBootstrapNfa,
 %   prtScorePercentCorrect
 
 [ds,y] = prtUtilScoreParseFirstTwoInputs(ds,y);

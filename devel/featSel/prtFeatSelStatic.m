@@ -27,13 +27,13 @@ classdef prtFeatSelStatic < prtFeatSel %
     %   explore(dataSetReduced);
     
     properties (SetAccess=private) 
-        % Required by prtAction
-        name = 'Static Feature Selection'
-        nameAbbreviation = 'StaticFeatSel'
+        
+        name = 'Static Feature Selection'   % Static Feature Selection
+        nameAbbreviation = 'StaticFeatSel' % StaticFeatSel
     end 
     
     properties 
-        % General Classifier Properties
+
         selectedFeatures = nan   % The selected features
     end
     

@@ -49,7 +49,7 @@ classdef prtDecisionBinarySpecifiedPd < prtDecisionBinary
     % subplot(2,1,2); plot(classifier); title('KNN + Decision');
     %
     % See also: prtDecisionBinary, prtDecisionBinaryMinPe,
-    % ptDecisionBinarySpecifiedPf, prtDecisionMap
+    % prtDecisionBinarySpecifiedPf, prtDecisionMap
     
     
     %
