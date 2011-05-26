@@ -13,11 +13,8 @@ function DataSet = prtDataGenProstate(prostateFile)
 %   ds.plot;
 %    
 %   See also: prtDataSetClass, prtDataGenBiModal, prtDataGenIris,
-%   prtDataGenManual, prtDataGenMary, prtDataGenNoisySinc,
-%   prtDataGenOldFaithful,prtDataGenProtate, prtDataGenSprial,
-%   prtDataGenSpiral3Regress, prtDataGenUnimodal, prtDataGenSwissRoll,
-%   prtDataGenUnimodal, prtDataGenXor
-
+%   prtDataGenMary, prtDataGenNoisySinc, prtDataGenOldFaithful,
+%   prtDataGenSpiral, prtDataGenUnimodal, prtDataGenUnimodal, prtDataGenXor
 
 %   prtDataGenProstate Read in data from a CSV formatted PROSTATE-like data file
 %

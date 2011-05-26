@@ -9,11 +9,9 @@ function DataSet = prtDataGenCircles
 %   dataSet = prtDataGenCircles;
 %   plot(dataSet);
 %
-% See also: prtDataSetClass, prtDataGenBiModal, prtDataGenIris,
-% prtDataGenManual, prtDataGenMary, prtDataGenNoisySinc,
-% prtDataGenOldFaithful,prtDataGenProtate, prtDataGenSprial,
-% prtDataGenSpiral3Regress, prtDataGenUnimodal, prtDataGenSwissRoll,
-% prtDataGenUnimodal, prtDataGenXor
+%   See also: prtDataSetClass, prtDataGenBiModal, prtDataGenIris,
+%   prtDataGenMary, prtDataGenNoisySinc, prtDataGenOldFaithful,
+%   prtDataGenSpiral, prtDataGenUnimodal, prtDataGenUnimodal, prtDataGenXor
 
 % Copyright 2010, New Folder Consulting, L.L.C.
 

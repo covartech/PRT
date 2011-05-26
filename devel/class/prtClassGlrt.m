@@ -1,5 +1,5 @@
 classdef prtClassGlrt < prtClass
-    % prtClassGlrt  Generlized likelihood ratio test classifier
+    % prtClassGlrt  Generalized likelihood ratio test classifier
     %
     %    CLASSIFIER = prtClassGlrt returns a Glrt classifier
     %
