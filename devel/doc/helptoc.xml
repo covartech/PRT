@@ -16,8 +16,23 @@
         <!-- A Getting Started Guide usually comes first -->
         <tocitem target="prtDocGettingStarted.html" image="HelpIcon.GETTING_STARTED"> Getting Started </tocitem>
         
+                 <!-- User Guide comes next -->
+        <tocitem target="prtDocUsersGuide.html" 
+            image="HelpIcon.USER_GUIDE">Pattern Recognition Toolbox User's Guide
+            <tocitem target="prtDocDataSet.html"> Pattern Recognition Toolbox Datasets
+            </tocitem>
+            <tocitem target="prtDocClass.html">Creating classifiers with the Pattern Recogntion Toolbox
+            </tocitem>
+            <tocitem target="prtDocEval.html">Evaluating results with the Pattern Recognition Toolbox 
+                <tocitem target="mytbx_ch_3a.html">Handling Test Failures
+                </tocitem>
+            </tocitem>
+        </tocitem>
+        
         <tocitem target="prtDocReleaseNotes.html" image="HelpIcon.RELEASE_NOTES">Release Notes</tocitem>
 
+       
+        
         <tocitem target="prtDocFunctionList.html" image="HelpIcon.FUNCTION">Function List </tocitem>
         
         <!-- Optional link or links to your or other Web sites -->
