@@ -11,7 +11,6 @@
 
 %% prtDataSetStandard
 %
-%
 % prtDataSetStandard objects can hold either labeled or unlabled data. To
 % create am empty prtDataSetStandard object, you can use the following
 % command:
@@ -85,8 +84,58 @@ ds = ds.setObservationInfo('info1',[7 8 9]')
  % functions.
  
  %% prtDataSetClass
+ %
+ % The prtDataSetClass object is an extension of the prtDataSetStandard,
+ % with several additional properties and methods specific to data that is
+ % to be used for classification.  All PRT classification objects require
+ % prtDataSetClass object for training and running. To illustrate, load a
+ % binary dataset using the funcion prtDataGenUnimodal:
  
+ ds = prtDataGenUnimodal
 
+ %%
+ % prtDataGenUnimodal randomly generates a dataset with 2 classes, with 2
+ % dimensions, and 200 observations per class. Note the additional
+ % properties such as nClasses, which equals 2. isBinary is therefore set
+ % to true because it is a binary data set. Since this dataset has 2
+ % dimensions, it can be plotted with the following command:
  
+ ds.plot
+ 
+ %%
+ % When a dataset has 3 or fewer dimensions, it can be plotted on a
+ % scatterplot in this manner. When the dataset has more than 3 dimensions,
+ % the PRT provides several ways for visualizing the data, such as the
+ % PRT explorer, or methods such as plotStar, plotAsTimeSeries, plotPairs.
+ % For an example of a higher dimension prtDataSetClass, load the Iris
+ % dataset:
+ 
+ ds = prtDataGenIris
+ 
+ 
+ %%
+ % This dataset has 4 classes, and 4 features per class. The isMary
+ % property is therefore set to true. Experiment with the different ways to
+ % plot visualize this dataset. For example, try the plotStar function:
+ 
+ ds.plotStar
+ 
+ %%
+ % For more information on the prtDataSetClass, please refer to
+ % <matlab:doc('prtDataSetClass') prtDataSetClass>
+ 
+ %% prtDataSetRegress
+ %
+ % prtDataSetRegress is also an extension of prtDataSetStandard, with
+ % methods overloaded with functionality specific to plotting regression
+ % data. All PRT classification objects require prtDataSetClass object for
+ % training and running. For example, load a regression data set, and plot
+ % it:
+ 
+ ds = prtDataGenNoisySinc
+ ds.plot
+
+ %%
+ % For more information on prtDataSetRegress, please refer to <matlab:doc('prtDataSetRegress') prtDataSetRegress>
 
 

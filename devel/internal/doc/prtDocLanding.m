@@ -8,6 +8,7 @@
 % *Available Documentation*
 %
 % * <prtDocGettingStarted.html Getting Started>
+% * <prtDocUsersGuide.html User's Guide>
 % * <prtDocReleaseNotes.html Release Notes>
 % * <prtDocFunctionList.html A Categorized List of Popular Functions>
 %
