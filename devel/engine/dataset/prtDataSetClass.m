@@ -14,7 +14,7 @@ classdef prtDataSetClass  < prtDataSetStandard
     %   uniqueClasses        - An array of the integer class labels
     %   isUnary              - True if the number of classes = 1
     %   isBinary             - True if the number of classes = 2
-    %   isMary = nan         - True if the number of classes > 2
+    %   isMary               - True if the number of classes > 2
     %   isZeroOne            - True if the unique classes are 0 and 1
     %   nObservationsByClass - The number of observations per class.
     %
