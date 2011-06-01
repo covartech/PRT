@@ -7,7 +7,11 @@
 % a generic object, containing much of the functionality needed to work
 % with the PRT. In general however, you will probably want to work with
 % either prtDataSetClass, or prtDataSetRegress, depending on if you are
-% doing classification or regression, respectively.
+% doing classification or regression, respectively. All prtDataSet objects
+% inherit from the prtDataSetBase class, which provides most of the basic
+% functionality for setting and getting data members. For more information
+% on the base data class, see <matlab:doc('prtDataSetBase')
+% prtDataSetBase>.
 
 %% prtDataSetStandard
 %

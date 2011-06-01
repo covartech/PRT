@@ -21,6 +21,8 @@
             image="HelpIcon.USER_GUIDE">Pattern Recognition Toolbox User's Guide
             <tocitem target="prtDocDataSet.html"> Pattern Recognition Toolbox Datasets
             </tocitem>
+                       <tocitem target="prtDocEngine.html">Pattern Recogntion Toolbox Engine
+            </tocitem>
             <tocitem target="prtDocClass.html">Creating classifiers with the Pattern Recogntion Toolbox
             </tocitem>
             <tocitem target="prtDocEval.html">Evaluating results with the Pattern Recognition Toolbox 
