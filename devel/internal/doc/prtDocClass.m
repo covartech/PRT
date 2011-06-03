@@ -18,13 +18,10 @@
 % native M-ary classifiers can label data into an arbitrary number of
 % classes.
 %
-%% Internal Deciders
-% The other important property is the internalDecider. Ordinarily, a
-% prtClass object outputs raw statistics based on the classification
-% algorithm. However, you might just want the classification object to also
-% label the outputs. This can be done by setting the internalDecider
-% property. The example below will illustrate the use of a simple prtClass
-% object, with both the internalDecider unset and set.
+%% Using classifiers
+% You use classifiers in the same manner as any prtAction object. The
+% following example shows how to create a generalized likelihood ratio
+% classifier, and perform kfolds validation on it.
 
 ds = prtDataGenUnimodal;   % Load a dataset to use
 classifier = prtClassGlrt  % Create a generalized likelihood ratio test classifier
@@ -38,8 +35,13 @@ result.getX(1:5)
 % likelihood values. Also note that since ds was a labeled dataset, the
 % original labels are copied over into the targets property of the results
 % dataset.
-%
-% Now, set the internalDecider to be  a prtDecisionBinaryMinPe object:
+
+%% Internal Deciders
+% Another important property of prtClass objects is the internalDecider.
+% Ordinarily, a prtClass object outputs raw statistics based on the
+% classification algorithm. However, you might just want the classification
+% object to also label the outputs. This can be done by setting the
+% internalDecider property to be a prtDecisionBinaryMinPe object:
 
 classifier.internalDecider = prtDecisionBinaryMinPe;
 result = classifier.kfolds(ds,2);   %  Perform a simple 2-fold cross-validation
@@ -47,9 +49,9 @@ result = classifier.kfolds(ds,2);   %  Perform a simple 2-fold cross-validation
 result.getX(1:5)
 
 % Note that now the data stored in the observations of result are class
-% labels. By setting the internalDecider to prtDecisionBinaryPe, an
-% threshold was found during training that would result in the minimum
-% probability of error.
+% labels. They are likely all of class 0 in this example. By setting the
+% internalDecider to prtDecisionBinaryPe, an threshold was found during
+% training that would result in the minimum probability of error.
 
 %% Plotting
 % Finally, prtClass objects all have an additional plot function, which can

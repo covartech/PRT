@@ -1,4 +1,6 @@
 %% The Pattern Recognition Toolbox Engine
+%
+%%
 % In the Pattern Recogntion toolbox, all actions (classification,
 % regression, etc...) are implemented as  <matlab:doc('prtAction')
 % prtAction> objects. All prtAction objects share fundamental operations
@@ -23,8 +25,9 @@ ds = prtDataGenUnimodal;
 classifier = prtClassGlrt;
 classifier = classifier.train(ds);
 
-%%
-% Note that ds is a labeleled prtDataSetClass object. The object 'classsifier' is now a trained generalized likelihood ratoi
+%% 
+% Note that ds is a labeleled prtDataSetClass object. The object
+% 'classsifier' is now a trained generalized likelihood ratio
 % test classifier. 
 
 classifier.isTrained 

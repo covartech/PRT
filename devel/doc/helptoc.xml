@@ -25,8 +25,15 @@
             </tocitem>
             <tocitem target="prtDocClass.html">Creating classifiers with the Pattern Recogntion Toolbox
             </tocitem>
+             <tocitem target="prtDocPreProc.html">Pre processing data with the Pattern Recogntion Toolbox
+            </tocitem>
+            <tocitem target="prtDocAlgo.html">Creating algorithms with the Pattern Recogntion Toolbox
+            </tocitem>
+            <tocitem target="prtDocRegress.html">Regression with the Pattern Recogntion Toolbox
+            </tocitem>
+
             <tocitem target="prtDocEval.html">Evaluating results with the Pattern Recognition Toolbox 
-                <tocitem target="mytbx_ch_3a.html">Handling Test Failures
+                <tocitem target="lala.html">Just testing a subcategory
                 </tocitem>
             </tocitem>
         </tocitem>

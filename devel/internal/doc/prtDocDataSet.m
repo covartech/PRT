@@ -1,4 +1,4 @@
-%% Dataset
+%% Datasets in the Pattern Recognition Toolbox
 % Before you can perform any actions with the PRT, you need to get your
 % data into a PRT dataset object.
 % 

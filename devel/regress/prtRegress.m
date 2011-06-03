@@ -28,13 +28,12 @@ classdef prtRegress < prtAction %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         end        
         
         function varargout = plot(Obj)
-            % PLOT  Plot the output confidence of a prtClass object
+            % PLOT  Plot the prtRegress object
             %
-            %   OBJ.plot() plots the output confidence of a prtClass
-            %   object. This function only operates when the dimensionality
-            %   of dataset is 3 or less. When verboseStorage is set to
-            %   'true', the training data points are also displayed on the
-            %   plot.
+            % OBJ.plot() plots a trained prtRegress object. The plot
+            % displays the original data points, the regressed data points,
+            % and a line or curve interpolating between the regressed data
+            % points.
             
             
             assert(Obj.isTrained,'Regressor must be trained before it can be plotted.');
