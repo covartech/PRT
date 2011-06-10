@@ -38,11 +38,16 @@ if dataSet.nClasses == 2 %binary classifier
     minPe = min(pe);
     percentCorrect = 1-minPe;
 else
-    if classifier.includesDecision
+    %Note, this is a hack; we need to fix this.
+    if isa(classifier,'prtAlgorithm')
         guess = results.getObservations;
     else
-        %Naive MAP decision:
-        [twiddle,guess] = max(results.getObservations,[],2); %#ok<ASGLU>
+        if classifier.includesDecision
+            guess = results.getObservations;
+        else
+           %Naive MAP decision:
+            [twiddle,guess] = max(results.getObservations,[],2); %#ok<ASGLU>
+        end
     end
     confusionMatrix = prtScoreConfusionMatrix(guess,dataSet.getTargets);
     percentCorrect = prtUtilConfusion2PercentCorrect(confusionMatrix);

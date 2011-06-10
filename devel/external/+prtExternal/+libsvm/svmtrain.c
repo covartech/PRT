@@ -49,9 +49,9 @@ void exit_with_help()
 	);
 }
 
-// svm arguments
-struct svm_parameter param;		// set by parse_command_line
-struct svm_problem prob;		// set by read_problem
+/* svm arguments */
+struct svm_parameter param;		/* set by parse_command_line */
+struct svm_problem prob;		/* set by read_problem */
 struct svm_model *model;
 struct svm_node *x_space;
 int cross_validation;
@@ -101,19 +101,19 @@ double do_cross_validation()
 	return retval;
 }
 
-// nrhs should be 3
+/* nrhs should be 3 */
 int parse_command_line(int nrhs, const mxArray *prhs[], char *model_file_name)
 {
 	int i, argc = 1;
 	char cmd[CMD_LEN];
 	char *argv[CMD_LEN/2];
-	void (*print_func)(const char *) = NULL;	// default printing to stdout
+	void (*print_func)(const char *) = NULL;	/* default printing to stdout */
 
-	// default values
+	/* default values */
 	param.svm_type = C_SVC;
 	param.kernel_type = RBF;
 	param.degree = 3;
-	param.gamma = 0;	// 1/num_features
+	param.gamma = 0;	/* 1/num_features */
 	param.coef0 = 0;
 	param.nu = 0.5;
 	param.cache_size = 100;
@@ -132,19 +132,19 @@ int parse_command_line(int nrhs, const mxArray *prhs[], char *model_file_name)
 
 	if(nrhs > 2)
 	{
-		// put options in argv[]
+		/* put options in argv[] */
 		mxGetString(prhs[2], cmd, mxGetN(prhs[2]) + 1);
 		if((argv[argc] = strtok(cmd, " ")) != NULL)
 			while((argv[++argc] = strtok(NULL, " ")) != NULL)
 				;
 	}
 
-	// parse options
+	/* parse options */
 	for(i=1;i<argc;i++)
 	{
 		if(argv[i][0] != '-') break;
 		++i;
-		if(i>=argc && argv[i-1][1] != 'q')	// since option -q has no parameter
+		if(i>=argc && argv[i-1][1] != 'q')	/* since option -q has no parameter */
 			return 1;
 		switch(argv[i-1][1])
 		{
@@ -215,7 +215,7 @@ int parse_command_line(int nrhs, const mxArray *prhs[], char *model_file_name)
 	return 0;
 }
 
-// read in a problem (in svmlight format)
+/* read in a problem (in svmlight format) */
 int read_problem_dense(const mxArray *label_vec, const mxArray *instance_mat)
 {
 	int i, j, k;
@@ -231,7 +231,7 @@ int read_problem_dense(const mxArray *label_vec, const mxArray *instance_mat)
 	sc = (int)mxGetN(instance_mat);
 
 	elements = 0;
-	// the number of instance
+	/* the number of instance */
 	prob.l = (int)mxGetM(instance_mat);
 	label_vector_row_num = (int)mxGetM(label_vec);
 
@@ -250,7 +250,7 @@ int read_problem_dense(const mxArray *label_vec, const mxArray *instance_mat)
 			for(k = 0; k < sc; k++)
 				if(samples[k * prob.l + i] != 0)
 					elements++;
-			// count the '-1' element
+			/* count the '-1' element */
 			elements++;
 		}
 	}
@@ -300,13 +300,13 @@ int read_problem_sparse(const mxArray *label_vec, const mxArray *instance_mat)
 	mwIndex *ir, *jc;
 	int elements, max_index, num_samples, label_vector_row_num;
 	double *samples, *labels;
-	mxArray *instance_mat_col; // transposed instance sparse matrix
+	mxArray *instance_mat_col; /* transposed instance sparse matrix */
 
 	prob.x = NULL;
 	prob.y = NULL;
 	x_space = NULL;
 
-	// transpose instance matrix
+	/* transpose instance matrix */
 	{
 		mxArray *prhs[1], *plhs[1];
 		prhs[0] = mxDuplicateArray(instance_mat);
@@ -319,7 +319,7 @@ int read_problem_sparse(const mxArray *label_vec, const mxArray *instance_mat)
 		mxDestroyArray(prhs[0]);
 	}
 
-	// each column is one instance
+	/* each column is one instance */
 	labels = mxGetPr(label_vec);
 	samples = mxGetPr(instance_mat_col);
 	ir = mxGetIr(instance_mat_col);
@@ -327,7 +327,7 @@ int read_problem_sparse(const mxArray *label_vec, const mxArray *instance_mat)
 
 	num_samples = (int)mxGetNzmax(instance_mat_col);
 
-	// the number of instance
+	/* the number of instance */
 	prob.l = (int)mxGetN(instance_mat_col);
 	label_vector_row_num = (int)mxGetM(label_vec);
 
@@ -370,18 +370,18 @@ static void fake_answer(mxArray *plhs[])
 	plhs[0] = mxCreateDoubleMatrix(0, 0, mxREAL);
 }
 
-// Interface function of matlab
-// now assume prhs[0]: label prhs[1]: features
+/* Interface function of matlab
+   now assume prhs[0]: label prhs[1]: features */
 void mexFunction( int nlhs, mxArray *plhs[],
 		int nrhs, const mxArray *prhs[] )
 {
 	const char *error_msg;
 
-	// fix random seed to have same results for each run
-	// (for cross validation and probability estimation)
+	/* fix random seed to have same results for each run
+	   (for cross validation and probability estimation) */
 	srand(1);
 
-	// Transform the input Matrix to libsvm format
+	/* Transform the input Matrix to libsvm format */
 	if(nrhs > 1 && nrhs < 4)
 	{
 		int err;
@@ -404,7 +404,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 		{
 			if(param.kernel_type == PRECOMPUTED)
 			{
-				// precomputed kernel requires dense matrix, so we make one
+				/* precomputed kernel requires dense matrix, so we make one */
 				mxArray *rhs[1], *lhs[1];
 
 				rhs[0] = mxDuplicateArray(prhs[1]);
@@ -425,7 +425,7 @@ void mexFunction( int nlhs, mxArray *plhs[],
 		else
 			err = read_problem_dense(prhs[0], prhs[1]);
 
-		// svmtrain's original code
+		/* svmtrain's original code */
 		error_msg = svm_check_parameter(&prob, &param);
 
 		if(err || error_msg)

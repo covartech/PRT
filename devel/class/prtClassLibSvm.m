@@ -197,7 +197,7 @@ classdef prtClassLibSvm < prtClass
             Obj.libSvmOptionsTest = Obj.libSvmOptionStringTest(DataSet);
             
             if DataSet.nClasses ~= 2
-                error('prt:prtClassLibSvm:UnaryData','prtClassLibSvm requires binary data for training');
+                %error('prt:prtClassLibSvm:UnaryData','prtClassLibSvm requires binary data for training');
             end
             Obj.trainedSvm = prtExternal.libsvm.svmtrain(training_label_vector, training_instance_matrix, Obj.libSvmOptions);
             

@@ -6,8 +6,6 @@ function auc = prtScoreAuc(ds,y)
 %   GUESS and TRUTH should both be Nx1 vectors. The elements of both
 %   TRUTH and GUESS should be binary or interger class labels.
 %
-%   For a reference,  see:
-%   http://www.springerlink.com/content/nn141j42838n7u21/fulltext.pdf
 %
 %   Example:
 %   TestDataSet = prtDataGenUnimodal;       % Create some test and

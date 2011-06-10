@@ -46,7 +46,7 @@ static char* readline(FILE *input)
 	return line;
 }
 
-// read in a problem (in libsvm format)
+/* read in a problem (in libsvm format)*/
 void read_problem(const char *filename, mxArray *plhs[])
 {
 	int max_index, min_index, inst_max_index, i;
@@ -68,19 +68,19 @@ void read_problem(const char *filename, mxArray *plhs[])
 	line = (char *) malloc(max_line_len*sizeof(char));
 
 	max_index = 0;
-	min_index = 1; // our index starts from 1
+	min_index = 1; /* our index starts from 1 */
 	elements = 0;
 	while(readline(fp) != NULL)
 	{
 		char *idx, *val;
-		// features
+		/* features */
 		int index = 0;
 
-		inst_max_index = -1; // strtol gives 0 if wrong format, and precomputed kernel has <index> start from 0
-		strtok(line," \t"); // label
+		inst_max_index = -1; /* strtol gives 0 if wrong format, and precomputed kernel has <index> start from 0 */
+		strtok(line," \t"); /* label */
 		while (1)
 		{
-			idx = strtok(NULL,":"); // index:value
+			idx = strtok(NULL,":"); /* index:value */
 			val = strtok(NULL," \t");
 			if(val == NULL)
 				break;
@@ -104,9 +104,9 @@ void read_problem(const char *filename, mxArray *plhs[])
 	}
 	rewind(fp);
 
-	// y
+	/* y */
 	plhs[0] = mxCreateDoubleMatrix(l, 1, mxREAL);
-	// x^T
+	/* x^T */
 	if (min_index <= 0)
 		plhs[1] = mxCreateSparse(max_index-min_index+1, l, elements, mxREAL);
 	else
@@ -134,7 +134,7 @@ void read_problem(const char *filename, mxArray *plhs[])
 			return;
 		}
 
-		// features
+		/* features */
 		while(1)
 		{
 			idx = strtok(NULL,":");
@@ -142,7 +142,7 @@ void read_problem(const char *filename, mxArray *plhs[])
 			if(val == NULL)
 				break;
 
-			ir[k] = (mwIndex) (strtol(idx,&endptr,10) - min_index); // precomputed kernel has <index> start from 0
+			ir[k] = (mwIndex) (strtol(idx,&endptr,10) - min_index); /* precomputed kernel has <index> start from 0 */
 
 			errno = 0;
 			samples[k] = strtod(val,&endptr);

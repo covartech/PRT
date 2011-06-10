@@ -56,21 +56,21 @@ static void info(const char *fmt,...)
 static void info(const char *fmt,...) {}
 #endif
 
-//
+/*
 // Kernel Cache
 //
 // l is the number of total data items
 // size is the cache size limit in bytes
-//
+ */
 class Cache
 {
 public:
 	Cache(int l,long int size);
 	~Cache();
 
-	// request data [0,len)
+	/* request data [0,len)
 	// return some position p where [p,len) need to be filled
-	// (p >= len if nothing needs to be filled)
+	// (p >= len if nothing needs to be filled) */
 	int get_data(const int index, Qfloat **data, int len);
 	void swap_index(int i, int j);	
 private:
@@ -78,9 +78,9 @@ private:
 	long int size;
 	struct head_t
 	{
-		head_t *prev, *next;	// a circular list
+		head_t *prev, *next;	/* a circular list */
 		Qfloat *data;
-		int len;		// data[0,len) is cached in this entry
+		int len;		/* data[0,len) is cached in this entry */
 	};
 
 	head_t *head;

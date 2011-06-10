@@ -39,7 +39,12 @@ classdef prtFeatSelStatic < prtFeatSel %
     
     methods 
         function Obj = prtFeatSelStatic(varargin) 
-            Obj.isCrossValidateValid = false;
+            %
+            
+            %pt, 2011.06.09 - why was this false?
+            %Obj.isCrossValidateValid = false;
+            Obj.isCrossValidateValid = true;
+            
             Obj.isTrained = true;
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
         end
