@@ -195,10 +195,15 @@ classdef prtClassLibSvm < prtClass
             training_instance_matrix = DataSet.getObservations;
             Obj.libSvmOptions = Obj.libSvmOptionString(DataSet);
             Obj.libSvmOptionsTest = Obj.libSvmOptionStringTest(DataSet);
-            
-            if DataSet.nClasses ~= 2
-                %error('prt:prtClassLibSvm:UnaryData','prtClassLibSvm requires binary data for training');
+  
+            % Its ok to have 1 class if its a 1 class classifier
+            if DataSet.nClasses ~= 2 && Obj.svmType ~=2
+                error('prt:prtClassLibSvm:UnaryData','prtClassLibSvm requires binary data for training');
             end
+            if DataSet.nClasses ~= 1 && Obj.svmType ==2
+                error('prt:prtClassLibSvm:UnaryData','prtClassLibSvm requires unary data for training when svmType = 2');
+            end
+            
             Obj.trainedSvm = prtExternal.libsvm.svmtrain(training_label_vector, training_instance_matrix, Obj.libSvmOptions);
             
             %Need to figure out whether to flip SVM outputs:
