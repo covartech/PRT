@@ -43,7 +43,12 @@ function varargout = prtScoreRocNfa(ds,y)
 
 % Copyright 2010, New Folder Consulting, L.L.C.
 
-[nf,pd,thresholds,auc] = prtScoreRoc(ds,y);
+if nargin < 2
+    [nf,pd,thresholds,auc] = prtScoreRoc(ds);
+    y = ds.getTargets;
+else
+    [nf,pd,thresholds,auc] = prtScoreRoc(ds,y);
+end
 
 nMiss = length(find(y == 0));
 nf = nf*nMiss;

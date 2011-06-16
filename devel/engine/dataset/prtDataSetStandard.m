@@ -888,17 +888,22 @@ classdef prtDataSetStandard < prtDataSetBase
                     error('prt:prtDataSetStandard:select','selectFunction did not return a logical vector with nObservation elements and this data set object does not contain observationInfo. Therefore this selecFunction is not valid.')
                 end
                 
-                keep = false(obj.nObservations,1);
-                for iObs = 1:obj.nObservations
-                    try
-                        cOut = selectFunction(obj.observationInfo(iObs));
-                    catch %#ok<CTCH>
-                        error('prt:prtDataSetStandard:select','selectFunction did not return a logical vector with nObservation elements and there was an evaluation error using this function. See help prtDataSetStandard/select');
+                try
+                    keep = arrayfun(@(s)selectFunction(s),ds.observationInfo);
+                catch %#ok<CTCH>
+                    % Try the loopy version
+                    keep = false(obj.nObservations,1);
+                    for iObs = 1:obj.nObservations
+                        try
+                            cOut = selectFunction(obj.observationInfo(iObs));
+                        catch %#ok<CTCH>
+                            error('prt:prtDataSetStandard:select','selectFunction did not return a logical vector with nObservation elements and there was an evaluation error using this function. See help prtDataSetStandard/select');
+                        end
+                        assert(numel(cOut)==1,'selectFunction did not return a logical vector with nObservation elements but also did not return scalar logical.');
+                        assert((islogical(cOut) || (isnumeric(cOut) && (cOut==0 || cOut==1))),'selectFunction that returns one output must output a 1x1 logical.');
+                        
+                        keep(iObs) = cOut;
                     end
-                    assert(numel(cOut)==1,'selectFunction did not return a logical vector with nObservation elements but also did not return scalar logical.');
-                    assert((islogical(cOut) || (isnumeric(cOut) && (cOut==0 || cOut==1))),'selectFunction that returns one output must output a 1x1 logical.');
-                    
-                    keep(iObs) = cOut;
                 end
             end
             obj = obj.retainObservations(keep);
