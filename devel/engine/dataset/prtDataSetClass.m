@@ -937,6 +937,10 @@ classdef prtDataSetClass  < prtDataSetStandard
                 containingHandle = gcf;
             end
             
+            if obj.nFeatures > 4
+                warning('prt:prtDataSetClassPlotPairs:BigNFeatures','Number of features is greater than 4 plotting may be slow. Consider selecting features using plotPairs(retainFeatures(ds,selectedFeatureInds)).');
+            end
+                
             assert(ishghandle(containingHandle),'prt:prtDataSetClass:prtPlotPairs','containingHandle must be a MATLAB handle graphics handle that is a valid parent for MATLAB axes');
             
             cChildren = get(containingHandle,'Children');

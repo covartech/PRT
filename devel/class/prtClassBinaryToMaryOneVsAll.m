@@ -74,7 +74,17 @@ classdef prtClassBinaryToMaryOneVsAll < prtClass
             Obj.baseClassifier = repmat(Obj.baseClassifier(:), (DataSet.nClasses - length(Obj.baseClassifier)+1),1);
             Obj.baseClassifier = Obj.baseClassifier(1:DataSet.nClasses);
             
+            actuallyShowProgressBar = Obj.showProgressBar && (DataSet.nClasses > 1);
+            
+            if actuallyShowProgressBar
+                waitBarObj = prtUtilProgressBar(0,'Training M-Ary Emulation Classifier (One vs. All)','autoClose',true);
+            end
+            
             for iY = 1:DataSet.nClasses
+                if actuallyShowProgressBar
+                    waitBarObj.update((iY-1)/DataSet.nClasses);
+                end
+                
                 % Replace the targets with binary targets for this class
                 cDataSet = DataSet.setTargets(DataSet.getTargetsAsBinaryMatrix(:,iY));
                 
@@ -86,6 +96,10 @@ classdef prtClassBinaryToMaryOneVsAll < prtClass
                 % Train this Classifier
                 Obj.baseClassifier(iY) = train(Obj.baseClassifier(iY), cDataSet);
             end
+            if actuallyShowProgressBar
+                waitBarObj.update(1);
+            end
+            
         end
 
         function DataSetOut = runAction(Obj,DataSet)
