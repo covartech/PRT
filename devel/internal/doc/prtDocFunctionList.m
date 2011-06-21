@@ -38,8 +38,6 @@
 % * <./functionReference/prtDataGenFeatureSelection.html prtDataGenFeatureSelection>
 % * <./functionReference/prtDataGenIris.html prtDataGenIris>
 % * <./functionReference/prtDataGenMary.html prtDataGenMary>
-% * <./functionReference/prtDataGenMarySimple.html prtDataGenMarySimple>
-% * <./functionReference/prtDataGenMarySimpleEasy.html prtDataGenMarySimpleEasy>
 % * <./functionReference/prtDataGenNoisySinc.html prtDataGenNoisySinc>
 % * <./functionReference/prtDataGenOldFaithful.html prtDataGenOldFaithful>
 % * <./functionReference/prtDataGenProstate.html prtDataGenProstate>
@@ -51,9 +49,9 @@
 % * <./functionReference/prtDecision.html prtDecision>
 % * <./functionReference/prtDecisionBinary.html prtDecisionBinary>
 % * <./functionReference/prtDecisionBinaryMinPe.html prtDecisionBinaryMinPe>
-% * <./functionReference/prtDecisionBinarySpecifiedPd.html prtDecisionBinarySpecifiedPd>
 % * <./functionReference/prtDecisionBinarySpecifiedPf.html prtDecisionBinarySpecifiedPf>
 % * <./functionReference/prtDecisionMap.html prtDecisionMap>
+% * <./functionReference/prtDecisionOneClassPd.html prtDecisionOneClassPd>
 %
 %% prtDistance
 % * <./functionReference/prtDistanceChebychev.html prtDistanceChebychev>
