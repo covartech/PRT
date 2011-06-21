@@ -28,6 +28,7 @@ B = Sw^(-1)*Sb;  %NIPS, 2004, Two-Dimensional Linear Discriminant Analysis
 eigOpts.issym = 1;
 eigOpts.isreal = 1;
 eigOpts.disp = 0;
+
 [projectionMat,e] = eigs(B,nComponents,'LM',eigOpts);
 
 % [projectionMat,e] = eig(B);
