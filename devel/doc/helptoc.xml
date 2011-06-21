@@ -24,6 +24,8 @@
                        <tocitem target="prtDocEngine.html">Pattern Recogntion Toolbox Engine
             </tocitem>
             <tocitem target="prtDocClass.html">Creating classifiers with the Pattern Recogntion Toolbox
+             <tocitem target="prtDocClassExamples.html"> Classification technique examples
+                </tocitem>
             </tocitem>
              <tocitem target="prtDocPreProc.html">Pre processing data with the Pattern Recogntion Toolbox
             </tocitem>
