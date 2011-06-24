@@ -46,7 +46,12 @@ else
             guess = results.getObservations;
         else
            %Naive MAP decision:
-            [twiddle,guess] = max(results.getObservations,[],2); %#ok<ASGLU>
+           % [twiddle,guess] = max(results.getObservations,[],2); %#ok<ASGLU>
+           %Naive MAP decision:
+           prtMap = prtDecisionMap;
+           prtMap = train(prtMap,results);
+           results = prtMap.run(results);
+           guess = results.getObservations;
         end
     end
     confusionMatrix = prtScoreConfusionMatrix(guess,dataSet.getTargets);
