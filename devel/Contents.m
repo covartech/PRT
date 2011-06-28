@@ -1,2 +1,2 @@
 % Pattern Recognition Toolbox
-% Version 969 26-May-2011
+% Version 992 28-Jun-2011
