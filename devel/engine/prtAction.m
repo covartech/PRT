@@ -309,6 +309,8 @@ classdef prtAction
                 waitBarObj = prtUtilProgressBar(0,sprintf('Crossvalidating - %s',Obj.name),'autoClose',true);
             end
             
+            inputNumberOfClasses = DataSet.nClasses;
+            
             for uInd = 1:length(uKeys);
                     
                 if actuallyShowProgressBar
@@ -329,6 +331,10 @@ classdef prtAction
                     trainDataSet = DataSet.removeObservations(cTestLogical);
                 end
                 %fprintf('Original: %d, Train: %d, Test: %d\n',DataSet.nObservations,trainDataSet.nObservations,testDataSet.nObservations);
+                
+                if trainDataSet.nClasses ~= inputNumberOfClasses
+                	warning('prt:prtAction:crossValidateNClasses','Cross validation fold %d yielded a test data set with %d class(es) but the input data set contains %d classes. This may result in errors. It may be possible to resolve this by modifying the cross-validation keys.', uInd, trainDataSet.nClasses, inputNumberOfClasses)
+                end
                 
                 classOut = Obj.train(trainDataSet);
                 currResults = classOut.run(testDataSet);

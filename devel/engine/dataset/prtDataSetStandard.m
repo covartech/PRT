@@ -764,11 +764,13 @@ classdef prtDataSetStandard < prtDataSetBase
             if nargin < 3
                 p = ones(obj.nObservations,1)./obj.nObservations;
             end
+            
             assert(isvector(p) & all(p) <= 1 & all(p) >= 0 & prtUtilApproxEqual(sum(p),1,eps(obj.nObservations)) & length(p) == obj.nObservations,'prt:prtDataSetStandard:bootstrap','invalid input probability distribution; distribution must be a vector of size obj.nObservations x 1, and must sum to 1')
             
             if obj.nObservations == 0
                 error('prtDataSetStandard:BootstrapEmpty','Cannot bootstrap empty data set');
             end
+            
             if nargin < 2 || isempty(nSamples)
                 nSamples = obj.nObservations;
             end

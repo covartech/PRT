@@ -374,6 +374,8 @@ classdef prtDataSetClass  < prtDataSetStandard
                     error('prt:prtDataSetClass:getObservationsByClassInd','This dataSet is unlabeled and therefore contains only one class.');
                 end
             else
+                assert(classInd <= obj.nClasses,'prt:prtDataSetClass:getObservationsByClassInd','This requested class index (%d) exceeds the number of classes in this dataSet (%d).',classInd,obj.nClasses);
+                
                 d = obj.getObservations(obj.getTargets == obj.uniqueClasses(classInd),featureIndices);
             end
         end
