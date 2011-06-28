@@ -1228,6 +1228,8 @@ classdef prtDataSetClass  < prtDataSetStandard
             uniqueClasses = obj.uniqueClasses;
             for i = 1:nClasses
                 cX = obj.getObservationsByClassInd(i, featureIndices);
+                %Note, class colors should really be linked to
+                %uniqueClasses(i), not i
                 classEdgeColor = obj.plotOptions.symbolEdgeModificationFunction(classColors(i,:));
                 
                 featureNames = obj.getFeatureNames(featureIndices);
