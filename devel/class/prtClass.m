@@ -210,7 +210,12 @@ classdef prtClass < prtAction
             assert(~isempty(Obj.isTrained),'explore() is only for trained classifiers.');
             assert(~isempty(Obj.dataSet),'explore() requires that verboseStorage is true and therefore a prtDataSet is stored within the classifier.');
             if Obj.yieldsMaryOutput
-                Obj = trainAutoDecision(Obj);
+                if ~isempty(Obj.dataSet)
+                    warning('prt:prtClass:explore:autoDecision','prtClass.explore() requires a binary prtClass or a prtClass with an internal decider. A prtDecisionMap has been trained and set as the internalDecider to enable plotting.');
+                else
+                    error('prt:prtClass:explore','prtClass.explore() requires a binary prtClass or a prtClass with an internal decider. A prtDecisionMap cannot be trained and set as the internalDecider to enable plotting because this classifier object does not have verboseStorege turned on and therefore the dataSet used to train the classifier is unknow. To enable plotting, set an internalDecider and retrain the classifier.');
+                end
+                Obj.internalDecider = prtDecisionMap;
             end
             
             prtPlotUtilClassExploreGui(Obj)
