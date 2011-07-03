@@ -5,9 +5,8 @@
 % regression, etc...) are implemented as  <matlab:doc('prtAction')
 % prtAction> objects. All prtAction objects share fundamental operations
 % such as training, running and validating results share this common API.
-% There are 5 methods, <matlab:doc('prtAction/train') train>,
+% There are 4 methods, <matlab:doc('prtAction/train') train>,
 % <matlab:doc('prtAction/run') run>,
-% <matlab:doc('prtAction/runOnTrainingData') runOnTrainingData>,
 % <matlab:doc('prtAction/crossValidate') crossValidate>, and
 % <matlab:doc('prtAction/kfolds') kfolds>.
 %

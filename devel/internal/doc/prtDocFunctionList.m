@@ -49,6 +49,7 @@
 % * <./functionReference/prtDecision.html prtDecision>
 % * <./functionReference/prtDecisionBinary.html prtDecisionBinary>
 % * <./functionReference/prtDecisionBinaryMinPe.html prtDecisionBinaryMinPe>
+% * <./functionReference/prtDecisionBinarySpecifiedPd.html prtDecisionBinarySpecifiedPd>
 % * <./functionReference/prtDecisionBinarySpecifiedPf.html prtDecisionBinarySpecifiedPf>
 % * <./functionReference/prtDecisionMap.html prtDecisionMap>
 % * <./functionReference/prtDecisionOneClassPd.html prtDecisionOneClassPd>
