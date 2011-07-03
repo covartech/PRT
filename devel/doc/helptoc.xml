@@ -33,7 +33,8 @@
             </tocitem>
             <tocitem target="prtDocRegress.html">Regression with the Pattern Recogntion Toolbox
             </tocitem>
-
+            <tocitem target="prtDocCluster.html">Clustering with the Pattern Recogntion Toolbox
+            </tocitem>
             <tocitem target="prtDocEval.html">Evaluating results with the Pattern Recognition Toolbox 
                 <tocitem target="lala.html">Just testing a subcategory
                 </tocitem>
