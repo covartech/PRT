@@ -56,12 +56,11 @@ classdef prtClassPlsda < prtClass
     end
     
     properties (SetAccess=protected)
-        xMeans   % The xMeans
-        yMeans   % The yMeans
         Bpls     % The prediction weights
         loadings % T
         xFactors % P
         yFactors % Q
+        yMeansFactor % Factor to be added into regression output (accounts for X means and yMeans);
     end
     
     methods
@@ -92,16 +91,22 @@ classdef prtClassPlsda < prtClass
                 Obj.nComponents = maxComps;
             end
             
-            Obj.xMeans = mean(X,1);
-            Obj.yMeans = mean(Y,1);
-            X = bsxfun(@minus, X, Obj.xMeans);
-            Y = bsxfun(@minus, Y, Obj.yMeans);
+            xMeans = mean(X,1);
+            yMeans = mean(Y,1);
+            X = bsxfun(@minus, X, xMeans);
+            Y = bsxfun(@minus, Y, yMeans);
             
-            [Obj.Bpls, twiddle, Obj.xFactors, Obj.yFactors, Obj.loadings] = prtUtilSimpls(X,Y,Obj.nComponents); %#ok<ASGLU>
+            [Obj.Bpls, R, Obj.xFactors, Obj.yFactors, Obj.loadings, U] = prtUtilSimpls(X,Y,Obj.nComponents); %#ok<ASGLU>
+            
+            Obj.yMeansFactor = yMeans - xMeans*Obj.Bpls;
+            
+%             ssT = diag(Obj.xFactors'*U);
+%             vipScore = sqrt(size(G.Data.Model.Use.X,2) * sum(bsxfun(@times, bsxfun(@rdivide,R,sqrt(sum(R.^2))).^2, ssT'),2) / sum(ssT(:)));
+
         end
         
         function DataSet = runAction(Obj,DataSet)
-            yOut = bsxfun(@plus,DataSet.getObservations*Obj.Bpls, Obj.yMeans - Obj.xMeans*Obj.Bpls);
+            yOut = bsxfun(@plus,DataSet.getObservations*Obj.Bpls, Obj.yMeansFactor);
             DataSet = DataSet.setObservations(yOut);
         end
         

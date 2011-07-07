@@ -60,7 +60,7 @@ end
 %imageAxes = axes;
 imagesc(X,cLim);
 colormap(cMap);
-fontSize = getBestFontSize(gca);
+fontSize = max(getBestFontSize(gca),1);
 textHandles = zeros(size(X));
 verticleLineHandles = zeros(nRows,1);
 horizontalLineHandles = zeros(nCols,1);
@@ -76,28 +76,25 @@ for iRow = 1:nRows
 
         cTextColor = textCMap(textCMapInds(iRow,jCol),:);
         
-        if fontSize > 0
+        cTextString = num2str(cNum,num2strFormat);
             
-            cTextString = num2str(cNum,num2strFormat);
-            
-            % Some decimal place pruning
-            done = false;
-            while ~done
-                if length(cTextString) > 1 && strcmpi(cTextString(end),'0')
-                    cTextString(end) = [];
-                else
-                    done = true;
-                end
-            end
-            % Remove last decimal if necessary
-            if strcmpi(cTextString(end),'.')
+        % Some decimal place pruning
+        done = false;
+        while ~done
+            if length(cTextString) > 1 && strcmpi(cTextString(end),'0')
                 cTextString(end) = [];
+            else
+                done = true;
             end
-            
-            textHandles(jCol,iRow) = text(jCol,iRow,cTextString,...
-                'color',cTextColor,'horizontalAlignment','center',...
-                'fontsize',fontSize,'clipping','on','visible','on');
         end
+        % Remove last decimal if necessary
+        if strcmpi(cTextString(end),'.')
+            cTextString(end) = [];
+        end
+        
+        textHandles(jCol,iRow) = text(jCol,iRow,cTextString,...
+            'color',cTextColor,'horizontalAlignment','center',...
+            'fontsize',fontSize,'clipping','on','visible','on');
         
         if iRow == 1
             horizontalLineHandles(jCol) = plot([jCol jCol]+0.5,[0.5 0.5+nRows],'k','linewidth',1);
@@ -119,6 +116,7 @@ end
 
 f = ancestor(gca,'figure');
 set(f,'ResizeFcn',@(src,evt)setBestFontSize(gca,textHandles));
+setBestFontSize(gca,textHandles);
 
 function setBestFontSize(imAxes,textHandles)
 
