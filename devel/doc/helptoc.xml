@@ -35,7 +35,7 @@
             </tocitem>
             <tocitem target="prtDocCluster.html">Clustering with the Pattern Recogntion Toolbox
             </tocitem>
-            <tocitem target="prtDocEval.html">Evaluating results with the Pattern Recognition Toolbox 
+            <tocitem target="prtDocScore.html">Analyzing results with the Pattern Recognition Toolbox 
                 <tocitem target="lala.html">Just testing a subcategory
                 </tocitem>
             </tocitem>
