@@ -6,9 +6,9 @@
 % prtAction> objects. All prtAction objects share fundamental operations
 % such as training, running and validating results share this common API.
 % There are 4 methods, <matlab:doc('prtAction/train') train>,
-% <matlab:doc('prtAction/run') run>,
-% <matlab:doc('prtAction/crossValidate') crossValidate>, and
-% <matlab:doc('prtAction/kfolds') kfolds>.
+% <matlab:doc('prtAction/run') run>, <matlab:doc('prtAction/crossValidate')
+% crossValidate>, <matlab:doc('prtAction/kfolds') kfolds>, and
+% <matlab:doc('prtAction/optimize') optimize>.
 %
 % Training is the first fundamental method in the Pattern Recognition
 % Toolbox. Training occurs whenever a PRT object needs to learn some
@@ -136,3 +136,26 @@ result = cluster.kfolds(ds,nFolds);
 % removal is an example of this. Kernel object are another. In this case, a flag is set, indicating
 % that cross-validation is not a valid operation, and calling crossValidate
 % or kfolds on such an object will error.
+
+%% Optimize
+% Optimize is a function that allows the user to specify a range of values
+% for a single parameter, and exhaustively determine which value of the
+% parameter gives the best performance. The prtAction is run for every
+% value of the parameter, and the performance is evaluated by a function
+% specified in a function handle. Consider the following example, where we
+% attempt to determine the optimal number of nearest neighbors for a
+% K-nearest neigbor classifier:
+
+ds = prtDataGenBimodal;  % Load a data set
+knn = prtClassKnn;       % Create a classifier
+kVec = 3:5:50;          % Create a vector of parameters to
+% optimze over
+
+% Optimize over the range of k values, using the area under the
+% receiver operating curve as the evaluation metric. Validation
+% is performed by a k-folds cross validation with
+%10 folds as specified by the call to prtEvalAuc.
+
+[knnOptimize, percentCorrects] = knn.optimize(ds,@(class,ds)prtEvalAuc(class,ds,10), 'k',kVec);
+plot(kVec, percentCorrects);
+xlabel('K values'); ylabel('Percent Correct'); title('Number of neighbors vs. classifier accuracy')
