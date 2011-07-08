@@ -5,6 +5,8 @@
 % particular performance measure of a classifier. They are also very useful
 % for optimizing classifiers and performing feature reduction.
 %
+
+%% Using prtEval functions directly with prtActions
 % First, consider a simple example, evaluating the percent correct of a
 % classifier:
 
