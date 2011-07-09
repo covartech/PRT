@@ -306,8 +306,7 @@ classdef prtAlgorithm < prtAction
 
     methods (Hidden)
         function [optimizedAlgorithm,performance] = optimize(Obj,DataSet,objFn,tag,parameterName,parameterValues)
-            % OPTIMIZE Optimize action parameter by exhaustive function 
-            % maximization. 
+            % OPTIMIZE Optimize action parameter by exhaustive function maximization. 
             %
             % [optimizedAlgorithm,performance] = optimize(Obj,DataSet,objFn,tag,parameterName,parameterValues)
             %

@@ -33,7 +33,8 @@ classdef prtAction
     %                       labeled prtDataSet and cross-validation keys.
     %   kfolds            - K-folds cross-validate a prtAction object using
     %                       a labeled prtDataSet
-    %
+    %   optimize          - Optimize the prtAction for a specified
+    %                       parameter
     % See Also: prtAction/train, prtAction/run, prtAction/crossValidate,
     % prtAction/kfolds, prtClass, prtRegress, prtFeatSel, prtPreProc,
     % prtDataSetBase
@@ -547,16 +548,41 @@ classdef prtAction
             DataSetOut = runAction(Obj, DataSetIn);
         end
     end
-    methods (Hidden)
+    methods (Hidden = false)
         function [optimizedAction,performance] = optimize(Obj,DataSet,objFn,parameterName,parameterValues)
-            % OPTIMIZE Optimize action parameter by exhaustive function 
-            % maximization.
+            % OPTIMIZE Optimize action parameter by exhaustive function maximization.
             %
-            % Although functional it is currently hidden.
-            % At this point it is not possible to optimize parameters of
-            % parameters. 
+            %  OPTIMACT = OPTIMIZE(DS, EVALFN, PARAMNAME, PARAMVALS)
+            %  returns an optimized prtAction object, with parameter
+            %  PARAMNAME set to the optimal value. DS must be a prtDataSet
+            %  object. EVALFN must be a function handle that returns a
+            %  scalar value that indicates a performance metric for the
+            %  prtAction object, for example a prtEval function. PARAMNAME
+            %  must be a string that indicates the parameter of the
+            %  prtAction that is to be optimized. PARAMVALS must be a
+            %  vector of possible values of the parameter that the
+            %  prtAction will be evaluated at.
+            %
+            %  [OPTIMACT, PERF]  = OPTIMIZE(...) returns a vector of
+            %  performance values that correspond to each element of
+            %  PARAMVALS.
             %
             % Example:
+            %
+            %  ds = prtDataGenBimodal;  % Load a data set
+            %  knn = prtClassKnn;       % Create a classifier
+            %  kVec = 3:5:50;          % Create a vector of parameters to
+            %                           % optimze over
+            %
+            % % Optimize over the range of k values, using the area under
+            % % the receiver operating curve as the evaluation metric.
+            % % Validation is performed by a k-folds cross validation with
+            % % 10 folds as specified by the call to prtEvalAuc.
+            %           
+            % [knnOptimize, percentCorrects] = knn.optimize(ds, @(class,ds)prtEvalAuc(class,ds,10), 'k',kVec);
+            % plot(kVec, percentCorrects)
+
+            
             %   objFn = @(act,ds)prtEvalAuc(act,ds,3);
             %   [optimizedAction,performance] = optimize(Obj,DataSet,objFn,parameterName,parameterValues)
             
@@ -584,7 +610,8 @@ classdef prtAction
             optimizedAction = train(Obj,DataSet);
             
         end
-        
+    end
+    methods(Hidden = true)
         function [outputObj, creationString] = gui(obj)
             % GUI Graphical method to set properties of prtAction
             %

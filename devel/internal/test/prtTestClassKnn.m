@@ -86,6 +86,30 @@ catch
     disp('error changing k for Knn classifier')
     result = false;
 end
+%% Check the optimize function
+
+ds = prtDataGenBimodal;  % Load a data set
+knn = prtClassKnn;       % Create a classifier
+kVec = 3:5:50;          % Create a vector of parameters to
+% optimze over
+
+% Optimize over the range of k values, using the area under
+% the receiver operating curve as the evaluation metric.
+% Validation is performed by a k-folds cross validation with
+% 10 folds as specified by the call to prtEvalAuc.
+
+try
+[knnOptimize, percentCorrects] = knn.optimize(ds,@(class,ds)prtEvalAuc(class,ds,10), 'k',kVec);
+catch me
+    disp(me);
+    disp('knn optimize fail');
+    result= false;
+end
+% the optmized knn should have way more than 10 k's
+if knnOptimize.k < 10
+    disp('knn Optimize wrong k value')
+    result = false
+end
 %% Error checks
 
 error = true;  % We will want all these things to error

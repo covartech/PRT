@@ -24,7 +24,7 @@ function [cost, pf, pd] = prtEvalMinCost(classifier,dataSet,costMatrix,nFolds)
 %   classifier = prtClassDlrt;
 %   cost = prtEvalMinCost(classifier, dataSet,[ 0 1; 1 0])
 %
-%   See Also: prtEvalAuc, prtEvalPfAtPd, prtEvalPfAtPf
+%   See Also: prtEvalAuc, prtEvalPfAtPd, prtEvalPdAtPf
 %   prtEvalPercentCorrect
 
 assert(nargin >= 2,'prt:prtEvalMinCost:BadInputs','prtEvalMinCost requires two input arguments');
