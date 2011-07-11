@@ -89,25 +89,33 @@ for iter = 1:inputStructure.maxIterations
     [twiddle,clusterIndex] = min(distanceMat,[],2); %#ok<ASGLU>
     
     %Handle empty clusters:
-    if length(unique(clusterIndex)) ~= nClusters
-        invalidClusters = setdiff(1:nClusters,clusterIndex);
-        validClusters = intersect(1:nClusters,clusterIndex);
-        switch lower(inputStructure.handleEmptyClusters)
-            case 'remove'
-                classMeans = classMeans(validClusters,:);
-                nClusters = nClusters - length(invalidClusters);
-                distanceMat = distanceMat(:,validClusters);
-                [twiddle,clusterIndex] = min(distanceMat,[],2); %#ok<ASGLU>
-            case 'random'
-                randInds = max(1,ceil(rand(1,length(invalidClusters))*nSamples));
-                classMeans(invalidClusters,:) = data(randInds,:);
-                distanceMat =  inputStructure.distanceMetricFn(data,classMeans);
-                [twiddle,clusterIndex] = min(distanceMat,[],2); %#ok<ASGLU>
-            otherwise
-                error('invalid');
+    nMaxFixSteps = 10;
+    for iFix = 1:nMaxFixSteps
+        if length(unique(clusterIndex)) ~= nClusters
+            invalidClusters = setdiff(1:nClusters,clusterIndex);
+            validClusters = intersect(1:nClusters,clusterIndex);
+            switch lower(inputStructure.handleEmptyClusters)
+                case 'remove'
+                    classMeans = classMeans(validClusters,:);
+                    nClusters = nClusters - length(invalidClusters);
+                    distanceMat = distanceMat(:,validClusters);
+                    [twiddle,clusterIndex] = min(distanceMat,[],2); %#ok<ASGLU>
+                case 'random'
+                    randInds = max(1,ceil(rand(1,length(invalidClusters))*nSamples));
+                    classMeans(invalidClusters,:) = data(randInds,:);
+                    distanceMat =  inputStructure.distanceMetricFn(data,classMeans);
+                    [twiddle,clusterIndex] = min(distanceMat,[],2); %#ok<ASGLU>
+                otherwise
+                    error('invalid');
+            end
+        else
+            break
         end
     end
-    
+    if iFix == nMaxFixSteps
+        maxIterReached = true;
+        return
+    end
     %Check convergence:
     if all(clusterIndexOld == clusterIndex)
         maxIterReached = false;

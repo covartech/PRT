@@ -59,6 +59,8 @@ classdef prtClassKmeansPrototypes < prtClass
     
     properties (SetAccess = private, Hidden = true)
         uY = [];                    
+    end
+    properties (Hidden = true)
         kmeansHandleEmptyClusters = 'remove';
         distanceMetricFn = @prtDistanceEuclidean;
     end
