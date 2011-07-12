@@ -856,7 +856,7 @@ classdef prtDataSetStandard < prtDataSetBase
             val = obj.featureInfoDepHelper;
         end
         
-        function obj = select(obj, selectFunction)
+        function [obj,keep] = select(obj, selectFunction)
             % Select observations to retain by specifying a function
             %   The specified function is evaluated on each obesrvation.
             % 

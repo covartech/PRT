@@ -61,7 +61,7 @@ end
 imagesc(X,cLim);
 colormap(cMap);
 fontSize = max(getBestFontSize(gca),1);
-textHandles = zeros(size(X));
+textHandles = nan(size(X));
 verticleLineHandles = zeros(nRows,1);
 horizontalLineHandles = zeros(nCols,1);
 hold on;

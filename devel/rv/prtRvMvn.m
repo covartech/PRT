@@ -257,13 +257,7 @@ classdef prtRvMvn < prtRv
     % Get methods
     methods
         function val = get.nDimensions(R)
-            if ~isempty(R.mu)
-                val = length(R.mu);
-            elseif ~isempty(R.sigma)
-                val = size(R.sigma,2);
-            else
-                val = [];
-            end
+            val = getNumDimensions(R);
         end
         
         function val = get.mu(R)
@@ -276,7 +270,17 @@ classdef prtRvMvn < prtRv
             val = R.covarianceStructureDepHelper;
         end
     end
-    
+    methods (Access = 'protected')
+        function val = getNumDimensions(R)
+            if ~isempty(R.mu)
+                val = length(R.mu);
+            elseif ~isempty(R.sigma)
+                val = size(R.sigma,2);
+            else
+                val = [];
+            end
+        end
+    end
     % Set Methods
     methods
         function R = set.covarianceStructure(R,covarianceStructure)
