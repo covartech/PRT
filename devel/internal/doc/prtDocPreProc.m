@@ -28,4 +28,4 @@ subplot(2,1,2); plot(dsOut); title('After PCA')
 % All pre processing objects in the Pattern Recognition Toolbox have the
 % same API as discussed above.  For a list of all the
 % different pre processing techniques, and links to their individual help
-% entries, <prtDocFunctionList.html A list of commonly used functions>
+% entries, <prtDocFunctionList.html#11 A list of commonly used functions>

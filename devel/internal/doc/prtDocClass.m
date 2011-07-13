@@ -24,9 +24,10 @@
 % classifier, and perform kfolds validation on it.
 
 ds = prtDataGenUnimodal;   % Load a dataset to use
-classifier = prtClassGlrt  % Create a generalized likelihood ratio test classifier
+classifier = prtClassGlrt  % Create a generalized likelihood ratio test 
+                           % classifier
 
-result = classifier.kfolds(ds,2);   % Perform a simple 2-fold cross-validation
+result = classifier.kfolds(ds,2);% Perform a simple 2-fold cross-validation
 
 result.getX(1:5)
 
@@ -44,7 +45,7 @@ result.getX(1:5)
 % internalDecider property to be a prtDecisionBinaryMinPe object:
 
 classifier.internalDecider = prtDecisionBinaryMinPe;
-result = classifier.kfolds(ds,2);   %  Perform a simple 2-fold cross-validation
+result = classifier.kfolds(ds,2); %Perform a simple 2-fold cross-validation
 
 result.getX(1:5)
 
@@ -58,7 +59,8 @@ result.getX(1:5)
 % help you visulize the classifiers decision regions. To plot the
 % classification object, it first needs to be trained. 
 
-classifier = classifier.train(ds);   % For example purposes, train with all the data
+classifier = classifier.train(ds);   % For example purposes, 
+                                     % train with all the data
 classifier.plot();                   % Alternatively, plot(classifier) 
 
 %%

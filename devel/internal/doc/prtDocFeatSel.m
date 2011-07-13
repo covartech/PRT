@@ -34,8 +34,8 @@ classifier = prtClassGlrt;
 featSel.evaluationMetric = @(DS)prtEvalAuc(classifier, DS);
 
 featSel = featSel.train(dataSet);  % Train the feature selection object
-outDataSet = featSel.run(dataSet); % Run the classifier on the data set using only the
-                                   % selected features
+outDataSet = featSel.run(dataSet); % Run the classifier on the data set 
+                                   % using only the selected features
                                    
 %%
 % The above example illustrates several important things about feature

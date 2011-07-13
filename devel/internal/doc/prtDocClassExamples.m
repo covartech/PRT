@@ -100,7 +100,7 @@ DataRemain = DataRemain.setY(zeros(size(DataRemain.getY)));
 %%
 % Now, create a one-class SVM classifier.
 classifier = prtClassLibSvm;
-classifier.svmType = 2;            % svmType of 2 denotes a one-class classifier
+classifier.svmType = 2;       % svmType of 2 denotes a one-class classifier
 % Train the classifier 
 classifier = classifier.train(DataRemain);
 

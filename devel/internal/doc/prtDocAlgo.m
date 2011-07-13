@@ -12,7 +12,8 @@
 
 ds = prtDataGenUnimodal;    % Load a dataset
 preProc = prtPreProcPca;    % Create a pre processing object
-classifier = prtClassGlrt;  % Create a generalized likelihood ratio classifier
+classifier = prtClassGlrt;  % Create a generalized likelihood ratio 
+                            % classifier
 
 algo = preProc + classifier;  % Cascade the 2 objects together
 
@@ -53,8 +54,8 @@ results = algo.kfolds(ds,3);
 % operators, they just control where the object gets placed when displayed
 % with the plot command.
 %
-% As an example, create a new algorithm that normalizes the data, and then feeds
-% the result into 2 prtClass objects, operating in parallel, 
+% As an example, create a new algorithm that normalizes the data, and then
+% feeds the result into 2 prtClass objects, operating in parallel,
 
 clear all;                % Clear the current objects
 ds = prtDataGenUnimodal;  % Load a dataset
@@ -78,6 +79,3 @@ plot(algo)
 % following manner:
 
 algo.actionCell{4}.plot
-
-%% runOnTraining
-% What to say about this?

@@ -10,9 +10,9 @@
 % percent error, plot receiver operating curves and similar operations. In
 % the following example, a simple binary classifier is created and scored
 
-ds = prtDataGenUnimodal;     % Load a binary data set
-class = prtClassGlrt;        % Create a classifier.
-result = class.kfolds(ds,3); % Perform a k-fold validation, score the result
+ds = prtDataGenUnimodal;    % Load a binary data set
+class = prtClassGlrt;       % Create a classifier.
+result = class.kfolds(ds,3);% Perform a k-fold validation, score the result
 
 prtScoreRoc(result);         % Plot the receiver operating curve
 %%
@@ -23,12 +23,13 @@ auc = prtScoreAuc(result)
 
 %%
 % Note, in the above example, the data stored in result are decision
-% statistics. By setting the decision rule, you can compute a percent correct:
+% statistics. By setting the decision rule, you can compute a percent
+% correct:
 
-class.internalDecider = prtDecisionBinaryMinPe;   % Set the internal decider
-result = class.kfolds(ds,3);                      % K-folds validation
+class.internalDecider = prtDecisionBinaryMinPe;  % Set the internal decider
+result = class.kfolds(ds,3);                     % K-folds validation
 
-prtScorePercentCorrect(result)                    % Compute the percent correct
+prtScorePercentCorrect(result)                % Compute the percent correct
 
 %%
 % Recall that when a PRT class object is run or cross-validated, the output
@@ -81,3 +82,10 @@ dataSetOut = reg.run(dataSet);   % Run the regressor on the data
 truth = sinc(dataSet.getX);
 guess = dataSetOut.getX;
 prtScoreRmse(truth, guess)
+
+
+% All scoring functions in the Pattern Recognition Toolbox have the same
+% API as discussed above. The difference is in the performance metric to be
+% evaluated. For a list of all the different functions, and links to their
+% individual help entries, <prtDocFunctionList.html#14 A list of commonly
+% used functions>

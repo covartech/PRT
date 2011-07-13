@@ -133,9 +133,9 @@ result = cluster.kfolds(ds,nFolds);
 %%
 % A final note about cross validation and kfolds, there are some actions
 % that cross validation does not make sense, or is not possible. Outlier
-% removal is an example of this. Kernel object are another. In this case, a flag is set, indicating
-% that cross-validation is not a valid operation, and calling crossValidate
-% or kfolds on such an object will error.
+% removal is an example of this. Kernel object are another. In this case, a
+% flag is set, indicating that cross-validation is not a valid operation,
+% and calling crossValidate or kfolds on such an object will error.
 
 %% Optimize
 % Optimize is a function that allows the user to specify a range of values
@@ -156,6 +156,8 @@ kVec = 3:5:50;          % Create a vector of parameters to
 % is performed by a k-folds cross validation with
 %10 folds as specified by the call to prtEvalAuc.
 
-[knnOptimize, percentCorrects] = knn.optimize(ds,@(class,ds)prtEvalAuc(class,ds,10), 'k',kVec);
+[knnOptimize, percentCorrects] = ...
+    knn.optimize(ds,@(class,ds)prtEvalAuc(class,ds,10), 'k',kVec);
 plot(kVec, percentCorrects);
-xlabel('K values'); ylabel('Percent Correct'); title('Number of neighbors vs. classifier accuracy')
+xlabel('K values'); ylabel('Percent Correct'); 
+title('Number of neighbors vs. classifier accuracy')

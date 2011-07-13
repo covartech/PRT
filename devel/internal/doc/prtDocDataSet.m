@@ -140,6 +140,7 @@ ds = ds.setObservationInfo('info1',[7 8 9]')
  ds.plot
 
  %%
- % For more information on prtDataSetRegress, please refer to <matlab:doc('prtDataSetRegress') prtDataSetRegress>
+ % For more information on prtDataSetRegress, please refer to
+ % <matlab:doc('prtDataSetRegress') prtDataSetRegress>
 
 

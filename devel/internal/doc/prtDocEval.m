@@ -32,8 +32,14 @@ pc =  prtEvalPercentCorrect(classifier, dataSet)
 % k values:p
 
 kVec = 1:20;
-[optClassifier, pc] = classifier.optimize(dataSet, @(class,ds)prtEvalPercentCorrect(class,ds,10), 'k',kVec);
-plot(kVec, pc); title('Number of neighbors versus percent correct'); xlabel('Number of neighbors'); ylabel('Percent Correct')
+[optClassifier, pc] =  ...
+    classifier.optimize(dataSet,...
+    @(class,ds)prtEvalPercentCorrect(class,ds,10), 'k',kVec);
+
+% Plot
+plot(kVec, pc); 
+title('Number of neighbors versus percent correct');
+xlabel('Number of neighbors'); ylabel('Percent Correct')
 
 %% 
 % The above example illustrates that increasing the number of neighbors
@@ -43,8 +49,8 @@ plot(kVec, pc); title('Number of neighbors versus percent correct'); xlabel('Num
 % All evaluation functions in the Pattern Recognition Toolbox have the same
 % API as discussed above. The difference is in the performance metric to be
 % evaluated. For a list of all the different functions, and links to their
-% individual help entries, <prtDocFunctionList.html A list of commonly used
-% functions>
+% individual help entries, <prtDocFunctionList.html#7 A list of commonly
+% used functions>
 %
 % For more information on the use of prtEval functions in conjunction with
 % feature selection techniques, see <prtDocFeatSel.html Feature Selection>

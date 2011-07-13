@@ -61,4 +61,4 @@ result = cluster.kfolds(ds,2);   %  Perform a simple 2-fold cross-validation
 % API as discussed above. The only difference is the underlying clustering
 % algorithms used to train and run . For a list of all the different
 % clustering algorithms, and links to their individual help entries,
-% <prtDocFunctionList.html A list of commonly used functions>
+% <prtDocFunctionList.html#2 A list of commonly used functions>
