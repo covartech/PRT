@@ -1,5 +1,5 @@
 classdef prtOutlierRemovalMissingData < prtOutlierRemoval
-    % prtPreProcMissingDataOutlierRemove  Removes missing data from a prtDataSet
+    % prtOutlierRemovalMissingData  Removes missing data from a prtDataSet
     %
     %   NSTDOUT = prtOutlierRemovalNStd creates a pre-processing
     %   object that removes all missing data as outliers. Missing data are
@@ -17,10 +17,10 @@ classdef prtOutlierRemovalMissingData < prtOutlierRemoval
     %   dataSet = catObservations(dataSet,outlier); % an Outlier
     %
     %   % Create the prtOutlierRemoval object
-    %   nStdRemove = prtOutlierRemovalMissingData('runMode','removeObservation');
+    %   outRemove = prtOutlierRemovalMissingData('runMode','removeObservation');
     %
-    %   nStdRemove = nStdRemove.train(dataSet);    % Train and run
-    %   dataSetNew = nStdRemove.run(dataSet);
+    %   outRemove = outRemove.train(dataSet);    % Train and run
+    %   dataSetNew = outRemove.run(dataSet);
     %
     %   See Also:  prtOutlierRemoval,
     %   prtOutlierRemovalNonFinite,prtOutlierRemovalNstd
