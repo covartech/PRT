@@ -41,6 +41,18 @@
             </tocitem>
             <tocitem target="prtDocDecision.html">Using decision objects in the Pattern Recognition Toolbox 
             </tocitem>
+            <tocitem target="prtDocKernel.html"> Kernel objects in the Pattern Recognition Toolbox 
+            </tocitem>
+
+            <tocitem target="prtDocDistance.html"> Distance functions in the Pattern Recognition Toolbox 
+            </tocitem>
+
+            <tocitem target="prtDocRv.html"> Random variable objects in the Pattern Recognition Toolbox 
+            </tocitem>
+
+                        <tocitem target="prtDocFeatSel.html"> Feature selection objects in the Pattern Recognition Toolbox 
+            </tocitem>
+
 
         </tocitem>
         
