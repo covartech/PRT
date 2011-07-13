@@ -18,6 +18,10 @@ classdef prtKernel < prtAction
     %   prtActions, the AND operation trains and runs each kernel
     %   individually on the provided data.
     %
+    %   Note, cross validation is not a valid operation on prtKernel
+    %   objects, and therefore the CROSSVALIDATE and KFOLDS operations are
+    %   not implemented.
+    %
     %   % Example syntax of the AND method:
     %
     %   kernels = prtKernelDc & prtKernelRbf; % kernels is prtKernelSet
