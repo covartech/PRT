@@ -10,6 +10,7 @@
 % crossValidate>, <matlab:doc('prtAction/kfolds') kfolds>, and
 % <matlab:doc('prtAction/optimize') optimize>.
 %
+%% Training
 % Training is the first fundamental method in the Pattern Recognition
 % Toolbox. Training occurs whenever a PRT object needs to learn some
 % parameters from the data. All PRT objects require that training be done
