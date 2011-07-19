@@ -1,21 +1,8 @@
-% PRTBRVDISCRETE - PRT BRV Discrete Observation Model
-%
-% Constructor takes the dimesionality (number of unique outputs)
-%
-% Impliments all abstract properties and methods from prtBrvObsModel.
-%
-% Additional Properties:
-%   model - prtBrvDiscreteHierarchy object that contains the parameters of
-%       the prior/posterior
-%
-% Also inherits from prtBrvVbOnlineObsModel and therefore impliments
-%   vbOnlineWeightedUpdate
-
-classdef prtBrvDiscrete < prtBrvObsModel & prtBrvVbOnlineObsModel
+classdef prtBrvDiscreteStickBreaking < prtBrvDiscrete
     
     properties (SetAccess = private)
-        name = 'Discrete Bayesian Random Variable';
-        nameAbbreviation = 'BRVDisc';
+        name = 'Discrete Stick Breaking Bayesian Random Variable';
+        nameAbbreviation = 'BRVSB';
     end
     
     properties (SetAccess = protected)
@@ -24,19 +11,15 @@ classdef prtBrvDiscrete < prtBrvObsModel & prtBrvVbOnlineObsModel
     end
     
     properties
-        model = prtBrvDiscreteHierarchy;
+        model = prtBrvDiscreteStickBreakingHierarchy;
     end
     
     methods
-        function obj = prtBrvDiscrete(varargin)
+        function obj = prtBrvDiscreteStickBreaking(varargin)
             if nargin < 1
                 return
             end
-            obj.model = prtBrvDiscreteHierarchy(varargin{1});
-        end        
-        
-        function val = nDimensions(obj)
-            val = length(obj.model.lambda);
+            obj.model = prtBrvDiscreteStickBreakingHierarchy(varargin{1});
         end
         
         function y = conjugateVariationalAverageLogLikelihood(obj, x)

@@ -24,6 +24,7 @@ mm = prtBrvMm(repmat(prtBrvMvn(2),2,1));
 mm.vbVerboseText = false;
 mm.vbVerbosePlot = false;
 [mmLearned, training] = mm.vb(x);
+%%
 
 %x2 = draw(prtRvGmm('components',cat(1,prtRvMvn('mu',[-2 -2],'sigma',eye(2)),prtRvMvn('mu',[5 5],'sigma',eye(2))),'mixingProportions',[0.6 0.4]),200);
 x2 = draw(prtRvMvn('mu',[-2 -2],'sigma',eye(2)),100);

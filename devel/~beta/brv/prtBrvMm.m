@@ -22,6 +22,16 @@
 
 
 classdef prtBrvMm < prtBrv & prtBrvIVb & prtBrvVbOnline
+    properties (SetAccess = private)
+        name = 'Mixture Bayesian Random Variable';
+        nameAbbreviation = 'BRVMix';
+    end
+    
+    properties (SetAccess = protected)
+        isSupervised = false;
+        isCrossValidateValid = true;
+    end
+    
     properties (Dependent) % Act as non-dependent
         mixingProportions
         components
@@ -38,7 +48,6 @@ classdef prtBrvMm < prtBrv & prtBrvIVb & prtBrvVbOnline
     end
     
     methods
-        
         function obj = prtBrvMm(varargin)
             if nargin < 1
                 return
@@ -175,7 +184,18 @@ classdef prtBrvMm < prtBrv & prtBrvIVb & prtBrvVbOnline
             cBaseDensity = prevObj.mixingProportions.weightedConjugateUpdate(prevObj.mixingProportions,training.phiMat,[]);
             obj.mixingProportions = obj.mixingProportions.vbOnlineWeightedUpdate(priorObj.mixingProportions, training.phiMat, [], obj.vbOnlineLambda, obj.vbOnlineD, cBaseDensity);
 
-        end        
+        end      
+        
+        function eLogLikelihood = conjugateVariationalAverageLogLikelihood(obj,x)
+            
+            training.startTime = now;
+            training.iterations.negativeFreeEnergy = [];
+            training.iterations.eLogLikelihood = [];
+            training.iterations.kld = [];
+            
+            [twiddle, training] = obj.vbE(obj, x, training); %#ok<ASGLU>
+            eLogLikelihood = sum(prtUtilSumExp(training.variationalLogLikelihoodBySample'));
+        end
     end
     methods (Hidden)
         function [obj, priorObj, training] = vbInitialize(obj, x)
@@ -232,8 +252,13 @@ classdef prtBrvMm < prtBrv & prtBrvIVb & prtBrvVbOnline
             end
             mixingProportionsKld = obj.mixingProportions.conjugateKld(priorObj.mixingProportions);
             
+            entropyTerm = training.phiMat.*log(training.phiMat);
+            entropyTerm(isnan(entropyTerm)) = 0;
+            entropyTerm = -sum(entropyTerm(:)) + obj.mixingProportions.expectedLogMean*sum(training.phiMat,1)';
+            
             kldDetails.sources = sourceKlds(:);
             kldDetails.mixingProportions = mixingProportionsKld;
+            kldDetails.entropy = entropyTerm;
             
             kld = sum(sourceKlds) + mixingProportionsKld;
             

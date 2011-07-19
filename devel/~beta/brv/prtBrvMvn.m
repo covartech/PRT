@@ -19,11 +19,20 @@
 %   vbOnlineWeightedUpdate
 
 classdef prtBrvMvn < prtBrvObsModel & prtBrvVbOnlineObsModel
-    properties
-        name = 'MVN';
-        
-        model = prtBrvMvnHierarchy;
+    
+    properties (SetAccess = private)
+        name = 'Multi-varite Normal Bayesian Random Variable';
+        nameAbbreviation = 'BRVMVN';
     end
+    
+    properties (SetAccess = protected)
+        isSupervised = false;
+        isCrossValidateValid = true;
+    end
+    
+    properties
+        model = prtBrvMvnHierarchy;
+    end    
     
     properties (Hidden)
         initFudgeFactor = 1; % Between zero and 1, probably > 0.9

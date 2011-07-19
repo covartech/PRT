@@ -25,12 +25,6 @@
 %       weights all equal to one.
 
 classdef prtBrvObsModel < prtBrv
-    properties (Abstract)
-        name
-    end
-    properties
-        userData = [];
-    end
     methods (Abstract)
         y = conjugateVariationalAverageLogLikelihood(obj, x)
         [phiMat, priorObjs] = mixtureInitialize(objs, priorObjs, x)
@@ -41,9 +35,24 @@ classdef prtBrvObsModel < prtBrv
         s = posteriorMeanStruct(obj)
         model = modelDraw(obj)
     end
+    
+    properties (Abstract)
+        model
+    end
+    
     methods
         function obj = conjugateUpdate(obj, prior, x)
             obj = weightedConjugateUpdate(obj, prior, x, ones(size(x,1),1));
+        end
+    end
+    
+    methods (Access = protected, Hidden = true)
+        function Obj = trainAction(Obj, DataSet)
+            Obj = Obj.conjugateUpdate(DataSet, obj.model);
+        end
+        
+        function DataSet = runAction(obj, DataSet)
+            DataSet = DataSet.setObservations(conjugateVariationalAverageLogLikelihood(obj, DataSet.getObservations));
         end
     end
 end

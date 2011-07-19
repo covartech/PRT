@@ -46,4 +46,15 @@ classdef prtBrvIVb
             end
         end
     end
+    
+    methods (Access = protected, Hidden = true)
+        function Obj = trainAction(Obj, DataSet)
+            Obj = Obj.vb(DataSet);
+        end
+        
+        function DataSet = runAction(obj, DataSet)
+            DataSet = DataSet.setObservations(conjugateVariationalAverageLogLikelihood(obj, DataSet.getObservations));
+        end
+    end    
+    
 end
