@@ -1,6 +1,6 @@
 function cVal = prtUtilFintPrtActionsAndConvertToStructures(cVal)
 
-if isa(cVal,'prtAction')
+if isa(cVal,'prtAction') || isa(cVal,'prtRv')
     cVal = cVal.toStructure;
 elseif iscell(cVal)
     % Current element is a cell that may contain prtActions

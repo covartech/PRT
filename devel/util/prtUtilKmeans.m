@@ -50,6 +50,7 @@ p.addParamValue('distanceMetricFn',@(data,centers)prtDistanceEuclidean(data,cent
 p.addParamValue('handleEmptyClusters','remove');
 p.addParamValue('maxIterations',1000);
 p.addParamValue('plotVisualization',false);
+p.addParamValue('logicalMeans',false);
 
 p.parse(varargin{:});
 inputStructure = p.Results;
@@ -78,6 +79,9 @@ for iter = 1:inputStructure.maxIterations
     else
         for clusterInd = 1:nClusters
             classMeans(clusterInd,:) = mean(data(clusterIndex == clusterInd,:),1);
+        end
+        if inputStructure.logicalMeans
+            classMeans = classMeans>0.5;
         end
     end
     

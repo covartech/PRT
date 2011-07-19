@@ -54,6 +54,16 @@ classdef prtRvUniformImproper < prtRv
     %
     %   See also: prtRv, prtRvMvn, prtRvGmm, prtRvMultinomial,
     %   prtRvVq, prtRvKde
+
+    properties (SetAccess = private)
+        name = 'Improper Uniform Random Variable'
+        nameAbbreviation = 'RVImUnif';
+    end
+    
+    properties (SetAccess = protected)
+        isSupervised = false;
+        isCrossValidateValid = true;
+    end        
     
     properties (Hidden = true, SetAccess = 'private', GetAccess = 'private')
         nDimensionsPrivate
@@ -66,8 +76,6 @@ classdef prtRvUniformImproper < prtRv
     methods
         % The Constructor
         function R = prtRvUniformImproper(varargin)
-            R.name = 'Improper Uniform Random Variable';
-            
             R = constructorInputParse(R,varargin{:});
         end
         

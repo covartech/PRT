@@ -39,6 +39,15 @@ classdef prtRvMixture < prtRv
     %
     %   See also: prtRv, prtRvMvn, prtRvGmm, prtRvMultinomial,
     %   prtRvUniform, prtRvUniformImproper, prtRvVq
+    properties (SetAccess = private)
+        name = 'Mixture Random Variable'
+        nameAbbreviation = 'RVMix';
+    end
+    
+    properties (SetAccess = protected)
+        isSupervised = false;
+        isCrossValidateValid = true;
+    end
     
     properties
         components  % A vector of the components
@@ -69,7 +78,6 @@ classdef prtRvMixture < prtRv
     
     methods
         function R = prtRvMixture(varargin)
-            R.name = 'Mixture Random Variable';
             R = constructorInputParse(R,varargin{:});
         end
     end

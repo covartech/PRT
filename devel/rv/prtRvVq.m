@@ -39,6 +39,16 @@ classdef prtRvVq < prtRv
     %  
     %   See also: prtRv, prtRvMvn, prtRvGmm, prtRvMultinomial,
     %   prtRvUniform, prtRvUniformImproper
+
+    properties (SetAccess = private)
+        name = 'Vector Quantization Random Variable'
+        nameAbbreviation = 'RVVQ';
+    end
+    
+    properties (SetAccess = protected)
+        isSupervised = false;
+        isCrossValidateValid = true;
+    end     
     
     properties (Dependent = true)
         probabilities   % The probabilities
@@ -62,8 +72,6 @@ classdef prtRvVq < prtRv
     methods
         % The Constructor
         function R = prtRvVq(varargin)
-            R.name = 'Vector Quantization Random Variable';
-            
             R = constructorInputParse(R,varargin{:});
         end
         function val = get.means(R)

@@ -35,6 +35,16 @@ classdef prtRvDiscrete < prtRv
     %   See also: prtRv, prtRvMvn, prtRvGmm, prtRvVq, prtRvKde,
     %             prtRvMultinomial
     
+    properties (SetAccess = private)
+        name = 'Discrete Random Variable';
+        nameAbbreviation = 'RVDisc';
+    end
+    
+    properties (SetAccess = protected)
+        isSupervised = false;
+        isCrossValidateValid = true;
+    end
+    
     properties (Dependent = true)
         probabilities   % The probabilities of each symbol
         nCategories     % The number of categories
@@ -61,7 +71,6 @@ classdef prtRvDiscrete < prtRv
     methods
         % The Constructor
         function R = prtRvDiscrete(varargin)
-            R.name = 'Discrete Random Variable';
             R = constructorInputParse(R,varargin{:});
         end
         function val = get.nCategories(R)

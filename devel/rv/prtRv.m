@@ -1,4 +1,4 @@
-classdef prtRv
+classdef prtRv < prtAction
     % prtRv Base class for all prt random variables
     %
     %   This is an abstract class from which all prt random variables
@@ -39,8 +39,6 @@ classdef prtRv
     %   prtRvUniformImproper, prtRvVq
     
     properties
-        name        % The name of the prtRv
-        userData    % User specified data
         plotOptions  = prtRv.initializePlotOptions()
     end
     properties (Abstract = true, Hidden = true, Dependent = true)
@@ -197,6 +195,16 @@ classdef prtRv
         end
     end
     
+    methods (Access = protected, Hidden = true)
+        function Obj = trainAction(Obj, DataSet)
+            Obj = Obj.mle(DataSet);
+        end
+        
+        function DataSet = runAction(Obj, DataSet)
+            DataSet = DataSet.setObservations(Obj.logPdf(DataSet));
+        end
+    end
+    
     methods (Access = 'private', Hidden = true)
         function missingMethodError(R,methodName) %#ok<MANU>
             error('The method %s is not defined for this prtRv object',methodName);
@@ -274,5 +282,42 @@ classdef prtRv
             limits(2:2:end) = maxX;
         end
     end
+    methods (Hidden = true)
+        function S = toStructure(obj)
+            % toStructure(obj)
+            % This default prtRv method adds all properties defined in
+            % the class of obj into the structure, that are:
+            %   GetAccess: public
+            %   Hidden: false
+            % other prtRvs (that are properties, contained in cells,
+            %   or fields of structures) are also converted to structures.
+            
+            MetaInfo = meta.class.fromName(class(obj));
+            
+            propNames = {};
+            for iProperty = 1:length(MetaInfo.Properties)
+                if isequal(MetaInfo.Properties{iProperty}.DefiningClass,MetaInfo) && strcmpi(MetaInfo.Properties{iProperty}.GetAccess,'public') && ~MetaInfo.Properties{iProperty}.Hidden
+                    propNames{end+1} = MetaInfo.Properties{iProperty}.Name; %#ok<AGROW>
+                end
+            end
+            
+            S.class = 'prtRv';
+            S.prtRvType = class(obj);
+            for iProp = 1:length(propNames)
+                cProp = obj.(propNames{iProp});
+                for icProp = 1:length(cProp) % Allow for arrays of objects
+                    cOut = prtUtilFintPrtActionsAndConvertToStructures(cProp(icProp));
+                    if icProp == 1
+                        cVal = repmat(cOut,size(cProp));
+                    else
+                        cVal(icProp) = cOut;
+                    end
+                end
+                S.(propNames{iProp}) = cVal;
+            end
+            S.userData = obj.userData;
+        end
+    end
 end
+
 

@@ -722,11 +722,20 @@ classdef prtAction
                 end
             end
             
+            S.class = 'prtAction';
             S.prtActionType = class(obj);
             S.isSupervised = obj.isSupervised;
             S.dataSetSummary = obj.dataSetSummary;
             for iProp = 1:length(propNames)
-                cVal = prtUtilFintPrtActionsAndConvertToStructures(obj.(propNames{iProp}));
+                cProp = obj.(propNames{iProp});
+                for icProp = 1:length(cProp) % Allow for arrays of objects
+                    cOut = prtUtilFintPrtActionsAndConvertToStructures(cProp(icProp));
+                    if icProp == 1
+                        cVal = repmat(cOut,size(cProp));
+                    else
+                        cVal(icProp) = cOut;
+                    end
+                end
                 S.(propNames{iProp}) = cVal;
             end
             S.userData = obj.userData;

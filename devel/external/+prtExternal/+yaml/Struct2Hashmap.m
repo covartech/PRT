@@ -49,7 +49,7 @@ for n=1:numel(S)
             end
             
             vn = java.util.ArrayList();
-            if not(isscalar(val)) && not(ischar(val)) && not(isa(val,'java.util.LinkedHashMap')) || isa(val,'java.util.ArrayList')
+            if not(isscalar(val)) && not(ischar(val)) && not(isa(val,'java.util.LinkedHashMap') || isa(val,'java.util.ArrayList'))
                 if not(isscalar(val)) && (isnumeric(val) || islogical(val)) % numeric
                     if size(val,1)==1 % one row
                         arrayfun(@(x)vn.add(x),val);
@@ -70,9 +70,8 @@ for n=1:numel(S)
                             vn.add(vnr);
                         end
                     end
-                    
                 else
-                    error('prt:yaml:Struct2Hashmap','Cannot write YAML file field %s is of an unknown data type.',fn{1});
+                    error('prt:yaml:Struct2Hashmap','Cannot write YAML file. Field %s is of an unknown data type.',fn{1});
                 end
                 val = vn;
             end

@@ -44,6 +44,16 @@ classdef prtRvMultinomial < prtRv
     %
     %   See also: prtRv, prtRvMvn, prtRvGmm, prtRvVq, prtRvKde
     
+    properties (SetAccess = private)
+        name = 'Multinomial Random Variable';
+        nameAbbreviation = 'RVMulti';
+    end
+    
+    properties (SetAccess = protected)
+        isSupervised = false;
+        isCrossValidateValid = true;
+    end
+    
     properties (Dependent)
         probabilities
     end
@@ -67,8 +77,6 @@ classdef prtRvMultinomial < prtRv
     methods
         % The Constructor
         function R = prtRvMultinomial(varargin)
-            R.name = 'Multinomial Random Variable';  
-            
             R = constructorInputParse(R,varargin{:});
         end
         

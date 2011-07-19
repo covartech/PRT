@@ -79,7 +79,7 @@ classdef prtClassLibSvm < prtClass
     %   when you try and run it on an unlabeled data set (in testing) or
     %   when you plot it.  This is because whoever made the interface
     %   didn't think to give us a way that I can see to turn off that
-    %   output.
+    %   output. (Actually this has now been disabled.)
     %
     %       2) All the parameters that you set below actually get set for
     %       real when we call libSvmOptionString and libSvmOptionStringTest

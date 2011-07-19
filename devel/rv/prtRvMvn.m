@@ -56,7 +56,15 @@ classdef prtRvMvn < prtRv
     %   See also: prtRv, prtRvGmm, prtRvMultinomial, prtRvUniform,
     %   prtRvUniformImproper, prtRvVq, prtRvDiscrete
     
-
+    properties (SetAccess = 'private')
+        name = 'Multi-Variate Normal';
+        nameAbbreviation = 'RVMVN';
+    end
+    
+    properties (SetAccess = 'protected')
+        isSupervised = false;
+        isCrossValidateValid = true;
+    end
     
     properties (Dependent)
         covarianceStructure  % The covariance structure
@@ -80,7 +88,6 @@ classdef prtRvMvn < prtRv
     
     methods
         function R = prtRvMvn(varargin)
-            R.name = 'Multi-Variate Normal';
             R = constructorInputParse(R,varargin{:});
         end
         

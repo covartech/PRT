@@ -85,6 +85,16 @@ classdef prtRvKde < prtRv
     %   See also: prtRv, prtRvMvn, prtRvGmm, prtRvMultinomial,
     %   prtRvUniform, prtRvUniformImproper, prtRvVq
     
+    properties (SetAccess = private)
+        name = 'Kernel Density Estimation RV'
+        nameAbbreviation = 'RVKDE';
+    end
+    
+    properties (SetAccess = protected)
+        isSupervised = false;
+        isCrossValidateValid = true;
+    end        
+    
     properties
         bandwidthMode = 'diffusion';
         bandwidths = []; % Will be estimated
@@ -99,7 +109,6 @@ classdef prtRvKde < prtRv
     methods
         % The Constructor
         function R = prtRvKde(varargin)
-            R.name = 'Kernel Density Estimation RV';
             R = constructorInputParse(R,varargin{:});
         end
 
