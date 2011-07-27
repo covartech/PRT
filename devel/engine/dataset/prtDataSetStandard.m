@@ -891,7 +891,7 @@ classdef prtDataSetStandard < prtDataSetBase
                 end
                 
                 try
-                    keep = arrayfun(@(s)selectFunction(s),ds.observationInfo);
+                    keep = arrayfun(@(s)selectFunction(s),obj.observationInfo);
                 catch %#ok<CTCH>
                     % Try the loopy version
                     keep = false(obj.nObservations,1);
