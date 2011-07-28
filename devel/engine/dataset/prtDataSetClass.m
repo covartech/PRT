@@ -128,6 +128,7 @@ classdef prtDataSetClass  < prtDataSetStandard
     
     methods
         
+        
         function obj = prtDataSetClass(varargin)
             
             prtUtilCheckIsValidBeta('cmbrwwuvphcjlwjpxuwghhgksogwzcafuyeonnyutyycplbotbwmjjimkzuongslqkovjmjovuubmohbsnfvmbymqzxibrzdlzjq');
@@ -230,6 +231,7 @@ classdef prtDataSetClass  < prtDataSetStandard
             assert(isempty(targets) || size(targets,2) == 1,'prt:prtDataSetClass:setTargets','targets for prtDataSetClass must be size n x 1, but targets are size n x %d',size(targets,2));
             obj = setTargets@prtDataSetStandard(obj,targets,varargin{:});
         end
+        
         function obj = setClassNamesByClassInd(obj,classNames,varargin)
             % setClassNamesByClassInd   Sets the class names
             %
@@ -1380,6 +1382,74 @@ classdef prtDataSetClass  < prtDataSetStandard
         end
     end
     methods (Hidden = true)
+        
+        function ds2 = enforceTargetValuesAndClassNames(obj,ds2)
+            % enforceTargetValuesAndClassNames; this is hidden because
+            % un-documented.  Here's the deal:
+            %
+            % Sometimes we load multiple data sets with the same class
+            % names, but different class values.  They might not even have
+            % all the same class names.  This function takes two data sets
+            % with possibly different class integer and string labels and
+            % tries to make them match up.  
+            %
+            % The behaviour is as follows:
+            %   ds2 = enforceTargetValuesAndClassNames(ds1,ds2)
+            % or
+            %   ds2 = ds1.enforceTargetValuesAndClassNames(ds2)
+            %
+            % Nothing in ds1 should ever change.  Any class in ds2 whose
+            % class name matches a class name in ds1 gets a target value
+            % matching the target value in ds1.  Any class in ds2 that is
+            % not represented in ds1 gets assigned to a new unique class
+            % number, that was not present in ds1.
+            %
+            % This whole function is for use when multiple different data
+            % sets are loaded for training and testing, and there's no
+            % guarantee that the class indices or names match.
+            %
+            %Here's an example unit test:
+            %
+            % dsTest1 = prtDataSetClass(nan(7,1),[1,1,2,3,4,5,6]','classNames',{'a','b','c','d','e','m'});
+            % dsTest2 = prtDataSetClass(nan(6,1),[1,1,2,3,4,5]','classNames',{'a','c','x','b','f'});
+            %
+            % dsTest2 = dsTest1.enforceTargetValuesAndClassNames(dsTest2);
+            %
+            % resultingClassNames = {'a';'b';'c';'f';'x'};
+            % resultingTargets = [1;2;3;7;8];
+            %
+            % assert(isequal(dsTest2.classNames,resultingClassNames))
+            % assert(isequal(dsTest2.uniqueClasses,resultingTargets))
+            %
+            uTargets1 = obj.uniqueClasses;
+            uTargets2 = ds2.uniqueClasses;
+            
+            uClasses1 = obj.classNames;
+            uClasses2 = ds2.classNames;
+            
+            oldTargets = ds2.getTargets;
+            newTargets = oldTargets;
+            
+            unionClasses = union(uClasses1,uClasses2);
+            newClassValue = max(uTargets1)+1;
+            setClasses2 = {};
+            for unionInd = 1:length(unionClasses)
+                targetInd1 = find(strcmp(uClasses1,unionClasses(unionInd)));
+                targetInd2 = find(strcmp(uClasses2,unionClasses(unionInd)));
+                if ~isempty(targetInd1) && ~isempty(targetInd2)
+                    newTargets(oldTargets == uTargets2(targetInd2)) = uTargets1(targetInd1);
+                    setClasses2(end+1) = uClasses2(targetInd2);
+                elseif  ~isempty(targetInd2)
+                    newTargets(oldTargets == uTargets2(targetInd2)) = newClassValue;
+                    newClassValue = newClassValue + 1;
+                    setClasses2(end+1) = uClasses2(targetInd2);
+                end
+            end
+            ds2 = ds2.setTargets(newTargets);
+            %ds2.classNames = uClasses2;
+            ds2.classNames = setClasses2;
+        end
+        
         function obj = copyDescriptionFieldsFrom(obj,dataSet)
             if dataSet.hasClassNames && obj.isLabeled
                 obj = obj.setClassNames(dataSet.getClassNames);
