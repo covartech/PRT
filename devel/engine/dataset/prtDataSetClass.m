@@ -1326,6 +1326,14 @@ classdef prtDataSetClass  < prtDataSetStandard
                 error('Number of samples (N) must be either scalar integer or a vector integer of dataSet.nClasses (%d), N is a %s %s',nClasses,mat2str(size(N)),class(N));
             end
       
+            if ~Obj.isLabeled
+                % nClasses will return one but we do not need to look at
+                % targets
+                
+                [Out, newObsInds] = bootstrap(Obj,N);
+                return
+            end
+            
             targetInds = Obj.getTargetsClassInd;
             obsInds = (1:Obj.nObservations)';
             newObsInds = nan(sum(N),1);

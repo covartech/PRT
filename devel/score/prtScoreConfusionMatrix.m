@@ -1,5 +1,5 @@
-function varargout = prtScoreConfusionMatrix(guess,truth,nClasses,labelsIn)
-%[confMat,occurances,labels] = prtScoreConfusionMatrix(guess,truth,nClasses)
+function varargout = prtScoreConfusionMatrix(guess, truth, possibleTruthValues, classNames)
+%[confMat,occurances] = prtScoreConfusionMatrix(guess,truth)
 % prtScoreConfusionMatrix Plot or return the confusion matrix
 %
 %   CONFMAT = prtScoreConfusionMatrix(GUESS, TRUTH) returns the confusion matrix that
@@ -23,41 +23,102 @@ function varargout = prtScoreConfusionMatrix(guess,truth,nClasses,labelsIn)
 %    See also: prtScoreoc, prtScoreRmse, prtScoreRocNfa,
 %    prtScorePercentCorrect, prtScoreAuc
 
+% guess = [0;0;1;2;3;]; truth = [0;1;1;4;3;];
+% prtScoreConfusionMatrix(guess,truth)
+% prtScoreConfusionMatrix(guess,truth,[0 1 2 3 4])
+% prtScoreConfusionMatrix(guess,truth,[0 1 2 3 4],{'A','B','C','D','E'})
+% prtScoreConfusionMatrix(prtDataSetClass(guess,guess,'classNames',{'0','1','2','3'}),prtDataSetClass(nan(size(truth,1),1),truth,'classNames',{'A','B','C','D'}))
+% prtScoreConfusionMatrix(prtDataSetClass(guess,guess,'classNames',{'0','1','2','3'}),prtDataSetClass(nan(size(truth,1),1),truth,'classNames',{'A','B','C','D'}),0:4,{'aa','bb','cc','dd','ee'})
+
+
 if (nargin == 1 || isempty(truth)) && isa(guess,'prtDataSetClass')
     truth = guess;
 end
 
-[guess,truth,labels] = prtUtilScoreParseFirstTwoInputs(guess,truth);
-if nargin > 3
-    labels = labelsIn;
-end
+[guess, truth, allClassNames, uniqueTruthValues, guessClassNames, truthClassNames, uClassesGuess, uClassesTruth] = prtUtilScoreParseFirstTwoInputs(guess,truth); %#ok<ASGLU>
 
-guess = guess(:);
-if nargin < 3
-    nClasses = length(unique(cat(1,truth(:),guess(:))));
+% Parse 3rd and 4th inputs
+%% These inputs are used to 
+if nargin < 3 || isempty(possibleTruthValues)
+    % Nothing do to keep from above
+    %uClassesTruth = possiblGuessValues;
+    %uClassesGuess = possiblGuessValues;
+else
+    % if you supplied possiblTruthValues we will make a square matrix with
+    % these values. It is possible here that values in truth do not match those
+    % in possibleGuessValues this will result in confusion matrices that do not
+    % sum to 100% accross the rows.
+    
+    uClassesTruth = possibleTruthValues;
+    uClassesGuess = possibleTruthValues;
+end
+if nargin < 4 || isempty(classNames)
+    % Nothing to do  already have everything we need from above
+    
+    if nargin >= 3 && ~isempty(possibleTruthValues)
+        % You supplied possibleTruthValues but not classNames
+        % We need to generate appropriate classNames
+        possibleTruthValues = possibleTruthValues(:);
+        tempDs = prtDataSetClass(nan(size(possibleTruthValues,1),1),possibleTruthValues);
+        classNames = tempDs.classNames;
+        
+        guessClassNames = classNames;
+        truthClassNames = classNames;
+    else
+        % You didn't supply classNames or possibleTruthValues
+        % everything is known from above
+    end
+else
+    % You supplied classNames
+    if nargin < 3 || isempty(possibleTruthValues)
+        % You didn't supply possibleTruthValues
+        % We will assume that you want the default joint truth values, but
+        % we must check the dimensionality
+        assert(length(uniqueTruthValues) == length(classNames),'prt:prtScoreConfusionMatrix:badInput','length of classNames does not match the number of unique values contained in both guess and truth');
+        
+        uClassesTruth = uniqueTruthValues;
+        uClassesGuess = uniqueTruthValues;
+        
+        truthClassNames = classNames;
+        guessClassNames = classNames;
+    else
+        % You supplied both must check the dimensionality
+        assert(length(possibleTruthValues) == length(classNames),'prt:prtScoreConfusionMatrix:badInput','length of classNames must match the length of possibleTruthValues');
+        
+        uClassesTruth = possibleTruthValues;
+        uClassesGuess = possibleTruthValues;
+        
+        truthClassNames = classNames;
+        guessClassNames = classNames;
+        
+    end
 end
 
 if length(truth) ~= length(guess)
-    error('Truth and response inputs must be the same length')
+    error('prt:prtScoreConfusionMatrix:badInputs','guess and truth inputs must be the same length, or they must be prtDataSets with the same number of observations.')
 end
 
-confusionMat = zeros(nClasses);
-occurances = zeros(nClasses);
-classes = sort(unique(cat(1,truth(:),guess(:))));
 
-for iTruthNum = 1:length(classes)
-    iTruth = classes(iTruthNum);
+nUClassesTruth = length(uClassesTruth);
+nUClassesGuess = length(uClassesGuess);
+
+confusionMat = zeros([nUClassesTruth,nUClassesGuess]);
+occurances = zeros(nUClassesTruth,1);
+
+for iTruthNum = 1:nUClassesTruth
+    iTruth = uClassesTruth(iTruthNum);
     iTruthLocs = truth == iTruth;
-    for jRespNum = 1:length(classes)
-        jResp = classes(jRespNum);
+    for jRespNum = 1:nUClassesGuess
+        jResp = uClassesGuess(jRespNum);
         confusionMat(iTruthNum,jRespNum) = sum(guess(iTruthLocs) == jResp);
     end
-    occurances(iTruthNum,:) = repmat(sum(iTruthLocs),nClasses,1);
+    occurances(iTruthNum) = sum(iTruthLocs);
 end
 
 varargout = {};
 if nargout 
-    varargout = {confusionMat, occurances, labels};
+    varargout = {confusionMat, occurances};
 else
-    prtUtilPlotConfusionMatrix(confusionMat./occurances,labels);
+    %prtUtilPlotConfusionMatrix(bsxfun(@rdivide,confusionMat,occurances),guessClassNames,truthClassNames);
+    prtUtilPlotConfusionMatrix(confusionMat,guessClassNames,truthClassNames);
 end

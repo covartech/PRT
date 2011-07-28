@@ -35,26 +35,13 @@ function varargout = prtUtilPlotConfusionMatrix(confusionMat,classLabels,classLa
 
 % Copyright 2011, New Folder Consulting, L.L.C.
 
-if nargin == 3
-    plotConfusionMatrix(confusionMatrix(confusionMat,classLabels),classLabels2)
-    return
-end
-
-if numel(confusionMat) == length(confusionMat)
-    % Not a square matrix so assume that the user has specified the inputs
-    % to confusionMatrix.
-    plotConfusionMatrix(confusionMatrix(confusionMat,classLabels))
-    return
-end
-
 nClass = size(confusionMat,1);
 
 % Make a percentage matrix if it is not already. Also, if it is not count
 % the number of occurances.
-if max(confusionMat(:)) > 1
+if ~all(prtUtilApproxEqual(sum(confusionMat,2),1))
     occurances = sum(confusionMat,2);
     percentageConfusionMat = confusionMat./repmat(occurances,1,nClass);
-    
 else
     percentageConfusionMat = confusionMat;
 end
@@ -81,11 +68,16 @@ if numericalLabels
         classLabels{iClass} = num2str(iClass);
     end
 end
+
+if nargin < 3 || isempty(classLabels2)
+    classLabels2 = classLabels;
+end
+
 axes(imageAxes);
 set(imageAxes,'Ytick',1:nClass);
 set(imageAxes,'Xtick',1:nClass);
 xlabel('Response'); ylabel('Truth');
-set(imageAxes,'Yticklabel',classLabels);
+set(imageAxes,'Yticklabel',classLabels2);
 set(imageAxes,'Xticklabel',classLabels);
 
 sideTextHandles = zeros(nClass,1);

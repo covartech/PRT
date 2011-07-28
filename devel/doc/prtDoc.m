@@ -11,5 +11,6 @@ if nargin < 1 || isempty(topic)
     web(fullfile(prtRoot,'doc','prtDocLanding.html'),'-helpbrowser');
 else
     assert(ischar(topic) && isvector(topic),'prt:prtDoc','topic must be a string');
+    
     web(fullfile(prtRoot,'doc','functionReference',cat(2,strrep(topic(:)','.',filesep),'.html')),'-helpbrowser');
 end

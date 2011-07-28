@@ -27,7 +27,7 @@ end
 if size(guesses,2) ~= 1 
     error('prt:prtScorePercentCorrect','GUESS must be a N x 1 integer vector of class guesses');
 else
-    confusionMatrix = prtScoreConfusionMatrix(guesses,targets);
-    percentCorrect = prtUtilConfusion2PercentCorrect(confusionMatrix);
+    percentCorrect = mean(guesses == targets);
+
 end
   
