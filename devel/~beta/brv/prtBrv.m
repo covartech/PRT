@@ -2,7 +2,7 @@
 %   Abstract Methods:
 %       nDimensions
 
-classdef prtBrv
+classdef prtBrv < prtAction
     methods (Abstract)
         val = nDimensions(obj)
     end

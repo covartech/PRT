@@ -3,10 +3,16 @@
 classdef prtBrvDiscreteStickBreakingHierarchy
     properties
         sortingInds
+        unsortingInds
     end
     properties
-        alphaGammaParams = [1 1];
+        alphaGammaParams = [1e-6 1e-6];
+        counts = [];
         beta = [];
+    end
+    properties (Hidden = true)
+        useGammaPriorOnScale = true;
+        useOptimalSorting = true;
     end
     properties (Dependent, SetAccess='private')
         truncationLevel
@@ -18,27 +24,22 @@ classdef prtBrvDiscreteStickBreakingHierarchy
     end
     
     methods
-        function obj = prtBrvDiscreteHierarchy(varargin)
+        function obj = prtBrvDiscreteStickBreakingHierarchy(varargin)
             if nargin < 1
                 return
             end
             
             truncationLevel = varargin{1};
             
-            % Initialize beta priorBeta, alpha, priorAlpha
-            obj.beta = ones(1,varargin{1})/varargin{1};
-            
-            
-            asdfasdfasdfasdfasdf
-            
+            % Initialize beta
+            obj.counts = zeros(truncationLevel,1);
+            obj.beta = ones(truncationLevel,2);
+            obj.beta(:,2) = obj.alphaGammaParams(1)/obj.alphaGammaParams(2);
+            obj.sortingInds = (1:truncationLevel)';
+            obj.unsortingInds = obj.sortingInds;
         end
         
         function pis = draw(obj)
-            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-             
              vs = prtRvUtilDirichletDraw([obj.beta(:,1),obj.beta(:,2)]);
              vs = vs(:,1);
              
@@ -53,27 +54,106 @@ classdef prtBrvDiscreteStickBreakingHierarchy
              
              pis(end) = 1-sum(pis(1:end-1));
              pis(pis<0) = 0; % This happens in the range of eps sometimes.
-             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         end
         
         function obj = conjugateUpdate(obj,priorObj,counts)
             
+            counts = counts(:);
+            
+            if obj.useOptimalSorting
+                [counts, obj.sortingInds] = sort(counts,'descend');
+                [dontNeed, obj.unsortingInds] = sort(obj.sortingInds,'ascend'); %#ok<ASGLU>
+            else
+                obj.sortingInds = (1:obj.truncationLevel)';
+                obj.unsortingInds = obj.sortingInds;
+            end
             sumIToK = flipud(cumsum(flipud(counts)));
             sumIPlus1ToK = sumIToK-counts;
             
+            if obj.useOptimalSorting
+                obj.counts = counts(obj.unsortingInds);
+                sumIPlus1ToK = sumIPlus1ToK(obj.unsortingInds);
+            else
+                obj.counts = counts;
+            end
+            
             % Update stick parameters
-            obj.beta(:,1) = counts + priorObj.beta(:,1) + 1;
+            obj.beta(:,1) = obj.counts + priorObj.beta(:,1);
             obj.beta(:,2) = sumIPlus1ToK + priorObj.beta(:,2) + obj.expectedValueAlpha;
             
             % Update alpha Gamma density parameters
-            obj.alphaGammaParams(1) = priorObj.alphaGammaParams(1) + obj.truncationLevel;
-            eLog1MinusVt = obj.expectedValueLogOneMinusStickLengths;
-            obj.alphaGammaParams(2) = priorObj.alphaGammaParams(2) - sum(eLog1MinusVt(isfinite(eLog1MinusVt))); % Sometimes there are -infs at the end
+            if obj.useGammaPriorOnScale
+                obj.alphaGammaParams(1) = priorObj.alphaGammaParams(1) + obj.truncationLevel - 1;
+                eLog1MinusVt = obj.expectedValueLogOneMinusStickLengths;
+                obj.alphaGammaParams(2) = priorObj.alphaGammaParams(2) - sum(eLog1MinusVt(isfinite(eLog1MinusVt))); % Sometimes there are -infs at the end
+            end
+        end
+        function kld = kld(obj, priorObj)
+            if obj.useGammaPriorOnScale
+                % These beta KLDs are not correct. Really we need to take
+                % the expected value of the KLDs over the alpha Gamma
+                % density. This is diffucult. Here we use an approximation
+                % that may cause a decrease in NFE near convergence.
+                betaKlds = zeros(obj.truncationLevel,1);
+                for iV = 1:obj.truncationLevel
+                    betaKlds(iV) = prtRvUtilDirichletKld(obj.beta(iV,:),priorObj.beta(iV,:));
+                end
+                
+                alphaKld = prtRvUtilGammaKld(obj.alphaGammaParams(1),obj.alphaGammaParams(2),priorObj.alphaGammaParams(1),priorObj.alphaGammaParams(2));
+                
+                kld = sum(betaKlds) + alphaKld;
+            else
+                betaKlds = zeros(obj.truncationLevel,1);
+                for iV = 1:obj.truncationLevel
+                    betaKlds(iV) = prtRvUtilDirichletKld(obj.beta(iV,:),priorObj.beta(iV,:));
+                end
+                kld = sum(betaKlds);
+            end
         end
         
+        function [obj, training] = vbOnlineWeightedUpdate(obj, priorObj, x, weights, lambda, D, prevObj) %#ok<INUSL>
+            S = size(x,1);
+            
+            if ~isempty(weights)
+                x = bsxfun(@times,x,weights);
+            end
+            
+            localCounts = x(:);
+            
+            if obj.useOptimalSorting
+                [localCounts, obj.sortingInds] = sort(localCounts,'descend');
+                [dontNeed, obj.unsortingInds] = sort(obj.sortingInds,'ascend'); %#ok<ASGLU>
+            else
+                obj.sortingInds = (1:obj.truncationLevel)';
+                obj.unsortingInds = obj.sortingInds;
+            end
+            
+            sumIToK = flipud(cumsum(flipud(localCounts)));
+            sumIPlus1ToK = sumIToK-localCounts;
+            
+            if obj.useOptimalSorting
+                obj.counts = localCounts(obj.unsortingInds);
+                sumIPlus1ToK = sumIPlus1ToK(obj.unsortingInds);
+            else
+                obj.counts = localCounts;
+            end
+            
+            % Update stick parameters
+            updatedBeta = zeros(obj.truncationLevel,2);
+            
+            updatedBeta(:,1) = D/S*obj.counts + priorObj.beta(:,1);
+            updatedBeta(:,2) = D/S*sumIPlus1ToK + priorObj.beta(:,2) + obj.expectedValueAlpha;
+            
+            obj.beta = updatedBeta*lambda + (1-lambda)*prevObj.beta;
+            
+            if obj.useGammaPriorOnScale
+                obj.alphaGammaParams(1) = priorObj.alphaGammaParams(1) + obj.truncationLevel - 1;
+                eLog1MinusVt = obj.expectedValueLogOneMinusStickLengths;
+                obj.alphaGammaParams(2) = priorObj.alphaGammaParams(2) - sum(eLog1MinusVt(isfinite(eLog1MinusVt))); % Sometimes there are -infs at the end
+            end
+            
+            training = struct([]);
+        end
     end
     methods
         function val = get.expectedValueLogStickLengths(obj)
@@ -83,8 +163,13 @@ classdef prtBrvDiscreteStickBreakingHierarchy
             val = psi(obj.beta(:,2)) - psi(sum(obj.beta,2));
         end
         function val = get.expectedValueLogProbabilities(obj)
-            val = obj.expectedValueLogStickLengths + cat(1,cumsum(obj.expectedValueLogOneMinusStickLengths(1:end-1)));
-            val(end) = -prtUtilSumExp(val(1:end-1)); % Force sum to 1
+            expectedLogOneMinusStickLengths = obj.expectedValueLogOneMinusStickLengths;
+            expectedLogOneMinusStickLengths = expectedLogOneMinusStickLengths(obj.sortingInds);
+            
+            val = obj.expectedValueLogStickLengths(obj.sortingInds) + cat(1,0,cumsum(expectedLogOneMinusStickLengths(1:end-1)));
+            
+            val = val(obj.unsortingInds);
+            
         end
         function val = get.posteriorMean(obj)
             val = exp(obj.expectedValueLogProbabilities);
@@ -93,7 +178,15 @@ classdef prtBrvDiscreteStickBreakingHierarchy
             val = size(obj.beta,1);
         end
         function val = get.expectedValueAlpha(obj)
-            val = obj.alphaGammaParams(2)./obj.alphaGammaParams(1);
+            
+            alphaParams = obj.alphaGammaParams;
+            if length(alphaParams) < 2
+                alphaParams = alphaParams*[1 1];
+            end
+            
+            val = alphaParams(2)./alphaParams(1);
         end
     end
 end
+
+

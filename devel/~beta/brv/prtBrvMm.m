@@ -44,7 +44,7 @@ classdef prtBrvMm < prtBrv & prtBrvIVb & prtBrvVbOnline
         internalComponents
     end
     properties (Hidden)
-        plotComponentMembershipThreshold = 1; % Must have 1 total sample
+        plotComponentProbabilityThreshold = 0.01;
     end
     
     methods
@@ -61,7 +61,7 @@ classdef prtBrvMm < prtBrv & prtBrvIVb & prtBrvVbOnline
             val = obj.components(1).nDimensions;
         end
                 
-        function [obj, training] = vb(obj, x)
+        function [obj, training] = vbBatch(obj, x)
             
             % Initialize
             if obj.vbVerboseText
@@ -145,7 +145,7 @@ classdef prtBrvMm < prtBrv & prtBrvIVb & prtBrvVbOnline
                 training.startTime = now;
                 training.iterations.negativeFreeEnergy = [];
                 training.iterations.eLogLikelihood = [];
-                training.iterations.kld = [];                
+                training.iterations.kld = [];           
                 [obj, training] = obj.vbE(priorObj, x, training);
             end
             
@@ -156,6 +156,11 @@ classdef prtBrvMm < prtBrv & prtBrvIVb & prtBrvVbOnline
                 obj.components(s) = obj.components(s).vbOnlineWeightedUpdate(priorObj.components(s), x, training.phiMat(:,s), obj.vbOnlineLambda, obj.vbOnlineD, prevObj.components(s));
             end
             obj.mixingProportions = obj.mixingProportions.vbOnlineWeightedUpdate(priorObj.mixingProportions, training.phiMat, [], obj.vbOnlineLambda, obj.vbOnlineD, prevObj.mixingProportions);
+            
+            training.nSamplesPerCluster = sum(training.phiMat,1);
+            
+            [nfe, eLogLikelihood, kld, kldDetails] = vbNfe(obj, priorObj, x, training); %#ok<NASGU,ASGLU>
+            training.negativeFreeEnergy = -kld;
             
         end
         
@@ -207,7 +212,7 @@ classdef prtBrvMm < prtBrv & prtBrvIVb & prtBrvVbOnline
             priorObj = obj;
             [training.phiMat, priorObj.components] = mixtureInitialize(obj.components, obj.components, x);
             
-            training.variationalClusterLogLikelihoods = zeros(size(x,1),obj.nComponents);
+            training.variationalLogLikelihoodBySample = -inf(size(x,1),obj.nComponents);
             training.negativeFreeEnergy = 0;
             training.previousNegativeFreeEnergy = nan;
             training.iterations.negativeFreeEnergy = [];
@@ -225,7 +230,7 @@ classdef prtBrvMm < prtBrv & prtBrvIVb & prtBrvVbOnline
             
             sourceVariationalLogLikelihoods = obj.mixingProportions.expectedLogMean;
             
-            training.variationalLogLikelihoodBySample = bsxfun(@plus,training.variationalClusterLogLikelihoods, sourceVariationalLogLikelihoods);
+            training.variationalLogLikelihoodBySample = bsxfun(@plus,training.variationalClusterLogLikelihoods, sourceVariationalLogLikelihoods(:)');
             training.phiMat = exp(bsxfun(@minus, training.variationalLogLikelihoodBySample, prtUtilSumExp(training.variationalLogLikelihoodBySample')'));
             
         end
@@ -276,8 +281,11 @@ classdef prtBrvMm < prtBrv & prtBrvIVb & prtBrvVbOnline
             subplot(3,2,1)
             mixingPropPostMean = obj.mixingProportions.posteriorMeanStruct;
             mixingPropPostMean = mixingPropPostMean.probabilities;
-            bar([mixingPropPostMean(:)'; nan(1,length(mixingPropPostMean(:)))])
-            colormap(colors);
+            
+            [mixingPropPostMeanSorted, sortingInds] = sort(mixingPropPostMean,'descend');
+            
+            bar([mixingPropPostMeanSorted(:)'; nan(1,length(mixingPropPostMean(:)))])
+            colormap(colors(sortingInds,:));
             ylim([0 1])
             xlim([0.5 1.5])
             set(gca,'XTick',[]);
@@ -298,9 +306,12 @@ classdef prtBrvMm < prtBrv & prtBrvIVb & prtBrvVbOnline
             xlabel('Iteration')
 
             subplot(3,1,2)
-            componentsToPlot = training.nSamplesPerCluster > obj.plotComponentMembershipThreshold;
-            plot(obj.components(training.nSamplesPerCluster > obj.plotComponentMembershipThreshold),colors(componentsToPlot,:));
-            
+
+            componentsToPlot = mixingPropPostMean > obj.plotComponentProbabilityThreshold;
+            if sum(componentsToPlot) > 0
+                plot(obj.components(componentsToPlot),colors(componentsToPlot,:));
+            end
+               
             subplot(3,1,3)
             if obj.nDimensions < 4
                 [~, cY] = max(training.phiMat,[],2);
@@ -313,8 +324,8 @@ classdef prtBrvMm < prtBrv & prtBrvIVb & prtBrvVbOnline
                 end
                 legend('off');
             else
-                area(training.phiMat,'edgecolor','none')
-                colormap(colors)
+                area(training.phiMat(:,sortingInds),'edgecolor','none')
+                % colormap set above in bar.
                 ylim([0 1]);
                 title('Cluster Memberships');
             end

@@ -36,14 +36,15 @@ classdef prtBrvVbOnline
         function  [obj, training] = vbOnline(obj, x)
             
             D = size(x,1);
+            kldByIteration = zeros(obj.vbMaxIterations,1);
             for iStep = 1:obj.vbMaxIterations
                 
                 if iStep == 1
                     cX = x(prtRvUtilRandomSample(D,obj.vbOnlineInitialBatchSize),:);
                     
-                    [obj, priorObj, training] = obj.vbInitialize(cX);
-                    obj.nSamples = 0;
+                    [initObj, priorObj, training] = obj.vbInitialize(cX);
                     
+                    obj.vbOnlineT = 0;
                     [obj, training] = obj.vbOnlineUpdate(priorObj, cX, training);
                     
                 else
@@ -52,6 +53,10 @@ classdef prtBrvVbOnline
                     [obj, training] = obj.vbOnlineUpdate(priorObj, cX);
                     
                 end
+                
+                kldByIteration(iStep) = -training.negativeFreeEnergy;
+                
+                training.iterations.negativeFreeEnergy(1:iStep) = -kldByIteration(1:iStep);
                 
                 if mod(iStep-1,obj.vbVerbosePlot)==0 || iStep == obj.vbMaxIterations
                     vbIterationPlot(obj, priorObj, cX, training);
@@ -69,6 +74,7 @@ classdef prtBrvVbOnline
             end
         end
     end
+   
     methods (Abstract)
         [obj, training] = vbOnlineUpdate(obj, x);
     end

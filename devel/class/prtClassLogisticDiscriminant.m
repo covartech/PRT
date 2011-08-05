@@ -290,7 +290,7 @@ classdef prtClassLogisticDiscriminant < prtClass
                 end
                 
                 if nIter > Obj.maxIter
-                    warning('prt:generateLogDisc:maxIter',sprintf('nIterations (%d) > maxIterations; exiting',nIterations)); %#ok
+                    warning('prt:generateLogDisc:maxIter',sprintf('nIterations (%d) > maxIterations; exiting',nIter)); %#ok
                     return;
                 end
                 nIter = nIter + 1;

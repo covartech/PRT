@@ -21,6 +21,8 @@ classdef prtBrvIVb
         vbVerbosePlot = false; % plot after each iteration
         vbVerboseMovie = false; % make a movie with each frame of plotting
         vbVerboseMovieFrames = []; % Where we store the frames
+        
+        vbUseOnlineInsteadOfBatch = false; % If true you must also inherit from prtBrvVbOnline
     end
     
     methods (Hidden)
@@ -49,12 +51,25 @@ classdef prtBrvIVb
     
     methods (Access = protected, Hidden = true)
         function Obj = trainAction(Obj, DataSet)
-            Obj = Obj.vb(DataSet);
+            Obj = Obj.vb(DataSet.getObservations);
         end
         
         function DataSet = runAction(obj, DataSet)
-            DataSet = DataSet.setObservations(conjugateVariationalAverageLogLikelihood(obj, DataSet.getObservations));
+            [obj, training] = vbE(obj, [], DataSet.getObservations(), []);
+            DataSet = DataSet.setObservations(prtUtilSumExp(training.variationalLogLikelihoodBySample')');
         end
-    end    
+    end
     
+    methods
+        function [obj, training] = vb(obj, x)
+            if obj.vbUseOnlineInsteadOfBatch
+                [obj, training] = vbOnline(obj,x);
+            else
+                [obj, training] = vbBatch(obj,x);
+            end
+        end
+    end
+    methods (Abstract)
+        [Obj, training] = vbBatch(Obj,x);
+    end
 end

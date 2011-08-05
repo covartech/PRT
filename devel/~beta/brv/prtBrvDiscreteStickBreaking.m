@@ -1,33 +1,26 @@
 classdef prtBrvDiscreteStickBreaking < prtBrvDiscrete
-    
-    properties (SetAccess = private)
-        name = 'Discrete Stick Breaking Bayesian Random Variable';
-        nameAbbreviation = 'BRVSB';
-    end
-    
-    properties (SetAccess = protected)
-        isSupervised = false;
-        isCrossValidateValid = true;
-    end
-    
-    properties
-        model = prtBrvDiscreteStickBreakingHierarchy;
-    end
-    
     methods
         function obj = prtBrvDiscreteStickBreaking(varargin)
             if nargin < 1
                 return
             end
             obj.model = prtBrvDiscreteStickBreakingHierarchy(varargin{1});
+            
+            %obj.name = 'Discrete Stick Breaking Bayesian Random Variable';
+            %obj.nameAbbreviation = 'BRVSB';
         end
         
         function y = conjugateVariationalAverageLogLikelihood(obj, x)
-            y = sum(bsxfun(@times,x,psi(obj.model.lambda)-psi(sum(obj.model.lambda))),2);
+            
+            error('Not done yet');
+            
+            % y = sum(bsxfun(@times,x,psi(obj.model.lambda)-psi(sum(obj.model.lambda))),2);
         end
         
         function val = expectedLogMean(obj)
-            val = psi(obj.model.lambda) - psi(sum(obj.model.lambda));
+            val = obj.model.expectedValueLogProbabilities(:)';
+            
+            % val = psi(obj.model.lambda) - psi(sum(obj.model.lambda));
         end
         
         function [phiMat, priorObjs] = mixtureInitialize(objs, priorObjs, x)
@@ -60,34 +53,33 @@ classdef prtBrvDiscreteStickBreaking < prtBrvDiscrete
         end
         
         function obj = weightedConjugateUpdate(obj, priorObj, x, weights)
-            if isempty(weights)
-                weights = ones(size(x,1),1);
-            end
-            obj.model.lambda = priorObj.model.lambda + sum(bsxfun(@times,x,weights),1);
+            obj.model = obj.model.conjugateUpdate(priorObj.model,bsxfun(@times,x,weights));
         end
         
         function kld = conjugateKld(obj, priorObj)
-            kld = prtRvUtilDirichletKld(obj.model.lambda,priorObj.model.lambda);
+            kld = obj.model.kld(priorObj.model);
         end
         
         function x = posteriorMeanDraw(obj, n, varargin)
             if nargin < 2
                 n = 1;
             end
-            
-            probs = obj.model.lambda./sum(obj.model.lambda);
+
+            probs = exp(obj.model.expectedValueLogProbabilities);
             x = prtRvUtilRandomSample(probs, n);
         end
         
         function s = posteriorMeanStruct(obj)
-            s.probabilities = obj.model.lambda./sum(obj.model.lambda);
+            s.probabilities = exp(obj.model.expectedValueLogProbabilities);
         end
         
         function model = modelDraw(obj)
-            model.probabilities = prtRvUtilDirichletRnd(obj.model.lambda);
+            model.probabilities = draw(obj.model);
         end
         
         function plot(objs, colors)
+            
+             error('Not done yet');
             
             nComponents = length(objs);
             
@@ -121,12 +113,12 @@ classdef prtBrvDiscreteStickBreaking < prtBrvDiscrete
 
         end
         
-        function [obj, training] = vbOnlineWeightedUpdate(obj, priorObj, x, weights, lambda, D, prevObj) %#ok<INUSL>
-            S = size(x,1);
+        function [obj, training] = vbOnlineWeightedUpdate(obj, priorObj, x, weights, lambda, D, prevObj)
+            if ~isempty(weights)
+                x = bsxfun(@times,x,weights);
+            end
             
-            obj.model.lambda = prevObj.model.lambda*(1-lambda) + (D/S*sum(x,1) + priorObj.model.lambda)*lambda;
-            
-            training = struct([]);
+            [obj.model, training] = obj.model.vbOnlineWeightedUpdate(priorObj.model, sum(x,1), [], lambda, D, prevObj.model);
         end
     end
 end
