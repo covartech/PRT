@@ -134,8 +134,8 @@ classdef prtPreProcPca < prtPreProc
             %should be ~= Obj.pcaVectors
             %             disp('svd')
             %             tic;
-            %             [S,U,V] = svd(x,0);
-            %             Obj.pcaVectorsSvd = V(:,1:Obj.nComponents);
+            %             [U, S, V] = svd(x,0);
+            %             pcaVectorsSvd = sqrt(S)*V(:,1:Obj.nComponents)';
             %             toc;
                 
         end
