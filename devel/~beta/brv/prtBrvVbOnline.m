@@ -68,7 +68,7 @@ classdef prtBrvVbOnline
                             obj.vbVerboseMovieFrames(end+1) = getframe(gcf);
                         end
                     end
-                    
+                    drawnow;
                 end
                 
             end
