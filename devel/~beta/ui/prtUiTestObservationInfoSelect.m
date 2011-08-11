@@ -5,3 +5,10 @@ selectionDataSet = nfHvscXls2PartDataSetClass(fullfile(hvscRoot,'util','truth','
 
 uiObj = prtUiDataSetStandardObservationInfoSelect(selectionDataSet.observationInfo);
 %%
+
+close all
+clear classes
+
+selectionDataSet = prtDataGenGlass;
+
+uiObj = prtUiDataSetStandardObservationInfoSelect(selectionDataSet.observationInfo);
