@@ -22,11 +22,11 @@ classdef prtUiDataSetStandardObservationInfoSelect < prtUiManagerPanel
             self.handleStruct.table = uitable('parent',self.managedHandle,...
                 'units','normalized','position',[0.05 0.05 0.9 0.8]);
             
-%             tableJObj = findjobj(handle(self.handleStruct.table));
-%             self.handleStruct.tableJava = tableJObj(1).handle.getViewport.getView;
-            
             self.handleStruct.jScrollPane = findjobj(self.handleStruct.table);
             self.handleStruct.jTable = self.handleStruct.jScrollPane.getViewport.getView;
+            
+            %self.handleStruct.tableContextMenuItems{1} = uimenu(hcmenu, 'Label', 'Create', 'Callback', @(myHandle,eventData)selkf);
+            %self.handleStruct.tableContextMenu = uicontextmenu(
             
             self.handleStruct.edit = uicontrol(self.managedHandle,...
                 'style','edit','units','normalized',...
@@ -66,9 +66,13 @@ classdef prtUiDataSetStandardObservationInfoSelect < prtUiManagerPanel
                 %set(self.handleStruct.jTable,'SelectionForeground',[0.8 0.8 0.8])
                 self.handleStruct.jTable.setColumnAutoResizable(true);
                 self.handleStruct.jTable.setAutoResizeMode(self.handleStruct.jTable.AUTO_RESIZE_NEXT_COLUMN)
+                
+                
             end
             
         end
+        %function 
+        
         function editCallback(self, myHandle, eventData)
             cStr = get(myHandle,'string');
             
