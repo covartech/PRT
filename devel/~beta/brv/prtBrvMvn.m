@@ -35,7 +35,7 @@ classdef prtBrvMvn < prtBrvObsModel & prtBrvVbOnlineObsModel
     end    
     
     properties (Hidden)
-        initFudgeFactor = 1; % Between zero and 1, probably > 0.9
+        initFudgeFactor = 0.9; % Between zero and 1, probably > 0.9
         initModifiyPrior = true;
     end
     

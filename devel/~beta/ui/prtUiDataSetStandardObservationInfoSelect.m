@@ -1,6 +1,7 @@
 classdef prtUiDataSetStandardObservationInfoSelect < prtUiManagerPanel
     properties
         prtDs
+        tableFieldNames = {};
         handleStruct
         dataCell = {};
     end
@@ -25,8 +26,8 @@ classdef prtUiDataSetStandardObservationInfoSelect < prtUiManagerPanel
             self.handleStruct.jScrollPane = findjobj(self.handleStruct.table);
             self.handleStruct.jTable = self.handleStruct.jScrollPane.getViewport.getView;
             
-            %self.handleStruct.tableContextMenuItems{1} = uimenu(hcmenu, 'Label', 'Create', 'Callback', @(myHandle,eventData)selkf);
-            %self.handleStruct.tableContextMenu = uicontextmenu(
+            self.handleStruct.tableContextMenu = uicontextmenu;
+            self.handleStruct.tableContextMenuItemInferSelection = uimenu(self.handleStruct.tableContextMenu, 'Label', 'Infer Selection', 'Callback', @(myHandle,eventData)self.uiMenuInferSelection(myHandle,eventData));
             
             self.handleStruct.edit = uicontrol(self.managedHandle,...
                 'style','edit','units','normalized',...
@@ -37,12 +38,12 @@ classdef prtUiDataSetStandardObservationInfoSelect < prtUiManagerPanel
                 'callback',@(myHandle,eventData)self.editCallback(myHandle,eventData));
             
             if ~isempty(self.prtDs.observationInfo)
-                fnames = fieldnames(self.prtDs.observationInfo);
+                self.tableFieldNames = fieldnames(self.prtDs.observationInfo);
             
-                self.dataCell = cell(length(self.prtDs.observationInfo),length(fnames));
+                self.dataCell = cell(length(self.prtDs.observationInfo),length(self.tableFieldNames));
                 for iObs = 1:size(self.dataCell,1)
                     for iField = 1:size(self.dataCell,2)
-                        cVal = self.prtDs.observationInfo(iObs).(fnames{iField});
+                        cVal = self.prtDs.observationInfo(iObs).(self.tableFieldNames{iField});
                         if ischar(cVal) || islogical(cVal) || (isnumeric(cVal) && isscalar(cVal))
                             self.dataCell{iObs,iField} = cVal;
                         else
@@ -52,10 +53,11 @@ classdef prtUiDataSetStandardObservationInfoSelect < prtUiManagerPanel
                 end
                  
                 set(self.handleStruct.table,'data',self.dataCell,...
-                    'ColumnName',fnames,...
-                    'ColumnEditable',false(1,length(fnames)),...
+                    'ColumnName',self.tableFieldNames,...
+                    'ColumnEditable',false(1,length(self.tableFieldNames)),...
                     'ColumnWidth','auto','RearrangeableColumns','on',...
-                    'RowStriping','off','RowName','');
+                    'RowStriping','off','RowName','',...
+                    'uicontextmenu',self.handleStruct.tableContextMenu);
                 
                 self.handleStruct.jTable.setSortable(true);		% or: set(jtable,'Sortable','on');
                 self.handleStruct.jTable.setAutoResort(true);
@@ -71,7 +73,14 @@ classdef prtUiDataSetStandardObservationInfoSelect < prtUiManagerPanel
             end
             
         end
-        %function 
+        function uiMenuInferSelection(self,myHandle,eventData)
+            
+            rows = get(self.handleStruct.jTable,'SelectedRows')+1; % Java is 0 based indexed
+            cols = get(self.handleStruct.jTable,'SelectedColumns')+1; % Java is 0 based indexed
+            
+            keyboard
+            
+        end
         
         function editCallback(self, myHandle, eventData)
             cStr = get(myHandle,'string');

@@ -181,7 +181,7 @@ classdef prtBrvDiscreteStickBreakingHierarchy
             
             alphaParams = obj.alphaGammaParams;
             if length(alphaParams) < 2
-                alphaParams = alphaParams*[1 1];
+                alphaParams = cat(2,1,alphaParams);
             end
             
             val = alphaParams(2)./alphaParams(1);
