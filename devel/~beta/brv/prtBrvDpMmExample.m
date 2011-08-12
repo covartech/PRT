@@ -1,14 +1,16 @@
+close all
 clear classes
 ds = prtDataGenOldFaithful; x = ds.getX;
 %x = draw(prtRvGmm('components',cat(1,prtRvMvn('mu',[0 0],'sigma',eye(2)),prtRvMvn('mu',[3 3],'sigma',eye(2))),'mixingProportions',[0.6 0.4]),200);
 
 mm = prtBrvDpMm(repmat(prtBrvMvn(2),25,1));
-mm.mixingProportions.model.useGammaPriorOnScale = true;
-mm.mixingProportions.model.useOptimalSorting = false;
-mm.mixingProportions.model.alphaGammaParams = [1 1];
+mm.mixingProportions.model.useGammaPriorOnScale = false;
+mm.mixingProportions.model.useOptimalSorting = true;
+mm.mixingProportions.model.alphaGammaParams = [0.1 1];
 mm.vbConvergenceThreshold = 1e-6;
 mm.vbVerboseText = true;
 mm.vbVerbosePlot = true;
+mm.vbVerboseMovie = true;
 [mmLearned, training] = mm.vb(x);
 
 %%
