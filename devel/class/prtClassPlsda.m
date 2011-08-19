@@ -100,8 +100,8 @@ classdef prtClassPlsda < prtClass
             
             Obj.yMeansFactor = yMeans - xMeans*Obj.Bpls;
             
-%             ssT = diag(Obj.xFactors'*U);
-%             vipScore = sqrt(size(G.Data.Model.Use.X,2) * sum(bsxfun(@times, bsxfun(@rdivide,R,sqrt(sum(R.^2))).^2, ssT'),2) / sum(ssT(:)));
+            % ssT = diag(Obj.xFactors'*U);
+            % vipScore = sqrt(size(G.Data.Model.Use.X,2) * sum(bsxfun(@times, bsxfun(@rdivide,R,sqrt(sum(R.^2))).^2, ssT'),2) / sum(ssT(:)));
 
         end
         
@@ -110,6 +110,8 @@ classdef prtClassPlsda < prtClass
             DataSet = DataSet.setObservations(yOut);
         end
         
+        function xOut = runActionFast(Obj,xIn,ds) %#ok<INUSD>
+           xOut = bsxfun(@plus,xIn*Obj.Bpls, Obj.yMeansFactor);
+        end
     end
-    
 end

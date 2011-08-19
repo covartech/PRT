@@ -203,7 +203,12 @@ classdef prtRv < prtAction
         function DataSet = runAction(Obj, DataSet)
             DataSet = DataSet.setObservations(Obj.logPdf(DataSet));
         end
+        
+        function xOut = runActionFast(Obj, xIn, ds) %#ok<INUSD>
+            xOut = Obj.logPdf(xIn);
+        end
     end
+    
     
     methods (Access = 'private', Hidden = true)
         function missingMethodError(R,methodName) %#ok<MANU>

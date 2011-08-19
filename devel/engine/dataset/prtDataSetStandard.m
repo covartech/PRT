@@ -830,7 +830,7 @@ classdef prtDataSetStandard < prtDataSetBase
                 return
             end
             
-            assert(isa(Struct,'struct') && isvector(Struct) && numel(Struct)==obj.nObservations, 'prt:prtDataSetStandard:observationInfo', 'observationInfo must be an nObservations x 1 structure array.');
+            assert(isa(Struct,'struct') && numel(Struct)==obj.nObservations, 'prt:prtDataSetStandard:observationInfo', 'observationInfo must be an nObservations x 1 structure array.');
             
             obj.observationInfoDepHelper = Struct(:);
         end
@@ -918,6 +918,11 @@ classdef prtDataSetStandard < prtDataSetBase
             % DS = prtDataGenIris;
             % DS = DS.setObservationInfo('asdf',randn(DS.nObservations,1),'qwer',randn(DS.nObservations,1),'poiu',randn(DS.nObservations,10),'lkjh',mat2cell(randn(DS.nObservations,1),ones(DS.nObservations,1),1),'mnbv',mat2cell(randn(DS.nObservations,10),ones(DS.nObservations,1),10));
             % vals = DS.getObservationInfo('asdf');
+            
+            if nargin == 1
+                val = obj.observationInfo;
+                return
+            end
             
             assert(nargin==2,'prt:prtDataSetStandard:getObservationInfo','invalid number of input arguments, only one input argument should be specified.');
             

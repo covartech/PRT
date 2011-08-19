@@ -5,10 +5,19 @@ selectionDataSet = nfHvscXls2PartDataSetClass(fullfile(hvscRoot,'util','truth','
 
 uiObj = prtUiDataSetStandardObservationInfoSelect(selectionDataSet.observationInfo);
 %%
+clear classes
+close all
 
+selectionDataSet = prtDataGenNcaaFootball2010_records;
+selectionDataSet = selectionDataSet.select(@(S)((S.awayGames>=8) & (S.homeGames>=8) & ~S.includesSubDivisionTeam));
+%%
+uiObj = prtUiDataSetStandardObservationInfoSelect(selectionDataSet.observationInfo);
+%%
+uiObj = prtUiStructureTable(selectionDataSet.observationInfo);
+
+%%
 close all
 clear classes
 
 selectionDataSet = prtDataGenGlass;
-
-uiObj = prtUiDataSetStandardObservationInfoSelect(selectionDataSet.observationInfo);
+uiObj = prtUiStructureTable(selectionDataSet.observationInfo);

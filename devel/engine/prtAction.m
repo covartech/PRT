@@ -133,7 +133,12 @@ classdef prtAction
         %   DataSet = runAction(Obj, DataSet)
         DataSet = runAction(Obj, DataSet)
     end
-        
+    methods (Access = protected, Hidden = true)
+        function xOut = runActionFast(Obj, xIn, ds) %#ok<STOUT,INUSD>
+            error('prt:prtAction:runActionFast','The prtAction (%s) does not have a runActionFast method(). Therefore runFast() cannot be used.',class(Obj));
+        end
+    end
+    
     methods (Hidden)
         function Obj = plus(in1,in2)
             if isa(in2,'prtAlgorithm')
@@ -536,6 +541,25 @@ classdef prtAction
                 DataSetOut = ActionObj.updateDataSetFeatureNames(DataSetOut);
             end
         end
+        
+        function xIn = preRunProcessingFast(ActionObj, xIn, ds) %#ok<INUSD,MANU>
+            % preRunProcessingFast - Processing done before runAction()
+            %   Called by runFast(). Can be overloaded by prtActions to
+            %   store specific information about the xIn or Classifier
+            %   prior to runAction.
+            %   
+            %   xOut = preRunProcessingFast(ActionObj, xIn, ds)
+        end
+        
+        function xOut = postRunProcessingFast(ActionObj, xIn, xOut, dsIn) %#ok<MANU,INUSD>
+            % postRunProcessingFast - Processing done after runAction()
+            %   Called by runFast(). Can be overloaded by prtActions to
+            %   alter the results of run() to modify outputs using
+            %   parameters of the prtAction.
+            %   
+            %   DataSet = postRunProcessing(ActionObj, DataSet)
+        end
+        
     end
     methods (Access = protected, Hidden)
         function DataSetOut = runActionOnTrainingData(Obj, DataSetIn)
@@ -634,6 +658,11 @@ classdef prtAction
     end
     
     methods (Hidden = true)
+        function out = rt(Obj,in)
+            % Train and then run an action on a dataset
+            out = run(train(Obj,in),in);
+        end
+        
         function Obj = setVerboseStorage(Obj,val)
             assert(numel(val)==1 && (islogical(val) || (isnumeric(val) && (val==0 || val==1))),'prtAction:invalidVerboseStorage','verboseStorage must be a logical');
             Obj.verboseStorageInternal = logical(val);
@@ -739,6 +768,31 @@ classdef prtAction
                 S.(propNames{iProp}) = cVal;
             end
             S.userData = obj.userData;
+        end
+        
+        function xOut = runFast(Obj, xIn, ds)         
+            % RUNFAST  Run a prtAction object on a matrix.
+            %   The specific action must have overloaded the runActionFast
+            %   method.
+            
+            if ~Obj.isTrained
+                error('prtAction:runFast:ActionNotTrained','Attempt to run a prtAction of type %s that was not trained',class(Obj));
+            end
+                
+            if isempty(xIn)
+                xOut = xIn;
+                return
+            end
+            
+            if nargin > 2
+                xIn = preRunProcessingFast(Obj, xIn, ds);
+                xOut = runActionFast(Obj, xIn, ds);
+                xOut = postRunProcessingFast(Obj, xIn, xOut, ds);
+            else
+                xIn = preRunProcessingFast(Obj, xIn);
+                xOut = runActionFast(Obj, xIn);
+                xOut = postRunProcessingFast(Obj, xIn, xOut);
+            end
         end
     end
     

@@ -73,5 +73,11 @@ classdef prtDecisionMap < prtDecision
             classList = classList(:);
             DS = DS.setObservations(classList);
         end
+    
+        function xOut = runActionFast(Obj,xIn,ds) %#ok<INUSD>
+           [twiddle,index] = max(xIn,[],2); %#ok<ASGLU>
+           xOut = Obj.classList(index);
+           xOut = xOut(:);
+        end
     end
 end

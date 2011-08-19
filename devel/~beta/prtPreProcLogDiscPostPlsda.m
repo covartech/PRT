@@ -70,6 +70,12 @@ classdef prtPreProcLogDiscPostPlsda < prtPreProcClass
             end
         end
         
+        function xOut = runActionFast(Obj,xIn,ds) %#ok<INUSD>
+            xOut = zeros(size(xIn,1), length(Obj.logDiscWeights));
+            for iFeature = 1:size(xOut,2)
+                xOut(:,iFeature) = 1./(1 + exp(-xIn(:,iFeature)*Obj.logDiscWeights(iFeature) + Obj.logDiscMeans(iFeature)));
+            end
+        end
     end
     
 end

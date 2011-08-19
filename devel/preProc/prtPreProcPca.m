@@ -141,10 +141,14 @@ classdef prtPreProcPca < prtPreProc
         end
         
         function DataSet = runAction(Obj,DataSet)
-            
             X = DataSet.getObservations;
             X = bsxfun(@minus,X,Obj.means);
             DataSet = DataSet.setObservations(X*Obj.pcaVectors);
         end
+        
+        function xOut = runActionFast(Obj,xIn)
+            xOut = bsxfun(@minus,xIn,Obj.means)*Obj.pcaVectors;
+        end
+        
     end
 end

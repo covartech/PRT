@@ -335,6 +335,31 @@ classdef prtClass < prtAction
             OutputDataSet = postRunProcessing@prtAction(ClassObj, InputDataSet, OutputDataSet);
         end
         
+        function xOut = postRunProcessingFast(ClassObj, xIn, xOut, dsIn) %#ok<MANU,INUSD>
+            % Overload postRunProcessingFast (from prtAction) so that we can
+            % enforce twoClassParadigm
+            
+            if ~isempty(ClassObj.internalDecider)
+                xOut = ClassObj.internalDecider.run(xOut);
+            end
+            
+            if ~isempty(ClassObj.yieldsMaryOutput) && ~isnan(ClassObj.yieldsMaryOutput)
+                if ClassObj.yieldsMaryOutput
+                    % Mary classifier output mary decision statistics
+                    % enforce that it has output one for each class in the
+                    % training data set.
+                    assert(size(xOut,2) == ClassObj.dataSetSummary.nClasses,'M-ary classifiers must yield observations with nFeatures equal to the number of unique classes in the training data set. This classifier must be modified to output observations with the proper dimensionality. If integer outputs are desired, output a binary matrix.');
+                else
+                    % Run Function provided mary output but ClassObj knows
+                    % not to supply this. We must run
+                    % maryOutput2binaryOutput()
+                    xOut = maryOutput2binaryOutputFast(ClassObj,xOut);
+                end
+            end
+            
+            xOut = postRunProcessingFast@prtAction(ClassObj, xIn, xOut);
+        end
+        
         function OutputDataSet = maryOutput2binaryOutput(ClassObj,OutputDataSet) %#ok
             % Default method to convert an Mary output to a Binary output 
             % Can/should be overloaded by classifiers
@@ -342,7 +367,19 @@ classdef prtClass < prtAction
             % The default just takes the last (right-most) output dimension
             % In classifiers this will typically be the confidence of the
             % class with the highest valued target index.
+            if isnumeric(OutputDataSet) || islogical(OutputDataSet)
+                % Called by runfast
+                OutputDataSet = OutputDataSet(:,end);
+                return
+            end
+            
             OutputDataSet = OutputDataSet.setObservations(OutputDataSet.getObservations(:,end));
+        end
+        function xOut = maryOutput2binaryOutputFast(ClassObj,xOut) %#ok
+            % Default method to convert an Mary output to a Binary output 
+            % when operating in fast (matrix only) mode. Can/should be
+            % overloaded by classifiers 
+            xOut = xOut(:,end);
         end
                         
         % Plotting functions

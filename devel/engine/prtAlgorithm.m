@@ -295,6 +295,23 @@ classdef prtAlgorithm < prtAction
             DataSet = catFeatures(input{finalNodes});
         end
         
+        function xOut = runActionFast(Obj,xIn,ds) %#ok<INUSD>
+            
+            if nargin > 2
+                error('prt:prtAlgorithm:runActionFast','prtAlgorithm.runFast cannot currently take the input argument ds');
+            end
+            
+            topoOrder = prtUtilTopographicalSort(Obj.connectivityMatrix');
+            input = cell(size(Obj.connectivityMatrix,1),1);
+            input{1} = xIn;
+            
+            for i = 2:length(topoOrder)-1
+                currentInput = cat(2,input{Obj.connectivityMatrix(topoOrder(i),:)});
+                input{topoOrder(i)} = runFast(Obj.actionCell{topoOrder(i-1)},currentInput);
+            end
+            finalNodes = any(Obj.connectivityMatrix(Obj.outputNodes,:),1);
+            xOut = cat(2,input{finalNodes});
+        end
     end
     
     methods (Static)

@@ -85,7 +85,16 @@ classdef prtClassMap < prtClass
             DataSet = prtDataSetClass(exp(bsxfun(@minus, logLikelihoods, prtUtilSumExp(logLikelihoods.').')));
             DataSet.actionData.logLikelihoods = logLikelihoods;
         end
-        
+    
+        function xOut = runActionFast(Obj,xIn,ds) %#ok<INUSD>
+            
+            logLikelihoods = zeros(size(xIn,1),length(Obj.rvs));
+            for iY = 1:length(Obj.rvs)
+                logLikelihoods(:,iY) = runFast(Obj.rvs(iY), xIn);
+            end
+            
+            xOut = exp(bsxfun(@minus, logLikelihoods, prtUtilSumExp(logLikelihoods.').'));
+        end
     end
     
 end

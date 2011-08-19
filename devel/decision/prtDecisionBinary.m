@@ -34,6 +34,10 @@ classdef prtDecisionBinary < prtDecision
             theClasses = Obj.classList;
             DS = DS.setObservations(theClasses((DS.getObservations >= Obj.getThreshold) + 1));
         end
+         function xOut = runActionFast(Obj,xIn,ds) %#ok<INUSD>
+            theClasses = Obj.classList;
+            xOut = theClasses((xIn >= Obj.getThreshold) + 1);
+        end
     end
     
     methods (Access = protected, Hidden = true)

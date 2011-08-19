@@ -123,8 +123,11 @@ function setBestFontSize(imAxes,textHandles)
 if ~ishandle(imAxes)
     return
 end
-
-fs = getBestFontSize(imAxes);
+try
+    fs = getBestFontSize(imAxes);
+catch %#ok<CTCH>
+    return
+end
 
 for iHandle = 1:numel(textHandles)
     if ishandle(textHandles(iHandle))
