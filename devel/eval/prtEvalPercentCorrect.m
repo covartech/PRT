@@ -54,7 +54,8 @@ else
            guess = results.getObservations;
         end
     end
-    confusionMatrix = prtScoreConfusionMatrix(guess,dataSet.getTargets);
-    percentCorrect = prtUtilConfusion2PercentCorrect(confusionMatrix);
+    percentCorrect = prtScorePercentCorrect(guess,dataSet.getTargets);
+    %confusionMatrix = prtScoreConfusionMatrix(guess,dataSet.getTargets);
+    %percentCorrect = prtUtilConfusion2PercentCorrect(confusionMatrix);
 end
   

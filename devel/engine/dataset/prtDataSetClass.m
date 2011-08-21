@@ -1414,7 +1414,8 @@ classdef prtDataSetClass  < prtDataSetStandard
             %
             % This whole function is for use when multiple different data
             % sets are loaded for training and testing, and there's no
-            % guarantee that the class indices or names match.
+            % guarantee that the class indices or names match.  That makes
+            % cunfusion matrix stuff complicated.  
             %
             %Here's an example unit test:
             %
@@ -1440,6 +1441,7 @@ classdef prtDataSetClass  < prtDataSetStandard
             
             unionClasses = union(uClasses1,uClasses2);
             newClassValue = max(uTargets1)+1;
+            setUniqueTargets = [];
             setClasses2 = {};
             for unionInd = 1:length(unionClasses)
                 targetInd1 = find(strcmp(uClasses1,unionClasses(unionInd)));
@@ -1447,12 +1449,16 @@ classdef prtDataSetClass  < prtDataSetStandard
                 if ~isempty(targetInd1) && ~isempty(targetInd2)
                     newTargets(oldTargets == uTargets2(targetInd2)) = uTargets1(targetInd1);
                     setClasses2(end+1) = uClasses2(targetInd2);
+                    setUniqueTargets(end+1) = uTargets1(targetInd1);
                 elseif  ~isempty(targetInd2)
                     newTargets(oldTargets == uTargets2(targetInd2)) = newClassValue;
-                    newClassValue = newClassValue + 1;
+                    setUniqueTargets(end+1) = newClassValue;
                     setClasses2(end+1) = uClasses2(targetInd2);
+                    newClassValue = newClassValue + 1;
                 end
             end
+            [sortedClasses,sortedClassInds] = sort(setUniqueTargets);
+            setClasses2 = setClasses2(sortedClassInds);
             ds2 = ds2.setTargets(newTargets);
             %ds2.classNames = uClasses2;
             ds2.classNames = setClasses2;

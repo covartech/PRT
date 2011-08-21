@@ -1,6 +1,6 @@
 close all
 clear classes
-a = prtGuiPlot(1:10,randn(10,5),'lineWidth',1);
+a = prtUiPlot(1:10,randn(10,5),'lineWidth',1);
 a.addPlot(11:2:30,randn(10,5),'lineWidth',2,'lineStyle','--');
 %%
 for iUpdate = 1:1000
@@ -20,11 +20,11 @@ end
 
 close all
 clear classes
-p = prtGuiManagerPanel;
+p = prtUiManagerPanel;
 %%
 close all
 clear classes
-s = prtGuiSubplot({{2,2,1:2},{2, 2, 3},{2, 2, 4}});
+s = prtUiSubplot({{2,2,1:2},{2, 2, 3},{2, 2, 4}});
 
 s.axesManagers{1}.plot(1:2)
 s.axesManagers{2}.plot(0:-1:-2)

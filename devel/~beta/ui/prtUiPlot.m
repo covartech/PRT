@@ -2,7 +2,7 @@ function varargout = prtUiPlot(varargin)
 % obj = prtUiPlot(input, arguments, to, plot, ...)
 %   obj is a prtUiPlotManager
 
-obj = prtGuiManagerPlot;
+obj = prtUiManagerPlot;
 obj.plot(varargin{:});
 
 if nargout

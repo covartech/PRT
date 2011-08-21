@@ -10,6 +10,12 @@ classdef prtUiManagerAxes < prtUiManager
         fixedYLims
         fixedZLims
         hold
+        
+        defaultPosition = [0.1300    0.1100    0.7750    0.8150];
+    end
+    
+    properties (Constant)
+        factoryDefaultPosition = [0.1300    0.1100    0.7750    0.8150];
     end
     
     properties (Hidden = true)

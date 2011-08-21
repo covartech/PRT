@@ -22,6 +22,7 @@ classdef prtUiManagerPlot < prtUiManagerAxes
             end
             updateLineColors(self,indsToSet);
         end
+        
         function updateLineColors(self,indsToSet)
             if nargin < 2 || isempty(indsToSet)
                 indsToSet = 1:self.nLines;
@@ -32,9 +33,11 @@ classdef prtUiManagerPlot < prtUiManagerAxes
                 set(self.lineHandles(iLine),'color',colors(iLine,:));
             end
         end
+        
         function plot(self,varargin)
             self.lineHandles = plot(self.managedHandle,varargin{:});
         end
+        
         function replot(self, xData, yData, zData)
             if nargin < 3
                 yData = [];
@@ -65,6 +68,7 @@ classdef prtUiManagerPlot < prtUiManagerAxes
                  end
             end
         end
+        
         function addPlot(self,varargin)
             self.hold = 'on';
             newLineHandles = plot(varargin{:});
@@ -75,6 +79,7 @@ classdef prtUiManagerPlot < prtUiManagerAxes
             
             self.setAxesConstraints();
         end
+        
         function updateData(self, xData, yData, zData, inds)
             % updateData(self, xData)
             % updateData(self, xData, yData)
@@ -179,9 +184,11 @@ classdef prtUiManagerPlot < prtUiManagerAxes
         function val = get.nLines(self)
             val = length(self.lineHandles);
         end
+        
         function set.nLines(self,val) %#ok<INUSD,MANU>
             error('prt:prtGuiManagerPlot:nLines','Setting nLines is not allowed');
         end
+        
         function lh = get.lineHandles(self)
             lh = self.lineHandles;
             assert(all(ishandle(lh)),'prt:prtGuiManagerPlot:badHandles','Some or all of the requested handles are no longer valid. The axes may have been deleted.');
