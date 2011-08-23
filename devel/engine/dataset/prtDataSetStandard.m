@@ -1027,7 +1027,11 @@ classdef prtDataSetStandard < prtDataSetBase
                 end
                 assert(size(cVal,1) == obj.nObservations,'observationInfo values must have nObservations rows.');
                 
-                cValSet = mat2cell(cVal,ones(size(cVal,1),1),size(cVal,2));
+                if iscellstr(cVal)
+                    cValSet = cVal;
+                else
+                    cValSet = mat2cell(cVal,ones(size(cVal,1),1),size(cVal,2));
+                end
                 
                 if isempty(cStruct)
                     cStruct = struct(cName,cValSet);

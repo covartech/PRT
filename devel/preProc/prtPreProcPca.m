@@ -52,12 +52,8 @@ classdef prtPreProcPca < prtPreProc
                                       % function of the number of
                                       % components
         
-        
     end
     
-    properties( SetAccess = private, Hidden = true)
-          pcaVectorsSvd = [];
-    end
     methods
         
           % Allow for string, value pairs
@@ -85,10 +81,7 @@ classdef prtPreProcPca < prtPreProc
     
     methods (Access = protected, Hidden = true)
         
-        %NOTE: I think we can replace all this with one call to svds
         function Obj = trainAction(Obj,DataSet)
-                       
-            nSamplesEmThreshold = 1000;
                        
             Obj.means = prtUtilNanMean(DataSet.getObservations(),1);
             x = bsxfun(@minus,DataSet.getObservations(),Obj.means);
@@ -100,50 +93,20 @@ classdef prtPreProcPca < prtPreProc
                 Obj.nComponents = maxComponents;
             end
             
-            % We no longer divide by the STD of each column to match princomp
-            % 30-Jun-2009 14:05:20    KDM
-            useHD = size(x,2) > size(x,1);
+            [s,u,v] = svds(x,Obj.nComponents); %#ok<ASGLU>
             
-            if useHD
-                useEM = size(x,1) > nSamplesEmThreshold;
-            else
-                useEM = false;
-            end
-            
-            %Figure out whether to use regular, HD, or EM PCA:
-            if useHD
-                if useEM
-                    [twiddle, Obj.pcaVectors] = prtUtilPcaEm(x,Obj.nComponents); %#ok<ASGLU>
-                else
-                    [twiddle, Obj.pcaVectors] = prtUtilPcaHd(x,Obj.nComponents); %#ok<ASGLU>
-                end
-            else
-                Obj.pcaVectors = prtUtilPca(x,Obj.nComponents);
-            end
+            Obj.pcaVectors = v;
             
             Obj.trainingTotalVariance = sum(var(x));
-            pcaVariance = cumsum(var(x*Obj.pcaVectors));
+            pcaVariance = cumsum(var(x*v));
             
             Obj.totalVarianceCumulative = pcaVariance;
             Obj.totalVariance = Obj.totalVarianceCumulative(end);
-            
-            %For debugging: if you want to compare to SVD decomposition.
-            %SVD is marginally faster for smaller matrices, but EM and HD
-            %are better for larger matrices.  We use the right ones at the
-            %right times.  SVD and PCA should give about the same PC's - V
-            %should be ~= Obj.pcaVectors
-            %             disp('svd')
-            %             tic;
-            %             [U, S, V] = svd(x,0);
-            %             pcaVectorsSvd = sqrt(S)*V(:,1:Obj.nComponents)';
-            %             toc;
                 
         end
         
         function DataSet = runAction(Obj,DataSet)
-            X = DataSet.getObservations;
-            X = bsxfun(@minus,X,Obj.means);
-            DataSet = DataSet.setObservations(X*Obj.pcaVectors);
+            DataSet = DataSet.setObservations(Obj.runActionFast(DataSet.getObservations));
         end
         
         function xOut = runActionFast(Obj,xIn)

@@ -21,3 +21,4 @@ clear classes
 
 selectionDataSet = prtDataGenGlass;
 uiObj = prtUiStructureTable(selectionDataSet.observationInfo);
+%%
