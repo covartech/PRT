@@ -17,6 +17,7 @@ classdef prtPreProcEnergyNormalizeRows < prtPreProc
         
         function Obj = prtPreProcEnergyNormalizeRows(varargin)
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
+            Obj.verboseFeatureNames = false;
         end
     end
     

@@ -51,7 +51,7 @@ classdef prtPreProcPca < prtPreProc
                                       % reduced dimension data as a
                                       % function of the number of
                                       % components
-        
+        totalPercentVarianceCumulative = []; %The perceont of the total training variance explained in totalVarianceCumulative
     end
     
     methods
@@ -102,7 +102,7 @@ classdef prtPreProcPca < prtPreProc
             
             Obj.totalVarianceCumulative = pcaVariance;
             Obj.totalVariance = Obj.totalVarianceCumulative(end);
-                
+            Obj.totalPercentVarianceCumulative = Obj.totalVarianceCumulative./Obj.trainingTotalVariance;
         end
         
         function DataSet = runAction(Obj,DataSet)
