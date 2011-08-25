@@ -1063,6 +1063,10 @@ classdef prtDataSetClass  < prtDataSetStandard
             
             uClasses = obj.uniqueClasses;
             holdState = get(gca,'nextPlot');
+            if strcmpi(holdState,'replace')
+                delete(gca);
+                gca;
+            end
             hold on
             for i = 1:obj.nObservations;
                 centerI = 0;
