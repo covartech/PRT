@@ -1,5 +1,5 @@
 classdef prtClassGlrt < prtClass
-    % prtClassGlrt  Generlized likelihood ratio test classifier
+    % prtClassGlrt  Generalized likelihood ratio test classifier
     %
     %    CLASSIFIER = prtClassGlrt returns a Glrt classifier
     %
@@ -10,15 +10,8 @@ classdef prtClassGlrt < prtClass
     %    A prtClassGlrt object inherits all properties from the abstract class
     %    prtClass. In addition is has the following properties:
     %
-    %    rvH0 - A prtRvMvn object representing the mean and variance of
-    %           hypothesis 0.
-    %    rvH1 - A prtRvMvn object representing the mean and variance of
-    %           hypothesis 0.
-    % 
-    %    For more information on Glrt classifiers, refer to the
-    %    following URL:
-    %  
-    %    XXX Need ref
+    %    rvH0 - A prtRvMvn object representing hypothesis 0
+    %    rvH1 - A prtRvMvn object representing hypothesis 1
     %
     %    A prtClassGlrt object inherits the TRAIN, RUN, CROSSVALIDATE and
     %    KFOLDS methods from prtAction. It also inherits the PLOT method
@@ -32,16 +25,17 @@ classdef prtClassGlrt < prtClass
     %     classifier = classifier.train(TrainingDataSet);    % Train
     %     classifier.plot;
     %     classified = classifier.run(TestDataSet);
-    %    subplot(2,1,1);
-    %    classifier.plot;
-    %    subplot(2,1,2);
-    %    [pf,pd] = prtScoreRoc(classified,TestDataSet);
-    %    h = plot(pf,pd,'linewidth',3);
-    %    title('ROC'); xlabel('Pf'); ylabel('Pd');
+    %     subplot(2,1,1);
+    %     classifier.plot;
+    %     subplot(2,1,2);
+    %     [pf,pd] = prtScoreRoc(classified,TestDataSet);
+    %     h = plot(pf,pd,'linewidth',3);
+    %     title('ROC'); xlabel('Pf'); ylabel('Pd');
     %
     %    See also prtClass, prtClassLogisticDiscriminant, prtClassBagging,
-    %    prtClassMap, prtClassCap, prtClassBinaryToMaryOneVsAll, prtClassDlrt,
-    %    prtClassPlsda, prtClassFld, prtClassRvm, prtClassGlrt,  prtClass
+    %    prtClassMap, prtClassCap, prtClassBinaryToMaryOneVsAll
+    %    prtClassDlrt, prtClassPlsda, prtClassFld, prtClassRvm,
+    %    prtClassGlrt,  prtClass
     
     
     properties (SetAccess=private)
@@ -77,6 +71,9 @@ classdef prtClassGlrt < prtClass
     methods (Access=protected, Hidden = true)
        
         function Obj = trainAction(Obj,DataSet)
+            
+            assert(DataSet.isBinary, 'prt:prtClassGlrt:nonBinaryData','prtClassGlrt requires a binary dataset.');
+            
             Obj.rvH0 = mle(Obj.rvH0, DataSet.getObservationsByClassInd(1));
             Obj.rvH1 = mle(Obj.rvH1, DataSet.getObservationsByClassInd(2));
         end

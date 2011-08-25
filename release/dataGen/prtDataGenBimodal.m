@@ -12,11 +12,10 @@ function DataSet = prtDataGenBimodal(N)
 %  dataSet = prtDataGenBimodal;
 %  plot(dataSet)
 %
-% See also: prtDataSetClass, prtDataGenCircles, prtDataGenIris,
-% prtDataGenManual, prtDataGenMary, prtDataGenNoisySinc,
-% prtDataGenOldFaithful,prtDataGenProtate, prtDataGenSprial,
-% prtDataGenSpiral3Regress prtDataGenUnimodal, prtDataGenSwissRoll,
-% prtDataGenUnimodal, prtDataGenXor
+%   See also: prtDataSetClass, prtDataGenBiModal, prtDataGenIris,
+%   prtDataGenMary, prtDataGenNoisySinc, prtDataGenOldFaithful,
+%   prtDataGenSpiral, prtDataGenUnimodal, prtDataGenUnimodal, prtDataGenXor
+
 
 % Copyright 2010, New Folder Consulting, L.L.C.
 

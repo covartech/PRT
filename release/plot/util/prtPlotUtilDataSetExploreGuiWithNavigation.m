@@ -414,7 +414,7 @@ set(navFigH,'visible','on');
         
         set(H.xPopUp,'value',plotInds(1)) % Always have at least 1 features
         if plotInds(2) > 0
-            set(H.yPopUp,'value',plotInds(2))
+            set(H.yPopUp,'value',plotInds(2)+1)
         else
             set(H.yPopUp,'value',1) % None;
         end

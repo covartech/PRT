@@ -65,6 +65,9 @@ classdef prtUtilProgressBar
     properties (Hidden = true)
         allowStop = false;
         isDead = false;
+        globalTitleStr = '-auto';
+        
+        barIndex  % Used internally
         
         % Restricted update parameters
         minTimeBetweenUpdates = 0.2; % in seconds
@@ -93,11 +96,6 @@ classdef prtUtilProgressBar
         
         % Time Estimate Smoothing
         nSamplesForTimeEstSmoothing = 25;
-    end
-    
-    properties (Hidden = true)
-        barIndex
-        
     end
     
     methods
@@ -129,8 +127,11 @@ classdef prtUtilProgressBar
             Obj = prtUtilAssignStringValuePairs(Obj, varargin{:});
             
             % Attempt to locate parent
+            oldHandleVisilibity = get(0,'ShowHiddenHandles');
+            set(0,'ShowHiddenHandles','on');
             oldFigureHandle = findobj('tag','PrtProgressBar','HandleVisibility','off');
-           
+            set(0,'ShowHiddenHandles',oldHandleVisilibity);
+            
             if Obj.reset && ~isempty(oldFigureHandle)
                 close(oldFigureHandle)
                 oldFigureHandle = [];
@@ -158,8 +159,7 @@ classdef prtUtilProgressBar
             Obj.update(percentage); % Actually update the bars so that we can initialize partially done
         end
         function Obj = update(Obj, percentage)
-            assert(~(percentage > 1+eps | percentage < -eps),'prt:prtUtilProgressBar','progress must be a scalar percentage in the range [0 1]');
-            
+            assert(numel(percentage)==1 &&  ~(percentage > 1+eps || percentage < -eps),'prt:prtUtilProgressBar','progress must be a scalar percentage in the range [0 1]');
             
             if  Obj.isCanceled || Obj.isDead || ~ishandle(Obj.figureHandle) || strcmpi(get(Obj.figureHandle,'BeingDeleted'),'on')
                 Obj.isCanceled = true;
@@ -171,10 +171,15 @@ classdef prtUtilProgressBar
             prtUtilProgressBarData = guidata(Obj.figureHandle);
 
             if Obj.barIndex > prtUtilProgressBarData.nBars
-                % We deleted a bar (possibly through auto close 
-                % We gotta create a new bar
-                Obj = addBar(Obj);
-                prtUtilProgressBarData = guidata(Obj.figureHandle);
+                % We deleted at least one bar (possibly through auto close 
+                % We gotta create a new bar(s)
+                
+                nBarsNeeded = Obj.barIndex-prtUtilProgressBarData.nBars;
+                for iNewBar = 1:nBarsNeeded
+                    Obj = addBar(Obj);
+                end
+                Obj.update(percentage);
+                return;
             end
                 
             bar = prtUtilProgressBarData.bars(Obj.barIndex);
@@ -183,7 +188,7 @@ classdef prtUtilProgressBar
             % now() provides
             currentTime = 86400*now();
             
-            bar.percentage = percentage; % We flip the percentages so that the left most appears on top which feels more natural (I think)            
+            bar.percentage = percentage;
             
             % We only want to store times and percentages if the
             % percentages are different than the last time we saved.
@@ -211,7 +216,10 @@ classdef prtUtilProgressBar
                 
             % Update Bar
             set(bar.foregroundPatchHandle,'Position',[cPatchPosition(1:2), min(max(0.1,totalPatchArea*percentage),totalPatchArea), cPatchPosition(4)]);
-                
+            
+            % Update title string (sub title)
+            set(bar.topTextHandle,'string',Obj.titleStr);
+            
             % Update texts
             if sum(isfinite(bar.lastIterationsTimes)) == 1
                 % First update with percetage > 0
@@ -235,30 +243,46 @@ classdef prtUtilProgressBar
             estimatedSecondsPerPercent = prtUtilNanMean(estimatedTimesPerPercent(~isnan(estimatedTimesPerPercent)));
             
             if isempty(estimatedSecondsPerPercent)
-                timeRemainingStr = '??:??:??';
                 estimatedRemainingTimeInSeconds = inf;
             else
                 estimatedRemainingTimeInSeconds = round(estimatedSecondsPerPercent*(1-percentage));
-                estimatedRemainingTimeInMinutes = estimatedRemainingTimeInSeconds/60;
-                estimatedRemainingHours = floor(estimatedRemainingTimeInMinutes/60);
-                estimatedRemainingMinutes = floor(mod(estimatedRemainingTimeInMinutes,60));
-                estimatedRemainingSeconds = mod(estimatedRemainingTimeInSeconds,60);
-               
-                timeRemainingStr = sprintf('%u:%02u:%02u',estimatedRemainingHours,estimatedRemainingMinutes,estimatedRemainingSeconds);
             end
             
-            elapsedTimeInSeconds = round(currentTime - bar.startTime);
-            elapsedTimeInMinutes = elapsedTimeInSeconds/60;
-                 
-            elapsedTimeHours = floor(elapsedTimeInMinutes/60);
-            elapsedTimeMinutes = floor(mod(elapsedTimeInMinutes,60));
-            elapsedTimeSeconds = mod(elapsedTimeInSeconds,60);
-            elapsedTimeStr = sprintf('%u:%02u:%02u',[elapsedTimeHours; elapsedTimeMinutes; elapsedTimeSeconds]);
-                 
-            set(bar.leftTextHandle,'string', elapsedTimeStr);
             if abs(estimatedRemainingTimeInSeconds-bar.estimatedRemainingTime) > 0.75 % Only update if we differ significantly. This eliminates jitter.
-                set(bar.rightTextHandle,'string', timeRemainingStr);
                 bar.estimatedRemainingTime = estimatedRemainingTimeInSeconds;
+                
+                timeDifferentials = currentTime - cat(1,prtUtilProgressBarData.bars.timeLastGraphicsUpdate);
+                remainingTimes = cat(1,prtUtilProgressBarData.bars.estimatedRemainingTime) - timeDifferentials;
+                remainingTimes(remainingTimes<0) = 0;
+                elapsedTimes = currentTime - cat(1,prtUtilProgressBarData.bars.startTime);
+                
+                for iBar = 1:prtUtilProgressBarData.nBars
+                    
+                    if isfinite(remainingTimes(iBar))
+                        estimatedRemainingTimeInSeconds = fix(remainingTimes(iBar));
+                        estimatedRemainingTimeInMinutes = estimatedRemainingTimeInSeconds/60;
+                        estimatedRemainingHours = floor(estimatedRemainingTimeInMinutes/60);
+                        estimatedRemainingMinutes = floor(mod(estimatedRemainingTimeInMinutes,60));
+                        estimatedRemainingSeconds = mod(estimatedRemainingTimeInSeconds,60);
+                    
+                        timeRemainingStr = sprintf('%u:%02u:%02u',estimatedRemainingHours,estimatedRemainingMinutes,estimatedRemainingSeconds);
+                        
+                        set(prtUtilProgressBarData.bars(iBar).rightTextHandle,'string',timeRemainingStr);
+                    end
+                    
+                    
+                    if isfinite(elapsedTimes(iBar))
+                        elapsedRemainingTimeInSeconds = fix(elapsedTimes(iBar));
+                        elapsedRemainingTimeInMinutes = elapsedRemainingTimeInSeconds/60;
+                        elapsedRemainingHours = floor(elapsedRemainingTimeInMinutes/60);
+                        elapsedRemainingMinutes = floor(mod(elapsedRemainingTimeInMinutes,60));
+                        elapsedRemainingSeconds = mod(elapsedRemainingTimeInSeconds,60);
+                        
+                        timeElapsedStr = sprintf('%u:%02u:%02u',elapsedRemainingHours,elapsedRemainingMinutes,elapsedRemainingSeconds);
+                        
+                        set(prtUtilProgressBarData.bars(iBar).leftTextHandle,'string',timeElapsedStr);
+                    end
+                end
             end
             
             % Always update the center 
@@ -267,7 +291,9 @@ classdef prtUtilProgressBar
             if ((currentTime-bar.timeLastGraphicsUpdate) > Obj.minTimeBetweenUpdates) || ((percentage-bar.percentLastGraphicsUpdate) > Obj.minPercentBetweenUpdates)
                 bar.timeLastGraphicsUpdate = currentTime;
                 bar.percentLastGraphicsUpdate = percentage;
-                set(Obj.figureHandle,'Name',Obj.titleStr);
+                
+                Obj.updateFigureName(prtUtilProgressBarData);
+                
                 drawnow;
             end
              
@@ -286,11 +312,50 @@ classdef prtUtilProgressBar
             
         end
         
+        function Obj = set.globalTitleStr(Obj,str)
+            assert(ischar(str),'globalTitleStr must be a character array');
+            
+            oldGlobalTitleStr = Obj.globalTitleStr;
+            Obj.globalTitleStr = str;
+            
+            if ishandle(Obj.figureHandle) %#ok<MCSUP>
+                prtUtilProgressBarData = guidata(Obj.figureHandle); %#ok<MCSUP>
+                isAuto = strcmpi(str,'-auto');
+                if (isAuto && strcmpi(oldGlobalTitleStr,prtUtilProgressBarData.globalTitleStr)) || ~isAuto
+                    prtUtilProgressBarData.globalTitleStr = Obj.globalTitleStr;
+                    guidata(Obj.figureHandle, prtUtilProgressBarData); %#ok<MCSUP>
+                end
+            end
+        end
+        
+        function updateFigureName(Obj,gData)
+            
+            if ~ishandle(Obj.figureHandle)
+                return
+            end
+            
+            if nargin < 2 || isempty(gData)
+                gData = guidata(Obj.figureHandle);
+            end
+            
+            if ~isfield(gData,'globalTitleStr')
+                guidata(Obj.figureHandle,gData);
+                Obj.globalTitleStr = Obj.globalTitleStr;
+                gData = guidata(Obj.figureHandle);                
+            end
+            
+            if strcmpi(gData.globalTitleStr,'-auto')
+                % Automatically set to the active sub-titles title
+                set(Obj.figureHandle,'Name',Obj.titleStr);
+            else
+                % Set to the global one.
+                set(Obj.figureHandle,'Name',gData.globalTitleStr);
+            end
+        end
+        
         function Obj = close(Obj)
             
             Obj = removeBar(Obj);
-            
-            Obj.isDead = true;
             
             prtUtilProgressBarData = guidata(Obj.figureHandle);
             
@@ -379,6 +444,7 @@ classdef prtUtilProgressBar
             prtUtilProgressBarData.bars = struct([]);
             prtUtilProgressBarData.isCanceled = false;
             prtUtilProgressBarData.nBarsSpace = 0;
+            prtUtilProgressBarData.globalTitleStr = Obj.globalTitleStr;
             
             guidata(Obj.figureHandle,prtUtilProgressBarData);
             
@@ -404,8 +470,11 @@ classdef prtUtilProgressBar
             else
                 barYStarts = Obj.windowBottomMargin + ((1:nBarsSpace)-1)*(Obj.barHeight + Obj.barVertMargin);
             end
+            
             barYStarts = flipud(barYStarts(:));
             barYStarts = barYStarts(1:nBars);
+            
+            
             
             for iBar = 1:nBars
                 cBarYStart = barYStarts(iBar);
@@ -446,6 +515,7 @@ classdef prtUtilProgressBar
             Obj.isDead = true;
             
         end
+        
         function Obj = addBar(Obj)
             
             % Get Figure user data
@@ -463,8 +533,6 @@ classdef prtUtilProgressBar
             
             barWidth = xStop - xStart;
             
-            cancelButtonYStart = Obj.windowBottomMargin;
-            
             textLeftX = xStart + Obj.textHorzMargin;
             textCenterX = mean([xStop xStart]);
             textRightX = xStop - Obj.textHorzMargin;
@@ -472,6 +540,7 @@ classdef prtUtilProgressBar
             hasStop = ~isempty(prtUtilProgressBarData.cancelButtonHandle);
             
             if nBars > nBarsSpace
+                
                 % Expand window
                 if hasStop
                     windowHeight = Obj.windowBottomMargin + Obj.windowTopMargin + Obj.cancelButtonHeight + Obj.cancelButtonVertMargin + (nBars-1)*Obj.barVertMargin + nBars*Obj.barHeight;
@@ -487,13 +556,21 @@ classdef prtUtilProgressBar
                                                    'XLim',[0 windowSize(1)],...
                                                    'YLim',[0 windowSize(2)]);
                 
-                prtUtilProgressBarData.nBarsSpace = nBars; % Shorthand
+                prtUtilProgressBarData.nBarsSpace = nBars;
+                nBarsSpace = nBars;
             end
             
+            % Force Set function call; Be sure to juggle guidata properly
+            guidata(Obj.figureHandle,prtUtilProgressBarData);
+            Obj.globalTitleStr = Obj.globalTitleStr; 
+            prtUtilProgressBarData = guidata(Obj.figureHandle);
+            
             if hasStop
-                barYStarts = cancelButtonYStart + Obj.cancelButtonHeight + Obj.cancelButtonVertMargin + ((1:nBars)-1)*(Obj.barHeight + Obj.barVertMargin);
+                %barYStarts = cancelButtonYStart + Obj.cancelButtonHeight + Obj.cancelButtonVertMargin + ((1:nBars)-1)*(Obj.barHeight + Obj.barVertMargin);
+                barYStarts = Obj.windowBottomMargin + Obj.cancelButtonHeight + Obj.cancelButtonVertMargin + ((1:nBarsSpace)-1)*(Obj.barHeight + Obj.barVertMargin);
             else
-                barYStarts = cancelButtonYStart + ((1:nBars)-1)*(Obj.barHeight + Obj.barVertMargin);
+                %barYStarts = cancelButtonYStart + ((1:nBars)-1)*(Obj.barHeight + Obj.barVertMargin);
+                barYStarts = Obj.windowBottomMargin + ((1:nBarsSpace)-1)*(Obj.barHeight + Obj.barVertMargin);
             end
             barYStarts = flipud(barYStarts(:));
             barYStarts = barYStarts(1:nBars);
@@ -596,7 +673,10 @@ classdef prtUtilProgressBar
         
         function forceClose()
             
-            figHandle = findobj('tag','PrtProgressBar');
+            oldHandleVisilibity = get(0,'ShowHiddenHandles');
+            set(0,'ShowHiddenHandles','on');
+            figHandle = findobj('tag','PrtProgressBar','HandleVisibility','off');
+            set(0,'ShowHiddenHandles',oldHandleVisilibity);
             
             if ~isempty(figHandle)
                 close(figHandle)

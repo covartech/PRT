@@ -49,8 +49,8 @@ classdef prtFeatSelExhaustive < prtFeatSel %
 % See Also:  prtFeatSelStatic, prtFeatSelSfs
 
     properties (SetAccess=private)
-        name = 'Exhaustive Feature Selection'
-        nameAbbreviation = 'Efs'
+        name = 'Exhaustive Feature Selection' % Exhaustive Feature Selection
+        nameAbbreviation = 'Efs'  % Efs
     end
     
     properties

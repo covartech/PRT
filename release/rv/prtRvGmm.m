@@ -42,12 +42,22 @@ classdef prtRvGmm < prtRv
     %   See also: prtRv, prtRvMvn, prtRvMultinomial, prtRvUniform,
     %             prtRvUniformImproper, prtRvVq
     
+    properties (SetAccess = private)
+        name = 'Gaussian Mixture Model';
+        nameAbbreviation = 'RVGMM';
+    end
+    
+    properties (SetAccess = protected)
+        isSupervised = false;
+        isCrossValidateValid = true;
+    end    
+    
     properties (Dependent = true)
         nComponents   % The number of components
         covarianceStructure   % The covariance structure
         covariancePool         % Flag indicating whether or not to pool the covariance
         components             % The mixture components
-        mixingProportions        % The mixing proportions
+        mixingProportions      % The mixing proportions
     end
     
     properties (SetAccess = 'private', GetAccess = 'private', Hidden=true)
@@ -66,7 +76,6 @@ classdef prtRvGmm < prtRv
     
     methods
         function R = prtRvGmm(varargin)
-            R.name = 'Gaussian Mixture Model';
             R = constructorInputParse(R,varargin{:});
         end
     end
@@ -141,7 +150,7 @@ classdef prtRvGmm < prtRv
             R.mixtureRv.minimumComponentMembership = size(X,2)+5;
             % 5 is a rather arbitrarily safe choice. This is motivated by
             % common prior parameters for NiW distributions in Bayesian
-            % GMMss.
+            % GMMs.
             
             if size(X,1) < R.mixtureRv.minimumComponentMembership
                 error('prt:prtRvGmm:mle','This data has too few observations to support a GMM with this many components.');

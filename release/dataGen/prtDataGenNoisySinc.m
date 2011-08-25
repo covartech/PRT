@@ -10,11 +10,10 @@ function DataSet = prtDataGenNoisySinc
 %   ds = prtDataGenNoisySinc;
 %   plot(ds)
 %
-%   See also: prtDataSetRegress, prtDataGenBiModal, prtDataGenIris,
-%   prtDataGenManual, prtDataGenMary, prtDataGenNoisySinc,
-%   prtDataGenOldFaithful,prtDataGenProtate, prtDataGenSprial,
-%   prtDataGenSpiral3Regress, prtDataGenUnimodal, prtDataGenSwissRoll,
-%   prtDataGenUnimodal, prtDataGenXor
+%   See also: prtDataSetClass, prtDataGenBiModal, prtDataGenIris,
+%   prtDataGenMary, prtDataGenNoisySinc, prtDataGenOldFaithful,
+%   prtDataGenSpiral, prtDataGenUnimodal, prtDataGenUnimodal, prtDataGenXor
+
 
 
 nSamples = 100;

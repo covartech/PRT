@@ -41,12 +41,12 @@ if (nargin == 1 || isempty(y)) && isa(ds,'prtDataSetClass')
     y = ds;
 end
 
-[ds,y] = prtUtilScoreParseFirstTwoInputs(ds,y);
+[ds,y] = prtUtilScoreParseFirstTwoInputs(ds,y,mfilename);
 
 %Handle multi-dimensional input DS (numeric or prtDataSetClass)
 if size(ds,2) > 1
     for iRoc = 1:size(ds,2)
-        [pf{iRoc},pd{iRoc},thresholds{iRoc},auc{iRoc}] = prtScoreRoc(ds(:,iRoc),y,varargin{:}); %#ok<NASGU,AGROW>
+        [pf{iRoc},pd{iRoc},thresholds{iRoc},auc{iRoc}] = prtScoreRoc(ds(:,iRoc),y,varargin{:}); %#ok<AGROW>
     end
     if nargout == 0
         colors = prtPlotUtilClassColors(size(ds,2));
@@ -55,9 +55,9 @@ if size(ds,2) > 1
         for iRoc = 1:size(ds,2)
             lineHandles(iRoc) = plot(pf{iRoc},pd{iRoc},'color',colors(iRoc,:));
             hold on
-            xlabel('Pf');
-            ylabel('Pd');
         end
+        xlabel('Pf');
+        ylabel('Pd');
         set(gca,'nextPlot',holdState);
         varargout = {};
     else

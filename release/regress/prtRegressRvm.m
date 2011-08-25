@@ -246,11 +246,6 @@ classdef prtRegressRvm < prtRegress
     
     methods
         function varargout = plot(Obj)
-            % plot - Plot output confidence of the prtRegressRvm object
-            %
-            %   CLASS.plot plots the output confidence of the prtClassRvm
-            %   object. The dimensionality of the dataset must be 3 or
-            %   less.
             
             HandleStructure = plot@prtRegress(Obj);
             

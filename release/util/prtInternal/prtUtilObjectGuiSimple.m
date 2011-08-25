@@ -104,7 +104,7 @@ MainPanelOptions = DefaultMainPanelOptions;
 
 % Default MainFigureOptions
 ss = get(0,'screensize');
-        
+
 windowSize = [754 600];
 
 % Center the window
@@ -119,7 +119,7 @@ DefaultMainFigureOptions.position = pos;
 DefaultMainFigureOptions.menuBar = 'none';
 DefaultMainFigureOptions.toolbar = 'none';
 DefaultMainFigureOptions.numberTitle = 'off';
-DefaultMainFigureOptions.name = cat(2,'PRT Action Property Editor - ',name);
+DefaultMainFigureOptions.name = cat(2,'PRT Action Editor - ',name);
 DefaultMainFigureOptions.color = backgroundColor;
 DefaultMainFigureOptions.windowStyle = 'modal';
 DefaultMainFigureOptions.CloseRequestFcn = @cancelCallback;

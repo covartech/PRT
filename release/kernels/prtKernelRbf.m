@@ -27,8 +27,7 @@ classdef prtKernelRbf < prtKernel
     %   
     %  http://en.wikipedia.org/wiki/Support_vector_machine#Non-linear_classification
     %
-    %   prtKernelRbf objects inherit the TRAIN, RUN, and AND
-    %   methods from prtKernel.
+    %   prtKernelRbf objects inherit the TRAIN and RUN methods from prtKernel.
     %
     %   % Example
     %   ds = prtDataGenBimodal;       % Generate a dataset

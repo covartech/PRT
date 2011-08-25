@@ -41,14 +41,11 @@ classdef prtDecisionMap < prtDecision
     % subplot(2,1,2); plot(classifier); title('KNN + Decision');
     %    	
     % See also: prtDecisionBinary, prtDecisionBinarySpecifiedPd,
-    % ptDecisionBinarySpecifiedPf, prtDecisionMap
-
-    % See also: prtDecisionBinaryMinPe, prtDecisionBinarySpecifiedPd,
-    % ptDecisionBinarySpecifiedPf, prtDecisionMap
+    % prtDecisionBinarySpecifiedPf, prtDecisionMap
 
      properties (SetAccess = private)
-        name = 'MAP'
-        nameAbbreviation = 'MAP';
+        name = 'MAP'  % MAP
+        nameAbbreviation = 'MAP';  % MAP
     end
     
     methods
@@ -75,6 +72,12 @@ classdef prtDecisionMap < prtDecision
             classList = Obj.classList(index);
             classList = classList(:);
             DS = DS.setObservations(classList);
+        end
+    
+        function xOut = runActionFast(Obj,xIn,ds) %#ok<INUSD>
+           [twiddle,index] = max(xIn,[],2); %#ok<ASGLU>
+           xOut = Obj.classList(index);
+           xOut = xOut(:);
         end
     end
 end

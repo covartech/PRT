@@ -69,7 +69,7 @@ classdef prtDataSetBase
         isLabeled             % Whether or not the data has target labels
     end
     
-    properties  %public, for now
+    properties
         name = ''             % A string naming the data set
         description = ''      % A string with a verbose description of the data set
         userData = struct;    % Additional data per data set
@@ -79,11 +79,15 @@ classdef prtDataSetBase
         actionData = struct;      % Data stored by a prtAction
     end
     
+    properties (Hidden, Constant)
+        version = 1;
+    end
+    
     % Only prtDataSetBase knows about these, use getObs... and getFeat.. to
     % get and set these, they handle the dirty stuff
     properties (GetAccess = 'protected',SetAccess = 'protected')
-        observationNames    % The observations names
-        targetNames         % The target names.
+        observationNamesInternal    % The observations names
+        targetNamesInternal         % The target names.
     end
     
     methods
@@ -140,8 +144,8 @@ classdef prtDataSetBase
     %Methods for get, set, ObservationNames and FeatureNames
     methods
         function obj = prtDataSetBase
-            obj.observationNames = prtUtilIntegerAssociativeArray;
-            obj.targetNames = prtUtilIntegerAssociativeArray;
+            obj.observationNamesInternal = prtUtilIntegerAssociativeArray;
+            obj.targetNamesInternal = prtUtilIntegerAssociativeArray;
         end
         
         function obsNames = getObservationNames(obj,varargin)
@@ -165,7 +169,7 @@ classdef prtDataSetBase
             obsNames = cell(length(indices1),1);
             
             for i = 1:length(indices1)
-                obsNames{i} = obj.observationNames.get(indices1(i));
+                obsNames{i} = obj.observationNamesInternal.get(indices1(i));
                 if isempty(obsNames{i})
                     obsNames(i) = prtDataSetBase.generateDefaultObservationNames(indices1(i));
                 end
@@ -185,7 +189,7 @@ classdef prtDataSetBase
             targetNames = cell(length(indices2),1);
             
             for i = 1:length(indices2)
-                targetNames{i} = obj.targetNames.get(indices2(i));
+                targetNames{i} = obj.targetNamesInternal.get(indices2(i));
                 if isempty(targetNames{i})
                     targetNames(i) = prtDataSetBase.generateDefaultTargetNames(indices2(i));
                 end
@@ -202,7 +206,7 @@ classdef prtDataSetBase
             %  names for only the specified INDICES.
             
             if ~isa(obsNames,'cell') || ~isa(obsNames{1},'char')
-                error('prt:dataSetStandard:setObservationNames','Input observation names must be a cell array of characters');
+                    error('prt:dataSetStandard:setObservationNames','Input observation names must be a cell array of characters');
             end
             if ~isvector(obsNames)
                 error('prt:dataSetStandard:setObservationNames','setObservationNames requires first input to be a n x 1 cell array');
@@ -215,8 +219,12 @@ classdef prtDataSetBase
                 indices1 = find(indices1);
             end
             
+            if length(obsNames) ~= length(indices1)
+                error('prt:dataSetStandard:setObservationNames','Index exceeds matrix dimensions.');
+            end
+            
             for i = 1:length(indices1)
-                obj.observationNames = obj.observationNames.put(indices1(i),obsNames{i});
+                obj.observationNamesInternal = obj.observationNamesInternal.put(indices1(i),obsNames{i});
             end
         end
         
@@ -252,7 +260,7 @@ classdef prtDataSetBase
             %Put the default string names in there; otherwise we might end
             %up with empty elements in the cell array
             for i = 1:length(indices2)
-                obj.targetNames = obj.targetNames.put(indices2(i),targetNames{i});
+                obj.targetNamesInternal = obj.targetNamesInternal.put(indices2(i),targetNames{i});
             end
         end
     end
@@ -337,13 +345,13 @@ classdef prtDataSetBase
     methods (Access = 'protected', Hidden = true)
         function obj = catObservationNames(obj,newDataSet)
             
-            if isempty(newDataSet.observationNames)
+            if isempty(newDataSet.observationNamesInternal)
                 return;
             end
             for i = 1:newDataSet.nObservations;
-                currObsName = newDataSet.observationNames.get(i);
+                currObsName = newDataSet.observationNamesInternal.get(i);
                 if ~isempty(currObsName)
-                    obj.observationNames = obj.observationNames.put(i + obj.nObservations,currObsName);
+                    obj.observationNamesInternal = obj.observationNamesInternal.put(i + obj.nObservations,currObsName);
                 end
             end
         end
@@ -351,7 +359,7 @@ classdef prtDataSetBase
         %   Note: only call this from within retainObservations
         function obj = retainObservationNames(obj,varargin)
             
-            if isempty(obj.observationNames)
+            if isempty(obj.observationNamesInternal)
                 return;
             end
             
@@ -360,17 +368,17 @@ classdef prtDataSetBase
             if islogical(retainIndices)
                 retainIndices = find(retainIndices);
             end
-            if isempty(obj.observationNames)
+            if isempty(obj.observationNamesInternal)
                 return;
             else
                 %copy the hash with new indices
                 newHash = prtUtilIntegerAssociativeArray;
                 for retainInd = 1:length(retainIndices);
-                    if obj.observationNames.containsKey(retainIndices(retainInd));
-                        newHash = newHash.put(retainInd,obj.observationNames.get(retainIndices(retainInd)));
+                    if obj.observationNamesInternal.containsKey(retainIndices(retainInd));
+                        newHash = newHash.put(retainInd,obj.observationNamesInternal.get(retainIndices(retainInd)));
                     end
                 end
-                obj.observationNames = newHash;
+                obj.observationNamesInternal = newHash;
             end
         end
         
@@ -378,9 +386,9 @@ classdef prtDataSetBase
         function obj = catTargetNames(obj,newDataSet)
             
             for i = 1:newDataSet.nTargetDimensions;
-                currTargetName = newDataSet.targetNames.get(i);
+                currTargetName = newDataSet.targetNamesInternal.get(i);
                 if ~isempty(currTargetName)
-                    obj.targetNames = obj.targetNames.put(i + obj.nTargetDimensions,currTargetName);
+                    obj.targetNamesInternal = obj.targetNamesInternal.put(i + obj.nTargetDimensions,currTargetName);
                 end
             end
         end
@@ -393,17 +401,17 @@ classdef prtDataSetBase
             if islogical(retainIndices)
                 retainIndices = find(retainIndices);
             end
-            if isempty(obj.targetNames)
+            if isempty(obj.targetNamesInternal)
                 return;
             else
                 %copy the hash with new indices
                 newHash = prtUtilIntegerAssociativeArray;
                 for retainInd = 1:length(retainIndices);
-                    if obj.targetNames.containsKey(retainIndices(retainInd));
-                        newHash = newHash.put(retainInd,obj.targetNames.get(retainIndices(retainInd)));
+                    if obj.targetNamesInternal.containsKey(retainIndices(retainInd));
+                        newHash = newHash.put(retainInd,obj.targetNamesInternal.get(retainIndices(retainInd)));
                     end
                 end
-                obj.targetNames = newHash;
+                obj.targetNamesInternal = newHash;
             end
         end
         
@@ -424,13 +432,12 @@ classdef prtDataSetBase
         
         
         function has = hasObservationNames(obj)
-            has = ~isempty(obj.observationNames);
+            has = ~isempty(obj.observationNamesInternal);
         end
         function has = hasTargetNames(obj)
-            has = ~isempty(obj.targetNames);
+            has = ~isempty(obj.targetNamesInternal);
         end
     end
-    
     methods (Abstract)
         %all sub-classes must define these behaviors, this is the contract
         %that all "data sets" must follow

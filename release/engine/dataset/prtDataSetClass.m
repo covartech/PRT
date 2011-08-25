@@ -14,7 +14,7 @@ classdef prtDataSetClass  < prtDataSetStandard
     %   uniqueClasses        - An array of the integer class labels
     %   isUnary              - True if the number of classes = 1
     %   isBinary             - True if the number of classes = 2
-    %   isMary = nan         - True if the number of classes > 2
+    %   isMary               - True if the number of classes > 2
     %   isZeroOne            - True if the unique classes are 0 and 1
     %   nObservationsByClass - The number of observations per class.
     %
@@ -53,14 +53,20 @@ classdef prtDataSetClass  < prtDataSetStandard
         isZeroOne              % True if the uniqueClasses are 0 and 1
     end
     
+    properties (Dependent, Hidden)
+        classNames             % Provides quick access to set/get ClassNames
+    end
+    
     properties (Access = 'private')
-        classNames
+        classNamesInternal
     end
     
     properties (Hidden=true, Access='private')
         targetsCacheUnique = [];
         targetsCacheHist = []; 
         targetsCacheNClasses = 1;
+        targetsCacheHasNans = false;
+        targetsCacheNNans = 0;
     end
     
     properties (Hidden = true)
@@ -108,12 +114,12 @@ classdef prtDataSetClass  < prtDataSetStandard
                 %if the current data set doesn't have this key, and the
                 %other data set does, well, use the other data set's name
                 %for this class
-                if ~obj.classNames.containsKey(newUniqueClasses(i)) && newDataSet.classNames.containsKey(newUniqueClasses(i));
-                    obj.classNames = obj.classNames.put(newUniqueClasses(i),newDataSet.classNames.get(newUniqueClasses(i)));
+                if ~obj.classNamesInternal.containsKey(newUniqueClasses(i)) && newDataSet.classNamesInternal.containsKey(newUniqueClasses(i));
+                    obj.classNamesInternal = obj.classNamesInternal.put(newUniqueClasses(i),newDataSet.classNamesInternal.get(newUniqueClasses(i)));
                     %If both the data sets have the key, and the strings
                     %don't match...
-                elseif (obj.classNames.containsKey(newUniqueClasses(i)) && newDataSet.classNames.containsKey(newUniqueClasses(i))) && ...
-                        ~strcmpi(newDataSet.classNames.get(newUniqueClasses(i)),obj.classNames.get(newUniqueClasses(i)))
+                elseif (obj.classNamesInternal.containsKey(newUniqueClasses(i)) && newDataSet.classNamesInternal.containsKey(newUniqueClasses(i))) && ...
+                        ~strcmpi(newDataSet.classNamesInternal.get(newUniqueClasses(i)),obj.classNamesInternal.get(newUniqueClasses(i)))
                     warning('prt:prtDataSetClass:IncompatibleClassNames','Incompatible class names encountered; retaining original data sets class names');
                 end
             end
@@ -122,11 +128,12 @@ classdef prtDataSetClass  < prtDataSetStandard
     
     methods
         
+        
         function obj = prtDataSetClass(varargin)
             
             prtUtilCheckIsValidBeta('cmbrwwuvphcjlwjpxuwghhgksogwzcafuyeonnyutyycplbotbwmjjimkzuongslqkovjmjovuubmohbsnfvmbymqzxibrzdlzjq');
             
-            obj.classNames = prtUtilIntegerAssociativeArray;
+            obj.classNamesInternal = prtUtilIntegerAssociativeArray;
             if nargin == 0
                 return;
             end
@@ -212,8 +219,8 @@ classdef prtDataSetClass  < prtDataSetStandard
             
             tn = cell(length(indices1),1);
             for i = 1:length(indices1)
-                if obj.classNames.containsKey(uniqueClasses(indices1(i)))
-                    tn{i} = obj.classNames.get(uniqueClasses(indices1(i)));
+                if obj.classNamesInternal.containsKey(uniqueClasses(indices1(i)))
+                    tn{i} = obj.classNamesInternal.get(uniqueClasses(indices1(i)));
                 else
                     tn(i) = prtDataSetClass.generateDefaultClassNames(uniqueClasses(indices1(i)));
                 end
@@ -224,6 +231,7 @@ classdef prtDataSetClass  < prtDataSetStandard
             assert(isempty(targets) || size(targets,2) == 1,'prt:prtDataSetClass:setTargets','targets for prtDataSetClass must be size n x 1, but targets are size n x %d',size(targets,2));
             obj = setTargets@prtDataSetStandard(obj,targets,varargin{:});
         end
+        
         function obj = setClassNamesByClassInd(obj,classNames,varargin)
             % setClassNamesByClassInd   Sets the class names
             %
@@ -242,7 +250,7 @@ classdef prtDataSetClass  < prtDataSetStandard
             uniqueClasses = obj.uniqueClasses;
             
             for i = 1:length(indices1)
-                obj.classNames = obj.classNames.put(uniqueClasses(indices1(i)),classNames{i});
+                obj.classNamesInternal = obj.classNamesInternal.put(uniqueClasses(indices1(i)),classNames{i});
             end
         end
         
@@ -255,10 +263,14 @@ classdef prtDataSetClass  < prtDataSetStandard
                 classes = obj.uniqueClasses;
             end
             uniqueClasses = obj.uniqueClasses;
-            if ~isempty(setdiff(classes,uniqueClasses))
-                error('Input classes array (%s) contains class numbers not in uniqueClasses (%s)',mat2str(classes),mat2str(uniqueClasses));
+            leftOverClasses = setdiff(classes,uniqueClasses);
+            if ~isempty(leftOverClasses)
+                if ~all(isnan(leftOverClasses))
+                    error('Input classes array (%s) contains class numbers not in uniqueClasses (%s)',mat2str(classes),mat2str(uniqueClasses));
+                end
             end
             [twiddle,twiddle,ib] = intersect(classes,uniqueClasses); %#ok<ASGLU>
+            
             tn = getClassNamesByClassInd(obj,ib);
         end
         
@@ -282,9 +294,9 @@ classdef prtDataSetClass  < prtDataSetStandard
             names = names(:);
             if nargin < 3
                 classes = obj.uniqueClasses;
-                if size(names,1) ~= length(classes)
-                    error('prt:dataSetClass:setClassNames','setClassNames with one input requires that size(names,1) (%d) equals number of unique classes (%d)',size(names,1),length(classes));
-                end
+                %if size(names,1) ~= length(classes)
+                %    error('prt:dataSetClass:setClassNames','setClassNames with one input requires that size(names,1) (%d) equals number of unique classes (%d)',size(names,1),length(classes));
+                %end
             end
             uniqueClasses = obj.uniqueClasses;
             
@@ -364,7 +376,29 @@ classdef prtDataSetClass  < prtDataSetStandard
                     error('prt:prtDataSetClass:getObservationsByClassInd','This dataSet is unlabeled and therefore contains only one class.');
                 end
             else
+                assert(classInd <= obj.nClasses,'prt:prtDataSetClass:getObservationsByClassInd','This requested class index (%d) exceeds the number of classes in this dataSet (%d).',classInd,obj.nClasses);
+                
                 d = obj.getObservations(obj.getTargets == obj.uniqueClasses(classInd),featureIndices);
+            end
+        end
+        function d = getObservationsUnlabeled(obj, featureIndices)
+            % getObservationsUnlabeled  Return the observations that
+            %   have the a target value that is NaN. If no target values
+            %   are contained in the dataset all observations are returned.
+            %   If targets is multidimensional observations that have any 
+            %   dimensions of targets with NaN values will be returned.
+            %
+            %   OBS = dataSet.getObservationsUnlabeled() returns the
+            %   observations OBS of the prtDataSetClass object that have
+            %   targets that are NaN
+            
+            if nargin < 2 || isempty(featureIndices)
+                featureIndices = 1:obj.nFeatures;
+            end
+            if ~obj.isLabeled
+                d = obj.getObservations(:,featureIndices);
+            else
+                d = obj.getObservations(any(isnan(obj.getTargets(:)),2),featureIndices);
             end
         end
         
@@ -816,7 +850,7 @@ classdef prtDataSetClass  < prtDataSetStandard
             %       minimumKernelBandwidth - minimumBandwidth parameter of 
             %                                prtRvKde that is used to
             %                                estimate each density. default
-            %                                eps.
+            %                                []. See prtRvKde.
             %
             % Example:
             %    ds = prtDataGenMary;
@@ -843,7 +877,7 @@ classdef prtDataSetClass  < prtDataSetStandard
             
             % Parse Options (additional string value pairs)
             Options.nDensitySamples = 500;
-            Options.minimumKernelBandwidth = eps;
+            Options.minimumKernelBandwidth = [];
             
             if nargin > 1
                 assert(mod(length(inputs),2)==0,'Additional inputs must be string value pairs')
@@ -907,6 +941,10 @@ classdef prtDataSetClass  < prtDataSetStandard
                 containingHandle = gcf;
             end
             
+            if obj.nFeatures > 4
+                warning('prt:prtDataSetClassPlotPairs:BigNFeatures','Number of features is greater than 4 plotting may be slow. Consider selecting features using plotPairs(retainFeatures(ds,selectedFeatureInds)).');
+            end
+                
             assert(ishghandle(containingHandle),'prt:prtDataSetClass:prtPlotPairs','containingHandle must be a MATLAB handle graphics handle that is a valid parent for MATLAB axes');
             
             cChildren = get(containingHandle,'Children');
@@ -1194,6 +1232,8 @@ classdef prtDataSetClass  < prtDataSetStandard
             uniqueClasses = obj.uniqueClasses;
             for i = 1:nClasses
                 cX = obj.getObservationsByClassInd(i, featureIndices);
+                %Note, class colors should really be linked to
+                %uniqueClasses(i), not i
                 classEdgeColor = obj.plotOptions.symbolEdgeModificationFunction(classColors(i,:));
                 
                 featureNames = obj.getFeatureNames(featureIndices);
@@ -1286,6 +1326,14 @@ classdef prtDataSetClass  < prtDataSetStandard
                 error('Number of samples (N) must be either scalar integer or a vector integer of dataSet.nClasses (%d), N is a %s %s',nClasses,mat2str(size(N)),class(N));
             end
       
+            if ~Obj.isLabeled
+                % nClasses will return one but we do not need to look at
+                % targets
+                
+                [Out, newObsInds] = bootstrap(Obj,N);
+                return
+            end
+            
             targetInds = Obj.getTargetsClassInd;
             obsInds = (1:Obj.nObservations)';
             newObsInds = nan(sum(N),1);
@@ -1342,6 +1390,80 @@ classdef prtDataSetClass  < prtDataSetStandard
         end
     end
     methods (Hidden = true)
+        
+        function ds2 = enforceTargetValuesAndClassNames(obj,ds2)
+            % enforceTargetValuesAndClassNames; this is hidden because
+            % un-documented.  Here's the deal:
+            %
+            % Sometimes we load multiple data sets with the same class
+            % names, but different class values.  They might not even have
+            % all the same class names.  This function takes two data sets
+            % with possibly different class integer and string labels and
+            % tries to make them match up.  
+            %
+            % The behaviour is as follows:
+            %   ds2 = enforceTargetValuesAndClassNames(ds1,ds2)
+            % or
+            %   ds2 = ds1.enforceTargetValuesAndClassNames(ds2)
+            %
+            % Nothing in ds1 should ever change.  Any class in ds2 whose
+            % class name matches a class name in ds1 gets a target value
+            % matching the target value in ds1.  Any class in ds2 that is
+            % not represented in ds1 gets assigned to a new unique class
+            % number, that was not present in ds1.
+            %
+            % This whole function is for use when multiple different data
+            % sets are loaded for training and testing, and there's no
+            % guarantee that the class indices or names match.  That makes
+            % cunfusion matrix stuff complicated.  
+            %
+            %Here's an example unit test:
+            %
+            % dsTest1 = prtDataSetClass(nan(7,1),[1,1,2,3,4,5,6]','classNames',{'a','b','c','d','e','m'});
+            % dsTest2 = prtDataSetClass(nan(6,1),[1,1,2,3,4,5]','classNames',{'a','c','x','b','f'});
+            %
+            % dsTest2 = dsTest1.enforceTargetValuesAndClassNames(dsTest2);
+            %
+            % resultingClassNames = {'a';'b';'c';'f';'x'};
+            % resultingTargets = [1;2;3;7;8];
+            %
+            % assert(isequal(dsTest2.classNames,resultingClassNames))
+            % assert(isequal(dsTest2.uniqueClasses,resultingTargets))
+            %
+            uTargets1 = obj.uniqueClasses;
+            uTargets2 = ds2.uniqueClasses;
+            
+            uClasses1 = obj.classNames;
+            uClasses2 = ds2.classNames;
+            
+            oldTargets = ds2.getTargets;
+            newTargets = oldTargets;
+            
+            unionClasses = union(uClasses1,uClasses2);
+            newClassValue = max(uTargets1)+1;
+            setUniqueTargets = [];
+            setClasses2 = {};
+            for unionInd = 1:length(unionClasses)
+                targetInd1 = find(strcmp(uClasses1,unionClasses(unionInd)));
+                targetInd2 = find(strcmp(uClasses2,unionClasses(unionInd)));
+                if ~isempty(targetInd1) && ~isempty(targetInd2)
+                    newTargets(oldTargets == uTargets2(targetInd2)) = uTargets1(targetInd1);
+                    setClasses2(end+1) = uClasses2(targetInd2);
+                    setUniqueTargets(end+1) = uTargets1(targetInd1);
+                elseif  ~isempty(targetInd2)
+                    newTargets(oldTargets == uTargets2(targetInd2)) = newClassValue;
+                    setUniqueTargets(end+1) = newClassValue;
+                    setClasses2(end+1) = uClasses2(targetInd2);
+                    newClassValue = newClassValue + 1;
+                end
+            end
+            [sortedClasses,sortedClassInds] = sort(setUniqueTargets);
+            setClasses2 = setClasses2(sortedClassInds);
+            ds2 = ds2.setTargets(newTargets);
+            %ds2.classNames = uClasses2;
+            ds2.classNames = setClasses2;
+        end
+        
         function obj = copyDescriptionFieldsFrom(obj,dataSet)
             if dataSet.hasClassNames && obj.isLabeled
                 obj = obj.setClassNames(dataSet.getClassNames);
@@ -1349,7 +1471,7 @@ classdef prtDataSetClass  < prtDataSetStandard
             obj = copyDescriptionFieldsFrom@prtDataSetStandard(obj,dataSet);
         end
         function has = hasClassNames(obj)
-            has = ~isempty(obj.classNames);
+            has = ~isempty(obj.classNamesInternal);
         end
     end
     methods (Hidden=true, Access='protected')
@@ -1364,13 +1486,27 @@ classdef prtDataSetClass  < prtDataSetStandard
                 obj.targetsCacheUnique = [];
                 obj.targetsCacheNClasses = 1; % If unlabeled we really have one class
                 obj.targetsCacheHist = obj.nObservations;
+                obj.targetsCacheHasNans = false;
+                obj.targetsCacheNNans = 0;
             else
                 if islogical(obj.targets)
                     obj.targets = double(obj.targets);
                 end
                 obj.targetsCacheUnique = unique(obj.targets,'rows');
+                
+                % Handle nan targets (un/semi/supervised)
+                isNanVals = isnan(obj.targetsCacheUnique);
+                obj.targetsCacheHasNans = any(isNanVals);
+                hasNans = obj.targetsCacheHasNans;
+                if hasNans
+                    % Remove nans from unique targetsCache
+                    obj.targetsCacheUnique(isNanVals) = [];
+                end
+                
                 obj.targetsCacheNClasses = length(obj.targetsCacheUnique);
-                obj.targetsCacheHist = histc(obj.targets,obj.targetsCacheUnique);
+                    obj.targetsCacheHist = histc(obj.targets,obj.targetsCacheUnique);
+                obj.targetsCacheNNans = sum(isNanVals);
+                
             end
         end
         function obj = updateObservationsCache(obj)
@@ -1445,6 +1581,80 @@ classdef prtDataSetClass  < prtDataSetStandard
             varargout = {};
             if nargout > 0
                 varargout = {handleArray};
+            end
+        end
+    end
+    
+    % Ease of use properties and methods, perhaps these should be
+    % moved to prtDataSetStandardClass
+    methods
+        function obj = set.classNames(obj,val)
+            obj = obj.setClassNames(val);
+        end
+        function val = get.classNames(obj)
+            val = obj.getClassNames();
+        end
+    end
+    methods (Static)
+        function obj = loadobj(obj)
+            
+            if isstruct(obj)
+                if ~isfield(obj,'version')
+                    % Version 0 - we didn't even specify version
+                    inputVersion = 0;
+                else
+                    inputVersion = obj.version;
+                end
+                
+                currentVersionObj = prtDataSetClass;
+                if inputVersion == currentVersionObj.version
+                    % Returning now will cause MATLAB to ignore this entire
+                    % loadobj() function and perform the default actions
+                    return
+                end
+                
+                % The input version is less than the current version
+                % We need to
+                inObj = obj;
+                obj = currentVersionObj;
+                switch inputVersion
+                    case 0
+                        % The oldest version of prtDataSetBase
+                        % We need to set the appropriate fields from the
+                        % structure (inObj) into the prtDataSetClass of the
+                        % current version
+                        obj = obj.setObservationsAndTargets(inObj.dataDepHelper,inObj.targetsDepHelper);
+                        obj.observationInfo = inObj.observationInfoDepHelper;
+                        obj.featureInfo = inObj.featureInfoDepHelper;
+                        if ~isempty(inObj.classNames.cellValues)
+                            obj = obj.setClassNames(inObj.classNames.cellValues);
+                        end
+                        if ~isempty(inObj.featureNames.cellValues)
+                            obj = obj.setFeatureNames(inObj.featureNames.cellValues);
+                        end
+                        if ~isempty(inObj.observationNames.cellValues)
+                            obj = obj.setObservationNames(inObj.observationNames.cellValues);
+                        end
+                        if ~isempty(inObj.targetNames.cellValues)
+                            obj = obj.setTargetNames(inObj.targetNames.cellValues);
+                        end
+                        obj.plotOptions = inObj.plotOptions;
+                        obj.name = inObj.name;
+                        obj.description = inObj.description;
+                        obj.userData = inObj.userData;
+                        obj.actionData = inObj.actionData;
+                        
+                        obj = obj.updateTargetsCache();
+                        obj = obj.updateObservationsCache();
+                        
+                    otherwise
+                        error('prt:prtDataSetClass:loadObj','Unknown prtDataSetBase version %d, object cannot be laoded.',inputVersion);
+                end
+            else 
+                % Object was loaded
+                % This happens when the current definition matches
+                obj = obj.updateTargetsCache();
+                obj = obj.updateObservationsCache();
             end
         end
     end

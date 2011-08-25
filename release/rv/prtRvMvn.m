@@ -56,7 +56,15 @@ classdef prtRvMvn < prtRv
     %   See also: prtRv, prtRvGmm, prtRvMultinomial, prtRvUniform,
     %   prtRvUniformImproper, prtRvVq, prtRvDiscrete
     
-
+    properties (SetAccess = 'private')
+        name = 'Multi-Variate Normal';
+        nameAbbreviation = 'RVMVN';
+    end
+    
+    properties (SetAccess = 'protected')
+        isSupervised = false;
+        isCrossValidateValid = true;
+    end
     
     properties (Dependent)
         covarianceStructure  % The covariance structure
@@ -80,7 +88,6 @@ classdef prtRvMvn < prtRv
     
     methods
         function R = prtRvMvn(varargin)
-            R.name = 'Multi-Variate Normal';
             R = constructorInputParse(R,varargin{:});
         end
         
@@ -257,13 +264,7 @@ classdef prtRvMvn < prtRv
     % Get methods
     methods
         function val = get.nDimensions(R)
-            if ~isempty(R.mu)
-                val = length(R.mu);
-            elseif ~isempty(R.sigma)
-                val = size(R.sigma,2);
-            else
-                val = [];
-            end
+            val = getNumDimensions(R);
         end
         
         function val = get.mu(R)
@@ -276,7 +277,17 @@ classdef prtRvMvn < prtRv
             val = R.covarianceStructureDepHelper;
         end
     end
-    
+    methods (Access = 'protected')
+        function val = getNumDimensions(R)
+            if ~isempty(R.mu)
+                val = length(R.mu);
+            elseif ~isempty(R.sigma)
+                val = size(R.sigma,2);
+            else
+                val = [];
+            end
+        end
+    end
     % Set Methods
     methods
         function R = set.covarianceStructure(R,covarianceStructure)

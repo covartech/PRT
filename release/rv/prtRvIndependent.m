@@ -60,18 +60,27 @@ classdef prtRvIndependent < prtRv
     %   See also: prtRv, prtRvGmm, prtRvMultinomial, prtRvUniform,
     %   prtRvUniformImproper, prtRvVq, prtRvDiscrete
     
+    properties (SetAccess = private)
+        name = 'Indepenent RV';
+        nameAbbreviation = 'RVInd';
+    end
+    
+    properties (SetAccess = protected)
+        isSupervised = false;
+        isCrossValidateValid = true;
+    end    
+    
     properties (Hidden = true, Dependent = true)
-        nDimensions
+        nDimensions  % Number of dimensions
     end
 
     properties
-        baseRv
-        rvArray
+        baseRv  % The base random variable
+        rvArray  % The array of random variables
     end
     
     methods
         function R = prtRvIndependent(varargin)
-            R.name = 'Indepenent RV';
             R.baseRv = prtRvMvn;
             R = constructorInputParse(R,varargin{:});
         end

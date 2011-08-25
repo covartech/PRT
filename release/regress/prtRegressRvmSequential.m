@@ -2,8 +2,9 @@ classdef prtRegressRvmSequential < prtRegressRvm
     % prtRegressRvm  Relevance vector machine regression object
     %
     %   This code is based on:
+    %
     %       Michael E Tipping, Sparse bayesian learning and the relevance 
-    %   vector machine, The Journal of Machine Learning Research, Vol 1.
+    %       vector machine, The Journal of Machine Learning Research, Vol 1.
     %
     %   Also see http://en.wikipedia.org/wiki/Relevance_vector_machine
     % 

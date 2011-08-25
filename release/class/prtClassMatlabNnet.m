@@ -1,6 +1,5 @@
 classdef prtClassMatlabNnet < prtClass
-    % prtClassMatlabNnet  Support vector machine classifier using the
-    % MATLAB neural network toolbox (requires NNET toolbox)
+    % prtClassMatlabNnet  Support vector machine classifier using the MATLAB neural network toolbox (requires NNET toolbox)
     %
     %   CLASSIFIER = prtClassMatlabNnet returns a neural network classifier
     %   using the MATLAB NNET toolbox (additonal product, not included)
@@ -28,27 +27,24 @@ classdef prtClassMatlabNnet < prtClass
     %   
     
     properties (SetAccess=private)
-        name = 'MATLAB Neural Network' % Fisher Linear Discriminant
-        nameAbbreviation = 'MLNN'            % FLD
-        isNativeMary = true;  % False
+        name = 'MATLAB Neural Network' % MATLAB Neural Network
+        nameAbbreviation = 'MLNN'            % MLNN
+        isNativeMary = true;  % True
     end
     
     properties 
-        % w is a DataSet.nDimensions x 1 vector of projection weights
-        % learned during Fld.train(DataSet)
-        nnet 
+        nnet % The base neural network
         
     end
     properties 
-        Si = 20;  %number of layers in hidden element; or, number of elements per hidden layer (vector)
-        %these are all bizzare; see the help for newpr for help with these
-        TFi = [];
-        BTF = [];
-        BLF = [];
-        PF = [];
-        IPF = [];
-        OPF = [];
-        DDF = [];
+        Si = 20;  %Number of layers in hidden element
+        TFi = []; % See help for newpr
+        BTF = [];% See help for newpr
+        BLF = [];% See help for newpr
+        PF = [];% See help for newpr
+        IPF = [];% See help for newpr
+        OPF = [];% See help for newpr
+        DDF = [];% See help for newpr
     end
 
     methods 

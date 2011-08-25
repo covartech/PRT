@@ -36,7 +36,8 @@ classdef prtRvKde < prtRv
     %                      identify a discrete density and infer a very
     %                      small bandwidth. This is sometimes undesirable
     %                      and causes stability issues. The default value
-    %                      is eps.
+    %                      is []. If this value is empty it is estimated
+    %                      during MLE as max(std(X)/size(X,1),eps);.
     %   
     %  A prtRvKde object inherits all methods from the prtRv class. The MLE
     %  method can be used to estimate the distribution parameters from
@@ -85,11 +86,21 @@ classdef prtRvKde < prtRv
     %   See also: prtRv, prtRvMvn, prtRvGmm, prtRvMultinomial,
     %   prtRvUniform, prtRvUniformImproper, prtRvVq
     
+    properties (SetAccess = private)
+        name = 'Kernel Density Estimation RV'
+        nameAbbreviation = 'RVKDE';
+    end
+    
+    properties (SetAccess = protected)
+        isSupervised = false;
+        isCrossValidateValid = true;
+    end        
+    
     properties
         bandwidthMode = 'diffusion';
         bandwidths = []; % Will be estimated
         trainingData = []% Locations of kernels
-        minimumBandwidth = eps;
+        minimumBandwidth = [];
     end
     
     properties (Dependent = true, Hidden=true)
@@ -99,7 +110,6 @@ classdef prtRvKde < prtRv
     methods
         % The Constructor
         function R = prtRvKde(varargin)
-            R.name = 'Kernel Density Estimation RV';
             R = constructorInputParse(R,varargin{:});
         end
 
@@ -125,7 +135,7 @@ classdef prtRvKde < prtRv
         end
         
         function R = set.minimumBandwidth(R,val)
-            assert(isnumeric(val) && numel(val)==1 && val>=0,'minimumBandwidth must be a scalar, numeric, non-negative value');
+            assert(isempty(val) | (isnumeric(val) && numel(val)==1 && val>=0),'minimumBandwidth must be empty or a scalar, numeric, non-negative value');
             R.minimumBandwidth = val;
         end
         
@@ -148,24 +158,50 @@ classdef prtRvKde < prtRv
                     nDims = size(X,2);
                     if nDims == 1
                         % 1D solution from Botev et al. 2010
-                        R.bandwidths = prtExternal.kde.kde(X);
+                        R.bandwidths = prtExternal.kde.kde(X).^2;
                     elseif nDims == 2
                         % 2D solution from Botev et al. 2010
-                        R.bandwidths = prtExternal.kde2d.kde2d(X);
+                        R.bandwidths = prtExternal.kde2d.kde2d(X).^2;
                     else
                         % In higher than 2 dimensions we assume independence in selecting
                         % bandwidths and use the 1D solution from Botev et al. 2010
                         % This is not entirely "best"
                         R.bandwidths = zeros(1,nDims);
                         for iDim = 1:nDims;
-                            R.bandwidths(iDim) = prtExternal.kde.kde(X(:,iDim));
+                            R.bandwidths(iDim) = prtExternal.kde.kde(X(:,iDim)).^2;
                         end
                     end
                 otherwise
                     error('prt:prtRvKde:unknownBandwidthMode','Unknown bandwidth mode %s.',R.bandwidthMode);
             end
             
-            R.bandwidths = max(R.bandwidths,R.minimumBandwidth);
+            if isempty(R.minimumBandwidth)
+                % Estimate a minimum bandwidth using a heuristic method
+                % Robust std estimate in each dim
+                minBandwidths = zeros(size(X,2),1);
+                for iDim = 1:size(X,2)
+                    cX = X(:,iDim);
+                    cX(isnan(cX)) = []; % Remove nans
+                    
+                    % Calculate quantiles
+                    sortedX = sort(cX,'ascend');
+                    cCdf = cumsum(ones(size(cX)))./size(cX,1); 
+                    
+                    cXMiddle = sortedX(find(cCdf>0.25,1,'first'):find(cCdf>0.75,1,'first'));
+                    
+                    if isempty(cXMiddle)
+                        minBandwidths(iDim) = (std(cX)/size(cX,1)).^2;
+                    else
+                        minBandwidths(iDim) = (std(cXMiddle)/size(cXMiddle,1)).^2;
+                    end
+                end
+                minimumBandwidthVal = max(minBandwidths(:)',eps); %#ok<UDIM>
+                
+            else
+                minimumBandwidthVal = R.minimumBandwidth;
+            end
+            
+            R.bandwidths = max(R.bandwidths,minimumBandwidthVal);
         end
         
         function vals = cdf(R,X)
@@ -225,10 +261,10 @@ classdef prtRvKde < prtRv
                 
                 cDist = zeros(cNSamples,size(R.trainingData,1));
                 for iDim = 1:nDims
-                    cDist = cDist + (bsxfun(@minus,X(cInds,iDim),R.trainingData(:,iDim)').^2) / R.bandwidths(iDim);
+                    cDist = cDist + (bsxfun(@minus,X(cInds,iDim),R.trainingData(:,iDim)').^2) / (R.bandwidths(iDim));
                 end
-                
                 vals(cInds) = prtUtilSumExp(((-cDist.^2)/2 - 0.5*log(2*pi) - 0.5*sum(log(R.bandwidths)))')' - log(nTrainingPoints);
+                
             end
         end
         

@@ -210,7 +210,12 @@ classdef prtClass < prtAction
             assert(~isempty(Obj.isTrained),'explore() is only for trained classifiers.');
             assert(~isempty(Obj.dataSet),'explore() requires that verboseStorage is true and therefore a prtDataSet is stored within the classifier.');
             if Obj.yieldsMaryOutput
-                Obj = trainAutoDecision(Obj);
+                if ~isempty(Obj.dataSet)
+                    warning('prt:prtClass:explore:autoDecision','prtClass.explore() requires a binary prtClass or a prtClass with an internal decider. A prtDecisionMap has been trained and set as the internalDecider to enable plotting.');
+                else
+                    error('prt:prtClass:explore','prtClass.explore() requires a binary prtClass or a prtClass with an internal decider. A prtDecisionMap cannot be trained and set as the internalDecider to enable plotting because this classifier object does not have verboseStorege turned on and therefore the dataSet used to train the classifier is unknow. To enable plotting, set an internalDecider and retrain the classifier.');
+                end
+                Obj.internalDecider = prtDecisionMap;
             end
             
             prtPlotUtilClassExploreGui(Obj)
@@ -330,6 +335,31 @@ classdef prtClass < prtAction
             OutputDataSet = postRunProcessing@prtAction(ClassObj, InputDataSet, OutputDataSet);
         end
         
+        function xOut = postRunProcessingFast(ClassObj, xIn, xOut, dsIn) %#ok<MANU,INUSD>
+            % Overload postRunProcessingFast (from prtAction) so that we can
+            % enforce twoClassParadigm
+            
+            if ~isempty(ClassObj.internalDecider)
+                xOut = ClassObj.internalDecider.run(xOut);
+            end
+            
+            if ~isempty(ClassObj.yieldsMaryOutput) && ~isnan(ClassObj.yieldsMaryOutput)
+                if ClassObj.yieldsMaryOutput
+                    % Mary classifier output mary decision statistics
+                    % enforce that it has output one for each class in the
+                    % training data set.
+                    assert(size(xOut,2) == ClassObj.dataSetSummary.nClasses,'M-ary classifiers must yield observations with nFeatures equal to the number of unique classes in the training data set. This classifier must be modified to output observations with the proper dimensionality. If integer outputs are desired, output a binary matrix.');
+                else
+                    % Run Function provided mary output but ClassObj knows
+                    % not to supply this. We must run
+                    % maryOutput2binaryOutput()
+                    xOut = maryOutput2binaryOutputFast(ClassObj,xOut);
+                end
+            end
+            
+            xOut = postRunProcessingFast@prtAction(ClassObj, xIn, xOut);
+        end
+        
         function OutputDataSet = maryOutput2binaryOutput(ClassObj,OutputDataSet) %#ok
             % Default method to convert an Mary output to a Binary output 
             % Can/should be overloaded by classifiers
@@ -337,7 +367,19 @@ classdef prtClass < prtAction
             % The default just takes the last (right-most) output dimension
             % In classifiers this will typically be the confidence of the
             % class with the highest valued target index.
+            if isnumeric(OutputDataSet) || islogical(OutputDataSet)
+                % Called by runfast
+                OutputDataSet = OutputDataSet(:,end);
+                return
+            end
+            
             OutputDataSet = OutputDataSet.setObservations(OutputDataSet.getObservations(:,end));
+        end
+        function xOut = maryOutput2binaryOutputFast(ClassObj,xOut) %#ok
+            % Default method to convert an Mary output to a Binary output 
+            % when operating in fast (matrix only) mode. Can/should be
+            % overloaded by classifiers 
+            xOut = xOut(:,end);
         end
                         
         % Plotting functions

@@ -32,8 +32,16 @@ classdef prtDataSetStandard < prtDataSetBase
         nObservations         % The number of observations
         nFeatures             % The number of features
         nTargetDimensions     % The number of dimensions of the target data
-        observationInfo       % Additional data per observation
-        featureInfo           % Additional data per feature
+        observationInfo       % Additional data (structure) per observation
+        featureInfo           % Additional data (structure) per feature
+    end
+    
+    properties (Dependent, Hidden)
+        featureNames          % Feature names
+        observationNames      % Observation names (rows)
+        targetNames           % Target dimension names
+        X                     % Shortcut to observations
+        Y                     % Shortcut to targets
     end
     
     properties (GetAccess = 'private',SetAccess = 'private', Hidden=true)
@@ -41,14 +49,11 @@ classdef prtDataSetStandard < prtDataSetBase
         featureInfoDepHelper
         dataDepHelper
         targetsDepHelper
+        featureNamesDepHelper
     end
     properties (Dependent,SetAccess='protected',GetAccess ='protected')
         data                % The observations
         targets             % The targets
-    end
-    
-    properties (SetAccess='protected',GetAccess ='protected')
-        featureNames        % The feature names
     end
     
     methods (Access = 'protected', Hidden = true)
@@ -56,10 +61,10 @@ classdef prtDataSetStandard < prtDataSetBase
         function obj = catTargetNames(obj,newDataSet)
             
             for i = 1:newDataSet.nTargetDimensions;
-                currTargName = newDataSet.targetNames.get(i);
+                currTargName = newDataSet.targetNamesInternal.get(i);
                 
                 if ~isempty(currTargName)
-                    obj.targetNames = obj.targetNames.put(i + obj.nTargetDimensions,currTargName);
+                    obj.targetNamesInternal = obj.targetNamesInternal.put(i + obj.nTargetDimensions,currTargName);
                 end
             end
         end
@@ -76,19 +81,19 @@ classdef prtDataSetStandard < prtDataSetBase
             %newHash = java.util.Hashtable;
             newHash = prtUtilIntegerAssociativeArray;
             for retainInd = 1:length(retainIndices);
-                if obj.targetNames.containsKey(retainIndices(retainInd));
-                    newHash = newHash.put(retainInd,obj.targetNames.get(retainIndices(retainInd)));
+                if obj.targetNamesInternal.containsKey(retainIndices(retainInd));
+                    newHash = newHash.put(retainInd,obj.targetNamesInternal.get(retainIndices(retainInd)));
                 end
             end
             
-            obj.targetNames = newHash;
+            obj.targetNamesInternal = newHash;
         end
         
         function obj = catFeatureNames(obj,newDataSet)
             for i = 1:newDataSet.nFeatures;
-                currFeatName = newDataSet.featureNames.get(i);
+                currFeatName = newDataSet.featureNamesDepHelper.get(i);
                 if ~isempty(currFeatName)
-                    obj.featureNames = obj.featureNames.put(i + obj.nFeatures,currFeatName);
+                    obj.featureNamesDepHelper = obj.featureNamesDepHelper.put(i + obj.nFeatures,currFeatName);
                 end
             end
         end
@@ -104,11 +109,11 @@ classdef prtDataSetStandard < prtDataSetBase
             %copy the hash with new indices
             newHash = prtUtilIntegerAssociativeArray;
             for retainInd = 1:length(retainIndices);
-                if obj.featureNames.containsKey(retainIndices(retainInd));
-                    newHash = newHash.put(retainInd,obj.featureNames.get(retainIndices(retainInd)));
+                if obj.featureNamesDepHelper.containsKey(retainIndices(retainInd));
+                    newHash = newHash.put(retainInd,obj.featureNamesDepHelper.get(retainIndices(retainInd)));
                 end
             end
-            obj.featureNames = newHash;
+            obj.featureNamesDepHelper = newHash;
         end
     end
     methods
@@ -116,7 +121,7 @@ classdef prtDataSetStandard < prtDataSetBase
         % Constructor
         function obj = prtDataSetStandard(varargin)
             
-            obj.featureNames = prtUtilIntegerAssociativeArray;
+            obj.featureNamesDepHelper = prtUtilIntegerAssociativeArray;
             
             if nargin == 0
                 return;
@@ -199,7 +204,7 @@ classdef prtDataSetStandard < prtDataSetBase
             
             featNames = cell(length(indices2),1);
             for i = 1:length(indices2)
-                featNames{i} = obj.featureNames.get(indices2(i));
+                featNames{i} = obj.featureNamesDepHelper.get(indices2(i));
                 if isempty(featNames{i})
                     featNames(i) = prtDataSetStandard.generateDefaultFeatureNames(indices2(i));
                 end
@@ -233,7 +238,7 @@ classdef prtDataSetStandard < prtDataSetBase
             indices2 = prtDataSetBase.parseIndices(obj.nFeatures,varargin{:});
             if nargin < 3
                 %clear the old feature names:
-                obj.featureNames = prtUtilIntegerAssociativeArray;
+                obj.featureNamesDepHelper = prtUtilIntegerAssociativeArray;
                 if size(featNames,1) ~= length(indices2)
                     error('prt:dataSetStandard:setFeatureNames','setFeatureNames with one input requires that size(names,1) (%d) equals number of features (%d)',size(featNames,1),obj.nFeatures);
                 end
@@ -249,7 +254,7 @@ classdef prtDataSetStandard < prtDataSetBase
             %Put the default string names in there; otherwise we might end
             %up with empty elements in the cell array
             for i = 1:length(indices2)
-                obj.featureNames = obj.featureNames.put(indices2(i),featNames{i});
+                obj.featureNamesDepHelper = obj.featureNamesDepHelper.put(indices2(i),featNames{i});
             end
         end
         
@@ -472,40 +477,6 @@ classdef prtDataSetStandard < prtDataSetBase
             % Reset the data cache
             obj = updateTargetsCache(obj);
             
-            % %
-            % %             % Setting only specified entries of the matrix
-            % %             [indices1, indices2] = prtDataSetBase.parseIndices([obj.nObservations, obj.nTargetDimensions],varargin{:});
-            % %
-            % %             %Handle empty targets (2-D)
-            % %             if isempty(indices2)
-            % %                 indices2 = 1:size(targets,2);
-            % %             end
-            % %             %Handle empty targets (1-D)
-            % %             if isempty(indices1) && ~isempty(targets);
-            % %                 indices1 = 1:obj.nObservations;
-            % %             end
-            % %
-            % %             if ~isempty(targets)
-            % %                 if nargin < 3
-            % %                     if ~isequal(obj.nObservations,size(targets,1))
-            % %                         error('prt:prtDataSetStandard:InvalidTargetSize','nObservations is %d, but targets are of size %s, corresponding to %d observations',obj.nObservations,mat2str(size(targets)),size(targets,1));
-            % %                     end
-            % %                 end
-            % %                 if ~isequal([length(indices1),length(indices2)],size(targets))
-            % %                     if isempty(obj.targets) && nargin < 3
-            % %                         error('prtDataSetStandard:InvalidTargetSize','Attempt to set targets to matrix of size %s, but indices are of size [%d %d]',mat2str(size(targets)),length(indices1),length(indices2))
-            % %                     else
-            % %                         error('prtDataSetStandard:InvalidTargetSize','Attempt to set targets to matrix of size %s, but targets is size %s',mat2str(size(targets)),mat2str(size(obj.targets)));
-            % %                     end
-            % %                 end
-            % %
-            % %                 obj.targets(indices1,indices2) = targets;
-            % %             else
-            % %                 obj.targets = [];
-            % %             end
-            % %
-            % %             % Updated chached target info
-            % %             obj = updateTargetsCache(obj);
         end
         
         function obj = set.data(obj,newData)
@@ -793,11 +764,13 @@ classdef prtDataSetStandard < prtDataSetBase
             if nargin < 3
                 p = ones(obj.nObservations,1)./obj.nObservations;
             end
+            
             assert(isvector(p) & all(p) <= 1 & all(p) >= 0 & prtUtilApproxEqual(sum(p),1,eps(obj.nObservations)) & length(p) == obj.nObservations,'prt:prtDataSetStandard:bootstrap','invalid input probability distribution; distribution must be a vector of size obj.nObservations x 1, and must sum to 1')
             
             if obj.nObservations == 0
                 error('prtDataSetStandard:BootstrapEmpty','Cannot bootstrap empty data set');
             end
+            
             if nargin < 2 || isempty(nSamples)
                 nSamples = obj.nObservations;
             end
@@ -857,7 +830,7 @@ classdef prtDataSetStandard < prtDataSetBase
                 return
             end
             
-            assert(isa(Struct,'struct') && isvector(Struct) && numel(Struct)==obj.nObservations, 'prt:prtDataSetStandard:observationInfo', 'observationInfo must be an nObservations x 1 structure array.');
+            assert(isa(Struct,'struct') && numel(Struct)==obj.nObservations, 'prt:prtDataSetStandard:observationInfo', 'observationInfo must be an nObservations x 1 structure array.');
             
             obj.observationInfoDepHelper = Struct(:);
         end
@@ -883,7 +856,7 @@ classdef prtDataSetStandard < prtDataSetBase
             val = obj.featureInfoDepHelper;
         end
         
-        function obj = select(obj, selectFunction)
+        function [obj,keep] = select(obj, selectFunction)
             % Select observations to retain by specifying a function
             %   The specified function is evaluated on each obesrvation.
             % 
@@ -917,17 +890,22 @@ classdef prtDataSetStandard < prtDataSetBase
                     error('prt:prtDataSetStandard:select','selectFunction did not return a logical vector with nObservation elements and this data set object does not contain observationInfo. Therefore this selecFunction is not valid.')
                 end
                 
-                keep = false(obj.nObservations,1);
-                for iObs = 1:obj.nObservations
-                    try
-                        cOut = selectFunction(obj.observationInfo(iObs));
-                    catch %#ok<CTCH>
-                        error('prt:prtDataSetStandard:select','selectFunction did not return a logical vector with nObservation elements and there was an evaluation error using this function. See help prtDataSetStandard/select');
+                try
+                    keep = arrayfun(@(s)selectFunction(s),obj.observationInfo);
+                catch %#ok<CTCH>
+                    % Try the loopy version
+                    keep = false(obj.nObservations,1);
+                    for iObs = 1:obj.nObservations
+                        try
+                            cOut = selectFunction(obj.observationInfo(iObs));
+                        catch %#ok<CTCH>
+                            error('prt:prtDataSetStandard:select','selectFunction did not return a logical vector with nObservation elements and there was an evaluation error using this function. See help prtDataSetStandard/select');
+                        end
+                        assert(numel(cOut)==1,'selectFunction did not return a logical vector with nObservation elements but also did not return scalar logical.');
+                        assert((islogical(cOut) || (isnumeric(cOut) && (cOut==0 || cOut==1))),'selectFunction that returns one output must output a 1x1 logical.');
+                        
+                        keep(iObs) = cOut;
                     end
-                    assert(numel(cOut)==1,'selectFunction did not return a logical vector with nObservation elements but also did not return scalar logical.');
-                    assert((islogical(cOut) || (isnumeric(cOut) && (cOut==0 || cOut==1))),'selectFunction that returns one output must output a 1x1 logical.');
-                    
-                    keep(iObs) = cOut;
                 end
             end
             obj = obj.retainObservations(keep);
@@ -940,6 +918,11 @@ classdef prtDataSetStandard < prtDataSetBase
             % DS = prtDataGenIris;
             % DS = DS.setObservationInfo('asdf',randn(DS.nObservations,1),'qwer',randn(DS.nObservations,1),'poiu',randn(DS.nObservations,10),'lkjh',mat2cell(randn(DS.nObservations,1),ones(DS.nObservations,1),1),'mnbv',mat2cell(randn(DS.nObservations,10),ones(DS.nObservations,1),10));
             % vals = DS.getObservationInfo('asdf');
+            
+            if nargin == 1
+                val = obj.observationInfo;
+                return
+            end
             
             assert(nargin==2,'prt:prtDataSetStandard:getObservationInfo','invalid number of input arguments, only one input argument should be specified.');
             
@@ -967,7 +950,6 @@ classdef prtDataSetStandard < prtDataSetBase
                 end
             end
         end
-        
         
         function val = getFeatureInfo(obj,fieldName)
             % Allow for fast retrieval of feature info by specifying
@@ -1003,7 +985,6 @@ classdef prtDataSetStandard < prtDataSetBase
                 end
             end
         end
-        
         
         function obj = setObservationInfo(obj,varargin)
             % Allow setting of observation info by specifying string value
@@ -1046,7 +1027,11 @@ classdef prtDataSetStandard < prtDataSetBase
                 end
                 assert(size(cVal,1) == obj.nObservations,'observationInfo values must have nObservations rows.');
                 
-                cValSet = mat2cell(cVal,ones(size(cVal,1),1),size(cVal,2));
+                if iscellstr(cVal)
+                    cValSet = cVal;
+                else
+                    cValSet = mat2cell(cVal,ones(size(cVal,1),1),size(cVal,2));
+                end
                 
                 if isempty(cStruct)
                     cStruct = struct(cName,cValSet);
@@ -1226,7 +1211,7 @@ classdef prtDataSetStandard < prtDataSetBase
         end
         
         function has = hasFeatureNames(obj)
-            has = ~isempty(obj.featureNames);
+            has = ~isempty(obj.featureNamesDepHelper);
         end
         
         function v = export(obj,varargin) %#ok<STOUT,MANU>
@@ -1251,4 +1236,93 @@ classdef prtDataSetStandard < prtDataSetBase
         end
     end
     
+    % Easy of use methods. These assume that the data is in memory
+    % therefore they are implemented here in prtDataSetStandard
+    methods
+        function X = get.X(obj)
+            X = obj.getX();
+        end
+        function obj = set.X(obj,val)
+            obj = obj.setX(val);
+        end
+        function Y = get.Y(obj)
+            Y = obj.getY();
+        end
+        function obj = set.Y(obj,val)
+            obj = obj.setY(val);
+        end
+        function obj = set.featureNames(obj,val)
+            obj = obj.setFeatureNames(val);
+        end
+        function val = get.featureNames(obj)
+            val = obj.getFeatureNames();
+        end
+        function obj = set.observationNames(obj,val)
+            obj = obj.setObservationNames(val);
+        end
+        function val = get.observationNames(obj)
+            val = obj.getObservationNames();
+        end
+        function obj = set.targetNames(obj,val)
+            obj = obj.setTargetNames(val);
+        end
+        function val = get.targetNames(obj)
+            val = obj.getTargetNames();
+        end        
+    end
+    methods (Static)
+        function obj = loadobj(obj)
+            
+            if isstruct(obj)
+                if ~isfield(obj,'version')
+                    % Version 0 - we didn't even specify version
+                    inputVersion = 0;
+                else
+                    inputVersion = obj.version;
+                end
+                
+                currentVersionObj = prtDataSetStandard;
+                
+                if inputVersion == currentVersionObj.version
+                    % Returning now will cause MATLAB to ignore this entire
+                    % loadobj() function and perform the default actions
+                    return
+                end
+                
+                % The input version is less than the current version
+                % We need to
+                inObj = obj;
+                obj = currentVersionObj;
+                switch inputVersion
+                    case 0
+                        % The oldest version of prtDataSetBase
+                        % We need to set the appropriate fields from the
+                        % structure (inObj) into the prtDataSetClass of the
+                        % current version
+                        obj = obj.setObservationsAndTargets(inObj.dataDepHelper,inObj.targetsDepHelper);
+                        obj.observationInfo = inObj.observationInfoDepHelper;
+                        obj.featureInfo = inObj.featureInfoDepHelper;
+                        if ~isempty(inObj.featureNames.cellValues)
+                            obj = obj.setFeatureNames(inObj.featureNames.cellValues);
+                        end
+                        if ~isempty(inObj.observationNames.cellValues)
+                            obj = obj.setObservationNames(inObj.observationNames.cellValues);
+                        end
+                        if ~isempty(inObj.targetNames.cellValues)
+                            obj = obj.setTargetNames(inObj.targetNames.cellValues);
+                        end
+                        obj.plotOptions = inObj.plotOptions;
+                        obj.name = inObj.name;
+                        obj.description = inObj.description;
+                        obj.userData = inObj.userData;
+                        obj.actionData = inObj.actionData;
+                        
+                    otherwise
+                        error('prt:prtDataSetStandard:loadObj','Unknown prtDataSetBase version %d, object cannot be laoded.',inputVersion);
+                end
+            else
+                % Nothin special
+            end
+        end
+    end
 end

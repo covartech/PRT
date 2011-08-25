@@ -8,7 +8,7 @@ function [data1,data2] = prtUtilDistanceParseInputs(dataSet1,dataSet2,dimCheck)
 if nargin < 3
     dimCheck = true;
 end
-if isnumeric(dataSet1) && isnumeric(dataSet2)
+if (isnumeric(dataSet1) && isnumeric(dataSet2)) || (islogical(dataSet1) && islogical(dataSet2))
     data1 = dataSet1;
     data2 = dataSet2;
 elseif isa(dataSet1,'prtDataSetBase') && isa(dataSet2,'prtDataSetBase')

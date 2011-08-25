@@ -33,7 +33,8 @@ classdef prtAction
     %                       labeled prtDataSet and cross-validation keys.
     %   kfolds            - K-folds cross-validate a prtAction object using
     %                       a labeled prtDataSet
-    %
+    %   optimize          - Optimize the prtAction for a specified
+    %                       parameter
     % See Also: prtAction/train, prtAction/run, prtAction/crossValidate,
     % prtAction/kfolds, prtClass, prtRegress, prtFeatSel, prtPreProc,
     % prtDataSetBase
@@ -132,7 +133,12 @@ classdef prtAction
         %   DataSet = runAction(Obj, DataSet)
         DataSet = runAction(Obj, DataSet)
     end
-        
+    methods (Access = protected, Hidden = true)
+        function xOut = runActionFast(Obj, xIn, ds) %#ok<STOUT,INUSD>
+            error('prt:prtAction:runActionFast','The prtAction (%s) does not have a runActionFast method(). Therefore runFast() cannot be used.',class(Obj));
+        end
+    end
+    
     methods (Hidden)
         function Obj = plus(in1,in2)
             if isa(in2,'prtAlgorithm')
@@ -309,6 +315,11 @@ classdef prtAction
                 waitBarObj = prtUtilProgressBar(0,sprintf('Crossvalidating - %s',Obj.name),'autoClose',true);
             end
             
+            isDataSetClass = isa(DataSet,'prtDataSetClass'); % Used below to provide a nicer error message in bad casses.
+            if isDataSetClass 
+                inputNumberOfClasses = DataSet.nClasses;
+            end
+            
             for uInd = 1:length(uKeys);
                     
                 if actuallyShowProgressBar
@@ -329,6 +340,10 @@ classdef prtAction
                     trainDataSet = DataSet.removeObservations(cTestLogical);
                 end
                 %fprintf('Original: %d, Train: %d, Test: %d\n',DataSet.nObservations,trainDataSet.nObservations,testDataSet.nObservations);
+                
+                if isDataSetClass && trainDataSet.nClasses ~= inputNumberOfClasses
+                	warning('prt:prtAction:crossValidateNClasses','Cross validation fold %d yielded a test data set with %d class(es) but the input data set contains %d classes. This may result in errors. It may be possible to resolve this by modifying the cross-validation keys.', uInd, trainDataSet.nClasses, inputNumberOfClasses)
+                end
                 
                 classOut = Obj.train(trainDataSet);
                 currResults = classOut.run(testDataSet);
@@ -526,6 +541,25 @@ classdef prtAction
                 DataSetOut = ActionObj.updateDataSetFeatureNames(DataSetOut);
             end
         end
+        
+        function xIn = preRunProcessingFast(ActionObj, xIn, ds) %#ok<INUSD,MANU>
+            % preRunProcessingFast - Processing done before runAction()
+            %   Called by runFast(). Can be overloaded by prtActions to
+            %   store specific information about the xIn or Classifier
+            %   prior to runAction.
+            %   
+            %   xOut = preRunProcessingFast(ActionObj, xIn, ds)
+        end
+        
+        function xOut = postRunProcessingFast(ActionObj, xIn, xOut, dsIn) %#ok<MANU,INUSD>
+            % postRunProcessingFast - Processing done after runAction()
+            %   Called by runFast(). Can be overloaded by prtActions to
+            %   alter the results of run() to modify outputs using
+            %   parameters of the prtAction.
+            %   
+            %   DataSet = postRunProcessing(ActionObj, DataSet)
+        end
+        
     end
     methods (Access = protected, Hidden)
         function DataSetOut = runActionOnTrainingData(Obj, DataSetIn)
@@ -541,21 +575,45 @@ classdef prtAction
             DataSetOut = runAction(Obj, DataSetIn);
         end
     end
-    methods (Hidden)
+    methods (Hidden = false)
         function [optimizedAction,performance] = optimize(Obj,DataSet,objFn,parameterName,parameterValues)
-            % OPTIMIZE Optimize action parameter by exhaustive function 
-            % maximization.
+            % OPTIMIZE Optimize action parameter by exhaustive function maximization.
             %
-            % Although functional it is currently hidden.
-            % At this point it is not possible to optimize parameters of
-            % parameters. 
+            %  OPTIMACT = OPTIMIZE(DS, EVALFN, PARAMNAME, PARAMVALS)
+            %  returns an optimized prtAction object, with parameter
+            %  PARAMNAME set to the optimal value. DS must be a prtDataSet
+            %  object. EVALFN must be a function handle that returns a
+            %  scalar value that indicates a performance metric for the
+            %  prtAction object, for example a prtEval function. PARAMNAME
+            %  must be a string that indicates the parameter of the
+            %  prtAction that is to be optimized. PARAMVALS must be a
+            %  vector of possible values of the parameter that the
+            %  prtAction will be evaluated at.
+            %
+            %  [OPTIMACT, PERF]  = OPTIMIZE(...) returns a vector of
+            %  performance values that correspond to each element of
+            %  PARAMVALS.
             %
             % Example:
-            %   objFn = @(act,ds) = prtEvalAuc(act,ds,3);
-            %   [optimizedAction,performance] = optimize(Obj,DataSet,objFn,parameterName,parameterValues)
-            %  
+            %
+            %  ds = prtDataGenBimodal;  % Load a data set
+            %  knn = prtClassKnn;       % Create a classifier
+            %  kVec = 3:5:50;          % Create a vector of parameters to
+            %                           % optimze over
+            %
+            % % Optimize over the range of k values, using the area under
+            % % the receiver operating curve as the evaluation metric.
+            % % Validation is performed by a k-folds cross validation with
+            % % 10 folds as specified by the call to prtEvalAuc.
+            %           
+            % [knnOptimize, percentCorrects] = knn.optimize(ds, @(class,ds)prtEvalAuc(class,ds,10), 'k',kVec);
+            % plot(kVec, percentCorrects)
+
             
-            if isnumeric(parameterValues);
+            %   objFn = @(act,ds)prtEvalAuc(act,ds,3);
+            %   [optimizedAction,performance] = optimize(Obj,DataSet,objFn,parameterName,parameterValues)
+            
+            if isnumeric(parameterValues) || islogical(parameterValues)
                 parameterValues = num2cell(parameterValues);
             end
             performance = nan(length(parameterValues),1);
@@ -579,7 +637,8 @@ classdef prtAction
             optimizedAction = train(Obj,DataSet);
             
         end
-        
+    end
+    methods(Hidden = true)
         function [outputObj, creationString] = gui(obj)
             % GUI Graphical method to set properties of prtAction
             %
@@ -599,6 +658,11 @@ classdef prtAction
     end
     
     methods (Hidden = true)
+        function out = rt(Obj,in)
+            % Train and then run an action on a dataset
+            out = run(train(Obj,in),in);
+        end
+        
         function Obj = setVerboseStorage(Obj,val)
             assert(numel(val)==1 && (islogical(val) || (isnumeric(val) && (val==0 || val==1))),'prtAction:invalidVerboseStorage','verboseStorage must be a logical');
             Obj.verboseStorageInternal = logical(val);
@@ -609,6 +673,127 @@ classdef prtAction
             end
             Obj.showProgressBarInternal = val;
         end
+        
+        function varargout = export(obj,exportType,varargin)
+            % export(obj,fileSpec);
+            % S = export(obj,'struct');
+            if nargin < 2
+                error('prt:prtAction:export','exportType must be specified');
+            end
+                
+            switch lower(exportType)
+                case {'struct','structure'}
+                    varargout{1} = toStructure(obj);
+                    
+                case {'yaml'}
+                    if nargin < 3
+                        error('prt:prtAction:exportYaml','fileName must be specified to export YAML');
+                    end
+                    file = varargin{1};
+                    
+                    objStruct = toStructure(obj);
+                    
+                    prtExternal.yaml.WriteYaml(file,objStruct);
+                    
+                    varargout = {};
+                    
+                case {'eml'}
+                    if length(varargin) < 2
+                        structureName = cat(2,class(obj),'Structure');
+                    else
+                        structureName = varargin{2};
+                    end
+                    if length(varargin) < 1
+                        file = sprintf('%sCreate',structureName);
+                    else
+                        file = varargin{1};
+                    end
+                    
+                    [filePath, file, fileExt] = fileparts(file); %#ok<NASGU>
+                    
+                    if ~isvarname(file)
+                        error('prt:prtAction:export','When using EML export, file must be a string that is a valid MATLAB function name (optionally it can also contain a path.)');
+                    end
+                    
+                    fileWithMExt = cat(2,file,'.m');
+                    
+                    exportStruct = obj.toStructure();
+
+                    exportString = prtUtilStructToStr(exportStruct,structureName);
+                    
+                    % Add a function declaration name to the beginning
+                    exportString = cat(1, {sprintf('function [%s] = %s()',structureName,file)}, {''}, exportString);
+                    
+                    fid = fopen(fullfile(filePath,fileWithMExt),'w');
+                    fprintf(fid,'%s\n',exportString{:});
+                    fclose(fid);
+    
+                otherwise
+                    error('prt:prtAction:export','Invalid file formal specified');
+            end
+        end
+        
+        function S = toStructure(obj)
+            % toStructure(obj)
+            % This default prtAction method adds all properties defined in
+            % the class of obj into the structure, that are:
+            %   GetAccess: public
+            %   Hidden: false
+            % other prtActions (that are properties, contained in cells,
+            %   or fields of structures) are also converted to structures.
+            
+            MetaInfo = meta.class.fromName(class(obj));
+            
+            propNames = {};
+            for iProperty = 1:length(MetaInfo.Properties)
+                if isequal(MetaInfo.Properties{iProperty}.DefiningClass,MetaInfo) && strcmpi(MetaInfo.Properties{iProperty}.GetAccess,'public') && ~MetaInfo.Properties{iProperty}.Hidden
+                    propNames{end+1} = MetaInfo.Properties{iProperty}.Name; %#ok<AGROW>
+                end
+            end
+            
+            S.class = 'prtAction';
+            S.prtActionType = class(obj);
+            S.isSupervised = obj.isSupervised;
+            S.dataSetSummary = obj.dataSetSummary;
+            for iProp = 1:length(propNames)
+                cProp = obj.(propNames{iProp});
+                for icProp = 1:length(cProp) % Allow for arrays of objects
+                    cOut = prtUtilFintPrtActionsAndConvertToStructures(cProp(icProp));
+                    if icProp == 1
+                        cVal = repmat(cOut,size(cProp));
+                    else
+                        cVal(icProp) = cOut;
+                    end
+                end
+                S.(propNames{iProp}) = cVal;
+            end
+            S.userData = obj.userData;
+        end
+        
+        function xOut = runFast(Obj, xIn, ds)         
+            % RUNFAST  Run a prtAction object on a matrix.
+            %   The specific action must have overloaded the runActionFast
+            %   method.
+            
+            if ~Obj.isTrained
+                error('prtAction:runFast:ActionNotTrained','Attempt to run a prtAction of type %s that was not trained',class(Obj));
+            end
+                
+            if isempty(xIn)
+                xOut = xIn;
+                return
+            end
+            
+            if nargin > 2
+                xIn = preRunProcessingFast(Obj, xIn, ds);
+                xOut = runActionFast(Obj, xIn, ds);
+                xOut = postRunProcessingFast(Obj, xIn, xOut, ds);
+            else
+                xIn = preRunProcessingFast(Obj, xIn);
+                xOut = runActionFast(Obj, xIn);
+                xOut = postRunProcessingFast(Obj, xIn, xOut);
+            end
+        end
     end
     
     methods (Hidden, Static)
@@ -617,7 +802,6 @@ classdef prtAction
         end
         function val = getShowProgressBar()
             val = prtOptionsGet('prtOptionsComputation','showProgressBar');
-        end
-        
+        end        
     end
 end

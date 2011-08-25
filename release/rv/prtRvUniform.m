@@ -35,6 +35,16 @@ classdef prtRvUniform < prtRv
     %   See also: prtRv, prtRvMvn, prtRvGmm, prtRvMultinomial,
     %   prtRvVq, prtRvKde
     
+    properties (SetAccess = private)
+        name = 'Uniform Random Variable'
+        nameAbbreviation = 'RVUnif';
+    end
+    
+    properties (SetAccess = protected)
+        isSupervised = false;
+        isCrossValidateValid = true;
+    end    
+    
     properties
         upperBounds  % The lower bounds of the random variable
         lowerBounds  % The upper bounds of the random variable
@@ -47,8 +57,6 @@ classdef prtRvUniform < prtRv
     methods
         % The Constructor
         function R = prtRvUniform(varargin)
-            R.name = 'Uniform Random Variable';
-            
             R = constructorInputParse(R,varargin{:});
         end
         

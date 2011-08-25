@@ -21,7 +21,7 @@ void libsvmwrite(const char *filename, const mxArray *label_vec, const mxArray *
 	mwIndex *ir, *jc;
 	int label_vector_row_num;
 	double *samples, *labels;
-	mxArray *instance_mat_col; // instance sparse matrix in column format
+	mxArray *instance_mat_col; /* instance sparse matrix in column format */
 
 	if(fp ==NULL)
 	{
@@ -29,7 +29,7 @@ void libsvmwrite(const char *filename, const mxArray *label_vec, const mxArray *
 		return;
 	}
 
-	// transpose instance matrix
+	/* transpose instance matrix */
 	{
 		mxArray *prhs[1], *plhs[1];
 		prhs[0] = mxDuplicateArray(instance_mat);
@@ -42,7 +42,7 @@ void libsvmwrite(const char *filename, const mxArray *label_vec, const mxArray *
 		mxDestroyArray(prhs[0]);
 	}
 
-	// the number of instance
+	/* the number of instance */
 	l = (int) mxGetN(instance_mat_col);
 	label_vector_row_num = (int) mxGetM(label_vec);
 
@@ -52,7 +52,7 @@ void libsvmwrite(const char *filename, const mxArray *label_vec, const mxArray *
 		return;
 	}
 
-	// each column is one instance
+	/* each column is one instance */
 	labels = mxGetPr(label_vec);
 	samples = mxGetPr(instance_mat_col);
 	ir = mxGetIr(instance_mat_col);
@@ -76,7 +76,7 @@ void libsvmwrite(const char *filename, const mxArray *label_vec, const mxArray *
 void mexFunction( int nlhs, mxArray *plhs[],
 		int nrhs, const mxArray *prhs[] )
 {	
-	// Transform the input Matrix to libsvm format
+	/* Transform the input Matrix to libsvm format */
 	if(nrhs == 3)
 	{
 		char filename[256];

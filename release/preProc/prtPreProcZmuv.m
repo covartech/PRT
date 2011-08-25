@@ -47,9 +47,6 @@ classdef prtPreProcZmuv < prtPreProc
         stds = [];    % The original data standard deviation
     end
     
-    
-        % Allow for string, value pairs
-        % There are no user settable options though.
     methods
         function Obj = prtPreProcZmuv(varargin)
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
@@ -69,6 +66,8 @@ classdef prtPreProcZmuv < prtPreProc
             DataSet = DataSet.setObservations(bsxfun(@rdivide,bsxfun(@minus,DataSet.getObservations(),Obj.means),Obj.stds));
         end
         
+        function xOut = runActionFast(Obj,xIn,ds) %#ok<INUSD>
+           xOut = bsxfun(@rdivide,bsxfun(@minus,xIn,Obj.means),Obj.stds);
+        end
     end
-    
 end

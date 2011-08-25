@@ -9,8 +9,8 @@ classdef prtPreProcLda < prtPreProcClass
     %
     %   nComponents - The number of dimensions to project the data onto.
     %                 This must less than or equal to the input data's
-    %                 number of features, and less than to the input data's
-    %                 number of classes.
+    %                 number of features, and less than or equal to the 
+    %                 input data sets number of classes.
     %
     %   A prtPreProcLda object also inherits all properties and functions from
     %   the prtAction class

@@ -50,8 +50,11 @@ classdef prtClassBagging < prtClass
     %     h = plot(pf,pd,'linewidth',3);
     %     title('ROC'); xlabel('Pf'); ylabel('Pd');
     %
+    %    See also prtClass, prtClassLogisticDiscriminant, prtClassBagging,
+    %    prtClassMap, prtClassFld, prtClassBinaryToMaryOneVsAll, prtClassDlrt,
+    %    prtClassPlsda, prtClassFld, prtClassRvm, prtClassGlrt,  prtClassSvm,
+    %    prtClassTreeBaggingCap, prtClassKmsd, prtClassKnn
     
-
     properties (SetAccess=private)
         % Required by prtAction
         name = 'Bagging Classifier'   %  Bagging Classifier

@@ -52,7 +52,7 @@ classdef prtClassMap < prtClass
         end
         % Set function
         function Obj = set.rvs(Obj,val)
-            if(~ isa(val, 'prtRv'))
+            if ~(isa(val, 'prtRv') || isa(val, 'prtBrv')) 
                 error('prtClassMAP:rvs','Rvs parameter must be of class prtRv');
             else
                 Obj.rvs = val;
@@ -69,7 +69,7 @@ classdef prtClassMap < prtClass
 
             % Get the ML estimates of the RV parameters for each class
             for iY = 1:DataSet.nClasses
-                Obj.rvs(iY) = mle(Obj.rvs(iY), DataSet.getObservationsByClassInd(iY));
+                Obj.rvs(iY) = train(Obj.rvs(iY), DataSet.retainClassesByInd(iY));
             end
         end
         
@@ -77,7 +77,7 @@ classdef prtClassMap < prtClass
             
             logLikelihoods = zeros(DataSet.nObservations, length(Obj.rvs));
             for iY = 1:length(Obj.rvs)
-                logLikelihoods(:,iY) = logPdf(Obj.rvs(iY), DataSet.getObservations());
+                logLikelihoods(:,iY) = getObservations(run(Obj.rvs(iY), DataSet));
             end
 
             % Change to posterior probabilities and package everything up in a
@@ -85,7 +85,16 @@ classdef prtClassMap < prtClass
             DataSet = prtDataSetClass(exp(bsxfun(@minus, logLikelihoods, prtUtilSumExp(logLikelihoods.').')));
             DataSet.actionData.logLikelihoods = logLikelihoods;
         end
-        
+    
+        function xOut = runActionFast(Obj,xIn,ds) %#ok<INUSD>
+            
+            logLikelihoods = zeros(size(xIn,1),length(Obj.rvs));
+            for iY = 1:length(Obj.rvs)
+                logLikelihoods(:,iY) = runFast(Obj.rvs(iY), xIn);
+            end
+            
+            xOut = exp(bsxfun(@minus, logLikelihoods, prtUtilSumExp(logLikelihoods.').'));
+        end
     end
     
 end

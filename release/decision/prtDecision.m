@@ -73,9 +73,9 @@ classdef prtDecision < prtAction
             obj.classList = val(:);
         end
         function c = get.classList(obj)
-            if isempty(obj.classList)
-                error('prtDecision field of a classifier was not set during training; please try re-training the classifier');
-            end
+            %             if isempty(obj.classList)
+            %                 error('prtDecision field of a classifier was not set during training; please try re-training the classifier');
+            %             end
             c = obj.classList;
         end
     end

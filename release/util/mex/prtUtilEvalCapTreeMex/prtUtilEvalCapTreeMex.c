@@ -19,7 +19,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
     if (nlhs != 1)
         mexErrMsgTxt("evalCAPtreeMex requires one output arguments");
 	
-	// Check the fields of the tree for W, featureIndices, threshold, terminalVote, and treeIndices
+	/* Check the fields of the tree for W, featureIndices, threshold, terminalVote, and treeIndices */
 	W = mxGetField(prhs[0],0,"W");
 	if (W == NULL)
 		mexErrMsgTxt("evalCAPtreeMex requires argument 1 must have field 'W'");
@@ -40,7 +40,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
 	if (treeIndices == NULL)
 		mexErrMsgTxt("evalCAPtreeMex requires argument 1 must have field 'treeIndices'");
 
-    // Get the data out of the struct
+    /* Get the data out of the struct */
 	wData = mxGetPr(W);
     wSize = mxGetDimensions(W);
     featureIndicesData = mxGetPr(featureIndices);
@@ -48,7 +48,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
 	terminalVoteData = mxGetPr(terminalVote);
 	treeIndicesData = mxGetPr(treeIndices);
     
-	// Get the Pointers-to-real data we need
+	/* Get the Pointers-to-real data we need */
 	xData = mxGetPr(prhs[1]);
 	xSize = mxGetDimensions(prhs[1]);
     nClasses = mxGetPr(prhs[2]);
@@ -67,11 +67,11 @@ void mexFunction(int nlhs, mxArray *plhs[],
                 yOut = 0;
                 for (iFeature = 0; iFeature < wSize[0]; iFeature++){
                     yOut += wData[(index-1)*wSize[0]+iFeature] * xData[((int)featureIndicesData[(index-1)*wSize[0]+iFeature]-1)*xSize[0] + iSample];
-                    //mexPrintf("%.2f * %.2f [%d] = %.2f\n",wData[(index-1)*wSize[0]+i],xData[(int)featureIndicesData[(index-1)*wSize[0]+i]-1],(int)featureIndicesData[(index-1)*wSize[0]+i]-1,yOut);
+                    /*mexPrintf("%.2f * %.2f [%d] = %.2f\n",wData[(index-1)*wSize[0]+i],xData[(int)featureIndicesData[(index-1)*wSize[0]+i]-1],(int)featureIndicesData[(index-1)*wSize[0]+i]-1,yOut);*/
                 }
                 yOut = yOut - thresholdData[index-1];
                 
-                if (yOut >= 0){ //find the second (right) branch
+                if (yOut >= 0){ /*find the second (right) branch*/
                     found = 0;
                     iTreeSearch = -1;
                     while (found <= 1){
@@ -81,7 +81,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
                         }
                     }
                     index = iTreeSearch+1;
-                }else{  //find the first (left) branch
+                }else{  /* find the first (left) branch */
                     found = 0;
                     iTreeSearch = -1;
                     while (found <= 0){

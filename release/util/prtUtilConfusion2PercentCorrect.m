@@ -28,6 +28,8 @@ if any(~prtUtilIsNaturalNumber(confusionMat(:)))
     error('requires counting number - confusionCountMatrix, not confusionPercentMatrix');
 end
 
+assert(ndims(confusionMat)==2 && size(confusionMat,1)==size(confusionMat,2),'prt:prtUtilConfusion2PercentCorrect:BadInput','prtUtilConfusion2PercentCorrect requires a square confusion matrix. A non square confusion matrix possible implies a mismatch between the true targets and the assigned targets. This is ambiguous.')
+
 % The confusion matrix lists the number of responses not percentages.
 % We must change the matrix to a percentage matrix.
 occurances = repmat(sum(confusionMat,2),1,size(confusionMat,2));

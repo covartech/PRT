@@ -7,7 +7,7 @@ function rmse = prtScoreRmse(varargin)
 %   they are prtDataSets, TRUTH.isLabeled must be true.
 %
 %   Example:
-%   dataSet = prtDataGenNoisySinc;        % Load a prtDataRegress data set, a
+%   dataSet = prtDataGenNoisySinc;   % Load a prtDataRegress data set, a
 %                                    % noisy Sinc function
 %   reg = prtRegressRvm;             % Create a prtRegressRvm object
 %   reg = reg.train(dataSet);        % Train the prtRegressRvm object
@@ -18,9 +18,7 @@ function rmse = prtScoreRmse(varargin)
 %   prtScoreRmse(truth, guess)
 %
 %     
-%   See also prtScoreConfusionMatrix, prtScoreRoc,
-%   prtScoreRocBayesianBootstrap, prtScoreRocBayesianBootstrapNfa,
-%   prtScorePercentCorrect
+%   See also prtScoreConfusionMatrix, prtScoreRoc, prtScorePercentCorrect
 
 [guesses,targets] = prtUtilScoreParseFirstTwoInputs(varargin{:});
 

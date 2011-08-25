@@ -10,10 +10,9 @@ function DataSet = prtDataGenSpiral(N)
 %  plot(ds)
 %
 %   See also: prtDataSetClass, prtDataGenBiModal, prtDataGenIris,
-%   prtDataGenManual, prtDataGenMary, prtDataGenNoisySinc,
-%   prtDataGenOldFaithful,prtDataGenProtate, prtDataGenSprial,
-%   prtDataGenSpiral3Regress, prtDataGenUnimodal, prtDataGenSwissRoll,
-%   prtDataGenUnimodal, prtDataGenXor
+%   prtDataGenMary, prtDataGenNoisySinc, prtDataGenOldFaithful,
+%   prtDataGenSpiral, prtDataGenUnimodal, prtDataGenUnimodal, prtDataGenXor
+
 
 
 

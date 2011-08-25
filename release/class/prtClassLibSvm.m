@@ -79,7 +79,7 @@ classdef prtClassLibSvm < prtClass
     %   when you try and run it on an unlabeled data set (in testing) or
     %   when you plot it.  This is because whoever made the interface
     %   didn't think to give us a way that I can see to turn off that
-    %   output.
+    %   output. (Actually this has now been disabled.)
     %
     %       2) All the parameters that you set below actually get set for
     %       real when we call libSvmOptionString and libSvmOptionStringTest
@@ -195,6 +195,14 @@ classdef prtClassLibSvm < prtClass
             training_instance_matrix = DataSet.getObservations;
             Obj.libSvmOptions = Obj.libSvmOptionString(DataSet);
             Obj.libSvmOptionsTest = Obj.libSvmOptionStringTest(DataSet);
+  
+            % Its ok to have 1 class if its a 1 class classifier
+            if DataSet.nClasses ~= 2 && Obj.svmType ~=2
+                error('prt:prtClassLibSvm:UnaryData','prtClassLibSvm requires binary data for training');
+            end
+            if DataSet.nClasses ~= 1 && Obj.svmType ==2
+                error('prt:prtClassLibSvm:UnaryData','prtClassLibSvm requires unary data for training when svmType = 2');
+            end
             
             Obj.trainedSvm = prtExternal.libsvm.svmtrain(training_label_vector, training_instance_matrix, Obj.libSvmOptions);
             
