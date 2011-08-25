@@ -850,7 +850,7 @@ classdef prtDataSetClass  < prtDataSetStandard
             %       minimumKernelBandwidth - minimumBandwidth parameter of 
             %                                prtRvKde that is used to
             %                                estimate each density. default
-            %                                eps.
+            %                                []. See prtRvKde.
             %
             % Example:
             %    ds = prtDataGenMary;
@@ -877,7 +877,7 @@ classdef prtDataSetClass  < prtDataSetStandard
             
             % Parse Options (additional string value pairs)
             Options.nDensitySamples = 500;
-            Options.minimumKernelBandwidth = eps;
+            Options.minimumKernelBandwidth = [];
             
             if nargin > 1
                 assert(mod(length(inputs),2)==0,'Additional inputs must be string value pairs')
