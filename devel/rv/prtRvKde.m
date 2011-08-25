@@ -178,7 +178,7 @@ classdef prtRvKde < prtRv
             if isempty(R.minimumBandwidth)
                 % Estimate a minimum bandwidth using a heuristic method
                 % Robust std estimate in each dim
-                minBandwidths = zeros(size(X,2),1);
+                minBandwidthsStd = zeros(size(X,2),1);
                 for iDim = 1:size(X,2)
                     cX = X(:,iDim);
                     cX(isnan(cX)) = []; % Remove nans
@@ -190,12 +190,18 @@ classdef prtRvKde < prtRv
                     cXMiddle = sortedX(find(cCdf>0.25,1,'first'):find(cCdf>0.75,1,'first'));
                     
                     if isempty(cXMiddle)
-                        minBandwidths(iDim) = (std(cX)/size(cX,1)).^2;
+                        minBandwidthsStd(iDim) = std(cX);
                     else
-                        minBandwidths(iDim) = (std(cXMiddle)/size(cXMiddle,1)).^2;
+                        minBandwidthsStd(iDim) = std(cXMiddle);
                     end
                 end
-                minimumBandwidthVal = max(minBandwidths(:)',eps); %#ok<UDIM>
+                % The optimal bandwidth for a gaussian uses this function
+                % of a robust std estimate and the number of samples
+                minBandwidthsStd = minBandwidthsStd * (4/(3*size(X,1)))^(1/5);
+                
+                % To make this a minumum we divide by 10
+                % (and make it a variance) but never below eps
+                minimumBandwidthVal = max((minBandwidthsStd(:)'/10).^2,eps);
                 
             else
                 minimumBandwidthVal = R.minimumBandwidth;
