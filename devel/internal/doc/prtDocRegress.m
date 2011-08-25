@@ -3,10 +3,10 @@
 % Recognition Toolbox. It is similar to classification, except that the
 % target result is not a class label, but can be a non-integer value.
 %
-% Since all <matlab:doc('prtRegress') prtRegress> objects inherit from the
+% Since all <./functionReference/prtRegress.html prtRegress> objects inherit from the
 % prtAction class, they share the TRAIN, RUN, CROSSVALIDATE and KFOLDS For
 % more information on these methods, refer to section on the
-% <matlab:showdemo('prtDocEngine') prtEngine>.
+% <./prtDocEngine.html prtEngine>.
 
 %% Using regression objects
 % The following is a simple example of the usage of a prtRegress object.

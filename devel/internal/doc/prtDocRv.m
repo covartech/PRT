@@ -47,7 +47,7 @@ randomDraw = rvUni.draw(2)  % Draw 2 samples
 
 %% 
 % For a list of other functions related to to prtRv objects, see
-% <matlab:doc('prtRv') prtRv>. All random variable objects in the Pattern
+% <./functionReference/prtRv.html prtRv>. All random variable objects in the Pattern
 % Recognition Toolbox have the same API as discussed above.  For a list of
 % all the different random variables supported, and links to their
 % individual help entries, <prtDocFunctionList.html#13 A list of commonly

@@ -1,6 +1,6 @@
 %% PRT Classification Objects
 % One of the most powerful features of the Pattern Recognition Toolbox is
-% classification objects, implemented as <matlab:doc('prtClass') prtClass>
+% classification objects, implemented as <./functionReference/prtClass.html prtClass>
 % objects. Classification objects allow you to develop algorithms which
 % will label data into discrete clases. prtClass objects are all
 % supervised, meaning they require labeled training data during training.
@@ -8,8 +8,7 @@
 %% Classification object methods and properties.
 % All prtClass objects inherit the TRAIN, RUN, CROSSVALIDATE and KFOLDS
 % functions from the prtAction object, for more information on these
-% methods, refer to section on the  <matlab:showdemo('prtDocEngine')
-% prtEngine>.
+% methods, refer to section on the  <./prtDocEngine.html prtEngine>.
 %
 % In addition to the inherited methods, prtClass objects also have a few
 % important properties. The isNativeMary field indicates whether or not the
@@ -82,4 +81,4 @@ classifier.plot()
 % same API as discussed above. The only difference is the underlying
 % algorithms used to train and run the classifier. For a list of all the
 % different classification algorithms, and links to their individual help
-% entries, <prtDocFunctionList.html A list of commonly used functions>
+% entries, <./prtDocFunctionList.html A list of commonly used functions>

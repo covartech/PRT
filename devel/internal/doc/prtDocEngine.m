@@ -2,13 +2,14 @@
 %
 %%
 % In the Pattern Recogntion toolbox, all actions (classification,
-% regression, etc...) are implemented as  <matlab:doc('prtAction')
-% prtAction> objects. All prtAction objects share fundamental operations
+% regression, etc...) are implemented as  <./functionReference./prtAction.html prtAction>
+% objects. All prtAction objects share fundamental operations
 % such as training, running and validating results share this common API.
-% There are 4 methods, <matlab:doc('prtAction/train') train>,
-% <matlab:doc('prtAction/run') run>, <matlab:doc('prtAction/crossValidate')
-% crossValidate>, <matlab:doc('prtAction/kfolds') kfolds>, and
-% <matlab:doc('prtAction/optimize') optimize>.
+% There are 4 methods, <./functionReference./prtAction/train.html train>,
+% <./functionReference./prtAction/run.html run>, 
+% <./functionReference./prtAction/crossValidate.html crossValidate>,
+% <./functionReference./prtAction/kfolds.html kfolds>, and
+% <./functionReference./prtAction/optimize.html optimize>.
 %
 %% Training
 % Training is the first fundamental method in the Pattern Recognition
@@ -76,7 +77,7 @@ result.getX(1:5)    % getX() is a shortcut for getObservations()
 % likelihood ratio test for each observation in dsTest, as performed by the
 % classifier that was trained with the data from the dataset ds. To make a
 % decision based on these outputs, you will need to use a
-% <matlab:doc('prtDecision') prtDecision> Object.
+% <./functionReference./prtDecision.html prtDecision> Object.
 %
 % The cluster object operates in exactly the same way:
 
@@ -95,7 +96,7 @@ result.getX(1:5,:)
 
 %% Cross Validation
 %
-% <matlab:doc('prtAction/crossValidate' Cross validation> allows you to
+% <./functionReference./prtAction/crossValidate.html Cross validation> allows you to
 % perform training and running of an action in one command, by partitioning
 % a labeled dataset into training and test data using keys. This also
 % ensures that all data will be used for both training and testing. To
@@ -120,7 +121,7 @@ result = cluster.crossValidate(ds,keys);
 %% K-folds
 % In the above example of cross validation, the user manually picked which
 % data belonged to which fold. An alternative method is to use the
-% <matlab:doc('prtAction/kfolds') kfolds> function. When calling kfolds,
+% <./functionReference./prtAction/kfolds.html kfolds> function. When calling kfolds,
 % specify the number of folds you would like the data divided into. Kfolds
 % will then randomly subdivide the data into the specified number of folds,
 % and perform cross validation. For example:

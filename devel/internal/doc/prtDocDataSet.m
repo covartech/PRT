@@ -10,8 +10,8 @@
 % interested in classification or regression, respectively. All prtDataSet
 % objects inherit from the prtDataSetBase class, which provides most of the
 % basic functionality for setting and getting data members. For more
-% information on the base data class, see <matlab:doc('prtDataSetBase')
-% prtDataSetBase>.
+% information on the base data class, see
+% <./functionReference/prtDataSetBase.html prtDataSetBase>.
 
 %% prtDataSetStandard
 %
@@ -52,10 +52,10 @@ ds = ds.setX([1 2; 3 4; 5 6])
 % equals 2, etc.
 %
 % Right now, the dataset is not labeled. To set labels, we can use the
-% setTargets function. Suppose we want to simply label the data as being a
-% member of class 0 or class 1, you can do the following:
+% setY (or setTargets) function. Suppose we want to simply label the data
+% as being a member of class 0 or class 1, you can do the following:
 
-ds = ds.setTargets([1;0;1])
+ds = ds.setY([1;0;1])
 
 %%
 % Note that the number of targets was equal to the number of observations.
@@ -127,7 +127,7 @@ ds = ds.setObservationInfo('info1',[7 8 9]')
  
  %%
  % For more information on the prtDataSetClass, please refer to
- % <matlab:doc('prtDataSetClass') prtDataSetClass>
+ % <./functionReference/prtDataSetClass.html prtDataSetClass>
  
  %% prtDataSetRegress
  %
@@ -142,6 +142,6 @@ ds = ds.setObservationInfo('info1',[7 8 9]')
 
  %%
  % For more information on prtDataSetRegress, please refer to
- % <matlab:doc('prtDataSetRegress') prtDataSetRegress>
+ % <./functionReference/prtDataSetRegress.html prtDataSetRegress>
 
 

@@ -38,8 +38,8 @@ cluster = cluster.train(ds);  %Train
 subplot(2,1,2); plot(cluster) % Plot
 title('City block distance metric')
 
-
+%%
 % All distance functions in the Pattern Recognition Toolbox have the same
 % API as discussed above.  For a list of all the different techniques, and
-% links to their individual help entries, <prtDocFunctionList.html#5 A list
+% links to their individual help entries, <./prtDocFunctionList.html#5 A list
 % of commonly used functions>

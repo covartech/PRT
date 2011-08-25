@@ -7,13 +7,13 @@
 % Like all other prtAction objects, all prtPreProc objects inherit the
 % TRAIN, RUN, CROSSVALIDATE and KFOLDS functions from the prtAction object.
 % For more information on these methods, refer to section on the
-% <matlab:showdemo('prtDocEngine') prtEngine>.
+% <./prtDocEngine.html prtEngine>.
 %
 % Performing principle component analysis is another common
 % example of pre processing, which is illustrated below. 
 
 ds = prtDataGenUnimodal;     % Load a dataset
-preProc = prtPreProcPca;     % Create a pre processing object
+preProc = prtPreProcPca('nComponents',2); % Create a pre processing object
 preProc = preProc.train(ds); % Train the object
 dsOut = preProc.run(ds);     % Run the object on the dataset
 

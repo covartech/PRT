@@ -1,7 +1,7 @@
 %% Creating algorithms with the Pattern Recognition Toolbox
 %
 % One of the most useful features of the Pattern Recognition Toolbox is the
-% ability to create <matlab:doc('prtAlgorithm') prtAlgorithm> objects.
+% ability to create <./functionReference/prtAlgorithm.html prtAlgorithm> objects.
 % prtAlgorithm objects allow you to combine together prtAction objects, and
 % then train and run them as if they were a single object.
 

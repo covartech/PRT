@@ -5,4 +5,4 @@ prtPublishDoc
 
 % Copy all of the files over
 copyfile(fullfile(prtRoot,'doc'),fullfile(targetDir,'doc'));
-rmdir(fullfile(prtTarget,'doc','.svn'),'s') % Delete .svn
+rmdir(fullfile(targetDir,'doc','.svn'),'s') % Delete .svn

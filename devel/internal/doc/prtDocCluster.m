@@ -12,8 +12,7 @@
 %% Clustering object methods and properties.
 % All prtCluster objects inherit the TRAIN, RUN, CROSSVALIDATE and KFOLDS
 % functions from the prtAction object, for more information on these
-% methods, refer to section on the  <matlab:showdemo('prtDocEngine')
-% prtEngine>.
+% methods, refer to section on the  <./prtDocEngine.html prtEngine>.
 %
 %
 %% Using clustering objects
