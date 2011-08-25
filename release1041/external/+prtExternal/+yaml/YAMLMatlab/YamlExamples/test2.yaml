@@ -1,0 +1,30 @@
+Process:
+    name: Enaspol_Abeson
+    Description: Temperature of heating water of Abeson tanks
+    controlSamplingPeriod: 1:00:00
+    predictionHorizon: 144:00:00
+sensors:
+    - class: Compass
+      tiltSigma: 0.2
+      headingSigma: 0.5
+      Hz: 20
+      translation: [1,1,1]
+      rotationaxis: [1, 0, 0, 0]
+    - class: Compass
+      tiltSigma: 0.2
+      headingSigma: 0.5
+      Hz: 20
+      translation: [1,1,1]
+      rotationaxis: [1, 0, 0, 0]    
+    - class: PressureSensor
+      whiteSigma: 0.1
+      translation: [0.1, 0.2, 0.3]
+    - class: DepthSensor
+      whiteSigma: 0.1
+      translation: [0.1, 0.2, 0.3]
+    - class: Compass
+      tiltSigma: 0.2
+      headingSigma: 0.5
+      Hz: 20
+      translation: [1,1,1]
+      rotationaxis: [1, 0, 0, 0]
