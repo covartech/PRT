@@ -189,7 +189,7 @@ yOutKfolds = knnClassifier.kfolds(dsPca,10); %10-Fold cross-validation
 [nVotes,guess] = max(yOutKfolds.getObservations,[],2);
 
 subplot(1,1,1); %don't plot in the last figure window.
-prtScoreConfusionMatrix(guess,truth,dsPca.nClasses,dsPca.getClassNames);
+prtScoreConfusionMatrix(guess,truth,dsPca.uniqueClasses,dsPca.getClassNames);
 title('Iris Classification Confusion Matrix');
 
 %% One More Thing...

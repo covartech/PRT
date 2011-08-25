@@ -2,11 +2,12 @@
 % 
 % Feature selection is a technique that is used to determine which features
 % of a data set are most relevant to performing classification. In general,
-% the more features used in a classification, there will be more
-% computation and memory usage. Therefore, it is often desirable to reduce
+% for a fixed size training set, incorporating more features in classifier
+% training can lead to declining performance due to the curse of
+% dimensionality.  Therefore, it is often desirable to reduce
 % the amount of features used to perform classification to the smallest
 % amount possible that still gives the desired performance. prtFeatSel
-% provide a way to select features based on a performance criteria. 
+% objects provide a way to select features based on a performance criteria.
 
 %% Exhaustive feature selection
 %
@@ -16,8 +17,10 @@
 %  selection algorithm will then evaluate the classifier with all
 %  combinations of features and select the set that gives the best
 %  performance. The classifier performance is determined by specifying a
-%  prtEval object. The following example illustrates exhaustive feature
-%  selection:
+%  prtEval object. Note that the computational complexity of exhaustive
+%  feature selection grows very rapidly, so that for even moderately sized
+%  data sets, exhaustive feature selection is impractical.  The following
+%  example illustrates exhaustive feature selection:
 
 % Generate a data set, this data set has a redundant feature intentionally
 % inserted for example purposes.
@@ -61,12 +64,13 @@ featSel.selectedFeatures
 % Exhaustive feature selection can take a considerable amount of time to
 % train, particularly if the number of features is large. Sequential
 % feature selection can potentially resolve this problem while reducing the
-% amount of training time. Sequential forward selection starts with one
-% feature, and evaluates the classifier for every feature. The feature that
-% gives the best performance is then selected. If more than one feature is
-% requested, the feature selection object will then repeat this, adding
-% features, and selecting the one that most improves performance, until the
-% desired number of features has been met. For example:
+% amount of training time. Sequential forward selection starts by selecting
+% one feature by and evaluating the classifier on each feature
+% individually. The feature that gives the best performance is then
+% selected. If more than one feature is requested, the feature selection
+% object will then repeat this, adding features, and selecting the one that
+% most improves performance, until the desired number of features has been
+% met. For example:
 
 % Create a sequential forward selection object
 featSel = prtFeatSelSfs;

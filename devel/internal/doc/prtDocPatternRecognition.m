@@ -20,13 +20,12 @@
 %
 % $$\hat{y}_{j} = f(x_{j})$$
 %
-% Given the function $$f(x_{j})$, inference is trivial.  
-%
 % The goals of _learning_ in pattern recognition are to develop the
-% function, f, given only a (possibly small) set of training data, $$ X = \{\{x_{i},y_{i}\}\} $$ , $$i = 1...N$ .  As such, pattern recognition is fundamentally
-% an ill-posed problem, since it is trivially easy to define a function
-% that performs arbitrarily well on the training data ( $$f(x_{j}) = y_{j})
-% \forall {x_{j},y_{j}} \in X$ ).
+% function, f, given only a (possibly small) set of training data, $$ X = \{\{x_{i},y_{i}\}\} $$ , $$i = 1...N$ .  
+% As such, pattern recognition is fundamentally an ill-posed problem, since
+% it is trivially easy to define a function that performs arbitrarily well
+% on the training data ( $$f(x_{j}) = y_{j}) \forall {x_{j},y_{j}} \in X$
+% ).
 %
 % Since learning in pattern recognition is ill-posed, a wide number of
 % different algorithms have been proposed to map from a set of training

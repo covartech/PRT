@@ -2,7 +2,7 @@
 % 
 % The Pattern Recognition Toolbox offers a set of random variable objects
 % with a wide range of functionality. prtRv objects can compute pdf or cdf
-% values of a random variable, be used a a random variable generator, or
+% values of a random variable, be used as a random variable generator, or
 % perform a maximum likelihood fit of a random variable from a data set.
 
 %% Specifying a random variable object

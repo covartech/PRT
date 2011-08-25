@@ -12,16 +12,17 @@
 
 dataSet = prtDataGenSpiral;
 classifier = prtClassDlrt;
+classifier.internalDecider = prtDecisionBinaryMinPe;
 pc =  prtEvalPercentCorrect(classifier, dataSet)
 
 %%
-% Note, in the above example, the internal decider was not set, so the
-% minimum probability of error was used as the decision rule. By setting
-% the internal decider to a prtDecision object, a different probability
-% correct will be obtained:
+% In the above, the minimum probability of error was used as the decision
+% rule. Alternatively, we can specify a Pf to acheive and make decisions
+% based on that:
 
 % Set the decider so that the object has at least a probility of false
 % alarm of .1 or less.
+classifier = prtClassDlrt;
 classifier.internalDecider = prtDecisionBinarySpecifiedPf('pf',.1);
 pc =  prtEvalPercentCorrect(classifier, dataSet)
 
@@ -29,7 +30,7 @@ pc =  prtEvalPercentCorrect(classifier, dataSet)
 % Another important use of the prtEval functions is to optimize performance
 % of a prtAction. Continuing the following example, use the optimize
 % function to select the best performance of the classifier for a range of
-% k values:p
+% k values:
 
 kVec = 1:20;
 [optClassifier, pc] =  ...

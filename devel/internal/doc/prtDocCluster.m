@@ -1,12 +1,13 @@
 %% PRT Clustering Objects
 % Clustering is an operation very similar to classification. The main
 % difference is that in clustering, the class labels are unknown.
-% Clustering sorts the data into discrete clusters, which are given integer
-% labels. It is important to remember that when using clustering
-% algorithms, the assignment of labels to clusters is completely arbitrary.
-% For example, if you train a clustering algorithm with the same set of
-% data twice, it is possible that the same sample could be labeled class 0
-% the first train, and class 1 the second train.
+% Instead of using known class labels, clustering sorts the data into
+% discrete clusters, which are given integer labels. It is important to
+% remember that when using clustering algorithms, the assignment of labels
+% to clusters is completely arbitrary. For example, if you train a
+% clustering algorithm with the same set of data twice, it is possible that
+% the same sample could be labeled class 0 the first time, and class 1 the
+% second time.
 %
 %% Clustering object methods and properties.
 % All prtCluster objects inherit the TRAIN, RUN, CROSSVALIDATE and KFOLDS
@@ -40,7 +41,7 @@ plot(cluster)
 %%
 % In the above example, again the number of clusters in the orignal data
 % was known to be 3, so the nClusters data member was set accordingly.
-% Currenlty, all prtCluster algorithms require the number of clusters to be
+% Currently, all prtCluster algorithms require the number of clusters to be
 % set before training.
 
 %% Internal Deciders
@@ -59,6 +60,6 @@ result = cluster.kfolds(ds,2);   %  Perform a simple 2-fold cross-validation
 %%
 % All clustering objects in the Pattern Recognition Toolbox have the same
 % API as discussed above. The only difference is the underlying clustering
-% algorithms used to train and run . For a list of all the different
+% algorithms used to train and run. For a list of all the different
 % clustering algorithms, and links to their individual help entries,
 % <prtDocFunctionList.html#2 A list of commonly used functions>

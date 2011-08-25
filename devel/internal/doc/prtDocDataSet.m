@@ -1,16 +1,16 @@
 %% Datasets in the Pattern Recognition Toolbox
-% Before you can perform any actions with the PRT, you need to get your
-% data into a PRT dataset object.
+% Before you can perform any actions with the PRT, your data must be stored
+% in a PRT dataset object.
 % 
 % There are 3 basic types of dataset objects, prtDataSetStandard,
 % prtDataSetClass, and prtDataSetRegress. The prtDataSetStandard object is
 % a generic object, containing much of the functionality needed to work
 % with the PRT. In general however, you will probably want to work with
 % either prtDataSetClass, or prtDataSetRegress, depending on if you are
-% doing classification or regression, respectively. All prtDataSet objects
-% inherit from the prtDataSetBase class, which provides most of the basic
-% functionality for setting and getting data members. For more information
-% on the base data class, see <matlab:doc('prtDataSetBase')
+% interested in classification or regression, respectively. All prtDataSet
+% objects inherit from the prtDataSetBase class, which provides most of the
+% basic functionality for setting and getting data members. For more
+% information on the base data class, see <matlab:doc('prtDataSetBase')
 % prtDataSetBase>.
 
 %% prtDataSetStandard
@@ -31,10 +31,11 @@ ds = ds.setX([1; 2; 3])
 
 %%
 % This result of this command illustrates a few very important features of
-% the PRT to remember. First of all, if you want to set a property, you
-% need to say ds = ds.setX([1;2;3]). If you just say ds.set([1;2;3]), then
-% the result will be returned and stored in the ans variable, and the
-% original ds object will be unchanged.
+% the PRT to remember. First, since prtDataSets are not MATLAB handle
+% objects, if you want to set the data or label properties, you need to say
+% ds = ds.setX([1;2;3]). If you just say ds.setX([1;2;3]), then the result
+% will be returned and stored in the ans variable, and the original ds
+% object will be unchanged.
 %
 % The second important feature this command illustrates is the orientation
 % of observations and features. Note that ds is now an object with 3
@@ -120,7 +121,7 @@ ds = ds.setObservationInfo('info1',[7 8 9]')
  %%
  % This dataset has 4 classes, and 4 features per class. The isMary
  % property is therefore set to true. Experiment with the different ways to
- % plot visualize this dataset. For example, try the plotStar function:
+ % visualize this dataset. For example, try the plotStar function:
  
  ds.plotStar
  

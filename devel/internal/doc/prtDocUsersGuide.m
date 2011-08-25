@@ -81,9 +81,3 @@
 % * <matlab:web(fullfile(prtRoot,'doc','prtDocDataGen.html'),'-helpbrowser'); Pattern Recognition Toolbox Data Generation Functions>
 %
 % Copyright 2011 New Folder Consulting L.L.C.
-
-
-
-
-
-

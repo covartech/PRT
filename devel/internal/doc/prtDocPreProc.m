@@ -23,7 +23,7 @@ subplot(2,1,2); plot(dsOut); title('After PCA')
 
 %%
 % Note that dsOut, the data has been reoriented by the principle component
-% analysis.
+% processing.
 %
 % All pre processing objects in the Pattern Recognition Toolbox have the
 % same API as discussed above.  For a list of all the

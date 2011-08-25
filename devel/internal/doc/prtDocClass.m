@@ -1,9 +1,9 @@
 %% PRT Classification Objects
 % One of the most powerful features of the Pattern Recognition Toolbox is
 % classification objects, implemented as <matlab:doc('prtClass') prtClass>
-% objects. Classification objects allow you to label data into clases.
-% prtClass objects are all supervised, meaning you have to train them
-% before you can perform classification.
+% objects. Classification objects allow you to develop algorithms which
+% will label data into discrete clases. prtClass objects are all
+% supervised, meaning they require labeled training data during training.
 %
 %% Classification object methods and properties.
 % All prtClass objects inherit the TRAIN, RUN, CROSSVALIDATE and KFOLDS
@@ -13,10 +13,10 @@
 %
 % In addition to the inherited methods, prtClass objects also have a few
 % important properties. The isNativeMary field indicates whether or not the
-% particular classifier is a binary classifier, or an M-ary classifier.
-% Binary classifiers can only label data as being in class 0 or 1, whereas
-% native M-ary classifiers can label data into an arbitrary number of
-% classes.
+% particular classifier natively handles binary and/or M-ary
+% classification. Binary classifiers can only label data as being in class
+% 0 or 1, whereas native M-ary classifiers can label data into an arbitrary
+% number of classes.
 %
 %% Using classifiers
 % You use classifiers in the same manner as any prtAction object. The
@@ -24,12 +24,13 @@
 % classifier, and perform kfolds validation on it.
 
 ds = prtDataGenUnimodal;   % Load a dataset to use
-classifier = prtClassGlrt  % Create a generalized likelihood ratio test 
+classifier = prtClassGlrt;  % Create a generalized likelihood ratio test 
                            % classifier
 
 result = classifier.kfolds(ds,2);% Perform a simple 2-fold cross-validation
 
 result.getX(1:5)
+result.getY(1:5)
 
 %% 
 % Note that the data stored in the observations of result correspond to the
@@ -41,13 +42,15 @@ result.getX(1:5)
 % Another important property of prtClass objects is the internalDecider.
 % Ordinarily, a prtClass object outputs raw statistics based on the
 % classification algorithm. However, you might just want the classification
-% object to also label the outputs. This can be done by setting the
-% internalDecider property to be a prtDecisionBinaryMinPe object:
+% object to make class decisions based on these outputs. This can be done
+% by setting the internalDecider property to be a prtDecisionBinaryMinPe
+% object:
 
 classifier.internalDecider = prtDecisionBinaryMinPe;
 result = classifier.kfolds(ds,2); %Perform a simple 2-fold cross-validation
 
 result.getX(1:5)
+result.getY(1:5)
 
 % Note that now the data stored in the observations of result are class
 % labels. They are likely all of class 0 in this example. By setting the

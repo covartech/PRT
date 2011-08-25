@@ -4,7 +4,6 @@
 % data sets, generally these will be the data sets returned from a
 % classification, clustering or regression operation.
 
-
 %% Binary scoring functions
 % The first set of scoring functions work on binary data, to evaluate
 % percent error, plot receiver operating curves and similar operations. In

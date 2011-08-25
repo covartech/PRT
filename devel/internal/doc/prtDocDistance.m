@@ -15,7 +15,7 @@ distance = prtDistanceEuclidean(dsx,dsy)
 % The above example computes the Euclidean distance from the data points 
 % [0 0] and [1 1] in the data set dsx to all the data points in dsy. The
 % result is a double matrix, where distance(i,j) corresponds to the
-% distance from the ith observation in dsy to the jth observation in dsy. 
+% distance from the ith observation in dsx to the jth observation in dsy. 
 
 %% Distance functions as members of prtActions
 %

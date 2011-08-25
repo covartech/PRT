@@ -1,8 +1,9 @@
 %% Using decision objects in the Pattern Recognition Toolbox
-% prtDecision objects are intended to be used as part of prtClass or
-% prtAlgorithm objects. They change the output of the run, crossvalidate
-% and kmeans functions from decision statistics to class labels. They also
-% determine the operating point that the decision is made at. 
+% prtDecision objects are intended to be used in algorithms with, or as
+% part of prtClass or prtAlgorithm objects. They change the output of the
+% run, crossvalidate and kmeans functions from decision statistics to class
+% labels. They also determine the operating point that the decision is made
+% at.
 
 %% prtDecision objects as the internalDecider of a prtClass object
 % The simplest way to use a prtDecision object is by

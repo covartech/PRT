@@ -75,7 +75,7 @@ classifier.plot;
 
 %% One-class classification with support vector machines
 % Support vector machines can be used to create one-class classifiers. One
-% class classifiers are useful for doing a type of outlier remove. If
+% class classifiers are useful for doing a type of outlier removal. If
 % training data is only available for one class, and you wish to determine
 % if a sample is from that class or not, a one-class classifier might be
 % useful. In the following example, we will create a 3 class M-ary dataset.

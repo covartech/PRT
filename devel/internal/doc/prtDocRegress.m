@@ -1,9 +1,7 @@
 %% PRT Regresssion objects
 % Regression is another powerful technique available in the Pattern
 % Recognition Toolbox. It is similar to classification, except that the
-% target result is not a class label, but an arbitrary length vector.
-% Classification maps numbers or vectorss to integers labels, whereas
-% Regression can map a number to number, or vector to another.
+% target result is not a class label, but can be a non-integer value.
 %
 % Since all <matlab:doc('prtRegress') prtRegress> objects inherit from the
 % prtAction class, they share the TRAIN, RUN, CROSSVALIDATE and KFOLDS For
@@ -32,7 +30,6 @@ plot(regress)
 % 
 % To delve a little bit deeper, run the prtRegression object on the test
 % dataset:
-
 
 % Test it with the test dataset:
 result = regress.run(dsTest);

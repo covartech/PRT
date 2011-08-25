@@ -116,9 +116,6 @@ result = cluster.crossValidate(ds,keys);
 % observation corresponds to key 1, the second to key 3, the third to key
 % 3, and the 4th corresponds to key 1 again, and so forth. 
 %
-% When crossValidate is called, all the observations of ds corresponding to
-% key 1 will be treated as test data, and the classifier will be trained
-% using the data corresponding to keys 2 and 3. 
 
 %% K-folds
 % In the above example of cross validation, the user manually picked which
@@ -133,10 +130,10 @@ result = cluster.kfolds(ds,nFolds);
 
 %%
 % A final note about cross validation and kfolds, there are some actions
-% that cross validation does not make sense, or is not possible. Outlier
-% removal is an example of this. Kernel object are another. In this case, a
-% flag is set, indicating that cross-validation is not a valid operation,
-% and calling crossValidate or kfolds on such an object will error.
+% that cross validation does not make sense, or is not possible (certain
+% forms of outlier removal for example). In this case, a flag is set,
+% indicating that cross-validation is not a valid operation, and calling
+% crossValidate or kfolds on such an object will error.
 
 %% Optimize
 % Optimize is a function that allows the user to specify a range of values
@@ -150,7 +147,7 @@ result = cluster.kfolds(ds,nFolds);
 ds = prtDataGenBimodal;  % Load a data set
 knn = prtClassKnn;       % Create a classifier
 kVec = 3:5:50;          % Create a vector of parameters to
-% optimze over
+                        % optimize over
 
 % Optimize over the range of k values, using the area under the
 % receiver operating curve as the evaluation metric. Validation
