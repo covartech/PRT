@@ -625,7 +625,10 @@ classdef prtAction
             for i = 1:length(performance)
                 Obj.(parameterName) = parameterValues{i};
                 performance(i) = objFn(Obj,DataSet);
-                h.update(i/length(performance));
+                
+                if Obj.showProgressBar
+                    h.update(i/length(performance));
+                end
             end
             if Obj.showProgressBar
                 % Force close

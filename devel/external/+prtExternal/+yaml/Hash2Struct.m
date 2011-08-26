@@ -62,6 +62,14 @@ else
         field = iterator.next();
         if ~isempty(field)
             d =  hashMap.get(java.lang.String(field));
+            
+            %Added 2011.08.25 by Peter Torrione to handle structs with
+            %empty fields
+            if isa(d,'java.util.ArrayList') && d.isEmpty
+                Data.(field) = [];
+                continue;
+            end
+            
             switch class(d)
                 case {'java.util.LinkedHashMap'}
                     Data.(field) = Hash2Struct(d);
