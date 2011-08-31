@@ -1,0 +1,79 @@
+<?xml version='1.0' encoding="utf-8"?>
+
+<toc version="2.0">
+    <!-- First tocitem specifies top level in Help browser Contents pane -->
+    <!-- This can be a roadmap page, as shown below, or a content page -->
+    <tocitem target="prtDocLanding.html">Pattern Recognition Toolbox
+        <!-- Nest tocitems to create hierarchical entries in  Contents-->
+        <!-- To include icons, use the following syntax for tocitems: -->
+        <!-- <tocitem target="foo.html" image="HelpIcon.NAME"> -->
+        <!-- Title-of-Section </tocitem> -->
+        <!-- where NAME is one of the following (use capital letters): -->
+        <!-- FUNCTION, USER_GUIDE, EXAMPLES, BLOCK, GETTING_STARTED, -->
+        <!-- DEMOS, RELEASE_NOTES --> 
+        <!-- Icon images used for these entries are also stored in -->
+        <!-- matlabroot/toolbox/matlab/icons -->
+        <!-- A Getting Started Guide usually comes first -->
+        <tocitem target="prtDocGettingStarted.html" image="HelpIcon.GETTING_STARTED"> Getting Started </tocitem>
+        
+        <!-- User Guide comes next -->
+        <tocitem target="prtDocUsersGuide.html" 
+                 image="HelpIcon.USER_GUIDE">Pattern Recognition Toolbox User's Guide
+            <tocitem target="prtDocDataSet.html"> Pattern Recognition Toolbox Datasets
+            </tocitem>
+            <tocitem target="prtDocEngine.html">Pattern Recogntion Toolbox Engine
+            </tocitem>
+            <tocitem target="prtDocClass.html">Creating classifiers with the Pattern Recogntion Toolbox
+                <tocitem target="prtDocClassExamples.html"> Classification technique examples
+                </tocitem>
+            </tocitem>
+            <tocitem target="prtDocPreProc.html">Pre processing data with the Pattern Recogntion Toolbox
+            </tocitem>
+            <tocitem target="prtDocAlgo.html">Creating algorithms with the Pattern Recogntion Toolbox
+            </tocitem>
+            <tocitem target="prtDocRegress.html">Regression with the Pattern Recogntion Toolbox
+            </tocitem>
+            <tocitem target="prtDocCluster.html">Clustering with the Pattern Recogntion Toolbox
+            </tocitem>
+            <tocitem target="prtDocScore.html">Analyzing results with the Pattern Recognition Toolbox 
+            </tocitem>
+            <tocitem target="prtDocEval.html">Evaluating classifiers with the Pattern Recognition Toolbox 
+            </tocitem>
+            <tocitem target="prtDocDecision.html">Using decision objects in the Pattern Recognition Toolbox 
+            </tocitem>
+            <tocitem target="prtDocKernel.html"> Kernel objects in the Pattern Recognition Toolbox 
+            </tocitem>
+            
+            <tocitem target="prtDocDistance.html"> Distance functions in the Pattern Recognition Toolbox 
+            </tocitem>
+            
+            <tocitem target="prtDocRv.html"> Random variable objects in the Pattern Recognition Toolbox 
+            </tocitem>
+            
+            <tocitem target="prtDocFeatSel.html"> Feature selection objects in the Pattern Recognition Toolbox 
+            </tocitem>
+            
+            
+            <tocitem target="prtDocOutlierRemoval.html"> Outlier removal in the Pattern Recognition Toolbox 
+            </tocitem>
+            
+                     <tocitem target="prtDocDataGen.html">Data generation in the Pattern Recognition Toolbox 
+            </tocitem>
+            
+            
+        </tocitem>
+        
+        <tocitem target="prtDocReleaseNotes.html" image="HelpIcon.RELEASE_NOTES">Release Notes</tocitem>
+        
+        
+        
+        <tocitem target="prtDocFunctionList.html" image="HelpIcon.FUNCTION">Function List </tocitem>
+        
+        <!-- Optional link or links to your or other Web sites -->
+        <tocitem target="http://www.newfolderconsulting.com/prt/doc" 
+                 image="$toolbox/matlab/icons/webicon.gif">
+            Pattern Recognition Toolbox (Web)
+        </tocitem>
+        
+    </tocitem>
+</toc>
