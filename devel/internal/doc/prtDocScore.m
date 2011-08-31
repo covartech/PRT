@@ -82,9 +82,9 @@ truth = sinc(dataSet.getX);
 guess = dataSetOut.getX;
 prtScoreRmse(truth, guess)
 
-
+%%
 % All scoring functions in the Pattern Recognition Toolbox have the same
 % API as discussed above. The difference is in the performance metric to be
 % evaluated. For a list of all the different functions, and links to their
-% individual help entries, <prtDocFunctionList.html#14 A list of commonly
+% individual help entries, <./prtDocFunctionList.html#14 A list of commonly
 % used functions>

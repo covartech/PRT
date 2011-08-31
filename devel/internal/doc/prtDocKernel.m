@@ -13,7 +13,7 @@
 % object. When a prtKernel object is run, the Gram matrix is computed using
 % the stored kernel centers and the input data. For example, create a
 % radial basis function kernel using the
-% <./functionReference./prtKernelRbf.html prtKernelRbf> object:
+% <./functionReference/prtKernelRbf.html prtKernelRbf> object:
 
 
 ds = prtDataGenBimodal;       % Generate a dataset
@@ -32,7 +32,7 @@ g1 = k1.run(ds);              % Evaluate, the resulting dataset g1 contains
 classifier = prtClassSvm
 %%
 % Note that the classifier has property kernels, which is set by default to
-% be a <./functionReference./prtKernelRbfNdimensionScale.html prtKernelRbfNdimensionScale> object.
+% be a <./functionReference/prtKernelRbfNdimensionScale.html prtKernelRbfNdimensionScale> object.
 % A prtKernelRbfNdimensionScale is a radial basis function kernel, that
 % scales with the number of dimensions, and is a commonly used kernel in
 % classification problems. The radial basis function kernel has one user

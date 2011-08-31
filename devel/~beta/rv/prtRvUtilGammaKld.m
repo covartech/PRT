@@ -19,4 +19,4 @@ function KLD = prtRvUtilGammaKld(bQ,cQ,bP,cP)
 % Outputs:
 %   KLD - The KLD for the gamma distributions
 
-KLD = (bP-bQ)*(psi(bQ)-psi(cQ)) + (cQ-cP)*(bQ/cQ) + gammaln(bQ)-gammaln(bP) + bQ*log(cQ) - bP*log(cP);
+KLD = gammaln(bP)-gammaln(bQ) + bP*log(cQ) - bP*log(cP) + (bQ-bP)*psi(bQ) + bQ*(cP-cQ)/cQ;

@@ -101,7 +101,7 @@ classdef prtBrvMvn < prtBrvObsModel & prtBrvVbOnlineObsModel
                 % Gives problems sometimes
                 covMat = zeros([size(x,2) size(x,2) nClusters]);
                 for iCluster = 1:nClusters
-                    cX = x(phiMat(:,iCluster)>0,:);
+                    cX = x(phiMat(:,iCluster)>(1-fuzzyFactor),:);
                     if isempty(cX) || size(cX,1)==1
                         covMat = oldCovPhi*priorObjs(1).model.covNu;
                     else
