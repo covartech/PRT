@@ -33,7 +33,7 @@ try
     
     %% m-ary-binary classifier; no decision
     close all;
-    marybinaryclassifier = prtclassbinarytomaryonevsall('baseClassifier',prtClassLogisticDiscriminant);
+    marybinaryclassifier = prtClassBinaryToMaryOneVsAll('baseClassifier',prtClassLogisticDiscriminant);
     marybinaryclassifier = marybinaryclassifier.train(dsmary);
     marybinaryclassifier.plot; drawnow; pause(0.1);
     
