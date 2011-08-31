@@ -51,6 +51,16 @@ for n=1:numel(S)
             vn = java.util.ArrayList();
             if not(isscalar(val)) && not(ischar(val)) && not(isa(val,'java.util.LinkedHashMap') || isa(val,'java.util.ArrayList'))
                 if not(isscalar(val)) && (isnumeric(val) || islogical(val)) % numeric
+                    
+                    %I take all this back; instead see mods in Hash2Struct; pt 2011.08.25
+                    %                     if isempty(val)
+                    %                         %val = nan; %this is the best way i can think of to handle empties; pt 2011.08.25
+                    %                         % for example, without this mod,
+                    %                         % s(1).a = 'asdf'; s(2).a = 'asdf'; s(4).a = 'fasdf';
+                    %                         % s(3) is empty, running prtExternal.yaml.WriteYaml('test',s)
+                    %                         % makes a YAML file that can't be read by readYaml
+                    %                     end
+                    
                     if size(val,1)==1 % one row
                         arrayfun(@(x)vn.add(x),val);
                     else

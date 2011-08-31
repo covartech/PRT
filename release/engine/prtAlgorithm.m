@@ -95,6 +95,7 @@ classdef prtAlgorithm < prtAction
             end
             
         end
+        
         function Obj = setShowProgressBar(Obj,val)
             if ~prtUtilIsLogicalScalar(val);
                 error('prt:prtAction','showProgressBar must be a scalar logical.');
@@ -204,7 +205,7 @@ classdef prtAlgorithm < prtAction
                 newOutput = cat(2,false,all(newConn == 0,1),false);
                 newInput = cat(2,false,all(newConn == 0,2)',false);
                 
-                tempNewConn = zeros(size(newConn)+2);
+                tempNewConn = false(size(newConn)+2);
                 tempNewConn(2:end-1,2:end-1) = newConn;
                 newConn = tempNewConn;
                 
@@ -219,6 +220,7 @@ classdef prtAlgorithm < prtAction
             else
                 error('prt:prtAlgorithm:plus','prtAlgorithm.plus is only defined for second inputs of type prtAlgorithm or prtAction, but the second input is a %s',class(Obj2));
             end
+            
         end
         
         %this should be hidden
@@ -264,6 +266,7 @@ classdef prtAlgorithm < prtAction
             for i = 2:length(topoOrder)-1
                 
                 currentInput = catFeatures(input{Obj.connectivityMatrix(topoOrder(i),:)});
+                %keyboard
                 Obj.actionCell{topoOrder(i-1)}.verboseStorage = Obj.verboseStorage;
                 Obj.actionCell{topoOrder(i-1)} = train(Obj.actionCell{topoOrder(i-1)},currentInput);
                 
