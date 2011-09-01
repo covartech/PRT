@@ -14,7 +14,7 @@ if isempty(varargin)
 end
 
 if mod(length(varargin), 2)
-    otlerror('prt:prtUtilAssignStringValuePairs:InvalidInput','Additional inputs must be supplied by as string/value pairs');
+    error('prt:prtUtilAssignStringValuePairs:InvalidInput','Additional inputs must be supplied by as string/value pairs');
 end
 
 paramStrs = varargin(1:2:end);
