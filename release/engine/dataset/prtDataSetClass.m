@@ -637,7 +637,7 @@ classdef prtDataSetClass  < prtDataSetStandard
             %    ds = prtDataGenIris;
             %    plotBeeSwarm(ds,'minimumKernelBandwidth',5e-3);
             
-            Options.minimumKernelBandwidth = eps;
+            Options.minimumKernelBandwidth = [];
             
             if nargin > 1
                 assert(mod(length(varargin),2)==0,'Additional inputs must be string value pairs')
@@ -673,47 +673,18 @@ classdef prtDataSetClass  < prtDataSetStandard
             FLeft = F;
             F = bsxfun(@plus,F,1:Summary.nFeatures);
             FLeft = bsxfun(@plus,-FLeft,1:Summary.nFeatures);
-            centeredX = bsxfun(@minus,bsxfun(@rdivide,ds.getObservations(),Summary.upperBounds),Summary.lowerBounds./Summary.upperBounds);
+            %centeredX = bsxfun(@minus,bsxfun(@rdivide,ds.getObservations(),Summary.upperBounds),Summary.lowerBounds./Summary.upperBounds);
+            x = ds.getObservations(); % No longer actually centered
             
-            
-            % Plot Box Plots
-            boxColor = [0.8 0.8 0.8];
-            boxEdgeColor = [0 0 0];
-            centerLineColor = [0 0 0];
-            
-            boxHandles = zeros(Summary.nFeatures,2);
-            
-            boxIndexes = round(Summary.nObservations.*[0.25 0.5 0.75]);
-            for iFeature = 1:Summary.nFeatures
-            
-                sortedX = sort(centeredX(:,iFeature));
-                
-                cBottom = sortedX(boxIndexes(1));
-                cMiddle = sortedX(boxIndexes(2));
-                cTop = sortedX(boxIndexes(3));
-                
-                boxHandles(iFeature,1) = patch([-1 -1 1 1]*1/3 + iFeature, [cBottom, cTop, cTop, cBottom], boxColor,'edgecolor',boxEdgeColor);
-                boxHandles(iFeature,2) = line([-1 1]*1/3 + iFeature,[cMiddle, cMiddle],'color',centerLineColor,'linewidth',2);
-            end
-            
-            
-            % Plot using prtDataSetClass.plot() with the densities and the
-            % feature indexes as the data
-            % Each observation is actually two points, one on the left and
-            % one on the right.
-            %hold on;
-            %ds = ds.setObservationsAndTargets(cat(2,cat(1,F(:),FLeft(:)),repmat(centeredX(:),2,1)),repmat(ds.getTargets(),Summary.nFeatures*2,1));
-            %plotHandles = plot(ds);
-            
-            % In the new version each point is distributed in  accourding
+            % In the new version each point is distributed according
             % to the local density. (drawn uniformly)
             hold on;
-            ds = ds.setObservationsAndTargets(cat(2,rand(size(F(:))).*(F(:)-FLeft(:)) + FLeft(:),centeredX(:)),repmat(ds.getTargets(),Summary.nFeatures,1));
+            ds = ds.setObservationsAndTargets(cat(2,rand(size(F(:))).*(F(:)-FLeft(:)) + FLeft(:),x(:)),repmat(ds.getTargets(),Summary.nFeatures,1));
             plotHandles = plot(ds);
             
             
             xlabel('Feature');
-            ylabel('Normalized Feature Value');
+            ylabel('Feature Value');
             
             set(gca,'NextPlot',holdState,'YTick',[]);
             
@@ -723,7 +694,7 @@ classdef prtDataSetClass  < prtDataSetStandard
                 set(gca,'XTick',1:Summary.nFeatures,'XTickLabel',ds.getFeatureNames());
             end
             xlim([0.5 Summary.nFeatures+0.5]);
-            
+            grid on
             
             if nargout
                 varargout = {plotHandles, boxHandles};
@@ -744,11 +715,11 @@ classdef prtDataSetClass  < prtDataSetStandard
             %       faceAlpha              - Face alpha value of the patch
             %                                for each density. Must be a
             %                                value between 0 and 1. Default
-            %                                0.7.
+            %                                0.5
             %       minimumKernelBandwidth - minimumBandwidth parameter of 
             %                                prtRvKde that is used to
             %                                estimate each density. default
-            %                                eps.
+            %                                []. See prtRvKde
             %
             % Example:
             %    ds = prtDataGenMary;
@@ -758,8 +729,8 @@ classdef prtDataSetClass  < prtDataSetStandard
             %    plotDensity(ds,'minimumKernelBandwidth',5e-3);
             
             Options.nDensitySamples = 500;
-            Options.faceAlpha = 0.7;
-            Options.minimumKernelBandwidth = eps;
+            Options.faceAlpha = 0.5;
+            Options.minimumKernelBandwidth = [];
             
             if nargin > 1
                 assert(mod(length(varargin),2)==0,'Additional inputs must be string value pairs')
@@ -809,7 +780,7 @@ classdef prtDataSetClass  < prtDataSetStandard
                 end
                 
                 F = F./max(F(:))/2;
-                xLoc = (xLoc-mean(xLoc))./std(xLoc);
+                %xLoc = (xLoc-mean(xLoc))./std(xLoc);
                 
                 for cY = 1:nClasses
                     cPatch = cat(2,cat(1,-F(:,cY),flipud(F(:,cY))), cat(1,xLoc, flipud(xLoc)));
@@ -819,10 +790,10 @@ classdef prtDataSetClass  < prtDataSetStandard
             
             set(patchH,'FaceAlpha',Options.faceAlpha);
             
-            set(gca,'NextPlot',holdState,'YTick',[]);
-            
+            set(gca,'NextPlot',holdState);
+            grid on
             xlabel('Feature');
-            ylabel('Normalized Feature Value');
+            ylabel('Feature Value');
             
             % Create legend
             if ds.isLabeled
