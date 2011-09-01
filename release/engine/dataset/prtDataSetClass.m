@@ -701,9 +701,16 @@ classdef prtDataSetClass  < prtDataSetStandard
             % feature indexes as the data
             % Each observation is actually two points, one on the left and
             % one on the right.
+            %hold on;
+            %ds = ds.setObservationsAndTargets(cat(2,cat(1,F(:),FLeft(:)),repmat(centeredX(:),2,1)),repmat(ds.getTargets(),Summary.nFeatures*2,1));
+            %plotHandles = plot(ds);
+            
+            % In the new version each point is distributed in  accourding
+            % to the local density. (drawn uniformly)
             hold on;
-            ds = ds.setObservationsAndTargets(cat(2,cat(1,F(:),FLeft(:)),repmat(centeredX(:),2,1)),repmat(ds.getTargets(),Summary.nFeatures*2,1));
+            ds = ds.setObservationsAndTargets(cat(2,rand(size(F(:))).*(F(:)-FLeft(:)) + FLeft(:),centeredX(:)),repmat(ds.getTargets(),Summary.nFeatures,1));
             plotHandles = plot(ds);
+            
             
             xlabel('Feature');
             ylabel('Normalized Feature Value');

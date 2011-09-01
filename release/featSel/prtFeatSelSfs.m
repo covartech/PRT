@@ -106,7 +106,7 @@ classdef prtFeatSelSfs < prtFeatSel
                 
                 if Obj.showProgressBar && j == 1
                     h2 = prtUtilProgressBar(0,sprintf('Selecting Feature %d',j),'autoClose',false);
-                else
+                elseif Obj.showProgressBar
                     h2.titleStr = sprintf('Selecting Feature %d',j);
                     h2.update(0);
                 end
