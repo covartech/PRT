@@ -55,7 +55,7 @@ classdef prtBrvMvn < prtBrvObsModel & prtBrvVbOnlineObsModel
             nDims = size(x,2);
             
             innerPsiTerm = (obj.model.covNu + 1 - (1:nDims)')./2;
-            lnDetGammaTilde = sum(psi(innerPsiTerm)) - prtUtilLogDet(obj.model.covPhi) - nDims*log(2);
+            lnDetGammaTilde = sum(psi(innerPsiTerm)) - prtUtilLogDet(obj.model.covPhi) + nDims*log(2);
 
             xDemeaned = bsxfun(@minus,x,obj.model.meanMean);
             
@@ -191,9 +191,11 @@ classdef prtBrvMvn < prtBrvObsModel & prtBrvVbOnlineObsModel
             if nDimensions < 3
                 meanMat = zeros(nDimensions,nComponents);
                 covMat = zeros([nDimensions nDimensions nComponents]);
+                
                 for s = 1:nComponents
-                    meanMat(:,s) = objs(s).model.meanMean;
-                    covMat(:,:,s) = objs(s).model.covPhi./objs(s).model.covNu;
+                    pm = objs(s).posteriorMeanStruct;
+                    meanMat(:,s) = pm.mean;
+                    covMat(:,:,s) = pm.covariance;
                 end
             end
                 

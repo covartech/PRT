@@ -16,6 +16,8 @@ mfileStr = cat(2,mfileStr,sprintf('\n  For more help and information regarding t
 returnChar = mfileStr(find(double(mfileStr)==10,1,'first'));
 mfileStr = strrep(mfileStr,returnChar,cat(2,returnChar,'%'));
 
+mfileStr = cat(2,mfileStr,'%');
+
 fid = fopen(fileName,'w+');
 fwrite(fid,mfileStr);
 fclose(fid);
