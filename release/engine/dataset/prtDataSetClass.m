@@ -780,7 +780,7 @@ classdef prtDataSetClass  < prtDataSetStandard
                 end
                 
                 F = F./max(F(:))/2;
-                %xLoc = (xLoc-mean(xLoc))./std(xLoc);
+                %xLoc = (xLoc-mean(xLoc))./std(xLoc); % No longer centered
                 
                 for cY = 1:nClasses
                     cPatch = cat(2,cat(1,-F(:,cY),flipud(F(:,cY))), cat(1,xLoc, flipud(xLoc)));
