@@ -60,12 +60,14 @@ target = prtTarget;
 command = sprintf('svn export "%s" "%s"',local,target);
 system(command);
 
-% P-Code Files
-disp('P-Coding select files...');
-filesToPCode = cat(1,prtUtilSubDir(fullfile(prtTarget,'engine','dataset'),'*.m','asdf'),prtUtilSubDir(fullfile(prtTarget,'engine'),'*.m','asdf'),{fullfile(prtTarget,'util','prtUtilCheckIsValidBeta.m')});
-for iFile = 1:length(filesToPCode)
-    prtUtilPCode(filesToPCode{iFile});
-end
+% P-Code Files - No longer as of 1062
+% disp('P-Coding select files...');
+% filesToPCode = cat(1,prtUtilSubDir(fullfile(prtTarget,'engine','dataset'),'*.m','asdf'),prtUtilSubDir(fullfile(prtTarget,'engine'),'*.m','asdf'),{fullfile(prtTarget,'util','prtUtilCheckIsValidBeta.m')});
+% for iFile = 1:length(filesToPCode)
+%     prtUtilPCode(filesToPCode{iFile});
+% end
+
+
 
 % Copy over documenation
 disp('Copying documentation...');

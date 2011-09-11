@@ -79,37 +79,7 @@ classdef prtBrvDiscreteStickBreaking < prtBrvDiscrete
         
         function plot(objs, colors)
             
-             error('Not done yet');
-            
-            nComponents = length(objs);
-            
-            if nargin < 2
-                cMap = jet(128);
-                colors = cMap(gray2ind(mat2gray(1:nComponents),size(cMap,1))+1,:);
-            end
-            
-            nDimensions = length(objs(1).model.lambda);
-            
-            lambdaMat = zeros([nComponents, nDimensions]);
-            for s = 1:nComponents
-                lambdaMat(s,:) = objs(s).model.lambda;
-            end
-                
-            probMat = bsxfun(@rdivide,lambdaMat,sum(lambdaMat,2));
-            for iSource = 1:size(probMat,1)
-                for jSym = 1:size(probMat,2)
-                    cSize = sqrt(probMat(iSource,jSym));
-                    if cSize > 0
-                        rectangle('Position',[jSym-cSize/2, iSource-cSize/2, cSize, cSize],'Curvature',[1 1],'FaceColor',colors(iSource,:),'EdgeColor',colors(iSource,:));
-                    end
-                end
-            end
-            set(gca,'YDir','Rev');
-            title('Observations Prob.')
-            xlabel('Observations')
-            ylabel('Component')
-            xlim([0 size(probMat,2)+1])
-            ylim([0 size(probMat,1)+1])
+            error('Not done yet');
 
         end
         
