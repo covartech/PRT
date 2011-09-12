@@ -82,8 +82,8 @@ classdef prtClassMatlabTreeBagger < prtClass
         end
         
         function DataSet = runAction(Obj,DataSet)
-            [~,scores] = predict(Obj.forest,DataSet.getObservations);
-            DataSet = DataSet.setObservations(scores);
+            x = predict(Obj.forest,DataSet.getObservations);
+            DataSet = DataSet.setObservations(x);
         end
         
     end

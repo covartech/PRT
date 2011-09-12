@@ -116,6 +116,13 @@ classdef prtClassBagging < prtClass
         end
         
     end
+    methods (Hidden = true)
+        
+        function self = setClassifier(self,newClassifierArray)
+           self.Classifiers = newClassifierArray;
+        end
+        
+    end
     
     methods (Access=protected, Hidden = true)
         
