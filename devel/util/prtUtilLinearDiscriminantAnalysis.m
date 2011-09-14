@@ -33,7 +33,8 @@ end
 % the Sw^-1 issue above
 St = Sw + Sb;
 [V, D] = eig(St, Sw);
-[notUsed, sortedIndices] = sort(diag(D),'descend');
+[notUsed, sortedIndices] = sort(diag(D));
 projectionMat = V(:, sortedIndices(1:nComponents));
+
 
 
