@@ -19,7 +19,24 @@ FileStruct.Edges = struct();
 cEdge = 0;
 cNode = 0;
 
+skipNextLine = false;
 for iLine = 1:length(fileStrCell)
+    if skipNextLine
+        skipNextLine = false;
+        continue
+    end
+    
+    % Read last string to check for multi-line definitions
+    if strcmpi(fileStrCell{iLine}(end),'\')
+        % We have a multilinestr
+        skipNextLine = true;
+        if iLine == length(fileStrCell)
+            error('prt:prtPlotUtilGraphVizReadDot:badFile','Invalid DOT file encountered. prtPlotUtilGraphVizReadDot() is a very limited DOT file reader. Not all aspects of the DOT file spec are supported.');
+        end
+        fileStrCell{iLine} = cat(2,fileStrCell{iLine}(1:end-1),fileStrCell{iLine+1});
+    else
+        skipNextLine = false;
+    end
     % Read first string which indicates the type of line
     lineFirstStr = textscan(fileStrCell{iLine},'%s');
     lineFirstStr = lineFirstStr{1}{1};  
@@ -96,6 +113,7 @@ for iLine = 1:length(fileStrCell)
         
         
         % At this point we only parse the pos
+       
         EdgeInfoPos = regexp(fileStrCell{iLine},'pos="(?<posString>[\w\s,.-+]+)"','names');
         posString = EdgeInfoPos.posString;
         % We skip the first two characters to skip the e, (what is that?)
