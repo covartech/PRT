@@ -23,17 +23,18 @@ for i = 1:length(uY)
 end
 
 % Find projection matrix via eigenvalue method
-B = Sw^(-1)*Sb;  %NIPS, 2004, Two-Dimensional Linear Discriminant Analysis
+% B = Sw^(-1)*Sb;  %NIPS, 2004, Two-Dimensional Linear Discriminant Analysis
+% eigOpts.issym = 1;
+% eigOpts.isreal = 1;
+% eigOpts.disp = 0;
+% [projectionMat,e] = eigs(B,nComponents,'LM',eigOpts);
 
-eigOpts.issym = 1;
-eigOpts.isreal = 1;
-eigOpts.disp = 0;
+% Code suggested by rittersport3, 2011.09.14, this is cleaner, and avoids
+% the Sw^-1 issue above
+St = Sw + Sb;
+[V, D] = eig(St, Sw);
+[notUsed, sortedIndices] = sort(diag(D));
+projectionMat = V(:, sortedIndices(1:nComponents));
 
-[projectionMat,e] = eigs(B,nComponents,'LM',eigOpts);
-
-% [projectionMat,e] = eig(B);
-% [val,ind] = sort(diag(e),'descend');
-% projectionMat = projectionMat(:,ind(1:nComponents));
-% projectionMat = real(projectionMat);
 
 

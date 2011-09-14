@@ -110,7 +110,13 @@ classdef prtClassKnn < prtClass
                     
                     [twiddle,I] = sort(distanceMat,1,'ascend');
                     I = I(1:Obj.k,:);
-                    L = labels(I)';
+                    L = labels(I);
+                    
+                    % MATLAB indexing is inexplicably different if I is
+                    % 1xN or (k>1)xN
+                    if Obj.k ~= 1
+                        L = L';
+                    end
                     
                     for class = 1:nClasses
                         y(indices,class) = sum(L == uClasses(class),2);
@@ -121,7 +127,13 @@ classdef prtClassKnn < prtClass
                 
                 [twiddle,I] = sort(distanceMat,1,'ascend');
                 I = I(1:Obj.k,:);
-                L = labels(I)';
+                L = labels(I);
+                
+                % MATLAB indexing is inexplicably different if I is
+                % 1xN or (k>1)xN
+                if Obj.k ~= 1
+                    L = L';
+                end
                 
                 for class = 1:nClasses
                     y(:,class) = sum(L == uClasses(class),2);
