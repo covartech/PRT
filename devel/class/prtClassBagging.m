@@ -122,6 +122,12 @@ classdef prtClassBagging < prtClass
            self.Classifiers = newClassifierArray;
         end
         
+        function Obj = setVerboseStorage(Obj,val)
+            assert(numel(val)==1 && (islogical(val) || (isnumeric(val) && (val==0 || val==1))),'prtAction:invalidVerboseStorage','verboseStorage must be a logical');
+            Obj.verboseStorageInternal = logical(val);
+            
+            Obj.baseClassifier.verboseStorage = val;
+        end
     end
     
     methods (Access=protected, Hidden = true)

@@ -46,37 +46,56 @@ classdef prtDecisionMap < prtDecision
      properties (SetAccess = private)
         name = 'MAP'  % MAP
         nameAbbreviation = 'MAP';  % MAP
+     end
+    
+    properties (SetAccess = private, Hidden = true)
+        runBinary = false;
+        minPeDecision = [];
     end
     
     methods
-        function Obj = prtDecisionMap(varargin)
-            Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
+        function self = prtDecisionMap(varargin)
+            self = prtUtilAssignStringValuePairs(self,varargin{:});
         end
     end
     methods (Access=protected,Hidden=true)
         
-        function Obj = trainAction(Obj, DS)
-            if isa(DS,'prtDataSetClass')
-                Obj.classList = DS.uniqueClasses;
+        function self = trainAction(self, dataSet)
+            if isa(dataSet,'prtDataSetClass')
+                self.classList = dataSet.uniqueClasses;
             else
-                Obj.classList = 1:DS.nFeatures;
+                self.classList = 1:dataSet.nFeatures;
+            end
+            %binary classification
+            if dataSet.nClasses == 2 && dataSet.nFeatures == 1
+                warning('prtDecisionMap:binaryData','User specified MAP decision, but input data was binary, and classifier provided binary decision statistics.  MAP will default to prtDecisionBinaryMinPe, but there are subtle differences between these approaches.  This warning will only be shown once.  To turn it off permanently, use "warning off prtDecisionMap:binaryData" in your startup M-file');
+                warning off prtDecisionMap:binaryData
+                self.runBinary = true;
+                self.minPeDecision = prtDecisionBinaryMinPe;
+                self.minPeDecision = self.minPeDecision.train(dataSet);
             end
         end
-        function DS = runAction(Obj,DS)
-            yOut = DS.getObservations;
-            if size(yOut,2) > 1
-                [twiddle,index] = max(yOut,[],2); %#ok<ASGLU>
+        function dataSet = runAction(self,dataSet)
+            yOut = dataSet.getObservations;
+            
+            if self.runBinary
+                dataSet = self.minPeDecision.run(dataSet);
+                return;
             else
-                error('prt:prtDecisionMap','Cannot run prtDecisionMap on algorithms with single-column output; use prtDecisionBinaryMinPe instead');
+                if size(yOut,2) > 1
+                    [twiddle,index] = max(yOut,[],2); %#ok<ASGLU>
+                else
+                    error('prt:prtDecisionMap','Cannot run prtDecisionMap on algorithms with single-column output; use prtDecisionBinaryMinPe instead');
+                end
             end
-            classList = Obj.classList(index);
+            classList = self.classList(index);
             classList = classList(:);
-            DS = DS.setObservations(classList);
+            dataSet = dataSet.setObservations(classList);
         end
     
-        function xOut = runActionFast(Obj,xIn,ds) %#ok<INUSD>
+        function xOut = runActionFast(self,xIn,ds) %#ok<INUSD>
            [twiddle,index] = max(xIn,[],2); %#ok<ASGLU>
-           xOut = Obj.classList(index);
+           xOut = self.classList(index);
            xOut = xOut(:);
         end
     end
