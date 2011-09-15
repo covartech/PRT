@@ -116,6 +116,21 @@ classdef prtClassBagging < prtClass
         end
         
     end
+<<<<<<< .mine
+    methods (Hidden = true)
+        
+        function self = setClassifier(self,newClassifierArray)
+           self.Classifiers = newClassifierArray;
+        end
+        
+        function Obj = setVerboseStorage(Obj,val)
+            assert(numel(val)==1 && (islogical(val) || (isnumeric(val) && (val==0 || val==1))),'prtAction:invalidVerboseStorage','verboseStorage must be a logical');
+            Obj.verboseStorageInternal = logical(val);
+            
+            Obj.baseClassifier.verboseStorage = val;
+        end
+    end
+=======
     methods (Hidden = true)
         
         function self = setClassifier(self,newClassifierArray)
@@ -123,6 +138,7 @@ classdef prtClassBagging < prtClass
         end
         
     end
+>>>>>>> .r1074
     
     methods (Access=protected, Hidden = true)
         
