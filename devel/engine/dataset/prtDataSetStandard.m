@@ -1160,6 +1160,16 @@ classdef prtDataSetStandard < prtDataSetBase
             % Updated chached target info
             obj = updateTargetsCache(obj);
         end
+        
+        function keys = getKFoldKeys(DataSet,K)
+            if DataSet.isLabeled
+                keys = prtUtilEquallySubDivideData(DataSet.getTargets(),K);
+            else
+                %can cross-val on unlabeled data, too!
+                keys = prtUtilEquallySubDivideData(ones(DataSet.nObservations,1),K);
+            end
+        end
+        
     end
     
     methods (Hidden=true, Access='protected')

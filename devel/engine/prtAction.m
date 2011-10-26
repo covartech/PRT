@@ -135,7 +135,7 @@ classdef prtAction
     end
     methods (Access = protected, Hidden = true)
         function xOut = runActionFast(Obj, xIn, ds) %#ok<STOUT,INUSD>
-            error('prt:prtAction:runActionFast','The prtAction (%s) does not have a runActionFast method(). Therefore runFast() cannot be used.',class(Obj));
+            error('prt:prtAction:runActionFast','The prtAction (%s) does not have a runActionFast() method. Therefore runFast() cannot be used.',class(Obj));
         end
     end
     
@@ -423,12 +423,7 @@ classdef prtAction
                 K = 1;
             end
             
-            if DataSet.isLabeled
-                keys = prtUtilEquallySubDivideData(DataSet.getTargets(),K);
-            else
-                %can cross-val on unlabeled data, too!
-                keys = prtUtilEquallySubDivideData(ones(DataSet.nObservations,1),K);
-            end
+            keys = DataSet.getKFoldKeys(K);
             
             outputs = cell(1,min(max(nargout,1),2));
             [outputs{:}] = Obj.crossValidate(DataSet,keys);

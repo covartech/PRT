@@ -28,6 +28,8 @@ classdef prtClassLogisticDiscriminant < prtClass
     %                      classifier will exit.
     %
     %   w                - The regression weights, estimated during training
+    %                      w(1) corresponds to the DC bias and w(2:end)
+    %                      corresponds to the weights for the features
     %
     %    For more information on LogisticDiscriminant classifiers, refer to the
     %    following URL:
