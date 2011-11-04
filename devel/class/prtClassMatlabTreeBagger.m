@@ -82,7 +82,7 @@ classdef prtClassMatlabTreeBagger < prtClass
         end
         
         function DataSet = runAction(Obj,DataSet)
-            x = predict(Obj.forest,DataSet.getObservations);
+            [dontNeed, x] = predict(Obj.forest,DataSet.getObservations); %#ok<ASGLU>
             DataSet = DataSet.setObservations(x);
         end
         

@@ -51,7 +51,13 @@ else
 end
 
 nMiss = length(find(y == 0));
-nf = nf*nMiss;
+if iscell(nf)
+    for iCell = 1:length(nf)
+        nf{iCell} = nf{iCell}*nMiss;
+    end
+else
+    nf = nf*nMiss;
+end
 
 if nargout == 0
     plot(nf,pd);
