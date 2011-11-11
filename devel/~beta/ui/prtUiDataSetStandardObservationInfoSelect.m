@@ -5,14 +5,18 @@ classdef prtUiDataSetStandardObservationInfoSelect < prtUiManagerPanel
         tableFieldNames = {};
         handleStruct
         dataCell = {};
-        retainedObs = [];
+        
         sortingInds
     end
     properties (Hidden, SetAccess='protected', GetAccess='protected')
         selectrStrDepHelper = 'true(size(S))';
+        retainedObsDepHelper = [];
+        retainedObsUpdateCallbackDepHelper = [];
     end
     properties (Dependent)
+        retainedObs
         selectStr 
+        retainedObsUpdateCallback
     end
     
     methods 
@@ -24,16 +28,22 @@ classdef prtUiDataSetStandardObservationInfoSelect < prtUiManagerPanel
             else
                 self = prtUtilAssignStringValuePairs(self,varargin{:});
             end
-            self = init(self);
+            
+            if nargin~=0 && ~self.hgIsValid
+               self.create()
+            end
+            
+            init(self);
         end
         
-        function self = init(self)
+        function init(self)
             
             self.handleStruct.table = uitable('parent',self.managedHandle,...
                 'units','normalized','position',[0.05 0.05 0.9 0.8]);
             
             self.handleStruct.jScrollPane = findjobj(self.handleStruct.table);
             self.handleStruct.jTable = self.handleStruct.jScrollPane.getViewport.getView;
+            
             
             self.handleStruct.tableContextMenu = uicontextmenu;
             self.handleStruct.tableContextMenuItemNewSelection = uimenu(self.handleStruct.tableContextMenu, 'Label', 'New Selection', 'Callback', @(myHandle,eventData)self.uiMenuNewSelection(myHandle,eventData));
@@ -87,6 +97,9 @@ classdef prtUiDataSetStandardObservationInfoSelect < prtUiManagerPanel
                         badColumns(iField) = true;
                         continue
                     end
+                    if ischar(cVals)
+                        cVals = cellstr(cVals);
+                    end
                     
                     if isnumeric(cVals) || islogical(cVals)
                         cVals = cellstr(num2str(cVals));
@@ -114,10 +127,10 @@ classdef prtUiDataSetStandardObservationInfoSelect < prtUiManagerPanel
 %                 self.handleStruct.jTable.setMultiColumnSortable(true);
 %                 self.handleStruct.jTable.setPreserveSelectionsAfterSorting(true);
                 
-                %set(self.handleStruct.jTable,'SelectionBackground',get(self.handleStruct.jTable,'MarginBackground'))
-                %set(self.handleStruct.jTable,'SelectionForeground',[0.8 0.8 0.8])
-                self.handleStruct.jTable.setColumnAutoResizable(true);
-                %self.handleStruct.jTable.setAutoResizeMode(self.handleStruct.jTable.AUTO_RESIZE_NEXT_COLUMN)
+%                 set(self.handleStruct.jTable,'SelectionBackground',get(self.handleStruct.jTable,'MarginBackground'))
+%                 set(self.handleStruct.jTable,'SelectionBackground',[0.4 0.4 0.4])
+%                 set(self.handleStruct.jTable,'SelectionForeground',[1 1 1])
+                self.handleStruct.jTable.setAutoResizeMode(self.handleStruct.jTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
                 
                 self.sortingInds = (1:size(self.dataCell,1))';
             end
@@ -149,6 +162,23 @@ classdef prtUiDataSetStandardObservationInfoSelect < prtUiManagerPanel
             self.selectrStrDepHelper = val;
             set(self.handleStruct.edit,'string',val);
             self.applySelection();
+        end
+        function val = get.retainedObsUpdateCallback(self)
+            val = self.retainedObsUpdateCallbackDepHelper;
+        end
+        function set.retainedObsUpdateCallback(self,val)
+            assert(isempty(val) || (isa(val, 'function_handle') && nargin(val)==1),'retainedObsUpdateCallback must be a function handle that accepts one input')
+            
+            self.retainedObsUpdateCallbackDepHelper = val;
+        end
+        function val = get.retainedObs(self)
+            val = self.retainedObsDepHelper;
+        end
+        function set.retainedObs(self, val)
+            if ~isempty(self.retainedObsUpdateCallback)
+                self.retainedObsUpdateCallback(val)
+            end
+            self.retainedObsDepHelper = val;
         end
         function commandStr = selectionToSelectStr(self)
             tableSelectionModel = self.handleStruct.jTable.getTableSelectionModel;

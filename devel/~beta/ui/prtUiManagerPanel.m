@@ -6,11 +6,11 @@ classdef prtUiManagerPanel < prtUiManager
     
     methods
         function self = prtUiManagerPanel(varargin)
-            if nargin
+           if nargin
                 self = prtUtilAssignStringValuePairs(self, varargin{:});
-            end
+           end
             
-           if ~self.hgIsValid
+           if nargin~=0 && ~self.hgIsValid
                self.create()
            end
         end

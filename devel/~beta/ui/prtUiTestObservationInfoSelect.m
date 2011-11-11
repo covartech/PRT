@@ -20,5 +20,6 @@ close all
 clear classes
 
 selectionDataSet = prtDataGenGlass;
-uiObj = prtUiStructureTable(selectionDataSet.observationInfo);
+%uiObj = prtUiStructureTable(selectionDataSet.observationInfo);
+uiObj = prtUiDataSetStandardObservationInfoSelect(selectionDataSet.observationInfo);
 %%

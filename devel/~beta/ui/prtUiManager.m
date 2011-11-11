@@ -1,4 +1,4 @@
-classdef prtUiManager < handle & hgsetget
+classdef prtUiManager < hgsetget
     properties (Dependent)
         managedHandle
         parent
@@ -64,7 +64,5 @@ classdef prtUiManager < handle & hgsetget
 %               delete(self.managedHandle);
 %             end
 %         end
-
-        
     end
 end
