@@ -78,7 +78,13 @@ classdef prtDecisionMap < prtDecision
         function dataSet = runAction(self,dataSet)
             yOut = dataSet.getObservations;
             
-            if self.runBinary
+            %Under certain strange circumstances, e.g., in prtClassCascade,
+            %the self.runBinary flag may be turned on, even when the actual
+            %mode of operation should be "m-ary". It's not clear to me when
+            %or why this is happening.  So I now check size(yOut,2) in
+            %addition to self.runBinary...
+            %       -Pete, 2011.11.21
+            if size(yOut,2) == 1 && self.runBinary
                 dataSet = self.minPeDecision.run(dataSet);
                 return;
             else
