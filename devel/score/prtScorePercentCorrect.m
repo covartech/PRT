@@ -30,4 +30,3 @@ else
     percentCorrect = mean(guesses == targets);
 
 end
-  

@@ -11,6 +11,10 @@ function defaultOptions = prtOptionsGetFactory()
 
 optionsPackageInfo = meta.package.fromName('prtOptions');
 
+if isempty(optionsPackageInfo)
+    error('Package prtOptions was not found on path');
+end
+
 for iClass = 1:length(optionsPackageInfo.Classes)
     defaultOptions.(strrep(optionsPackageInfo.Classes{iClass}.Name,'prtOptions.','')) = feval(optionsPackageInfo.Classes{iClass}.Name);
 end

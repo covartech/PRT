@@ -94,12 +94,17 @@ classdef prtUiManagerImage < prtUiManagerAxes
             h = nan(size(shapeArray));
             hold(self.managedHandle,'on');
             %Plot each shape:
-            for i = 1:length(shapeArray)
-                if length(shapeArray(i).xi) == 1
-                    h(i) = plot(shapeArray(i).xi,shapeArray(i).yi,'b.'); %points
-                else
-                    h(i) = plot(shapeArray(i).xi,shapeArray(i).yi,'b');
+            try
+                for i = 1:length(shapeArray)
+                    if length(shapeArray(i).xi) == 1
+                        h(i) = plot(shapeArray(i).xi,shapeArray(i).yi,'b.'); %points
+                    else
+                        h(i) = plot(shapeArray(i).xi,shapeArray(i).yi,'b');
+                    end
                 end
+            catch ME
+                disp(ME)
+                debugdlg('I had trouble plotting one of your objects.  Do you want to debug?');
             end
             if ~holdState
                 hold(self.managedHandle,'off');

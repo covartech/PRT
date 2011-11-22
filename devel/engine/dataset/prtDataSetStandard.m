@@ -830,7 +830,9 @@ classdef prtDataSetStandard < prtDataSetBase
                 return
             end
             
-            assert(isa(Struct,'struct') && numel(Struct)==obj.nObservations, 'prt:prtDataSetStandard:observationInfo', 'observationInfo must be an nObservations x 1 structure array.');
+            %Added isempty(Struct) to allow for clearing of obsInfo.
+            %p.t. 2011.09.22
+            assert(isempty(Struct) || (isa(Struct,'struct') && numel(Struct)==obj.nObservations), 'prt:prtDataSetStandard:observationInfo', 'observationInfo must be an nObservations x 1 structure array.');
             
             obj.observationInfoDepHelper = Struct(:);
         end

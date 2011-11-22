@@ -149,7 +149,6 @@ classdef prtFeatSelSfs < prtFeatSel
                 if Obj.showProgressBar
                     h.update(j/nSelectFeatures);
                 end
-                
             end
             if Obj.showProgressBar
                 % Make sure it's closed.
