@@ -116,6 +116,58 @@ classdef prtDataSetStandard < prtDataSetBase
             obj.featureNamesDepHelper = newHash;
         end
     end
+    
+    methods (Access = protected, Hidden = true)
+        
+        %Note: if you change the way data is stored, you must overload the
+        %following four functions: getDataAsMatrix, setDataFromMatrix, 
+        %getTargetsAsMatrix, and setTargetsFromMatrix
+        %
+        %Are these necessary?  Or do getTargets, setTargets, getData,
+        %setData handle all this already?
+        %
+        function doubleData = getDataAsMatrix(obj,varargin)
+            if nargin == 1 %all data
+                doubleData = obj.data;
+            elseif nargin == 2
+                doubleData = obj.data(varargin{1},:);
+            elseif nargin == 3
+                doubleData = obj.data(varargin{1},varargin{2});
+            end
+        end
+        
+        function obj = setDataFromMatrix(obj,newData,varargin)
+            if nargin == 2 %all data
+                obj.data = newData;
+            elseif nargin == 3
+                obj.data(varargin{1},:) = newData;
+            elseif nargin == 4
+                obj.data(varargin{1},varargin{2}) = newData;
+            end
+        end
+        
+        function doubleTargets = getTargetsAsMatrix(obj,varargin)
+            if nargin == 1 %all data
+                doubleTargets = obj.targets;
+            elseif nargin == 2
+                doubleTargets = obj.targets(varargin{1},:);
+            elseif nargin == 3
+                doubleTargets = obj.targets(varargin{1},varargin{2});
+            end
+        end
+        
+        function obj = setTargetsFromMatrix(obj,newTargets,varargin)
+            if nargin == 2 %all data
+                obj.targets = newTargets;
+            elseif nargin == 3
+                obj.targets(varargin{1},:) = newTargets;
+            elseif nargin == 4
+                obj.targets(varargin{1},varargin{2}) = newTargets;
+            end
+        end
+        
+    end
+    
     methods
         
         % Constructor
@@ -291,8 +343,8 @@ classdef prtDataSetStandard < prtDataSetBase
             if ~isempty(targets) && size(data,1) ~= size(targets,1)
                 error('prtDataSet:invalidDataTargetSet','Data and non-empty target matrices must have the same number of rows, but data is size %s and targets are size %s',mat2str(size(data)),mat2str(size(targets)));
             end
-            obj.data = data;
-            obj.targets = targets;
+            obj = obj.setDataFromMatrix(data);
+            obj = obj.setTargetsFromMatrix(targets);
             
             % Updated chached data info
             obj = updateObservationsCache(obj);
@@ -318,11 +370,14 @@ classdef prtDataSetStandard < prtDataSetBase
                 switch nargin
                     case 1
                         % No indicies identified. Quick exit
-                        data = obj.data;
+                        %data = obj.data;
+                        data = obj.getDataAsMatrix;
                     case 2
-                        data = obj.data(varargin{1},:);
+                        %data = obj.data(varargin{1},:);
+                        data = obj.getDataAsMatrix(varargin{1},:);
                     case 3
-                        data = obj.data(varargin{1},varargin{2});
+                        %data = obj.data(varargin{1},varargin{2});
+                        data = obj.getDataAsMatrix(varargin{1},varargin{2});
                     otherwise
                         error('prt:prtDataSetStandard:getObservations','getObservations expects 1 or 2 sets of indices; %d indices provided',nargin-1);
                 end
@@ -355,15 +410,18 @@ classdef prtDataSetStandard < prtDataSetBase
                 if obj.isLabeled && obj.nObservations ~= size(data,1)
                     error('prtDataSet:invalidDataTargetSet','Attempt to change size of observations in a labeled data set; use setObservationsAndTargets to change both simultaneously');
                 end
-                obj.data = data;
+                %obj.data = data;
+                obj = obj.setDataFromMatrix(data);
             else
                 try
                     nObservationsPrev = obj.nObservations;
                     switch nargin
                         case 3
-                            obj.data(varargin{1},:) = data;
+                            %obj.data(varargin{1},:) = data;
+                            obj = obj.setDataFromMatrix(data,varargin{1},:);
                         case 4
-                            obj.data(varargin{1},varargin{2}) = data;
+                            %obj.data(varargin{1},varargin{2}) = data;
+                            obj = obj.setDataFromMatrix(data,varargin{1},varargin{2});
                         otherwise
                             error('prt:prtDataSetStandard:setObservations','setObservations expects 1 or 2 sets of indices; %d indices provided',nargin-2);
                     end
@@ -399,7 +457,7 @@ classdef prtDataSetStandard < prtDataSetBase
             
             if nargin == 1
                 % No indicies identified. Quick exit
-                targets = obj.targets;
+                targets = obj.getTargetsAsMatrix;
                 return
             end
             
@@ -407,9 +465,9 @@ classdef prtDataSetStandard < prtDataSetBase
                 try
                     switch nargin
                         case 2
-                            targets = obj.targets(varargin{1},:);
+                            targets = obj.getTargetsAsMatrix(varargin{1},:);
                         case 3
-                            targets = obj.targets(varargin{1},varargin{2});
+                            targets = obj.getTargetsAsMatrix(varargin{1},varargin{2});
                         otherwise
                             error('prt:prtDataSetStandard:getTargets','getTargets expects 1 or 2 sets of indices; %d indices provided',nargin-1);
                     end
@@ -440,7 +498,7 @@ classdef prtDataSetStandard < prtDataSetBase
                 
                 if isempty(targets)
                     %un-labeling data
-                    obj.targets = targets;
+                    obj = obj.setTargetsFromMatrix(targets);
                     obj = updateTargetsCache(obj);
                     return;
                 end
@@ -449,7 +507,7 @@ classdef prtDataSetStandard < prtDataSetBase
                 if obj.nObservations ~= size(targets,1)
                     error('prtDataSet:invalidDataTargetSet','Attempt to change number of observations in a data set by changing targets without changing observations; use setObservationsAndTargets to change both simultaneously');
                 end
-                obj.targets = targets;
+                obj = obj.setTargetsFromMatrix(targets);
                 obj = updateTargetsCache(obj);
                 return
             else
@@ -457,13 +515,13 @@ classdef prtDataSetStandard < prtDataSetBase
                     nObservationsPrev = obj.nObservations;
                     switch nargin
                         case 3
-                            obj.targets(varargin{1},:) = targets;
+                            obj = obj.setTargetsFromMatrix(targets,varargin{1},:);
                         case 4
-                            obj.targets(varargin{1},varargin{2}) = targets;
+                            obj = obj.setTargetsFromMatrix(targets,varargin{1},varargin{2});
                         otherwise
                             error('prt:prtDataSetStandard:setTargets','setTargets expects 1 or 2 sets of indices; %d indices provided',nargin-2);
                     end
-                    nObservationsAfter = size(obj.getTargets,1);
+                    nObservationsAfter = size(obj.getTargetsAsMatrix,1);
                     if nObservationsAfter ~= nObservationsPrev
                         error('prt:prtDataSetStandard:invalidDataSize','Attempt to change number of targets in a dataSet with %d observations to have %d targets',nObservationsPrev,nObservationsAfter);
                     end
@@ -540,7 +598,7 @@ classdef prtDataSetStandard < prtDataSetBase
                 objClass = class(obj);
                 currInput = varargin{argin};
                 
-                if isnumeric(currInput) && isempty(obj.targets)
+                if isnumeric(currInput) && isempty(obj.getTargetsAsMatrix)
                     % Catting with a double matrix is allowed because
                     % targets are empty
                     currInput = setObservations(eval(class(obj)),currInput);
@@ -563,12 +621,12 @@ classdef prtDataSetStandard < prtDataSetBase
                 assert(obj.nFeatures==currInput.nFeatures,'Attempt to cat observations for data sets with different numbers of features');
                 
                 oldObservationInfo = obj.observationInfo;
-                if isempty(obj.data) %handle empty data set
-                    obj.data = currInput.data;
-                    obj.targets = currInput.targets;
-                elseif (isempty(obj.targets) && isempty(currInput.targets)) || (~isempty(obj.targets) && ~isempty(currInput.targets))
-                    obj.data = cat(1,obj.data,currInput.getObservations);
-                    obj.targets = cat(1,obj.targets,currInput.getTargets);
+                if isempty(obj.getDataAsMatrix) %handle empty data set
+                    obj = obj.setDataFromMatrix(currInput.getDataAsMatrix);
+                    obj = obj.setTargetsFromMatrix(currInput.getTargetsAsMatrix);
+                elseif (isempty(obj.getTargetsAsMatrix) && isempty(currInput.getTargetsAsMatrix)) || (~isempty(obj.getTargetsAsMatrix) && ~isempty(currInput.getTargetsAsMatrix))
+                    obj = obj.setDataFromMatrix(cat(1,obj.getDataAsMatrix,currInput.getDataAsMatrix));
+                    obj = obj.setTargetsFromMatrix(cat(1,obj.getTargetsAsMatrix,currInput.getTargetsAsMatrix));
                 else
                     error('prt:prtDataSetStandard:CatObservations','Attempt to cat observations for data sets with different sized targets');
                 end
@@ -614,9 +672,11 @@ classdef prtDataSetStandard < prtDataSetBase
                 oldObservationInfo = obj.observationInfo;
                 
                 obj = obj.retainObservationNames(retainedIndices);
-                obj.data = obj.data(retainedIndices,:);
+                %obj.data = obj.data(retainedIndices,:);
+                obj = obj.setDataFromMatrix(obj.getDataAsMatrix(retainedIndices,:));
                 if obj.isLabeled
-                    obj.targets = obj.targets(retainedIndices,:);
+                    %obj.targets = obj.targets(retainedIndices,:);
+                    obj = obj.setTargetsFromMatrix(obj.getTargetsAsMatrix(retainedIndices,:));
                 end
                 
                 % Put observation info back.
@@ -665,7 +725,7 @@ classdef prtDataSetStandard < prtDataSetBase
             
             obj = obj.retainFeatureNames(retainedFeatures);
             
-            obj.data = obj.data(:,retainedFeatures);
+            obj = obj.setDataFromMatrix(obj.getDataAsMatrix(:,retainedFeatures));
             
             obj.featureInfo = oldFeatureInfo(retainedFeatures);
             
@@ -746,7 +806,7 @@ classdef prtDataSetStandard < prtDataSetBase
                 
                 % Standard procedure
                 obj = obj.catFeatureNames(currInput);
-                obj.data = cat(2,obj.data,currInput.getObservations);
+                obj = obj.setDataFromMatrix(cat(2,obj.getObservations,currInput.getObservations));
                 obj = obj.catFeatureInfo(oldFeatureInfo, currInput);
             end
             
@@ -1118,11 +1178,11 @@ classdef prtDataSetStandard < prtDataSetBase
             end
             for argin = 1:length(varargin)
                 currInput = varargin{argin};
-                if isa(currInput,class(obj.targets))
-                    obj.targets = cat(2,obj.targets, currInput);
+                if isa(currInput,class(obj.getTargetsAsMatrix))
+                    obj = obj.setTargetsFromMatrix(cat(2, obj.getTargetsAsMatrix, currInput));
                 elseif isa(currInput,'prtDataSetStandard')
                     obj = obj.catTargetNames(currInput);
-                    obj.targets = cat(2,obj.targets,currInput.getTargets);
+                    obj = obj.setTargetsFromMatrix(cat(2, obj.getTargetsAsMatrix, currInput.getTargetsAsMatrix));
                 end
             end
             % Updated chached target info
@@ -1157,7 +1217,7 @@ classdef prtDataSetStandard < prtDataSetBase
             
             retainedTargets = prtDataSetBase.parseIndices(obj.nTargetDimensions ,retainedTargets);
             obj = obj.retainTargetNames(retainedTargets);
-            obj.targets = obj.targets(:,retainedTargets);
+            obj = obj.setTargetsFromMatrix(obj.getTargetsAsMatrix(:,retainedTargets));
             
             % Updated chached target info
             obj = updateTargetsCache(obj);
