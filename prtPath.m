@@ -1,4 +1,4 @@
-function prtPath
+function prtPath(varargin)
 % prtPath Adds necessary directories for the PRT to your path.
 
 startupCheck = true;
@@ -22,6 +22,26 @@ while ~isempty(string);
 end
 if ~isempty(removePath)
     rmpath(removePath);
+end
+
+for iArg = 1:length(varargin)
+    cArg = varargin{iArg};
+    cDir = fullfile(prtRoot,cat(2,']',cArg));
+    assert(logical(exist(cDir,'file')),']%s is not a directory in %s',cArg,prtRoot);
+    P = genpath(cDir);
+    addpath(P);
+    
+    removePath = [];
+    [string,remString] = strtok(P,pathsep);
+    while ~isempty(string);
+        if ~isempty(strfind(string,[filesep '.']))
+            removePath = cat(2,removePath,pathsep,string);
+        end
+        [string,remString] = strtok(remString,pathsep); %#ok
+    end
+    if ~isempty(removePath)
+        rmpath(removePath);
+    end
 end
 
 function checkPrtInStartup
