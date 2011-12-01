@@ -15,7 +15,7 @@ addpath(P);
 removePath = [];
 [string,remString] = strtok(P,pathsep);
 while ~isempty(string);
-    if ~isempty(strfind(string,[filesep '.'])) || ~isempty(strfind(string,[filesep '~']))
+    if ~isempty(strfind(string,[filesep '.'])) || ~isempty(strfind(string,[filesep ']']))
         removePath = cat(2,removePath,pathsep,string);
     end
     [string,remString] = strtok(remString,pathsep); %#ok
