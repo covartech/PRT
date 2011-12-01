@@ -1,5 +1,6 @@
 function prtPath(varargin)
 % prtPath Adds necessary directories for the PRT to your path.
+%
 
 startupCheck = true;
 if startupCheck

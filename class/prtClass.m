@@ -34,6 +34,7 @@ classdef prtClass < prtAction
     %
     %
     
+    
     %
     %   Sub-classing prtClass:
     %       Concrete sub-classes of prtClass must define the abstract
