@@ -102,7 +102,6 @@ classdef prtClassPlsda < prtClass
             
             % ssT = diag(Obj.xFactors'*U);
             % vipScore = sqrt(size(G.Data.Model.Use.X,2) * sum(bsxfun(@times, bsxfun(@rdivide,R,sqrt(sum(R.^2))).^2, ssT'),2) / sum(ssT(:)));
-
         end
         
         function DataSet = runAction(Obj,DataSet)
