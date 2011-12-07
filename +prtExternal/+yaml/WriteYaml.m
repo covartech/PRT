@@ -30,7 +30,7 @@ function WriteYaml(yaml_file,matlab_struct)
 %======================================================================
 import prtExternal.yaml.*;
 
-jarPath = fullfile(prtRoot,'external','+prtExternal','+yaml','YAMLMatlab','external-packages','snakeyaml','snakeyaml-1.8.jar');
+jarPath = fullfile(prtRoot,'+prtExternal','+yaml','YAMLMatlab','external-packages','snakeyaml','snakeyaml-1.8.jar');
 javaaddpath(jarPath)
 
 import('org.yaml.snakeyaml.Yaml');
