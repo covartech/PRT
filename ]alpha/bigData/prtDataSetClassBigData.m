@@ -146,6 +146,7 @@ classdef prtDataSetClassBigData < prtDataSetClass
             %matObj doesn't like logical
             isColon = false(1,2);
             for i = 1:length(varargin)
+                varargin{i} = varargin{i}(:)';
                 if islogical(varargin{i})
                     varargin{i} = find(varargin{i});
                 elseif isequal(varargin{i},':')
