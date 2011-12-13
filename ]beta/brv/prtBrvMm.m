@@ -103,7 +103,7 @@ classdef prtBrvMm < prtBrv & prtBrvIVb & prtBrvVbOnline
                 end
             
                 % Plot
-                if mod(iteration-1,obj.vbVerbosePlot) == 0
+                if obj.vbVerbosePlot && (mod(iteration-1,obj.vbVerbosePlot) == 0)
                     vbIterationPlot(obj, priorObj, x, training);
                     
                     if obj.vbVerboseMovie

@@ -94,7 +94,11 @@ classdef prtDecisionMap < prtDecision
                     error('prt:prtDecisionMap','Cannot run prtDecisionMap on algorithms with single-column output; use prtDecisionBinaryMinPe instead');
                 end
             end
-            classList = self.classList(index);
+            if ~isempty(self.classList)
+                classList = self.classList(index);
+            else
+                classList = index;
+            end
             classList = classList(:);
             dataSet = dataSet.setObservations(classList);
         end
