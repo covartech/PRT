@@ -1,5 +1,0 @@
-
-
-Bug fix in prtClassGlrt for binary datasets with targets that are not 0-1.
-Added methods retainClasses removeClasses and retainClassesByInd, removeClassesByInd to prtDataSetClass.
-Bug fix in prtDataSetClass.explore() that prevented the legend from updating sometimes.
