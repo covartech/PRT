@@ -41,7 +41,7 @@ nClass = size(confusionMat,1);
 % the number of occurances.
 if ~all(prtUtilApproxEqual(sum(confusionMat,2),1))
     occurances = sum(confusionMat,2);
-    percentageConfusionMat = confusionMat./repmat(occurances,1,nClass);
+    percentageConfusionMat = bsxfun(@rdivide,confusionMat,occurances);
 else
     percentageConfusionMat = confusionMat;
 end
@@ -83,7 +83,7 @@ set(imageAxes,'Xticklabel',classLabels);
 sideTextHandles = zeros(nClass,1);
 if exist('occurances','var');
     for j = 1:nClass
-        sideTextHandles(j) = text(nClass+1-0.375,j,...
+        sideTextHandles(j) = text(size(confusionMat,2)+1-0.375,j,...
             sprintf('[%d]',occurances(j)),...
             'color',[0 0 0],...
             'horizontalAlignment','left',...
