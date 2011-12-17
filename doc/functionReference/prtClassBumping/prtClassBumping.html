@@ -1,0 +1,75 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../../helpwin.css">
+      <title>MATLAB File Help: prtClassBumping/prtClassBumping</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtClassBumping/prtClassBumping</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtClassBumping/prtClassBumping</div>
+      <div class="helptext"><pre><!--helptext --> <span class="helptopic">prtClassBumping</span> Bumping (Bootstrap Selection) Classifier
+ 
+     CLASSIFIER = <span class="helptopic">prtClassBumping</span> returns a Bumping classifier
+ 
+     CLASSIFIER = <span class="helptopic">prtClassBumping</span>(PROPERTY1, VALUE1, ...) constructs a
+     <span class="helptopic">prtClassBumping</span> object CLASSIFIER with properties as specified by
+     PROPERTY/VALUE pairs.
+ 
+  A <span class="helptopic">prtClassBumping</span> object inherits all properties from the abstract class
+  prtClass. In addition is has the following properties:
+ 
+       baseClassifier    - The base classifier to be re-trained with bootstrap
+                           samples
+       nBags             - The number of bagging samples to use
+ 
+       includeOriginalDataClassifier - Boolean value specifying whether to
+                                       include a classifier trained with
+                                       all the available data (not a
+                                       bootstrap sample) in comparison.
+                                       Defaults to "false" since training
+                                       with all the available data can
+                                       result in over-training.
+ 
+  After training, a Bump classifier contains a field "Classifier" with the
+  best trained classification algorithm, and a vector baggedPerformance
+  with the percent correct found for each bagging sample.
+ 
+  A Bumping classifier is a meta-classifier that chooses one of several
+  classifiers trained on a bootstrap sampled version of the input training
+  data.  In this case, the classifier chosen is the classifier trained on
+  the bootstrap sample that results in the smallest percent error when
+  tested on the original data set.  Bumping classifiers can be useful when
+  the data set under consideration has a small number of significant
+  outliers; some of the bagging samples will be free of at least some of
+  the outliers and may provide better generalization performance.
+ 
+  For more information on Bumping classifiers, see:
+   Hastie, Tibshirani, and Friedman, The Elements of Statistical Learning
+   Theory.
+ 
+  % Example:
+  ds = prtDataGenUnimodal;
+  % add a significant outlier to the data:
+  ds = ds.setXY(cat(1,ds.getObservations,[-30 -10]),cat(1,ds.getTargets,1));
+  fld = prtClassFld('internalDecider',prtDecisionBinaryMinPe);
+  fld = fld.train(ds);
+ 
+  bumpingFld = <span class="helptopic">prtClassBumping</span>('baseClassifier',fld);
+  bumpingFld = bumpingFld.train(ds);
+ 
+  subplot(2,1,1); plot(fld);
+  subplot(2,1,2); plot(bumpingFld);</pre></div><!--after help --><!--seeAlso--><div class="footerlinktitle">See also</div><div class="footerlink"> <a href="./../prtClass.html">prtClass</a>, <a href="./../prtClassLogisticDiscriminant.html">prtClassLogisticDiscriminant</a>, <a href="./../prtClassBagging.html">prtClassBagging</a>,
+     <a href="./../prtClassMap.html">prtClassMap</a>, <a href="./../prtClassFld.html">prtClassFld</a>, <a href="./../prtClassBinaryToMaryOneVsAll.html">prtClassBinaryToMaryOneVsAll</a>, <a href="./../prtClassDlrt.html">prtClassDlrt</a>,
+     <a href="./../prtClassPlsda.html">prtClassPlsda</a>, <a href="./../prtClassFld.html">prtClassFld</a>, <a href="./../prtClassRvm.html">prtClassRvm</a>, <a href="./../prtClassGlrt.html">prtClassGlrt</a>,  <a href="./../prtClassSvm.html">prtClassSvm</a>,
+     <a href="./../prtClassTreeBaggingCap.html">prtClassTreeBaggingCap</a>, <a href="./../prtClassKmsd.html">prtClassKmsd</a>, <a href="./../prtClassKnn.html">prtClassKnn</a>
+</div>
+   </body>
+</html>

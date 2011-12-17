@@ -1,0 +1,63 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../../helpwin.css">
+      <title>MATLAB File Help: prtKernelHyperbolicTangent/prtKernelHyperbolicTangent</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtKernelHyperbolicTangent/prtKernelHyperbolicTangent</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtKernelHyperbolicTangent/prtKernelHyperbolicTangent</div>
+      <div class="helptext"><pre><!--helptext -->  <span class="helptopic">prtKernelHyperbolicTangent</span>  Hyperbolic tangent kernel
+ 
+   kernelObj = <span class="helptopic">prtKernelHyperbolicTangent</span>; Generates a kernel object
+   implementing a hyperbolic tangent.  Kernel objects are widely used
+   in several prt classifiers, such as prtClassRvm and prtClassSvm.
+   Hyperbolic tangent kernels implement the following function for 1 x
+   N vectors x1 and x2:
+ 
+    k(x1,x2) = tanh(kappa*x1*x2'+c);
+ 
+   KERNOBJ = <span class="helptopic">prtKernelHyperbolicTangent</span>(PROPERTY1, VALUE1, ...) constructs a
+   <span class="helptopic">prtKernelHyperbolicTangent</span> object KERNOBJ with properties as specified by
+   PROPERTY/VALUE pairs. <span class="helptopic">prtKernelHyperbolicTangent</span> objects have the following
+   user-settable properties:
+ 
+    kappa   - Positive scalar value specifying the gain on the inner
+              product between x1 and x2 (default 1)
+ 
+    c       - Scalar value specifying DC offset in hyperbolic tangent
+              function
+ 
+   For more information on these kernels, please refer to:
+    
+   <a href="http://en.wikipedia.org/wiki/Support_vector_machine#Non-linear_classification">http://en.wikipedia.org/wiki/Support_vector_machine#Non-linear_classification</a>
+ 
+   <span class="helptopic">prtKernelHyperbolicTangent</span> objects inherit the TRAIN, RUN, and AND
+   methods from prtKernel.
+ 
+   % Example:
+   ds = prtDataGenBimodal;
+ 
+   k1 = <span class="helptopic">prtKernelHyperbolicTangent</span>;
+   k2 = <span class="helptopic">prtKernelHyperbolicTangent</span>('kappa',2);
+    
+   k1 = k1.train(ds); % Train
+   g1 = k1.run(ds); % Evaluate
+ 
+   k2 = k2.train(ds); % Train
+   g2 = k2.run(ds); % Evaluate
+ 
+   subplot(2,2,1); imagesc(g1.getObservations);  %Plot the results
+   subplot(2,2,2); imagesc(g2.getObservations);</pre></div><!--after help --><!--seeAlso--><div class="footerlinktitle">See also</div><div class="footerlink"> <a href="./../prtKernel.html">prtKernel</a>,<a href="./../prtKernelSet.html">prtKernelSet</a>, <a href="./../prtKernelDc.html">prtKernelDc</a>, <a href="./../prtKernelDirect.html">prtKernelDirect</a>,
+    <a href="./../prtKernelPolynomial.html">prtKernelPolynomial</a>, <a href="./../prtKernelRbf.html">prtKernelRbf</a>, <a href="./../prtKernelRbfNdimensionScale.html">prtKernelRbfNdimensionScale</a>, 
+</div>
+   </body>
+</html>

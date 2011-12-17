@@ -1,0 +1,37 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../helpwin.css">
+      <title>MATLAB File Help: prtScoreRmse</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtScoreRmse</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtScoreRmse</div>
+      <div class="helptext"><pre><!--helptext -->  RMSE = <span class="helptopic">prtScoreRmse</span>(GUESS, TRUTH)
+ 
+    RMSE = <span class="helptopic">prtScoreRmse</span>(GUESS, TRUTH) returns the
+    root mean squared error between the guesses in GUESS as compared to the truth in TRUTH.
+    GUESS and TRUTH should both be Nx1 vectors, or both be prtDataSets.  If
+    they are prtDataSets, TRUTH.isLabeled must be true.
+ 
+    Example:
+    dataSet = prtDataGenNoisySinc;   % Load a prtDataRegress data set, a
+                                     % noisy Sinc function
+    reg = prtRegressRvm;             % Create a prtRegressRvm object
+    reg = reg.train(dataSet);        % Train the prtRegressRvm object
+    dataSetOut = reg.run(dataSet);   % Run the regressor on the data
+ 
+    truth = sinc(dataSet.getX);
+    guess = dataSetOut.getX;
+    <span class="helptopic">prtScoreRmse</span>(truth, guess)</pre></div><!--after help --><!--seeAlso--><div class="footerlinktitle">See also</div><div class="footerlink"> <a href="./prtScoreConfusionMatrix.html">prtScoreConfusionMatrix</a>, <a href="./prtScoreRoc.html">prtScoreRoc</a>, <a href="./prtScorePercentCorrect.html">prtScorePercentCorrect</a>
+</div>
+   </body>
+</html>

@@ -1,0 +1,69 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../../helpwin.css">
+      <title>MATLAB File Help: prtDecisionBinarySpecifiedPf/prtDecisionBinarySpecifiedPf</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtDecisionBinarySpecifiedPf/prtDecisionBinarySpecifiedPf</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtDecisionBinarySpecifiedPf/prtDecisionBinarySpecifiedPf</div>
+      <div class="helptext"><pre><!--helptext -->  prtDecisionBinarySpecifiedPd Decision object for a specified Pf
+ 
+  prtDec = <span class="helptopic">prtDecisionBinarySpecifiedPf</span> creates a <span class="helptopic">prtDecisionBinarySpecifiedPf</span>
+  object, which can be used find a decision threshold in a binary
+  classification problem for a specific probability of false alarm Pf.
+ 
+  A <span class="helptopic">prtDecisionBinarySpecifiedPf</span> has the following member:
+ 
+  pf - The specified probability of false alarm, which must be between 0
+  and 1.
+ 
+  prtDecision objects are intended to be used either as members of
+  prtAlgorithm or prtClass objects.
+ 
+  Example 1:
+ 
+  ds = prtDataGenBimodal;              % Load a data set
+  classifier = prtClassKnn;            % Create a clasifier
+  classifier = classifier.train(ds);   % Train the classifier
+  yOutClassifier = classifier.run(ds); % Run the classifier
+ 
+  % Construct a prtAlgorithm object consisting of a prtClass object and
+  % a prtDecision object
+  dec = <span class="helptopic">prtDecisionBinarySpecifiedPf</span>;
+  dec.pf = .7;   % Set the desired probility of detection.
+  algo = prtClassKnn + dec;
+ 
+  algo = algo.train(ds);        % Train the algorithm
+  yOutAlgorithm = algo.run(ds); % Run the algorithm
+ 
+  % Plot and compare the results
+  subplot(2,1,1); stem(yOutClassifier.getObservations); title('KNN Output');
+  subplot(2,1,2); stem(yOutAlgorithm.getObservations); title('KNN + Decision Output');
+ 
+  Example 2:
+ 
+  ds = prtDataGenBimodal;              % Load a data set
+  classifier = prtClassKnn;            % Create a clasifier
+  classifier = classifier.train(ds);   % Train the classifier
+ 
+  % Plot the trained classifier
+  subplot(2,1,1); plot(classifier); title('KNN');
+ 
+  % Set the classifiers internealDecider to be a prtDecsion object
+  classifier.internalDecider = dec;
+ 
+  classifier = classifier.train(ds); % Train the classifier
+  subplot(2,1,2); plot(classifier); title('KNN + Decision');</pre></div><!--after help --><!--seeAlso--><div class="footerlinktitle">See also</div><div class="footerlink"> <a href="./../prtDecisionBinary.html">prtDecisionBinary</a>, <a href="./../prtDecisionBinaryMinPe.html">prtDecisionBinaryMinPe</a>,
+  ptDecisionBinarySpecifiedPf, <a href="./../prtDecisionMap.html">prtDecisionMap</a>
+</div>
+   </body>
+</html>

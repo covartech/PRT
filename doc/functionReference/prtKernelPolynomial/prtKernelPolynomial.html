@@ -1,0 +1,64 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../../helpwin.css">
+      <title>MATLAB File Help: prtKernelPolynomial/prtKernelPolynomial</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtKernelPolynomial/prtKernelPolynomial</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtKernelPolynomial/prtKernelPolynomial</div>
+      <div class="helptext"><pre><!--helptext -->  <span class="helptopic">prtKernelPolynomial</span>  Polynomial kernel object
+ 
+   kernelObj = <span class="helptopic">prtKernelPolynomial</span>; Generates a kernel object implementing a
+   polynomial kernel.  Kernel objects are widely used in several
+   prt classifiers, such as prtClassRvm and prtClassSvm.  Polynomial kernels
+   implement the following function for 1 x N vectors x1 and x2:
+ 
+    k(x,y) = (x*y'+c).^d;
+ 
+   KERNOBJ = <span class="helptopic">prtKernelPolynomial</span>(PROPERTY1, VALUE1, ...) constructs a
+   <span class="helptopic">prtKernelPolynomial</span> object KERNOBJ with properties as specified by
+   PROPERTY/VALUE pairs. <span class="helptopic">prtKernelPolynomial</span> objects have the following
+   user-settable properties:
+ 
+    d   - Positive scalar value specifying the order of the polynomial.
+          (Default value is 2)
+ 
+    c   - Positive scalar indicating the offset of the polynomial.
+          (Default value is 0)
+ 
+    <span class="helptopic">prtKernelPolynomial</span> objects inherit the TRAIN, RUN, and AND
+    methods from prtKernel.
+ 
+   Polynomial kernels are widely used in the machine
+   learning literature. For more information on these kernels, please
+   refer to:
+    
+   <a href="http://en.wikipedia.org/wiki/Support_vector_machine#Non-linear_classification">http://en.wikipedia.org/wiki/Support_vector_machine#Non-linear_classification</a>
+ 
+   % Example:
+    ds = prtDataGenBimodal;         % Load a data set
+    k1 = <span class="helptopic">prtKernelPolynomial</span>;       % Create 2 kernels to compare
+    k2 = <span class="helptopic">prtKernelPolynomial</span>('d',3);
+    
+    k1 = k1.train(ds); % Train
+    g1 = k1.run(ds);   % Evaluate
+ 
+    k2 = k2.train(ds); % Train
+    g2 = k2.run(ds);   % Evaluate
+ 
+    subplot(2,1,1); imagesc(g1.getObservations);  %Plot the results
+    subplot(2,1,2); imagesc(g2.getObservations);</pre></div><!--after help --><!--seeAlso--><div class="footerlinktitle">See also</div><div class="footerlink"> <a href="./../prtKernel.html">prtKernel</a>,<a href="./../prtKernelSet.html">prtKernelSet</a>, <a href="./../prtKernelDc.html">prtKernelDc</a>, <a href="./../prtKernelDirect.html">prtKernelDirect</a>,
+    <a href="./../prtKernelHyperbolicTangent.html">prtKernelHyperbolicTangent</a>, <a href="./../prtKernelRbf.html">prtKernelRbf</a>,
+    <a href="./../prtKernelRbfNdimensionScale.html">prtKernelRbfNdimensionScale</a>, 
+</div>
+   </body>
+</html>

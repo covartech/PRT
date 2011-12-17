@@ -1,0 +1,54 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../../helpwin.css">
+      <title>MATLAB File Help: prtOutlierRemovalNStd/prtOutlierRemovalNStd</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtOutlierRemovalNStd/prtOutlierRemovalNStd</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtOutlierRemovalNStd/prtOutlierRemovalNStd</div>
+      <div class="helptext"><pre><!--helptext -->  <span class="helptopic">prtOutlierRemovalNStd</span>  Removes outliers from a prtDataSet
+ 
+    NSTDOUT = <span class="helptopic">prtOutlierRemovalNStd</span> creates a pre-processing
+    object that flags as outliers data where any of the feature values is
+    more then nStd standard deviations from the mean of that feature.
+  
+    <span class="helptopic">prtOutlierRemovalNStd</span> has the following properties:
+ 
+        nStd - The number of standard deviations at which to flag an
+               observation as an outlier an observation (default = 3)
+ 
+    A <span class="helptopic">prtOutlierRemovalNStd</span> object also inherits all properties and
+    functions from the prtOutlierRemoval class.  For more information
+    on how to control the behaviour of outlier removal objects, see the
+    help for prtOutlierRemoval.
+ 
+    Example:
+ 
+    dataSet = prtDataGenUnimodal;               % Load a data Set
+    outlier = prtDataSetClass([-10 -10],1);     % Create and insert
+    dataSet = catObservations(dataSet,outlier); % an outlier
+ 
+    % Create the prtOutlierRemoval object
+    nStdRemove = <span class="helptopic">prtOutlierRemovalNStd</span>('runMode','removeObservation');
+ 
+    nStdRemove = nStdRemove.train(dataSet);    % Train and run    
+    dataSetNew = nStdRemove.run(dataSet);  
+  
+    % Plot the results
+    subplot(2,1,1); plot(dataSet);
+    title('Original Data');
+    subplot(2,1,2); plot(dataSetNew);
+    title('NstdOutlierRemove Data');</pre></div><!--after help --><!--seeAlso--><div class="footerlinktitle">See Also</div><div class="footerlink">  <a href="./../prtOutlierRemoval.html">prtOutlierRemoval</a>,
+    <a href="./../prtOutlierRemovalNonFinite.html">prtOutlierRemovalNonFinite</a>,<a href="./../prtOutlierRemovalMissingData.html">prtOutlierRemovalMissingData</a>
+</div>
+   </body>
+</html>

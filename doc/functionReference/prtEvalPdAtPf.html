@@ -1,0 +1,40 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../helpwin.css">
+      <title>MATLAB File Help: prtEvalPdAtPf</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtEvalPdAtPf</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtEvalPdAtPf</div>
+      <div class="helptext"><pre><!--helptext -->  <span class="helptopic">prtEvalPdAtPf</span>   Returns the probability of false alarm at a desired
+  probability of detection on the receiver operating curve.
+ 
+    PD = prtEvalPfAtPd(CLASSIFIER, DATASET,PF) returns the probabilty of
+    detection PD.  DATASET must be a labeled, binary prtDataSetStandard
+    object. CLASSIFIER must be a prtClass object. PF is the desired
+    probability of detection and must be between 0 and 1.
+ 
+    PF = prtScorePfAtPd(CLASSIFIER, DATASET,PD, NFOLDS) returns the
+    probabilty of false alarm PF on the receiver operating curve with
+    K-fold cross-validation. DATASET must be a labeled, binary
+    prtDataSetStandard object. CLASSIFIER must be a prtClass object. PF is
+    the desired probability of detection and must be between 0 and 1.
+    NFOLDS is the number of folds in the K-fold cross-validation.
+ 
+    Example: 
+    dataSet = prtDataGenSpiral; 
+    classifier = prtClassDlrt;
+    pf = <span class="helptopic">prtEvalPdAtPf</span>(classifier, dataSet,.01)</pre></div><!--after help --><!--seeAlso--><div class="footerlinktitle">See Also</div><div class="footerlink"> <a href="./prtEvalAuc.html">prtEvalAuc</a>, <a href="./prtEvalPfAtPd.html">prtEvalPfAtPd</a>, <a href="./prtEvalPercentCorrect.html">prtEvalPercentCorrect</a>,
+    <a href="./prtEvalMinCost.html">prtEvalMinCost</a>
+</div>
+   </body>
+</html>

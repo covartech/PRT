@@ -1,0 +1,148 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Evaluating classifiers</title><meta name="generator" content="MATLAB 7.13"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2011-12-13"><meta name="DC.source" content="prtDocEval.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Evaluating classifiers</h1><!--introduction--><p>While prtScore functions operate on data sets, prtEval functions operate on classifiers and data sets. The other key difference is that they return scalars rather than vectors. They are useful for finding a particular performance measure of a classifier. They are also very useful for optimizing classifiers and performing feature reduction.</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Using prtEval functions directly with prtActions</a></li><li><a href="#3">Evaluating classifier in conjunction with optimizing performance</a></li></ul></div><h2>Using prtEval functions directly with prtActions<a name="1"></a></h2><p>First, consider a simple example, evaluating the percent correct of a classifier:</p><pre class="codeinput">dataSet = prtDataGenSpiral;
+classifier = prtClassDlrt;
+classifier.internalDecider = prtDecisionBinaryMinPe;
+pc =  prtEvalPercentCorrect(classifier, dataSet)
+</pre><pre class="codeoutput">pc =
+    0.9950
+</pre><p>In the above, the minimum probability of error was used as the decision rule. Alternatively, we can specify a Pf to acheive and make decisions based on that:</p><pre class="codeinput"><span class="comment">% Set the decider so that the object has at least a probility of false</span>
+<span class="comment">% alarm of .1 or less.</span>
+classifier = prtClassDlrt;
+classifier.internalDecider = prtDecisionBinarySpecifiedPf(<span class="string">'pf'</span>,.1);
+pc =  prtEvalPercentCorrect(classifier, dataSet)
+</pre><pre class="codeoutput">pc =
+    0.9525
+</pre><h2>Evaluating classifier in conjunction with optimizing performance<a name="3"></a></h2><p>Another important use of the prtEval functions is to optimize performance of a prtAction. Continuing the following example, use the optimize function to select the best performance of the classifier for a range of k values:</p><pre class="codeinput">kVec = 1:20;
+[optClassifier, pc] =  <span class="keyword">...</span>
+    classifier.optimize(dataSet,<span class="keyword">...</span>
+    @(class,ds)prtEvalPercentCorrect(class,ds,10), <span class="string">'k'</span>,kVec);
+
+<span class="comment">% Plot</span>
+plot(kVec, pc);
+title(<span class="string">'Number of neighbors versus percent correct'</span>);
+xlabel(<span class="string">'Number of neighbors'</span>); ylabel(<span class="string">'Percent Correct'</span>)
+</pre><img vspace="5" hspace="5" src="prtDocEval_01.png" alt=""> <p>The above example illustrates that increasing the number of neighbors improves the performance of the classifier for this data set, but only to a point, after which performance begins to decline.</p><p>All evaluation functions in the Pattern Recognition Toolbox have the same API as discussed above. The difference is in the performance metric to be evaluated. For a list of all the different functions, and links to their individual help entries, <a href="prtDocFunctionList.html#7">A list of commonly used functions</a></p><p>For more information on the use of prtEval functions in conjunction with feature selection techniques, see <a href="prtDocFeatSel.html">Feature Selection</a></p><p class="footer"><br>
+      Published with MATLAB&reg; 7.13<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Evaluating classifiers
+% While prtScore functions operate on data sets, prtEval functions operate
+% on classifiers and data sets. The other key difference is that they
+% return scalars rather than vectors. They are useful for finding a
+% particular performance measure of a classifier. They are also very useful
+% for optimizing classifiers and performing feature reduction.
+%
+
+%% Using prtEval functions directly with prtActions
+% First, consider a simple example, evaluating the percent correct of a
+% classifier:
+
+dataSet = prtDataGenSpiral;
+classifier = prtClassDlrt;
+classifier.internalDecider = prtDecisionBinaryMinPe;
+pc =  prtEvalPercentCorrect(classifier, dataSet)
+
+%%
+% In the above, the minimum probability of error was used as the decision
+% rule. Alternatively, we can specify a Pf to acheive and make decisions
+% based on that:
+
+% Set the decider so that the object has at least a probility of false
+% alarm of .1 or less.
+classifier = prtClassDlrt;
+classifier.internalDecider = prtDecisionBinarySpecifiedPf('pf',.1);
+pc =  prtEvalPercentCorrect(classifier, dataSet)
+
+%% Evaluating classifier in conjunction with optimizing performance
+% Another important use of the prtEval functions is to optimize performance
+% of a prtAction. Continuing the following example, use the optimize
+% function to select the best performance of the classifier for a range of
+% k values:
+
+kVec = 1:20;
+[optClassifier, pc] =  ...
+    classifier.optimize(dataSet,...
+    @(class,ds)prtEvalPercentCorrect(class,ds,10), 'k',kVec);
+
+% Plot
+plot(kVec, pc); 
+title('Number of neighbors versus percent correct');
+xlabel('Number of neighbors'); ylabel('Percent Correct')
+
+%% 
+% The above example illustrates that increasing the number of neighbors
+% improves the performance of the classifier for this data set, but only to
+% a point, after which performance begins to decline.
+%
+% All evaluation functions in the Pattern Recognition Toolbox have the same
+% API as discussed above. The difference is in the performance metric to be
+% evaluated. For a list of all the different functions, and links to their
+% individual help entries, <prtDocFunctionList.html#7 A list of commonly
+% used functions>
+%
+% For more information on the use of prtEval functions in conjunction with
+% feature selection techniques, see <prtDocFeatSel.html Feature Selection>
+##### SOURCE END #####
+--></body></html>

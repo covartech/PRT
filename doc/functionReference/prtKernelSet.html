@@ -1,0 +1,181 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../helpwin.css">
+      <title>MATLAB File Help: prtKernelSet</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtKernelSet</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtKernelSet</div>
+      <div class="helptext"><pre><!--helptext -->  <span class="helptopic">prtKernelSet</span>  A set of prtKernel Object
+ 
+    KC = <span class="helptopic">prtKernelSet</span>(KERNOBJ) creates a <span class="helptopic">prtKernelSet</span> object consisting
+    of one prtKenrel KERNOBJ.
+ 
+    KC = KERNOBJ1 &amp; KERNOBJ2 creates a <span class="helptopic">prtKernelSet</span> object consisting of
+    the prtKernel objects KERNOBJ1, and KERNOBJ2. Additional prtKernel
+    object can be included by appending more objects using the AND(&amp;)
+    operator.
+ 
+    When the TRAIN method is called on a prtKernetSet object, the
+    train method of all member prtKernel objects is invoked. 
+ 
+    When the RUN method is called on a <span class="helptopic">prtKernelSet</span> object is called,
+    the RUN method of all member prtKernel objects is invoked, and the
+    output is the concatenation of the results.
+ 
+    % Example:
+ 
+    ds = prtDataGenBimodal;       % Generate a dataset
+    k1 = prtKernelRbf;            % Create a prtKernel object with 
+                                  % default value of sigma 
+    k2 = prtKernelRbf('sigma',2); % Create a prtKernel object with
+                                  % specified value of sigma
+        
+    kSet = k1&amp;k2;                 % Create a prtKernel object using the
+                                  % AND operator 
+    kSet =  kSet.train(ds);       % Train
+       
+    g = kSet.run(ds);             % Evaluate
+  
+    imagesc(g.getObservations);   %Plot the results</pre></div><!--after help --><!--seeAlso--><div class="footerlinktitle">See also</div><div class="footerlink"> <a href="./prtKernel.html">prtKernel</a>,<a href="./prtKernelSet/prtKernelSet.html">prtKernelSet</a>, <a href="./prtKernelDc.html">prtKernelDc</a>, <a href="./prtKernelDirect.html">prtKernelDirect</a>,
+    <a href="./prtKernelHyperbolicTangent.html">prtKernelHyperbolicTangent</a>, <a href="./prtKernelPolynomial.html">prtKernelPolynomial</a>,
+    <a href="./prtKernelRbfNdimensionScale.html">prtKernelRbfNdimensionScale</a>
+</div>
+      <!--Class-->
+      <div class="sectiontitle">Class Details</div>
+      <table class="class-details">
+         <tr>
+            <td class="class-detail-label">Superclasses</td>
+            <td><a href="./prtKernel.html">prtKernel</a></td>
+         </tr>
+         <tr>
+            <td class="class-detail-label">Sealed</td>
+            <td>false</td>
+         </tr>
+         <tr>
+            <td class="class-detail-label">Construct on load</td>
+            <td>false</td>
+         </tr>
+      </table>
+      <!--Constructors-->
+      <div class="sectiontitle"><a name="constructors"></a>Constructor Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="name"><a href="./prtKernelSet/prtKernelSet.html">prtKernelSet</a></td>
+            <td class="m-help">Obj = prtKernelSet(varargin)&nbsp;</td>
+         </tr>
+      </table>
+      <!--Properties-->
+      <div class="sectiontitle"><a name="properties"></a>Property Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="name"><a href="./prtKernelSet/dataSet.html">dataSet</a></td>
+            <td class="m-help">The training prtDataSet, only stored if verboseStorage is true. &nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtKernelSet/dataSetSummary.html">dataSetSummary</a></td>
+            <td class="m-help">Structure that summarizes prtDataSet.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtKernelSet/isCrossValidateValid.html">isCrossValidateValid</a></td>
+            <td class="m-help">False&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtKernelSet/isSupervised.html">isSupervised</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtKernelSet/isTrained.html">isTrained</a></td>
+            <td class="m-help">Indicates if prtAction object has been trained.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtKernelSet/kernelCell.html">kernelCell</a></td>
+            <td class="m-help">The cell array of prtKenrel objects&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtKernelSet/name.html">name</a></td>
+            <td class="m-help">Kernel Set&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtKernelSet/nameAbbreviation.html">nameAbbreviation</a></td>
+            <td class="m-help">KernelSet&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtKernelSet/showProgressBar.html">showProgressBar</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtKernelSet/userData.html">userData</a></td>
+            <td class="m-help">User specified data&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtKernelSet/verboseStorage.html">verboseStorage</a></td>
+            <td class="m-help">Specifies whether or not to store the training prtDataset.&nbsp;</td>
+         </tr>
+      </table>
+      <!--Methods-->
+      <div class="sectiontitle"><a name="methods"></a>Method Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtKernelSet/and.html">and</a></td>
+            <td class="m-help">Combine 2 prtKernels into a prtKernelSet&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtKernelSet/get.html">get</a></td>
+            <td class="m-help">get the object properties&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtKernelSet/optimize.html">optimize</a></td>
+            <td class="m-help">Optimize action parameter by exhaustive function maximization.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtKernelSet/run.html">run</a></td>
+            <td class="m-help">Run a prtAction object on a prtDataSet object.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtKernelSet/set.html">set</a></td>
+            <td class="m-help">set the object properties&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtKernelSet/train.html">train</a></td>
+            <td class="m-help">Train a prtAction object using training a prtDataSet object.&nbsp;</td>
+         </tr>
+      </table>
+   </body>
+</html>

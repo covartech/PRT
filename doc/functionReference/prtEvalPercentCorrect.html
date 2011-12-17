@@ -1,0 +1,38 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../helpwin.css">
+      <title>MATLAB File Help: prtEvalPercentCorrect</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtEvalPercentCorrect</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtEvalPercentCorrect</div>
+      <div class="helptext"><pre><!--helptext -->  PERCENTCORRECT    Calculate percent correct of a classification operation
+  
+    PERCENTCORRECT = <span class="helptopic">prtEvalPercentCorrect</span>(CLASSIFIER, DATASET) returns the percentage
+    of correctly classified elements of DATASET when classifier by
+    CLASSIFIER. DATASET must be a labeled, prtDataSetStandard
+    object. CLASSIFIER must be a prtClass object. 
+ 
+    PF = prtScorePercentCorrect(CLASSIFIER, DATASET, NFOLDS)  returns the
+    percentage of correctly classified elements of DATASET when classifier
+    by CLASSIFIER with K-fold cross-validation. DATASET must be a labeled,
+    prtDataSetStandard object. CLASSIFIER must be a prtClass object.
+    NFOLDS is the number of folds in the K-fold cross-validation.
+ 
+    Example:
+    dataSet = prtDataGenSpiral;
+    classifier = prtClassDlrt;
+    pc =  <span class="helptopic">prtEvalPercentCorrect</span>(classifier, dataSet)</pre></div><!--after help --><!--seeAlso--><div class="footerlinktitle">See Also</div><div class="footerlink"> <a href="./prtEvalPdAtPf.html">prtEvalPdAtPf</a>, <a href="./prtEvalPfAtPd.html">prtEvalPfAtPd</a>, <a href="./prtEvalAuc.html">prtEvalAuc</a>,
+    <a href="./prtEvalMinCost.html">prtEvalMinCost</a>
+</div>
+   </body>
+</html>

@@ -1,0 +1,45 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../helpwin.css">
+      <title>MATLAB File Help: prtDistanceCustom</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtDistanceCustom</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtDistanceCustom</div>
+      <div class="helptext"><pre><!--helptext -->  <span class="helptopic">prtDistanceCustom</span>   Custom distance function
+  
+    DIST = prtDistanceCityBlock(D1,D2,DISTFUNHANDLE)  calculates the
+    distance from all the observations in dataset D1 to dataset D2, using
+    the function handle DISTFUNHANDLE. The output is a distance matrix of
+    size D1.nObservations x D2.nObservations. D1 and D2 must have the same
+    number of features.
+ 
+    DISTFUNHANDLE should be a function handle that accepts two 1xn
+    vectors and outputs the scalar distance between them.  For example, 
+ 
+    DISTFUNHANDLE = @(x,y)sqrt(sum((x-y).^2,2)); %euclidean distance
+ 
+    Note: This is provided as an example only, use prtDistanceEuclidean to
+    calculate Euclidean distances, as it is significantly faster than
+    <span class="helptopic">prtDistanceCustom</span>.
+    
+    %  Example:
+ 
+    % Create 2 data sets
+    dsx = prtDataSetStandard('Observations',[0 0; 1 1]);
+    dsy = prtDataSetStandard('Observations',[1 0; 2 2; 3 3;]);
+    % Compute their distance based on function handle
+    distance = <span class="helptopic">prtDistanceCustom</span>(dsx,dsy,@(x,y)sqrt(sum((x-y).^2,2)))</pre></div><!--after help --><!--seeAlso--><div class="footerlinktitle">See Also</div><div class="footerlink"> <a href="./prtDistanceChebychev.html">prtDistanceChebychev</a>, <a href="./prtDistanceCityBlock.html">prtDistanceCityBlock</a>,
+    <a href="./prtDistanceEuclidean.html">prtDistanceEuclidean</a>, <a href="./prtDistanceMahalanobis.html">prtDistanceMahalanobis</a>, <a href="./prtDistanceSquare.html">prtDistanceSquare</a>
+</div>
+   </body>
+</html>

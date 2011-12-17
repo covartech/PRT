@@ -1,0 +1,71 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../../helpwin.css">
+      <title>MATLAB File Help: prtClassSvm/prtClassSvm</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtClassSvm/prtClassSvm</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtClassSvm/prtClassSvm</div>
+      <div class="helptext"><pre><!--helptext -->  <span class="helptopic">prtClassSvm</span>  Support vector machine classifier
+ 
+     CLASSIFIER = <span class="helptopic">prtClassSvm</span> returns a support vector machine classifier
+ 
+     CLASSIFIER = <span class="helptopic">prtClassSvm</span>(PROPERTY1, VALUE1, ...) constructs a
+     <span class="helptopic">prtClassSvm</span> object CLASSIFIER with properties as specified by
+     PROPERTY/VALUE pairs.
+ 
+     A <span class="helptopic">prtClassSvm</span> object inherits all properties from the abstract class
+     prtClass. In addition is has the following properties:
+ 
+     c      - Slack variable weight 
+     tol    - tolerance on learning updates 
+ 
+     The following properties are read-only.
+ 
+     alpha  - Vector of support vector machine weights
+     beta   - Support vector machine DC offset
+ 
+     For information on relevance vector machines, please
+     refer to the following URL:
+ 
+     <a href="http://en.wikipedia.org/wiki/Support_vector_machine">http://en.wikipedia.org/wiki/Support_vector_machine</a>
+ 
+     The <span class="helptopic">prtClassSvm</span> object makes use of the sequential minimal
+     optimization as described in Reference:
+ 
+      J. Platt, Sequential Minimal Optimization: A Fast Algorithm
+      for Training Support Vector Machines, Microsoft Research Technical
+      Report MSR-TR-98-14, (1998).
+ 
+     A <span class="helptopic">prtClassSvm</span> object inherits the TRAIN, RUN, CROSSVALIDATE and
+     KFOLDS methods from prtAction. It also inherits the PLOT method
+     from prtClass.
+ 
+ 
+     Example:
+ 
+     TestDataSet = prtDataGenUnimodal;      % Create some test and
+     TrainingDataSet = prtDataGenUnimodal;  % training data
+     classifier = <span class="helptopic">prtClassSvm</span>;              % Create a classifier
+     classifier = classifier.train(TrainingDataSet);    % Train
+     classified = run(classifier, TestDataSet);         % Test
+     subplot(2,1,1);
+     classifier.plot;
+     subplot(2,1,2);
+     [pf,pd] = prtScoreRoc(classified,TestDataSet);
+     h = plot(pf,pd,'linewidth',3);
+     title('ROC'); xlabel('Pf'); ylabel('Pd');</pre></div><!--after help --><!--seeAlso--><div class="footerlinktitle">See also</div><div class="footerlink"> <a href="./../prtClass.html">prtClass</a>, <a href="./../prtClassLogisticDiscriminant.html">prtClassLogisticDiscriminant</a>, <a href="./../prtClassBagging.html">prtClassBagging</a>,
+     <a href="./../prtClassMap.html">prtClassMap</a>, <a href="./../prtClassCap.html">prtClassCap</a>, <a href="./../prtClassBinaryToMaryOneVsAll.html">prtClassBinaryToMaryOneVsAll</a>, <a href="./../prtClassDlrt.html">prtClassDlrt</a>,
+     <a href="./../prtClassPlsda.html">prtClassPlsda</a>, <a href="./../prtClassFld.html">prtClassFld</a>, <a href="./../prtClassRvm.html">prtClassRvm</a>, <a href="./../prtClassGlrt.html">prtClassGlrt</a>,  <a href="./../prtClass.html">prtClass</a>
+</div>
+   </body>
+</html>

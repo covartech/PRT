@@ -1,0 +1,73 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../../helpwin.css">
+      <title>MATLAB File Help: prtClassBagging/prtClassBagging</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtClassBagging/prtClassBagging</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtClassBagging/prtClassBagging</div>
+      <div class="helptext"><pre><!--helptext -->  <span class="helptopic">prtClassBagging</span>  Bagging (Bootstrap Aggregating) classifier
+ 
+     CLASSIFIER = <span class="helptopic">prtClassBagging</span> returns a bagging classifier
+ 
+     CLASSIFIER = <span class="helptopic">prtClassBagging</span>(PROPERTY1, VALUE1, ...) constructs a
+     <span class="helptopic">prtClassBagging</span> object CLASSIFIER with properties as specified by
+     PROPERTY/VALUE pairs.
+ 
+     A <span class="helptopic">prtClassBagging</span> object inherits all properties from the abstract
+     class prtClass. In addition is has the following properties:
+ 
+     baseClassifier  - The base classifier to be used 
+     nBags           - The number of bags to aggregate over
+     nSamplesPerBag  - The number of bootstrap samples to use per bag.
+            When nSamplesPerBag is an empty matrix (the default),
+            the number of bootstrap samples is set to the number of
+            observations in the training data set.
+     bootstrapByClass - A logical describing whether to enforce an
+            equal number of bootstrap samples from each class in the
+            training data set. If bootstrapByClass is true,
+            floor(nSamplesPerBag/nClasses) samples per class are used
+            when training each classifier.  bootstrapByClass defaults
+            to false.
+  
+     Bagging classifiers are meta-classifiers that attempt to develop
+     more robust decision boundaries by aggregating outputs over
+     multiple bootstrapped samples of the original data.  For more
+     information on bagging classifiers, see:
+ 
+     <a href="http://en.wikipedia.org/wiki/Bootstrap_aggregating">http://en.wikipedia.org/wiki/Bootstrap_aggregating</a>
+ 
+     A <span class="helptopic">prtClassBagging</span>  object inherits the TRAIN, RUN, 
+     CROSSVALIDATE and KFOLDS methods from prtAction. It also inherits 
+     the PLOT method from prtClass.
+ 
+     Example:
+ 
+      TestDataSet = prtDataGenUnimodal;       % Create some test and
+      TrainingDataSet = prtDataGenUniModal;   % training data
+      classifier = <span class="helptopic">prtClassBagging</span>;           % Create a classifier
+      classifier.baseClassifier = prtClassMap; % Set the classifier to
+                                               % a prtClassMap
+      classifier = classifier.train(TrainingDataSet);    % Train
+      classified = run(classifier, TestDataSet);         % Test
+      subplot(2,1,1);
+      classifier.plot;
+      subplot(2,1,2);
+      [pf,pd] = prtScoreRoc(classified,TestDataSet);
+      h = plot(pf,pd,'linewidth',3);
+      title('ROC'); xlabel('Pf'); ylabel('Pd');</pre></div><!--after help --><!--seeAlso--><div class="footerlinktitle">See also</div><div class="footerlink"> <a href="./../prtClass.html">prtClass</a>, <a href="./../prtClassLogisticDiscriminant.html">prtClassLogisticDiscriminant</a>, <a href="./../prtClassBagging.html">prtClassBagging</a>,
+     <a href="./../prtClassMap.html">prtClassMap</a>, <a href="./../prtClassFld.html">prtClassFld</a>, <a href="./../prtClassBinaryToMaryOneVsAll.html">prtClassBinaryToMaryOneVsAll</a>, <a href="./../prtClassDlrt.html">prtClassDlrt</a>,
+     <a href="./../prtClassPlsda.html">prtClassPlsda</a>, <a href="./../prtClassFld.html">prtClassFld</a>, <a href="./../prtClassRvm.html">prtClassRvm</a>, <a href="./../prtClassGlrt.html">prtClassGlrt</a>,  <a href="./../prtClassSvm.html">prtClassSvm</a>,
+     <a href="./../prtClassTreeBaggingCap.html">prtClassTreeBaggingCap</a>, <a href="./../prtClassKmsd.html">prtClassKmsd</a>, <a href="./../prtClassKnn.html">prtClassKnn</a>
+</div>
+   </body>
+</html>

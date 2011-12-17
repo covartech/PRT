@@ -1,0 +1,108 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Pre processing data with the Pattern Recognition Toolbox</title><meta name="generator" content="MATLAB 7.13"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2011-12-13"><meta name="DC.source" content="prtDocPreProc.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Pre processing data with the Pattern Recognition Toolbox</h1><p>Often, you will want to perform some sort of pre processing on your data before peforming clasification or other operations. For example, many algorithms require the input data to be normalize to have zero-mean and unit variance.</p><p>Like all other prtAction objects, all prtPreProc objects inherit the TRAIN, RUN, CROSSVALIDATE and KFOLDS functions from the prtAction object. For more information on these methods, refer to section on the <a href="./prtDocEngine.html">prtEngine</a>.</p><p>Performing principle component analysis is another common example of pre processing, which is illustrated below.</p><pre class="codeinput">ds = prtDataGenUnimodal;     <span class="comment">% Load a dataset</span>
+preProc = prtPreProcPca(<span class="string">'nComponents'</span>,2); <span class="comment">% Create a pre processing object</span>
+preProc = preProc.train(ds); <span class="comment">% Train the object</span>
+dsOut = preProc.run(ds);     <span class="comment">% Run the object on the dataset</span>
+
+<span class="comment">% Plot the old and new datasets</span>
+subplot(2,1,1); plot(ds); title(<span class="string">'Before PCA'</span>)
+subplot(2,1,2); plot(dsOut); title(<span class="string">'After PCA'</span>)
+</pre><img vspace="5" hspace="5" src="prtDocPreProc_01.png" alt=""> <p>Note that dsOut, the data has been reoriented by the principle component processing.</p><p>All pre processing objects in the Pattern Recognition Toolbox have the same API as discussed above.  For a list of all the different pre processing techniques, and links to their individual help entries, <a href="prtDocFunctionList.html#11">A list of commonly used functions</a></p><p class="footer"><br>
+      Published with MATLAB&reg; 7.13<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Pre processing data with the Pattern Recognition Toolbox
+% Often, you will want to perform some sort of pre processing on your data
+% before peforming clasification or other operations. For example, many
+% algorithms require the input data to be normalize to have zero-mean and
+% unit variance.
+%
+% Like all other prtAction objects, all prtPreProc objects inherit the
+% TRAIN, RUN, CROSSVALIDATE and KFOLDS functions from the prtAction object.
+% For more information on these methods, refer to section on the
+% <./prtDocEngine.html prtEngine>.
+%
+% Performing principle component analysis is another common
+% example of pre processing, which is illustrated below. 
+
+ds = prtDataGenUnimodal;     % Load a dataset
+preProc = prtPreProcPca('nComponents',2); % Create a pre processing object
+preProc = preProc.train(ds); % Train the object
+dsOut = preProc.run(ds);     % Run the object on the dataset
+
+% Plot the old and new datasets
+subplot(2,1,1); plot(ds); title('Before PCA')
+subplot(2,1,2); plot(dsOut); title('After PCA')
+
+%%
+% Note that dsOut, the data has been reoriented by the principle component
+% processing.
+%
+% All pre processing objects in the Pattern Recognition Toolbox have the
+% same API as discussed above.  For a list of all the
+% different pre processing techniques, and links to their individual help
+% entries, <prtDocFunctionList.html#11 A list of commonly used functions>
+##### SOURCE END #####
+--></body></html>

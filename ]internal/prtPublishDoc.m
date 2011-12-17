@@ -4,7 +4,7 @@ function prtPublishDoc
 %   HTML files.
 
 docHtmlDir = fullfile(prtRoot,'doc');
-docMDir = fullfile(prtRoot,'internal','doc');
+docMDir = fullfile(prtRoot,']internal','doc');
 
 mfilelist = prtUtilSubDir(docMDir,'prtDoc*.m');
 

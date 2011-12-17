@@ -1,0 +1,45 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../helpwin.css">
+      <title>MATLAB File Help: prtEvalMinCost</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtEvalMinCost</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtEvalMinCost</div>
+      <div class="helptext"><pre><!--helptext -->  <span class="helptopic">prtEvalMinCost</span>   Returns the minimum cost of classification
+ 
+    COST = <span class="helptopic">prtEvalMinCost</span>(CLASSIFIER, DATASET,COSTMAT) returns the minimum
+    cost of classification of dataset DATASET with classifier CLASSIFIER
+    according to the cost matrix COSTMAT. DATASET must be a labeled,
+    prtDataSetStandard object. CLASSIFIER must be a prtClass object.
+    COSTMAT must be a 2x2 matrix consisting of the costs.
+    COSTMAT  = [C00, C10; C01 C11], where Cij is the cost for deciding i 
+    when j is the truth.
+ 
+    COST = prtScoreMinCost(CLASSIFIER, DATASET, NFOLDS)  returns the minimum
+    cost of classification of dataset DATASET with classifier CLASSIFIER
+    according to the cost matrix COSTMAT with K-fold cross-validation.
+    DATASET must be a labeled, binary prtDataSetStandard object. CLASSIFIER
+    must be a prtClass object. NFOLDS is the number of folds in the K-fold
+    cross-validation.
+ 
+    [COST, PF, PD] =  prtScoreMinCost(...) returns the probability of false
+    alarm PF and the probability of detection PD.
+ 
+    Example: 
+    dataSet = prtDataGenSpiral; 
+    classifier = prtClassDlrt;
+    cost = <span class="helptopic">prtEvalMinCost</span>(classifier, dataSet,[ 0 1; 1 0])</pre></div><!--after help --><!--seeAlso--><div class="footerlinktitle">See Also</div><div class="footerlink"> <a href="./prtEvalAuc.html">prtEvalAuc</a>, <a href="./prtEvalPfAtPd.html">prtEvalPfAtPd</a>, <a href="./prtEvalPdAtPf.html">prtEvalPdAtPf</a>
+    <a href="./prtEvalPercentCorrect.html">prtEvalPercentCorrect</a>
+</div>
+   </body>
+</html>

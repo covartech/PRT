@@ -1,0 +1,56 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../../helpwin.css">
+      <title>MATLAB File Help: prtRv/prtRv</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtRv/prtRv</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtRv/prtRv</div>
+      <div class="helptext"><pre><!--helptext -->  <span class="helptopic">prtRv</span> Base class for all prt random variables
+ 
+    This is an abstract class from which all prt random variables
+    inherit. It can not be instantiated. <span class="helptopic">prtRv</span> contains the following 
+    properties:
+ 
+    name           - Name of the random variable.
+    userData       - Structure for holding additional related to the
+                     random variable.
+    nDimensions    - Number of dimensions of the vector space
+                     represented by the random variable.
+ 
+    The <span class="helptopic">prtRv</span> class has the following methods
+ 
+    plotPdf - Plot the pdf of the random variable
+    plotCdf - Plot the cdf of the random variable
+ 
+    The <span class="helptopic">prtRv</span> class has the following methods, most of which are
+    overloaded. If a method is not overloaded, it is because it is not
+    possible to implement the functionality.
+ 
+    pdf - Output the pdf of the random variable evaluated at the points
+          specified
+ 
+    logPdf - Output the log-pdf of the random variable evaluated at the
+             points specified (for many distributions, this can be
+             calculated more easily than simply log(pdf(R,X))
+ 
+    cdf - Output the cdf of the random variable evaluated at the
+          points specified
+ 
+    draw - Draw samples from the random variable
+ 
+    mle - Perform maximum likelihood estimation of the objects parameters 
+          using the specified data</pre></div><!--after help --><!--seeAlso--><div class="footerlinktitle">See also</div><div class="footerlink"> <a href="./../prtRvMvn.html">prtRvMvn</a>, <a href="./../prtRvGmm.html">prtRvGmm</a>, <a href="./../prtRvMultinomial.html">prtRvMultinomial</a>, <a href="./../prtRvUniform.html">prtRvUniform</a>,
+    <a href="./../prtRvUniformImproper.html">prtRvUniformImproper</a>, <a href="./../prtRvVq.html">prtRvVq</a>
+</div>
+   </body>
+</html>

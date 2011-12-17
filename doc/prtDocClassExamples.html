@@ -1,0 +1,298 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Some examples of different classification techniques</title><meta name="generator" content="MATLAB 7.13"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2011-12-13"><meta name="DC.source" content="prtDocClassExamples.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>Some examples of different classification techniques</h1><!--introduction--><p>In this section a few different classification techniques are presented.</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Meta-classifiers: Boosting, Bagging and Bumping</a></li><li><a href="#5">M-ary classification with non-native M-ary classifiers</a></li><li><a href="#6">One-class classification with support vector machines</a></li></ul></div><h2>Meta-classifiers: Boosting, Bagging and Bumping<a name="1"></a></h2><p>Boosting and bagging classifiers make use of multiple weak classifiers to build a strong classifier. A common example of this is the ADA boost algorithm. Consider the following example:</p><pre class="codeinput">classifier = prtClassAdaBoost                    <span class="comment">% Create a classifier</span>
+</pre><pre class="codeoutput">classifier = 
+  prtClassAdaBoost
+
+  Properties:
+                    name: 'AdaBoost'
+        nameAbbreviation: 'AdaBoost'
+            isNativeMary: 0
+          baseClassifier: [1x1 prtClassFld]
+                 nBoosts: 30
+        twoClassParadigm: 'binary'
+         internalDecider: []
+            isSupervised: 1
+    isCrossValidateValid: 1
+          verboseStorage: 1
+         showProgressBar: 1
+               isTrained: 0
+          dataSetSummary: []
+                 dataSet: []
+                userData: [1x1 struct]
+</pre><p>Note that classifier has two properties related to boosting, the number of boosts, nBoosts, which defaults to 30, and the baseClassifier. The number of boosts indicates how many instances of the base classifier will be used to construct the overall classifier. The base classifier can be any prtClass object, however, it is recommended that this classifier be a simple classifier that trains quickly, such as prtClassFld or prtClassGlrt. If you select a classifier that has a long training time, the boosting classifier will take substantially longer.</p><p>For example, set the number of boosts to 20 and the baseClassifier to a prtClassGlrt.</p><pre class="codeinput">classifier.nBoosts = 20;
+classifier.baseClassifier = prtClassGlrt;
+</pre><p>Create a data set, train and plot the receiver operating curve</p><pre class="codeinput">TestDataSet = prtDataGenUnimodal;       <span class="comment">% Create some test and</span>
+TrainingDataSet = prtDataGenUnimodal;   <span class="comment">% training data</span>
+
+classifier = classifier.train(TrainingDataSet);    <span class="comment">% Train</span>
+classified = run(classifier, TestDataSet);         <span class="comment">% Test</span>
+subplot(2,1,1);
+classifier.plot;
+subplot(2,1,2);
+[pf,pd] = prtScoreRoc(classified,TestDataSet);
+h = plot(pf,pd,<span class="string">'linewidth'</span>,3);
+title(<span class="string">'ROC'</span>); xlabel(<span class="string">'Pf'</span>); ylabel(<span class="string">'Pd'</span>);
+</pre><img vspace="5" hspace="5" src="prtDocClassExamples_01.png" alt=""> <p>Other examples of meta-classifiers classifier are <a href="matlab:doc('prtClassBagging')">prtClassBagging</a>, <a href="matlab:doc('prtClassTreeBaggingCap')">prtClassTreeBaggingCap</a>, <a href="matlab:doc('prtClassBumping')">prtClassBumping</a></p><h2>M-ary classification with non-native M-ary classifiers<a name="5"></a></h2><p>While some prtClass objects natively support M-ary classification, it is also possible to construct an M-ary classifier out of binary classifiers using the <a href="matlab:doc('prtClassBinaryToMaryOneVsAll')">prtClassBinaryToMaryOneVsAll</a> object. A one versus all classifier utilizes a binary classifier to make M-ary decisions. For all M classes, it selects each class, and makes a binary comparison to all the others. The following example demonstrates how to create an 3 class M-ary classifier out of a prtClassGlrt object.</p><pre class="codeinput">TestDataSet = prtDataGenMary;      <span class="comment">% Create some test and</span>
+TrainingDataSet = prtDataGenMary;  <span class="comment">% training data</span>
+
+
+classifier = prtClassBinaryToMaryOneVsAll;   <span class="comment">% Create a classifier</span>
+
+classifier.baseClassifier = prtClassGlrt;    <span class="comment">% Set the binary classifier</span>
+
+<span class="comment">% Set the internal Decider</span>
+classifier.internalDecider = prtDecisionMap;
+
+classifier = classifier.train(TrainingDataSet);    <span class="comment">% Train</span>
+classes    = run(classifier, TestDataSet);         <span class="comment">% Test</span>
+
+<span class="comment">% Evaluate, plot results</span>
+percentCorr = prtScorePercentCorrect(classes.getX,TestDataSet.getTargets)
+classifier.plot;
+</pre><pre class="codeoutput">percentCorr =
+    0.8367
+</pre><img vspace="5" hspace="5" src="prtDocClassExamples_02.png" alt=""> <h2>One-class classification with support vector machines<a name="6"></a></h2><p>Support vector machines can be used to create one-class classifiers. One class classifiers are useful for doing a type of outlier removal. If training data is only available for one class, and you wish to determine if a sample is from that class or not, a one-class classifier might be useful. In the following example, we will create a 3 class M-ary dataset. We will mark two of the classes as being class 1, and test it with the 3rd class, which should be rejected and marked as not a member. First, create some data:</p><pre class="codeinput">clear <span class="string">all</span>; close <span class="string">all</span>;
+Data = prtDataGenMary; <span class="comment">% Create a data set with 3 classes</span>
+
+<span class="comment">% Remove one of the classes from the data set</span>
+<span class="comment">% We'll use this a test-case.</span>
+classToRemove =1;
+classToKeep = setxor(classToRemove, 1:Data.nClasses);
+DataTest = Data.removeClasses(classToKeep);
+
+<span class="comment">% Use the other two classes for training</span>
+DataRemain = Data.removeClasses(classToRemove);
+<span class="comment">% Mark these all to be of one class</span>
+DataRemain = DataRemain.setY(zeros(size(DataRemain.getY)));
+</pre><p>Now, create a one-class SVM classifier.</p><pre class="codeinput">classifier = prtClassLibSvm;
+classifier.svmType = 2;       <span class="comment">% svmType of 2 denotes a one-class classifier</span>
+<span class="comment">% Train the classifier</span>
+classifier = classifier.train(DataRemain);
+
+<span class="comment">% Plot the trained classifier</span>
+classifier.plot
+</pre><img vspace="5" hspace="5" src="prtDocClassExamples_03.png" alt=""> <p>In order to make decisions with a one-class classifier, you can use the prtDecisionOneClassPd object. In order to use this object, you must decide what probability of detection your application needs. Probablility of detection in this case means the percentage of data that belongs to the target class that will be marked as target.</p><pre class="codeinput"><span class="comment">% Create the prtDecision object, set the desired probabilty of detection,</span>
+<span class="comment">% and assign it to the classifier:</span>
+decider = prtDecisionOneClassPd;
+decider.pd = .75;
+classifier.internalDecider = decider;
+
+<span class="comment">% Test the decisions, you should see that the probability of detection</span>
+<span class="comment">% matches the desired pd set in the prtDecider object.</span>
+resultTest = classifier.run(DataTest);
+
+resultTrain = classifier.run(DataRemain);
+
+Pd = sum(resultTrain.getX)/resultTrain.determineNumObservations
+
+<span class="comment">% In this context, Pf refers to the percentage of data that is not a member</span>
+<span class="comment">% of the desired class, but was catergorized as a member of that class.</span>
+Pf = sum(resultTest.getX)/resultTest.determineNumObservations
+</pre><pre class="codeoutput">Pd =
+    0.7500
+Pf =
+    0.4000
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.13<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Some examples of different classification techniques
+% In this section a few different classification techniques are presented.
+
+%% Meta-classifiers: Boosting, Bagging and Bumping
+% Boosting and bagging classifiers make use of multiple weak classifiers to
+% build a strong classifier. A common example of this is the ADA boost
+% algorithm. Consider the following example:
+
+classifier = prtClassAdaBoost                    % Create a classifier
+
+
+%%
+% Note that classifier has two properties related to boosting, the number
+% of boosts, nBoosts, which defaults to 30, and the baseClassifier. The
+% number of boosts indicates how many instances of the base classifier will
+% be used to construct the overall classifier. The base classifier can be
+% any prtClass object, however, it is recommended that this classifier be a
+% simple classifier that trains quickly, such as prtClassFld or
+% prtClassGlrt. If you select a classifier that has a long training time,
+% the boosting classifier will take substantially longer.
+%
+% For example, set the number of boosts to 20 and the baseClassifier to a
+% prtClassGlrt.
+
+classifier.nBoosts = 20;
+classifier.baseClassifier = prtClassGlrt;
+%%
+% Create a data set, train and plot the receiver operating curve
+
+TestDataSet = prtDataGenUnimodal;       % Create some test and
+TrainingDataSet = prtDataGenUnimodal;   % training data
+
+classifier = classifier.train(TrainingDataSet);    % Train
+classified = run(classifier, TestDataSet);         % Test
+subplot(2,1,1);
+classifier.plot;
+subplot(2,1,2);
+[pf,pd] = prtScoreRoc(classified,TestDataSet);
+h = plot(pf,pd,'linewidth',3);
+title('ROC'); xlabel('Pf'); ylabel('Pd');
+%%
+% Other examples of meta-classifiers classifier are
+% <matlab:doc('prtClassBagging') prtClassBagging>, 
+% <matlab:doc('prtClassTreeBaggingCap')
+% prtClassTreeBaggingCap>, <matlab:doc('prtClassBumping') prtClassBumping>
+
+%% M-ary classification with non-native M-ary classifiers
+% While some prtClass objects natively support M-ary classification, it is
+% also possible to construct an M-ary classifier out of binary classifiers
+% using the <matlab:doc('prtClassBinaryToMaryOneVsAll')
+% prtClassBinaryToMaryOneVsAll> object. A one versus all classifier
+% utilizes a binary classifier to make M-ary decisions. For all M classes,
+% it selects each class, and makes a binary comparison to all the others.
+% The following example demonstrates how to create an 3 class M-ary
+% classifier out of a prtClassGlrt object.
+
+TestDataSet = prtDataGenMary;      % Create some test and
+TrainingDataSet = prtDataGenMary;  % training data
+
+
+classifier = prtClassBinaryToMaryOneVsAll;   % Create a classifier
+
+classifier.baseClassifier = prtClassGlrt;    % Set the binary classifier
+
+% Set the internal Decider
+classifier.internalDecider = prtDecisionMap;
+
+classifier = classifier.train(TrainingDataSet);    % Train
+classes    = run(classifier, TestDataSet);         % Test
+
+% Evaluate, plot results
+percentCorr = prtScorePercentCorrect(classes.getX,TestDataSet.getTargets)
+classifier.plot;
+
+
+%% One-class classification with support vector machines
+% Support vector machines can be used to create one-class classifiers. One
+% class classifiers are useful for doing a type of outlier removal. If
+% training data is only available for one class, and you wish to determine
+% if a sample is from that class or not, a one-class classifier might be
+% useful. In the following example, we will create a 3 class M-ary dataset.
+% We will mark two of the classes as being class 1, and test it with the
+% 3rd class, which should be rejected and marked as not a member. First,
+% create some data:
+
+clear all; close all;
+Data = prtDataGenMary; % Create a data set with 3 classes
+
+% Remove one of the classes from the data set
+% We'll use this a test-case.
+classToRemove =1; 
+classToKeep = setxor(classToRemove, 1:Data.nClasses);
+DataTest = Data.removeClasses(classToKeep);
+
+% Use the other two classes for training
+DataRemain = Data.removeClasses(classToRemove);
+% Mark these all to be of one class
+DataRemain = DataRemain.setY(zeros(size(DataRemain.getY)));
+
+%%
+% Now, create a one-class SVM classifier.
+classifier = prtClassLibSvm;
+classifier.svmType = 2;       % svmType of 2 denotes a one-class classifier
+% Train the classifier 
+classifier = classifier.train(DataRemain);
+
+% Plot the trained classifier
+classifier.plot
+
+
+%%
+% In order to make decisions with a one-class classifier, you can use the
+% prtDecisionOneClassPd object. In order to use this object, you must
+% decide what probability of detection your application needs. Probablility
+% of detection in this case means the percentage of data that belongs to
+% the target class that will be marked as target.
+ 
+% Create the prtDecision object, set the desired probabilty of detection,
+% and assign it to the classifier:
+decider = prtDecisionOneClassPd;
+decider.pd = .75;
+classifier.internalDecider = decider;
+
+% Test the decisions, you should see that the probability of detection
+% matches the desired pd set in the prtDecider object. 
+resultTest = classifier.run(DataTest);
+
+resultTrain = classifier.run(DataRemain);
+
+Pd = sum(resultTrain.getX)/resultTrain.determineNumObservations
+
+% In this context, Pf refers to the percentage of data that is not a member
+% of the desired class, but was catergorized as a member of that class.
+Pf = sum(resultTest.getX)/resultTest.determineNumObservations
+
+ 
+##### SOURCE END #####
+--></body></html>

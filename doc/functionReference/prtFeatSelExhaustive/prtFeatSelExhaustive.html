@@ -1,0 +1,66 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../../helpwin.css">
+      <title>MATLAB File Help: prtFeatSelExhaustive/prtFeatSelExhaustive</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtFeatSelExhaustive/prtFeatSelExhaustive</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtFeatSelExhaustive/prtFeatSelExhaustive</div>
+      <div class="helptext"><pre><!--helptext -->  <span class="helptopic">prtFeatSelExhaustive</span>   Exhaustive feature selection
+ 
+     FEATSEL = <span class="helptopic">prtFeatSelExhaustive</span> returns an exhaustive feature selection
+     object.
+ 
+     FEATSEL = <span class="helptopic">prtFeatSelExhaustive</span>(PROPERTY1, VALUE1, ...) constructs a
+     prttFeatSelExhaustive object FEATSEL with properties as specified by
+     PROPERTY/VALUE pair
+ 
+     A <span class="helptopic">prtFeatSelExhaustive</span> object has the following properties:
+ 
+     nFeatures             - The number of features to be selected
+     showProgressBar       - Flag indicating whether or not to show the
+                             progress bar during feature selection.
+     evaluationMetric      - The metric to be used to determine which
+                             features are selected. evaluationMetric must
+                             be a function handle. The function handle must
+                             be in the form:
+                             @(dataSet)prtEval(prtClass, dataSet, varargin)
+                             where prtEval is a prtEval function, prtClass
+                             is a prt classifier object, and varargin 
+                             represents optional input arguments to a 
+                             prtEval function.
+     Peformance            - The performance obtained by the using the
+                             features selected.
+     selectedFeatures      - The indices of the features selected that gave
+                             the best performance.
+ 
+    A <span class="helptopic">prtFeatSelExhaustive</span> object inherits the TRAIN and RUN methods from prtClass.
+ 
+    Example:
+  
+    dataSet = prtDataGenFeatureSelection;      % Generate a data set
+    featSel = <span class="helptopic">prtFeatSelExhaustive</span>;   % Create a feature selction object
+    featSel.nFeatures = 3;            % Select only one feature of the data
+    featSel = featSel.train(dataSet); % Train the feature selection object
+    outDataSet = featSel.run(dataSet);% Extract the data set with only the
+                                      % selected features
+ 
+    %   Change the scoring function to prtScorePdAtPf, and change the
+    %   classification method to prtClassMAP
+ 
+    featSel.evaluationMetric = @(DS)prtEvalPdAtPf( prtClassMap, DS, .9);
+ 
+    featSel = featSel.train(dataSet); 
+    outDataSet = featSel.run(dataSet);</pre></div><!--after help --><!--seeAlso--><div class="footerlinktitle">See Also</div><div class="footerlink">  <a href="./../prtFeatSelStatic.html">prtFeatSelStatic</a>, <a href="./../prtFeatSelSfs.html">prtFeatSelSfs</a>
+</div>
+   </body>
+</html>

@@ -30,6 +30,6 @@ fwrite(fid,sprintf('%% Copyright 2011 New Folder Consulting L.L.C.'));
 
 fclose(fid);
 
-copyfile(tempFileName,fullfile(prtRoot,'internal','doc','prtDocFunctionList.m'));
+copyfile(tempFileName,fullfile(prtRoot,']internal','doc','prtDocFunctionList.m'));
 
 delete(tempFileName);

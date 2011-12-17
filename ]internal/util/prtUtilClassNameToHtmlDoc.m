@@ -27,7 +27,7 @@ outStr = strtrim(outStr);
 
 if isempty(outStr)
     
-    str = fileread(fullfile(prtRoot,'internal','util','prtUtilDefaultHtml.html'));
+    str = fileread(fullfile(prtRoot,']internal','util','prtUtilDefaultHtml.html'));
     str = strrep(str,'<funcName>',topic);
     
     cssStr = cat(2,repmat('../',1,sum(topic=='.')+1),'helpwin.css');

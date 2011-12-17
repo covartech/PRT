@@ -1,0 +1,61 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../../helpwin.css">
+      <title>MATLAB File Help: prtClassPlsda/prtClassPlsda</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtClassPlsda/prtClassPlsda</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtClassPlsda/prtClassPlsda</div>
+      <div class="helptext"><pre><!--helptext -->  <span class="helptopic">prtClassPlsda</span>  Partial least squares discriminant classifier
+ 
+     CLASSIFIER = <span class="helptopic">prtClassPlsda</span> returns a Partial least squares
+     discriminant classifier
+ 
+     CLASSIFIER = <span class="helptopic">prtClassPlsda</span>(PROPERTY1, VALUE1, ...) constructs a
+     prtClassMAP object CLASSIFIER with properties as specified by
+     PROPERTY/VALUE pairs.
+ 
+     A <span class="helptopic">prtClassPlsda</span> object inherits all properties from the abstract
+     class prtClass. In addition is has the following properties:
+ 
+     nComponents  -  The number of components
+     Bpls         -  The regression weights, estimated during training
+     xMeans       -  The xMeans, estimated during training
+     yMeans       -  The yMeana, estimated during training   
+ 
+     For information on the partial least squares discriminant
+     algorithm, please refer to the following URL:
+ 
+     <a href="http://en.wikipedia.org/wiki/Partial_least_squares_regression">http://en.wikipedia.org/wiki/Partial_least_squares_regression</a>
+ 
+     A <span class="helptopic">prtClassPlsda</span> object inherits the TRAIN, RUN, CROSSVALIDATE and
+     KFOLDS methods from prtAction. It also inherits the PLOT method
+     from prtClass.
+ 
+     Example:
+ 
+    TestDataSet = prtDataGenUnimodal;      % Create some test and 
+    TrainingDataSet = prtDataGenUnimodal;  % training data
+    classifier = <span class="helptopic">prtClassPlsda</span>;           % Create a classifier
+    classifier = classifier.train(TrainingDataSet);    % Train
+    classified = run(classifier, TestDataSet);         % Test
+    subplot(2,1,1);
+    classifier.plot;
+    subplot(2,1,2);
+    [pf,pd] = prtScoreRoc(classified,TestDataSet);
+    h = plot(pf,pd,'linewidth',3);
+    title('ROC'); xlabel('Pf'); ylabel('Pd');</pre></div><!--after help --><!--seeAlso--><div class="footerlinktitle">See also</div><div class="footerlink"> <a href="./../prtClass.html">prtClass</a>, <a href="./../prtClassLogisticDiscriminant.html">prtClassLogisticDiscriminant</a>, <a href="./../prtClassBagging.html">prtClassBagging</a>,
+     <a href="./../prtClassMap.html">prtClassMap</a>, <a href="./../prtClassCap.html">prtClassCap</a>, <a href="./../prtClassBinaryToMaryOneVsAll.html">prtClassBinaryToMaryOneVsAll</a>, <a href="./../prtClassDlrt.html">prtClassDlrt</a>,
+     <a href="./../prtClassKnn.html">prtClassKnn</a>, <a href="./../prtClassFld.html">prtClassFld</a>, <a href="./../prtClassRvm.html">prtClassRvm</a>, <a href="./../prtClassGlrt.html">prtClassGlrt</a>,  <a href="./../prtClass.html">prtClass</a>
+</div>
+   </body>
+</html>

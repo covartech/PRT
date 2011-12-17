@@ -1,0 +1,44 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../../helpwin.css">
+      <title>MATLAB File Help: prtClassMatlabNnet/prtClassMatlabNnet</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtClassMatlabNnet/prtClassMatlabNnet</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtClassMatlabNnet/prtClassMatlabNnet</div>
+      <div class="helptext"><pre><!--helptext -->  <span class="helptopic">prtClassMatlabNnet</span>  Support vector machine classifier using the MATLAB neural network toolbox (requires NNET toolbox)
+ 
+    CLASSIFIER = <span class="helptopic">prtClassMatlabNnet</span> returns a neural network classifier
+    using the MATLAB NNET toolbox (additonal product, not included)
+ 
+   A <span class="helptopic">prtClassMatlabNnet</span> object inherits all properties from the
+   abstract class prtClass. In addition is has the following
+   properties; complete documentation for these properties can be found
+   in the help for the newpr.m function in the MATLAB NNET toolbox.
+ 
+    Si, TFi, BTF, BLF, PF, IPF, OPF, DDF
+ 
+  % Example usage:
+ 
+    TestDataSet = prtDataGenBimodal;       % Create some test and
+    TrainingDataSet = prtDataGenBimodal;   % training data
+    classifier = <span class="helptopic">prtClassMatlabNnet</span>;           % Create a classifier
+    classifier = classifier.train(TrainingDataSet);    % Train
+    classified = run(classifier, TestDataSet);         % Test
+    subplot(2,1,1);
+    classifier.plot;
+    subplot(2,1,2);
+    [pf,pd] = prtScoreRoc(classified,TestDataSet);
+    h = plot(pf,pd,'linewidth',3);
+    title('ROC'); xlabel('Pf'); ylabel('Pd');</pre></div><!--after help -->
+   </body>
+</html>

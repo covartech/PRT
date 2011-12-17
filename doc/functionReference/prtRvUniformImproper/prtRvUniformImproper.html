@@ -1,0 +1,73 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../../helpwin.css">
+      <title>MATLAB File Help: prtRvUniformImproper/prtRvUniformImproper</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtRvUniformImproper/prtRvUniformImproper</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtRvUniformImproper/prtRvUniformImproper</div>
+      <div class="helptext"><pre><!--helptext -->  <span class="helptopic">prtRvUniformImproper</span>  Improper uniform random variable
+ 
+    RV = <span class="helptopic">prtRvUniformImproper</span> creates a <span class="helptopic">prtRvUniformImproper</span> object
+    with unknown dimensionality nDimensions. nDimensions can be set
+    manually or using the MLE method. A <span class="helptopic">prtRvUniformImproper</span>
+    models an improper pdf that always yields a value of 1 no matter
+    the input. <span class="helptopic">prtRvUniformImproper</span> is sometimes useful for creating 
+    one class classifiers. See the examples below for more information
+ 
+    The draw method of <span class="helptopic">prtRvUniformImproper</span> draws values uniformly
+    distributed from realmin to realmax in each dimension.
+ 
+    RV = <span class="helptopic">prtRvUniformImproper</span>(PROPERTY1, VALUE1,...) creates a
+    prtRvMultinomial object RV with properties as specified by
+    PROPERTY/VALUE pairs.
+ 
+    A <span class="helptopic">prtRvUniformImproper</span> object inherits all properties from the
+    prtRv class. In addition, it has the following properties:
+ 
+    nDimensions - dimensionality of the data modeled by this RV.
+    
+   A <span class="helptopic">prtRvUniformImproper</span> object inherits all methods from the prtRv
+   class. The MLE  method can be used to set the parameters from data.
+ 
+   Example:
+ 
+   % In this example we show that the PDF of a <span class="helptopic">prtRvUniformImproper</span> is
+   % always 1
+   dataSet = prtDataGenUnimodal;        % Load a dataset consisting of
+                                        % 2 features
+   dataSet = retainFeatures(dataSet,1); % Retain only the first feature
+                                        % only for the example.
+ 
+   RV = <span class="helptopic">prtRvUniformImproper</span>;           % Create a prtRvUniform object
+   RV = RV.mle(dataSet);                % Compute the bounds
+ 
+   RV.plotPdf([-10 10]);                % We must manually specify
+                                        % plot limits since
+                                        % <span class="helptopic">prtRvUniformImproper</span> does not
+                                        % have actual plot limits
+ 
+ 
+   % In this example we show how to build a one class MAP classifier
+   dataSet = prtDataGenUnimodal;        % Load a dataset consisting of
+                                        % 2 features
+   
+   % Create and train a GLRT classifier that uses a 
+   % <span class="helptopic">prtRvUniformImproper</span> to model class 0 and a prtRvMvn to model
+   % class 1
+   glrtClass = train(prtClassGlrt('rvH0',<span class="helptopic">prtRvUniformImproper</span>,'rvH1',prtRvMvn),dataSet);
+ 
+   plot(glrtClass) % Contours only show the log-likelihood of class 1</pre></div><!--after help --><!--seeAlso--><div class="footerlinktitle">See also</div><div class="footerlink"> <a href="./../prtRv.html">prtRv</a>, <a href="./../prtRvMvn.html">prtRvMvn</a>, <a href="./../prtRvGmm.html">prtRvGmm</a>, <a href="./../prtRvMultinomial.html">prtRvMultinomial</a>,
+    <a href="./../prtRvVq.html">prtRvVq</a>, <a href="./../prtRvKde.html">prtRvKde</a>
+</div>
+   </body>
+</html>

@@ -1,0 +1,167 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>The Pattern Recognition Toolbox Users Guide</title><meta name="generator" content="MATLAB 7.13"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2011-12-13"><meta name="DC.source" content="prtDocUsersGuide.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>The Pattern Recognition Toolbox Users Guide</h1><p>The Pattern Recognition Toolbox Users Guide begins with an introduction to the various dataset objects that are necessary to perform classification or regression.</p><div><ul><li><a href="./prtDocDataSet.html">Pattern Recognition Toolbox DataSets</a></li></ul></div><p>The next topic is the Pattern Recognition Toolbox Engine, which discusses the syntax for prtAction objects. This syntax is common for most of the functionality in the Pattern Recognition Toolbox.</p><div><ul><li><a href="./prtDocEngine.html">Pattern Recognition Toolbox Engine</a></li></ul></div><p>Following, Classifiers and Pre-processing techniques are presented.</p><div><ul><li><a href="./prtDocClass.html">Pattern Recognition Toolbox Classification Objects</a></li><li><a href="./prtDocPreProc.html">Pattern Recognition Toolbox Preprocessing Objects</a></li></ul></div><p>Algorithm objects allow multiple prtActions to be connected together, and use the same training, running and evaluation syntax as a single prtAction.</p><div><ul><li><a href="./prtDocAlgorithm.html">Pattern Recognition Toolbox Algorithm Objects</a></li></ul></div><pre>Regression is similar to classification, but maps observations to a
+continuum of numbers, as opposed to a discrete set of class labels.</pre><div><ul><li><a href="./prtDocRegress.html">Pattern Recognition Toolbox Regression Objects</a></li></ul></div><pre>Clustering is also closely related to classification, however, in
+clustering, class labels are not used during training.</pre><div><ul><li><a href="./prtDocCluster.html">Pattern Recognition Toolbox Clustering Objects</a></li></ul></div><pre>Scoring and evaulation provide methods to analyze the results of your
+classification, regression or clustering. Scoring functions work on
+prtDataSets, while evaluation functions work on prtAction objects.</pre><div><ul><li><a href="./prtDocScore.html">Pattern Recognition Toolbox Scoring functions</a></li><li><a href="./prtDocEval.html">Pattern Recognition Toolbox Evaluation functions</a></li></ul></div><pre>Decision objects take the outputs of a prtAction object and make
+decisions according to particular criteria, such as the minimum probability
+of error.</pre><div><ul><li><a href="./prtDocDecision.html">Pattern Recognition Toolbox Decision Objects</a></li></ul></div><pre>Kernels are useful in many nonlinear classification and regression
+problems. The Pattern Recognition Toolbox provides a suite of common
+kernels to be used in conjunction with prtClass and prtRegress objects.</pre><div><ul><li><a href="./prtDocKernel.html">Pattern Recognition Toolbox Kernel Objects</a></li></ul></div><pre>The Pattern Recognition Toolbox also provides a set of distance
+functions, such as Euclidean, Mahalonobis and other distance metrics, to
+be used in conjunction with prtActions.</pre><div><ul><li><a href="./prtDocDistance.html">Pattern Recognition Toolbox Distance Functions</a></li></ul></div><pre>Random variables often form important components of prtActions, and a
+set of random variable objects is provided.</pre><div><ul><li><a href="./prtDocRv.html">Pattern Recognition Toolbox Random Variable Objects</a></li></ul></div><pre>Feature selection is a technique that helps select the features that
+have the greatest effect on the performance of prtActions.</pre><div><ul><li><a href="./prtDocFeatSel.html">Pattern Recognition Toolbox Feature Selection Objects</a></li></ul></div><pre>Often, data collected from real world applications may contain outliers
+that are not relevant, and that may skew results. The Pattern
+Recognition Toolbox provides a set of outlier removal objects.</pre><div><ul><li><a href="./prtDocOutlierRemoval.html">Pattern Recognition Toolbox Outlier Removal Objects</a></li></ul></div><p>Finally, the Pattern Recognition Toolbox provides a set of data generation functions, which can be useful for creating example or prototying.</p><div><ul><li><a href="./prtDocDataGen.html">Pattern Recognition Toolbox Data Generation Functions</a></li></ul></div><p>Copyright 2011 New Folder Consulting L.L.C.</p><p class="footer"><br>
+      Published with MATLAB&reg; 7.13<br></p></div><!--
+##### SOURCE BEGIN #####
+%% The Pattern Recognition Toolbox Users Guide
+%
+% The Pattern Recognition Toolbox Users Guide begins with an introduction
+% to the various dataset objects that are necessary to perform
+% classification or regression. 
+%
+% * <./prtDocDataSet.html Pattern Recognition Toolbox DataSets>
+%
+% The next topic is the Pattern Recognition Toolbox Engine, which discusses
+% the syntax for prtAction objects. This syntax is common for most of the
+% functionality in the Pattern Recognition Toolbox.
+%
+% * <./prtDocEngine.html Pattern Recognition Toolbox Engine>
+%
+% Following, Classifiers and Pre-processing techniques are presented. 
+%
+% * <./prtDocClass.html Pattern Recognition Toolbox Classification Objects>
+% * <./prtDocPreProc.html Pattern Recognition Toolbox Preprocessing Objects>
+%
+% Algorithm objects allow multiple prtActions to be connected together,
+% and use the same training, running and evaluation syntax as a single
+% prtAction.
+%
+% * <./prtDocAlgorithm.html Pattern Recognition Toolbox Algorithm Objects>
+%
+%  Regression is similar to classification, but maps observations to a
+%  continuum of numbers, as opposed to a discrete set of class labels.
+%
+% * <./prtDocRegress.html Pattern Recognition Toolbox Regression Objects>
+%
+%  Clustering is also closely related to classification, however, in
+%  clustering, class labels are not used during training.
+%
+% * <./prtDocCluster.html Pattern Recognition Toolbox Clustering Objects>
+%
+%  Scoring and evaulation provide methods to analyze the results of your
+%  classification, regression or clustering. Scoring functions work on
+%  prtDataSets, while evaluation functions work on prtAction objects.
+%
+% * <./prtDocScore.html Pattern Recognition Toolbox Scoring functions>
+% * <./prtDocEval.html Pattern Recognition Toolbox Evaluation functions>
+%
+%  Decision objects take the outputs of a prtAction object and make
+%  decisions according to particular criteria, such as the minimum probability
+%  of error. 
+% 
+% * <./prtDocDecision.html Pattern Recognition Toolbox Decision Objects>
+%
+%  Kernels are useful in many nonlinear classification and regression
+%  problems. The Pattern Recognition Toolbox provides a suite of common
+%  kernels to be used in conjunction with prtClass and prtRegress objects.
+%
+% * <./prtDocKernel.html Pattern Recognition Toolbox Kernel Objects>
+%
+%  The Pattern Recognition Toolbox also provides a set of distance
+%  functions, such as Euclidean, Mahalonobis and other distance metrics, to
+%  be used in conjunction with prtActions.
+%
+% * <./prtDocDistance.html Pattern Recognition Toolbox Distance Functions>
+%
+%  Random variables often form important components of prtActions, and a
+%  set of random variable objects is provided.
+%
+% * <./prtDocRv.html Pattern Recognition Toolbox Random Variable Objects>
+%
+%  Feature selection is a technique that helps select the features that
+%  have the greatest effect on the performance of prtActions. 
+%
+% * <./prtDocFeatSel.html Pattern Recognition Toolbox Feature Selection Objects>
+%
+%  Often, data collected from real world applications may contain outliers
+%  that are not relevant, and that may skew results. The Pattern
+%  Recognition Toolbox provides a set of outlier removal objects.
+%
+% * <./prtDocOutlierRemoval.html Pattern Recognition Toolbox Outlier Removal Objects>
+%
+% Finally, the Pattern Recognition Toolbox provides a set of data
+% generation functions, which can be useful for creating example or
+% prototying.
+%
+% * <./prtDocDataGen.html Pattern Recognition Toolbox Data Generation Functions>
+%
+% Copyright 2011 New Folder Consulting L.L.C.
+
+##### SOURCE END #####
+--></body></html>

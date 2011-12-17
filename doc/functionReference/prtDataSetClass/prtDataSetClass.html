@@ -1,0 +1,58 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../../helpwin.css">
+      <title>MATLAB File Help: prtDataSetClass/prtDataSetClass</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtDataSetClass/prtDataSetClass</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtDataSetClass/prtDataSetClass</div>
+      <div class="helptext"><pre><!--helptext -->  <span class="helptopic">prtDataSetClass</span>  Data set object for classification
+ 
+    DATASET = <span class="helptopic">prtDataSetClass</span> returns a <span class="helptopic">prtDataSetClass</span> object
+ 
+    DATASET = <span class="helptopic">prtDataSetClass</span>(PROPERTY1, VALUE1, ...) constructs a
+    <span class="helptopic">prtDataSetClass</span> object DATASET with properties as specified by
+    PROPERTY/VALUE pairs.
+ 
+    A <span class="helptopic">prtDataSetClass</span> object inherits all properties from the
+    prtDataSetStandard class. In addition, it has the following properties:
+ 
+    nClasses             - The number of classes
+    uniqueClasses        - An array of the integer class labels
+    isUnary              - True if the number of classes = 1
+    isBinary             - True if the number of classes = 2
+    isMary               - True if the number of classes &gt; 2
+    isZeroOne            - True if the unique classes are 0 and 1
+    nObservationsByClass - The number of observations per class.
+ 
+    A <span class="helptopic">prtDataSetClass</span> inherits all methods from the prtDataSetStandard
+    class. In addition, it has the following methods:
+ 
+    getObservationsByClass     - Return the observations per class
+    getObservationsByClassInd  - Return the observations by class and index
+    getTargetsAsBinaryMatrix   - Return a binary matrix of targets.
+    explore                    - Explore the <span class="helptopic">prtDataSetClass</span> object
+    plot                       - Plot the data set
+    plotFeatureDensity         - Plot the probability density estimate 
+                                 of a single feature, labeled by class.
+    plotStar                   - Create a star plot to visualize higher
+                                 dimensional data
+    plotAsTimeSeries           - Plot the <span class="helptopic">prtDataSetClass</span> object as a
+                                 time series
+    plotPairs                  - Plot a grid of plots containing each
+                                 set of two-features with density
+                                 estimates on the diagonals
+    plotDensity                - Plot the density of each feature
+                                 independently as a volume</pre></div><!--after help --><!--seeAlso--><div class="footerlinktitle">See also</div><div class="footerlink"> <a href="./../prtDataSetBase.html">prtDataSetBase</a>, <a href="./../prtDataSetStandard.html">prtDataSetStandard</a>, <a href="./../prtDataSetRegress.html">prtDataSetRegress</a>
+</div>
+   </body>
+</html>

@@ -1,0 +1,77 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../../helpwin.css">
+      <title>MATLAB File Help: prtClassLogisticDiscriminant/prtClassLogisticDiscriminant</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtClassLogisticDiscriminant/prtClassLogisticDiscriminant</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtClassLogisticDiscriminant/prtClassLogisticDiscriminant</div>
+      <div class="helptext"><pre><!--helptext -->  <span class="helptopic">prtClassLogisticDiscriminant</span>  Logistic Discriminant classifier
+ 
+     CLASSIFIER = <span class="helptopic">prtClassLogisticDiscriminant</span> returns a LogisticDiscriminant classifier
+ 
+     CLASSIFIER = <span class="helptopic">prtClassLogisticDiscriminant</span>(PROPERTY1, VALUE1, ...) constructs a
+     <span class="helptopic">prtClassLogisticDiscriminant</span> object CLASSIFIER with properties as specified by
+     PROPERTY/VALUE pairs.
+ 
+     A <span class="helptopic">prtClassLogisticDiscriminant</span> object inherits all properties from the abstract class
+     prtClass. In addition is has the following properties:
+ 
+    wTolerance       - The convergance tolerance of the weights
+    irlsStepSize     - Step size used in training. Can be set to a
+                       double, or 'hessian'. If 'hessian', IRLS is 
+                       solved using the Hessian to estimate steps.
+    maxIter          - maximum IRLS iterations
+    nIterations      - number of iterations used, set during training
+    wInitTechnique   - Technique to initialize weights, can be set to
+                       'FLD', 'randn', and 'manual'
+    manualInitialW   - The values the weights are initialized to if 
+                       wInitTechnique is set to 'manual'
+    wTolerance       - Convergence tolerance on weight vector 
+    handleNonPosDefR - What to do when R is non-positive definte, can
+                       be set to 'regularize' or 'exit'. When set to 
+                       regularize, the classifier will attempt to
+                       regularize the matrix. When set to exit the 
+                       classifier will exit.
+ 
+    w                - The regression weights, estimated during training
+                       w(1) corresponds to the DC bias and w(2:end)
+                       corresponds to the weights for the features
+ 
+     For more information on LogisticDiscriminant classifiers, refer to the
+     following URL:
+   
+     <a href="http://en.wikipedia.org/wiki/Logistic_regression">http://en.wikipedia.org/wiki/Logistic_regression</a>
+ 
+     A <span class="helptopic">prtClassLogisticDiscriminant</span> object inherits the TRAIN, RUN, 
+     CROSSVALIDATE and KFOLDS methods from prtAction. It also inherits 
+     the PLOT method from prtClass.
+ 
+     Example:
+ 
+      TestDataSet = prtDataGenUnimodal;           % Create some test and
+      TrainingDataSet = prtDataGenUnimodal;       % training data
+      classifier = <span class="helptopic">prtClassLogisticDiscriminant</span>;  % Create a classifier
+      classifier = classifier.train(TrainingDataSet);       % Train
+      classified = run(classifier, TestDataSet);            % Test
+      subplot(2,1,1);
+      classifier.plot;
+      subplot(2,1,2);
+      [pf,pd] = prtScoreRoc(classified,TestDataSet);
+      h = plot(pf,pd,'linewidth',3);
+      title('ROC'); xlabel('Pf'); ylabel('Pd');</pre></div><!--after help --><!--seeAlso--><div class="footerlinktitle">See also</div><div class="footerlink"> <a href="./../prtClass.html">prtClass</a>, <a href="./../prtClassLogisticDiscriminant.html">prtClassLogisticDiscriminant</a>, <a href="./../prtClassBagging.html">prtClassBagging</a>,
+     <a href="./../prtClassMap.html">prtClassMap</a>, <a href="./../prtClassCap.html">prtClassCap</a>, <a href="./../prtClassBinaryToMaryOneVsAll.html">prtClassBinaryToMaryOneVsAll</a>,
+     <a href="./../prtClassDlrt.html">prtClassDlrt</a>, <a href="./../prtClassPlsda.html">prtClassPlsda</a>, <a href="./../prtClassFld.html">prtClassFld</a>, <a href="./../prtClassRvm.html">prtClassRvm</a>,
+     <a href="./../prtClassLogisticDiscriminant.html">prtClassLogisticDiscriminant</a>,  <a href="./../prtClass.html">prtClass</a>
+</div>
+   </body>
+</html>

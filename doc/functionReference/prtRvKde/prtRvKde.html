@@ -1,0 +1,104 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../../helpwin.css">
+      <title>MATLAB File Help: prtRvKde/prtRvKde</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtRvKde/prtRvKde</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtRvKde/prtRvKde</div>
+      <div class="helptext"><pre><!--helptext -->  <span class="helptopic">prtRvKde</span> - Gaussian Kernel Density Estimation Random Variable 
+    Assumes independence between each of the dimensions.
+ 
+    RV = <span class="helptopic">prtRvKde</span> creates a <span class="helptopic">prtRvKde</span> object with empty trainingData and
+    bandwidths parameters. The trainingData must be set either directly
+    or by calling the MLE method.
+ 
+    RV = <span class="helptopic">prtRvKde</span>('bandwidthMode', VALUE) enforces the bandwidths to be 
+    determined either using 'manual' or 'diffusion'. Setting this
+    property to 'manual' requires that the bandwidths also be
+    sepecified. The default, 'diffusion', uses the automatic bandwidth
+    selection method discussed in
+ 
+    Botev et al., Kernel density estimation via diffusion,
+    Ann. Statist. Volume 38, Number 5 (2010), 2916-2957. 
+    <a href="http://projecteuclid.org/DPubS?service=UI&amp;version=1.0&amp;verb=Display&amp;handle=euclid.aos/1281964340">http://projecteuclid.org/DPubS?service=UI&amp;version=1.0&amp;verb=Display&amp;handle=euclid.aos/1281964340</a>
+ 
+    RV = <span class="helptopic">prtRvKde</span>(PROPERTY1, VALUE1,...) creates a <span class="helptopic">prtRvKde</span> object RV
+    with properties as specified by PROPERTY/VALUE pairs.
+ 
+    A <span class="helptopic">prtRvKde</span> object inherits all properties from the prtRv class. In
+    addition, it has the following properties:
+ 
+    bandwidthMode    - A string specifying the method by which the
+                       bandwidths are determined. Possibilities
+                       {'diffusion'}, 'manual'
+    bandwidths       - The bandwidths of the kernels used in each
+                       dimension of the kernel density estimate. These
+                       are the diagonal values of the covariance matrix
+                       for the RBF kernels.
+    trainingData     - The training data used to determined the kernel
+                       density estimate
+    minimumBandwidth - Minium bandwidth that is aloud to be estimated.
+                       Diffusion based estimation can correctly 
+                       identify a discrete density and infer a very
+                       small bandwidth. This is sometimes undesirable
+                       and causes stability issues. The default value
+                       is []. If this value is empty it is estimated
+                       during MLE as max(std(X)/size(X,1),eps);.
+    
+   A <span class="helptopic">prtRvKde</span> object inherits all methods from the prtRv class. The MLE
+   method can be used to estimate the distribution parameters from
+   data.
+ 
+   Examples:
+ 
+    % Plot a 2D density 
+    ds = prtDataGenOldFaithful;
+    plotPdf(mle(<span class="helptopic">prtRvKde</span>,ds))
+    % or using the static method
+    <span class="helptopic">prtRvKde</span>.ezPlotPdf(ds)
+ 
+    % Diffusion bandwidth estimation can identify discrete densities
+    plotPdf(mle(<span class="helptopic">prtRvKde</span>,[0; 0; 0; 1; 1; 1; 2; 2;]))
+ 
+    % Comparison to ksdensity (Statistics toolbox required)
+    % ksdensity() is only for 1D data
+    ds = prtDataGenUnimodal;
+    subplot(2,1,1)
+    plotPdf(mle(<span class="helptopic">prtRvKde</span>,ds.getObservations(:,1)))
+    xlim([-5 5]), ylim([0 0.2])
+    subplot(2,1,2)
+    ksdensity(ds.getObservations(:,1))
+    xlim([-5 5]), ylim([0 0.2])
+  
+    % Classification comparison on multi-modal data
+    % We use a MAP classifier with three different RVs
+    ds = prtDataGenBimodal;
+ 
+    outputKde = kfolds(prtClassMap('rvs',<span class="helptopic">prtRvKde</span>),ds,5);
+    outputMvn = kfolds(prtClassMap('rvs',prtRvMvn),ds,5);
+    outputGmm = kfolds(prtClassMap('rvs',prtRvGmm('nComponents',2)),ds,5);
+ 
+    [pfKde,pdKde] = prtScoreRoc(outputKde);
+    [pfMvn,pdMvn] = prtScoreRoc(outputMvn);
+    [pfGmm,pdGmm] = prtScoreRoc(outputGmm);
+ 
+    plot(pfMvn,pdMvn,pfGmm,pdGmm,pfKde,pdKde)
+    grid on
+    xlabel('PF')
+    ylabel('PD')
+    title('Comparison of MAP Classification With Different RVs')
+    legend({'MAP - MVN','MAP - GMM(2)','MAP - KDE'},'Location','SouthEast')</pre></div><!--after help --><!--seeAlso--><div class="footerlinktitle">See also</div><div class="footerlink"> <a href="./../prtRv.html">prtRv</a>, <a href="./../prtRvMvn.html">prtRvMvn</a>, <a href="./../prtRvGmm.html">prtRvGmm</a>, <a href="./../prtRvMultinomial.html">prtRvMultinomial</a>,
+    <a href="./../prtRvUniform.html">prtRvUniform</a>, <a href="./../prtRvUniformImproper.html">prtRvUniformImproper</a>, <a href="./../prtRvVq.html">prtRvVq</a>
+</div>
+   </body>
+</html>
