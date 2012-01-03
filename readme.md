@@ -3,7 +3,7 @@ PRT: Pattern Recognition and Machine Learning in MATLAB
 
 A free and permissively licensed object oriented approach to machine learning in MATLAB.
 
-Machine learning and pattern recognition are eveywhere. MATLAB is a high level interpretted language and despite it's high cost to entry, it is frequently used throughout academia and engineering contractors for its easy of use and its numerous available toolboxes. Currently available toolboxes for pattern recognition and machine learning in MATLAB are either costly or restrictively licensed. The PRT is a BSD licensed toolbox that provides access to a wide range of pattern recognition techniques in an easy to use unified framework. The PRT provides an  suite of MATLAB commands and data-types to help you organize, visualize, process, cluster and classify your data. If you have data and need to make predictions based on your data, the PRT can help.
+Machine learning and pattern recognition are eveywhere. MATLAB is a high level interpretted language widely used throughout academia and engineering due to its ease of use and numerous available toolboxes. Currently available toolboxes for pattern recognition and machine learning in MATLAB are either costly or restrictively licensed. The PRT is a MIT licensed toolbox that provides access to a wide range of pattern recognition techniques in an easy to use unified framework. The PRT provides a suite of MATLAB commands and data-types to help you organize, visualize, process, cluster and classify your data. If you have data and need to make predictions based on your data, the PRT can help.
 
 Installation
 ------------
@@ -33,7 +33,7 @@ Note: building the search index can take a little while, please be patient while
 
 Several of the PRT's functions are implemented as MEX file for speed and convenience. However MEX files may need to be re-compiled to work on your system. Rebuilding MEX files with the PRT is quite easy. All we need to do is 1) make sure you have a supported compiler, 2) Run mex -setup, and 3) Compiler the PRT MEX files. The following sections outline how to accomplish these three tasks.
 
-1) First, make sure you have a MATLAB Supported compiler for your system (there are free ones available for making MEX files on all operating systems). You can find a list of supported compilers for your version of MATLAB here.
+1) First, make sure you have a MATLAB Supported compiler for your system (there are free ones available for making MEX files on all operating systems). You can find a list of supported compilers for your version of MATLAB here: .
 
 2) Once your compiler is installed, run the MATLAB command
 
