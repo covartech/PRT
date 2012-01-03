@@ -33,7 +33,7 @@ Note: building the search index can take a little while, please be patient while
 
 Several of the PRT's functions are implemented as MEX file for speed and convenience. However MEX files may need to be re-compiled to work on your system. Rebuilding MEX files with the PRT is quite easy. All we need to do is 1) make sure you have a supported compiler, 2) Run mex -setup, and 3) Compiler the PRT MEX files. The following sections outline how to accomplish these three tasks.
 
-1) First, make sure you have a MATLAB Supported compiler for your system (there are free ones available for making MEX files on all operating systems). You can find a list of supported compilers for your version of MATLAB here: .
+1) First, make sure you have a MATLAB Supported compiler for your system (there are free ones available for making MEX files on all operating systems). You can find a list of supported compilers for your version of MATLAB here: http://www.mathworks.com/support/compilers/R2011a/win32.html.
 
 2) Once your compiler is installed, run the MATLAB command
 
