@@ -505,7 +505,7 @@ classdef prtDataSetStandard < prtDataSetBase
                 
                 % Setting the entire data matrix
                 if obj.nObservations ~= size(targets,1)
-                    error('prtDataSet:invalidDataTargetSet','Attempt to change number of observations in a data set by changing targets without changing observations; use setObservationsAndTargets to change both simultaneously');
+                    error('prtDataSet:invalidDataTargetSet','Number of targets (%d) does not match number of observations (%d)',size(targets,1),obj.nObservations);
                 end
                 obj = obj.setTargetsFromMatrix(targets);
                 obj = updateTargetsCache(obj);
