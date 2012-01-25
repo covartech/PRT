@@ -17,8 +17,8 @@ classdef prtClassLibSvm < prtClass
     %
     %         svmType       - Whether to use a C-SVM, nu-SVM, one-class
     %                        SVM, epsilon-SVR, or nu-SVR
-    %         kernelType    - Kernel type to use - linear, polynomial, rbf,
-    %                        or sigmoid 
+    %         kernelType    - Kernel type to use - linear, polynomial,
+    %                         rbf (default) or sigmoid (base 0 index) 
     %         degree        - Kernel function parameter (some kernels)
     %         gamma         - Kernel function parameter (some kernels)
     %         coef0         - Kernel function parameter (some kernels)

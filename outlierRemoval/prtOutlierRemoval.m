@@ -77,9 +77,10 @@ classdef prtOutlierRemoval < prtAction
     properties
         runOnTrainingMode = 'removeObservation';  %Operation taken during TRAIN
         runMode = 'noAction';                     %Operation taken during RUN
+        replaceValue = nan;
     end
     properties (Constant = true)
-        validModes = {'noAction','replaceWithNan','removeObservation','removeFeature'};
+        validModes = {'noAction','replaceWithNan','removeObservation','removeFeature','replaceWithValue'};
     end
     properties (SetAccess = protected)
         isSupervised = false; % False
@@ -142,6 +143,11 @@ classdef prtOutlierRemoval < prtAction
                     ind = Obj.calculateOutlierIndices(DataSet);
                     x = DataSet.getObservations;
                     x(ind) = nan;
+                    DataSet = DataSet.setObservations(x);
+                case 'replaceWithValue'
+                    ind = Obj.calculateOutlierIndices(DataSet);
+                    x = DataSet.getObservations;
+                    x(ind) = Obj.replaceValue;
                     DataSet = DataSet.setObservations(x);
                 otherwise 
                     error('invalid string');

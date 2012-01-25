@@ -3,12 +3,12 @@ PRT: Pattern Recognition and Machine Learning in MATLAB
 
 A free and permissively licensed object oriented approach to machine learning in MATLAB.
 
-Machine learning and pattern recognition are eveywhere. MATLAB is a high level interpretted language and despite it's high cost to entry, it is frequently used throughout academia and engineering contractors for its easy of use and its numerous available toolboxes. Currently available toolboxes for pattern recognition and machine learning in MATLAB are either costly or restrictively licensed. The PRT is a BSD licensed toolbox that provides access to a wide range of pattern recognition techniques in an easy to use unified framework. The PRT provides an  suite of MATLAB commands and data-types to help you organize, visualize, process, cluster and classify your data. If you have data and need to make predictions based on your data, the PRT can help.
+Machine learning and pattern recognition are eveywhere. MATLAB is a high level interpretted language and despite it's high cost to entry, it is frequently used throughout academia and engineering contractors for its easy of use and its numerous available toolboxes. Currently available toolboxes for pattern recognition and machine learning in MATLAB are either costly or restrictively licensed. The PRT is an MIT licensed toolbox that provides access to a wide range of pattern recognition techniques in an easy to use unified framework. The PRT provides a suite of MATLAB commands and data-types to help you organize, visualize, process, cluster and classify your data. If you have data and need to make predictions based on your data, the PRT can help.
 
 Installation
 ------------
 
-To install the PRT, simply (clone the repository) or un-zip the PRT folder into your working MATLAB directory. Assume this folder is called called "prt". To ensure that all of the PRT functions are on your MATLAB path, edit your startup.m file to include the folder "prt" on your path, and then run "prtPath". On a typical windows system, these lines in your startup.m might look like this:
+To install the PRT, simply (clone the repository or) un-zip the PRT folder into your working MATLAB directory. Assume this folder is called called "prt". To ensure that all of the PRT functions are on your MATLAB path, edit your startup.m file to include the folder "prt" on your path, and then run "prtPath". On a typical windows system, these lines in your startup.m might look like this:
 
 > addpath C:\Users\theUser\Documents\MATLAB\prt
 > prtPath;
@@ -57,5 +57,7 @@ Documentation
 Once installed, the PRT documentation is available in several ways.
 
  1) Run the command "prtDoc" at the command line.
+ 
  2) From the MATLAB "Start" button, Start --> Toolboxes --> PRT
+ 
  3) All the PRT documentation is also available here: <http://www.newfolderconsulting.com/prt/doc/>

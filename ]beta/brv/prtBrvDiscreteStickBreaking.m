@@ -25,6 +25,8 @@ classdef prtBrvDiscreteStickBreaking < prtBrvDiscrete
         
         function [phiMat, priorObjs] = mixtureInitialize(objs, priorObjs, x)
             
+            error('Not done yet');
+            
             nStates = length(objs);
             
             minFrames = nStates*10;

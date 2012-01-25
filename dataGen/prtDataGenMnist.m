@@ -24,3 +24,4 @@ end
 
 x = reshape(imgs,[size(imgs,1)*size(imgs,2),size(imgs,3)])';
 ds = prtDataSetClass(x,y);
+ds.classNames = {'0','1','2','3','4','5','6','7','8','9','10'};

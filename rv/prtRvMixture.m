@@ -101,7 +101,7 @@ classdef prtRvMixture < prtRv
             
             if R.nComponents > 0
                 nSpecifiiedComponents = R.nComponents;
-                assert(weights.nCategories == nSpecifiiedComponents,'The length of these mixingProportions does not mach the number of components of thie prtRvMixture.')
+                assert(weights.nCategories == nSpecifiiedComponents,'The length of these mixingProportions does not mach the number of components of this prtRvMixture.')
             end
             
             R.mixingProportionsDepHelper = weights;

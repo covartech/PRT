@@ -1299,8 +1299,8 @@ classdef prtDataSetClass  < prtDataSetStandard
             if ~isvector(N)
                 error('N must be a vector, but N is size %s',mat2str(size(N)));
             end
-            if (any(N < 1) || any(N ~= round(N)))
-                error('All number of samples in N must be integers and greater than 0, N = %s',mat2str(N));
+            if (any(N < 0) || any(N ~= round(N)))
+                error('All number of samples in N must be non negative integers, N = %s',mat2str(N));
             end
             if length(N) ~= nClasses
                 error('Number of samples (N) must be either scalar integer or a vector integer of dataSet.nClasses (%d), N is a %s %s',nClasses,mat2str(size(N)),class(N));
