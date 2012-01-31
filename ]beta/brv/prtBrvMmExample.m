@@ -5,6 +5,7 @@ ds = prtDataGenOldFaithful; x = ds.getX;
 mm = prtBrvMm(repmat(prtBrvMvn(2),10,1));
 mm.vbVerboseText = true;
 mm.vbVerbosePlot = true;
+mm.vbConvergenceThreshold = 1e-10;
 [mmLearned, training] = mm.vb(x);
 
 %%
