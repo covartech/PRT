@@ -61,4 +61,14 @@ if isempty(mexFile1) || isempty(mexFile2) || overRideBuild
     mex('-outdir',fullfile(prtRoot,'external','+prtExternal','+libsvm'),'-output','libsvmread',fullfile(prtRoot,'external','+prtExternal','+libsvm','libsvmread.c'),extraInputs{:});
     mex('-outdir',fullfile(prtRoot,'external','+prtExternal','+libsvm'),'-output','libsvmwrite',fullfile(prtRoot,'external','+prtExternal','+libsvm','libsvmwrite.c'),extraInputs{:});
 end
+
+
+
+mexFile = which('prtRvUtilLogForwardsBackwards');
+if isempty(mexFile) || overRideBuild
+    mex('-outdir',fullfile(prtRoot,'util','mex','prtRvUtilLogForwardsBackwards'),'-output','prtRvUtilLogForwardsBackwards',fullfile(prtRoot,'util','mex','prtRvUtilLogForwardsBackwards','prtRvUtilLogForwardsBackwards.c'));
+end
+
+
+
 %fprintf('prt mex-file compilation complete\n');

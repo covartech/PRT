@@ -2,6 +2,16 @@ function imageHandle = prtPlotUtilPlotGriddedEvaledClassifier(DS, linGrid, gridS
 % Internal function
 % xxx Need Help xxx
 
+% Check to see if we are plotting a decision
+if ~isempty(prtActor.internalDecider)
+    % When using a decider DS contains integers and the linear spacing
+    % applied using the colormap may not be correct (depending on the 
+    % specific integer labels). Therefore we have to change DS to be
+    % consecutive integers corresponding to the integer labels that were
+    % used.
+    [dontNeed, DS] = ismember(DS,prtActor.internalDecider.dataSetSummary.uniqueClasses); %#ok<ASGLU>
+end
+
 nDims = size(linGrid,2);
 
 switch nDims

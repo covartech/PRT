@@ -265,7 +265,7 @@ classdef prtBrvMm < prtBrv & prtBrvIVb & prtBrvVbOnline
             kldDetails.mixingProportions = mixingProportionsKld;
             kldDetails.entropy = entropyTerm;
             
-            kld = sum(sourceKlds) + mixingProportionsKld;
+            kld = sum(sourceKlds) + mixingProportionsKld + entropyTerm;
             
             eLogLikelihood = sum(prtUtilSumExp(training.variationalLogLikelihoodBySample'));
             

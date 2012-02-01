@@ -70,7 +70,7 @@ classdef prtRv < prtAction
             % nDims matrix, where N is the number of locations to evaluate
             % the pdf, and nDims is the same as the number of dimensions,
             % nDimensions, of the prtRv object RV.
-                        vals = log(R.pdf(X));
+            vals = log(R.pdf(X));
         end
         
         function vals = cdf(R,X) %#ok
@@ -97,7 +97,7 @@ classdef prtRv < prtAction
         end
 
         function vals = mle(R,X) %#ok
-           % MLE Compute the maximum likelihood estimate 
+            % MLE Compute the maximum likelihood estimate 
             %
             % RV = RV.mle(X) computes the maximum likelihood estimate based
             % the data X. X should be nObservations x nDimensions.        
@@ -123,7 +123,7 @@ classdef prtRv < prtAction
                     plotLims = plotLimits(R);
                 end
                 
-                [linGrid,gridSize] = prtPlotUtilGenerateGrid(plotLims(1:2:end), plotLims(2:2:end), R.plotOptions.nSamplesPerDim);
+                [linGrid, gridSize] = prtPlotUtilGenerateGrid(plotLims(1:2:end), plotLims(2:2:end), R.plotOptions.nSamplesPerDim);
                 
                 imageHandle = prtPlotUtilPlotGriddedEvaledFunction(R.pdf(linGrid), linGrid, gridSize, R.plotOptions.colorMapFunction(R.plotOptions.nColorMapSamples));
                 
@@ -222,11 +222,15 @@ classdef prtRv < prtAction
     end
     methods (Access = 'protected', Hidden = true)
         function X = dataInputParse(R,X) %#ok<MANU>
+            % dataInputParse - Parse inputs for RVs that only require the
+            % data. Since most RVs need only the observations (X). This
+            % function allows RVs to operate on prtDataSetStandard()s and 
+            % a data matrix.
             
             if isnumeric(X) || islogical(X)
                 % Quick exit from this ifelse so we don't call isa
                 % which can be slow
-            elseif isa(X,'prtDataSetBase')
+            elseif isa(X,'prtDataSetStandard')
                 X = X.getObservations();
             else
                 error('prt:prtRv','Input to mle() must be a matrix of data or a prtDataSet.');

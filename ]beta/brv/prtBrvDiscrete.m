@@ -120,6 +120,7 @@ classdef prtBrvDiscrete < prtBrvObsModel & prtBrvVbOnlineObsModel
                 lambdaMat(s,:) = objs(s).model.lambda;
             end
                 
+            cla
             probMat = bsxfun(@rdivide,lambdaMat,sum(lambdaMat,2));
             for iSource = 1:size(probMat,1)
                 for jSym = 1:size(probMat,2)
@@ -129,12 +130,13 @@ classdef prtBrvDiscrete < prtBrvObsModel & prtBrvVbOnlineObsModel
                     end
                 end
             end
-            set(gca,'YDir','Rev');
+            set(gca,'YDir','Rev','Xtick',1:size(probMat,2),'Ytick',1:size(probMat,1));
             title('Observations Prob.')
             xlabel('Observations')
             ylabel('Component')
             xlim([0 size(probMat,2)+1])
             ylim([0 size(probMat,1)+1])
+            
 
         end
         
