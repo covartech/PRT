@@ -1,4 +1,4 @@
-function percentCorrect = prtScorePercentCorrect(dataSet1,dataSet2)
+function [percentCorrect,correctLogical] = prtScorePercentCorrect(dataSet1,dataSet2)
 % PERCENTCORRECT = prtScorePercentCorrect(GUESS, TRUTH)
 %
 %   PERCENTCORRECT = prtScorePercentCorrect(GUESS, TRUTH) returns the
@@ -28,5 +28,7 @@ if size(guesses,2) ~= 1
     error('prt:prtScorePercentCorrect','GUESS must be a N x 1 integer vector of class guesses');
 else
     percentCorrect = mean(guesses == targets);
-
+    if nargout > 1
+        correctLogical = guesses == targets;
+    end
 end
