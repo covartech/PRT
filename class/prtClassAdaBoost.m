@@ -12,7 +12,7 @@ classdef prtClassAdaBoost < prtClass
     %
     %    baseClassifier     - the prtClass object that forms the "weak" or
     %                         "Base" classifier for the AdaBoost.
-    %    nBoosts            - Number of iterations to run (number of weak
+    %    maxIters            - Number of iterations to run (number of weak
     %                         classifiers to train)
     %
     %    AdaBoost is a meta algorithm for training ensembles of weak
@@ -56,7 +56,8 @@ classdef prtClassAdaBoost < prtClass
     
     properties
         baseClassifier = prtClassFld; % The weak classifier
-        nBoosts = 30;  % The number of boosts
+        maxIters = 100;  % Max number of iterations
+        deltaPeThreshold = .1;
     end
     properties (Hidden)
         classifierArray = [];
@@ -77,11 +78,11 @@ classdef prtClassAdaBoost < prtClass
         end
         
         
-        function Obj = set.nBoosts(Obj,val)
+        function Obj = set.maxIters(Obj,val)
             if ~prtUtilIsPositiveScalarInteger(val)
                 error('prt:prtClassAdaBoost:nBoosts','nBoosts must be a positive scalar integer');
             end
-            Obj.nBoosts = val;
+            Obj.maxIters = val;
         end
     end
     
@@ -91,33 +92,58 @@ classdef prtClassAdaBoost < prtClass
             
             d = ones(dataSet.nObservations,1)./dataSet.nObservations;
             
-            for t = 1:Obj.nBoosts
+            classifier = Obj.baseClassifier + prtDecisionBinaryMinPe;
+            classifier.verboseStorage = false;
+            classifier.verboseFeatureNames = true;
+            
+            classifierSet = repmat(classifier,dataSet.nFeatures,1);
+            y = double(dataSet.getTargetsAsBinaryMatrix);
+            y = y(:,2);
+            y(y == 0) = -1;
+            
+            
+            for t = 1:Obj.maxIters
                 if t == 1
                     dataSetBootstrap = dataSet;
                 else
                     dataSetBootstrap = dataSet.bootstrap(dataSet.nObservations,d);
                 end
                 
-                Obj.classifierArray{t} = train(Obj.baseClassifier + prtDecisionBinaryMinPe,dataSetBootstrap);
-                yOut = run(Obj.classifierArray{t},dataSet);
-                
-                y = double(dataSet.getTargetsAsBinaryMatrix);
-                y = y(:,2);
-                y(y == 0) = -1;
-                h = double(yOut.getObservations);
-                h(h == 0) = -1;
-                pe = sum(double(y~=h).*d);
-                
-                Obj.alpha(t) = 1/2*log((1-pe)/pe);
-                d = d.*exp(-Obj.alpha(t).*y.*h);
-                if sum(d) == 0
-                    return;
+                pe = nan(dataSet.nFeatures,1);
+                for feature = 1:dataSet.nFeatures
+                    
+                    tempClassifier = prtFeatSelStatic('selectedFeatures',feature)+classifier;
+                    classifierSet(feature) = train(tempClassifier,dataSetBootstrap);
+                    yOut = run(classifierSet(feature),dataSet);
+                    
+                    [~,correctLogical] = prtScorePercentCorrect(yOut);
+                    pe(feature) = sum(double(~correctLogical).*d);
                 end
-                d = d./sum(d);
                 
-                if pe > .5
+                [minDeltaPe,minInd] = max(abs(pe-.5));
+                
+                if minDeltaPe < Obj.deltaPeThreshold
                     return;
+                else
+                    if t == 1
+                        Obj.classifierArray = classifierSet(minInd);
+                    else
+                        Obj.classifierArray(t) = classifierSet(minInd);
+                    end
+                    Obj.alpha(t) = 1/2*log((1-pe(minInd))/pe(minInd));
+                    
+                    yOut = run(Obj.classifierArray(t),dataSet);
+                    h = double(yOut.getObservations);
+                    h(h == 0) = -1;
+                    
+                    d = d.*exp(-Obj.alpha(t).*y.*h);
+                    
+                    if sum(d) == 0
+                        return;
+                    end
+                    d = d./sum(d);
                 end
+                
             end
         end
         
@@ -125,7 +151,7 @@ classdef prtClassAdaBoost < prtClass
             DataSetOut = prtDataSetClass(zeros(DataSet.nObservations,1));
             
             for t = 1:length(Obj.classifierArray)
-                theObs = run(Obj.classifierArray{t},DataSet);
+                theObs = run(Obj.classifierArray(t),DataSet);
                 currObs = Obj.alpha(t)*theObs.getObservations;
                 DataSetOut = DataSetOut.setObservations(DataSetOut.getObservations + currObs);
             end
