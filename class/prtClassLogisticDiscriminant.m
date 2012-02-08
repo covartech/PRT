@@ -159,7 +159,7 @@ classdef prtClassLogisticDiscriminant < prtClass
         end
 
         function Obj = set.manualInitialW(Obj,val)
-            if ~isnumeric(val) || ~isvector(val)
+            if ~isnumeric(val) && ~isvector(val) && ~isempty(val)
                 error('prt:prtClassLogisticDiscriminant:manualInitialW','manualInitialW must be a numeric vector');
             end
             Obj.manualInitialW = val;
