@@ -101,7 +101,7 @@ classdef prtBrvDiscrete < prtBrvObsModel & prtBrvVbOnlineObsModel
         end
         
         function model = modelDraw(obj)
-            model.probabilities = prtRvUtilDirichletRnd(obj.model.lambda);
+            model.probabilities = prtRvUtilDirichletRnd(obj.model.lambda,1);
         end
         
         function plot(objs, colors)

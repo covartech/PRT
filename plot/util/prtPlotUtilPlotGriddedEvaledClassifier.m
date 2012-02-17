@@ -9,9 +9,13 @@ if ~isempty(prtActor.internalDecider)
     % specific integer labels). Therefore we have to change DS to be
     % consecutive integers corresponding to the integer labels that were
     % used.
-    [dontNeed, DS] = ismember(DS,prtActor.internalDecider.dataSetSummary.uniqueClasses); %#ok<ASGLU>
+    if ~isempty(prtActor.internalDecider.dataSetSummary.uniqueClasses)
+        [dontNeed, DS] = ismember(DS,prtActor.internalDecider.dataSetSummary.uniqueClasses); %#ok<ASGLU>
+    else
+        % Have something unsupervised like a clusterer
+        % Just roll with it.
+    end
 end
-
 nDims = size(linGrid,2);
 
 switch nDims
