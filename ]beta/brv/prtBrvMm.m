@@ -259,7 +259,7 @@ classdef prtBrvMm < prtBrv & prtBrvIVb & prtBrvVbOnline
             
             entropyTerm = training.phiMat.*log(training.phiMat);
             entropyTerm(isnan(entropyTerm)) = 0;
-            entropyTerm = -sum(entropyTerm(:)) + obj.mixingProportions.expectedLogMean*sum(training.phiMat,1)';
+            entropyTerm = -sum(entropyTerm(:)); %+ obj.mixingProportions.expectedLogMean*sum(training.phiMat,1)';
             
             kldDetails.sources = sourceKlds(:);
             kldDetails.mixingProportions = mixingProportionsKld;
