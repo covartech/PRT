@@ -96,12 +96,11 @@ classdef prtClassPlsda < prtClass
             X = bsxfun(@minus, X, xMeans);
             Y = bsxfun(@minus, Y, yMeans);
             
-            [Obj.Bpls, R, Obj.xFactors, Obj.yFactors, Obj.loadings, U] = prtUtilSimpls(X,Y,Obj.nComponents); %#ok<ASGLU>
+            [Obj.Bpls, R, Obj.xFactors, Obj.yFactors, Obj.loadings, U] = prtUtilSimpls(X,Y,Obj.nComponents);  %#ok<ASGLU,NASGU>
             
             Obj.yMeansFactor = yMeans - xMeans*Obj.Bpls;
             
-            % ssT = diag(Obj.xFactors'*U);
-            % vipScore = sqrt(size(G.Data.Model.Use.X,2) * sum(bsxfun(@times, bsxfun(@rdivide,R,sqrt(sum(R.^2))).^2, ssT'),2) / sum(ssT(:)));
+            
         end
         
         function DataSet = runAction(Obj,DataSet)

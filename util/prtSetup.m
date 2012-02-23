@@ -5,6 +5,13 @@ function prtSetup
 %
 % Syntax: prtSetup()
 
+try
+    if datenum(version('-date')) < datenum('December 31, 2007')
+        warning('prt:prtSetup','It appears that you may be using a version of MATLAB that is too old for the PRT. The PRT requires a version newer than 7.6 (2008a). The PRT may not function properly on your system.');
+    end
+end
+
+
 % Check for graphviz
 [err,output] = system('dot -V'); %#ok<NASGU>
 
