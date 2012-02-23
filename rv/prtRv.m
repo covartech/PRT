@@ -138,6 +138,37 @@ classdef prtRv < prtAction
                 end
             end
         end
+        function varargout = plotLogPdf(R,varargin)
+            % plotLogPdf  Plot the pdf of the prtRv
+            %
+            % R.plotLogPdf()
+            % R.plotLogPdf([xMin yMin (zMin) xMax yMax (zMax)]);  
+            
+            varargout = {};
+            [isValid, reasonStr] = R.isValid;
+            if R.isPlottable
+                
+                if nargin > 1 % Calculate appropriate limits from covariance
+                    plotLims = varargin{1};
+                else
+                    plotLims = plotLimits(R);
+                end
+                
+                [linGrid, gridSize] = prtPlotUtilGenerateGrid(plotLims(1:2:end), plotLims(2:2:end), R.plotOptions.nSamplesPerDim);
+                
+                imageHandle = prtPlotUtilPlotGriddedEvaledFunction(R.logPdf(linGrid), linGrid, gridSize, R.plotOptions.colorMapFunction(R.plotOptions.nColorMapSamples));
+                
+                if nargout
+                    varargout = {imageHandle};
+                end
+            else
+                if isValid
+                    error('prt:prtRv:plot','This RV object cannont be plotted because it has too many dimensions.')
+                else
+                    error('prt:prtRv:plot','This RV object cannot be plotted. This RV is not yet valid %s.',reasonStr);
+                end
+            end
+        end
         
         function varargout = plotCdf(R,varargin)
             %PLOTCDF Plot the cdf of the prtRv
