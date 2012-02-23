@@ -83,11 +83,13 @@ classdef prtAction
     
     methods (Hidden = true)
         function dataSet = updateDataSetFeatureNames(obj,dataSet)
-            if isa(dataSet,'prtDataSetStandard') && (dataSet.hasFeatureNames || obj.verboseFeatureNames)
-                fNames = dataSet.getFeatureNames;
-                fNames = obj.updateFeatureNames(fNames);
-                if ~isempty(fNames) %it's possible that the feature set is *empty*; in which case, don't bother
-                    dataSet = dataSet.setFeatureNames(fNames);
+            if obj.verboseFeatureNames %this is redundant... but I'm not sure why the following code checks this anyway
+                if isa(dataSet,'prtDataSetStandard') && (dataSet.hasFeatureNames || obj.verboseFeatureNames)
+                    fNames = dataSet.getFeatureNames;
+                    fNames = obj.updateFeatureNames(fNames);
+                    if ~isempty(fNames) %it's possible that the feature set is *empty*; in which case, don't bother
+                        dataSet = dataSet.setFeatureNames(fNames);
+                    end
                 end
             end
         end

@@ -95,7 +95,11 @@ classdef prtDecisionMap < prtDecision
                 end
             end
             if ~isempty(self.classList)
-                classList = self.classList(index);
+                if max(index(:)) <= length(self.classList)
+                    classList = self.classList(index);
+                else
+                    classList = index;
+                end
             else
                 classList = index;
             end
