@@ -56,9 +56,6 @@ classdef prtAction
     end
     
     properties (Hidden = true)
-        % A logical to specify if modified feature names should be stored
-        % even if no feature names were specified for the dataset
-        verboseFeatureNames = true;
         
         % A tag that can be used to reference a specific action within a
         % prtAlgorithm
@@ -70,6 +67,7 @@ classdef prtAction
         classRun = 'prtDataSetBase';
         classRunRetained = false;
         
+        verboseFeatureNamesInternal = false;
         verboseStorageInternal = prtAction.getVerboseStorage();
         showProgressBarInternal = prtAction.getShowProgressBar();
     end
@@ -79,10 +77,14 @@ classdef prtAction
         % If true the training prtDataSet is stored internally prtAction.dataSet.
         verboseStorage
         showProgressBar
+        % A logical to specify if modified feature names should be stored
+        % even if no feature names were specified for the dataset
+        verboseFeatureNames = true;
     end
     
     methods (Hidden = true)
         function dataSet = updateDataSetFeatureNames(obj,dataSet)
+            
             if obj.verboseFeatureNames %this is redundant... but I'm not sure why the following code checks this anyway
                 if isa(dataSet,'prtDataSetStandard') && (dataSet.hasFeatureNames || obj.verboseFeatureNames)
                     fNames = dataSet.getFeatureNames;
@@ -265,6 +267,10 @@ classdef prtAction
             Obj.classRunRetained = val;
         end        
         
+        function Obj = set.verboseFeatureNames(Obj,val)
+            Obj = Obj.setVerboseFeatureNames(val);
+        end
+        
         function Obj = set.verboseStorage(Obj,val)
             Obj = Obj.setVerboseStorage(val);
         end
@@ -276,6 +282,11 @@ classdef prtAction
         function val = get.verboseStorage(Obj)
             val = Obj.verboseStorageInternal;
         end
+        
+        function val = get.verboseFeatureNames(Obj)
+            val = Obj.verboseFeatureNamesInternal;
+        end
+        
         function val = get.showProgressBar(Obj)
             val = Obj.showProgressBarInternal;
         end
@@ -666,6 +677,11 @@ classdef prtAction
         function Obj = setVerboseStorage(Obj,val)
             assert(numel(val)==1 && (islogical(val) || (isnumeric(val) && (val==0 || val==1))),'prtAction:invalidVerboseStorage','verboseStorage must be a logical');
             Obj.verboseStorageInternal = logical(val);
+        end
+        
+        function Obj = setVerboseFeatureNames(Obj,val)
+            assert(numel(val)==1 && (islogical(val) || (isnumeric(val) && (val==0 || val==1))),'prtAction:invalidVerboseFeatureNames','verboseFeatureNames must be a logical');
+            Obj.verboseFeatureNamesInternal = logical(val);
         end
         
         function Obj = setShowProgressBar(Obj,val)
