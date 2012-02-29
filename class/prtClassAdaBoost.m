@@ -11,9 +11,23 @@ classdef prtClassAdaBoost < prtClass
     %    class prtClass. In addition is has the following properties:
     %
     %    baseClassifier     - the prtClass object that forms the "weak" or
-    %                         "Base" classifier for the AdaBoost.
-    %    maxIters            - Number of iterations to run (number of weak
+    %                         "Base" classifier for the AdaBoost.  This
+    %                         classifier is iteratively trained on each of
+    %                         the features in succession.
+    %    maxIters            - Number of iterations to run (maximum number of weak
     %                         classifiers to train)
+    %    deltaPeThreshold (.05) - Specify the minimum error distance (from
+    %                        0.5) allowed.  Smaller values result in more
+    %                        complicated adaBoost classifiers, larger
+    %                        values in less complicated classifiers.
+    %    
+    %    downSampleBootstrap (false) - Specify whether (and how many)
+    %                           bootstrap-by class bootstrap samples to
+    %                           take at each iteration.  False or 0 uses
+    %                           the default number of bootstrap samples.
+    %                           Any other integer specifies the number of
+    %                           samples to use from
+    %                           ds.bootstrapDataByClass.
     %
     %    AdaBoost is a meta algorithm for training ensembles of weak
     %    classifiers on different sub-sets of the complete data set, with
@@ -23,6 +37,11 @@ classdef prtClassAdaBoost < prtClass
     %    more information AdaBoost can be found at the following URL:
     %
     %    http://en.wikipedia.org/wiki/AdaBoost
+    %
+    %    The PRT AdaBoost uses individual features to constitute each weak
+    %    learner in each iteration.  At each iteration, the feature
+    %    corresponding to the best weak learner operating on the current
+    %    weighted data distribution is used in the aggregate classifier.
     %
     %    A prtClassAdaBoost object inherits the TRAIN, RUN, CROSSVALIDATE and
     %    KFOLDS methods from prtAction. It also inherits the PLOT
@@ -42,10 +61,7 @@ classdef prtClassAdaBoost < prtClass
     %    h = plot(pf,pd,'linewidth',3);
     %    title('ROC'); xlabel('Pf'); ylabel('Pd');
     %
-    %    See also prtClass, prtClassLogisticDiscriminant, prtClassBagging,
-    %    prtClassMap, prtClassFld, prtClassBinaryToMaryOneVsAll, prtClassDlrt,
-    %    prtClassPlsda, prtClassFld, prtClassRvm, prtClassGlrt,  prtClassSvm,
-    %    prtClassTreeBaggingCap, prtClassKmsd, prtClassKnn
+    %    See also: prtClassAdaBoostFastAuc
     
     
     properties (SetAccess=private)
@@ -56,87 +72,109 @@ classdef prtClassAdaBoost < prtClass
     
     properties
         baseClassifier = prtClassFld; % The weak classifier
-        maxIters = 100;  % Max number of iterations
-        deltaPeThreshold = .1;
+        maxIters = 30;  % Max number of iterations
+        deltaPeThreshold = .05;
+        downSampleBootstrap = false;
     end
     properties (Hidden)
         classifierArray = [];
         alpha = [];
+        verbose = false;
     end
     
     methods
         % Constructor
-        function Obj = prtClassAdaBoost(varargin)
-            Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
+        function self = prtClassAdaBoost(varargin)
+            self = prtUtilAssignStringValuePairs(self,varargin{:});
         end
         % Set function
-        function Obj = set.baseClassifier(Obj,val)
+        function self = set.baseClassifier(self,val)
             if (~isa(val,'prtClass'))
                 error('prtClassAdaBoost:baseClassifier','baseClassifier parameter must be a prtClass');
             end
-            Obj.baseClassifier = val;
+            self.baseClassifier = val;
         end
         
         
-        function Obj = set.maxIters(Obj,val)
+        function self = set.maxIters(self,val)
             if ~prtUtilIsPositiveScalarInteger(val)
                 error('prt:prtClassAdaBoost:nBoosts','nBoosts must be a positive scalar integer');
             end
-            Obj.maxIters = val;
+            self.maxIters = val;
         end
     end
     
     methods (Access = protected, Hidden = true)
         
-        function Obj = trainAction(Obj,dataSet)
+        function self = trainAction(self,dataSet)
             
             d = ones(dataSet.nObservations,1)./dataSet.nObservations;
             
-            classifier = Obj.baseClassifier + prtDecisionBinaryMinPe;
+            classifier = self.baseClassifier + prtDecisionBinaryMinPe;
             classifier.verboseStorage = false;
-            classifier.verboseFeatureNames = true;
+            classifier.verboseFeatureNames = false;
             
-            classifierSet = repmat(classifier,dataSet.nFeatures,1);
             y = double(dataSet.getTargetsAsBinaryMatrix);
             y = y(:,2);
             y(y == 0) = -1;
             
             
-            for t = 1:Obj.maxIters
+            for t = 1:self.maxIters
                 if t == 1
                     dataSetBootstrap = dataSet;
+                    if self.downSampleBootstrap
+                        dataSetBootstrap = dataSetBootstrap.bootstrap(self.downSampleBootstrap);
+                    end
                 else
                     dataSetBootstrap = dataSet.bootstrap(dataSet.nObservations,d);
+                    if self.downSampleBootstrap
+                        dataSetBootstrap = dataSetBootstrap.bootstrap(self.downSampleBootstrap);
+                    end
                 end
                 
                 pe = nan(dataSet.nFeatures,1);
+                if self.verbose
+                    fprintf('\nIter: %d ',t);
+                end
                 for feature = 1:dataSet.nFeatures
+                    if ~mod(feature,1000) & self.verbose
+                        %disp(feature./dataSet.nFeatures);
+                        if feature == 1000
+                            fprintf('\n');
+                        end
+                        fprintf('.');
+                    end
                     
-                    tempClassifier = prtFeatSelStatic('selectedFeatures',feature)+classifier;
-                    classifierSet(feature) = train(tempClassifier,dataSetBootstrap);
-                    yOut = run(classifierSet(feature),dataSet);
+                    tempClassifier = prtFeatSelStatic('selectedFeatures',feature) + self.baseClassifier + prtDecisionBinaryMinPe;
+                    tempClassifier.verboseStorage = false;
+                    tempClassifier.verboseFeatureNames = false;
+                    
+                    classifier = train(tempClassifier,dataSetBootstrap);
+                    yOut = run(classifier,dataSet);
                     
                     [~,correctLogical] = prtScorePercentCorrect(yOut);
                     pe(feature) = sum(double(~correctLogical).*d);
                 end
-                
                 [minDeltaPe,minInd] = max(abs(pe-.5));
                 
-                if minDeltaPe < Obj.deltaPeThreshold
+                if minDeltaPe < self.deltaPeThreshold
                     return;
                 else
+                    feature = minInd;
+                    tempClassifier = prtFeatSelStatic('selectedFeatures',feature) + self.baseClassifier + prtDecisionBinaryMinPe;
+                    theClassifier = train(tempClassifier,dataSetBootstrap);
                     if t == 1
-                        Obj.classifierArray = classifierSet(minInd);
+                        self.classifierArray = theClassifier;
                     else
-                        Obj.classifierArray(t) = classifierSet(minInd);
+                        self.classifierArray(t) = theClassifier;
                     end
-                    Obj.alpha(t) = 1/2*log((1-pe(minInd))/pe(minInd));
+                    self.alpha(t) = 1/2*log((1-pe(minInd))/pe(minInd));
                     
-                    yOut = run(Obj.classifierArray(t),dataSet);
+                    yOut = run(self.classifierArray(t),dataSet);
                     h = double(yOut.getObservations);
                     h(h == 0) = -1;
                     
-                    d = d.*exp(-Obj.alpha(t).*y.*h);
+                    d = d.*exp(-self.alpha(t).*y.*h);
                     
                     if sum(d) == 0
                         return;
@@ -147,12 +185,14 @@ classdef prtClassAdaBoost < prtClass
             end
         end
         
-        function DataSetOut = runAction(Obj,DataSet)
+        function DataSetOut = runAction(self,DataSet)
             DataSetOut = prtDataSetClass(zeros(DataSet.nObservations,1));
             
-            for t = 1:length(Obj.classifierArray)
-                theObs = run(Obj.classifierArray(t),DataSet);
-                currObs = Obj.alpha(t)*theObs.getObservations;
+            for t = 1:length(self.classifierArray)
+                theObs = run(self.classifierArray(t),DataSet);
+                X = theObs.getObservations;
+                X(X == 0) = -1;
+                currObs = self.alpha(t)*X;
                 DataSetOut = DataSetOut.setObservations(DataSetOut.getObservations + currObs);
             end
             
@@ -160,4 +200,39 @@ classdef prtClassAdaBoost < prtClass
         
     end
     
+    methods (Static)
+        %used by sub-classes like prtClassAdaBoostFastAuc
+        function [pFa,pD,tau,auc] = fastRoc(ds,y)
+            [sortedDS, sortingInds] = sort(ds,'descend');
+            nanSpots = isnan(sortedDS);
+            
+            % Sort y
+            sortedY = y(sortingInds);
+            nH1 = sum(sortedY);
+            nH0 = length(sortedY)-nH1;
+            
+            % Start making
+            pFa = double(~sortedY); % number of false alarms as a function of threshold
+            pD = double(sortedY); % number of detections as a function of threshold
+            
+            pD(nanSpots & ~~sortedY) = 0; % NaNs are not counted as detections
+            pFa(nanSpots & ~sortedY) = 0; % or false alarms
+            
+            pD = cumsum(pD)/nH1;
+            pFa = cumsum(pFa)/nH0;
+            
+            pD = cat(1,0,pD);
+            pFa = cat(1,0,pFa);
+            
+            tau = cat(1,inf,sortedDS(:));
+            if nargout > 3
+                %this is faster than prtScoreRoc if we've already calculated pd and pf,
+                %which we have:
+                auc = trapz(pFa,pD);
+            else
+                auc = [];
+            end
+            
+        end
+    end
 end

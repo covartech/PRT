@@ -50,6 +50,9 @@ classdef prtFeatSelStatic < prtFeatSel %
         end
         
         function Obj = set.selectedFeatures(Obj,val)
+            if isnan(val)
+                return
+            end
             assert(isvector(val) && prtUtilIsPositiveInteger(val),'prt:prtFeatSelStatic:selectedFeatures','selectedFeatures must be vector of positive integers');
             
             uVals = unique(val);

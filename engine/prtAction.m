@@ -83,6 +83,9 @@ classdef prtAction
     
     methods (Hidden = true)
         function dataSet = updateDataSetFeatureNames(obj,dataSet)
+            if ~obj.verboseFeatureNames
+                return;
+            end
             if isa(dataSet,'prtDataSetStandard') && (dataSet.hasFeatureNames || obj.verboseFeatureNames)
                 fNames = dataSet.getFeatureNames;
                 fNames = obj.updateFeatureNames(fNames);
