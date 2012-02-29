@@ -1,2 +1,2 @@
 % Pattern Recognition Toolbox
-% Version 1070 14-Sep-2011
+% Version 3.0 (R2008a+) 01-Feb-2012

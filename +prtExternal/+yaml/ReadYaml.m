@@ -29,9 +29,8 @@ function YamlStruct = ReadYaml(yaml_file)
 import prtExternal.yaml.*;
 
 %InitYaml();
-jarPath = fullfile(prtRoot,'external','+prtExternal','+yaml','YAMLMatlab','external-packages','snakeyaml','snakeyaml-1.8.jar');
+jarPath = fullfile(prtRoot,'+prtExternal','+yaml','YAMLMatlab','external-packages','snakeyaml','snakeyaml-1.8.jar');
 javaaddpath(jarPath)
-
 import('org.yaml.snakeyaml.Yaml');
 
 yamlreader = Yaml();

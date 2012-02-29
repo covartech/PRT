@@ -38,6 +38,7 @@ classdef prtBrvDiscreteStickBreaking < prtBrvDiscrete
             end
 
             probs = exp(obj.model.expectedValueLogProbabilities);
+            probs = probs./sum(probs);
             x = prtRvUtilRandomSample(probs, n);
         end
         

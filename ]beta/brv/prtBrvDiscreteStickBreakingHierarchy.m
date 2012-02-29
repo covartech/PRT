@@ -40,10 +40,15 @@ classdef prtBrvDiscreteStickBreakingHierarchy
         end
         
         function pis = draw(obj)
-             vs = prtRvUtilDirichletDraw([obj.beta(:,1),obj.beta(:,2)]);
+             
+            
+             vs = zeros(obj.truncationLevel,2);
+             for iV = 1:obj.truncationLevel
+                 vs(iV,:) = prtRvUtilDirichletDraw([obj.beta(iV,1),obj.beta(iV,2)]);
+             end
              vs = vs(:,1);
              
-             pis = zeros(truncLevel,1);
+             pis = zeros(obj.truncationLevel,1);
              for iPi = 1:length(vs)
                  if iPi == 1
                      pis(iPi) = vs(iPi);
@@ -54,6 +59,8 @@ classdef prtBrvDiscreteStickBreakingHierarchy
              
              pis(end) = 1-sum(pis(1:end-1));
              pis(pis<0) = 0; % This happens in the range of eps sometimes.
+             
+             pis = pis./sum(pis);
         end
         
         function obj = conjugateUpdate(obj,priorObj,counts)
