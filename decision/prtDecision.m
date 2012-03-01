@@ -52,8 +52,11 @@ classdef prtDecision < prtAction
     %  outIntDec = myKnn.run(dsTest);
     %  figure; plot(myKnn); title('internalDecider implementation');
     
-    properties (Hidden)
+    properties (Dependent)
         classList
+    end
+    properties (Hidden)
+        hiddenClassList
     end
     
     properties (SetAccess = protected)
@@ -70,13 +73,13 @@ classdef prtDecision < prtAction
             obj.classRunRetained = true;
         end 
         function obj = set.classList(obj,val)
-            obj.classList = val(:);
+            obj.hiddenClassList = val(:);
         end
         function c = get.classList(obj)
             %             if isempty(obj.classList)
             %                 error('prtDecision field of a classifier was not set during training; please try re-training the classifier');
             %             end
-            c = obj.classList;
+            c = obj.hiddenClassList;
         end
     end
 end
