@@ -38,7 +38,6 @@ catch ME
     disp(ME);
 end
 
-
 % catObservaitons with different observationInfo structures
 try
     ds2 = ds.catObservations(prtDataGenUnimodal);

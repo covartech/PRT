@@ -23,6 +23,7 @@ delete(findobj(Toolbar.Children,'TooltipString','New Figure',...
     '-or','TooltipString','Hide Plot Tools'))
 
 popUpStrs = theObject.getFeatureNames;
+popUpStrs = popUpStrs(:);
 
 bgc = get(figH,'Color');
 popX = uicontrol(figH,'Style','popup','units','normalized','FontUnits','Normalized','FontSize',0.6,'position',[0.15 0.01 0.19 0.04],'string',popUpStrs,'callback',{@plotSelectPopupCallback 1});

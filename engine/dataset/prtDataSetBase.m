@@ -61,12 +61,27 @@ classdef prtDataSetBase
     %   See also: prtDataSetStandard, prtDataSetClass, prtDataSetRegress,
     
     
-    properties (Abstract, Dependent)
+    properties (Dependent)
         nObservations         % The number of observations
         nTargetDimensions     % The number of target dimensions
-    end
-    properties (Dependent)
         isLabeled             % Whether or not the data has target labels
+        
+    end
+    
+    properties (Dependent, Hidden)
+        X
+        Y
+    end
+    
+    properties (Dependent, Hidden)
+        observationNames      % Dependent variable providing access to observation names
+        targetNames           % Dependent variable providing access to target names
+    end
+    properties
+        observationInfo       % Struct of observation information
+    end
+    properties (Hidden)
+        targetInfo            % Struct of target information
     end
     
     properties
@@ -80,7 +95,7 @@ classdef prtDataSetBase
     end
     
     properties (Hidden, Constant)
-        version = 1;
+        version = 2;
     end
     
     % Only prtDataSetBase knows about these, use getObs... and getFeat.. to
@@ -91,76 +106,148 @@ classdef prtDataSetBase
     end
     
     methods
-        function isLabeled = get.isLabeled(obj)
-            isLabeled = ~isempty(obj.getY);
+        function X = get.X(self)
+            X = self.getX();
+        end
+        function self = set.X(self,val)
+            self = self.setX(val);
+        end
+        function Y = get.Y(self)
+            Y = self.getY();
+        end
+        function self = set.Y(self,val)
+            self = self.setY(val);
+        end
+    end
+    
+    methods (Abstract)
+        
+        n = getNumObservations(self)
+        nTargets = getNumTargetDimensions(self)
+        data = getData(self,indices)
+        targets = getTargets(self,indices)
+        
+        %         self = setObservations(self,data,indices1,indices2)
+        %         self = setTargets(self,targets,indices)
+        %         self = setObservationsAndTargets(self,data,targets)
+        %
+        %         self = removeTargets(self,indices)
+        
+        self = retainObservationData(self,indices)
+        self = catObservationData(self,varargin)
+        
+        %         self = retainTargets(self,indices)
+        %         self = catObservationData(self,dataSet)
+        %
+        %         handles = plot(self)
+        %         export(self,prtExportObject)
+        %         Summary = summarize(self)
+    end
+    
+    methods
+        
+        function obsNames = get.targetNames(self)
+            obsNames = self.getTargetNames;
+        end
+        
+        function self = set.targetNames(self,vals)
+            self = self.setTargetNames(vals);
+        end
+        
+        function obsNames = get.observationNames(self)
+            obsNames = self.getObservationNames;
+        end
+        
+        function self = set.observationNames(self,vals)
+            self = self.setObservationNames(vals);
+        end
+        
+        function nObs = get.nObservations(self)
+            nObs = self.getNumObservations;
+        end
+        
+        function nTargets = get.nTargetDimensions(self)
+            nTargets = self.getNumTargetDimensions;
+        end
+        
+        function isLabeled = get.isLabeled(self)
+            isLabeled = ~isempty(self.getTargets);
         end
     end
     
     %Wrappers - getX, setX, getY, setY
     methods
-        function [observations,targets] = getXY(obj,varargin)
+        function [observations,targets] = getXY(self,varargin)
             % getXY  Shortcut for getObservationsAndTargets
-            observations = obj.getObservations(varargin{:});
-            targets = obj.getTargets(varargin{:});
+            observations = self.getObservations(varargin{:});
+            targets = self.getTargets(varargin{:});
         end
-        function observations = getX(obj,varargin)
+        function observations = getX(self,varargin)
             % getX Shortcut for GetObservations
-            observations = obj.getObservations(varargin{:});
+            observations = self.getObservations(varargin{:});
         end
-        function targets = getY(obj,varargin)
+        function targets = getY(self,varargin)
             % getY Shortcut for getTargets
-            targets = obj.getTargets(varargin{:});
+            targets = self.getTargets(varargin{:});
         end
-        function obj = setXY(obj,varargin)
+        function self = setXY(self,varargin)
             % setXY Shortcut for setObservationsAndTargets
-            obj = obj.setObservationsAndTargets(varargin{:});
+            self = self.setObservationsAndTargets(varargin{:});
         end
-        function obj = setX(obj,varargin)
+        function self = setX(self,varargin)
             % setX Shortcut for setObservations
-            obj = obj.setObservations(varargin{:});
+            self = self.setObservations(varargin{:});
         end
-        function obj = setY(obj,varargin)
+        function self = setY(self,varargin)
             % setY Shortcut for setTargets
-            obj = obj.setTargets(varargin{:});
+            self = self.setTargets(varargin{:});
+        end
+    end
+    
+    methods 
+        function x = getObservations(self,varargin)
+            warning('use getData; getObservations is out of daters');
+            x = self.getData(varargin{:});
         end
     end
     
     %Methods for setting name, description
     methods
-        function obj = set.name(obj, newName)
+        function self = set.name(self, newName)
             if ~isa(newName,'char');
                 error('prt:prtDataSetBase:dataSetNameNonString','name must but name must be a character array');
             end
-            obj.name = newName;
+            self.name = newName;
         end
-        function obj = set.description(obj, newDescr)
+        function self = set.description(self, newDescr)
             if ~isa(newDescr,'char');
                 error('prt:prtDataSetBase:dataSetNameNonString','description must be a character array');
             end
-            obj.description = newDescr;
+            self.description = newDescr;
         end
     end
     
     %Methods for get, set, ObservationNames and FeatureNames
     methods
-        function obj = prtDataSetBase
-            obj.observationNamesInternal = prtUtilIntegerAssociativeArray;
-            obj.targetNamesInternal = prtUtilIntegerAssociativeArray;
+        
+        function self = prtDataSetBase
+            self.observationNamesInternal = prtUtilIntegerAssociativeArray;
+            self.targetNamesInternal = prtUtilIntegerAssociativeArray;
         end
         
-        function obsNames = getObservationNames(obj,varargin)
+        function obsNames = getObservationNames(self,varargin)
             % getObservationNames - Return DataSet's Observation Names
             %
-            %   featNames = getObservationNames(obj) Return a cell array of
+            %   featNames = getObservationNames(self) Return a cell array of
             %   an object's observation names; if setObservationNames has not been
             %   called or the 'observationNames' field was not set at construction,
             %   default behavior is to return sprintf('Observation %d',i) for all
             %   observations.
             %
-            %   featNames = getObservationNames(obj,indices) Return the observation
+            %   featNames = getObservationNames(self,indices) Return the observation
             %   names for only the specified indices.
             
-            indices1 = prtDataSetBase.parseIndices(obj.nObservations,varargin{:});
+            indices1 = prtDataSetBase.parseIndices(self.nObservations,varargin{:});
             %parse returns logicals
             if islogical(indices1)
                 indices1 = find(indices1);
@@ -169,18 +256,18 @@ classdef prtDataSetBase
             obsNames = cell(length(indices1),1);
             
             for i = 1:length(indices1)
-                obsNames{i} = obj.observationNamesInternal.get(indices1(i));
+                obsNames{i} = self.observationNamesInternal.get(indices1(i));
                 if isempty(obsNames{i})
                     obsNames(i) = prtDataSetBase.generateDefaultObservationNames(indices1(i));
                 end
             end
         end
         
-        function targetNames = getTargetNames(obj,varargin)
+        function targetNames = getTargetNames(self,varargin)
             % getTargetNames  Return the target names of a dataset
             %
             
-            indices2 = prtDataSetBase.parseIndices(obj.nTargetDimensions,varargin{:});
+            indices2 = prtDataSetBase.parseIndices(self.nTargetDimensions,varargin{:});
             %parse returns logicals
             if islogical(indices2)
                 indices2 = find(indices2);
@@ -189,14 +276,14 @@ classdef prtDataSetBase
             targetNames = cell(length(indices2),1);
             
             for i = 1:length(indices2)
-                targetNames{i} = obj.targetNamesInternal.get(indices2(i));
+                targetNames{i} = self.targetNamesInternal.get(indices2(i));
                 if isempty(targetNames{i})
                     targetNames(i) = prtDataSetBase.generateDefaultTargetNames(indices2(i));
                 end
             end
         end
         
-        function obj = setObservationNames(obj,obsNames,varargin)
+        function self = setObservationNames(self,obsNames,varargin)
             % setObservationNames  Set the observation names of a data set
             %
             %  dataSet = dataSet.setObservationNames(NAMES) Set an object's
@@ -213,22 +300,22 @@ classdef prtDataSetBase
             end
             obsNames = obsNames(:);
             
-            indices1 = prtDataSetBase.parseIndices(obj.nObservations,varargin{:});
+            indices1 = prtDataSetBase.parseIndices(self.nObservations,varargin{:});
             %parse returns logicals; find the indices
             if islogical(indices1)
                 indices1 = find(indices1);
             end
             
             if length(obsNames) ~= length(indices1)
-                error('prt:dataSetStandard:setObservationNames','Index exceeds matrix dimensions.');
+                error('prt:dataSetStandard:setObservationNames','Size mismatch between indices and observation names.');
             end
             
             for i = 1:length(indices1)
-                obj.observationNamesInternal = obj.observationNamesInternal.put(indices1(i),obsNames{i});
+                self.observationNamesInternal = self.observationNamesInternal.put(indices1(i),obsNames{i});
             end
         end
         
-        function obj = setTargetNames(obj,targetNames,varargin)
+        function self = setTargetNames(self,targetNames,varargin)
             % setTargetNames  Set the data set target names
             % 
             %  dataSet = dataSet.setTargetNames(NAMES) Set an object's
@@ -245,22 +332,22 @@ classdef prtDataSetBase
             end
             targetNames = targetNames(:);
                         
-            indices2 = prtDataSetBase.parseIndices(obj.nTargetDimensions,varargin{:});
+            indices2 = prtDataSetBase.parseIndices(self.nTargetDimensions,varargin{:});
             %parse returns logicals
             if islogical(indices2)
                 indices2 = find(indices2);
             end
             if length(targetNames) ~= length(indices2)
                 if nargin == 2
-                    error('prt:prtDataSetStandard','Attempt to set target names for different number of targets (%d) than data set has (%d)',length(targetNames),length(max(indices2)));
+                    error('prt:prtDataSetBase','Attempt to set target names for different number of targets (%d) than data set has (%d)',length(targetNames),length(max(indices2)));
                 else
-                    error('prt:prtDataSetStandard','Too many indices (%d) provided for number of target names provited (%d)',length(indices2),length(targetNames));
+                    error('prt:prtDataSetBase','Too many indices (%d) provided for number of target names provited (%d)',length(indices2),length(targetNames));
                 end
             end
             %Put the default string names in there; otherwise we might end
             %up with empty elements in the cell array
             for i = 1:length(indices2)
-                obj.targetNamesInternal = obj.targetNamesInternal.put(indices2(i),targetNames{i});
+                self.targetNamesInternal = self.targetNamesInternal.put(indices2(i),targetNames{i});
             end
         end
     end
@@ -343,7 +430,7 @@ classdef prtDataSetBase
    
     
     methods (Access = 'protected', Hidden = true)
-        function obj = catObservationNames(obj,newDataSet)
+        function self = catObservationNames(self,newDataSet)
             
             if isempty(newDataSet.observationNamesInternal)
                 return;
@@ -351,119 +438,187 @@ classdef prtDataSetBase
             for i = 1:newDataSet.nObservations;
                 currObsName = newDataSet.observationNamesInternal.get(i);
                 if ~isempty(currObsName)
-                    obj.observationNamesInternal = obj.observationNamesInternal.put(i + obj.nObservations,currObsName);
+                    self.observationNamesInternal = self.observationNamesInternal.put(i + self.nObservations,currObsName);
                 end
             end
         end
         
         %   Note: only call this from within retainObservations
-        function obj = retainObservationNames(obj,varargin)
+        function self = retainObservationNames(self,varargin)
             
-            if isempty(obj.observationNamesInternal)
+            if isempty(self.observationNamesInternal)
                 return;
             end
             
-            retainIndices = prtDataSetBase.parseIndices(obj.nObservations,varargin{:});
+            retainIndices = prtDataSetBase.parseIndices(self.nObservations,varargin{:});
             %parse returns logicals
             if islogical(retainIndices)
                 retainIndices = find(retainIndices);
             end
-            if isempty(obj.observationNamesInternal)
+            if isempty(self.observationNamesInternal)
                 return;
             else
                 %copy the hash with new indices
                 newHash = prtUtilIntegerAssociativeArray;
                 for retainInd = 1:length(retainIndices);
-                    if obj.observationNamesInternal.containsKey(retainIndices(retainInd));
-                        newHash = newHash.put(retainInd,obj.observationNamesInternal.get(retainIndices(retainInd)));
+                    if self.observationNamesInternal.containsKey(retainIndices(retainInd));
+                        newHash = newHash.put(retainInd,self.observationNamesInternal.get(retainIndices(retainInd)));
                     end
                 end
-                obj.observationNamesInternal = newHash;
+                self.observationNamesInternal = newHash;
             end
         end
         
-        %obj = catTargetNames(obj,newDataSet)
-        function obj = catTargetNames(obj,newDataSet)
+        %self = catTargetNames(self,newDataSet)
+        function self = catTargetNames(self,newDataSet)
             
             for i = 1:newDataSet.nTargetDimensions;
                 currTargetName = newDataSet.targetNamesInternal.get(i);
                 if ~isempty(currTargetName)
-                    obj.targetNamesInternal = obj.targetNamesInternal.put(i + obj.nTargetDimensions,currTargetName);
+                    self.targetNamesInternal = self.targetNamesInternal.put(i + self.nTargetDimensions,currTargetName);
                 end
             end
         end
  
         % Only call from retain tartets
-        function obj = retainTargetNames(obj,varargin)
+        function self = retainTargetNames(self,varargin)
             
-            retainIndices = prtDataSetBase.parseIndices(obj.nTargetDimensions,varargin{:});
+            retainIndices = prtDataSetBase.parseIndices(self.nTargetDimensions,varargin{:});
             %parse returns logicals
             if islogical(retainIndices)
                 retainIndices = find(retainIndices);
             end
-            if isempty(obj.targetNamesInternal)
+            if isempty(self.targetNamesInternal)
                 return;
             else
                 %copy the hash with new indices
                 newHash = prtUtilIntegerAssociativeArray;
                 for retainInd = 1:length(retainIndices);
-                    if obj.targetNamesInternal.containsKey(retainIndices(retainInd));
-                        newHash = newHash.put(retainInd,obj.targetNamesInternal.get(retainIndices(retainInd)));
+                    if self.targetNamesInternal.containsKey(retainIndices(retainInd));
+                        newHash = newHash.put(retainInd,self.targetNamesInternal.get(retainIndices(retainInd)));
                     end
                 end
-                obj.targetNamesInternal = newHash;
+                self.targetNamesInternal = newHash;
             end
         end
         
     end
     
-    methods (Hidden = true)
-        
-        function obj = copyDescriptionFieldsFrom(obj,dataSet)
-            if dataSet.hasObservationNames
-                obj = obj.setObservationNames(dataSet.getObservationNames);
+    methods
+        function [self, sampleIndices] = bootstrap(self,nSamples,p)
+            
+            if nargin < 3
+                p = ones(self.nObservations,1)./self.nObservations;
             end
-            if dataSet.hasTargetNames
-                obj = obj.setTargetNames(dataSet.getTargetNames);
+            
+            assert(isvector(p) & all(p) <= 1 & all(p) >= 0 & prtUtilApproxEqual(sum(p),1,eps(self.nObservations)) & length(p) == self.nObservations,'prt:prtDataSetStandard:bootstrap','invalid input probability distribution; distribution must be a vector of size self.nObservations x 1, and must sum to 1')
+            
+            if self.nObservations == 0
+                error('prtDataSetStandard:BootstrapEmpty','Cannot bootstrap empty data set');
             end
-            obj.name = dataSet.name;
-            obj.userData = dataSet.userData;
+            
+            if nargin < 2 || isempty(nSamples)
+                nSamples = self.nObservations;
+            end
+            
+            % We could do this
+            % >>rv = prtRvMultinomial('probabilities',p(:));
+            % >>sampleIndices = rv.drawIntegers(nSamples);
+            % but there is overhead associated with RV self creation.
+            % For some actions, TreebaggingCap for example, we need to
+            % rapidly bootstrap so we do not use the self
+            sampleIndices = prtRvUtilRandomSample(p,nSamples);
+            
+            self = self.retainObservations(sampleIndices);
         end
         
-        
-        function has = hasObservationNames(obj)
-            has = ~isempty(obj.observationNamesInternal);
+        function self = removeObservations(self,indices)
+            
+            if islogical(indices)
+                indices = ~indices;
+            else
+                indices = setdiff(1:self.getNumObservations,indices);
+            end
+            self = self.retainObservations(indices);
         end
-        function has = hasTargetNames(obj)
-            has = ~isempty(obj.targetNamesInternal);
+        
+        function self = retainObservations(self,indices)
+            self = self.retainObservationInfo(indices);
+            self = self.retainObservationData(indices);
+            self = self.update;
+        end
+        
+        function self = catObservations(self,varargin)
+            self = self.catObservationInfo(varargin{:});
+            self = self.catObservationData(varargin{:});
+            self = self.update;
         end
     end
-    methods (Abstract)
-        %all sub-classes must define these behaviors, this is the contract
-        %that all "data sets" must follow
+    
+    methods (Access = protected)
+        function self = retainObservationInfo(self,indices)
+            
+            if ~isempty(self.observationNames)
+                %self.observationNames = self.observationNames(indices);
+                self = self.retainObservationNames(indices);
+            end
+            if ~isempty(self.observationInfo)
+                self.observationInfo = self.observationInfo(indices);
+            end
+            
+        end
         
-        %Return the data by indices
-        data = getObservations(obj,indices1,indices2)
-        targets = getTargets(obj,indices1,indices2)
-        [data,targets] = getObservationsAndTargets(obj,indices1,indices2)
+        function self = catObservationInfo(self,varargin)
+            
+            for argin = 1:length(varargin)
+                currInput = varargin{argin};
+                if ~isa(currInput,'prtDataSetBase')
+                    %do nothing; nothing to cat.
+                else
+                    self = catObservationNames(self,currInput);
+                    if isempty(self.observationInfo) && isempty(currInput.observationInfo)
+                        %do nothing
+                    elseif isempty(self.observationInfo) && ~isempty(currInput.observationInfo)
+                        self.observationInfo = repmat(struct,self.nObservations,1);
+                        self.observationInfo = prtUtilStructVCatMergeFields(self.observationInfo,currInput.observationInfo(:));
+                    elseif ~isempty(self.observationInfo) && isempty(currInput.observationInfo)
+                        currInput.observationInfo = repmat(struct,currInput.nObservations,1);
+                        self.observationInfo = prtUtilStructVCatMergeFields(self.observationInfo(:),currInput.observationInfo);
+                    else
+                        self.observationInfo = prtUtilStructVCatMergeFields(self.observationInfo(:),currInput.observationInfo(:));
+                    end
+                end
+            end
+            
+        end
+    end
+    
+    methods (Access = protected)
+        function self = update(self)
+            %default behaviour is to do nothing
+        end
+    end
+    
+    methods (Hidden = true)
+        
+        function self = copyDescriptionFieldsFrom(self,dataSet)
+            if dataSet.hasObservationNames
+                self = self.setObservationNames(dataSet.getObservationNames);
+            end
+            if dataSet.hasTargetNames
+                self = self.setTargetNames(dataSet.getTargetNames);
+            end
+            self.name = dataSet.name;
+            self.userData = dataSet.userData;
+        end
         
         
-        obj = setObservations(obj,data,indices1,indices2)
-        obj = setTargets(obj,targets,indices)
-        obj = setObservationsAndTargets(obj,data,targets)
-        
-        obj = removeObservations(obj,indices)
-        obj = removeTargets(obj,indices)
-        
-        obj = retainObservations(obj,indices)
-        obj = retainTargets(obj,indices)
-        
-        obj = catObservations(obj,dataSet)
-        obj = catTargets(obj,dataSet)
-        
-        handles = plot(obj)
-        export(obj,prtExportObject)
-        Summary = summarize(obj)
+        function has = hasObservationNames(self)
+            has = ~isempty(self.observationNamesInternal);
+        end
+        function has = hasTargetNames(self)
+            has = ~isempty(self.targetNamesInternal);
+        end
         
     end
 end
