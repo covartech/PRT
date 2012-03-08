@@ -65,7 +65,6 @@ classdef prtDataSetBase
         nObservations         % The number of observations
         nTargetDimensions     % The number of target dimensions
         isLabeled             % Whether or not the data has target labels
-        
     end
     
     properties (Dependent, Hidden)
@@ -77,9 +76,10 @@ classdef prtDataSetBase
         observationNames      % Dependent variable providing access to observation names
         targetNames           % Dependent variable providing access to target names
     end
-    properties
+    properties (Dependent)
         observationInfo       % Struct of observation information
     end
+    
     properties (Hidden)
         targetInfo            % Struct of target information
     end
@@ -102,10 +102,19 @@ classdef prtDataSetBase
     % get and set these, they handle the dirty stuff
     properties (GetAccess = 'protected',SetAccess = 'protected')
         observationNamesInternal    % The observations names
+        observationInfoInternal
+        
         targetNamesInternal         % The target names.
     end
     
     methods
+        function self = set.observationInfo(self,val)
+            self = self.setObservationInfo(val);
+        end
+        
+        function val = get.observationInfo(self)
+            val = self.observationInfoInternal;
+        end
         function X = get.X(self)
             X = self.getX();
         end
@@ -201,6 +210,25 @@ classdef prtDataSetBase
         function self = setY(self,varargin)
             % setY Shortcut for setTargets
             self = self.setTargets(varargin{:});
+        end
+        function self = setObservationInfo(self,varargin)
+            
+            if length(varargin) == 1 
+                val = varargin{1};
+            else
+                val = prtUtilSimpleStruct(varargin{:});
+            end
+            if ~isa(val,'struct')
+                error('observationInfo must be a structure array');
+            end
+            if ~isvector(val)
+                error('observationInfo must be a structure array');
+            end
+            if length(val) ~= self.nObservations && self.nObservations ~= 0
+                error('observationInfo is length (%d) must be a structure array of length %d',self.nObservations);
+            end
+            self.observationInfoInternal = val;
+            
         end
     end
     
@@ -505,6 +533,65 @@ classdef prtDataSetBase
     end
     
     methods
+        function [obj,keep] = select(obj, selectFunction)
+            % Select observations to retain by specifying a function
+            %   The specified function is evaluated on each obesrvation.
+            %
+            % selectedDs = ds.select(selectFunction);
+            %
+            % There are two ways to define selectionFunction
+            %   One input, One logical vector output
+            %       selectFunction recieves the input data set and must
+            %       output a nObservations by 1 logical vector.
+            %   One input, One logical scalar output
+            %       selectFunction recieves the ObservatioinInfo structure
+            %       of a single observation.
+            %
+            % Examples:
+            %   ds = prtDataGenIris;
+            %   ds = ds.setObservationInfo(struct('asdf',num2cell(randn(ds.nObservations,1))));
+            %
+            %   dsSmallobservationInfoSelect = ds.select(@(ObsInfo)ObsInfo.asdf > 0.5);
+            %
+            %   dsSmallObservationSelect = ds.select(@(inputDs)inputDs.getObservations(:,1)>6);
+            
+            assert(isa(selectFunction, 'function_handle'),'selectFunction must be a function handle.');
+            assert(nargin(selectFunction)==1,'selectFunction must be a function handle that take a single input.');
+            
+            if isempty(ds.observationInfo)
+                error('prtDataSetBase:select','Attempt to apply a select function to an empty observationInfo');
+            end
+            
+            try
+                keep = selectFunction(obj);
+                assert(size(keep,1)==obj.nObservations);
+                assert(islogical(keep) || (isnumeric(keep) && all(ismember(keep,[0 1]))));
+            catch %#ok<CTCH>
+                if isempty(obj.observationInfo)
+                    error('prt:prtDataSetStandard:select','selectFunction did not return a logical vector with nObservation elements and this data set object does not contain observationInfo. Therefore this selecFunction is not valid.')
+                end
+                
+                try
+                    keep = arrayfun(@(s)selectFunction(s),obj.observationInfo);
+                catch %#ok<CTCH>
+                    % Try the loopy version
+                    keep = false(obj.nObservations,1);
+                    for iObs = 1:obj.nObservations
+                        try
+                            cOut = selectFunction(obj.observationInfo(iObs));
+                        catch %#ok<CTCH>
+                            error('prt:prtDataSetStandard:select','selectFunction did not return a logical vector with nObservation elements and there was an evaluation error using this function. See help prtDataSetStandard/select');
+                        end
+                        assert(numel(cOut)==1,'selectFunction did not return a logical vector with nObservation elements but also did not return scalar logical.');
+                        assert((islogical(cOut) || (isnumeric(cOut) && (cOut==0 || cOut==1))),'selectFunction that returns one output must output a 1x1 logical.');
+                        
+                        keep(iObs) = cOut;
+                    end
+                end
+            end
+            obj = obj.retainObservations(keep);
+        end
+        
         function [self, sampleIndices] = bootstrap(self,nSamples,p)
             
             if nargin < 3
@@ -543,6 +630,7 @@ classdef prtDataSetBase
         end
         
         function self = retainObservations(self,indices)
+            
             self = self.retainObservationInfo(indices);
             self = self.retainObservationData(indices);
             self = self.update;
@@ -563,7 +651,7 @@ classdef prtDataSetBase
                 self = self.retainObservationNames(indices);
             end
             if ~isempty(self.observationInfo)
-                self.observationInfo = self.observationInfo(indices);
+                self.observationInfoInternal = self.observationInfoInternal(indices);
             end
             
         end
@@ -580,12 +668,12 @@ classdef prtDataSetBase
                         %do nothing
                     elseif isempty(self.observationInfo) && ~isempty(currInput.observationInfo)
                         self.observationInfo = repmat(struct,self.nObservations,1);
-                        self.observationInfo = prtUtilStructVCatMergeFields(self.observationInfo,currInput.observationInfo(:));
+                        self.observationInfoInternal = prtUtilStructVCatMergeFields(self.observationInfo,currInput.observationInfo(:));
                     elseif ~isempty(self.observationInfo) && isempty(currInput.observationInfo)
                         currInput.observationInfo = repmat(struct,currInput.nObservations,1);
-                        self.observationInfo = prtUtilStructVCatMergeFields(self.observationInfo(:),currInput.observationInfo);
+                        self.observationInfoInternal = prtUtilStructVCatMergeFields(self.observationInfo(:),currInput.observationInfo);
                     else
-                        self.observationInfo = prtUtilStructVCatMergeFields(self.observationInfo(:),currInput.observationInfo(:));
+                        self.observationInfoInternal = prtUtilStructVCatMergeFields(self.observationInfo(:),currInput.observationInfo(:));
                     end
                 end
             end
