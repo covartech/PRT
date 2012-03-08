@@ -361,16 +361,17 @@ classdef prtDataSetStandard < prtDataSetInMem
                         obj = obj.setObservationsAndTargets(inObj.dataDepHelper,inObj.targetsDepHelper);
                         obj.observationInfo = inObj.observationInfoDepHelper;
                         obj.featureInfo = inObj.featureInfoDepHelper;
-                        if ~isempty(inObj.featureNames.cellValues)
-                            obj = obj.setFeatureNames(inObj.featureNames.cellValues);
+                        if ~isempty(inObj.featureNamesDepHelper)
+                            obj = obj.setFeatureNames(inObj.featureNamesDepHelper.cellValues,inObj.featureNamesDepHelper.integerKeys);
                         end
-                        if ~isempty(inObj.observationNames.cellValues)
-                            obj = obj.setObservationNames(inObj.observationNames.cellValues);
+                        if ~isempty(inObj.observationNamesInternal.cellValues)
+                            obj = obj.setObservationNames(inObj.observationNamesInternal.cellValues,inObj.observationNamesInternal.integerKeys);
+                            %obj = obj.setObservationNames(inObj.observationNames.cellValues);
                         end
-                        if ~isempty(inObj.targetNames.cellValues)
-                            obj = obj.setTargetNames(inObj.targetNames.cellValues);
+                        if ~isempty(inObj.targetNamesInternal)
+                            obj = obj.setTargetNames(inObj.targetNamesInternal.cellValues);
                         end
-                        obj.plotOptions = inObj.plotOptions;
+                        
                         obj.name = inObj.name;
                         obj.description = inObj.description;
                         obj.userData = inObj.userData;
