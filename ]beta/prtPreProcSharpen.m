@@ -44,13 +44,13 @@ classdef prtPreProcSharpen < prtPreProc
                 for start = 1:memBlock:n
                     indices = start:min(start+memBlock-1,n);
                     
-                    distanceMat = feval(Obj.distanceFunction, Obj.DataSet.getObservations, DataSet.getObservations(indices));
+                    distanceMat = feval(Obj.distanceFunction, Obj.dataSet.getObservations, DataSet.getObservations(indices));
                     
                     [~,I] = sort(distanceMat,1,'ascend');
                     nearestNeighborInds(indices) = I(Obj.k+1,:); %+1 to remove self-reference
                 end
             else
-                distanceMat = feval(Obj.distanceFunction, Obj.DataSet.getObservations(), DataSet.getObservations());
+                distanceMat = feval(Obj.distanceFunction, Obj.dataSet.getObservations(), DataSet.getObservations());
                 
                 [~,I] = sort(distanceMat,1,'ascend');
                 nearestNeighborInds = I(Obj.k+1,:); %+1 to remove self-reference

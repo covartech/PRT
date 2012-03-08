@@ -885,7 +885,9 @@ classdef prtDataSetClass  < prtDataSetStandard
             for iLine = 1:length(hs)
                 set(hs(iLine),'color',colors(iLine,:));
             end
-            xlim([Summary.lowerBounds, Summary.upperBounds]);
+            if Summary.lowerBounds < Summary.upperBounds
+                xlim([Summary.lowerBounds, Summary.upperBounds]);
+            end
             
             grid on;
             xlabel(obj.getFeatureNames{1});
@@ -959,7 +961,12 @@ classdef prtDataSetClass  < prtDataSetStandard
                         hs{iFeature,jFeature} = plotFeatureDensity(obj, iFeature);
                     else
                         hs{iFeature,jFeature} = obj.plot([iFeature jFeature]);
-                        axis([Summary.lowerBounds(iFeature), Summary.upperBounds(iFeature) Summary.lowerBounds(jFeature), Summary.upperBounds(jFeature)])
+                        if Summary.lowerBounds(iFeature) < Summary.upperBounds(iFeature)
+                            xlim([Summary.lowerBounds(iFeature), Summary.upperBounds(iFeature)])
+                        end
+                        if Summary.lowerBounds(jFeature) < Summary.upperBounds(jFeature)
+                            ylim([Summary.lowerBounds(jFeature), Summary.upperBounds(jFeature)]);
+                        end
                     end
                     
                     ylabel('');

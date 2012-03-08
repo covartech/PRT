@@ -12,28 +12,6 @@ mix = prtBrvDpMixture('components',repmat(prtBrvMvn,10,1), 'vbVerboseText',true,
 
 %%
 
-%%
-ds = prtDataGenOldFaithful; 
-
-mix = prtBrvMixture('components',repmat(prtBrvMvn,10,1), 'vbVerboseText',true, 'vbVerbosePlot', true, 'vbConvergenceThreshold',1e-10,'vbVerboseMovie',1);
-[mixLearned, training] = mix.vbBatch(ds);
-
-dpmix = prtBrvDpMixture('components',repmat(prtBrvMvn,10,1), 'vbVerboseText',true, 'vbVerbosePlot', true, 'vbConvergenceThreshold',1e-10,'vbVerboseMovie',1);
-[dpmixLearned, dpTraining] = mix.vbBatch(ds);
-%%
-movie2gif(mixLearned.vbVerboseMovieFrames,fullfile(myDesktop,'vbGmm'))
-movie2gif(dpmixLearned.vbVerboseMovieFrames,fullfile(myDesktop,'vbDpGmm'))
-
-
-
-
-
-
-
-
-
-%%
-
 O = vbdpmmOptions(mvnOptions);
 O.verbosePlot = true;
 O.verboseText = true;
