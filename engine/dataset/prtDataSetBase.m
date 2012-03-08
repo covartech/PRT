@@ -213,6 +213,10 @@ classdef prtDataSetBase
         end
         function self = setObservationInfo(self,varargin)
             
+            if isempty(varargin{1})
+                self.observationInfoInternal = varargin{1};
+                return;
+            end
             if length(varargin) == 1 
                 val = varargin{1};
             else
