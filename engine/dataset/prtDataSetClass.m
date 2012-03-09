@@ -44,32 +44,22 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
     
     methods
         
-        function self = catObservations(self,varargin)
-            self = catObservations@prtDataSetStandard(self,varargin{:});
-            self = catClasses(self,varargin{:});
-            self = self.updateTargetCache;
-        end
-        
-        function self = setTargets(self,targets)
-            self = setTargets@prtDataSetStandard(self,targets);
-            self = self.updateTargetCache;
-        end
-        
-        function self = setObservationsAndTargets(self,data,targets)
-            
-            if ~(isempty(targets) || isempty(data)) && size(data,1) ~= size(targets,1)
-                error('prt:DataTargetsSizeMisMatch','Neither targets nor data is empty, and the number of observations in data (%d) does not match the number of observations in targets (%d)',size(data,1),size(targets,1));
-            end
-            
-            self.internalSizeConsitencyCheck = false;
-            self = self.setData(data);
-            self = self.setTargets(targets);
-            self.internalSizeConsitencyCheck = true;
-            
+        function self = update(self)
             % Updated chached target info
             self = updateTargetCache(self);
             % Updated chached data info
             self = updateObservationsCache(self);
+        end
+        
+        function self = catObservations(self,varargin)
+            self = catObservations@prtDataSetStandard(self,varargin{:});
+            self = catClasses(self,varargin{:});
+            self = self.update;
+        end
+        
+        function self = setTargets(self,targets)
+            self = setTargets@prtDataSetStandard(self,targets);
+            self = self.update;
         end
         
         function Summary = summarize(self)
@@ -867,6 +857,84 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
             varargout = {};
             if nargout > 0
                 varargout = {handleArray};
+            end
+        end
+    end
+    
+    methods (Static)
+        function obj = loadobj(obj)
+            
+            if isstruct(obj)
+                if ~isfield(obj,'version')
+                    % Version 0 - we didn't even specify version
+                    inputVersion = 0;
+                else
+                    inputVersion = obj.version;
+                end
+                
+                currentVersionObj = prtDataSetStandard;
+                
+                if inputVersion == currentVersionObj.version
+                    % Returning now will cause MATLAB to ignore this entire
+                    % loadobj() function and perform the default actions
+                    return
+                end
+                
+                % The input version is less than the current version
+                % We need to
+                inObj = obj;
+                obj = currentVersionObj;
+                switch inputVersion
+                    case 0
+                        % The oldest version of prtDataSetBase
+                        % We need to set the appropriate fields from the
+                        % structure (inObj) into the prtDataSetClass of the
+                        % current version
+                        obj = obj.setObservationsAndTargets(inObj.dataDepHelper,inObj.targetsDepHelper);
+                        obj.observationInfo = inObj.observationInfoDepHelper;
+                        obj.featureInfo = inObj.featureInfoDepHelper;
+                        if ~isempty(inObj.featureNamesDepHelper)
+                            obj = obj.setFeatureNames(inObj.featureNamesDepHelper.cellValues,inObj.featureNamesDepHelper.integerKeys);
+                        end
+                        if ~isempty(inObj.observationNamesInternal.cellValues)
+                            obj = obj.setObservationNames(inObj.observationNamesInternal.cellValues,inObj.observationNamesInternal.integerKeys);
+                            %obj = obj.setObservationNames(inObj.observationNames.cellValues);
+                        end
+                        if ~isempty(inObj.targetNamesInternal)
+                            obj = obj.setTargetNames(inObj.targetNamesInternal.cellValues);
+                        end
+                        
+                        obj.name = inObj.name;
+                        obj.description = inObj.description;
+                        obj.userData = inObj.userData;
+                        obj.actionData = inObj.actionData;
+                        
+                    case 1
+                        disp('case 1');
+                        error('not tested');
+                        %                         obj = obj.setObservationsAndTargets(inObj.dataDepHelper,inObj.targetsDepHelper);
+                        %                         obj.observationInfo = inObj.observationInfoDepHelper;
+                        %                         obj.featureInfo = inObj.featureInfoDepHelper;
+                        %                         if ~isempty(inObj.featureNames.cellValues)
+                        %                             obj = obj.setFeatureNames(inObj.featureNames.cellValues);
+                        %                         end
+                        %                         if ~isempty(inObj.observationNames.cellValues)
+                        %                             obj = obj.setObservationNames(inObj.observationNames.cellValues);
+                        %                         end
+                        %                         if ~isempty(inObj.targetNames.cellValues)
+                        %                             obj = obj.setTargetNames(inObj.targetNames.cellValues);
+                        %                         end
+                        %                         obj.plotOptions = inObj.plotOptions;
+                        %                         obj.name = inObj.name;
+                        %                         obj.description = inObj.description;
+                        %                         obj.userData = inObj.userData;
+                        %                         obj.actionData = inObj.actionData;
+                        %
+                    otherwise
+                        error('prt:prtDataSetStandard:loadObj','Unknown prtDataSetBase version %d, object cannot be laoded.',inputVersion);
+                end
+            else
+                % Nothin special
             end
         end
     end
