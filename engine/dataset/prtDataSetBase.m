@@ -689,6 +689,9 @@ classdef prtDataSetBase
         function self = update(self)
             %default behaviour is to do nothing
         end
+        function self = updateObservationsCache(self)
+            %default behaviour is to do nothing
+        end
     end
     
     methods (Hidden = true)

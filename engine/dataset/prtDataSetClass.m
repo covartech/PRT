@@ -42,14 +42,17 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
         end
     end
     
-    methods
-        
+    
+    methods (Access = protected)
         function self = update(self)
             % Updated chached target info
             self = updateTargetCache(self);
             % Updated chached data info
             self = updateObservationsCache(self);
         end
+    end
+    
+    methods
         
         function self = catObservations(self,varargin)
             self = catObservations@prtDataSetStandard(self,varargin{:});
