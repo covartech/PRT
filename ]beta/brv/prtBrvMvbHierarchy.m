@@ -17,5 +17,9 @@ classdef prtBrvMvbHierarchy
             obj.countOfZeros = 0.5*ones(1,nDimensions);
             obj.countOfOnes = 0.5*ones(1,nDimensions);
         end
+        
+        function tf = isValid(self)
+            tf = ~isempty(self.countOfZeros);
+        end
     end
 end

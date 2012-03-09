@@ -5,11 +5,20 @@ classdef prtBrvDiscreteHierarchy
         lambda
     end
     methods
-        function obj = prtBrvDiscreteHierarchy(varargin)
+        function self = prtBrvDiscreteHierarchy(varargin)
             if nargin < 1
                 return
             end
-            obj.lambda = ones(1,varargin{1})/varargin{1};
+            
+            self = defaultParameters(self,varargin{1});
+        end
+        
+        function self = defaultParameters(self, nDimensions)
+            self.lambda = ones(1,nDimensions)/nDimensions;
+        end
+        
+        function tf = isValid(self)
+            tf = ~isempty(self.lambda);
         end
     end
 end

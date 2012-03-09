@@ -1,25 +1,10 @@
 % PRTBRVMVB - PRT BRV Multivariate Binary Observation Model
-%
-% Constructor takes the dimesionality
-%
-% Impliments all abstract properties and methods from prtBrvObsModel.
-%
-% Additional Properties:
-%   model - prtBrvMvbHierarchy object that contains the parameters of the
-%       prior/posterior
-% Additional Hidden Properties:
-%   initFuzzyFactor - Used to weaken the results of kmeans in the
-%       mixture initialization process. Between 0 and 1 (inclusivly) and
-%       probably greater than 0.9. Default 1.
-%   initModifiyPrior - Specifies weather to modify the covariance of the
-%       prior to more closely match that of the training data during
-%       mixture initialization.
-%
-% Also inherits from prtBrvVbOnlineObsModel and therefore impliments
-%   vbOnlineWeightedUpdate
 
-classdef prtBrvMvb < prtBrvObsModel & prtBrvVbOnlineObsModel
+classdef prtBrvMvb < prtBrv & prtBrvVbOnline & prtBrvVbMembershipModel & prtBrvVbOnlineMembershipModel
     
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % Properties required by prtAction
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     properties (SetAccess = private)
         name = 'Multi-varite Binary Bayesian Random Variable';
         nameAbbreviation = 'BRVMVB';
@@ -30,64 +15,39 @@ classdef prtBrvMvb < prtBrvObsModel & prtBrvVbOnlineObsModel
         isCrossValidateValid = true;
     end
     
-    properties
-        model = prtBrvMvbHierarchy;
-    end    
     
-    properties (Hidden)
-        initFudgeFactor = 1; % Between zero and 1, probably > 0.9
-    end
-    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % Methods for prtBrv
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
     methods
-        function obj = prtBrvMvb(varargin)
-            if nargin < 1
-                return
+        
+        function self = estimateParameters(self, x)
+            self = conjugateUpdate(self, self, x);
+        end
+        
+        function y = predictivePdf(self, x)
+            %%%% FIXME
+            % The true predictive here is a product of beta-binomials
+            % Since that isn't implemented yet we use the average
+            % variational loglikelihood
+            
+            y = conjugateVariationalAverageLogLikelihood(self, x);
+        end
+        
+        function val = getNumDimensions(self)
+            val = length(self.model.countOfOnes);
+        end
+    
+        function self = initialize(self, x)
+            x = self.parseInputData(x);
+            if ~self.model.isValid
+                self.model = self.model.defaultParameters(size(x,2));
             end
-            obj.model = prtBrvMvbHierarchy(varargin{1});
         end
         
-        function val = nDimensions(obj)
-            val = length(obj.model.countOfOnes);
-        end
-        
-        function y = conjugateVariationalAverageLogLikelihood(obj, x)
-
-            [logProb0, logProb1] = obj.expectedValueLogProbabilities;
-            
-            y = sum(bsxfun(@times,x,logProb1) + bsxfun(@times,~x,logProb0),2);
-        end
-        
-        function [phiMat, priorObjs] = mixtureInitialize(objs, priorObjs, X) % Vector of objects
-            
-            learningInitialMembershipFactor = objs(1).initFudgeFactor;
-            
-            [classMeans,kmMembership] = prtUtilKmeans(X,length(objs),'handleEmptyClusters','random','distanceMetricFn',@prtDistanceHamming,'maxIterations',100,'logicalMeans',true); %#ok<ASGLU>
-            
-            phiMat = zeros(size(X,1),length(objs));
-            for iComp = 1:length(objs)
-                phiMat(kmMembership == iComp, iComp) = learningInitialMembershipFactor;
-            end
-            phiMat(phiMat==0) = (1-learningInitialMembershipFactor)./(length(objs)-1);
-            
-            % We should normalize this just in case the
-            % learningInitialMembershipFactor was set poorly
-            phiMat = bsxfun(@rdivide,phiMat,sum(phiMat,2));
-        
-        end
-        
-        function obj = weightedConjugateUpdate(obj, priorObj, x, weights)
-            if nargin < 4 || isempty(weights)
-                weights = ones(size(x,1),1);
-            end
-            
-            obj.model.countOfOnes = sum(bsxfun(@times,x,weights)) + priorObj.model.countOfOnes;
-            
-            obj.model.countOfZeros = sum(bsxfun(@times,~x,weights)) + priorObj.model.countOfZeros;
-            
-        end
-        
+        % Optional methods
+        %------------------------------------------------------------------
         function kld = conjugateKld(obj, priorObj)
-
             betaKlds = zeros(1,length(obj.model.countOfOnes));
             for iDim = 1:length(obj.model.countOfOnes)
                 betaKlds(iDim) = prtRvUtilDirichletKld([obj.model.countOfZeros(iDim) obj.model.countOfOnes(iDim)],[priorObj.model.countOfZeros(iDim) priorObj.model.countOfOnes(iDim)]);
@@ -96,26 +56,11 @@ classdef prtBrvMvb < prtBrvObsModel & prtBrvVbOnlineObsModel
             kld = sum(betaKlds);
         end
         
-        function x = posteriorMeanDraw(obj, n, varargin)
-            if nargin < 2
-                n = 1;
-            end
-            modelMean.probabilities = obj.posteriorMeanStruct();
-            x = bsxfun(@gt,rand(n,length(modelMean.probabilities)),modelMean.probabilities);
-        end
-        
         function s = posteriorMeanStruct(obj)
-            s.probabilities = obj.model.countOfOnes./obj.model.countOfZeros;
+            s.probabilities = obj.model.countOfOnes./(obj.model.countOfOnes + obj.model.countOfZeros);
         end
         
-        function model = modelDraw(obj)
-            model.probabilities = zeros(1,length(obj.model.countOfOnes));
-            for iDim = 1:length(obj.model.countOfOnes)
-                model.probabilities(iDim) = prtRvUtilDirichletRnd([obj.model.countOfZeros(iDim) obj.model.countOfOnes(iDim)]);
-            end
-        end
-        
-        function plot(objs,colors)
+        function plotCollection(objs,colors)
             
             nComponents = length(objs);
             
@@ -139,7 +84,100 @@ classdef prtBrvMvb < prtBrvObsModel & prtBrvVbOnlineObsModel
             
         end
         
+        function val = plotLimits(self)
+            val = [1 self.nDimensions 0 1];
+        end
+    end
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % Methods for prtBrvVb
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+    methods
+        function [self, training] = vbBatch(self,x)
+            % Since we are purely conjugate we actually don't need vbBatch
+            % However we must implement it.
+            self = conjugateUpdate(self,x);
+            training = struct([]);
+        end
+    end
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % Methods for prtBrvMembershipModel
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+    methods
+        
+        function [phiMat, priorObjs] = collectionInitialize(objs, priorObjs, X) % Vector of objects
+            
+            learningInitialMembershipFactor = objs(1).initFudgeFactor;
+            
+            [classMeans,kmMembership] = prtUtilKmeans(X,length(objs),'handleEmptyClusters','random','distanceMetricFn',@prtDistanceHamming,'maxIterations',100,'logicalMeans',true); %#ok<ASGLU>
+            
+            phiMat = zeros(size(X,1),length(objs));
+            for iComp = 1:length(objs)
+                phiMat(kmMembership == iComp, iComp) = learningInitialMembershipFactor;
+            end
+            phiMat(phiMat==0) = (1-learningInitialMembershipFactor)./(length(objs)-1);
+            
+            % We should normalize this just in case the
+            % learningInitialMembershipFactor was set poorly
+            phiMat = bsxfun(@rdivide,phiMat,sum(phiMat,2));
+        
+        end
+        
+        function obj = weightedConjugateUpdate(obj, priorObj, x, weights)
+            
+            x = obj.parseInputData(x);
+            priorObj = priorObj.initialize(x);
+            
+            if nargin < 4 || isempty(weights)
+                weights = ones(size(x,1),1);
+            end
+            
+            obj.model.countOfOnes = sum(bsxfun(@times,x,weights)) + priorObj.model.countOfOnes;
+            
+            obj.model.countOfZeros = sum(bsxfun(@times,~x,weights)) + priorObj.model.countOfZeros;
+            
+        end
+        
+        function self = conjugateUpdate(self, prior, x)
+            x = self.parseInputData(x);
+            
+            self = weightedConjugateUpdate(self, prior, x, ones(size(x,1),1));
+        end
+    end
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % Methods for prtBrvVbMembershipModel
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+    methods
+        function y = conjugateVariationalAverageLogLikelihood(obj, x)
+
+            [logProb0, logProb1] = obj.expectedValueLogProbabilities;
+            
+            y = sum(bsxfun(@times,x,logProb1) + bsxfun(@times,~x,logProb0),2);
+        end
+    end
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % Methods for prtBrvVbOnlineMembershipModel
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+    methods
+        function obj = vbOnlineInitialize(obj, priorObj, x) %#ok<INUSD>
+            
+            randDraw = (rand(1,obj.nDimensions)>0.5);
+            
+            obj.model.countOfOnes = randDraw+0.5;
+            obj.model.countOfZeros  = (1-randDraw) + 0.5;
+        end
+        
+        function [self, training] = vbOnlineUpdate(self, priorObj, x, lambda, D, prevObj)
+            x = self.parseInputData(x);
+            [self, training] = vbOnlineWeightedUpdate(self, priorObj, x, ones(size(x,1),1), lambda, D, prevObj);
+        end
+        
         function [obj, training] = vbOnlineWeightedUpdate(obj, priorObj, x, weights, lambda, D, prevObj)
+            x = obj.parseInputData(x);
+            
             S = size(x,1);
             
             if nargin < 4 || isempty(weights)
@@ -151,6 +189,29 @@ classdef prtBrvMvb < prtBrvObsModel & prtBrvVbOnlineObsModel
             
             training = struct([]);
         end
+    end
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % Properties for prtBrvMvb use
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    properties
+        model = prtBrvMvbHierarchy;
+    end    
+    
+    properties (Hidden)
+        initFudgeFactor = 1; % Between zero and 1, probably > 0.9
+    end
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % Methods for prtBrvMvb use
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    methods
+        function self = prtBrvMvb(varargin)
+            if nargin < 1
+                return
+            end
+            self = constructorInputParse(self,varargin{:});
+        end
         
         function [logProb0, logProb1] = expectedValueLogProbabilities(obj)
             psi1 = psi(obj.model.countOfOnes);
@@ -160,9 +221,25 @@ classdef prtBrvMvb < prtBrvObsModel & prtBrvVbOnlineObsModel
             
             logProb1 = psi1 - psiSum;
             logProb0 = psi0 - psiSum;
-            %normalizer = prtUtilSumExp(cat(1,logProb0,logProb1));
-            %logProb0 = logProb0-normalizer;
-            %logProb1 = logProb1-normalizer;
+        end
+        
+        function model = modelDraw(obj)
+            model.probabilities = zeros(1,length(obj.model.countOfOnes));
+            for iDim = 1:length(obj.model.countOfOnes)
+                model.probabilities(iDim) = prtRvUtilDirichletRnd([obj.model.countOfZeros(iDim) obj.model.countOfOnes(iDim)]);
+            end
+        end
+    end
+    
+    methods (Hidden)
+        function x = parseInputData(self,x) %#ok<MANU>
+            if isnumeric(x)
+                return
+            elseif prtUtilIsSubClass(class(x),'prtDataSetBase')
+                x = x.getObservations();
+            else 
+                error('prt:prtBrvMvb:parseInputData','prtBrvMvb requires a prtDataSet or a numeric 2-D matrix');
+            end
         end
     end
 end

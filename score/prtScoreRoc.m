@@ -56,8 +56,9 @@ if size(ds,2) > 1
             lineHandles(iRoc) = plot(pf{iRoc},pd{iRoc},'color',colors(iRoc,:));
             hold on
         end
-        xlabel('Pf');
-        ylabel('Pd');
+        xlabel('P_F');
+        ylabel('P_D');
+        grid on;
         set(gca,'nextPlot',holdState);
         varargout = {};
     else
