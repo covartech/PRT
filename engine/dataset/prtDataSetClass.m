@@ -458,9 +458,15 @@ classdef prtDataSetClass  < prtDataSetStandard
             assert(isnumeric(classes) && isvector(classes),'classes must be a numeric vector');
             [isActuallyAClass, classInds] = ismember(classes,obj.uniqueClasses); %#ok<ASGLU>
             
+            classInds = classInds(classInds ~= 0);
+            %nothing to retain...
+            if isempty(classInds)
+                obj = obj.setObservationsAndTargets([],[]);
+                return;
+            end
+            
             % I am not sure if we want to enforce this.
-            % I don't think we do.
-            % assert(all(isActuallyAClass),'all classes to retain must be represented in dataSet')
+            %assert(all(isActuallyAClass),sprintf('Some classes to retain (%s) were not present in the data set',mat2str(classes)));
             
             obj = retainClassesByInd(obj,classInds);
         end
@@ -475,7 +481,11 @@ classdef prtDataSetClass  < prtDataSetStandard
             
             assert(isnumeric(classes) && isvector(classes),'classes must be a numeric vector');
             [isActuallyAClass, classInds] = ismember(classes,obj.uniqueClasses); %#ok<ASGLU>            
-            
+            classInds = classInds(classInds ~= 0);
+            %nothing to remove
+            if isempty(classInds)
+                return;
+            end
             % I am not sure if we want to enforce this.
             % I don't think we do.
             % assert(all(isActuallyAClass),'all classes to retain must be represented in dataSet')            
