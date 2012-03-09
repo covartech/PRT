@@ -650,7 +650,7 @@ classdef prtDataSetBase
     methods (Access = protected)
         function self = retainObservationInfo(self,indices)
             
-            if ~isempty(self.observationNames)
+            if self.hasObservationNames
                 %self.observationNames = self.observationNames(indices);
                 self = self.retainObservationNames(indices);
             end
