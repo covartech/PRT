@@ -1,4 +1,5 @@
 classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTargets
+    %prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTargets
     
     
     properties (Hidden = true)
