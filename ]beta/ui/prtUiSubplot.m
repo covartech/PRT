@@ -1,5 +1,5 @@
 function obj = prtUiSubplot(inputSpec,constructorFun)
-% obj = prtGuiSubplot(varargin)
+% obj = prtUiSubplot(varargin)
 %
 % obj = prtUiSubplot({{subplot one inputs}, {subplot two inputs},...},{prtGuiManagerAxesType1, prtGuiMangerAxesType2,...});
 % obj = prtUiSubplot([2,2,1:2],prtUiManagerAxesType1);
@@ -14,8 +14,10 @@ end
 if iscell(inputSpec)
     if ~iscell(constructorFun)
         constructorFun = repmat({constructorFun},length(inputSpec));
+        assert(isa(constructorFun,'function_handle'),'constructorFun must be a function handle');
     else
         assert(length(constructorFun)==length(inputSpec),'length of specified prtGuiManager*s must match the number of specified subplots');
+        assert(isa(constructorFun{1},'function_handle'),'constructorFun must be or contain a function handle');
     end
     
     nAxes = length(inputSpec);
@@ -23,15 +25,15 @@ if iscell(inputSpec)
         cInputSpec = inputSpec{iAxes};
         
         if iscell(cInputSpec)
-            assert(length(cInputSpec)==3,'prtGuiSubplot inputs must be a length(3) cell');
+            assert(length(cInputSpec)==3,'prtUiSubplot inputs must be a cell');
             axesManagers(iAxes) = constructorFun{iAxes}('managedHandle',subplot(cInputSpec{1},cInputSpec{2},cInputSpec{3}, 'parent', obj.managedHandle)); %#ok<AGROW>
         else
-            assert(prtUtilIsPositiveInteger(cInputSpec) & numel(cInputSpec)==3,'prtGuiSubplot inputs must be a cell or a length(3) vector of positive integers');
+            assert(prtUtilIsPositiveInteger(cInputSpec) & numel(cInputSpec)==3,'prtUiSubplot inputs must be a cell or a length(3) vector of positive integers');
             axesManagers(iAxes) = constructorFun{iAxes}('managedHandle',subplot(cInputSpec(1),cInputSpec(2),cInputSpec(3), 'parent', obj.managedHandle)); %#ok<AGROW>
         end
     end
 else
-    assert(prtUtilIsPositiveInteger(inputSpec) & ismember(numel(inputSpec),[2 3]),'prtGuiSubplot inputs must be vector of positive integers');
+    assert(prtUtilIsPositiveInteger(inputSpec) & ismember(numel(inputSpec),[2 3]),'prtUiSubplot inputs must be vector of positive integers');
     
     if ~iscell(constructorFun)
         assert(length(constructorFun)==1,'length of specified prtGuiManager*s must match the number of specified subplots');

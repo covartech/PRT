@@ -300,7 +300,7 @@ classdef prtBrvMvn < prtBrv & prtBrvVbOnline & prtBrvVbMembershipModel & prtBrvV
     % Methods for prtBrvVbOnlineMembershipModel
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
     methods
-        function self = vbOnlineInitialize(self, priorObj, x) %#ok<INUSD>
+        function self = vbOnlineInitialize(self, x) %#ok<INUSD>
             self.model.meanMean = randn(1,self.nDimensions);
         end
         
@@ -336,7 +336,7 @@ classdef prtBrvMvn < prtBrv & prtBrvVbOnline & prtBrvVbMembershipModel & prtBrvV
             
             self.model.covPhi = newSumOfSquares - self.model.meanMean'*self.model.meanMean*self.model.meanBeta;
 
-            training = prtBrvVbTraining;
+            training = struct([]);
         end
     end
     

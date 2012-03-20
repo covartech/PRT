@@ -179,7 +179,7 @@ classdef prtBrvDiscrete < prtBrv & prtBrvVbOnline & prtBrvVbMembershipModel & pr
     % Methods for prtBrvVbOnlineMembershipModel
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
     methods
-        function obj = vbOnlineInitialize(obj, priorObj, x) %#ok<INUSD>
+        function obj = vbOnlineInitialize(obj, x) %#ok<INUSD>
             randDraw = rand(1,obj.nDimensions);
             randDraw = randDraw./sum(randDraw);
             
