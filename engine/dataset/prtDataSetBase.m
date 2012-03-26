@@ -94,7 +94,7 @@ classdef prtDataSetBase
         actionData = struct;      % Data stored by a prtAction
     end
     
-    properties (Hidden, Constant)
+    properties (Hidden, Access = protected)
         version = 2;
     end
     

@@ -868,7 +868,6 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
     methods (Static)
         function obj = loadobj(obj)
             
-            keyboard
             if isstruct(obj)
                 if ~isfield(obj,'version')
                     % Version 0 - we didn't even specify version
@@ -877,7 +876,7 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
                     inputVersion = obj.version;
                 end
                 
-                currentVersionObj = prtDataSetStandard;
+                currentVersionObj = prtDataSetClass;
                 
                 if inputVersion == currentVersionObj.version
                     % Returning now will cause MATLAB to ignore this entire
