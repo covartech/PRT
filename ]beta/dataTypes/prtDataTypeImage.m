@@ -48,6 +48,23 @@ classdef prtDataTypeImage
     
     methods
         
+        function [patches,fullPatch] = extractKeypointPatches(self,patchSize)
+            patches = cell(size(self.keypoints,1),1);
+            for keyIndex = 1:size(self.keypoints,1)
+                cropRect = [self.keypoints(keyIndex,:)-ceil(patchSize/2),patchSize-1];
+                patches{keyIndex} = imcrop(self.gray,cropRect);
+            end
+            fullPatch = cellfun(@(x) isequal(size(x),patchSize), patches);
+        end
+        
+        function [self,points] = extractKeypoints(self,varargin)
+            %[self,points] = extractKeypoints(self,varargin)
+            %  Call this like you would "corner"
+            % to do: add scales
+            points = corner(self.gray,varargin{:});
+            self.keypoints = points;
+        end
+        
         function sz = getImageSize(self,varargin)
             %sz = getImageSize(self,varargin)
             sz = size(self.imageData,varargin{:});
@@ -79,6 +96,11 @@ classdef prtDataTypeImage
             %       Uses imread to read the RGB values from the image file
             %       imgFile.
             %
+            if nargin == 0
+                self.internalRgbData = nan;
+                self.imageType = 'gray';
+                return;
+            end
             
             if nargin == 2
                 if isa(varargin{1},'char') % one input, infer type

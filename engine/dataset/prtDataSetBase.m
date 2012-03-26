@@ -211,7 +211,25 @@ classdef prtDataSetBase
             % setY Shortcut for setTargets
             self = self.setTargets(varargin{:});
         end
+        
+        function val = getObservationInfo(self,varargin)
+            %val = getObservationInfo(self,varargin)
+            
+            if nargin < 2
+                val = self.observationInfoInternal;
+                return;
+            elseif nargin == 2
+                if isa(varargin{1},'char')
+                    val = cat(1,self.observationInfoInternal.(varargin{1}));
+                    return;
+                else
+                    val = self.observationInfoInternal(varargin{:});
+                end
+            end
+        end
+        
         function self = setObservationInfo(self,varargin)
+            %self = setObservationInfo(self,varargin)
             
             if isempty(varargin{1})
                 self.observationInfoInternal = varargin{1};
@@ -220,7 +238,8 @@ classdef prtDataSetBase
             if length(varargin) == 1 
                 val = varargin{1};
             else
-                val = prtUtilSimpleStruct(varargin{:});
+                origStruct = self.observationInfoInternal;
+                val = prtUtilSimpleStruct(origStruct,varargin{:});
             end
             if ~isa(val,'struct')
                 error('observationInfo must be a structure array');
@@ -232,8 +251,8 @@ classdef prtDataSetBase
                 error('observationInfo is length %d; should be a structure array of length %d',length(val),self.nObservations);
             end
             self.observationInfoInternal = val;
-            
         end
+        
     end
     
     methods 
