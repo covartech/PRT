@@ -73,13 +73,13 @@ classdef prtDataTypeImage
         function self = imresize(self,varargin)
             %self = imresize(self,varargin)
             imgData = imresize(self.imageData,varargin{:});
-            self = vpDataImage(imgData,self.imageType);
+            self = prtDataTypeImage(imgData,self.imageType);
         end
         
         function self = imcrop(self,varargin)
             %self = imcrop(self,varargin)
             imgData = imcrop(self.imageData,varargin{:});
-            self = vpDataImage(imgData,self.imageType);
+            self = prtDataTypeImage(imgData,self.imageType);
         end
         
         function self = prtDataTypeImage(varargin) 
@@ -209,7 +209,7 @@ classdef prtDataTypeImage
                     self.internalRgbData = rgb2gray(self.imageData);
                     self.internalGrayData = rgb2gray(self.internalRgbData);
                 otherwise
-                    error('vpDataImage:invalidSpec','The specified image format was not valid');
+                    error('prtDataTypeImage:invalidSpec','The specified image format was not valid');
             end
         end
         
@@ -233,7 +233,7 @@ classdef prtDataTypeImage
                         self.internalGrayData = rgb2gray(self.internalRgbData);
                         g = self.internalGrayData;
                     otherwise 
-                        error('vpDataImage:invalidSpec','The specified image format was not valid');
+                        error('prtDataTypeImage:invalidSpec','The specified image format was not valid');
                 end
                 return;
             end     
@@ -246,10 +246,10 @@ classdef prtDataTypeImage
             else
                 switch lower(self.imageType)
                     case 'mat'
-                        %                         error('vpDataImage:invalidSpec','Cannot convert from internal storage "mat" to "rgb"');
+                        %                         error('prtDataTypeImage:invalidSpec','Cannot convert from internal storage "mat" to "rgb"');
                         r = nan;
                     case 'gray'
-                        %                         error('vpDataImage:invalidSpec','Cannot convert from internal storage "gray" to "rgb"');
+                        %                         error('prtDataTypeImage:invalidSpec','Cannot convert from internal storage "gray" to "rgb"');
                         r = nan;
                     case 'rgb'
                         self.internalRgbData = self.imageData;
@@ -258,7 +258,7 @@ classdef prtDataTypeImage
                         self.internalRgbData = rgb2gray(self.imageData);
                         r = self.internalRgbData;
                     otherwise 
-                        error('vpDataImage:invalidSpec','The specified image format was not valid');
+                        error('prtDataTypeImage:invalidSpec','The specified image format was not valid');
                 end
                 return;
             end     
@@ -271,10 +271,10 @@ classdef prtDataTypeImage
             else
                 switch lower(self.imageType)
                     case 'mat'
-                        %                         error('vpDataImage:invalidSpec','Cannot convert from internal storage "mat" to "hsv"');
+                        %                         error('prtDataTypeImage:invalidSpec','Cannot convert from internal storage "mat" to "hsv"');
                         h = nan;
                     case 'gray'
-                        %                         error('vpDataImage:invalidSpec','Cannot convert from internal storage "gray" to "hsv"');
+                        %                         error('prtDataTypeImage:invalidSpec','Cannot convert from internal storage "gray" to "hsv"');
                         h = nan;
                     case 'rgb'
                         self.internalHsvData = rgb2hsv(self.imageData);
@@ -283,7 +283,7 @@ classdef prtDataTypeImage
                         self.internalHsvData = self.imageData;
                         h = self.internalHsvData;
                     otherwise 
-                        error('vpDataImage:invalidSpec','The specified image format was not valid');
+                        error('prtDataTypeImage:invalidSpec','The specified image format was not valid');
                 end
                 return;
             end     
