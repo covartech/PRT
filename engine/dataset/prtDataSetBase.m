@@ -581,7 +581,7 @@ classdef prtDataSetBase
             assert(isa(selectFunction, 'function_handle'),'selectFunction must be a function handle.');
             assert(nargin(selectFunction)==1,'selectFunction must be a function handle that take a single input.');
             
-            if isempty(ds.observationInfo)
+            if isempty(obj.observationInfo)
                 error('prtDataSetBase:select','Attempt to apply a select function to an empty observationInfo');
             end
             

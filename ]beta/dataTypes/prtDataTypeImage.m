@@ -31,6 +31,7 @@ classdef prtDataTypeImage
         i
         j
         keypoints
+        actionData
     end
     
     properties (Access = protected)
@@ -48,10 +49,14 @@ classdef prtDataTypeImage
     
     methods
         
-        function [patches,fullPatch] = extractKeypointPatches(self,patchSize)
-            patches = cell(size(self.keypoints,1),1);
-            for keyIndex = 1:size(self.keypoints,1)
-                cropRect = [self.keypoints(keyIndex,:)-ceil(patchSize/2),patchSize-1];
+        function [patches,fullPatch] = extractKeypointPatches(self,patchSize,theKeypoints)
+            %[patches,fullPatch] = extractKeypointPatches(self,patchSize)
+            if nargin < 3
+                theKeypoints = self.keypoints;
+            end
+            patches = cell(size(theKeypoints,1),1);
+            for keyIndex = 1:size(theKeypoints,1)
+                cropRect = [theKeypoints(keyIndex,:)-ceil(patchSize/2),patchSize-1];
                 patches{keyIndex} = imcrop(self.gray,cropRect);
             end
             fullPatch = cellfun(@(x) isequal(size(x),patchSize), patches);
@@ -62,7 +67,7 @@ classdef prtDataTypeImage
             %  Call this like you would "corner"
             % to do: add scales
             points = corner(self.gray,varargin{:});
-            self.keypoints = points;
+            theKeypoints = points;
         end
         
         function sz = getImageSize(self,varargin)

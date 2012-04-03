@@ -749,6 +749,10 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
                 return;
             end
             nClasses = obj.nClasses;
+            if nClasses == 0;
+                obj.Y = zeros(obj.nObservations,1);
+                nClasses = obj.nClasses;
+            end
             
             classColors = obj.plotOptions.colorsFunction(obj.nClasses);
             classSymbols = obj.plotOptions.symbolsFunction(obj.nClasses);
