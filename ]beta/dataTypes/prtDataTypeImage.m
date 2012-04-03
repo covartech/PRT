@@ -73,13 +73,13 @@ classdef prtDataTypeImage
         function self = imresize(self,varargin)
             %self = imresize(self,varargin)
             imgData = imresize(self.imageData,varargin{:});
-            self = vpDataImage(imgData,self.imageType);
+            self = prtDataTypeImage(imgData,self.imageType);
         end
         
         function self = imcrop(self,varargin)
             %self = imcrop(self,varargin)
             imgData = imcrop(self.imageData,varargin{:});
-            self = vpDataImage(imgData,self.imageType);
+            self = prtDataTypeImage(imgData,self.imageType);
         end
         
         function self = prtDataTypeImage(varargin) 
