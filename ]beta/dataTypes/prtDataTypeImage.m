@@ -55,9 +55,10 @@ classdef prtDataTypeImage
                 theKeypoints = self.keypoints;
             end
             patches = cell(size(theKeypoints,1),1);
+            theGray = self.gray;
             for keyIndex = 1:size(theKeypoints,1)
                 cropRect = [theKeypoints(keyIndex,:)-ceil(patchSize/2),patchSize-1];
-                patches{keyIndex} = imcrop(self.gray,cropRect);
+                patches{keyIndex} = imcrop(theGray,cropRect);
             end
             fullPatch = cellfun(@(x) isequal(size(x),patchSize), patches);
         end
@@ -196,6 +197,20 @@ classdef prtDataTypeImage
         
         function is = isValid(self)
             is = ~isempty(self.imageData) && ~isempty(self.imageType);
+        end
+        
+        
+        function self = convert(self,type)
+            switch lower(type)
+                case 'gray'
+                    self.internalGrayData = self.gray;
+                case 'hsv'
+                    self.internalHsvData = self.hsv;
+                case 'rgb'
+                    self.internalHsvData = self.rgb;
+                otherwise
+                    error('prtDataTypeImage:invalidSpec','The specified image format was not valid');
+            end
         end
         
         function self = updateStorage(self)
