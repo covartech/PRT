@@ -68,7 +68,6 @@ classdef prtDataTypeImage < prtUtilActionDataAccess
             %  Call this like you would "corner"
             % to do: add scales
             points = corner(self.gray,varargin{:});
-            theKeypoints = points;
         end
         
         function sz = getImageSize(self,varargin)
@@ -189,10 +188,11 @@ classdef prtDataTypeImage < prtUtilActionDataAccess
             set(h,'CDataMapping','scaled');
         end
         
-        function self = setImageDataAndType(imgData,imgType)
-            %self = setImageDataAndType(imgData,imgType)
+        function self = setImageDataAndType(self,imgData,imgType)
+            %self = setImageDataAndType(self,imgData,imgType)
             self.imageData = imgData;
             self.imageType = imgType;
+            self = clearStorage(self);
         end
         
         function is = isValid(self)
@@ -211,6 +211,12 @@ classdef prtDataTypeImage < prtUtilActionDataAccess
                 otherwise
                     error('prtDataTypeImage:invalidSpec','The specified image format was not valid');
             end
+        end
+        
+        function self = clearStorage(self)
+            self.internalRgbData = [];
+            self.internalHsvData = [];
+            self.internalGrayData = [];
         end
         
         function self = updateStorage(self)
