@@ -130,7 +130,7 @@ classdef prtUiDataSetStandardObservationInfoSelect < prtUiManagerPanel
 %                 set(self.handleStruct.jTable,'SelectionBackground',get(self.handleStruct.jTable,'MarginBackground'))
 %                 set(self.handleStruct.jTable,'SelectionBackground',[0.4 0.4 0.4])
 %                 set(self.handleStruct.jTable,'SelectionForeground',[1 1 1])
-                self.handleStruct.jTable.setAutoResizeMode(self.handleStruct.jTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
+%                self.handleStruct.jTable.setAutoResizeMode(self.handleStruct.jTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
                 
                 self.sortingInds = (1:size(self.dataCell,1))';
             end
