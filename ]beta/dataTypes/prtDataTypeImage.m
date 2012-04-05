@@ -1,4 +1,4 @@
-classdef prtDataTypeImage
+classdef prtDataTypeImage < prtUtilActionDataAccess
     %prtDataTypeImage
     % General class for image storage, with conversions between MAT, GRAY,
     % RGB, and HSV.  Also includes tools for data pixel-wise labeling,
