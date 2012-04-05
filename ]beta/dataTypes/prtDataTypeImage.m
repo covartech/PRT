@@ -82,9 +82,9 @@ classdef prtDataTypeImage < prtUtilActionDataAccess
             self = prtDataTypeImage(imgData,self.imageType);
         end
         
-        function self = imcrop(self,varargin)
+        function [self,rect] = imcrop(self,varargin)
             %self = imcrop(self,varargin)
-            imgData = imcrop(self.imageData,varargin{:});
+            [imgData,rect] = imcrop(self.imageData,varargin{:});
             self = prtDataTypeImage(imgData,self.imageType);
         end
         
