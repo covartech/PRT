@@ -37,6 +37,8 @@ end
 
 [guess, truth, allClassNames, uniqueTruthValues, guessClassNames, truthClassNames, uClassesGuess, uClassesTruth] = prtUtilScoreParseFirstTwoInputs(guess,truth); %#ok<ASGLU>
 
+assert(size(guess,2)==1,'guess should be a prtDataSet with 1 feature or a vector');
+
 % Parse 3rd and 4th inputs
 %% These inputs are used to 
 if nargin < 3 || isempty(possibleTruthValues)
