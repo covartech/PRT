@@ -74,13 +74,14 @@ if nargin < 3 || isempty(classLabels2)
 end
 
 axes(imageAxes);
-set(imageAxes,'Ytick',1:nClass);
-set(imageAxes,'Xtick',1:nClass);
+set(imageAxes,'Ytick',1:size(confusionMat,1));
+set(imageAxes,'Xtick',1:size(confusionMat,2));
 xlabel('Response'); ylabel('Truth');
 set(imageAxes,'Yticklabel',classLabels2);
 set(imageAxes,'Xticklabel',classLabels);
 
 sideTextHandles = zeros(nClass,1);
+
 if exist('occurances','var');
     for j = 1:nClass
         sideTextHandles(j) = text(size(confusionMat,2)+1-0.375,j,...

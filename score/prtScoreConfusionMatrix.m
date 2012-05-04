@@ -20,7 +20,7 @@ function varargout = prtScoreConfusionMatrix(guess, truth, possibleTruthValues, 
 %    %  Display the confusion matrix
 %    prtScoreConfusionMatrix(classified, TestDataSet)
 %
-%    See also: prtScoreoc, prtScoreRmse, prtScoreRocNfa,
+%    See also: prtScoreRoc, prtScoreRmse, prtScoreRocNfa,
 %    prtScorePercentCorrect, prtScoreAuc
 
 % guess = [0;0;1;2;3;]; truth = [0;1;1;4;3;];

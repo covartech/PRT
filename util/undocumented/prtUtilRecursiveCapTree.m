@@ -135,8 +135,14 @@ selectedClasses = y(:,sortedClassInds(1)) | y(:,sortedClassInds(2));
 yOut = (w*x')';
 yTest = y(selectedClasses,sortedClassInds(2));
 
-% figure out the threshold:
+% figure out the threshold: (1)
 [pf,pd,thresh] = prtScoreRoc(yOut(selectedClasses,:),yTest,'uniqueLabels',[0 1]);
+
+% figure out the threshold: (2)
+% uY = unique(yTest);
+% binLabels = yTest ~= uY(1);
+% [~,~,pf,pd,thresh] = prtUtilMinPeThreshold(yOut(selectedClasses,:),binLabels);
+
 pE = prtUtilPfPd2Pe(pf,pd);
 [minPe,I] = min(pE);
 if numel(I) > 1
