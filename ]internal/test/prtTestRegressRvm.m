@@ -8,7 +8,7 @@ result = true;
 % for i = 1:numIter
 %     dataSet = prtDataGenNoisySinc;
 %     reg = prtRegressRvm;
-%     reg = reg.train(dataSet);   
+%     reg = reg.train(dataSet);
 %     dataOut = reg.run(dataSet);
 %     rmseResult(i) = prtScoreRmse(sinc(dataSet.getX), dataOut.getX);
 % end
@@ -42,12 +42,12 @@ catch
 end
 
 % Check vs the baseline
- rmse = prtScoreRmse(sinc(dataSet.getX), dataOut.getX);
- if rmse > rmseBase
-     result = false;
-     disp('prtTestRegressRvm rmse greater than baseline')
- end
- 
+rmse = prtScoreRmse(sinc(dataSet.getX), dataOut.getX);
+if rmse > rmseBase
+    result = false;
+    disp('prtTestRegressRvm rmse greater than baseline')
+end
+
 
 % % Check param-val constuctor
 % try
