@@ -220,11 +220,15 @@ classdef prtDataSetBase
                 return;
             elseif nargin == 2
                 if isa(varargin{1},'char')
-                    if isa(self.observationInfoInternal(1).(varargin{1}),'char')
-                        val = cat(1,{self.observationInfoInternal.(varargin{1})});
-                    else
+                    try
                         val = cat(1,self.observationInfoInternal.(varargin{1}));
+                        if ~(size(val,1) == self.nObservations)
+                            error('Going to catch');
+                        end
+                    catch %#ok<CTCH>
+                        val = {self.observationInfoInternal.(varargin{1})}';
                     end
+                        
                     return;
                 else
                     val = self.observationInfoInternal(varargin{:});

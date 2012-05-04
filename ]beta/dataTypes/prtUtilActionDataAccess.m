@@ -12,7 +12,7 @@ classdef prtUtilActionDataAccess
     methods
         function self = setActionData(self,type,name,val)
             if strcmpi(name,'all')
-                warning('You specified a reserved word (all) as a field in prtUtilActionDataAccess; you might have trouble getting that field back without some trickery');
+                warning('prt:prtUtilActionDataAccess:all','You specified a reserved word (all) as a field in prtUtilActionDataAccess; you might have trouble getting that field back without some trickery');
             end
             self.actionData.(type).(name) = val;
         end
@@ -23,8 +23,12 @@ classdef prtUtilActionDataAccess
                     output = fieldnames(self.actionData);
                     name = {};
                 case 2
-                    output = fieldnames(self.actionData.(type));
-                    name = output;
+                    output = self.actionData.(type);
+                    if isstruct(output)
+                        name = fieldnames(output);
+                    else
+                        name = {};
+                    end
                 case 3
                     if strcmpi(name,'all')
                         name = fieldnames(self.actionData.(type));
