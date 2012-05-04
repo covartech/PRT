@@ -140,7 +140,13 @@ classdef prtUiDataSetStandardObservationInfoSelect < prtUiManagerPanel
                 self.tableFieldNames = self.tableFieldNames(~badColumns);
                 
                 if any(badColumns)
-                    warning('prt:prtUiDataSetStandardObservationInfoSelect:badFields','Some fields cannot be displayed.');
+                    origFieldNames = fieldnames(self.prtDs.observationInfo);
+                    badFieldNames = origFieldNames(badColumns);
+                    
+                    badFieldString = sprintf('%s, ',badFieldNames{:});
+                    badFieldString = badFieldString(1:(end-2));
+                    
+                    warning('prt:prtUiDataSetStandardObservationInfoSelect:badFields','Some fields (%s) cannot be displayed.',badFieldString);
                 end
                 
                 set(self.handleStruct.table,'data',self.dataCell,...
@@ -238,7 +244,7 @@ classdef prtUiDataSetStandardObservationInfoSelect < prtUiManagerPanel
             commandStr = '';
             for iCol = 1:length(cs)
                 selectedRowsInThisColumn = rs(arrayfun(@(r)tableSelectionModel.isSelected(r, cs(iCol)-1), rs-1));
-            
+                
                 cField = self.tableFieldNames{cs(iCol)};
                 cVals = getObservationInfo(self.prtDs.retainObservations(self.sortingInds(selectedRowsInThisColumn)),cField);
                 
@@ -277,9 +283,17 @@ classdef prtUiDataSetStandardObservationInfoSelect < prtUiManagerPanel
                     % Use == or ismember
                     uVal = unique(cVals,'rows');
                     if isscalar(uVal)
-                        cCommandStr = sprintf('S.%s==%s',cField,mat2str(uVal));
+                        if isnan(uVal)
+                            cCommandStr = sprintf('isnan(S.%s)',cField);
+                        else
+                            cCommandStr = sprintf('S.%s==%s',cField,mat2str(uVal));
+                        end
                     else
-                        cCommandStr = sprintf('ismember(S.%s,%s)',cField,mat2str(uVal));
+                        if any(isnan(uVal))
+                            cCommandStr = sprintf('(isnan(S.%s) | ismember(S.%s,%s))',cField,mat2str(uVal));
+                        else
+                            cCommandStr = sprintf('ismember(S.%s,%s)',cField,mat2str(uVal));
+                        end
                     end
                 end
                 
