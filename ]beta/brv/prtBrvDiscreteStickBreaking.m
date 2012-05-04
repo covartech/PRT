@@ -73,10 +73,11 @@ classdef prtBrvDiscreteStickBreaking < prtBrv & prtBrvVbOnline
     % Methods for prtBrvVbOnline
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
     methods
-        function [initSelf, priorSelf, training] = vbOnlineInitialize(self, x) %#ok<INUSD>
-            initSelf = self;
-            priorSelf = self;
-            training = struct([]);
+        function self = vbOnlineInitialize(self, x) %#ok<INUSD>
+            randDraw = rand(1,self.nDimensions);
+            randDraw = randDraw./sum(randDraw);
+            
+            self = self.conjugateUpdate(self, randDraw);
         end
         
         function [self, training] = vbOnlineUpdate(self, priorSelf, x, training, prevSelf, learningRate, D) %#ok<INUSL>

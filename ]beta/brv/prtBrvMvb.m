@@ -162,7 +162,7 @@ classdef prtBrvMvb < prtBrv & prtBrvVbOnline & prtBrvVbMembershipModel & prtBrvV
     % Methods for prtBrvVbOnlineMembershipModel
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
     methods
-        function obj = vbOnlineInitialize(obj, priorObj, x) %#ok<INUSD>
+        function obj = vbOnlineInitialize(obj, x) %#ok<INUSD>
             
             randDraw = (rand(1,obj.nDimensions)>0.5);
             
@@ -233,7 +233,7 @@ classdef prtBrvMvb < prtBrv & prtBrvVbOnline & prtBrvVbMembershipModel & prtBrvV
     
     methods (Hidden)
         function x = parseInputData(self,x) %#ok<MANU>
-            if isnumeric(x)
+            if isnumeric(x) || islogical(x)
                 return
             elseif prtUtilIsSubClass(class(x),'prtDataSetBase')
                 x = x.getObservations();

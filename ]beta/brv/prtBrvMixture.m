@@ -190,30 +190,18 @@ classdef prtBrvMixture < prtBrv & prtBrvVbOnline
     methods
         function [obj, priorObj, training] = vbOnlineInitialize(obj,x)
             
-            training.randnState = randn('seed'); %#ok<RAND>
-            training.randState = rand('seed'); %#ok<RAND>
-            training.startTime = now;
-            training.variationalLogLikelihoodBySample = -inf(size(x,1),obj.nComponents);
-            training.negativeFreeEnergy = 0;
-            training.previousNegativeFreeEnergy = nan;
-            training.iterations.negativeFreeEnergy = [];
-            training.iterations.eLogLikelihood = [];
-            training.iterations.kld = [];
-            training.nIterations = 0;
+            training = prtBrvMixtureVbTraining;
             
-            initCounts = rand(1,obj.nComponents);
-            initCounts = initCounts./sum(initCounts(:));
-            
-            training.nSamplesPerCluster = initCounts;
+            obj = initialize(obj, x);
             
             priorObj = obj;
             
-            % Updated mixing
-            obj.mixing = obj.mixing.conjugateUpdate(priorObj.mixing, initCounts);
+            % Intialize mixing
+            obj.mixing = obj.mixing.vbOnlineInitialize([]);
             
             % Iterate through each source and update using the current memberships
             for iSource = 1:obj.nComponents
-                obj.components(iSource) = obj.components(iSource).vbOnlineInitialize(priorObj.components(iSource), x);
+                obj.components(iSource) = obj.components(iSource).vbOnlineInitialize(x);
             end
             
         end
@@ -225,7 +213,7 @@ classdef prtBrvMixture < prtBrv & prtBrvVbOnline
             end
             
             if nargin < 4 || isempty(training)
-                training.startTime = now;
+                training = prtBrvMixtureVbTraining;
                 training.iterations.negativeFreeEnergy = [];
                 training.iterations.eLogLikelihood = [];
                 training.iterations.kld = [];
@@ -234,11 +222,11 @@ classdef prtBrvMixture < prtBrv & prtBrvVbOnline
             
             % Update components
             for s = 1:obj.nComponents
-                obj.components(s) = obj.components(s).vbOnlineWeightedUpdate(priorObj.components(s), x, training.phiMat(:,s), learningRate, D, prevObj.components(s));
+                obj.components(s) = obj.components(s).vbOnlineWeightedUpdate(priorObj.components(s), x, training.componentMemberships(:,s), learningRate, D, prevObj.components(s));
             end
-            obj.mixing = obj.mixing.vbOnlineWeightedUpdate(priorObj.mixing, training.phiMat, [], learningRate, D, prevObj.mixing);
+            obj.mixing = obj.mixing.vbOnlineWeightedUpdate(priorObj.mixing, training.componentMemberships, [], learningRate, D, prevObj.mixing);
             
-            training.nSamplesPerCluster = sum(training.phiMat,1);
+            training.nSamplesPerComponent = sum(training.componentMemberships,1);
             
             %[nfe, eLogLikelihood, kld, kldDetails] = vbNfe(obj, priorObj, x, training); %#ok<NASGU,ASGLU>
             %training.negativeFreeEnergy = -kld;
@@ -479,7 +467,7 @@ classdef prtBrvMixture < prtBrv & prtBrvVbOnline
     
     methods (Hidden)
         function x = parseInputData(self,x) %#ok<MANU>
-            if isnumeric(x)
+            if isnumeric(x) || islogical(x)
                 return
             elseif prtUtilIsSubClass(class(x),'prtDataSetBase')
                 x = x.getObservations();
