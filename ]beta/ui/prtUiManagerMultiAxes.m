@@ -11,6 +11,10 @@ classdef prtUiManagerMultiAxes < prtUiManagerPanel
             if nargin
                 self = prtUtilAssignStringValuePairs(self, varargin{:});
             end
+            
+            if ~self.hgIsValid
+               self.create()
+           end
         end
         
         function set.axesManagers(self,val)

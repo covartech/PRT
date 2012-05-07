@@ -81,9 +81,7 @@ for iRow = 1:nRows
         % Some decimal place pruning
         done = false;
         while ~done
-            %I added this check for a ., because otherwise this is patently
-            %false since it makes 100 --> 1
-            if any(cTextString == '.') && length(cTextString) > 1 && strcmpi(cTextString(end),'0')
+            if length(cTextString) > 1 && strcmpi(cTextString(end),'0') && any(cTextString == '.')
                 cTextString(end) = [];
             else
                 done = true;

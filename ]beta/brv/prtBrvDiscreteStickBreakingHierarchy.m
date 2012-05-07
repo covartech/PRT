@@ -24,24 +24,14 @@ classdef prtBrvDiscreteStickBreakingHierarchy
     end
     
     methods
-        function obj = prtBrvDiscreteStickBreakingHierarchy(varargin)
+        function self = prtBrvDiscreteStickBreakingHierarchy(varargin)
             if nargin < 1
                 return
             end
-            
-            truncationLevel = varargin{1};
-            
-            % Initialize beta
-            obj.counts = zeros(truncationLevel,1);
-            obj.beta = ones(truncationLevel,2);
-            obj.beta(:,2) = obj.alphaGammaParams(1)/obj.alphaGammaParams(2);
-            obj.sortingInds = (1:truncationLevel)';
-            obj.unsortingInds = obj.sortingInds;
+            self = defaultParameters(self,varargin{1});
         end
         
         function pis = draw(obj)
-             
-            
              vs = zeros(obj.truncationLevel,2);
              for iV = 1:obj.truncationLevel
                  vs(iV,:) = prtRvUtilDirichletDraw([obj.beta(iV,1),obj.beta(iV,2)]);
@@ -95,6 +85,7 @@ classdef prtBrvDiscreteStickBreakingHierarchy
                 obj.alphaGammaParams(2) = priorObj.alphaGammaParams(2) - sum(eLog1MinusVt(isfinite(eLog1MinusVt))); % Sometimes there are -infs at the end
             end
         end
+        
         function kld = kld(obj, priorObj)
             if obj.useGammaPriorOnScale
                 % These beta KLDs are not correct. Really we need to take
@@ -118,47 +109,52 @@ classdef prtBrvDiscreteStickBreakingHierarchy
             end
         end
         
-        function [obj, training] = vbOnlineWeightedUpdate(obj, priorObj, x, weights, lambda, D, prevObj) %#ok<INUSL>
+        function [obj, training] = vbOnlineWeightedUpdate(obj, priorObj, x, weights, lambda, D, prevObj) 
             S = size(x,1);
             
             if ~isempty(weights)
                 x = bsxfun(@times,x,weights);
             end
             
-            localCounts = x(:);
+            localCounts = sum(x,1)';
+            
+            obj.counts = D/S*localCounts*lambda + (1-lambda)*prevObj.counts + priorObj.counts; % Counts must be updated as a mixture of the prev and the local
             
             if obj.useOptimalSorting
-                [localCounts, obj.sortingInds] = sort(localCounts,'descend');
+                [~, obj.sortingInds] = sort(obj.counts,'descend'); % We need to sort based on the the updated counts
                 [dontNeed, obj.unsortingInds] = sort(obj.sortingInds,'ascend'); %#ok<ASGLU>
             else
                 obj.sortingInds = (1:obj.truncationLevel)';
                 obj.unsortingInds = obj.sortingInds;
             end
             
-            sumIToK = flipud(cumsum(flipud(localCounts)));
-            sumIPlus1ToK = sumIToK-localCounts;
-            
-            if obj.useOptimalSorting
-                obj.counts = localCounts(obj.unsortingInds);
-                sumIPlus1ToK = sumIPlus1ToK(obj.unsortingInds);
-            else
-                obj.counts = localCounts;
-            end
-            
             % Update stick parameters
-            updatedBeta = zeros(obj.truncationLevel,2);
+            % To calculate sumIPlus1ToK we sort before we cumsum. Then we
+            % unsort the result so that the beta matrix is actually
+            % unsorted.
+            localCountsSorted = localCounts(obj.sortingInds); % Sort the local counts according to the order of the blended counts
+            sumIToK = flipud(cumsum(flipud(localCountsSorted)));
+            sumIPlus1ToK = sumIToK-localCountsSorted;
+            sumIPlus1ToK = sumIPlus1ToK(obj.unsortingInds);
             
-            updatedBeta(:,1) = D/S*obj.counts + priorObj.beta(:,1);
-            updatedBeta(:,2) = D/S*sumIPlus1ToK + priorObj.beta(:,2) + obj.expectedValueAlpha;
+            % We have to sort the previous object the same we that we sort
+            % the current object for the purpos of calculating sumIPlus1ToK
+            prevCountsSorted = prevObj.counts(obj.sortingInds); % We need to sort the previous counts the same as our current counts are sorted
+            prevSumIToK = flipud(cumsum(flipud(prevCountsSorted)));
+            prevSumIPlus1ToK = prevSumIToK - prevCountsSorted;
+            prevSumIPlus1ToK = prevSumIPlus1ToK(obj.unsortingInds);
             
-            obj.beta = updatedBeta*lambda + (1-lambda)*prevObj.beta;
+            % the beta matrix is now totally unsorted but the sorting is
+            % done relative to the updated counts
+            obj.beta(:,1) = D/S*localCounts*lambda + (1-lambda)*prevObj.counts + priorObj.beta(:,1);
+            obj.beta(:,2) = D/S*sumIPlus1ToK*lambda + (1-lambda)*prevSumIPlus1ToK + priorObj.beta(:,2) + obj.expectedValueAlpha;
             
             if obj.useGammaPriorOnScale
                 obj.alphaGammaParams(1) = priorObj.alphaGammaParams(1) + obj.truncationLevel - 1;
                 eLog1MinusVt = obj.expectedValueLogOneMinusStickLengths;
                 obj.alphaGammaParams(2) = priorObj.alphaGammaParams(2) - sum(eLog1MinusVt(isfinite(eLog1MinusVt))); % Sometimes there are -infs at the end
             end
-            
+
             training = struct([]);
         end
     end
@@ -192,6 +188,18 @@ classdef prtBrvDiscreteStickBreakingHierarchy
             end
             
             val = alphaParams(2)./alphaParams(1);
+        end
+        
+        function self = defaultParameters(self, truncationLevel)
+            % Initialize beta
+            self.counts = zeros(truncationLevel,1);
+            self.beta = ones(truncationLevel,2);
+            self.beta(:,2) = self.alphaGammaParams(1)/self.alphaGammaParams(2);
+            self.sortingInds = (1:truncationLevel)';
+            self.unsortingInds = self.sortingInds;
+        end
+        function tf = isValid(self)
+            tf = ~isempty(self.beta);
         end
     end
 end

@@ -1,7 +1,5 @@
 % PRTBRVMVN - PRT BRV Multivariate Normal Observation Model
 %
-% Constructor takes the dimesionality
-%
 % Impliments all abstract properties and methods from prtBrvObsModel.
 %
 % Additional Properties:
@@ -15,11 +13,13 @@
 %       prior to more closely match that of the training data during
 %       mixture initialization.
 %
-% Also inherits from prtBrvVbOnlineObsModel and therefore impliments
-%   vbOnlineWeightedUpdate
+% Also inherits from prtBrv, prtBrvVbOnline, prtBrvVbOnlineMembershipModel
 
-classdef prtBrvMvn < prtBrvObsModel & prtBrvVbOnlineObsModel
+classdef prtBrvMvn < prtBrv & prtBrvVbOnline & prtBrvVbMembershipModel & prtBrvVbOnlineMembershipModel
     
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % Properties required by prtAction
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     properties (SetAccess = private)
         name = 'Multi-varite Normal Bayesian Random Variable';
         nameAbbreviation = 'BRVMVN';
@@ -30,48 +30,159 @@ classdef prtBrvMvn < prtBrvObsModel & prtBrvVbOnlineObsModel
         isCrossValidateValid = true;
     end
     
-    properties
-        model = prtBrvMvnHierarchy;
-    end    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % Methods for prtBrv
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+    methods
+        function self = estimateParameters(self, x)
+            self = conjugateUpdate(self, self, x);
+        end
+        
+        function y = predictivePdf(self, x)
+            y = prtRvUtilStudentTPdf(x, self.meanMean, self.covPhi, self.covNu);
+        end
+        
+        function val = getNumDimensions(self)
+            val = length(self.model.meanMean);
+        end
+        
+        function self = initialize(self, x)
+            x = self.parseInputData(x);
+            if ~self.model.isValid
+                self.model = self.model.defaultParameters(size(x,2));
+            end
+        end
     
-    properties (Hidden)
-        initFudgeFactor = 0.9; % Between zero and 1, probably > 0.9
-        initModifiyPrior = true;
+        % Optional methods
+        %------------------------------------------------------------------
+        function kld = conjugateKld(self, priorObj)
+            kld = prtRvUtilMvnWishartKld(self.model.meanBeta,...
+                self.model.covNu,self.model.meanMean,self.model.covPhi,...
+                priorObj.model.meanBeta,priorObj.model.covNu,...
+                priorObj.model.meanMean,priorObj.model.covPhi);
+        end
+        
+        function s = posteriorMeanStruct(self)
+            nDimensions = length(self.model.meanMean);
+
+            s.mean = self.model.meanMean;
+            s.covariance = 1/self.model.covNu .* self.model.covPhi;
+            s.degreesOfFreedom = self.model.covNu + 1 - nDimensions;
+        end
+        
+        function plotCollection(selfs,colors)
+            
+            nComponents = length(selfs);
+            
+            if nargin < 2
+                colors = prtPlotUtilClassColors(nComponents);
+            end
+            
+            nDimensions = selfs(1).nDimensions;
+            
+            if nDimensions < 3
+                meanMat = zeros(nDimensions,nComponents);
+                covMat = zeros([nDimensions nDimensions nComponents]);
+                
+                for s = 1:nComponents
+                    pm = selfs(s).posteriorMeanStruct;
+                    meanMat(:,s) = pm.mean;
+                    covMat(:,:,s) = pm.covariance;
+                end
+            end
+                
+            plotLimits = zeros(nComponents,length(selfs(1).plotLimits));
+            for s = 1:nComponents
+                plotLimits(s,:) = selfs(s).plotLimits();
+            end
+            
+            
+            if nDimensions == 1
+                plotLimits = [min(plotLimits(:,1)),max(plotLimits(:,2))];
+            elseif nDimensions == 2
+                plotLimits = [min(plotLimits(:,1)),max(plotLimits(:,2)),min(plotLimits(:,3)),max(plotLimits(:,4))];
+            end
+            
+            if nDimensions == 1
+                maxVar = max(arrayfun(@(S)S.model.covPhi/S.model.covNu,selfs));
+                meanPdfSamples = linspace(min(meanMat)-sqrt(maxVar)*2,max(meanMat)+sqrt(maxVar)*2,1000)';
+                for s = 1:nComponents
+                    h = plot(meanPdfSamples,exp(prtRvUtilMvnLogPdf(meanPdfSamples,meanMat(:,s),1/selfs(s).model.covNu.*selfs(s).model.covPhi)));
+                    set(h,'color',colors(s,:));
+                    hold on
+                end
+                hold off
+                v = axis;
+                ylim([0 v(4)]);
+                title('Posterior Mean Source PDFs');
+                xlim(plotLimits)
+                
+            elseif nDimensions == 2
+                for s = 1:nComponents
+                    ellipseHandle = prtPlotUtilMvnEllipse(meanMat(:,s)',squeeze(covMat(:,:,s)));
+                    set(ellipseHandle,'Color',colors(s,:));
+                    hold on
+                    plot(meanMat(1,s),meanMat(2,s),'x','color',colors(s,:),'markerSize',8);
+                end
+                hold off;
+                title('Posterior Mean Source PDFs');
+                axis(plotLimits)
+                
+            else
+    
+                for s = 1:nComponents
+                    cMean = selfs(s).model.meanMean;
+                    cCov = selfs(s).model.covPhi./selfs(s).model.covNu;
+                    cStds = sqrt(diag(cCov));
+                    
+                    plot(1:length(cMean),cMean,'x-','color',colors(s,:));
+                    hold on
+                    for iDim = 1:length(cMean)
+                        plot(iDim*[1 1],cStds(iDim)*2*[-1 1]+cMean(iDim),'color',colors(s,:))
+                    end
+                end
+                hold off
+                title('Posterior Mean Conditional PDF')
+                xlim([0.5 length(cMean)+0.5]);
+            end
+        end
+        
+        function val = plotLimits(self)
+            
+            pm = self.posteriorMeanStruct;
+            
+            minX = min(pm.mean, [], 1)' - 2*sqrt(diag(pm.covariance));
+            maxX = max(pm.mean, [], 1)' + 2*sqrt(diag(pm.covariance));
+            
+            val = zeros(1,2*self.nDimensions);
+            val(1:2:self.nDimensions*2-1) = minX;
+            val(2:2:self.nDimensions*2) = maxX;
+            
+        end
     end
     
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % Methods for prtBrvVb
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
     methods
-        function obj = prtBrvMvn(varargin)
-            if nargin < 1
-                return
-            end
-            obj.model = prtBrvMvnHierarchy(varargin{1});
+        function [self, training] = vbBatch(self,x)
+            % Since we are purely conjugate we actually don't need vbBatch
+            % However we must implement it.
+            self = conjugateUpdate(self,x);
+            training = struct([]);
         end
-        
-        function val = nDimensions(obj)
-            val = length(obj.model.meanMean);
-        end
-        
-        function y = conjugateVariationalAverageLogLikelihood(obj, x)
-            nDims = size(x,2);
+    end
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % Methods for prtBrvMembershipModel
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+    methods
+        function [phiMat, priorObjs] = collectionInitialize(selfs, priorObjs, x) % Vector of objects
             
-            innerPsiTerm = (obj.model.covNu + 1 - (1:nDims)')./2;
-            lnDetGammaTilde = sum(psi(innerPsiTerm)) - prtUtilLogDet(obj.model.covPhi) + nDims*log(2);
-
-            xDemeaned = bsxfun(@minus,x,obj.model.meanMean);
+            nClusters = length(selfs);
             
-            T = chol(obj.model.covPhi/obj.model.covNu);
-            xNorm = xDemeaned / T;
-            term = sum(xNorm.^2,2);
-            
-            y = 1/2*lnDetGammaTilde - 1/2*term(:) - nDims/2/obj.model.meanBeta;
-        end
-        
-        function [phiMat, priorObjs] = mixtureInitialize(objs, priorObjs, x) % Vector of objects
-            
-            nClusters = length(objs);
-            
-            fuzzyFactor = objs(1).initFudgeFactor;
-            modifyPrior = objs(1).initModifiyPrior;
+            fuzzyFactor = selfs(1).initFudgeFactor;
+            modifyPrior = selfs(1).initModifiyPrior;
             
             if nClusters < size(x,1)
                 % Run K-Means
@@ -93,6 +204,10 @@ classdef prtBrvMvn < prtBrvObsModel & prtBrvVbOnlineObsModel
             else
                 phiMat = eye(size(x,1));
                 phiMat = cat(2,phiMat,zeros(size(x,1),nClusters-size(phiMat,2)));
+            end
+            
+            for iCluster = 1:nClusters
+                priorObjs(iCluster).model = priorObjs(iCluster).model.defaultParameters(size(x,2));
             end
 
             if modifyPrior
@@ -123,10 +238,14 @@ classdef prtBrvMvn < prtBrvObsModel & prtBrvVbOnlineObsModel
             end
         end
         
-        function obj = weightedConjugateUpdate(obj, priorObj, x, weights)
+        function self = weightedConjugateUpdate(self, priorSelf, x, weights)
+            x = self.parseInputData(x);
+            
             if nargin < 4 || isempty(weights)
                 weights = ones(size(x,1),1);
             end
+
+            priorSelf = priorSelf.initialize(x);
             
             N_bar = sum(weights);
             
@@ -143,105 +262,55 @@ classdef prtBrvMvn < prtBrvObsModel & prtBrvVbOnlineObsModel
             xWeightedDemeaned = bsxfun(@times,bsxfun(@minus,x,muBar),sqrt(weights));
             sigmaBar = xWeightedDemeaned'*xWeightedDemeaned;
             
-            obj.model = priorObj.model;
-            obj.model.meanBeta = N_bar + priorObj.model.meanBeta;
-            obj.model.meanMean = (muBar.*N_bar + priorObj.model.meanMean.*priorObj.model.meanBeta) ./ (N_bar + priorObj.model.meanBeta);
-            obj.model.covNu = N_bar + priorObj.model.covNu;
-            obj.model.covPhi = sigmaBar + N_bar.*priorObj.model.meanBeta.*(muBar - priorObj.model.meanMean)'*(muBar - priorObj.model.meanMean)./(N_bar + priorObj.model.meanBeta) + priorObj.model.covPhi;
-            
+            self.model = priorSelf.model;
+            self.model.meanBeta = N_bar + priorSelf.model.meanBeta;
+            self.model.meanMean = (muBar.*N_bar + priorSelf.model.meanMean.*priorSelf.model.meanBeta) ./ (N_bar + priorSelf.model.meanBeta);
+            self.model.covNu = N_bar + priorSelf.model.covNu;
+            self.model.covPhi = sigmaBar + N_bar.*priorSelf.model.meanBeta.*(muBar - priorSelf.model.meanMean)'*(muBar - priorSelf.model.meanMean)./(N_bar + priorSelf.model.meanBeta) + priorSelf.model.covPhi;
         end
         
-        function kld = conjugateKld(obj, priorObj)
-            kld = prtRvUtilMvnWishartKld(obj.model.meanBeta,...
-                obj.model.covNu,obj.model.meanMean,obj.model.covPhi,...
-                priorObj.model.meanBeta,priorObj.model.covNu,...
-                priorObj.model.meanMean,priorObj.model.covPhi);
-        end
-        
-        function x = posteriorMeanDraw(obj, n, varargin)
-            if nargin < 2
-                n = 1;
-            end
-            x = prtRvUtilMvnDraw(obj.model.mean,obj.model.covariance, n);
-        end
-        
-        function s = posteriorMeanStruct(obj)
-            nDimensions = length(obj.model.meanMean);
-
-            s.mean = obj.model.meanMean;
-            s.covariance = 1/obj.model.covNu .* obj.model.covPhi;
-            s.degreesOfFreedom = obj.model.covNu + 1 - nDimensions;
-        end
-        
-        function model = modelDraw(obj)
-            model.covariance = iwishrnd(obj.model.covPhi,obj.model.covNu); %#STATS
-            model.mean = prtRvUtilMvnDraw(obj.model.meanMean,model.covariance/obj.model.meanBeta);
-        end
-        
-        function plot(objs,colors)
+        function self = conjugateUpdate(self, prior, x)
+            x = self.parseInputData(x);
             
-            nComponents = length(objs);
-            
-            if nargin < 2
-                colors = prtPlotUtilClassColors(nComponents);
-            end
-            
-            nDimensions = objs(1).nDimensions;
-            
-            if nDimensions < 3
-                meanMat = zeros(nDimensions,nComponents);
-                covMat = zeros([nDimensions nDimensions nComponents]);
-                
-                for s = 1:nComponents
-                    pm = objs(s).posteriorMeanStruct;
-                    meanMat(:,s) = pm.mean;
-                    covMat(:,:,s) = pm.covariance;
-                end
-            end
-                
-            if nDimensions == 1
-                maxVar = max(arrayfun(@(S)S.model.covPhi/S.model.covNu,objs));
-                meanPdfSamples = linspace(min(meanMat)-sqrt(maxVar)*2,max(meanMat)+sqrt(maxVar)*2,1000)';
-                for s = 1:nComponents
-                    h = plot(meanPdfSamples,exp(prtRvUtilMvnLogPdf(meanPdfSamples,meanMat(:,s),1/objs(s).model.covNu.*objs(s).model.covPhi)));
-                    set(h,'color',colors(s,:));
-                    hold on
-                end
-                hold off
-                v = axis;
-                ylim([0 v(4)]);
-                title('Posterior Mean Source PDFs');
-                
-            elseif nDimensions == 2
-                for s = 1:nComponents
-                    ellipseHandle = prtPlotUtilMvnEllipse(meanMat(:,s)',squeeze(covMat(:,:,s)));
-                    set(ellipseHandle,'Color',colors(s,:));
-                    hold on
-                    plot(meanMat(1,s),meanMat(2,s),'x','color',colors(s,:),'markerSize',8);
-                end
-                hold off;
-                title('Posterior Mean Source PDFs');
-                
-            else
+            self = weightedConjugateUpdate(self, prior, x, ones(size(x,1),1));
+        end
+    end
     
-                for s = 1:nComponents
-                    cMean = objs(s).model.meanMean;
-                    cCov = objs(s).model.covPhi./objs(s).model.covNu;
-                    cStds = sqrt(diag(cCov));
-                    
-                    plot(1:length(cMean),cMean,'x-','color',colors(s,:));
-                    hold on
-                    for iDim = 1:length(cMean)
-                        plot(iDim*[1 1],cStds(iDim)*2*[-1 1]+cMean(iDim),'color',colors(s,:))
-                    end
-                end
-                hold off
-                title('Posterior Mean Conditional PDF')
-                xlim([0.5 length(cMean)+0.5]);
-            end
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % Methods for prtBrvVbMembershipModel
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+	methods
+        function y = conjugateVariationalAverageLogLikelihood(self, x)
+            nDims = size(x,2);
+            
+            innerPsiTerm = (self.model.covNu + 1 - (1:nDims)')./2;
+            lnDetGammaTilde = sum(psi(innerPsiTerm)) - prtUtilLogDet(self.model.covPhi) + nDims*log(2);
+
+            xDemeaned = bsxfun(@minus,x,self.model.meanMean);
+            
+            T = chol(self.model.covPhi/self.model.covNu);
+            xNorm = xDemeaned / T;
+            term = sum(xNorm.^2,2);
+            
+            y = 1/2*lnDetGammaTilde - 1/2*term(:) - nDims/2/self.model.meanBeta;
+        end
+    end
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % Methods for prtBrvVbOnlineMembershipModel
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+    methods
+        function self = vbOnlineInitialize(self, x) %#ok<INUSD>
+            self.model.meanMean = randn(1,self.nDimensions);
         end
         
-        function [obj, training] = vbOnlineWeightedUpdate(obj, priorObj, x, weights, lambda, D, prevObj)
+        function [self, training] = vbOnlineUpdate(self, priorObj, x, lambda, D, prevObj)
+            x = self.parseInputData(x);
+            [self, training] = vbOnlineWeightedUpdate(self, priorObj, x, ones(size(x,1),1), lambda, D, prevObj);
+        end
+        
+        function [self, training] = vbOnlineWeightedUpdate(self, priorObj, x, weights, lambda, D, prevObj)
+            x = self.parseInputData(x);
             S = size(x,1);
             
             N_barNoWeighting = sum(weights,1);
@@ -254,10 +323,10 @@ classdef prtBrvMvn < prtBrvObsModel & prtBrvVbOnlineObsModel
                 muBar = zeros(1,size(x,2));
             end
             
-            obj.model = prevObj.model;
-            obj.model.meanBeta = lambda*(N_bar + priorObj.model.meanBeta)  + (1-lambda)*prevObj.model.meanBeta;
-            obj.model.meanMean = ((muBar.*N_bar + priorObj.model.meanMean.*priorObj.model.meanBeta)*lambda + (1-lambda)*prevObj.model.meanMean*prevObj.model.meanBeta) ./ obj.model.meanBeta;
-            obj.model.covNu = lambda*(N_bar + priorObj.model.covNu) + (1-lambda)*prevObj.model.covNu;
+            self.model = prevObj.model;
+            self.model.meanBeta = lambda*(N_bar + priorObj.model.meanBeta)  + (1-lambda)*prevObj.model.meanBeta;
+            self.model.meanMean = ((muBar.*N_bar + priorObj.model.meanMean.*priorObj.model.meanBeta)*lambda + (1-lambda)*prevObj.model.meanMean*prevObj.model.meanBeta) ./ self.model.meanBeta;
+            self.model.covNu = lambda*(N_bar + priorObj.model.covNu) + (1-lambda)*prevObj.model.covNu;
 
             xWeightedSqrt = bsxfun(@times,x,sqrt(weights));
             priorSumOfSquares = priorObj.model.meanMean'*priorObj.model.meanMean*priorObj.model.meanBeta + priorObj.model.covPhi;
@@ -265,9 +334,52 @@ classdef prtBrvMvn < prtBrvObsModel & prtBrvVbOnlineObsModel
             
             newSumOfSquares = (xWeightedSqrt'*xWeightedSqrt*D/S + priorSumOfSquares)*lambda + prevSumOfSquares*(1-lambda);
             
-            obj.model.covPhi = newSumOfSquares - obj.model.meanMean'*obj.model.meanMean*obj.model.meanBeta;
+            self.model.covPhi = newSumOfSquares - self.model.meanMean'*self.model.meanMean*self.model.meanBeta;
 
             training = struct([]);
+        end
+    end
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % Properties for prtBrvMvn use
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    properties
+        model = prtBrvMvnHierarchy;
+    end    
+    
+    properties (Hidden)
+        initFudgeFactor = 0.9; % Between zero and 1, probably > 0.9
+        initModifiyPrior = true;
+    end
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % Methods for prtBrvMvn use
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    methods
+        function self = prtBrvMvn(varargin)
+            if nargin < 1
+                return
+            end
+            self = constructorInputParse(self,varargin{:});
+        end
+        
+        % This may eventually be required by prtBrvMc
+        function model = modelDraw(self)
+            model.covariance = iwishrnd(self.model.covPhi,self.model.covNu); %#STATS
+            model.mean = prtRvUtilMvnDraw(self.model.meanMean,model.covariance/self.model.meanBeta);
+        end
+        
+    end
+    
+    methods (Hidden)
+        function x = parseInputData(self,x) %#ok<MANU>
+            if isnumeric(x)
+                return
+            elseif prtUtilIsSubClass(class(x),'prtDataSetBase')
+                x = x.getObservations();
+            else 
+                error('prt:prtBrvMvn:parseInputData','prtBrvMvn requires a prtDataSet or a numeric 2-D matrix');
+            end
         end
     end
 end

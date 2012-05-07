@@ -9,17 +9,22 @@ classdef prtBrvMvnHierarchy
     end
     
     methods
-        function obj = prtBrvMvnHierarchy(varargin)
+        function self = prtBrvMvnHierarchy(varargin)
             if nargin < 1
                 return
             end
-            obj = defaultParameters(obj,varargin{1});
+            self = defaultParameters(self,varargin{1});
         end
-        function obj = defaultParameters(obj, nDimensions)
-            obj.meanMean = zeros(1,nDimensions);
-            obj.meanBeta = nDimensions;
-            obj.covNu = nDimensions;
-            obj.covPhi = eye(nDimensions)*obj.covNu;
+        
+        function self = defaultParameters(self, nDimensions)
+            self.meanMean = zeros(1,nDimensions);
+            self.meanBeta = nDimensions;
+            self.covNu = nDimensions;
+            self.covPhi = eye(nDimensions)*self.covNu;
+        end
+        
+        function tf = isValid(self)
+            tf = ~isempty(self.meanMean);
         end
     end
 end
