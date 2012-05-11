@@ -5,6 +5,8 @@ classdef prtUiStructDlg < prtUiManagerPanel
         
         windowSize = [500 300];
         
+        closeOnOk = true;
+        
         titleStr = '';
         
         fig
@@ -13,10 +15,8 @@ classdef prtUiStructDlg < prtUiManagerPanel
         cancelButton
         okButton
         
-        
         cancelStr = 'Cancel';
         okStr = 'OK';
-        
         
         controls
         handles
@@ -28,20 +28,24 @@ classdef prtUiStructDlg < prtUiManagerPanel
         uibottommargin = 30;
         uilefttmargin  = 30;
         uirightmargin  = 30;
-        uicorewidth    = 400; %can be overrided by the option struct
+        uicorewidth    = 400;
         
         uitextheight   = 13;
         uiheightunit   = 20;
         
-        uimultieditfac = 4; %can be overrided by the option struct
-        uilistboxfac   = 4; %can be overrided by the option struct
-        uitablemaxrow  = 4; %can be overrided by the option struct
+        uimultieditfac = 4;
+        uilistboxfac   = 4;
+        uitablemaxrow  = 4;
         
         uibuttonwidth  = 60;
         uibuttonheight = 20;
         
+        uisidebuttonwidth = 30;
+        
         dxunit = 10;
         dyunit = 10;
+        
+        uiFontSize = 8;
         
         enablemode = 'on'; % 'inactive';
         dlgmode = 'edit'; % 'readonly';
@@ -71,7 +75,7 @@ classdef prtUiStructDlg < prtUiManagerPanel
             
             init(self);
             
-            waitfor(self.overlayPanel);
+            waitfor(self.overlayPanel,'visible','off');
             
         end
         function create(self)
@@ -143,7 +147,8 @@ classdef prtUiStructDlg < prtUiManagerPanel
                 h = uicontrol(self.overlayPanel,...
                     'Style','text',...
                     'String',description,...
-                    'HorizontalAlignment','left'...
+                    'HorizontalAlignment','left',...
+                    'FontSize',self.uiFontSize...
                     );
                 
                 self.figheight = self.figheight + self.uitextheight + self.dyunit/2;
@@ -157,12 +162,13 @@ classdef prtUiStructDlg < prtUiManagerPanel
                             'Enable',self.enablemode,...
                             'Data',fvalue,...
                             'ColumnEditable',true,...
-                            'Units','pixel'...
+                            'Units','pixel',...
+                            'FontSize',self.uiFontSize...
                             );
                         hBtn = [];
                         
-                        uitableheight = min(18*(self.uitablemaxrow)+22,...
-                            18*(size(fvalue,1))+22);
+                        %uitableheight = min(18*(self.uitablemaxrow)+22,18*(size(fvalue,1))+22);
+                        uitableheight = (self.uiFontSize*2+2)*min(self.uitablemaxrow,size(fvalue,1))+22;
                         
                         currwidth  = uiwidth;
                         currheight = uitableheight;
@@ -173,7 +179,8 @@ classdef prtUiStructDlg < prtUiManagerPanel
                             'Enable',self.enablemode,...
                             'Style',type,...
                             'Value',fvalue,...
-                            'HorizontalAlignment','left'...
+                            'HorizontalAlignment','left',...
+                            'FontSize',self.uiFontSize...
                             );
                         hBtn = [];
                         
@@ -187,7 +194,8 @@ classdef prtUiStructDlg < prtUiManagerPanel
                             'Style',type,...
                             'String',fvalue,...
                             'HorizontalAlignment','left',...
-                            'BackgroundColor','white'...
+                            'BackgroundColor','white',...
+                            'FontSize',self.uiFontSize...
                             );
                         hBtn = [];
                         
@@ -205,7 +213,8 @@ classdef prtUiStructDlg < prtUiManagerPanel
                             'Style',type,...
                             'String',fvalue,...
                             'HorizontalAlignment','left',...
-                            'BackgroundColor','white'...
+                            'BackgroundColor','white',...
+                            'FontSize',self.uiFontSize...
                             );
                         hBtn = [];
                         
@@ -221,7 +230,8 @@ classdef prtUiStructDlg < prtUiManagerPanel
                             'HorizontalAlignment','left',...
                             'BackgroundColor','white',...
                             'Min',1,...
-                            'Max',3 ...
+                            'Max',3, ...
+                            'FontSize',self.uiFontSize...
                             );
                         hBtn = [];
                         
@@ -237,7 +247,8 @@ classdef prtUiStructDlg < prtUiManagerPanel
                             'HorizontalAlignment','left',...
                             'BackgroundColor','white',...
                             'Min',1,...
-                            'Max',3 ...
+                            'Max',3, ...
+                            'FontSize',self.uiFontSize...
                             );
                         hBtn = [];
                         
@@ -251,7 +262,8 @@ classdef prtUiStructDlg < prtUiManagerPanel
                             'String','<Struct>',...
                             'Enable','off',...
                             'HorizontalAlignment','left',...
-                            'BackgroundColor','white'...
+                            'BackgroundColor','white',...
+                            'FontSize',self.uiFontSize...
                             );
                         
                         currwidth  = uiwidth;
@@ -261,8 +273,30 @@ classdef prtUiStructDlg < prtUiManagerPanel
                         hBtn = uicontrol(self.overlayPanel,...
                             'Style','pushbutton',...
                             'String','...',...
-                            'Callback',{@self.subStructOpenFcn,fname}...
+                            'Callback',{@self.subStructOpenFcn,fname},...
+                            'FontSize',self.uiFontSize...
                             );
+                        
+                    case 'file'
+                        h = uicontrol(self.overlayPanel,...
+                            'Enable',self.enablemode,...
+                            'Style','edit',...
+                            'String',fvalue(8:end),...
+                            'HorizontalAlignment','left',...
+                            'BackgroundColor','white',...
+                            'FontSize',self.uiFontSize...
+                            );
+                        
+                        hBtn = uicontrol(self.overlayPanel,...
+                            'Style','pushbutton',...
+                            'String','...',...
+                            'Callback',{@self.fileButtonCallback,fname, h},...
+                            'FontSize',self.uiFontSize...
+                            );
+                        
+                        currwidth  = uiwidth;
+                        currheight = self.uiheightunit;
+                        self.figheight  = self.figheight + currheight;
                         
                     otherwise
                         h = uicontrol(self.overlayPanel,...
@@ -270,7 +304,8 @@ classdef prtUiStructDlg < prtUiManagerPanel
                             'String',['<' class(fvalue) '>'],...
                             'Enable','off',...
                             'HorizontalAlignment','left',...
-                            'BackgroundColor','white'...
+                            'BackgroundColor','white',...
+                            'FontSize',self.uiFontSize...
                             );
                         
                         hBtn = [];
@@ -299,6 +334,8 @@ classdef prtUiStructDlg < prtUiManagerPanel
                 'Callback',@self.cancelCallback,...
                 'KeyPressFcn',@self.keyPressFunction...
                 );
+            
+            self.figheight = self.figheight + self.dyunit + self.uibuttonheight;
             
             %%Set dialog position
             %figx = maxx/2-figwidth/2;
@@ -333,6 +370,19 @@ classdef prtUiStructDlg < prtUiManagerPanel
             
             %scrollablePos = self.scrollable.ScrollPanel;
             
+            uiIsUiControl = strcmpi(get(cat(1,self.handles{:,1}),'type'),'uicontrol');
+            
+            uiIsTextGivenUiControl = strcmpi(get(cat(1,self.handles{uiIsUiControl,1}),'style'),'text');
+            
+            uiIsText = false(size(uiIsUiControl));
+            uiIsText(uiIsUiControl) = uiIsTextGivenUiControl;
+            
+            uiHeights = cat(1,self.handles{:,4});
+            
+            totalHeight = sum(uiHeights) + sum(self.dyunit/2.*uiIsText + self.dyunit.*(~uiIsText)) + self.uibuttonheight + self.dyunit*2 + self.uibottommargin + self.uitopmargin*2;
+            
+            extraVertOffSet = max(pos(4)-totalHeight,0);
+            
             for ni=1:size(self.handles,1)
                 
                 h      = self.handles{ni,1};
@@ -361,11 +411,11 @@ classdef prtUiStructDlg < prtUiManagerPanel
                 end
                 
                 if ~isempty(hBtn)
-                    width = width - self.dxunit - self.uibuttonwidth/2;
-                    set(hBtn,'Position',[x+width+self.dxunit y-height+self.uiheightunit self.uibuttonwidth/2 self.uibuttonheight]);
+                    width = width - self.dxunit - self.uisidebuttonwidth;
+                    set(hBtn,'Position',[x+width+self.dxunit y-height+self.uiheightunit+extraVertOffSet self.uisidebuttonwidth height]);
                 end
                 
-                set(h,'Position',[x y-height+self.uiheightunit width height]);
+                set(h,'Position',[x y-height+self.uiheightunit+extraVertOffSet width height]);
                 
                 y = y - height - dy;
                 
@@ -373,8 +423,8 @@ classdef prtUiStructDlg < prtUiManagerPanel
             
             usableWidth = (pos(3)-self.uirightmargin-self.uilefttmargin-self.scrollable.scrollBarWidth);
             
-            set(self.okButton,'Position',[self.uilefttmargin+usableWidth/2-self.dxunit-self.uibuttonwidth y-self.dyunit/2 self.uibuttonwidth self.uibuttonheight]);
-            set(self.cancelButton,'Position',[self.uilefttmargin+usableWidth/2+self.dxunit y-self.dyunit/2 self.uibuttonwidth self.uibuttonheight]);
+            set(self.okButton,'Position',[self.uilefttmargin+usableWidth/2-self.dxunit-self.uibuttonwidth y-self.dyunit/2-self.uibuttonheight self.uibuttonwidth self.uibuttonheight]);
+            set(self.cancelButton,'Position',[self.uilefttmargin+usableWidth/2+self.dxunit y-self.dyunit/2-self.uibuttonheight self.uibuttonwidth self.uibuttonheight]);
             
             %set(self.scrollable,'Units','pixels',
             %initScrollArea
@@ -415,6 +465,14 @@ classdef prtUiStructDlg < prtUiManagerPanel
                         end
                         
                     case 'char'
+                        % look for file
+                        
+                        if length(fvalue)>=7 && strcmpi(fvalue(1:7),'#<file>')% && exist(fname(8:end),'file')
+                            % File
+                            self.controls = [self.controls; {'file' fname}];
+                            return
+                        end
+                        
                         %look for multiline string
                         if size(fvalue,1)==1 && size(fvalue,2)>1 && ~isempty(strfind(fvalue,char(10)))
                             self.controls = [self.controls; {'multiedit' fname}];
@@ -471,6 +529,8 @@ classdef prtUiStructDlg < prtUiManagerPanel
                             self.outputStruct.(fname) = contents(get(hh,'Value'));
                         case 'table'
                             self.outputStruct.(fname) = get(hh,'Data');
+                        case 'file'
+                            self.outputStruct.(fname) = get(hh,'String');
                         case 'struct'
                             %do nothing
                         otherwise
@@ -482,12 +542,11 @@ classdef prtUiStructDlg < prtUiManagerPanel
             close(self)
         end
         function close(self)
+            set(self.overlayPanel,'visible','off');
             if self.madeThisWindow
                 try %#ok<TRYNC>
                     close(self.fig);
                 end
-            else
-                delete(self.overlayPanel);
             end
         end
         
@@ -498,14 +557,31 @@ classdef prtUiStructDlg < prtUiManagerPanel
             end
         end
         function subStructOpenFcn(self, hObject, eventdata, fname)
-            
-            
             newInputStruct = self.inputStruct.(fname);
             
             newObject = prtUiStructDlg('inputStruct',newInputStruct);
             
             self.outputStruct.(fname) = newObject.outputStruct;
-        end            
+        end
+        function fileButtonCallback(self, hObject, eventdata, fname, fieldHandle)
+            
+            cValue = get(fieldHandle,'string');
+            
+            [cPath, cFile, cExt] = fileparts(cValue);
+            
+            [outFile,outPath] = uigetfile('*.mat',cat(2,'Select ', fname), cat(2,cFile,cExt));
+           
+            if all(outFile == 0)
+                % user cancel
+                % Do nothing
+                return
+            end
+            
+            newValue = fullfile(outPath,outFile);
+            
+            set(fieldHandle,'string',newValue);
+                        
+        end
     end
     methods (Static)
         function str = fieldNameToString(vname)
@@ -532,3 +608,34 @@ classdef prtUiStructDlg < prtUiManagerPanel
         end
     end
 end
+
+% % clear classes
+% 
+% s = struct;
+% s.ScalarValue = 1.2;
+% s.MatrixData = rand(10);
+% s.SingleLineString = 'This is a single line string';
+% s.MultipleLineString1 = sprintf('This is\na multi-line\nstring');
+% s.MultipleLineString2 = strvcat({'This is','a multi-line','string','too'});
+% s.LogicalValue = true;
+% s.LogicalArray = [true false false true];
+% s.CellArrayOfStringRow = {'Choice one','Choice two','Choice three'};
+% s.CellArrayOfStringCol = {'Item1';'Item2';'Item3'};
+% s.SubStruct = struct('FieldA',0,'FieldB','Hello!','FieldC',rand(10));
+% s.HeterogeneousCellArray = {...
+%     'Key1' rand 'string1' true;...
+%     'Key2' rand 'string2' false;...
+%     'Key3' rand 'string3' true;...
+%     'Key4' rand 'string4' true;...
+%     };
+% s.FileName = '#<file>C:\Users\KDM\Documents\New Folder\MATLAB\hci\kdmTodo.txt';
+% selectorObj = prtUiStructDlg('inputStruct',s,'uiFontSize',8,'uitextheight',30,'uiheightunit',30,'dyunit',20,'uibuttonwidth',100,'uibuttonheight',50);
+% 
+% %%
+% clear classes
+% 
+% s.FileName = '#<file>C:\Users\KDM\Documents\New Folder\MATLAB\hci\kdmTodo.txt';
+% selectorObj = prtUiStructDlg('inputStruct',s,'uiFontSize',16,'uitextheight',30,'uiheightunit',30,'dyunit',20,'uibuttonwidth',100,'uibuttonheight',50);
+% 
+% sOut = selectorObj.outputStruct;
+
