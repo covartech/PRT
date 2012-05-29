@@ -97,16 +97,16 @@ classdef prtClassContextDiscrim < prtClass
             assert(isstruct(val),'prt:prtClassContextDiscrim:prior','prior must be a struct with fields tau1, tau2, gamma, a, b, u');
             Obj.prior = val;
         end
-%         
-%         function Obj = set.params(Obj,val)
-%             assert(isstruct(val),'prt:prtClassContextDiscrim:params','params must be a struct');
-%             params = val;
-%         end
+        %
+        %         function Obj = set.params(Obj,val)
+        %             assert(isstruct(val),'prt:prtClassContextDiscrim:params','params must be a struct');
+        %             params = val;
+        %         end
         
         function Obj = set.clusterRVs(Obj,val)
             Obj.clusterRVs = val;
         end
- 
+        
         function Obj = set.weights(Obj,val)
             Obj.weights = val;
         end
@@ -230,12 +230,12 @@ classdef prtClassContextDiscrim < prtClass
                     subplot(2,2,2),plot(L,'LineWidth',2),grid on,title('Negative Free Energy'),xlabel('Iteration'),ylabel('NFE')
                     subplot(2,1,2)
                     stem(muWkeep','LineWidth',2)
-%                     colors = prtClassColors(length(keepInds));
-%                     symbols = dprtClassSymbols(length(keepInds));
-%                     for i = 1:length(keepInds)
-%                         stem(muWkeep(i,:),'Color',colors(i,:),'Marker',symbols(i),'MarkerFaceColor',colors(i,:),'MarkerEdgeColor',colors(i,:)),hold on
-%                         lineNames{i} = ['Comp. ',num2str(keepInds(i))];
-%                     end
+                    %                     colors = prtClassColors(length(keepInds));
+                    %                     symbols = dprtClassSymbols(length(keepInds));
+                    %                     for i = 1:length(keepInds)
+                    %                         stem(muWkeep(i,:),'Color',colors(i,:),'Marker',symbols(i),'MarkerFaceColor',colors(i,:),'MarkerEdgeColor',colors(i,:)),hold on
+                    %                         lineNames{i} = ['Comp. ',num2str(keepInds(i))];
+                    %                     end
                     grid on
                     title('Discriminant Weights')
                     %legend(lineNames)
@@ -283,18 +283,18 @@ classdef prtClassContextDiscrim < prtClass
         
         
         function dataSetOut = runAction(Obj,dataSetContext)
-
+            
             xContext = dataSetContext.getContextFeats;
             xClass = dataSetContext.getTargetFeats;
             xClass = [ones(size(xClass,1),1),xClass];
             
-            y = dataSetContext.Y;   
+            y = dataSetContext.Y;
             N = length(Obj.clusterRVs);
-
+            
             w = Obj.weights;
             for h = 1:N
                 dsClass(:,h) = w(h,:)*xClass';
-                dsComponent(:,h) = studenttpdf(xContext,Obj.clusterRVs(h).mu,Obj.clusterRVs(h).covariance,Obj.clusterRVs(h).dof);
+                dsComponent(:,h) = prtRvUtilStudentTPdf(xContext,Obj.clusterRVs(h).mu,Obj.clusterRVs(h).covariance,Obj.clusterRVs(h).dof);
             end
             if any(sum(dsComponent,2)==0)
                 outlierInds = find(sum(dsComponent,2)==0);
@@ -372,7 +372,7 @@ classdef prtClassContextDiscrim < prtClass
                 nu(h) = nu0 + rhoCount(h);
                 B(:,:,h) = (C - u(h)*M(:,:,h) + u0*M0 + B0^-1)^-1;
                 
-                ElnDetLambda(h) = sum(psi((nu(h)-(1:Pcontext)+1)/2)) + Pcontext*log(2) + logdet(B(:,:,h));
+                ElnDetLambda(h) = sum(psi((nu(h)-(1:Pcontext)+1)/2)) + Pcontext*log(2) + prtUtilLogDet(B(:,:,h));
                 xMinusMMu = bsxfun(@minus,xContext,mMu(h,:));
                 for i = 1:n
                     ExMinusMuTimesLambda(i,h) = xMinusMMu(i,:)*nu(h)*B(:,:,h)*xMinusMMu(i,:)' + Pcontext/u(h);
@@ -404,7 +404,7 @@ classdef prtClassContextDiscrim < prtClass
                 end
             end
             params.rhoLog = rhoLog;
-            rho = exp(bsxfun(@minus,rhoLog,sumexp(rhoLog')'));
+            rho = exp(bsxfun(@minus,rhoLog,prtUtilSumExp(rhoLog')'));
             
             % Save output structure
             params.stickSizes = stickSizes;
@@ -529,9 +529,6 @@ classdef prtClassContextDiscrim < prtClass
             EqLogV = psi(stickParams(:,1)) - psi(sum(stickParams,2));
             EqLog1minusV = psi(stickParams(:,2)) - psi(sum(stickParams,2));
             for h = 1:N
-                %     for i = 1:n
-                %         ElogPZgivenVh(i,h) = sum(rhoSorted(i,h+1:N))*EqLog1minusV(h) + rhoSorted(i,h)*EqLogV(h);
-                %     end
                 ElogPZgivenVh(:,h) = sum(rhoSorted(:,h+1:N),2)*EqLog1minusV(h) + rhoSorted(:,h)*EqLogV(h);
             end
             ElogPZgivenV = sum(ElogPZgivenVh(:));
@@ -542,36 +539,32 @@ classdef prtClassContextDiscrim < prtClass
             
             %% Calculate KLDs for variational parameters
             KLDvH = zeros(1,N);
-            KLDLambdaH = zeros(1,N);
-            KLDmuH = zeros(1,N);
+            KLDmuLambdaH = zeros(1,N);
             for h = 1:N
-                KLDvH(h) = dirichletKLD(stickParams(h,:),[1,tau10/tau20]);
-                KLDLambdaH(h) = wishartKLD(nu(h),inv(B(:,:,h)),nu0,inv(B0));
-                KLDmuH(h) = mvnKLD(mMu(h,:),inv(B(:,:,h))/(nu(h)*u(h)),m0,inv(B0)/(nu0*u0)); % Typo in Penny Eq. 25?
+                KLDvH(h) = prtRvUtilDirichletKld(stickParams(h,:),[1,tau10/tau20]);
+                KLDmuLambdaH(h) = prtRvUtilMvnWishartKld(1/u(h),nu(h),mMu(h,:),inv(B(:,:,h)),1/u0,nu0,m0,inv(B0));
             end
             KLDv = sum(KLDvH);
-            KLDLambda = sum(KLDLambdaH);
-            KLDmu = sum(KLDmuH);
+            KLDmuLambda = sum(KLDmuLambdaH);
             
             %% Calculate KLDs of hyperparameters
-            KLDbeta = gammaKLD(1/stickHyperparams(2),stickHyperparams(1),1/tau20,tau10);
+            KLDbeta = prtRvUtilGammaKld(stickHyperparams(1),stickHyperparams(2),tau10,tau20);
             
             %% KLD of RVMs
             KLDrvm = 0;
             for h = 1:N
-                KLDrvm = KLDrvm + .5*Pclass + .5*logdet(Sigma(:,:,h));
+                KLDrvm = KLDrvm + .5*Pclass + .5*prtUtilLogDet(Sigma(:,:,h));
                 for p = 1:Pclass
                     KLDrvm = KLDrvm -.5*a(p,h)/b(p,h)*(Sigma(p,p,h)+mW(h,p)^2+2*b0)-(a0+.5)*log(b(p,h))+a0*log(b0)+a(p,h)-gammaln(a0)+gammaln(a(p,h));
                 end
             end
             
             %% Calc NFE
-            L = EqLogLikeRVM + KLDrvm + EqLogLikeGMM - KLDz - KLDv - KLDmu - -KLDLambda - KLDbeta;
+            L = EqLogLikeRVM + KLDrvm + EqLogLikeGMM - KLDz - KLDv - KLDmuLambda - KLDbeta;
             
             KLD.z = KLDz;
             KLD.v = KLDvH;
-            KLD.Lambda = KLDLambdaH;
-            KLD.mu = KLDmuH;
+            KLD.muLambda = KLDmuLambdaH;
             KLD.beta = KLDbeta;
         end
     end

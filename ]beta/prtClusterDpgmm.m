@@ -104,11 +104,14 @@ classdef prtClusterDpgmm < prtCluster
                     kmeansOptions = statset('kmeans');
                     kmeansOptions.MaXIter = 1000;
                     [counts.idX,means,~,D] = kmeans(X,T,'EmptyAction','drop','replicates',10,'options',kmeansOptions,'maxiter',1000);
+                    D(D==0) = eps;
                     phi = 1./D;
                     phi = bsxfun(@rdivide,phi,sum(phi,2));
                 end
                 phiCount = sum(phi);
-                
+                if any(any(isnan(phiCount)))
+                    keyboard
+                end                
                 % Sort sticks
                 [phiCountSorted,sortIndsPhi] = sort(phiCount,'descend');
                 [~,unsortIndsPhi] = sort(sortIndsPhi,'ascend');
@@ -188,8 +191,13 @@ classdef prtClusterDpgmm < prtCluster
                     end
                     
                     phiLog(:,t) = logPiTilde + .5*logGammaTilde - expTerm - .5*d/beta(t);
+                    %phiLog(isinf(phiLog(:,t)),t) = 1;
                 end
+                
                 phi = exp(bsxfun(@minus,phiLog,prtUtilSumExp(phiLog')'));
+                if any(any(isnan(phi)))
+                    keyboard
+                end
                 [~,phiSortInds] = sort(sum(phi),'descend');
                 phiSorted = phi(:,phiSortInds);
                 
@@ -227,25 +235,22 @@ classdef prtClusterDpgmm < prtCluster
                 ElogQZ = sum(ElogQZt(:));
                 
                 KLDvT = zeros(1,T);
-                KLDGammaT = zeros(1,T);
-                KLDrhoT = zeros(1,T);
+                KLDrhoGammaT = zeros(1,T);
                 for t = 1:T
                     KLDvT(t) = prtRvUtilDirichletKld([gamma1(t),gamma2(t)],[1,prior.s1/prior.s2]);
-                    KLDGammaT(t) = prtRvUtilWishartKld(nu(t),Phi(:,:,t),nu0,Phi0);
-                    KLDrhoT(t) = prtRvUtilMvnKld(rho(t,:),Phi(:,:,t)./(beta(t)*nu(t)),rho0,Phi0./(beta0*nu0)); % Typo in Penny Eq. 25?
+                    KLDrhoGammaT(t) = prtRvUtilMvnWishartKld(1/beta(t),nu(t),rho(t,:),Phi(:,:,t),1/beta0,nu0,rho0,Phi0);
                 end
                 KLDv = sum(KLDvT);
-                KLDGamma = sum(KLDGammaT);
-                KLDrho = sum(KLDrhoT);
+                KLDrhoGamma = sum(KLDrhoGammaT);
                 
                 KLDalphaT = zeros(1,T);
                 for t = 1:T-1
-                    KLDalphaT(t) = prtRvUtilGammaKld(1/s2,s1,1/prior.s2,prior.s1);
+                    KLDalphaT(t) = prtRvUtilGammaKld(s1,s2,prior.s1,prior.s2);
                 end
                 KLDalpha = sum(KLDalphaT);
                 
-                NFE(iteration) = ElogPXgivenZ + ElogPZgivenV - ElogQZ - KLDv - KLDGamma - KLDrho - KLDalpha;
-                
+                NFE(iteration) = ElogPXgivenZ + ElogPZgivenV - ElogQZ - KLDv - KLDrhoGamma - KLDalpha;
+              
                 if iteration > 1
                     Lpct = 100*(NFE(iteration-1) - NFE(iteration))/NFE(iteration-1);
                 else
@@ -364,7 +369,7 @@ classdef prtClusterDpgmm < prtCluster
                 subplot(2,2,4),plot(NFE),title('Negative Free Energy')
             else
                 subplot(2,1,1),imagesc(phi,[0,1]),title('Responsibilities')
-                subplot(2,1,2),plot(NFE),title('Negative Free Energy')  
+                subplot(2,1,2),plot(NFE),title('Negative Free Energy')
             end
             pause(0.0005)
         end

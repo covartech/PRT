@@ -146,7 +146,7 @@ classdef prtClassRvmForContext < prtClass
                 
                 KLDalpha = 0;
                 for d = 1:D
-                    KLDalpha = KLDalpha + prtRvUtilGammaKld(1/b(d),a(d),1/prior.b,prior.a);
+                    KLDalpha = KLDalpha + prtRvUtilGammaKld(a(d),b(d),prior.a,prior.b);
                 end
                 if det(S) ~= 0
                     KLDw  = .5*(-sum(log(diag(A))) -log(det(S)) + trace(A.*S)' + sum(diag(A).*m.^2) - N);
@@ -155,9 +155,16 @@ classdef prtClassRvmForContext < prtClass
                 end
                 
                 NFE(iter) = logF - KLDalpha - KLDw;
+                if Obj.verbosePlot
+                    figure(666),plot(NFE)
+                end
                 
                 if iter > 1
-                    Lpct = 100*(NFE(iter-1) - NFE(iter))/NFE(iter-1);
+                    if NFE(iter) > 0
+                        Lpct = 100*(NFE(iter) - NFE(iter-1))/NFE(iter-1);
+                    else
+                        Lpct = 100*(NFE(iter-1) - NFE(iter))/NFE(iter-1);
+                    end
                 else
                     Lpct = nan;
                 end
