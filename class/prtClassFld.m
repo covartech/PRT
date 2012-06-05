@@ -43,7 +43,7 @@ classdef prtClassFld < prtClass
  %   See also prtClass, prtClassLogisticDiscriminant, prtClassBagging,
  %   prtClassMap, prtClassCap, prtClassBinaryToMaryOneVsAll, prtClassDlrt,
  %   prtClassPlsda, prtClassKnn, prtClassRvm, prtClassGlrt,  prtClassSvm,
- %   prtClassTreeBaggingCap, prtClassKmsd, prtClassKnn
+ %   prtClassTreeBaggingCap, prtClassKmsd, prtClassKnn  
 
  
 
