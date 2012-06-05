@@ -12,6 +12,20 @@ mix = prtBrvDpMixture('components',repmat(prtBrvMvn,10,1), 'vbVerboseText',true,
 
 %%
 
+
+
+
+
+
+
+
+
+
+
+
+
+%%
+
 O = vbdpmmOptions(mvnOptions);
 O.verbosePlot = true;
 O.verboseText = true;
