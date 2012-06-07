@@ -173,11 +173,15 @@ classdef prtDataInterfaceCategoricalTargets < prtDataInterfaceTargets
             if nargin == 1
                 indices = 1:length(self.uniqueClasses);
             end
-            cn = cell(length(indices),1);
-            for i = 1:length(indices)
-                trueClass = self.uniqueClasses(indices(i));
-                cn{i} = self.classNamesArray.get(trueClass);
-            end
+            
+            trueClass = self.uniqueClasses(indices);
+            cn = self.classNamesArray.get(trueClass);
+            % Slow:
+            %             cn = cell(length(indices),1);
+            %             for i = 1:length(indices)
+            %                 trueClass = self.uniqueClasses(indices(i));
+            %                 cn{i} = self.classNamesArray.get(trueClass);
+            %             end
         end
         
         function cn = getClassNames(self,indices)
@@ -186,10 +190,13 @@ classdef prtDataInterfaceCategoricalTargets < prtDataInterfaceTargets
             if nargin == 1
                 indices = self.uniqueClasses;
             end
-            cn = cell(length(indices),1);
-            for i = 1:length(indices)
-                cn{i} = self.classNamesArray.get(indices(i));
-            end
+            
+            cn = self.classNamesArray.get(indices);
+            % Slow:
+            %             cn = cell(length(indices),1);
+            %             for i = 1:length(indices)
+            %                 cn{i} = self.classNamesArray.get(indices(i));
+            %             end
         end
         
         
