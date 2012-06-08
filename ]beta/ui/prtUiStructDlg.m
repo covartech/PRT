@@ -6,6 +6,11 @@ classdef prtUiStructDlg < prtUiManagerPanel
         windowSize = [500 300];
         
         closeOnOk = true;
+        closeOnCancel = true;
+        waitForOk = true;
+        allowCancel = true;
+        additionalOkCallback = [];
+        additionalCancelCallback = [];
         
         titleStr = '';
         
@@ -75,7 +80,9 @@ classdef prtUiStructDlg < prtUiManagerPanel
             
             init(self);
             
-            waitfor(self.overlayPanel,'visible','off');
+            if self.waitForOk
+                waitfor(self.overlayPanel,'visible','off');
+            end
             
         end
         function create(self)
@@ -335,6 +342,10 @@ classdef prtUiStructDlg < prtUiManagerPanel
                 'KeyPressFcn',@self.keyPressFunction...
                 );
             
+            if ~self.allowCancel
+                set(self.cancelButton,'visible','off')
+            end
+            
             self.figheight = self.figheight + self.dyunit + self.uibuttonheight;
             
             %%Set dialog position
@@ -503,7 +514,35 @@ classdef prtUiStructDlg < prtUiManagerPanel
         end
         function cancelCallback(self, varargin)
             self.outputStruct = self.inputStruct;
-            close(self)
+            if ~isempty(self.additionalCancelCallback)
+                feval(self.additionalCancelCallback)
+            end
+            if self.closeOnCancel 
+                close(self)
+            else
+                for ni = 1:size(self.handles,1)
+                    type  = self.handles{ni,5};
+                    fname = self.handles{ni,6};
+                    
+                    switch type
+                        
+                        case {'edit','multiedit'}
+                            set(self.handles{ni,1},'string',self.inputStruct.(fname));  
+                        case 'popupmenu'
+                            set(self.handles{ni,1},'string',cellstr(self.inputStruct.(fname)));  
+                        case 'listbox'
+                            set(self.handles{ni,1},'string',self.inputStruct.(fname));  
+                        case 'table'
+                            set(self.handles{ni,1},'Data',self.inputStruct.(fname));  
+                        case 'struct'
+                            %do nothing
+                        otherwise
+                            if ~isempty(fname)
+                                set(self.handles{ni,1},'value',self.inputStruct.(fname));  
+                            end
+                    end        
+                end
+            end
         end    
         function okCallback(self, varargin)
         
@@ -538,8 +577,13 @@ classdef prtUiStructDlg < prtUiManagerPanel
                     end
                 end
             end
+            if ~isempty(self.additionalOkCallback)
+                feval(self.additionalOkCallback)
+            end
             
-            close(self)
+            if self.closeOnOk
+                close(self)
+            end
         end
         function close(self)
             set(self.overlayPanel,'visible','off');

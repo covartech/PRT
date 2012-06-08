@@ -222,7 +222,7 @@ classdef prtAction
             Obj = postTrainProcessing(Obj,DataSet);
         end
         
-        function DataSetOut = run(Obj, DataSetIn)         
+        function [DataSetOut, extraOutput] = run(Obj, DataSetIn)         
             % RUN  Run a prtAction object on a prtDataSet object.
             %
             %   OUTPUT = OBJ.run(DataSet) runs the prtAction object using
@@ -244,7 +244,12 @@ classdef prtAction
             end
             
             DataSetOut = preRunProcessing(Obj, DataSetIn);
-            DataSetOut = runAction(Obj, DataSetOut);
+            switch nargout
+                case 1
+                   DataSetOut = runAction(Obj, DataSetOut);
+                case 2 
+                    [DataSetOut, extraOutput] = runAction(Obj, DataSetOut);
+            end
             DataSetOut = postRunProcessing(Obj, DataSetIn, DataSetOut);
            
             outputClassName = class(DataSetOut);
