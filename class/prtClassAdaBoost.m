@@ -108,6 +108,11 @@ classdef prtClassAdaBoost < prtClass
         
         function self = trainAction(self,dataSet)
             
+            
+            if ~dataSet.isBinary
+                error('prtClassAdaBoost:nonBinaryTraining','Input dataSet for prtClassAdaBoost.train must be binary');
+            end
+            
             d = ones(dataSet.nObservations,1)./dataSet.nObservations;
             
             classifier = self.baseClassifier + prtDecisionBinaryMinPe;

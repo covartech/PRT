@@ -193,6 +193,10 @@ classdef prtClassRvm < prtClass
             %   fields "sparseBeta" and "sparseKernels"
             %
             
+            if ~DataSet.isBinary
+                error('prtClassRvm:nonBinaryTraining','Input dataSet for prtClassRvm.train must be binary');
+            end
+            
             warningState = warning;
             warning off MATLAB:nearlySingularMatrix
                         

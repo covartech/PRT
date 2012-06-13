@@ -91,6 +91,10 @@ classdef prtClassFld < prtClass
             if p > n
                 warning('prt:prtClassFld:train:illconditioned','DataSet has n (%d) < p (%d); prtClassFld may not be stable',n,p);
             end
+            if ~DataSet.isBinary
+                error('prtClassFld:nonBinaryTraining','Input dataSet for prtClassFld.train must be binary');
+            end
+            
             
             dataH0 = DataSet.getObservationsByClassInd(1);
             dataH1 = DataSet.getObservationsByClassInd(2);
