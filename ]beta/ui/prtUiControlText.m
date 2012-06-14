@@ -20,6 +20,7 @@ classdef prtUiControlText < hgsetget
         function self = prtUiControlText(parent, pixelPos, varargin)
             [self.javaHandle, self.handle]  = javacomponent('javax.swing.JLabel',pixelPos, parent);
             
+            
             self = prtUtilAssignStringValuePairs(self, varargin{:});
         end
         
@@ -118,6 +119,15 @@ classdef prtUiControlText < hgsetget
         end
         function val = get.parent(self)
             val = get(self.handle,'parent');
+        end
+        
+        function delete(self)
+            try
+                delete(self.handle)
+            end
+            try
+                delete(self.javaHandle)
+            end
         end
     end
 end

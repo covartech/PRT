@@ -331,6 +331,11 @@ classdef prtAction
             
             if actuallyShowProgressBar
                 waitBarObj = prtUtilProgressBar(0,sprintf('Crossvalidating - %s',Obj.name),'autoClose',true);
+                
+                % cleanupObj = onCleanup(@()close(waitBarObj));
+                % % The above would close the waitBar upon completion but
+                % % it doesn't play nice when there are many bars in the
+                % % same window
             end
             
             isDataSetClass = isa(DataSet,'prtDataSetClass'); % Used below to provide a nicer error message in bad casses.

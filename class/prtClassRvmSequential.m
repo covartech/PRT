@@ -68,11 +68,10 @@ classdef prtClassRvmSequential < prtClassRvm
     properties
         learningPoorlyScaledLikelihoodThreshold = 1e4;
         learningLikelihoodIncreaseThreshold = 1e-6;
-        largestNumberOfGramColumns = 1000;
+        largestNumberOfGramColumns = 5000;
         learningCorrelationRemovalThreshold = 0.99;
         learningFactorRemove = true;   % Remove kernels during train?
         learningRepeatedActionLimit = 25;
-        
     end
     
     properties(Hidden = true)

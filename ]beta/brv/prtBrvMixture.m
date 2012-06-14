@@ -21,7 +21,7 @@
 %       stabilized forgetting. (Alpha release, be careful!)
 
 
-classdef prtBrvMixture < prtBrv & prtBrvVbOnline
+classdef prtBrvMixture < prtBrv & prtBrvVbOnline & prtBrvMembershipModel
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Properties required by prtAction
@@ -111,7 +111,7 @@ classdef prtBrvMixture < prtBrv & prtBrvVbOnline
                 [self, training] = vbM(self, prior, x, training);
                 
                 % Initial VBE Step
-                [self, training] = vbE(self, prior, x, training);            
+                [self, training] = vbE(self, prior, x, training);
             
                 % Calculate NFE
                 [nfe, eLogLikelihood, kld] = vbNfe(self, prior, x, training);
@@ -338,7 +338,10 @@ classdef prtBrvMixture < prtBrv & prtBrvVbOnline
         end
         
         function [obj, training] = vbE(obj, priorObj, x, training) %#ok<INUSL>
+            
             % Calculate the variational Log Likelihoods of each cluster
+            
+            training.variationalClusterLogLikelihoods = zeros(size(x,1),obj.nComponents);
             for iSource = 1:obj.nComponents
                 training.variationalClusterLogLikelihoods(:,iSource) = ...
                     obj.components(iSource).conjugateVariationalAverageLogLikelihood(x);
@@ -375,7 +378,7 @@ classdef prtBrvMixture < prtBrv & prtBrvVbOnline
             
             entropyTerm = training.componentMemberships.*log(training.componentMemberships);
             entropyTerm(isnan(entropyTerm)) = 0;
-            %entropyTerm = -sum(entropyTerm(:)) + obj.mixing.expectedLogMean*sum(training.phiMat,1)';
+            %entropyTerm = -sum(entropyTerm(:)) + obj.mixing.expectedLogMean*sum(training.componentMemberships,1)';
             entropyTerm = -sum(entropyTerm(:));
             
             kldDetails.sources = sourceKlds(:);
@@ -463,6 +466,84 @@ classdef prtBrvMixture < prtBrv & prtBrvVbOnline
             
             drawnow;
         end
+    end
+    
+    % Methods for prtBrvMembershipModel
+    %----------------------------------------------------------------------
+    methods 
+        function [phiMat, priorVec] = collectionInitialize(selfVec, priorVec, x)
+            if prtUtilIsSubClass(class(x),'prtDataInterfaceCategoricalTargets')
+                if x.nClasses == 2
+                    % This defaults to NPBMIL operation mode
+                    ds = x;
+                    x = ds.getObservations();
+                    y = ds.getTargetsAsBinaryMatrix();
+                else
+                    x = x.getObservations();
+                    y = [];
+                end
+            elseif prtUtilIsSubClass(class(x),'prtDataSetBase')
+                x = x.getObservations();
+            elseif isnumeric(x) || islogical(x)
+                y = [];
+            else
+                error('prt:prtBrvMixture:parseInputData','prtBrvMixture requires a prtDataSet or a numeric 2-D matrix');
+            end
+            
+            phiMat = zeros(size(x,1), length(selfVec));
+            if ~isempty(y)
+                % Special handling for NPBMIL
+                nH1s = sum(y(:,2));
+                randInd = prtRvUtilDiscreteRnd([1 2],[0.8 0.2],nH1s);
+                phiMatH1 = zeros(nH1s, length(selfVec));
+                phiMatH1(sub2ind(size(phiMatH1), (1:nH1s)',randInd)) = 1;
+                
+                phiMatH0 = zeros(size(x,1)-nH1s,length(selfVec));
+                phiMatH0(:,1) = 1;
+                
+                phiMat(logical(y(:,1)),:) = phiMatH0;
+                phiMat(logical(y(:,2)),:) = phiMatH1;
+                
+            else
+                randInd = prtRvUtilDiscreteRnd([1 2],[0.5 0.5],size(x,1));
+                phiMat(sub2ind(size(phiMat), (1:size(x,1))',randInd)) = 1;
+            end
+        end
+        function self = weightedConjugateUpdate(self, prior, x, weights, training)
+            
+            % Iterate through each source and update using the current memberships
+            for iSource = 1:self.nComponents
+                self.components(iSource) = self.components(iSource).weightedConjugateUpdate(prior.components(iSource), x, weights.*training.componentMemberships(:,iSource));
+            end
+    
+            training.nSamplesPerComponent = sum(bsxfun(@times,training.componentMemberships,weights),1);
+            
+            % Updated mixing
+            self.mixing = self.mixing.conjugateUpdate(prior.mixing, training.nSamplesPerComponent);
+            
+        end
+        function self = conjugateUpdate(self, prior, x) %#ok<INUSL>
+            warning('prt:prtBrvMixture:conjugateUpdate','Model is not fully conjugate resorting to vb');
+            self = vb(self, x);
+        end
+        
+        function plotCollection(selfs,colors)
+            
+            for iComp = 1:length(selfs)
+                plotCollection(selfs(iComp).components, repmat(colors(iComp,:),length(selfs(iComp).components),1));
+                hold on;
+                if iComp == 1
+                    axesLimits = repmat(axis,length(selfs),1);
+                else
+                    axesLimits(iComp,:) = axis;
+                end
+            end
+            hold off;
+            axis([min(axesLimits(:,1)), max(axesLimits(:,2)), min(axesLimits(:,3)), max(axesLimits(:,4))]);
+            
+            
+        end
+        
     end
     
     methods (Hidden)

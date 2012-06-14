@@ -12,7 +12,7 @@ classdef prtDataSetClassMultipleInstance < prtDataSetClass
         
     methods
         function obj = prtDataSetClassMultipleInstance(varargin)
-            warning('prt:prtDataSetClassMultipleInstance','prtDataSetClassMultipleInstance is incomplete and should not be used at this time');
+            %warning('prt:prtDataSetClassMultipleInstance','prtDataSetClassMultipleInstance is incomplete and should not be used at this time');
             
             if nargin == 0
                 return;
@@ -61,19 +61,47 @@ classdef prtDataSetClassMultipleInstance < prtDataSetClass
         end
         
         function self = setObservationsAndBagsFromCell(self, val)
-            self.bag = kron((1:size(val,1))',cellfun(@length,val));
+            
+            nObsPerBag = cellfun(@length,val);
+            self.bag = zeros(sum(nObsPerBag),1);
+            cEnd = 0;
+            for iBag = 1:length(nObsPerBag)
+                cBags = iBag*ones(nObsPerBag(iBag),1);
+                self.bag(cEnd+(1:nObsPerBag(iBag))) = cBags;
+                cEnd = cEnd + nObsPerBag(iBag);
+            end
+            
             self.data = cell2mat(val); % No error checking on your cell array yet! Make sure this works!
         end
         function self = setBagTargets(self, val)
-            keyboard
+            self.bagTarget = val;
+            
+            nObsPerBag = self.nObservationsByBag;
+            newTargets = zeros(self.nObservations,1);
+            cEnd = 0;
+            for iBag = 1:length(nObsPerBag)
+                cY = val(iBag)*ones(nObsPerBag(iBag),1);
+                newTargets(cEnd+(1:nObsPerBag(iBag))) = cY;
+                cEnd = cEnd + nObsPerBag(iBag);
+            end
+            
+            self.targets = newTargets;
         end
         
         function vals = getBagObservations(self,bagInd)
-            error('broken');
+            if islogical(self.bag)
+                error('broken')
+            else
+                vals = cell(length(bagInd),1);
+                for iInd = 1:length(bagInd)
+                    vals{iInd} = self.data(self.bag==bagInd(iInd),:);
+                end
+            end
         end
         function vals = getBagTarget(self,bagInd)
-            error('broken');
+            vals = self.bagTarget(bagInd);
         end
+        
         function self = setBagObservations(self, newObs,bagInd)
             error('broken');
         end
@@ -86,9 +114,9 @@ classdef prtDataSetClassMultipleInstance < prtDataSetClass
         end
         
         
-        function obj = setTargets(obj,targets,varargin)
-            error('broken');
-        end
+%         function obj = setTargets(obj,targets,varargin)
+%             error('broken')
+%         end
         function obj = catObservations(obj,varargin)
             error('broken');
         end
@@ -107,13 +135,17 @@ classdef prtDataSetClassMultipleInstance < prtDataSetClass
         end
         
         function val = get.nBags(self)
-            val = [];
+            val = max(self.bag);
         end
         function val = get.nObservationsByBag(self)
-            val = [];
+            val = histc(self.bag,1:self.nBags);
         end
         function val = get.nBagsByUniqueClass(self)
-            val = [];
+            uClass = self.uniqueClasses;
+            val = zeros(length(uClass),1);
+            for iClass = 1:length(uClass)
+                val(iClass) = sum(self.bagTarget==uClass(iClass));
+            end
         end
     end
 % 	methods (Hidden=true, Access='protected')

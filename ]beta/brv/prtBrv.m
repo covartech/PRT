@@ -27,7 +27,7 @@ classdef prtBrv < prtAction
             missingMethodError(self,'posteriorMeanStruct')
         end
         function plotCollection(selfVec,colors) %#ok<INUSD>
-           missingMethodError(selfVec(1),'plotComponents') 
+           missingMethodError(selfVec(1),'plotCollection') 
         end
         function val = plotLimits(self) %#ok<STOUT>
            missingMethodError(self,'plotLimits') 
