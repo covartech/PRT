@@ -75,6 +75,9 @@ classdef prtUtilIntegerAssociativeArray
         function self = retain(self,keys)
             
             keepLocs = false(1,length(self.integerKeys));
+            if isempty(keepLocs)
+                return
+            end
             for i = 1:length(keys)
                 keepLocs = keepLocs | self.integerKeys == keys(i);
             end

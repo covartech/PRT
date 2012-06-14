@@ -193,6 +193,7 @@ classdef prtClassRvm < prtClass
             %   fields "sparseBeta" and "sparseKernels"
             %
             
+
             assert(DataSet.isBinary,'prtClassRvm Requires a binary dataset');
             
             warningState = warning;

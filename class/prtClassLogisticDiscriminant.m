@@ -185,7 +185,12 @@ classdef prtClassLogisticDiscriminant < prtClass
         
         function Obj = trainAction(Obj,DataSet)
             %Obj = trainAction(Obj,DataSet)
-	
+            
+            
+            if ~DataSet.isBinary
+                error('prtClassLogisticDiscriminant:nonBinaryTraining','Input dataSet for prtClassLogisticDiscriminant.train must be binary');
+            end
+            
             %Helper functions:
             sigmaFn = @(x) 1./(1 + exp(-x));
             rCondDiag = @(vec) min(vec)/max(vec);

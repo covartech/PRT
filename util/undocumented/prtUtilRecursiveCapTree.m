@@ -94,6 +94,7 @@ tree.father = index;
 
 % Right
 xRight = x(yOut,:);
+
 yRight = y(yOut,:);
 maxLen = length(find(~isnan(tree.W(1,:))));
 tree = prtUtilRecursiveCapTree(Obj,tree,xRight,yRight,maxLen + 1);

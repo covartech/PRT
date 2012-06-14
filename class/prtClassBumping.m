@@ -105,6 +105,10 @@ classdef prtClassBumping < prtClass
         
         function Obj = trainAction(Obj,DataSet)
             
+            if ~DataSet.isBinary
+                error('prtClassBumping:nonBinaryTraining','Input dataSet for prtClassBumping.train must be binary');
+            end
+            
             Obj.nameAbbreviation = sprintf('Bumping_{%s}',Obj.baseClassifier.nameAbbreviation);
             if Obj.includeOriginalDataClassifier
                 titleString = sprintf('Building %d(+1) %s models...',Obj.nBags,Obj.baseClassifier.name);

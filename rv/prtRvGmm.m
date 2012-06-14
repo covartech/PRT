@@ -177,6 +177,43 @@ classdef prtRvGmm < prtRv
     end
 
     methods (Hidden=true)
+        
+        function [gmmCell,bic] = bicOptimize(self,ds,componentRange)
+            
+            count = 1;
+            gmmCell = repmat({self},length(componentRange),1);
+            bic = nan(length(componentRange),1);
+            for n = componentRange
+                self.nComponents = componentRange(n);
+                
+                gmmCell{count} = self.train(ds);
+                logLikelihood = gmmCell{count}.logPdf(ds);
+                nParams = gmmCell{count}.getNumParams(ds.nFeatures);
+                
+                bic(count) = -2*sum(logLikelihood) + nParams*log(ds.nObservations);
+                count = count + 1;
+            end
+        end
+        
+        function nParams = getNumParams(self,d)
+            if nargin == 1
+                d = self.dataSet.nFeatures;
+            elseif isa(d,'prtDataSet')
+                d = d.nFeatures;
+            end
+            nComponents = length(self.components);
+            
+            switch self.covarianceStructure
+                case 'full'
+                    nParamsPerCovariance = d*(d-1);
+                case 'diagonal'
+                    nParamsPerCovariance = d;
+                case 'spherical'
+                    nParamsPerCovariance = 1;
+            end
+            nParams = (1 + d + nParamsPerCovariance)*nComponents;
+        end
+        
         function [val, reasonStr] = isValid(R)
             if numel(R) > 1
                 val = false(size(R));
