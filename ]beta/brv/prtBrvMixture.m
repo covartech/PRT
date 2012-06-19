@@ -45,11 +45,20 @@ classdef prtBrvMixture < prtBrv & prtBrvVbOnline & prtBrvMembershipModel
         end
         
         function y = predictivePdf(self, x)
-            %%%% FIXME
-            % The true predictive is not finished yet. This is an
-            % approximation
+            y = exp(predictiveLogPdf(self, x));
+        end
+        function y = predictiveLogPdf(self, x)
             
-            y = conjugateVariationalAverageLogLikelihood(self, x);
+            logLikelihoods = zeros(size(x,1), self.nComponents);
+            for iComp = 1:self.nComponents
+                logLikelihoods(:,iComp) = predictiveLogPdf(self.components(iComp),x);
+            end
+            
+            piHat = self.mixing.posteriorMeanStruct;
+            piHat = piHat.probabilities(:)';
+            
+            y = prtUtilSumExp(bsxfun(@plus,logLikelihoods,log(piHat))')';
+            
         end
         
         function val = getNumDimensions(self)
@@ -378,18 +387,21 @@ classdef prtBrvMixture < prtBrv & prtBrvVbOnline & prtBrvMembershipModel
             
             entropyTerm = training.componentMemberships.*log(training.componentMemberships);
             entropyTerm(isnan(entropyTerm)) = 0;
-            %entropyTerm = -sum(entropyTerm(:)) + obj.mixing.expectedLogMean*sum(training.componentMemberships,1)';
-            entropyTerm = -sum(entropyTerm(:));
             
-            kldDetails.sources = sourceKlds(:);
-            kldDetails.mixing = mixingKld;
-            kldDetails.entropy = entropyTerm;
+            logPi = obj.mixing.expectedLogMean;
+            membershipKlds = sum(entropyTerm,2)-sum(bsxfun(@times, training.componentMemberships,logPi(:)'),2);
             
-            kld = sum(sourceKlds) + mixingKld + entropyTerm;
+            kld = sum(sourceKlds) + mixingKld + sum(membershipKlds);
             
-            eLogLikelihood = sum(prtUtilSumExp(training.variationalLogLikelihoodBySample'));
+            eLogLikelihood = sum(sum(training.variationalClusterLogLikelihoods.*training.componentMemberships,2));
             
             nfe = eLogLikelihood - kld;
+            
+            if nargout > 3
+                kldDetails.sources = sourceKlds(:);
+                kldDetails.mixing = mixingKld;
+                kldDetails.memberships = membershipKlds(:);
+            end
         end
         
         function vbIterationPlot(obj, priorObj, x, training) %#ok<INUSL>
@@ -530,8 +542,16 @@ classdef prtBrvMixture < prtBrv & prtBrvVbOnline & prtBrvMembershipModel
         function plotCollection(selfs,colors)
             
             for iComp = 1:length(selfs)
-                plotCollection(selfs(iComp).components, repmat(colors(iComp,:),length(selfs(iComp).components),1));
                 hold on;
+                mixingPropPostMean = selfs(iComp).mixing.posteriorMeanStruct;
+                mixingPropPostMean = mixingPropPostMean.probabilities;
+            
+                cComponents = mixingPropPostMean > selfs(iComp).plotComponentProbabilityThreshold;
+                if any(cComponents)
+                    plotCollection(selfs(iComp).components(cComponents), repmat(colors(iComp,:),sum(cComponents),1));
+                end
+                
+                
                 if iComp == 1
                     axesLimits = repmat(axis,length(selfs),1);
                 else

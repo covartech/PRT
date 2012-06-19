@@ -6,6 +6,7 @@ classdef prtBrv < prtAction
     methods (Abstract)
         self = estimateParameters(self, priorSelf, x)
         y = predictivePdf(self, x)
+        y = predictiveLogPdf(self, x)
         
         d = getNumDimensions(self)
         

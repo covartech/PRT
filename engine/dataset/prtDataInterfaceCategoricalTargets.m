@@ -469,5 +469,7 @@ classdef prtDataInterfaceCategoricalTargets < prtDataInterfaceTargets
             
             Out = retainObservations(Obj,newObsInds);
         end
+        
+        
     end
 end

@@ -15,9 +15,10 @@ end
 
 
 R{1} = prtRvGmm('nComponents',2,'mixingProportions',[0.5; 0.5],'components',cat(1,prtRvMvn('mu',[0 0],'sigma',eye(2)),prtRvMvn('mu',[-6 -6],'sigma',eye(2))));
-R{2} = prtRvGmm('nComponents',2,'mixingProportions',[0.5; 0.5],'components',cat(1,prtRvMvn('mu',[2 2],'sigma',[1 .5; .5 1]),prtRvMvn('mu',[-3 -3],'sigma',[1 .5; .5 1])));
+%R{2} = prtRvGmm('nComponents',2,'mixingProportions',[0.5; 0.5],'components',cat(1,prtRvMvn('mu',[2 2],'sigma',[1 .5; .5 1]),prtRvMvn('mu',[-3 -3],'sigma',[1 .5; .5 1])));
+R{2} = prtRvGmm('nComponents',2,'mixingProportions',[0.5; 0.5],'components',cat(1,prtRvMvn('mu',[6 6],'sigma',[1 .5; .5 1]),prtRvMvn('mu',[-6 6],'sigma',[1 .5; .5 1])));
 
-X = cell(nBagsPerHypothesis*2,1);
+X = repmat(struct('data',[]),nBagsPerHypothesis*2,1);
 for iBag = 1:size(X,1)
     if iBag <= nBagsPerHypothesis
         cX = draw(R{1}, nObservationsPerBag);
@@ -27,7 +28,7 @@ for iBag = 1:size(X,1)
         
         cX = cat(1,cXH0,cXH1);
     end
-    X{iBag} = cX;
+    X(iBag).data = cX;
 end
 
 Y = prtUtilY(nBagsPerHypothesis, nBagsPerHypothesis);

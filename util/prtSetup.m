@@ -24,7 +24,7 @@ end
 % >> builddocsearchdb(fullfile(prtRoot,'doc'));
 %
 % However, this indexes all of the methods and properties of each class.
-% This is not ideal. To prevent this we have to copy the all of the files
+% This is not ideal. To prevent this we have to copy all of the files
 % somewhere else. Delete the ones we don't want indexed, index, and then
 % copy the files back. This is all because there is no way to prevent
 % builddocsearchdb from searching particular files.

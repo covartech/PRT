@@ -564,6 +564,17 @@ classdef prtDataSetBase
     end
     
     methods
+        
+        %this might could be moved to prtDataInterfaceCategorical...
+        function keys = getKFoldKeys(DataSet,K)
+            if DataSet.isLabeled
+                keys = prtUtilEquallySubDivideData(DataSet.getTargets(),K);
+            else
+                %can cross-val on unlabeled data, too!
+                keys = prtUtilEquallySubDivideData(ones(DataSet.nObservations,1),K);
+            end
+        end        
+        
         function [obj,keep] = select(obj, selectFunction)
             % Select observations to retain by specifying a function
             %   The specified function is evaluated on each obesrvation.

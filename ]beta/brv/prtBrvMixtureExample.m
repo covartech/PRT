@@ -1,28 +1,26 @@
 clear classes
-ds = prtDataGenOldFaithful; 
+%ds = prtDataGenOldFaithful; 
+ds = prtDataGenBimodal;
 
-mix = prtBrvMixture('components',repmat(prtBrvMvn,10,1), 'vbVerboseText',true, 'vbVerbosePlot', true, 'vbConvergenceThreshold',1e-10);
+mix = prtBrvMixture('components', repmat(prtBrvMvn,20,1), 'vbVerboseText', true, 'vbVerbosePlot', true, 'vbConvergenceThreshold', 1e-15);
 [mixLearned, training] = mix.vbBatch(ds);
+
 %%
 clear classes
-ds = prtDataGenOldFaithful; 
+%ds = prtDataGenOldFaithful;
+ds = prtDataGenBimodal;
 
-mix = prtBrvDpMixture('components',repmat(prtBrvMvn,10,1), 'vbVerboseText',true, 'vbVerbosePlot', true, 'vbConvergenceThreshold',1e-10);
+mix = prtBrvDpMixture('components',repmat(prtBrvMvn,15,1), 'vbVerboseText',true, 'vbVerbosePlot', true, 'vbConvergenceThreshold',1e-15);
 [mixLearned, training] = mix.vbBatch(ds);
 
 %%
 
+clear classes
+%ds = prtDataGenOldFaithful; 
+ds = prtDataGenTopicModel;
 
-
-
-
-
-
-
-
-
-
-
+mix = prtBrvDpMixture('components',repmat(prtBrvDiscrete,50,1), 'vbVerboseText',true, 'vbVerbosePlot', true, 'vbConvergenceThreshold',1e-15);
+[mixLearned, training] = mix.vbBatch(ds);
 
 %%
 

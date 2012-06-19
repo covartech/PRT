@@ -405,7 +405,7 @@ classdef prtAction
             
             OutputDataSet = DataSet;
             OutputDataSet = OutputDataSet.setObservations(OutputMat);
-            OutputDataSet = OutputDataSet.setFeatureNames(InternalOutputDataSet.getFeatureNames);
+            %OutputDataSet = OutputDataSet.setFeatureNames(InternalOutputDataSet.getFeatureNames);
         end
         
         function varargout = kfolds(Obj,DataSet,K)

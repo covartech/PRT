@@ -39,7 +39,12 @@ classdef prtBrvMvn < prtBrv & prtBrvVbOnline & prtBrvVbMembershipModel & prtBrvV
         end
         
         function y = predictivePdf(self, x)
-            y = prtRvUtilStudentTPdf(x, self.meanMean, self.covPhi, self.covNu);
+            y = prtRvUtilStudentTPdf(x, self.model.meanMean, self.model.covPhi./self.model.covNu, self.model.covNu);
+        end
+        function y = predictiveLogPdf(self, x)
+            y = prtRvUtilStudentTLogPdf(x, self.model.meanMean, self.model.covPhi./self.model.covNu, self.model.covNu);
+            
+            %y = prtRvUtilMvnLogPdf(x, self.model.meanMean, self.model.covPhi/self.model.covNu);
         end
         
         function val = getNumDimensions(self)

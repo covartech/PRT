@@ -39,14 +39,14 @@ classdef prtBrvVb
             F = training.negativeFreeEnergy;
             pF = training.previousNegativeFreeEnergy;
             
-            signedPercentage(1) = (F-pF)./abs(mean([F pF])); %(1) removes mlint warning
+            signedPercentage = (F-pF);
             converged = signedPercentage < self.vbConvergenceThreshold;
     
             if self.vbVerboseText
                 fprintf('\t\t\t Negative Free Energy: %0.2f, %+.2e Change\n',F,signedPercentage)
             end
 
-            if signedPercentage < 0 && abs(F-pF)
+            if signedPercentage < 0
                 if self.vbVerboseText
                     fprintf('\t\tDecrease in negative free energy occured!!! Exiting.\n')
                 end
@@ -56,6 +56,27 @@ classdef prtBrvVb
                 err = false;
             end
         end
+        function [converged, err] = vbIsConvergedAbs(self, priorSelf, x, training) %#ok<INUSL>
+            F = training.negativeFreeEnergy;
+            pF = training.previousNegativeFreeEnergy;
+            
+            signedPercentage = (F-pF);
+            converged = abs(signedPercentage) < self.vbConvergenceThreshold;
+    
+            if self.vbVerboseText
+                fprintf('\t\t\t Negative Free Energy: %0.2f, %+.2e Change\n',F,signedPercentage)
+            end
+
+            if signedPercentage < 0
+                %if self.vbVerboseText
+                %    fprintf('\t\tDecrease in negative free energy occured!!! Exiting.\n')
+                %end
+                %converged = false;
+                err = true;
+            else
+                err = false;
+            end
+        end        
     end
 end
 
