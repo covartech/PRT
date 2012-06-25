@@ -222,7 +222,7 @@ classdef prtAction
             Obj = postTrainProcessing(Obj,DataSet);
         end
         
-        function DataSetOut = run(Obj, DataSetIn)         
+        function [DataSetOut, extraOutput] = run(Obj, DataSetIn)         
             % RUN  Run a prtAction object on a prtDataSet object.
             %
             %   OUTPUT = OBJ.run(DataSet) runs the prtAction object using
@@ -244,7 +244,12 @@ classdef prtAction
             end
             
             DataSetOut = preRunProcessing(Obj, DataSetIn);
-            DataSetOut = runAction(Obj, DataSetOut);
+            switch nargout
+                case 1
+                   DataSetOut = runAction(Obj, DataSetOut);
+                case 2 
+                    [DataSetOut, extraOutput] = runAction(Obj, DataSetOut);
+            end
             DataSetOut = postRunProcessing(Obj, DataSetIn, DataSetOut);
            
             outputClassName = class(DataSetOut);
@@ -326,6 +331,11 @@ classdef prtAction
             
             if actuallyShowProgressBar
                 waitBarObj = prtUtilProgressBar(0,sprintf('Crossvalidating - %s',Obj.name),'autoClose',true);
+                
+                % cleanupObj = onCleanup(@()close(waitBarObj));
+                % % The above would close the waitBar upon completion but
+                % % it doesn't play nice when there are many bars in the
+                % % same window
             end
             
             isDataSetClass = isa(DataSet,'prtDataSetClass'); % Used below to provide a nicer error message in bad casses.
@@ -395,7 +405,7 @@ classdef prtAction
             
             OutputDataSet = DataSet;
             OutputDataSet = OutputDataSet.setObservations(OutputMat);
-            OutputDataSet = OutputDataSet.setFeatureNames(InternalOutputDataSet.getFeatureNames);
+            %OutputDataSet = OutputDataSet.setFeatureNames(InternalOutputDataSet.getFeatureNames);
         end
         
         function varargout = kfolds(Obj,DataSet,K)

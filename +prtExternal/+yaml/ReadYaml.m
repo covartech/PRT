@@ -26,11 +26,17 @@ function YamlStruct = ReadYaml(yaml_file)
         jc    18-Mar-11   Warning added when imported file not found
 %}
 %======================================================================
+
 import prtExternal.yaml.*;
 
 %InitYaml();
-jarPath = fullfile(prtRoot,'+prtExternal','+yaml','YAMLMatlab','external-packages','snakeyaml','snakeyaml-1.8.jar');
-javaaddpath(jarPath)
+packagePath = fullfile(prtRoot,'+prtExternal','+yaml','YAMLMatlab','external-packages','snakeyaml');
+jarPath = fullfile(packagePath,'snakeyaml-1.8.jar');
+
+if isempty(strfind(javaclasspath,packagePath))
+    javaaddpath(jarPath)
+end
+    
 import('org.yaml.snakeyaml.Yaml');
 
 yamlreader = Yaml();
@@ -55,7 +61,3 @@ if isfield(Data,'import')
 else
     YamlStruct = Data;
 end
-
-end % end of function
-
-

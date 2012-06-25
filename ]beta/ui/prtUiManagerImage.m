@@ -24,6 +24,30 @@ classdef prtUiManagerImage < prtUiManagerAxes
            end
         end
         
+        function reImage(self, varargin)
+            if isempty(self.imageHandle)
+                self.imageHandle = image(varargin{:},'Parent',self.managedHandle);
+            else
+                self.updateCData(varargin{1});
+            end
+        end
+        
+        function reImagesc(self, varargin)
+            if isempty(self.imageHandle)
+                self.imageHandle = imagesc(varargin{:},'Parent',self.managedHandle);
+            else
+                self.updateCData(varargin{1});
+            end
+        end
+        
+        function reImshow(self, varargin)
+            if isempty(self.imageHandle)
+                self.imageHandle = imshow(varargin{:},'Parent',self.managedHandle);
+            else
+                self.updateCData(varargin{1});
+            end
+        end
+        
         function image(self,varargin)
             self.imageHandle = image(varargin{:},'Parent',self.managedHandle);
         end
@@ -82,7 +106,7 @@ classdef prtUiManagerImage < prtUiManagerAxes
         end
         
         function is = checkValid(self)
-            assert(ishandle(self.imageHandle),'prt:prtGuiManagerPlot:badHandles','Some or all of the requested handles are no longer valid. The axes may have been deleted.');
+            assert(ishandle(self.imageHandle),'prt:prtUiManagerImage:badHandle','Some or all of the requested handles are no longer valid. The axes may have been deleted.');
             is = true;
         end
         

@@ -96,7 +96,7 @@ nanSpots = isnan(sortedDS);
 % Sort y
 sortedY = y(sortingInds);
 
-% Start making 
+% Start making
 pFa = double(~sortedY); % number of false alarms as a function of threshold
 pD = double(sortedY); % number of detections as a function of threshold
 

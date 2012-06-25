@@ -271,6 +271,10 @@ classdef prtClass < prtAction
             end
             produceMaryOutput = false; % Default answer only do mary in special conditions
             
+            if isnan(ClassObj.isNativeMary)
+                produceMaryOutput = [];
+                return; %let it do it's thing.
+            end
             if DataSet.isMary
                 % You have Mary data so you want an Mary output
                 if ClassObj.isNativeMary

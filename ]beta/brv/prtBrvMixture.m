@@ -21,7 +21,7 @@
 %       stabilized forgetting. (Alpha release, be careful!)
 
 
-classdef prtBrvMixture < prtBrv & prtBrvVbOnline
+classdef prtBrvMixture < prtBrv & prtBrvVbOnline & prtBrvMembershipModel
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Properties required by prtAction
@@ -45,11 +45,20 @@ classdef prtBrvMixture < prtBrv & prtBrvVbOnline
         end
         
         function y = predictivePdf(self, x)
-            %%%% FIXME
-            % The true predictive is not finished yet. This is an
-            % approximation
+            y = exp(predictiveLogPdf(self, x));
+        end
+        function y = predictiveLogPdf(self, x)
             
-            y = conjugateVariationalAverageLogLikelihood(self, x);
+            logLikelihoods = zeros(size(x,1), self.nComponents);
+            for iComp = 1:self.nComponents
+                logLikelihoods(:,iComp) = predictiveLogPdf(self.components(iComp),x);
+            end
+            
+            piHat = self.mixing.posteriorMeanStruct;
+            piHat = piHat.probabilities(:)';
+            
+            y = prtUtilSumExp(bsxfun(@plus,logLikelihoods,log(piHat))')';
+            
         end
         
         function val = getNumDimensions(self)
@@ -111,7 +120,7 @@ classdef prtBrvMixture < prtBrv & prtBrvVbOnline
                 [self, training] = vbM(self, prior, x, training);
                 
                 % Initial VBE Step
-                [self, training] = vbE(self, prior, x, training);            
+                [self, training] = vbE(self, prior, x, training);
             
                 % Calculate NFE
                 [nfe, eLogLikelihood, kld] = vbNfe(self, prior, x, training);
@@ -190,30 +199,18 @@ classdef prtBrvMixture < prtBrv & prtBrvVbOnline
     methods
         function [obj, priorObj, training] = vbOnlineInitialize(obj,x)
             
-            training.randnState = randn('seed'); %#ok<RAND>
-            training.randState = rand('seed'); %#ok<RAND>
-            training.startTime = now;
-            training.variationalLogLikelihoodBySample = -inf(size(x,1),obj.nComponents);
-            training.negativeFreeEnergy = 0;
-            training.previousNegativeFreeEnergy = nan;
-            training.iterations.negativeFreeEnergy = [];
-            training.iterations.eLogLikelihood = [];
-            training.iterations.kld = [];
-            training.nIterations = 0;
+            training = prtBrvMixtureVbTraining;
             
-            initCounts = rand(1,obj.nComponents);
-            initCounts = initCounts./sum(initCounts(:));
-            
-            training.nSamplesPerCluster = initCounts;
+            obj = initialize(obj, x);
             
             priorObj = obj;
             
-            % Updated mixing
-            obj.mixing = obj.mixing.conjugateUpdate(priorObj.mixing, initCounts);
+            % Intialize mixing
+            obj.mixing = obj.mixing.vbOnlineInitialize([]);
             
             % Iterate through each source and update using the current memberships
             for iSource = 1:obj.nComponents
-                obj.components(iSource) = obj.components(iSource).vbOnlineInitialize(priorObj.components(iSource), x);
+                obj.components(iSource) = obj.components(iSource).vbOnlineInitialize(x);
             end
             
         end
@@ -225,7 +222,7 @@ classdef prtBrvMixture < prtBrv & prtBrvVbOnline
             end
             
             if nargin < 4 || isempty(training)
-                training.startTime = now;
+                training = prtBrvMixtureVbTraining;
                 training.iterations.negativeFreeEnergy = [];
                 training.iterations.eLogLikelihood = [];
                 training.iterations.kld = [];
@@ -234,11 +231,11 @@ classdef prtBrvMixture < prtBrv & prtBrvVbOnline
             
             % Update components
             for s = 1:obj.nComponents
-                obj.components(s) = obj.components(s).vbOnlineWeightedUpdate(priorObj.components(s), x, training.phiMat(:,s), learningRate, D, prevObj.components(s));
+                obj.components(s) = obj.components(s).vbOnlineWeightedUpdate(priorObj.components(s), x, training.componentMemberships(:,s), learningRate, D, prevObj.components(s));
             end
-            obj.mixing = obj.mixing.vbOnlineWeightedUpdate(priorObj.mixing, training.phiMat, [], learningRate, D, prevObj.mixing);
+            obj.mixing = obj.mixing.vbOnlineWeightedUpdate(priorObj.mixing, training.componentMemberships, [], learningRate, D, prevObj.mixing);
             
-            training.nSamplesPerCluster = sum(training.phiMat,1);
+            training.nSamplesPerComponent = sum(training.componentMemberships,1);
             
             %[nfe, eLogLikelihood, kld, kldDetails] = vbNfe(obj, priorObj, x, training); %#ok<NASGU,ASGLU>
             %training.negativeFreeEnergy = -kld;
@@ -350,7 +347,10 @@ classdef prtBrvMixture < prtBrv & prtBrvVbOnline
         end
         
         function [obj, training] = vbE(obj, priorObj, x, training) %#ok<INUSL>
+            
             % Calculate the variational Log Likelihoods of each cluster
+            
+            training.variationalClusterLogLikelihoods = zeros(size(x,1),obj.nComponents);
             for iSource = 1:obj.nComponents
                 training.variationalClusterLogLikelihoods(:,iSource) = ...
                     obj.components(iSource).conjugateVariationalAverageLogLikelihood(x);
@@ -387,18 +387,21 @@ classdef prtBrvMixture < prtBrv & prtBrvVbOnline
             
             entropyTerm = training.componentMemberships.*log(training.componentMemberships);
             entropyTerm(isnan(entropyTerm)) = 0;
-            %entropyTerm = -sum(entropyTerm(:)) + obj.mixing.expectedLogMean*sum(training.phiMat,1)';
-            entropyTerm = -sum(entropyTerm(:));
             
-            kldDetails.sources = sourceKlds(:);
-            kldDetails.mixing = mixingKld;
-            kldDetails.entropy = entropyTerm;
+            logPi = obj.mixing.expectedLogMean;
+            membershipKlds = sum(entropyTerm,2)-sum(bsxfun(@times, training.componentMemberships,logPi(:)'),2);
             
-            kld = sum(sourceKlds) + mixingKld + entropyTerm;
+            kld = sum(sourceKlds) + mixingKld + sum(membershipKlds);
             
-            eLogLikelihood = sum(prtUtilSumExp(training.variationalLogLikelihoodBySample'));
+            eLogLikelihood = sum(sum(training.variationalClusterLogLikelihoods.*training.componentMemberships,2));
             
             nfe = eLogLikelihood - kld;
+            
+            if nargout > 3
+                kldDetails.sources = sourceKlds(:);
+                kldDetails.mixing = mixingKld;
+                kldDetails.memberships = membershipKlds(:);
+            end
         end
         
         function vbIterationPlot(obj, priorObj, x, training) %#ok<INUSL>
@@ -477,9 +480,95 @@ classdef prtBrvMixture < prtBrv & prtBrvVbOnline
         end
     end
     
+    % Methods for prtBrvMembershipModel
+    %----------------------------------------------------------------------
+    methods 
+        function [phiMat, priorVec] = collectionInitialize(selfVec, priorVec, x)
+            if prtUtilIsSubClass(class(x),'prtDataInterfaceCategoricalTargets')
+                if x.nClasses == 2
+                    % This defaults to NPBMIL operation mode
+                    ds = x;
+                    x = ds.getObservations();
+                    y = ds.getTargetsAsBinaryMatrix();
+                else
+                    x = x.getObservations();
+                    y = [];
+                end
+            elseif prtUtilIsSubClass(class(x),'prtDataSetBase')
+                x = x.getObservations();
+            elseif isnumeric(x) || islogical(x)
+                y = [];
+            else
+                error('prt:prtBrvMixture:parseInputData','prtBrvMixture requires a prtDataSet or a numeric 2-D matrix');
+            end
+            
+            phiMat = zeros(size(x,1), length(selfVec));
+            if ~isempty(y)
+                % Special handling for NPBMIL
+                nH1s = sum(y(:,2));
+                randInd = prtRvUtilDiscreteRnd([1 2],[0.8 0.2],nH1s);
+                phiMatH1 = zeros(nH1s, length(selfVec));
+                phiMatH1(sub2ind(size(phiMatH1), (1:nH1s)',randInd)) = 1;
+                
+                phiMatH0 = zeros(size(x,1)-nH1s,length(selfVec));
+                phiMatH0(:,1) = 1;
+                
+                phiMat(logical(y(:,1)),:) = phiMatH0;
+                phiMat(logical(y(:,2)),:) = phiMatH1;
+                
+            else
+                randInd = prtRvUtilDiscreteRnd([1 2],[0.5 0.5],size(x,1));
+                phiMat(sub2ind(size(phiMat), (1:size(x,1))',randInd)) = 1;
+            end
+        end
+        function self = weightedConjugateUpdate(self, prior, x, weights, training)
+            
+            % Iterate through each source and update using the current memberships
+            for iSource = 1:self.nComponents
+                self.components(iSource) = self.components(iSource).weightedConjugateUpdate(prior.components(iSource), x, weights.*training.componentMemberships(:,iSource));
+            end
+    
+            training.nSamplesPerComponent = sum(bsxfun(@times,training.componentMemberships,weights),1);
+            
+            % Updated mixing
+            self.mixing = self.mixing.conjugateUpdate(prior.mixing, training.nSamplesPerComponent);
+            
+        end
+        function self = conjugateUpdate(self, prior, x) %#ok<INUSL>
+            warning('prt:prtBrvMixture:conjugateUpdate','Model is not fully conjugate resorting to vb');
+            self = vb(self, x);
+        end
+        
+        function plotCollection(selfs,colors)
+            
+            for iComp = 1:length(selfs)
+                hold on;
+                mixingPropPostMean = selfs(iComp).mixing.posteriorMeanStruct;
+                mixingPropPostMean = mixingPropPostMean.probabilities;
+            
+                cComponents = mixingPropPostMean > selfs(iComp).plotComponentProbabilityThreshold;
+                if any(cComponents)
+                    plotCollection(selfs(iComp).components(cComponents), repmat(colors(iComp,:),sum(cComponents),1));
+                end
+                
+                
+                if iComp == 1
+                    axesLimits = repmat(axis,length(selfs),1);
+                else
+                    axesLimits(iComp,:) = axis;
+                end
+            end
+            hold off;
+            axis([min(axesLimits(:,1)), max(axesLimits(:,2)), min(axesLimits(:,3)), max(axesLimits(:,4))]);
+            
+            
+        end
+        
+    end
+    
     methods (Hidden)
         function x = parseInputData(self,x) %#ok<MANU>
-            if isnumeric(x)
+            if isnumeric(x) || islogical(x)
                 return
             elseif prtUtilIsSubClass(class(x),'prtDataSetBase')
                 x = x.getObservations();

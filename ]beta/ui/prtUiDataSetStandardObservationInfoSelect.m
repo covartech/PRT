@@ -7,6 +7,9 @@ classdef prtUiDataSetStandardObservationInfoSelect < prtUiManagerPanel
         dataCell = {};
         
         sortingInds
+        
+        fontSizeTable = 8;
+        fontSizeEdit = 12;
     end
     properties (Hidden, SetAccess='protected', GetAccess='protected')
         selectrStrDepHelper = 'true(size(S))';
@@ -22,9 +25,15 @@ classdef prtUiDataSetStandardObservationInfoSelect < prtUiManagerPanel
     methods 
         function self = prtUiDataSetStandardObservationInfoSelect(varargin)
             if nargin == 1
-                obsInfoStruct = varargin{1};
-                self.prtDs = prtDataSetStandard(nan(length(obsInfoStruct),1));
-                self.prtDs.observationInfo = obsInfoStruct;
+                if isa(varargin{1},'prtDataSetStandard')
+                    self.prtDs = varargin{1};
+                elseif isstruct(varargin{1})
+                    obsInfoStruct = varargin{1};
+                    self.prtDs = prtDataSetStandard(nan(length(obsInfoStruct),1));
+                    self.prtDs.observationInfo = obsInfoStruct;
+                else
+                    error('prt:prtUiDataSetStandardObservationInfoSelect:input','Invalid input specified. When suppling a single input it must be a structure array or a prtDataSetStandard');
+                end
             else
                 self = prtUtilAssignStringValuePairs(self,varargin{:});
             end
@@ -35,15 +44,35 @@ classdef prtUiDataSetStandardObservationInfoSelect < prtUiManagerPanel
             
             init(self);
         end
-        
+        function create(self)
+            % Overload the default prtUiManagerPanel
+            % This will "create" a bigger figure and turn off toolbars and
+            % stuff.
+            self.handleStruct.figure = gcf;
+            set(self.handleStruct.figure,...
+                'Toolbar','none',...
+                'MenuBar','none',...
+                'Name','prtDataSetSelector',...
+                'NumberTitle','off',...
+                'WindowStyle','Normal',...
+                'DockControls','off');
+            
+            self.managedHandle = uipanel(self.handleStruct.figure,...
+                'BackgroundColor',get(0,'DefaultFigureColor'),...
+                'BorderType','none');
+        end
         function init(self)
             
             self.handleStruct.table = uitable('parent',self.managedHandle,...
-                'units','normalized','position',[0.05 0.05 0.9 0.8]);
-            
+                'units','normalized',...
+                'position',[0.05 0.05 0.9 0.8],...
+                'fontUnits','points',...
+                'fontSize',self.fontSizeTable,...
+                'visible','on');
+            drawnow;
             self.handleStruct.jScrollPane = findjobj(self.handleStruct.table);
             self.handleStruct.jTable = self.handleStruct.jScrollPane.getViewport.getView;
-            
+            set(self.handleStruct.table,'visible','off');
             
             self.handleStruct.tableContextMenu = uicontextmenu;
             self.handleStruct.tableContextMenuItemNewSelection = uimenu(self.handleStruct.tableContextMenu, 'Label', 'New Selection', 'Callback', @(myHandle,eventData)self.uiMenuNewSelection(myHandle,eventData));
@@ -54,8 +83,8 @@ classdef prtUiDataSetStandardObservationInfoSelect < prtUiManagerPanel
             self.handleStruct.edit = uicontrol(self.managedHandle,...
                 'style','edit','units','normalized',...
                 'position',[0.05 0.87 0.9 0.08],...
-                'fontUnits','normalized',...
-                'fontSize',0.4,...
+                'fontUnits','points',...
+                'fontSize',self.fontSizeEdit,...
                 'string',self.selectStr,...
                 'callback',@(myHandle,eventData)self.editCallback(myHandle,eventData));
             
@@ -90,7 +119,6 @@ classdef prtUiDataSetStandardObservationInfoSelect < prtUiManagerPanel
                         end
                     end
                     
-                    
                     if iscell(cVals) && ~iscellstr(cVals)
                         % If getObservationInfo() outputs a cell that isn't
                         % a cellstr then we can't use it.
@@ -112,7 +140,13 @@ classdef prtUiDataSetStandardObservationInfoSelect < prtUiManagerPanel
                 self.tableFieldNames = self.tableFieldNames(~badColumns);
                 
                 if any(badColumns)
-                    warning('prt:prtUiDataSetStandardObservationInfoSelect:badFields','Some fields cannot be displayed.');
+                    origFieldNames = fieldnames(self.prtDs.observationInfo);
+                    badFieldNames = origFieldNames(badColumns);
+                    
+                    badFieldString = sprintf('%s, ',badFieldNames{:});
+                    badFieldString = badFieldString(1:(end-2));
+                    
+                    warning('prt:prtUiDataSetStandardObservationInfoSelect:badFields','Some fields (%s) cannot be displayed.',badFieldString);
                 end
                 
                 set(self.handleStruct.table,'data',self.dataCell,...
@@ -122,19 +156,39 @@ classdef prtUiDataSetStandardObservationInfoSelect < prtUiManagerPanel
                     'RowStriping','off','RowName',cellstr(num2str((1:size(self.dataCell,1))')),...
                     'uicontextmenu',self.handleStruct.tableContextMenu);
                 
-%                 self.handleStruct.jTable.setSortable(true);		% or: set(jtable,'Sortable','on');
-%                 self.handleStruct.jTable.setAutoResort(true);
-%                 self.handleStruct.jTable.setMultiColumnSortable(true);
-%                 self.handleStruct.jTable.setPreserveSelectionsAfterSorting(true);
-                
-%                 set(self.handleStruct.jTable,'SelectionBackground',get(self.handleStruct.jTable,'MarginBackground'))
-%                 set(self.handleStruct.jTable,'SelectionBackground',[0.4 0.4 0.4])
-%                 set(self.handleStruct.jTable,'SelectionForeground',[1 1 1])
-                self.handleStruct.jTable.setAutoResizeMode(self.handleStruct.jTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
-                
                 self.sortingInds = (1:size(self.dataCell,1))';
+                
+                set(self.managedHandle,'ResizeFcn',@self.resizeFunction);
+                resizeFunction(self);
+                set(self.handleStruct.table,'visible','on');
             end
         end
+        function resizeFunction(self,varargin)
+            
+            rowHeightInPixels = self.fontSizeEdit*2; % A decent rule of thumb for edit boxes?
+            %border = max(rowHeightInPixels/8,1); % A decent rule of thumb ?
+            border = 0;
+            
+            parentPosPixels = getpixelposition(self.managedHandle);
+            parentHeight = parentPosPixels(4);
+            parentWidth = parentPosPixels(3);
+            
+            editPos = [1 parentHeight-rowHeightInPixels, parentWidth, rowHeightInPixels];
+            
+            % Re-adjust height of the uitable
+            tableTopPixels = editPos(2)-border;
+            tablePos = [1 1 parentWidth tableTopPixels-1];
+            
+            % Set everything
+            set(self.handleStruct.table,'units','pixels'); % Reset below
+            set(self.handleStruct.table,'position',tablePos);
+            set(self.handleStruct.table,'units','normalized');
+            
+            set(self.handleStruct.edit,'units','pixels');
+            set(self.handleStruct.edit,'position',editPos);
+            set(self.handleStruct.edit,'units','normalized');
+        end
+        
         
         function uiMenuNewSelection(self,myHandle,eventData) %#ok<INUSD>
             commandStr = selectionToSelectStr(self);
@@ -190,7 +244,7 @@ classdef prtUiDataSetStandardObservationInfoSelect < prtUiManagerPanel
             commandStr = '';
             for iCol = 1:length(cs)
                 selectedRowsInThisColumn = rs(arrayfun(@(r)tableSelectionModel.isSelected(r, cs(iCol)-1), rs-1));
-            
+                
                 cField = self.tableFieldNames{cs(iCol)};
                 cVals = getObservationInfo(self.prtDs.retainObservations(self.sortingInds(selectedRowsInThisColumn)),cField);
                 
@@ -229,9 +283,17 @@ classdef prtUiDataSetStandardObservationInfoSelect < prtUiManagerPanel
                     % Use == or ismember
                     uVal = unique(cVals,'rows');
                     if isscalar(uVal)
-                        cCommandStr = sprintf('S.%s==%s',cField,mat2str(uVal));
+                        if isnan(uVal)
+                            cCommandStr = sprintf('isnan(S.%s)',cField);
+                        else
+                            cCommandStr = sprintf('S.%s==%s',cField,mat2str(uVal));
+                        end
                     else
-                        cCommandStr = sprintf('ismember(S.%s,%s)',cField,mat2str(uVal));
+                        if any(isnan(uVal))
+                            cCommandStr = sprintf('(isnan(S.%s) | ismember(S.%s,%s))',cField,mat2str(uVal));
+                        else
+                            cCommandStr = sprintf('ismember(S.%s,%s)',cField,mat2str(uVal));
+                        end
                     end
                 end
                 

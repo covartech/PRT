@@ -204,7 +204,7 @@ classdef prtClassLibSvm < prtClass
                 error('prt:prtClassLibSvm:UnaryData','prtClassLibSvm requires unary data for training when svmType = 2');
             end
             
-            Obj.trainedSvm = prtExternal.libsvm.svmtrain(training_label_vector, training_instance_matrix, Obj.libSvmOptions);
+            Obj.trainedSvm = prtExternal.libsvm.svmtrain(double(training_label_vector), training_instance_matrix, Obj.libSvmOptions);
             
             %Need to figure out whether to flip SVM outputs:
             yOut = runAction(Obj,DataSet);
@@ -216,7 +216,7 @@ classdef prtClassLibSvm < prtClass
         
         function DataSetOut = runAction(Obj,DataSet)
 
-            testing_label_vector = DataSet.getTargets;
+            testing_label_vector = double(DataSet.getTargets);
             if isempty(testing_label_vector)
                 testing_label_vector = zeros(DataSet.nObservations,1);
             end

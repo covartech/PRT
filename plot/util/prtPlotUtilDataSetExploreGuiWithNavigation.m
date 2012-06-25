@@ -247,6 +247,9 @@ set(navFigH,'visible','on');
             cString = sprintf('Closest Observation:\n\t Name: %s',obsName{1});
         else
             className = ds.getClassNamesByClassInd(cClassInd);
+            if ~iscell(className)
+                className = {className};
+            end
             cString = sprintf('Closest Observation:\n\t Name: %s\t\nClass: %s',obsName{1},className{1});
         end
         
@@ -359,6 +362,7 @@ set(navFigH,'visible','on');
         
         % Make Feature Selection panel
         featureNames = ds.getFeatureNames;
+        featureNames = featureNames(:);
         H.xAxesLabel = uicontrol(H.navTab(1),'style','text',...
             'units','normalized',...
             'position',[0.025 0.875 0.95 0.1],...

@@ -73,6 +73,7 @@ classdef prtUtilProgressBar
         minTimeBetweenUpdates = 0.2; % in seconds
         minPercentBetweenUpdates = 0; % in percent [0 100] (0 ignores this)
     end
+    
     properties (Constant = true, GetAccess = protected);
         % Graphics parameters
         windowWidth = 512;

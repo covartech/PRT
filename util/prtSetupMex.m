@@ -52,14 +52,14 @@ end
 mexFile1 = which('prtExternal.libsvm.libsvmread');
 mexFile2 = which('prtExternal.libsvm.libsvmwrite');
 if isempty(mexFile1) || isempty(mexFile2) || overRideBuild
-    mex('-O','-c','-outdir',fullfile(prtRoot,'external','+prtExternal','+libsvm'),fullfile(prtRoot,'external','+prtExternal','+libsvm','svm.cpp'),extraInputs{:});
-    mex('-O','-c','-outdir',fullfile(prtRoot,'external','+prtExternal','+libsvm'),fullfile(prtRoot,'external','+prtExternal','+libsvm','svm_model_matlab.c'),extraInputs{:});
+    mex('-O','-c','-outdir',fullfile(prtRoot,'+prtExternal','+libsvm'),fullfile(prtRoot,'+prtExternal','+libsvm','svm.cpp'),extraInputs{:});
+    mex('-O','-c','-outdir',fullfile(prtRoot,'+prtExternal','+libsvm'),fullfile(prtRoot,'+prtExternal','+libsvm','svm_model_matlab.c'),extraInputs{:});
 
-    mex('-O','-outdir',fullfile(prtRoot,'external','+prtExternal','+libsvm'),fullfile(prtRoot,'external','+prtExternal','+libsvm','svmtrain.c'),fullfile(prtRoot,'external','+prtExternal','+libsvm','svm.o'),fullfile(prtRoot,'external','+prtExternal','+libsvm','svm_model_matlab.o'),extraInputs{:});
-    mex('-O','-outdir',fullfile(prtRoot,'external','+prtExternal','+libsvm'),fullfile(prtRoot,'external','+prtExternal','+libsvm','svmpredict.c'),fullfile(prtRoot,'external','+prtExternal','+libsvm','svm.o'),fullfile(prtRoot,'external','+prtExternal','+libsvm','svm_model_matlab.o'),extraInputs{:});
+    mex('-O','-outdir',fullfile(prtRoot,'+prtExternal','+libsvm'),fullfile(prtRoot,'+prtExternal','+libsvm','svmtrain.c'),fullfile(prtRoot,'+prtExternal','+libsvm','svm.o'),fullfile(prtRoot,'+prtExternal','+libsvm','svm_model_matlab.o'),extraInputs{:});
+    mex('-O','-outdir',fullfile(prtRoot,'+prtExternal','+libsvm'),fullfile(prtRoot,'+prtExternal','+libsvm','svmpredict.c'),fullfile(prtRoot,'+prtExternal','+libsvm','svm.o'),fullfile(prtRoot,'+prtExternal','+libsvm','svm_model_matlab.o'),extraInputs{:});
 
-    mex('-outdir',fullfile(prtRoot,'external','+prtExternal','+libsvm'),'-output','libsvmread',fullfile(prtRoot,'external','+prtExternal','+libsvm','libsvmread.c'),extraInputs{:});
-    mex('-outdir',fullfile(prtRoot,'external','+prtExternal','+libsvm'),'-output','libsvmwrite',fullfile(prtRoot,'external','+prtExternal','+libsvm','libsvmwrite.c'),extraInputs{:});
+    mex('-outdir',fullfile(prtRoot,'+prtExternal','+libsvm'),'-output','libsvmread',fullfile(prtRoot,'+prtExternal','+libsvm','libsvmread.c'),extraInputs{:});
+    mex('-outdir',fullfile(prtRoot,'+prtExternal','+libsvm'),'-output','libsvmwrite',fullfile(prtRoot,'+prtExternal','+libsvm','libsvmwrite.c'),extraInputs{:});
 end
 
 

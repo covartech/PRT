@@ -22,5 +22,4 @@ cslCell = cell(1,2*length(fnames));
 cslCell(1:2:(2*length(fnames)-1)) = fnames;
 cslCell(2:2:2*length(fnames)) = struct2cell(S);
 
-
 end

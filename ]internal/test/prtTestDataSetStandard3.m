@@ -43,7 +43,7 @@ end
 try
     ds2 = ds.catFeatures(prtDataGenUnimodal);
     
-    if ~isequal(fieldnames(ds.observationInfo),fieldnames(ds2.observationInfo))
+    if ~isequal(fieldnames(ds.featureInfo),fieldnames(ds2.featureInfo))
         error('catFeatures failed to update featureInfo correctly');
     end
     

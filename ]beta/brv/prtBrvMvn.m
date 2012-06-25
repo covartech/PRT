@@ -39,7 +39,12 @@ classdef prtBrvMvn < prtBrv & prtBrvVbOnline & prtBrvVbMembershipModel & prtBrvV
         end
         
         function y = predictivePdf(self, x)
-            y = prtRvUtilStudentTPdf(x, self.meanMean, self.covPhi, self.covNu);
+            y = prtRvUtilStudentTPdf(x, self.model.meanMean, self.model.covPhi./self.model.covNu, self.model.covNu);
+        end
+        function y = predictiveLogPdf(self, x)
+            y = prtRvUtilStudentTLogPdf(x, self.model.meanMean, self.model.covPhi./self.model.covNu, self.model.covNu);
+            
+            %y = prtRvUtilMvnLogPdf(x, self.model.meanMean, self.model.covPhi/self.model.covNu);
         end
         
         function val = getNumDimensions(self)
@@ -300,7 +305,7 @@ classdef prtBrvMvn < prtBrv & prtBrvVbOnline & prtBrvVbMembershipModel & prtBrvV
     % Methods for prtBrvVbOnlineMembershipModel
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
     methods
-        function self = vbOnlineInitialize(self, priorObj, x) %#ok<INUSD>
+        function self = vbOnlineInitialize(self, x) %#ok<INUSD>
             self.model.meanMean = randn(1,self.nDimensions);
         end
         
@@ -336,7 +341,7 @@ classdef prtBrvMvn < prtBrv & prtBrvVbOnline & prtBrvVbMembershipModel & prtBrvV
             
             self.model.covPhi = newSumOfSquares - self.model.meanMean'*self.model.meanMean*self.model.meanBeta;
 
-            training = prtBrvVbTraining;
+            training = struct([]);
         end
     end
     

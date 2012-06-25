@@ -295,7 +295,7 @@ classdef prtAlgorithm < prtAction
             end
         end
         
-        function DataSet = runAction(Obj,DataSet)
+        function [DataSet, input] = runAction(Obj,DataSet)
             
             topoOrder = prtUtilTopographicalSort(Obj.connectivityMatrix');
             input = cell(size(Obj.connectivityMatrix,1),1);

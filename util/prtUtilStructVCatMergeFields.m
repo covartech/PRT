@@ -28,8 +28,9 @@ function B = prtUtilStructVCatMergeFields(A,B)
 %  
 % Out = prtUtilStructVCatMergeFields(S1,S2); % This errors
 %%
-
-
+if isempty(A)  %base case
+    return;
+end
 
 assert(isstruct(A) && isstruct(B),'prt:prtUtilMergeStructureArrays','inputs must be structure arrays');
 

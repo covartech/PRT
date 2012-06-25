@@ -68,6 +68,12 @@ classdef prtClassCap < prtClass
     methods (Access=protected, Hidden = true)
         function Obj = trainAction(Obj,DataSet)
             
+            
+            if ~DataSet.isBinary
+                error('prtClassCap:nonBinaryTraining','Input dataSet for prtClassCap.train must be binary');
+            end
+            
+            
             %y = DataSet.getTargets;
             y = DataSet.getBinaryTargetsAsZeroOne;
             x = DataSet.getObservations;
