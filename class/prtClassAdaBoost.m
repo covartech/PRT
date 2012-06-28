@@ -122,7 +122,7 @@ classdef prtClassAdaBoost < prtClass
             y = double(dataSet.getTargetsAsBinaryMatrix);
             y = y(:,2);
             y(y == 0) = -1;
-            
+            validData = true;
             
             for t = 1:self.maxIters
                 if t == 1
@@ -135,6 +135,13 @@ classdef prtClassAdaBoost < prtClass
                     if self.downSampleBootstrap
                         dataSetBootstrap = dataSetBootstrap.bootstrap(self.downSampleBootstrap);
                     end
+                    if dataSetBootstrap.isUnary 
+                        %dumb luck, but indicative of a low probability d... just exit for now
+                        validData = false; 
+                    end
+                end
+                if ~validData
+                    break;
                 end
                 
                 pe = nan(dataSet.nFeatures,1);

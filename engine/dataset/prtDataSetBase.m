@@ -624,7 +624,9 @@ classdef prtDataSetBase
         end
         
         function [self, sampleIndices] = bootstrap(self,nSamples,p)
-            
+            % Bootstrap nSamples samples from the data set
+			% 
+			% dsBoot = ds.bootstrap(nSamples) returns a data set created by bootstrap 
             if nargin < 3
                 p = ones(self.nObservations,1)./self.nObservations;
             end

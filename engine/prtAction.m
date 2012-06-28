@@ -674,9 +674,15 @@ classdef prtAction
     end
     
     methods (Hidden = true)
-        function out = rt(Obj,in)
+        function [out,varargout] = rt(Obj,in)
             % Train and then run an action on a dataset
-            out = run(train(Obj,in),in);
+            switch nargout
+                case 1
+                    out = run(train(Obj,in),in);
+                otherwise
+                    varargout = cell(1,nargout-1);
+                    [out,varargout{:}] = run(train(Obj,in),in);
+            end
         end
         
         function Obj = setVerboseStorage(Obj,val)
