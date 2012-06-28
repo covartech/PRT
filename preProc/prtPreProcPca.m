@@ -89,7 +89,7 @@ classdef prtPreProcPca < prtPreProc
             maxComponents = min(size(x));
             
             if Obj.nComponents > maxComponents
-                warning('prt:prtPreProcPca','User specified # PCA components (%d) is > number of data dimensions (%d)',Obj.nComponents,maxComponents);
+                warning('prt:prtPreProcPca','User specified # PCA components (%d) is > maximum number of PCA allowed (min(size(dataSet.data)) = %d)',Obj.nComponents,maxComponents);
                 Obj.nComponents = maxComponents;
             end
             

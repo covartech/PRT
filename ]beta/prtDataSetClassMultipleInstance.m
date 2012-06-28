@@ -1,127 +1,112 @@
-classdef prtDataSetClassMultipleInstance < prtDataSetClass
-    properties
-        bag
-        bagTarget
-        bagInfo
+classdef prtDataSetClassMultipleInstance < prtDataSetInMem & prtDataInterfaceCategoricalTargets
+    % prtDataSetImage < prtDataSetInMem & prtDataInterfaceCategoricalTargets
+     
+    methods (Access = protected)
+        function self = update(self)
+            % Updated chached target info
+            self = updateTargetCache(self);
+            % Updated chached data info
+            self = updateObservationsCache(self);
+        end
     end
-    properties (Dependent)
+    
+    properties (Dependent, SetAccess='protected')
+        expandedData
+        expandedTargets
+        bagInds
         nBags
-        nObservationsByBag
-        nBagsByUniqueClass
+        nTotalObservations
+        nObservationsPerBag
     end
-        
+    
     methods
+        
         function obj = prtDataSetClassMultipleInstance(varargin)
-            warning('prt:prtDataSetClassMultipleInstance','prtDataSetClassMultipleInstance is incomplete and should not be used at this time');
+            %obj = prtDataSetImage(varargin)
             
             if nargin == 0
                 return;
             end
-            if isa(varargin{1},'prtDataSetClassMultipleInstance')
+            if isa(varargin{1},'prtDataSetClass')
                 obj = varargin{1};
                 varargin = varargin(2:end);
             end
             
-            if length(varargin) >= 1 && isa(varargin{1},'cell');
-                obj = obj.setObservationsAndBagsFromCell(varargin{1});
+            %handle first input data:
+            if length(varargin) >= 1 && (isa(varargin{1},'struct'))
+                obj = obj.setObservations(varargin{1});
                 varargin = varargin(2:end);
-                
+                %handle first input data, second input targets:
                 if length(varargin) >= 1 && ~isa(varargin{1},'char')
-                    if (isnumeric(varargin{1}) || isa(varargin{1},'logical'))
-                        obj = obj.setBagTargets(varargin{1});
+                    if (isa(varargin{1},'double') || isa(varargin{1},'logical'))
+                        obj = obj.setTargets(varargin{1});
                         varargin = varargin(2:end);
                     else
                         error('prtDataSet:InvalidTargets','Targets must be a double or logical array; but targets provided is a %s',class(varargin{1}));
                     end
                 end
             end
-            
-            %handle public access to observations and targets, via their
-            %pseudonyms.  If these were public, this would be simple... but
-            %they are not public.
-            dataIndex = find(strcmpi(varargin(1:2:end),'observations'));
-            targetIndex = find(strcmpi(varargin(1:2:end),'targets'));
-            stringIndices = 1:2:length(varargin);
-            
-            if ~isempty(dataIndex) && ~isempty(targetIndex)
-                obj = prtDataSetClassMultipleInstance(varargin{stringIndices(dataIndex)+1},varargin{stringIndices(targetIndex)+1});
-                newIndex = setdiff(1:length(varargin),[stringIndices(dataIndex),stringIndices(dataIndex)+1,stringIndices(targetIndex),stringIndices(targetIndex)+1]);
-                varargin = varargin(newIndex);
-            elseif ~isempty(dataIndex)
-                obj = prtDataSetClassMultipleInstance(varargin{dataIndex+1});
-                newIndex = setdiff(1:length(varargin),[stringIndices(dataIndex),stringIndices(dataIndex)+1]);
-                varargin = varargin(newIndex);
-            elseif ~isempty(targetIndex)
-                obj = obj.setBagTargets(varargin{stringIndices(targetIndex)+1});
-                newIndex = setdiff(1:length(varargin),[stringIndices(targetIndex),stringIndices(targetIndex)+1]);
-                varargin = varargin(newIndex);
-            end
-            
+           
             obj = prtUtilAssignStringValuePairs(obj,varargin{:});
+            obj = obj.update;
         end
         
-        function self = setObservationsAndBagsFromCell(self, val)
-            self.bag = kron((1:size(val,1))',cellfun(@length,val));
-            self.data = cell2mat(val); % No error checking on your cell array yet! Make sure this works!
+        function val = get.nTotalObservations(self)
+            val = getNumTotalObservations(self);
         end
-        function self = setBagTargets(self, val)
-            keyboard
+        function nTotObs = getNumTotalObservations(self)
+            nTotObs = sum(self.nObservationsPerBag);
         end
-        
-        function vals = getBagObservations(self,bagInd)
-            error('broken');
+            
+        function val = get.expandedTargets(self)
+            val = getExpandedTargets(self);
         end
-        function vals = getBagTarget(self,bagInd)
-            error('broken');
+        function bigTargets = getExpandedTargets(self)
+            nObsPerBag = self.nObservationsPerBag;
+            littleTargets = self.targets;
+            bigTargets = zeros(self.nTotalObservations,size(littleTargets,2));
+            cEnd = 0;
+            for iBag = 1:length(nObsPerBag)
+                cY = repmat(littleTargets(iBag,:),nObsPerBag(iBag),1);
+                bigTargets(cEnd+(1:nObsPerBag(iBag)),:) = cY;
+                cEnd = cEnd + nObsPerBag(iBag);
+            end            
         end
-        function self = setBagObservations(self, newObs,bagInd)
-            error('broken');
+        function val = get.expandedData(self)
+            val = getExpandedData(self);
         end
-        function self = setBagTarget(self, newTargs, bagInd)
-            error('broken');
+        function bigData = getExpandedData(self)
+            bigData = cat(1,self.data.data);          
         end
-        
-        function [obj,retainedIndices] = retainObservations(obj,retainedIndices)
-            error('broken');
+        function val = get.bagInds(self)
+            val = getBagInds(self);
         end
-        
-        
-        function obj = setTargets(obj,targets,varargin)
-            error('broken');
-        end
-        function obj = catObservations(obj,varargin)
-            error('broken');
-        end
-        function obj = catFeatures(obj,varargin)
-            error('broken');
-        end
-        function obj = retainClasses(obj,classes)
-            error('broken');
-        end
-        
-        function obj = retainClassesByInd(obj,classInds)
-            error('broken');
-        end
-        function keys = getKFoldKeys(DataSet,K)
-            error('broken');
+        function bagInds = getBagInds(self)
+            nObsPerBag = self.nObservationsPerBag;
+            bagInds = zeros(self.nTotalObservations,1);
+            cEnd = 0;
+            for iBag = 1:length(nObsPerBag)
+                bagInds(cEnd+(1:nObsPerBag(iBag))) = iBag*ones(nObsPerBag(iBag),1);
+                cEnd = cEnd + nObsPerBag(iBag);
+            end             
         end
         
         function val = get.nBags(self)
-            val = [];
+            val = getNumBags(self);
+        end        
+        function nBags = getNumBags(self)
+            nBags = self.nObservations;
         end
-        function val = get.nObservationsByBag(self)
-            val = [];
+        function val = get.nObservationsPerBag(self)
+            val = getNumObservationsPerBag(self);
         end
-        function val = get.nBagsByUniqueClass(self)
-            val = [];
+        function nOpb = getNumObservationsPerBag(self)
+            nOpb = arrayfun(@(s)size(s.data,1),self.data);
         end
-    end
-% 	methods (Hidden=true, Access='protected')
-%         function obj = updateTargetsCache(obj)
-%             error('broken');
-%         end
-%         function obj = updateObservationsCache(obj)
-%             error('broken');
-%         end
-%     end
+
+        
+        function dsClass = toPrtDataSetClass(self)
+            dsClass = prtDataSetClass(self.expandedData, self.expandedTargets);
+        end
+    end 
 end

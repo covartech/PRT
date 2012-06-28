@@ -32,7 +32,7 @@ function prtPlotUtilSetLineProperties(lineHandles, labels, varargin)
 %   - an Nx3 color matrix or
 %   - a function handle that accepts a scalar integer (N) and returns an
 %       Nx3 color matrix
-%   The default is [].
+%   The default is @prtPlotUtilClassColorsu.
 %
 % markerFaceColors:
 %   - an Nx3 color matrix or
@@ -280,7 +280,7 @@ for iL = 1:numel(lineHandles)
                 nStyles = nWidths;
                 cStyleInd = mod(cInd-1,nStyles)+1;
                 cWidth = options.lineWidths(cStyleInd);
-                set(cH,'lineWidths',cWidth);
+                set(cH,'lineWidth',cWidth);
                 
             case 's'
                 nStyles = nSizes;

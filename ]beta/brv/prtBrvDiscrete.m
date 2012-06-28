@@ -36,12 +36,18 @@ classdef prtBrvDiscrete < prtBrv & prtBrvVbOnline & prtBrvVbMembershipModel & pr
         end
         
         function y = predictivePdf(self, x)
-            %%%% FIXME
-            % The true predictive here is a product of beta-binomials
-            % Since that isn't implemented yet we use the average
-            % variational loglikelihood
+            y = exp(predictiveLogPdf(self, x));
+        end
+        function y = predictiveLogPdf(self, x)
             
-            y = conjugateVariationalAverageLogLikelihood(self, x);
+            % This is the variational approximation
+            %y2 = conjugateVariationalAverageLogLikelihood(self, x);
+            
+            % This is a dirichlet-multinomial density
+            xSum = sum(x,2);
+            lambdaSum = sum(self.model.lambda);
+            y = gammaln(lambdaSum)-gammaln(lambdaSum+xSum) + sum(bsxfun(@minus,gammaln(bsxfun(@plus,x,self.model.lambda(:)')),gammaln(self.model.lambda(:)')),2);
+            
         end
         
         function val = getNumDimensions(self)
@@ -58,7 +64,7 @@ classdef prtBrvDiscrete < prtBrv & prtBrvVbOnline & prtBrvVbMembershipModel & pr
         % Optional methods
         %------------------------------------------------------------------
         function kld = conjugateKld(obj, priorObj)
-            kld = prtRvUtilDirichletKld(obj.model.lambda,priorObj.model.lambda);
+            kld = prtRvUtilDirichletKld(obj.model.lambda, priorObj.model.lambda);
         end
         
         function s = posteriorMeanStruct(obj)
@@ -80,23 +86,40 @@ classdef prtBrvDiscrete < prtBrv & prtBrvVbOnline & prtBrvVbMembershipModel & pr
             for s = 1:nComponents
                 lambdaMat(s,:) = objs(s).model.lambda;
             end
-                
-            cla
-            probMat = bsxfun(@rdivide,lambdaMat,sum(lambdaMat,2));
-            for iSource = 1:size(probMat,1)
-                for jSym = 1:size(probMat,2)
-                    cSize = sqrt(probMat(iSource,jSym));
-                    if cSize > 0
-                        rectangle('Position',[jSym-cSize/2, iSource-cSize/2, cSize, cSize],'Curvature',[1 1],'FaceColor',colors(iSource,:),'EdgeColor',colors(iSource,:));
+            
+            if size(lambdaMat,2) <= 10
+                probMat = bsxfun(@rdivide,lambdaMat,sum(lambdaMat,2));
+                for iSource = 1:size(probMat,1)
+                    for jSym = 1:size(probMat,2)
+                        cSize = sqrt(probMat(iSource,jSym));
+                        if cSize > 0
+                            %rectangle('Position',[jSym-cSize/2, iSource-cSize/2, cSize, cSize],'Curvature',[1 1],'FaceColor',colors(iSource,:),'EdgeColor',colors(iSource,:));
+                            rectangle('Position',[jSym-cSize/2, iSource-cSize/2, cSize, cSize],'Curvature',[1 1],'FaceColor','none','EdgeColor',colors(iSource,:));
+                        end
                     end
                 end
+                set(gca,'YDir','Rev','Xtick',1:size(probMat,2),'Ytick',1:size(probMat,1));
+                title('Observations Prob.')
+                xlabel('Observations')
+                ylabel('Component')
+                xlim([0 size(probMat,2)+1])
+                ylim([0 size(probMat,1)+1])
+            else
+                probMat = bsxfun(@rdivide,lambdaMat,sum(lambdaMat,2));
+                holdState = ishold;
+                for iSource = 1:size(probMat,1)
+                    plot(probMat(iSource,:),'color',colors(iSource,:),'linewidth',1);
+                    hold on
+                end
+                if ~holdState
+                    hold off
+                end
+                title('Observations Prob.')
+                xlabel('Observations')
+                ylabel('Probability')
+                xlim([0 size(probMat,2)+1])
+                %ylim([0 1])
             end
-            set(gca,'YDir','Rev','Xtick',1:size(probMat,2),'Ytick',1:size(probMat,1));
-            title('Observations Prob.')
-            xlabel('Observations')
-            ylabel('Component')
-            xlim([0 size(probMat,2)+1])
-            ylim([0 size(probMat,1)+1])
             
             
         end
@@ -123,35 +146,38 @@ classdef prtBrvDiscrete < prtBrv & prtBrvVbOnline & prtBrvVbMembershipModel & pr
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
     methods
         function [phiMat, priorObjs] = collectionInitialize(objs, priorObjs, x) % Vector of objects
+            
             nStates = length(objs);
+            xNorm = bsxfun(@rdivide,x,sum(x,2));
+            [classMeans, Yout] = prtUtilKmeans(xNorm,nStates,'handleEmptyClusters','random'); %#ok<ASGLU>
             
-            minFrames = nStates*10;
-            minFrameLength = 10;
-            frameLength = floor(mean([floor(size(x,1)./minFrames),minFrameLength]));
-            frameInds = buffer((1:size(x,1))',frameLength);
-            
-            nFrames = size(frameInds,2);
-            frameClusteringX = zeros(nFrames,length(priorObjs(1).model.lambda));
-            for iFrame = 1:nFrames
-                cFrameInds = frameInds(frameInds(:,iFrame)>0,iFrame);
-                frameClusteringX(iFrame,:) =  mean(x(cFrameInds,:),1);
-            end
-            
-            prune = any(isnan(frameClusteringX),2);
-            frameClusteringX(prune,:) = repmat(mean(frameClusteringX(~prune,:)),sum(prune),1);
-            
-            [classMeans, Yout] = prtUtilKmeans(frameClusteringX,nStates,'handleEmptyClusters','random'); %#ok<ASGLU>
+%             minFrames = nStates*10;
+%             minFrameLength = 10;
+%             frameLength = floor(mean([floor(size(x,1)./minFrames),minFrameLength]));
+%             frameInds = buffer((1:size(x,1))',frameLength);
+%             
+%             nFrames = size(frameInds,2);
+%             frameClusteringX = zeros(nFrames,length(priorObjs(1).model.lambda));
+%             for iFrame = 1:nFrames
+%                 cFrameInds = frameInds(frameInds(:,iFrame)>0,iFrame);
+%                 frameClusteringX(iFrame,:) =  mean(x(cFrameInds,:),1);
+%             end
+%             
+%             prune = any(isnan(frameClusteringX),2);
+%             frameClusteringX(prune,:) = repmat(mean(frameClusteringX(~prune,:)),sum(prune),1);
+%             
+%            [classMeans, Yout] = prtUtilKmeans(frameClusteringX,nStates,'handleEmptyClusters','random'); %#ok<ASGLU>
             
             [unwanted, sortedInds] = sort(hist(Yout,1:nStates),'descend'); %#ok<ASGLU>
-            dsMat = bsxfun(@eq,Yout,sortedInds);
+            phiMat = bsxfun(@eq,Yout,sortedInds);
             
-            phiMat = kron(dsMat,ones(frameLength,1));
-            phiMat = phiMat(1:size(x,1),:);
+            %phiMat = kron(phiMat,ones(frameLength,1));
+            %phiMat = phiMat(1:size(x,1),:);
         end
         
         function obj = weightedConjugateUpdate(obj, priorObj, x, weights)
             x = obj.parseInputData(x);
-            priorObj = priorObj.initialize(x);
+            %priorObj = priorObj.initialize(x);
             
             if isempty(weights)
                 weights = ones(size(x,1),1);
@@ -159,10 +185,10 @@ classdef prtBrvDiscrete < prtBrv & prtBrvVbOnline & prtBrvVbMembershipModel & pr
             obj.model.lambda = priorObj.model.lambda + sum(bsxfun(@times,x,weights),1);
         end
         
-        function self = conjugateUpdate(self, prior, x)
-            x = self.parseInputData(x);
+        function obj = conjugateUpdate(obj, priorObj, x)
+            x = obj.parseInputData(x);
             
-            self = weightedConjugateUpdate(self, prior, x, ones(size(x,1),1));
+            obj.model.lambda = priorObj.model.lambda + sum(x,1);
         end
     end
     

@@ -6,12 +6,21 @@ classdef prtBrvDiscreteStickBreakingHierarchy
         unsortingInds
     end
     properties
-        alphaGammaParams = [1e-6 1e-6];
-        counts = [];
-        beta = [];
+        alphaGammaParams = [1 1]; % These are the prior parameters of
+                                     % the gamma density if
+                                     % useGammaPriorOnScale is true
+                                     % Otherwise the ratio of these
+                                     % alphaGammaParams(2)/alphaGammaParams(1)
+                                     % is set as the certain alpha
+                                     % Alternatively if
+                                     % useGammaPriorOnScale is false this
+                                     % can be set to a scalar
+        counts = []; % This is the data stored in the object
+        beta = []; % These are parameters of each of the beta distributions
     end
     properties (Hidden = true)
         useGammaPriorOnScale = true;
+        gammaUpdateIterations = 10; % When using a gamma prior on alpha we iterate through the stick update this many times. This speeds convergence.
         useOptimalSorting = true;
     end
     properties (Dependent, SetAccess='private')
@@ -74,36 +83,66 @@ classdef prtBrvDiscreteStickBreakingHierarchy
                 obj.counts = counts;
             end
             
+            if obj.useGammaPriorOnScale
+                for iUpdate = 1:obj.gammaUpdateIterations;
+                    % Update stick parameters
+                    obj.beta(:,1) = obj.counts + priorObj.beta(:,1);
+                    obj.beta(:,2) = sumIPlus1ToK + (priorObj.beta(:,2) - priorObj.expectedValueAlpha) + obj.expectedValueAlpha;
+                    % Because both the prior and the posterior share the same alpha we don't need to add it in twice.
+                    % We remove it from the prior in the case that we have a gamma
+                    % prior on the scale
+                    
+                    % Update alpha Gamma density parameters
+                    if obj.useGammaPriorOnScale
+                        obj.alphaGammaParams(1) = priorObj.alphaGammaParams(1) + obj.truncationLevel - 1;
+                        eLog1MinusVt = obj.expectedValueLogOneMinusStickLengths;
+                        eLog1MinusVt(~isfinite(eLog1MinusVt)) = 0; % Sometimes there are -infs at the end
+                        obj.alphaGammaParams(2) = priorObj.alphaGammaParams(2) - sum(eLog1MinusVt);
+                    end
+                end
+            end
+            
             % Update stick parameters
             obj.beta(:,1) = obj.counts + priorObj.beta(:,1);
-            obj.beta(:,2) = sumIPlus1ToK + priorObj.beta(:,2) + obj.expectedValueAlpha;
+            obj.beta(:,2) = sumIPlus1ToK + (priorObj.beta(:,2) - priorObj.expectedValueAlpha) + obj.expectedValueAlpha;
+            % Because both the prior and the posterior share the same alpha we don't need to add it in twice.
+            % We remove it from the prior in the case that we have a gamma
+            % prior on the scale
             
-            % Update alpha Gamma density parameters
-            if obj.useGammaPriorOnScale
-                obj.alphaGammaParams(1) = priorObj.alphaGammaParams(1) + obj.truncationLevel - 1;
-                eLog1MinusVt = obj.expectedValueLogOneMinusStickLengths;
-                obj.alphaGammaParams(2) = priorObj.alphaGammaParams(2) - sum(eLog1MinusVt(isfinite(eLog1MinusVt))); % Sometimes there are -infs at the end
-            end
         end
         
         function kld = kld(obj, priorObj)
             if obj.useGammaPriorOnScale
                 % These beta KLDs are not correct. Really we need to take
-                % the expected value of the KLDs over the alpha Gamma
+                % the expected value of the KLDs over alpha's Gamma
                 % density. This is diffucult. Here we use an approximation
                 % that may cause a decrease in NFE near convergence.
+                % We just assume that we can plug in the expected value of
+                % alpha everywhere into the standard Beta KLD
                 betaKlds = zeros(obj.truncationLevel,1);
                 for iV = 1:obj.truncationLevel
-                    betaKlds(iV) = prtRvUtilDirichletKld(obj.beta(iV,:),priorObj.beta(iV,:));
+                    cPost = obj.beta(iV,:);
+                    
+                    cPrior = priorObj.beta(iV,:);
+                    cPrior(:,2) = cPrior(:,2) - priorObj.expectedValueAlpha + obj.expectedValueAlpha;
+                    
+                    betaKlds(iV) = prtRvUtilDirichletKld(cPost,cPrior);
                 end
                 
                 alphaKld = prtRvUtilGammaKld(obj.alphaGammaParams(1),obj.alphaGammaParams(2),priorObj.alphaGammaParams(1),priorObj.alphaGammaParams(2));
                 
                 kld = sum(betaKlds) + alphaKld;
+                
+                %sum(betaKlds)
+                %alphaKld
+                
             else
                 betaKlds = zeros(obj.truncationLevel,1);
                 for iV = 1:obj.truncationLevel
-                    betaKlds(iV) = prtRvUtilDirichletKld(obj.beta(iV,:),priorObj.beta(iV,:));
+                    cPrior = priorObj.beta(iV,:);
+                    cPrior(:,2) = cPrior(:,2)-priorObj.expectedValueAlpha+obj.expectedValueAlpha;
+                    
+                    betaKlds(iV) = prtRvUtilDirichletKld(obj.beta(iV,:),cPrior);
                 end
                 kld = sum(betaKlds);
             end
@@ -172,10 +211,16 @@ classdef prtBrvDiscreteStickBreakingHierarchy
             val = obj.expectedValueLogStickLengths(obj.sortingInds) + cat(1,0,cumsum(expectedLogOneMinusStickLengths(1:end-1)));
             
             val = val(obj.unsortingInds);
-            
         end
         function val = get.posteriorMean(obj)
-            val = exp(obj.expectedValueLogProbabilities);
+            expctedValueStickLengths = obj.beta(:,1)./sum(obj.beta,2);
+            expctedValueStickLengths = expctedValueStickLengths(obj.sortingInds);
+            expctedValueLogStickLengths = log(expctedValueStickLengths);
+            expctedValueLogRemainingStickLengths = log(1-expctedValueStickLengths);
+            
+            val = expctedValueLogStickLengths + cat(1,0,cumsum(expctedValueLogRemainingStickLengths(1:end-1)));
+            
+            val = exp(val(obj.unsortingInds));
         end
         function val = get.truncationLevel(obj)
             val = size(obj.beta,1);
@@ -184,17 +229,18 @@ classdef prtBrvDiscreteStickBreakingHierarchy
             
             alphaParams = obj.alphaGammaParams;
             if length(alphaParams) < 2
-                alphaParams = cat(2,1,alphaParams);
+                val = alphaParams;
+            else
+                val = alphaParams(1)./alphaParams(2);
             end
-            
-            val = alphaParams(2)./alphaParams(1);
         end
         
         function self = defaultParameters(self, truncationLevel)
             % Initialize beta
             self.counts = zeros(truncationLevel,1);
-            self.beta = ones(truncationLevel,2);
-            self.beta(:,2) = self.alphaGammaParams(1)/self.alphaGammaParams(2);
+            self.beta = ones(truncationLevel,2); % Each stick has a [1 alpha] prior
+            self.beta(:,2) = self.expectedValueAlpha; % If alpha is certain it will be taken care of in the get.expectedValueAlpha method
+            
             self.sortingInds = (1:truncationLevel)';
             self.unsortingInds = self.sortingInds;
         end

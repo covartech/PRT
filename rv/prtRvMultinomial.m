@@ -72,6 +72,7 @@ classdef prtRvMultinomial < prtRv
     
     properties (Hidden = true)
         approximatelyEqualThreshold = 1e-4;
+        nDrawsPerObservationDraw = [];
     end
     
     methods
@@ -144,13 +145,23 @@ classdef prtRvMultinomial < prtRv
             % N x nDimensions vector, where nDimensions is the number of
             % dimensions of RV.
             
-            assert(numel(N)==1 && N==floor(N) && N > 0,'N must be a positive integer scalar.')
+            assert(numel(N)==1 && all(N==floor(N)) && all(N > 0),'N must be a positive integer scalar.')
             
             [isValid, reasonStr] = R.isValid;
             assert(isValid,'DRAW cannot yet be evaluated. This RV is not yet valid %s.',reasonStr);
             
-            vals = zeros(N,R.nCategories);
-            vals(sub2ind([N, R.nCategories], (1:N)',drawIntegers(R,N))) = 1;
+            if ~isempty(R.nDrawsPerObservationDraw)
+                nObsToDraw = R.nDrawsPerObservationDraw;
+                vals = zeros(N,R.nCategories);
+                for iBag = 1:N
+                    cVals = zeros(nObsToDraw,R.nCategories);
+                    cVals(sub2ind([nObsToDraw, R.nCategories], (1:nObsToDraw)',drawIntegers(R,nObsToDraw))) = 1;
+                    vals(iBag,:) = sum(cVals,1);
+                end
+            else
+                vals = zeros(N,R.nCategories);
+                vals(sub2ind([N, R.nCategories], (1:N)',drawIntegers(R,N))) = 1;
+            end
         end
         
         function vals = drawIntegers(R,N)
@@ -216,6 +227,9 @@ classdef prtRvMultinomial < prtRv
             else
                 val = [];
             end
+        end
+        function val = get.nDimensions(R)
+            val = R.nCategories;
         end
     end
     

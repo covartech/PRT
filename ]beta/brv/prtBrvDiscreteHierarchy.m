@@ -15,6 +15,7 @@ classdef prtBrvDiscreteHierarchy
         
         function self = defaultParameters(self, nDimensions)
             self.lambda = ones(1,nDimensions)/nDimensions;
+            %self.lambda = ones(1,nDimensions)*nDimensions;
         end
         
         function tf = isValid(self)

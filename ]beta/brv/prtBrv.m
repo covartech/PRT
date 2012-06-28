@@ -6,6 +6,7 @@ classdef prtBrv < prtAction
     methods (Abstract)
         self = estimateParameters(self, priorSelf, x)
         y = predictivePdf(self, x)
+        y = predictiveLogPdf(self, x)
         
         d = getNumDimensions(self)
         
@@ -27,7 +28,7 @@ classdef prtBrv < prtAction
             missingMethodError(self,'posteriorMeanStruct')
         end
         function plotCollection(selfVec,colors) %#ok<INUSD>
-           missingMethodError(selfVec(1),'plotComponents') 
+           missingMethodError(selfVec(1),'plotCollection') 
         end
         function val = plotLimits(self) %#ok<STOUT>
            missingMethodError(self,'plotLimits') 

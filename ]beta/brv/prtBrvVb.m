@@ -21,7 +21,8 @@ classdef prtBrvVb
     
     properties
         vbCheckConvergence = true; % Actually bother to calculate NFE
-        vbConvergenceThreshold = 1e-6; % This is a percentage of the total change in NFE
+        vbConvergenceThreshold = 1e-6; % This is total change in NFE
+        vbConvergenceDecreaseThreshold = 1e-3; % This is total change in NFE that will cause an exit
         vbMaxIterations = 1e3; % Maximum number of iterations
         vbVerboseText = false; % display text
         vbVerbosePlot = false; % plot after each iteration
@@ -39,23 +40,56 @@ classdef prtBrvVb
             F = training.negativeFreeEnergy;
             pF = training.previousNegativeFreeEnergy;
             
-            signedPercentage(1) = (F-pF)./abs(mean([F pF])); %(1) removes mlint warning
+            signedPercentage = (F-pF);
             converged = signedPercentage < self.vbConvergenceThreshold;
+    
+            if self.vbVerboseText
+                fprintf('\t\t\t Negative Free Energy: %0.2f, %+.2e Change',F,signedPercentage)
+            end
+
+            if signedPercentage < 0
+                if self.vbVerboseText
+                    fprintf('\tDecrease in negative free energy occured!!!')
+                end
+                converged = false;
+                if abs(signedPercentage)>self.vbConvergenceDecreaseThreshold
+                    if self.vbVerboseText
+                        fprintf('\n\t\tDecrease in negative free energy is beyond numerical error expectations. Exiting.')
+                    end
+                    err = true;
+                else
+                    err = false;
+                end
+            else
+                err = false;
+            end
+            
+            if self.vbVerboseText
+                fprintf('\n');
+            end
+            
+        end
+        function [converged, err] = vbIsConvergedAbs(self, priorSelf, x, training) %#ok<INUSL>
+            F = training.negativeFreeEnergy;
+            pF = training.previousNegativeFreeEnergy;
+            
+            signedPercentage = (F-pF);
+            converged = abs(signedPercentage) < self.vbConvergenceThreshold;
     
             if self.vbVerboseText
                 fprintf('\t\t\t Negative Free Energy: %0.2f, %+.2e Change\n',F,signedPercentage)
             end
 
-            if signedPercentage < 0 && abs(F-pF)
-                if self.vbVerboseText
-                    fprintf('\t\tDecrease in negative free energy occured!!! Exiting.\n')
-                end
-                converged = false;
+            if signedPercentage < 0
+                %if self.vbVerboseText
+                %    fprintf('\t\tDecrease in negative free energy occured!!! Exiting.\n')
+                %end
+                %converged = false;
                 err = true;
             else
                 err = false;
             end
-        end
+        end        
     end
 end
 

@@ -23,6 +23,10 @@ classdef prtBrvDiscreteStickBreaking < prtBrv & prtBrvVbOnline
         end
         
         function y = predictivePdf(self, x)
+            y = exp(predictiveLogPdf(self, x));
+        end
+        
+        function y = predictiveLogPdf(self, x)
             %%%% FIXME
             % The true predictive here is a product of beta-binomials
             % Since that isn't implemented yet we use the average

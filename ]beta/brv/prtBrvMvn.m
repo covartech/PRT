@@ -39,7 +39,10 @@ classdef prtBrvMvn < prtBrv & prtBrvVbOnline & prtBrvVbMembershipModel & prtBrvV
         end
         
         function y = predictivePdf(self, x)
-            y = prtRvUtilStudentTPdf(x, self.meanMean, self.covPhi, self.covNu);
+            y = prtRvUtilStudentTPdf(x, self.model.meanMean, self.model.covPhi./self.model.covNu, self.model.covNu);
+        end
+        function y = predictiveLogPdf(self, x)
+            y = prtRvUtilStudentTLogPdf(x, self.model.meanMean, self.model.covPhi./self.model.covNu, self.model.covNu);
         end
         
         function val = getNumDimensions(self)
@@ -253,20 +256,28 @@ classdef prtBrvMvn < prtBrv & prtBrvVbOnline & prtBrvVbMembershipModel & prtBrvV
             %muBar = 1./N_bar.*sum(bsxfun(@times,X,weights));
             % but to avoid divide by zero warnings we do this.
             muBar = sum(bsxfun(@times,x,weights),1);
-            if N_bar > 0
+            if N_bar > 0 % It is possible to use a higher threshold here
                 muBar = muBar./N_bar;
             else
+                % We include these lines incase the threshold above is
+                % changes to be different than zero
+                N_bar = 0;
+                weights = zeros(size(x,1),1);
+                
                 muBar = zeros(1,size(x,2));
             end
             
             xWeightedDemeaned = bsxfun(@times,bsxfun(@minus,x,muBar),sqrt(weights));
             sigmaBar = xWeightedDemeaned'*xWeightedDemeaned;
             
+            meanPriorDifference = muBar - priorSelf.model.meanMean;
+            
             self.model = priorSelf.model;
             self.model.meanBeta = N_bar + priorSelf.model.meanBeta;
             self.model.meanMean = (muBar.*N_bar + priorSelf.model.meanMean.*priorSelf.model.meanBeta) ./ (N_bar + priorSelf.model.meanBeta);
             self.model.covNu = N_bar + priorSelf.model.covNu;
-            self.model.covPhi = sigmaBar + N_bar.*priorSelf.model.meanBeta.*(muBar - priorSelf.model.meanMean)'*(muBar - priorSelf.model.meanMean)./(N_bar + priorSelf.model.meanBeta) + priorSelf.model.covPhi;
+            self.model.covPhi = sigmaBar + priorSelf.model.covPhi +...
+                N_bar*priorSelf.model.meanBeta/self.model.meanBeta*(meanPriorDifference'*meanPriorDifference);
         end
         
         function self = conjugateUpdate(self, prior, x)

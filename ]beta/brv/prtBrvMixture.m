@@ -21,7 +21,7 @@
 %       stabilized forgetting. (Alpha release, be careful!)
 
 
-classdef prtBrvMixture < prtBrv & prtBrvVbOnline
+classdef prtBrvMixture < prtBrv & prtBrvVbOnline & prtBrvMembershipModel
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Properties required by prtAction
@@ -45,11 +45,20 @@ classdef prtBrvMixture < prtBrv & prtBrvVbOnline
         end
         
         function y = predictivePdf(self, x)
-            %%%% FIXME
-            % The true predictive is not finished yet. This is an
-            % approximation
+            y = exp(predictiveLogPdf(self, x));
+        end
+        function y = predictiveLogPdf(self, x)
             
-            y = conjugateVariationalAverageLogLikelihood(self, x);
+            logLikelihoods = zeros(size(x,1), self.nComponents);
+            for iComp = 1:self.nComponents
+                logLikelihoods(:,iComp) = predictiveLogPdf(self.components(iComp),x);
+            end
+            
+            piHat = self.mixing.posteriorMeanStruct;
+            piHat = piHat.probabilities(:)';
+            
+            y = prtUtilSumExp(bsxfun(@plus,logLikelihoods,log(piHat))')';
+            
         end
         
         function val = getNumDimensions(self)
@@ -104,17 +113,17 @@ classdef prtBrvMixture < prtBrv & prtBrvVbOnline
             if self.vbVerboseText
                 fprintf('\tIterating VB Updates\n')
             end
-            
-            for iteration = 1:self.vbMaxIterations
                 
+            for iteration = 1:self.vbMaxIterations
+            
                 % VBM Step
                 [self, training] = vbM(self, prior, x, training);
-                
-                % Initial VBE Step
-                [self, training] = vbE(self, prior, x, training);            
             
+                % VBE Step
+                [self, training] = vbE(self, prior, x, training);
+                
                 % Calculate NFE
-                [nfe, eLogLikelihood, kld] = vbNfe(self, prior, x, training);
+                [nfe, eLogLikelihood, kld, kldDetails(iteration,1)] = vbNfe(self, prior, x, training);
                 
                 % Update training information
                 training.previousNegativeFreeEnergy = training.negativeFreeEnergy;
@@ -123,6 +132,8 @@ classdef prtBrvMixture < prtBrv & prtBrvVbOnline
                 training.iterations.eLogLikelihood(iteration) = eLogLikelihood;
                 training.iterations.kld(iteration) = kld;
                 training.nIterations = iteration;
+                training.kld = kld;
+                training.eLogLikelihood = eLogLikelihood;
                 
                 % Check covergence
                 
@@ -154,8 +165,21 @@ classdef prtBrvMixture < prtBrv & prtBrvVbOnline
                 end
                 
                 if err
+                    
+                    % These might be useful things for debuging
+                    
+                    %eLogLikeDiff = training.eLogLikelihood - prevTraining.eLogLikelihood
+                    %kldDiff = training.kld - prevTraining.kld
+                    %mixingKldDiff = kldDetails(end).mixing - kldDetails(end-1).mixing
+                    %componentKldDiff = sum(kldDetails(end).components) - sum(kldDetails(end-1).components)
+                    %membershipKldDiff = sum(kldDetails(end).memberships)-sum(kldDetails(end-1).memberships)
+                    %keyboard
+                    
                     break
                 end
+                
+                prevTraining = training;
+                prevSelf = self;
                 
             end
             if self.vbCheckConvergence && self.vbVerboseText
@@ -294,6 +318,7 @@ classdef prtBrvMixture < prtBrv & prtBrvVbOnline
     properties (Hidden)
         plotComponentProbabilityThreshold = 0.01;
     end
+    
     % Set and get methods for weird properties
     %----------------------------------------------------------------------
     methods
@@ -332,23 +357,25 @@ classdef prtBrvMixture < prtBrv & prtBrvVbOnline
             training = prtBrvMixtureVbTraining;
             
             priorObj = obj;
-            [training.componentMemberships, priorObj.components] = collectionInitialize(obj.components, obj.components, x);
+            [training.componentMemberships, priorObj.components] = collectionInitialize(obj.components, priorObj.components, x);
             
             training.variationalLogLikelihoodBySample = -inf(size(x,1),obj.nComponents);
         end
         
         function [obj, training] = vbE(obj, priorObj, x, training) %#ok<INUSL>
+            
             % Calculate the variational Log Likelihoods of each cluster
+            training.variationalClusterLogLikelihoods = zeros(size(x,1),obj.nComponents);
             for iSource = 1:obj.nComponents
                 training.variationalClusterLogLikelihoods(:,iSource) = ...
                     obj.components(iSource).conjugateVariationalAverageLogLikelihood(x);
             end
             
-            sourceVariationalLogLikelihoods = obj.mixing.expectedLogMean;
+            expectedLogMixing = obj.mixing.expectedLogMean;
             
-            training.variationalLogLikelihoodBySample = bsxfun(@plus,training.variationalClusterLogLikelihoods, sourceVariationalLogLikelihoods(:)');
+            training.variationalLogLikelihoodBySample = bsxfun(@plus,training.variationalClusterLogLikelihoods, expectedLogMixing(:)');
+            
             training.componentMemberships = exp(bsxfun(@minus, training.variationalLogLikelihoodBySample, prtUtilSumExp(training.variationalLogLikelihoodBySample')'));
-            
         end
         
         function [obj, training] = vbM(obj, priorObj, x, training)
@@ -375,18 +402,28 @@ classdef prtBrvMixture < prtBrv & prtBrvVbOnline
             
             entropyTerm = training.componentMemberships.*log(training.componentMemberships);
             entropyTerm(isnan(entropyTerm)) = 0;
-            %entropyTerm = -sum(entropyTerm(:)) + obj.mixing.expectedLogMean*sum(training.phiMat,1)';
-            entropyTerm = -sum(entropyTerm(:));
             
-            kldDetails.sources = sourceKlds(:);
-            kldDetails.mixing = mixingKld;
-            kldDetails.entropy = entropyTerm;
+            logPi = obj.mixing.expectedLogMean;
+            membershipKlds = sum(entropyTerm,2)-sum(bsxfun(@times, training.componentMemberships,logPi(:)'),2);
             
-            kld = sum(sourceKlds) + mixingKld + entropyTerm;
-            
-            eLogLikelihood = sum(prtUtilSumExp(training.variationalLogLikelihoodBySample'));
+            % When checking the negative free energy sometimes you want to
+            % include the membership matrix as a variational parameter and
+            % sometimes you do not. We allow both.
+            if obj.vbNfeIncludeMemberships
+                kld = sum(sourceKlds) + mixingKld + sum(membershipKlds);
+                eLogLikelihood = sum(sum(training.variationalClusterLogLikelihoods.*training.componentMemberships,2));
+            else
+                kld = sum(sourceKlds) + mixingKld;
+                eLogLikelihood = sum(prtUtilSumExp(training.variationalLogLikelihoodBySample'));
+            end
             
             nfe = eLogLikelihood - kld;
+            
+            if nargout > 3
+                kldDetails.components = sourceKlds(:);
+                kldDetails.mixing = mixingKld;
+                kldDetails.memberships = membershipKlds(:);
+            end
         end
         
         function vbIterationPlot(obj, priorObj, x, training) %#ok<INUSL>
@@ -465,6 +502,62 @@ classdef prtBrvMixture < prtBrv & prtBrvVbOnline
         end
     end
     
+    % Methods for prtBrvMembershipModel
+    %----------------------------------------------------------------------
+    methods 
+        function [phiMat, priorVec] = collectionInitialize(selfVec, priorVec, x)
+            phiMat = zeros(size(x,1),length(selfVec));
+            randInd = prtRvUtilDiscreteRnd([1 2],[0.5 0.5],size(x,1));
+            phiMat(sub2ind(size(phiMat), (1:size(x,1))',randInd)) = 1;
+        end
+        
+        function self = weightedConjugateUpdate(self, prior, x, weights, training)
+            
+            % Iterate through each source and update using the current memberships
+            for iSource = 1:self.nComponents
+                self.components(iSource) = self.components(iSource).weightedConjugateUpdate(prior.components(iSource), x, weights.*training.componentMemberships(:,iSource));
+            end
+    
+            training.nSamplesPerComponent = sum(bsxfun(@times,training.componentMemberships,weights),1);
+            
+            % Updated mixing
+            self.mixing = self.mixing.conjugateUpdate(prior.mixing, training.nSamplesPerComponent);
+            
+        end
+        
+        function self = conjugateUpdate(self, prior, x) %#ok<INUSL>
+            warning('prt:prtBrvMixture:conjugateUpdate','Model is not fully conjugate resorting to vb');
+            self = vb(self, x);
+        end
+        
+        function plotCollection(selfs,colors)
+            
+            for iComp = 1:length(selfs)
+                hold on;
+                mixingPropPostMean = selfs(iComp).mixing.posteriorMeanStruct;
+                mixingPropPostMean = mixingPropPostMean.probabilities;
+            
+                cComponents = mixingPropPostMean > selfs(iComp).plotComponentProbabilityThreshold;
+                if any(cComponents)
+                    plotCollection(selfs(iComp).components(cComponents), repmat(colors(iComp,:),sum(cComponents),1));
+                end
+                
+                if iComp == 1
+                    axesLimits = repmat(axis,length(selfs),1);
+                else
+                    axesLimits(iComp,:) = axis;
+                end
+            end
+            hold off;
+            axis([min(axesLimits(:,1)), max(axesLimits(:,2)), min(axesLimits(:,3)), max(axesLimits(:,4))]);
+            
+            
+        end
+        
+    end
+    properties
+        vbNfeIncludeMemberships = true;
+    end
     methods (Hidden)
         function x = parseInputData(self,x) %#ok<MANU>
             if isnumeric(x) || islogical(x)

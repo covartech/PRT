@@ -69,8 +69,15 @@ classdef prtDataInterfaceCategoricalTargets < prtDataInterfaceTargets
         %this is used by some class objects, but breaks encapsulation. Hide
         %it from 99% of users
         function self = updateTargetCache(self)
-            
             targets = double(self.getTargets);
+            if isempty(targets)
+                self.targetCache.uniqueClasses = [];
+                self.targetCache.hist = [];
+                self.targetCache.nClasses = [];
+                self.targetCache.hasNans = false;
+                self.targetCache.nNans = 0;
+                return
+            end
             self.targetCache.uniqueClasses = unique(targets);
             self.targetCache.hist = histc(targets,self.uniqueClasses);
             self.targetCache.nClasses = length(self.targetCache.uniqueClasses);
@@ -462,5 +469,7 @@ classdef prtDataInterfaceCategoricalTargets < prtDataInterfaceTargets
             
             Out = retainObservations(Obj,newObsInds);
         end
+        
+        
     end
 end
