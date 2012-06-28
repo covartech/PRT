@@ -19,7 +19,7 @@ classdef prtBrvMvnHierarchy
         function self = defaultParameters(self, nDimensions)
             self.meanMean = zeros(1,nDimensions);
             self.meanBeta = nDimensions;
-            self.covNu = nDimensions;
+            self.covNu = self.meanBeta*nDimensions + 1;
             self.covPhi = eye(nDimensions)*self.covNu;
         end
         

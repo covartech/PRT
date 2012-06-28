@@ -14,6 +14,9 @@ function KLD = prtRvUtilDirichletKld(lambdaQ,lambdaP)
 % Outputs:
 %   KLD - The KLD for the Dirichlet distributions
 
-lambdaQ(lambdaQ == 0) = eps;
-lambdaP(lambdaP == 0) = eps;
-KLD = gammaln(sum(lambdaQ)) - gammaln(sum(lambdaP)) + sum((lambdaQ - lambdaP).*(psi(lambdaQ) - psi(sum(lambdaQ)))) + sum(gammaln(lambdaP) - gammaln(lambdaQ));
+pSum = sum(lambdaP);
+qSum = sum(lambdaQ);
+KLD = gammaln(qSum) - gammaln(pSum) + ...
+    sum( (lambdaQ-lambdaP).*(psi(lambdaQ)-psi(qSum)) ) + ...
+    sum(gammaln(lambdaP) - gammaln(lambdaQ));
+

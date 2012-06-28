@@ -113,17 +113,17 @@ classdef prtBrvMixture < prtBrv & prtBrvVbOnline & prtBrvMembershipModel
             if self.vbVerboseText
                 fprintf('\tIterating VB Updates\n')
             end
-            
-            for iteration = 1:self.vbMaxIterations
                 
+            for iteration = 1:self.vbMaxIterations
+            
                 % VBM Step
                 [self, training] = vbM(self, prior, x, training);
-                
-                % Initial VBE Step
-                [self, training] = vbE(self, prior, x, training);
             
+                % VBE Step
+                [self, training] = vbE(self, prior, x, training);
+                
                 % Calculate NFE
-                [nfe, eLogLikelihood, kld] = vbNfe(self, prior, x, training);
+                [nfe, eLogLikelihood, kld, kldDetails(iteration,1)] = vbNfe(self, prior, x, training);
                 
                 % Update training information
                 training.previousNegativeFreeEnergy = training.negativeFreeEnergy;
@@ -132,6 +132,8 @@ classdef prtBrvMixture < prtBrv & prtBrvVbOnline & prtBrvMembershipModel
                 training.iterations.eLogLikelihood(iteration) = eLogLikelihood;
                 training.iterations.kld(iteration) = kld;
                 training.nIterations = iteration;
+                training.kld = kld;
+                training.eLogLikelihood = eLogLikelihood;
                 
                 % Check covergence
                 
@@ -163,8 +165,21 @@ classdef prtBrvMixture < prtBrv & prtBrvVbOnline & prtBrvMembershipModel
                 end
                 
                 if err
+                    
+                    % These might be useful things for debuging
+                    
+                    %eLogLikeDiff = training.eLogLikelihood - prevTraining.eLogLikelihood
+                    %kldDiff = training.kld - prevTraining.kld
+                    %mixingKldDiff = kldDetails(end).mixing - kldDetails(end-1).mixing
+                    %componentKldDiff = sum(kldDetails(end).components) - sum(kldDetails(end-1).components)
+                    %membershipKldDiff = sum(kldDetails(end).memberships)-sum(kldDetails(end-1).memberships)
+                    %keyboard
+                    
                     break
                 end
+                
+                prevTraining = training;
+                prevSelf = self;
                 
             end
             if self.vbCheckConvergence && self.vbVerboseText
@@ -303,6 +318,7 @@ classdef prtBrvMixture < prtBrv & prtBrvVbOnline & prtBrvMembershipModel
     properties (Hidden)
         plotComponentProbabilityThreshold = 0.01;
     end
+    
     % Set and get methods for weird properties
     %----------------------------------------------------------------------
     methods
@@ -341,7 +357,7 @@ classdef prtBrvMixture < prtBrv & prtBrvVbOnline & prtBrvMembershipModel
             training = prtBrvMixtureVbTraining;
             
             priorObj = obj;
-            [training.componentMemberships, priorObj.components] = collectionInitialize(obj.components, obj.components, x);
+            [training.componentMemberships, priorObj.components] = collectionInitialize(obj.components, priorObj.components, x);
             
             training.variationalLogLikelihoodBySample = -inf(size(x,1),obj.nComponents);
         end
@@ -349,18 +365,17 @@ classdef prtBrvMixture < prtBrv & prtBrvVbOnline & prtBrvMembershipModel
         function [obj, training] = vbE(obj, priorObj, x, training) %#ok<INUSL>
             
             % Calculate the variational Log Likelihoods of each cluster
-            
             training.variationalClusterLogLikelihoods = zeros(size(x,1),obj.nComponents);
             for iSource = 1:obj.nComponents
                 training.variationalClusterLogLikelihoods(:,iSource) = ...
                     obj.components(iSource).conjugateVariationalAverageLogLikelihood(x);
             end
             
-            sourceVariationalLogLikelihoods = obj.mixing.expectedLogMean;
+            expectedLogMixing = obj.mixing.expectedLogMean;
             
-            training.variationalLogLikelihoodBySample = bsxfun(@plus,training.variationalClusterLogLikelihoods, sourceVariationalLogLikelihoods(:)');
+            training.variationalLogLikelihoodBySample = bsxfun(@plus,training.variationalClusterLogLikelihoods, expectedLogMixing(:)');
+            
             training.componentMemberships = exp(bsxfun(@minus, training.variationalLogLikelihoodBySample, prtUtilSumExp(training.variationalLogLikelihoodBySample')'));
-            
         end
         
         function [obj, training] = vbM(obj, priorObj, x, training)
@@ -391,14 +406,21 @@ classdef prtBrvMixture < prtBrv & prtBrvVbOnline & prtBrvMembershipModel
             logPi = obj.mixing.expectedLogMean;
             membershipKlds = sum(entropyTerm,2)-sum(bsxfun(@times, training.componentMemberships,logPi(:)'),2);
             
-            kld = sum(sourceKlds) + mixingKld + sum(membershipKlds);
-            
-            eLogLikelihood = sum(sum(training.variationalClusterLogLikelihoods.*training.componentMemberships,2));
+            % When checking the negative free energy sometimes you want to
+            % include the membership matrix as a variational parameter and
+            % sometimes you do not. We allow both.
+            if obj.vbNfeIncludeMemberships
+                kld = sum(sourceKlds) + mixingKld + sum(membershipKlds);
+                eLogLikelihood = sum(sum(training.variationalClusterLogLikelihoods.*training.componentMemberships,2));
+            else
+                kld = sum(sourceKlds) + mixingKld;
+                eLogLikelihood = sum(prtUtilSumExp(training.variationalLogLikelihoodBySample'));
+            end
             
             nfe = eLogLikelihood - kld;
             
             if nargout > 3
-                kldDetails.sources = sourceKlds(:);
+                kldDetails.components = sourceKlds(:);
                 kldDetails.mixing = mixingKld;
                 kldDetails.memberships = membershipKlds(:);
             end
@@ -484,43 +506,11 @@ classdef prtBrvMixture < prtBrv & prtBrvVbOnline & prtBrvMembershipModel
     %----------------------------------------------------------------------
     methods 
         function [phiMat, priorVec] = collectionInitialize(selfVec, priorVec, x)
-            if prtUtilIsSubClass(class(x),'prtDataInterfaceCategoricalTargets')
-                if x.nClasses == 2
-                    % This defaults to NPBMIL operation mode
-                    ds = x;
-                    x = ds.getObservations();
-                    y = ds.getTargetsAsBinaryMatrix();
-                else
-                    x = x.getObservations();
-                    y = [];
-                end
-            elseif prtUtilIsSubClass(class(x),'prtDataSetBase')
-                x = x.getObservations();
-            elseif isnumeric(x) || islogical(x)
-                y = [];
-            else
-                error('prt:prtBrvMixture:parseInputData','prtBrvMixture requires a prtDataSet or a numeric 2-D matrix');
-            end
-            
-            phiMat = zeros(size(x,1), length(selfVec));
-            if ~isempty(y)
-                % Special handling for NPBMIL
-                nH1s = sum(y(:,2));
-                randInd = prtRvUtilDiscreteRnd([1 2],[0.8 0.2],nH1s);
-                phiMatH1 = zeros(nH1s, length(selfVec));
-                phiMatH1(sub2ind(size(phiMatH1), (1:nH1s)',randInd)) = 1;
-                
-                phiMatH0 = zeros(size(x,1)-nH1s,length(selfVec));
-                phiMatH0(:,1) = 1;
-                
-                phiMat(logical(y(:,1)),:) = phiMatH0;
-                phiMat(logical(y(:,2)),:) = phiMatH1;
-                
-            else
-                randInd = prtRvUtilDiscreteRnd([1 2],[0.5 0.5],size(x,1));
-                phiMat(sub2ind(size(phiMat), (1:size(x,1))',randInd)) = 1;
-            end
+            phiMat = zeros(size(x,1),length(selfVec));
+            randInd = prtRvUtilDiscreteRnd([1 2],[0.5 0.5],size(x,1));
+            phiMat(sub2ind(size(phiMat), (1:size(x,1))',randInd)) = 1;
         end
+        
         function self = weightedConjugateUpdate(self, prior, x, weights, training)
             
             % Iterate through each source and update using the current memberships
@@ -534,6 +524,7 @@ classdef prtBrvMixture < prtBrv & prtBrvVbOnline & prtBrvMembershipModel
             self.mixing = self.mixing.conjugateUpdate(prior.mixing, training.nSamplesPerComponent);
             
         end
+        
         function self = conjugateUpdate(self, prior, x) %#ok<INUSL>
             warning('prt:prtBrvMixture:conjugateUpdate','Model is not fully conjugate resorting to vb');
             self = vb(self, x);
@@ -551,7 +542,6 @@ classdef prtBrvMixture < prtBrv & prtBrvVbOnline & prtBrvMembershipModel
                     plotCollection(selfs(iComp).components(cComponents), repmat(colors(iComp,:),sum(cComponents),1));
                 end
                 
-                
                 if iComp == 1
                     axesLimits = repmat(axis,length(selfs),1);
                 else
@@ -565,7 +555,9 @@ classdef prtBrvMixture < prtBrv & prtBrvVbOnline & prtBrvMembershipModel
         end
         
     end
-    
+    properties
+        vbNfeIncludeMemberships = true;
+    end
     methods (Hidden)
         function x = parseInputData(self,x) %#ok<MANU>
             if isnumeric(x) || islogical(x)

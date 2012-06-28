@@ -43,9 +43,9 @@ classdef prtBrvDiscrete < prtBrv & prtBrvVbOnline & prtBrvVbMembershipModel & pr
             % This is the variational approximation
             %y2 = conjugateVariationalAverageLogLikelihood(self, x);
             
+            % This is a dirichlet-multinomial density
             xSum = sum(x,2);
             lambdaSum = sum(self.model.lambda);
-            
             y = gammaln(lambdaSum)-gammaln(lambdaSum+xSum) + sum(bsxfun(@minus,gammaln(bsxfun(@plus,x,self.model.lambda(:)')),gammaln(self.model.lambda(:)')),2);
             
         end
@@ -64,7 +64,7 @@ classdef prtBrvDiscrete < prtBrv & prtBrvVbOnline & prtBrvVbMembershipModel & pr
         % Optional methods
         %------------------------------------------------------------------
         function kld = conjugateKld(obj, priorObj)
-            kld = prtRvUtilDirichletKld(obj.model.lambda,priorObj.model.lambda);
+            kld = prtRvUtilDirichletKld(obj.model.lambda, priorObj.model.lambda);
         end
         
         function s = posteriorMeanStruct(obj)
@@ -177,7 +177,7 @@ classdef prtBrvDiscrete < prtBrv & prtBrvVbOnline & prtBrvVbMembershipModel & pr
         
         function obj = weightedConjugateUpdate(obj, priorObj, x, weights)
             x = obj.parseInputData(x);
-            priorObj = priorObj.initialize(x);
+            %priorObj = priorObj.initialize(x);
             
             if isempty(weights)
                 weights = ones(size(x,1),1);
@@ -185,10 +185,10 @@ classdef prtBrvDiscrete < prtBrv & prtBrvVbOnline & prtBrvVbMembershipModel & pr
             obj.model.lambda = priorObj.model.lambda + sum(bsxfun(@times,x,weights),1);
         end
         
-        function self = conjugateUpdate(self, prior, x)
-            x = self.parseInputData(x);
+        function obj = conjugateUpdate(obj, priorObj, x)
+            x = obj.parseInputData(x);
             
-            self = weightedConjugateUpdate(self, prior, x, ones(size(x,1),1));
+            obj.model.lambda = priorObj.model.lambda + sum(x,1);
         end
     end
     
