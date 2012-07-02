@@ -116,15 +116,16 @@ classdef prtOutlierRemoval < prtAction
     
     methods (Access = protected, Hidden = true)
         
-        function DataSet = runAction(Obj,DataSet)
-            DataSet = outlierRemovalRun(Obj,DataSet,Obj.runMode);
+        function [DataSet,inds] = runAction(Obj,DataSet)
+            [DataSet,inds] = outlierRemovalRun(Obj,DataSet,Obj.runMode);
         end
         
-        function DataSet = runActionOnTrainingData(Obj,DataSet)
-            DataSet = outlierRemovalRun(Obj,DataSet,Obj.runOnTrainingMode);
+        function [DataSet,inds] = runActionOnTrainingData(Obj,DataSet)
+            [DataSet,inds] = outlierRemovalRun(Obj,DataSet,Obj.runOnTrainingMode);
         end
         
-        function DataSet = outlierRemovalRun(Obj,DataSet,mode)
+        function [DataSet,ind] = outlierRemovalRun(Obj,DataSet,mode)
+            ind = [];
             switch mode
                 case 'noAction'
                     return;
