@@ -296,7 +296,7 @@ classdef prtBrvMvn < prtBrv & prtBrvVbOnline & prtBrvVbMembershipModel & prtBrvV
             
             innerPsiTerm = (self.model.covNu + 1 - (1:nDims)')./2;
             lnDetGammaTilde = sum(psi(innerPsiTerm)) - prtUtilLogDet(self.model.covPhi) + nDims*log(2);
-
+            
             xDemeaned = bsxfun(@minus,x,self.model.meanMean);
             
             T = chol(self.model.covPhi/self.model.covNu);

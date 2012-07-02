@@ -522,7 +522,6 @@ classdef prtBrvMixture < prtBrv & prtBrvVbOnline & prtBrvMembershipModel
             
             % Updated mixing
             self.mixing = self.mixing.conjugateUpdate(prior.mixing, training.nSamplesPerComponent);
-            
         end
         
         function self = conjugateUpdate(self, prior, x) %#ok<INUSL>

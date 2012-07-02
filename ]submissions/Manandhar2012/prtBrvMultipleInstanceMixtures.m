@@ -74,8 +74,6 @@ classdef prtBrvMultipleInstanceMixtures < prtBrv & prtBrvVbOnline
     methods
         function [self, training, prior] = vbBatch(self, x)
             
-            %x = self.parseInputData(x);
-            
             self = initialize(self,x);
             
             % Initialize
@@ -425,10 +423,25 @@ classdef prtBrvMultipleInstanceMixtures < prtBrv & prtBrvVbOnline
             training.variationalClusterLogLikelihoods = zeros(size(xData,1),obj.nComponents);
             for iSource = 1:obj.nComponents
                 [obj.components(iSource), training.componentTraining(iSource)] = vbE(obj.components(iSource), priorObj.components(iSource), xData, training.componentTraining(iSource));
+                
                 training.variationalClusterLogLikelihoods(:,iSource) = prtUtilSumExp(training.componentTraining(iSource).variationalLogLikelihoodBySample')';
+                
+                % We need to fix the VBE step to account for the membership
+                % weights within this mixture
+                
+                %training.componentTraining(iSource).variationalClusterLogLikelihoods = bsxfun(@times, training.componentMemberships(:,iSource), training.componentTraining(iSource).variationalClusterLogLikelihoods);
+                %logPi = obj.components(iSource).mixing.expectedLogMean;
+                %training.componentTraining(iSource).variationalLogLikelihoodBySample = bsxfun(@plus, training.componentTraining(iSource).variationalClusterLogLikelihoods, logPi(:)');
+                %training.componentTraining(iSource).componentMemberships = exp(bsxfun(@minus, training.componentTraining(iSource).variationalLogLikelihoodBySample, prtUtilSumExp(training.componentTraining(iSource).variationalLogLikelihoodBySample')'));
+                
+                logPi = obj.components(iSource).mixing.expectedLogMean;
+                weightedClusterLogLikelihoods = bsxfun(@plus, bsxfun(@times, training.componentMemberships(:,iSource), training.componentTraining(iSource).variationalClusterLogLikelihoods), logPi(:)');
+                training.componentTraining(iSource).componentMemberships = exp(bsxfun(@minus, weightedClusterLogLikelihoods, prtUtilSumExp(weightedClusterLogLikelihoods')'));
+                
             end
-            sourceVariationalLogLikelihoods = obj.mixing.expectedLogMean;
-            training.variationalLogLikelihoodBySample = bsxfun(@plus,training.variationalClusterLogLikelihoods, sourceVariationalLogLikelihoods(:)');
+            
+            logEta = obj.mixing.expectedLogMean;
+            training.variationalLogLikelihoodBySample = bsxfun(@plus,training.variationalClusterLogLikelihoods, logEta(:)');
             
             training.componentMemberships = exp(bsxfun(@minus, training.variationalLogLikelihoodBySample, prtUtilSumExp(training.variationalLogLikelihoodBySample')'));
             
@@ -446,7 +459,8 @@ classdef prtBrvMultipleInstanceMixtures < prtBrv & prtBrvVbOnline
                     isThisBag = training.bagInds==iBag;
                     isThisBagInds = find(isThisBag);
                     
-                    cLikes = training.variationalLogLikelihoodBySample(isThisBag,2);
+                    % Most H1 Like
+                    cLikes = training.variationalClusterLogLikelihoods(isThisBag,2);
                     [~, bestInd] = max(cLikes);
                     training.componentMemberships(isThisBagInds(bestInd),:)  = [0 1];
                 end
@@ -691,11 +705,10 @@ classdef prtBrvMultipleInstanceMixtures < prtBrv & prtBrvVbOnline
     
     methods (Access = protected, Hidden = true)
         function self = trainAction(self, ds)
-            self = vbBatch(self,ds);
-            
-            % nWarmUps = 5;
-            % nWarmUpIterations = 5;
-            %self = vbBatchMultiWarmUp(self,ds,nWarmUps,nWarmUpIterations)
+            %[self, training] = vbBatch(self,ds);
+            nWarmUps = 5;
+            nWarmUpIterations = 5;
+            self = vbBatchMultiWarmUp(self,ds,nWarmUps,nWarmUpIterations);
         end
         
         function ds = runAction(self, ds)

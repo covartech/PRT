@@ -1,5 +1,5 @@
-function [imgs labels] = prtReadMNIST(imgFile, labelFile, readDigits, offset)
-% prtReadMNIST is just readMNIST by Siddharth Hegde; available from:
+function [imgs labels] = prtUtilReadMNIST(imgFile, labelFile, readDigits, offset)
+% prtUtilReadMNIST is just readMNIST by Siddharth Hegde; available from:
 % http://www.mathworks.com/matlabcentral/fileexchange/27675-read-digits-and-labels-from-mnist-database
 %
 % Description:
