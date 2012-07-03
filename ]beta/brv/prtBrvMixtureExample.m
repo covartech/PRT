@@ -4,6 +4,9 @@ ds = prtDataGenBimodal;
 
 mix = prtBrvMixture('components', repmat(prtBrvMvn,5,1), 'vbVerboseText', true, 'vbVerbosePlot', true, 'vbConvergenceThreshold', 1e-11);
 
+mix.vbIterationPlotNumSamplesThreshold = 200;
+mix.vbIterationPlotNumBootstrapSamples = 100;
+
 %[mixLearned, training] = mix.vbBatch(rt(prtPreProcZmuv,ds));
 [mixLearned, training] = mix.vbBatch(ds);
 

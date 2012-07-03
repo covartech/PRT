@@ -165,7 +165,6 @@ classdef prtBrvMixture < prtBrv & prtBrvVbOnline & prtBrvMembershipModel
                 end
                 
                 if err
-                    
                     % These might be useful things for debuging
                     
                     %eLogLikeDiff = training.eLogLikelihood - prevTraining.eLogLikelihood
@@ -469,7 +468,11 @@ classdef prtBrvMixture < prtBrv & prtBrvVbOnline & prtBrvMembershipModel
             subplot(3,1,3)
             if obj.nDimensions < 4
                 [~, cY] = max(training.componentMemberships,[],2);
-                allHandles = plot(prtDataSetClass(x,cY));
+                if size(x,1) < obj.vbIterationPlotNumSamplesThreshold;
+                    allHandles = plot(prtDataSetClass(x,cY));
+                else
+                    allHandles = plot(bootstrapByClass(prtDataSetClass(x,cY), ceil(obj.vbIterationPlotNumBootstrapSamples./obj.nComponents)));
+                end
                 
                 uY = unique(cY);
                 for s = 1:length(uY)
@@ -492,10 +495,16 @@ classdef prtBrvMixture < prtBrv & prtBrvVbOnline & prtBrvMembershipModel
 %                 end
             
             else
-                area(training.componentMemberships(:,sortingInds),'edgecolor','none')
-                % colormap set above in bar.
-                ylim([0 1]);
-                title('Cluster Memberships');
+                if size(training.componentMemberships,1) < obj.vbIterationPlotNumSamplesThreshold;
+                    area(training.componentMemberships(:,sortingInds),'edgecolor','none')
+                    % colormap set above in bar.
+                else
+                    cMemberships = training.componentMemberships(prtRvUtilRandomSample(size(training.componentMemberships,1),obj.vbIterationPlotNumBootstrapSamples),sortingInds);
+                    area(cMemberships,'edgecolor','none');
+                    % colormap set above in bar.
+                end
+                    ylim([0 1]);
+                    title('Cluster Memberships');
             end
             
             drawnow;
@@ -556,6 +565,8 @@ classdef prtBrvMixture < prtBrv & prtBrvVbOnline & prtBrvMembershipModel
     end
     properties
         vbNfeIncludeMemberships = true;
+        vbIterationPlotNumSamplesThreshold = 1000;
+        vbIterationPlotNumBootstrapSamples = 200;
     end
     methods (Hidden)
         function x = parseInputData(self,x) %#ok<MANU>
