@@ -333,13 +333,15 @@ classdef prtRvMixture < prtRv
         end
         
         function R = maximizeParameters(R,X,membershipMat)
+            temp = R.components;
             for iComp = 1:R.nComponents
                 try
-                    R.components(iComp) = weightedMle(R.components(iComp),X,membershipMat(:,iComp));
+                    temp(iComp) = weightedMle(temp(iComp),X,membershipMat(:,iComp));
                 catch  %#ok<CTCH>
                     error('prt:prtRvMixture:maximizeParameters','An error was encountered while fitting the parameters of component %d. Perhaps the number of components is too high.',iComp)
                 end
             end
+            R.components = temp;
             
             try
                 R.mixingProportions = mle(prtRvMultinomial,membershipMat);
