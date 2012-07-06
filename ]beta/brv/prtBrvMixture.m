@@ -222,10 +222,8 @@ classdef prtBrvMixture < prtBrv & prtBrvVbOnline & prtBrvMembershipModel
             % Intialize mixing
             obj.mixing = obj.mixing.vbOnlineInitialize([]);
             
-            % Iterate through each source and update using the current memberships
-            for iSource = 1:obj.nComponents
-                obj.components(iSource) = obj.components(iSource).vbOnlineInitialize(x);
-            end
+            % Initialize components
+            obj.components = vbOnlineCollectionInitialize(obj.components, x);
             
         end
         

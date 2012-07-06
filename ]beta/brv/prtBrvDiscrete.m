@@ -212,6 +212,16 @@ classdef prtBrvDiscrete < prtBrv & prtBrvVbOnline & prtBrvVbMembershipModel & pr
             obj.model.lambda = randDraw;
         end
         
+        function selfs = vbOnlineCollectionInitialize(selfs, x)
+            for iComp = 1:length(selfs)
+                cInd = prtRvUtilRandomSample(size(x,1));
+                cX = x(cInd,:);
+                cX = cX./sum(cX);
+                
+                selfs(iComp).model.lambda = cX;
+            end
+        end
+        
         function [self, training] = vbOnlineUpdate(self, priorObj, x, lambda, D, prevObj)
             x = self.parseInputData(x);
             [self, training] = vbOnlineWeightedUpdate(self, priorObj, x, ones(size(x,1),1), lambda, D, prevObj);

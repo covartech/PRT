@@ -15,7 +15,7 @@ classdef prtBrvVbOnline < prtBrvVb
         vbOnlineLearningRateFunctionHandle = @(t)(100 + t).^(-0.9); % From Wang, Paisley and Blei (2011)
         vbOnlineBatchSize = 25;
         vbOnlineFullDataSetSize = []; % If empty it is learned from a batch
-        vbUseOnlineInsteadOfBatch = true;
+        vbUseOnlineInsteadOfBatch = false;
     end
     methods
         
@@ -45,6 +45,7 @@ classdef prtBrvVbOnline < prtBrvVb
                     [initSelf, priorSelf] = self.vbOnlineInitialize(cX);
                     
                     [self, training] = initSelf.vbOnlineUpdate(priorSelf, cX, [], initSelf, learningRate, D);
+                    
                 else
                     
                     [self, training] = self.vbOnlineUpdate(priorSelf, cX, [], self, learningRate, D);

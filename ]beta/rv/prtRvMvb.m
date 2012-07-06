@@ -1,4 +1,4 @@
-classdef prtRvMvb < prtRv
+classdef prtRvMvb < prtRv & prtRvMemebershipModel
     % prtRvMvv  Multivariate binary random variable
     %
     %   RV = prtRvMvv creates a prtRvMvv object with empty probability
