@@ -179,8 +179,15 @@ classdef prtRvGmm < prtRv
     methods (Hidden=true)
         
         function [gmmCell,bic] = bicOptimize(self,ds,componentRange)
+            %[gmmCell,bic] = bicOptimize(self,ds,componentRange)
+            % Output a cell array of GMM's trained with nComponents equal
+            % to the unique values of componentRange the bic output
+            % corresponds to the Bayes' information criteria for the
+            % different GMMs.
+            % 
             
             count = 1;
+            componentRange = componentRange(:)';
             gmmCell = repmat({self},length(componentRange),1);
             bic = nan(length(componentRange),1);
             for n = componentRange
