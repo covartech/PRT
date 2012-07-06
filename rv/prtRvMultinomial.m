@@ -1,4 +1,4 @@
-classdef prtRvMultinomial < prtRv
+classdef prtRvMultinomial < prtRv & prtRvMemebershipModel
     % prtRvMultinomial  Multinomial random variable
     %
     %   RV = prtRvMultinomial creates a prtRvMultinomial object
