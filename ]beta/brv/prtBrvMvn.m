@@ -311,6 +311,14 @@ classdef prtBrvMvn < prtBrv & prtBrvVbOnline & prtBrvVbMembershipModel & prtBrvV
     % Methods for prtBrvVbOnlineMembershipModel
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
     methods
+        function selfs = vbOnlineCollectionInitialize(selfs, x)
+            for iComp = 1:length(selfs)
+                cInd = prtRvUtilRandomSample(size(x,1));
+                cX = x(cInd,:);
+                selfs(iComp).model.meanMean = cX;
+            end
+        end
+        
         function self = vbOnlineInitialize(self, x) %#ok<INUSD>
             self.model.meanMean = randn(1,self.nDimensions);
         end
