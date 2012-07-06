@@ -1,4 +1,4 @@
-classdef prtRvDiscrete < prtRv
+classdef prtRvDiscrete < prtRv & prtRvMemebershipModel
     % prtRvDiscrete  Discrete random variable.
     %
     %   RV = prtRvDiscrete creates a prtRvDiscrete object with an unknown

@@ -115,8 +115,7 @@ classdef prtRvMixture < prtRv
         end
         function R = set.components(R,CompArray)
             if ~isempty(CompArray)
-                assert(isa(CompArray(1),'prtRv'),'components must be a prtRv');
-                assert(prtUtilIsMethodIncludeHidden(CompArray(1),'weightedMle'),'The %s class is not capable of mixture modeling as it does not have a weightedMle method.',class(CompArray(1)));
+                assert(isa(CompArray(1),'prtRv') && isa(CompArray(1),'prtRvMemebershipModel'),'components must be a prtRv and inherit from prtRvMemebershipModel');
                 assert(isvector(CompArray),'components must be an array of prtRv objects');
             end
             

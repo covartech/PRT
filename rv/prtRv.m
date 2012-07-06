@@ -209,17 +209,6 @@ classdef prtRv < prtAction
         function limits = plotLimits(R)
             limits = monteCarloPlotLimits(R);
         end
-        function vals = weightedMle(R,X,weights) %#ok
-            % Maximum likelihood estimate using membership weighted samples
-            % This is necessary for mixtures and other hierarchical models
-            missingMethodError(R,'weightedMle');
-        end
-        
-        function initMembershipMat = initializeMixtureMembership(Rs,X,weights) %#ok
-            % Initialize a mixture assumes all Rs are the same.
-            % This is necessary for mixtures and other hierarchical models
-            missingMethodError(R,'initializeMixtureMembership');
-        end        
         
         function val = isPlottable(R)
             val = ~isempty(R.nDimensions) && R.nDimensions < 4 && R.isValid;

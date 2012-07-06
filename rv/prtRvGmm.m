@@ -123,7 +123,7 @@ classdef prtRvGmm < prtRv
             R.covarianceStructureDepHelp = val;
         end
         function R = set.components(R,vals)
-            assert(all(isa(vals,'prtRvMvn')),'components must be of type prtRvGmm');
+            assert(all(isa(vals,'prtRvMvn')),'components must be of type prtRvMvn');
             
             R.mixtureRv.components = vals;
         end
