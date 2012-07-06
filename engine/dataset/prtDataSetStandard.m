@@ -55,6 +55,10 @@ classdef prtDataSetStandard < prtDataSetInMem
     methods
         
         function self = setFeatureNames(self,names,featureIndices)
+            %dataSet = setFeatureNames(dataSet,names)
+            %  Set the feature names using a cell array, names, of size
+            %  1 x dataSet.nFeatures
+            
             if isempty(names)
                 %clear
                 self.featureNameIntegerAssocArray = prtUtilIntegerAssociativeArray;
@@ -72,6 +76,8 @@ classdef prtDataSetStandard < prtDataSetInMem
         end
         
         function featNames = getFeatureNames(obj,indices)
+            %names = getFeatureNames(dataSet)
+            %  Return the current feature names.
             
             if nargin == 1
                 indices = 1:obj.nFeatures;
@@ -88,7 +94,9 @@ classdef prtDataSetStandard < prtDataSetInMem
         end
         
         function d = getObservations(self,varargin)
-            
+            %d = getObservations(dataSet)
+            %  Return dataSet.data
+            %
             if nargin == 1
                 d = self.data;
                 return;
@@ -144,11 +152,11 @@ classdef prtDataSetStandard < prtDataSetInMem
             % getFeatures   Return the features of a prtDataSetStandard
             % object
             %
-            % FEATURES = dataSet.getFeatures() returns the features of the
-            % dataSet object
+            % data = dataSet.getFeatures() returns dataSet.data
             %
-            % FEATURES = dataSet.getFeatures(INDICES) returns only the
-            % features of the dataSet object specified by INDICES
+            % data = dataSet.getFeatures(indices) returns only the
+            % features of the dataSet object specified by indices, e.g.,
+            %  data = dataSet.data(:,indices);
             
             if nargin == 1
                 featureIndices = 1:obj.nFeatures;
@@ -164,13 +172,21 @@ classdef prtDataSetStandard < prtDataSetInMem
         end
         
         function obj = setFeatures(obj,data,varargin)
-            % setFeatures   Set the features of a prtDataSetStandard object
+            % dsOut = setFeatures(dataSet,data,indices)
+            %   Set the columns of dataSet.data corresponding to indices to
+            %   the input matrix, data:
+            %
+            %   dsOut.data(:,indices) = data;
+            %  
             
             obj.data(:,varargin{:}) = data;
             obj = obj.update;
         end
         
         function obj = catFeatures(obj, varargin)
+            % dsOut = catFeatures(dataSet1,dataSet2)
+            %  Return a data set formed from the horizontal concatenation
+            %  of the features in dataSet1 and dataSet2.
             
             if nargin == 1
                 return;
@@ -193,6 +209,8 @@ classdef prtDataSetStandard < prtDataSetInMem
         end
         
         function [obj,retainFeatureInds] = removeFeatures(obj,removeFeatureInds)
+            % dsOut = removeFeatures(dataSet,removeFeatureInds)
+            %  Return a data set formed by removing the specified features.
             
             if islogical(removeFeatureInds)
                 removeFeatureInds = find(removeFeatureInds);
@@ -203,6 +221,9 @@ classdef prtDataSetStandard < prtDataSetInMem
         end
         
         function [obj,retainFeatureInds] = retainFeatures(obj,retainFeatureInds)
+            % dsOut = retainFeatures(dataSet,retainFeatureInds)
+            %  Return a data set formed by retaining the specified features.
+            
             try
                 obj = obj.retainFeatureNames(retainFeatureInds);
                 obj.data = obj.data(:,retainFeatureInds);

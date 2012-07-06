@@ -213,7 +213,12 @@ classdef prtDataSetBase
         end
         
         function val = getObservationInfo(self,varargin)
-            %val = getObservationInfo(self,varargin)
+            %obsInfo = getObservationInfo(dataSet)
+            % Return the observationInfo structure from the dataSet.
+            %
+            % observationInfo can be used to store arbitrary information
+            % about a data set.
+            %
             
             if nargin < 2
                 val = self.observationInfoInternal;
@@ -237,8 +242,14 @@ classdef prtDataSetBase
         end
         
         function self = setObservationInfo(self,varargin)
-            %self = setObservationInfo(self,varargin)
-            
+            %dataSet = setObservationInfo(dataSet,obsInfoStruct)
+            % Set the observationInfo field of the data set to the
+            % structure array obsInfoStruct.  obsInfoStruct should be
+            % dataSet.nObservations x 1.
+            % 
+            % observationInfo can be used to store arbitrary information
+            % about a data set.
+            %
             if isempty(varargin{1})
                 self.observationInfoInternal = varargin{1};
                 return;
@@ -297,13 +308,13 @@ classdef prtDataSetBase
         function obsNames = getObservationNames(self,varargin)
             % getObservationNames - Return DataSet's Observation Names
             %
-            %   featNames = getObservationNames(self) Return a cell array of
+            %   obsNames = getObservationNames(self) Return a cell array of
             %   an object's observation names; if setObservationNames has not been
             %   called or the 'observationNames' field was not set at construction,
             %   default behavior is to return sprintf('Observation %d',i) for all
             %   observations.
             %
-            %   featNames = getObservationNames(self,indices) Return the observation
+            %   obsNames = getObservationNames(self,indices) Return the observation
             %   names for only the specified indices.
             
             indices1 = prtDataSetBase.parseIndices(self.nObservations,varargin{:});
@@ -323,7 +334,7 @@ classdef prtDataSetBase
         end
         
         function targetNames = getTargetNames(self,varargin)
-            % getTargetNames  Return the target names of a dataset
+            % getTargetNames  Return the target names from a dataset
             %
             
             indices2 = prtDataSetBase.parseIndices(self.nTargetDimensions,varargin{:});
@@ -490,7 +501,7 @@ classdef prtDataSetBase
     
     methods (Access = 'protected', Hidden = true)
         function self = catObservationNames(self,newDataSet)
-            
+            % dsOut = catObservationNames(self,varargin) 
             if isempty(newDataSet.observationNamesInternal)
                 return;
             end
@@ -504,7 +515,7 @@ classdef prtDataSetBase
         
         %   Note: only call this from within retainObservations
         function self = retainObservationNames(self,varargin)
-            
+            % dsOut = retainObservationNames(self,varargin) 
             if isempty(self.observationNamesInternal)
                 return;
             end
@@ -530,7 +541,7 @@ classdef prtDataSetBase
         
         %self = catTargetNames(self,newDataSet)
         function self = catTargetNames(self,newDataSet)
-            
+            % dsOut = catTargetNames(self,varargin) 
             for i = 1:newDataSet.nTargetDimensions;
                 currTargetName = newDataSet.targetNamesInternal.get(i);
                 if ~isempty(currTargetName)
@@ -541,6 +552,7 @@ classdef prtDataSetBase
  
         % Only call from retain tartets
         function self = retainTargetNames(self,varargin)
+            % dsOut = retainTargetNames(self,varargin) 
             
             retainIndices = prtDataSetBase.parseIndices(self.nTargetDimensions,varargin{:});
             %parse returns logicals
@@ -567,6 +579,10 @@ classdef prtDataSetBase
         
         %this might could be moved to prtDataInterfaceCategorical...
         function keys = getKFoldKeys(DataSet,K)
+            % keys = getKFoldKeys(dataSet,K)
+            %   Return a vector of integers specifying fold indices.  THis
+            %   is used in prtAction.kfolds, for example.
+            %
             if DataSet.isLabeled
                 keys = prtUtilEquallySubDivideData(DataSet.getTargets(),K);
             else
@@ -635,9 +651,21 @@ classdef prtDataSetBase
         end
         
         function [self, sampleIndices] = bootstrap(self,nSamples,p)
-            % Bootstrap nSamples samples from the data set
-			% 
-			% dsBoot = ds.bootstrap(nSamples) returns a data set created by bootstrap 
+            % dsBoot = bootstrap(dataSet,nSamples)
+            %   Bootstrap (sample with replacement) nSamples from the data
+            %   set dataSet, and return the new data in dsBoot.
+            %
+            % [dsBoot,indices] = bootstrap(dataSet,nSamples) also returns
+            % the indices of the extracted data points in dataSet.
+            %
+            % [...] = bootstrap(dataSet,nSamples,p) sample from a
+            % non-uniform distribution specified by the nObservations x 1
+            % vector p.  p should "approximately" sum to 1, e.g.
+            %    prtUtilApproxEqual(sum(p),1,eps(self.nObservations))
+            % Should return "true"
+            %
+            % 
+            
             if nargin < 3
                 p = ones(self.nObservations,1)./self.nObservations;
             end
@@ -664,6 +692,10 @@ classdef prtDataSetBase
         end
         
         function self = removeObservations(self,indices)
+            % dsOut = removeObservations(dataSet,indices)
+            %   Return a data set, dsOut, created by removing the
+            %   observations specified by indices from the input dataSet.
+            %
             
             if islogical(indices)
                 indices = ~indices;
@@ -674,6 +706,10 @@ classdef prtDataSetBase
         end
         
         function self = retainObservations(self,indices)
+            % dsOut = removeObservations(dataSet,indices)
+            %   Return a data set, dsOut, created by retaining the
+            %   observations specified by indices from the input dataSet.
+            %
             
             self = self.retainObservationInfo(indices);
             self = self.retainObservationData(indices);
@@ -681,6 +717,13 @@ classdef prtDataSetBase
         end
         
         function self = catObservations(self,varargin)
+            % dsOut = catObservations(dataSet1,dataSet2)
+            %   Return a data set, dsOut, created by concatenating the
+            %   data and observationInfo in dataSet1 and dataSet2.  The
+            %   output data set, dsOut, will have nObservations =
+            %   dataSet1.nObservations + dataSet2.nObservations.
+            %
+            
             self = self.catObservationInfo(varargin{:});
             self = self.catObservationData(varargin{:});
             self = self.update;
