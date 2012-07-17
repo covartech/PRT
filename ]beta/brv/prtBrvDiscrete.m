@@ -11,7 +11,7 @@
 % Also inherits from prtBrvVbOnlineObsModel and therefore impliments
 %   vbOnlineWeightedUpdate
 
-classdef prtBrvDiscrete < prtBrv & prtBrvVbOnline & prtBrvVbMembershipModel & prtBrvVbOnlineMembershipModel
+classdef prtBrvDiscrete < prtBrv & prtBrvVbOnline & prtBrvVbMembershipModel & prtBrvVbOnlineMembershipModel & prtBrvMcmcMembershipModel
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Properties required by prtAction
@@ -238,6 +238,24 @@ classdef prtBrvDiscrete < prtBrv & prtBrvVbOnline & prtBrvVbMembershipModel & pr
         end
         
     end
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % Methods required by prtBrvMcmc
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    methods
+        function model = draw(self)
+            model.probabilities = prtRvUtilDirichletDraw(self.model.lambda);
+            %model.covariance = iwishrnd(self.model.covPhi,self.model.covNu); %#STATS
+            %model.mean = prtRvUtilMvnDraw(self.model.meanMean,model.covariance/self.model.meanBeta);
+        end
+        function y = logPdfFromDraw(self, model, x)
+            keyboard
+        end
+        function y = pdfFromDraw(self, model, x)
+            keyboard
+        end
+    end
+    
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Properties for prtBrvDiscrete use
