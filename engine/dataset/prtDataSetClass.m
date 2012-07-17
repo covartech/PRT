@@ -92,12 +92,19 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
     methods
         
         function self = catObservations(self,varargin)
+            %dsOut = catObservations(dataSet1,dataSet2)
+            %   Return a data set, dsOut, formed by vertically
+            %   concatenating the observations and targets in dataSet1 and
+            %   dataSet2.
+            %
             self = catObservations@prtDataSetStandard(self,varargin{:});
             self = catClasses(self,varargin{:});
             self = self.update;
         end
         
         function self = setTargets(self,targets)
+            % dataSet = setTargets(dataSet,targets)
+            %  Run dataSet.targets = targets;
             self = setTargets@prtDataSetStandard(self,targets);
             self = self.update;
         end

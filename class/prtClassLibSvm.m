@@ -227,6 +227,20 @@ classdef prtClassLibSvm < prtClass
             DataSetOut = DataSetOut.setObservations(decision_values*Obj.gain);
         end
         
+        function dataSetOut = runActionFast(self,x,ds)
+            
+            switch self.kernelType
+                case 2
+                    nFeats = size(x,2);
+                    f = full(self.trainedSvm.SVs);
+                    gram = prtKernelRbf.kernelFn(f,x,sqrt(nFeats));
+                    yOut = ((self.trainedSvm.sv_coef'*gram)-self.trainedSvm.rho)';
+                otherwise
+                    error('prtClassLibSvm','Unsupported kernel type for runActionFast');
+            end
+            dataSetOut = yOut(:);
+        end
+        
     end
     methods (Hidden = true)
         function optionString = libSvmOptionString(obj,dataSet)
