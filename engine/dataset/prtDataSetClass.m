@@ -574,7 +574,7 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
                     patchH(iFeature,cY) = patch(cPatch(:,1)+iFeature, cPatch(:,2), colors(cY,:),'edgecolor','none');
                 end
             end
-            
+
             set(patchH,'FaceAlpha',Options.faceAlpha);
             
             set(gca,'NextPlot',holdState);
