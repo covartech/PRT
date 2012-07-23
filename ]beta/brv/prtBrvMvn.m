@@ -15,7 +15,7 @@
 %
 % Also inherits from prtBrv, prtBrvVbOnline, prtBrvVbOnlineMembershipModel
 
-classdef prtBrvMvn < prtBrv & prtBrvVbOnline & prtBrvVbMembershipModel & prtBrvVbOnlineMembershipModel
+classdef prtBrvMvn < prtBrv & prtBrvVbOnline & prtBrvVbMembershipModel & prtBrvVbOnlineMembershipModel & prtBrvMcmcMembershipModel
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Properties required by prtAction
@@ -381,14 +381,24 @@ classdef prtBrvMvn < prtBrv & prtBrvVbOnline & prtBrvVbMembershipModel & prtBrvV
             end
             self = constructorInputParse(self,varargin{:});
         end
-        
-        % This may eventually be required by prtBrvMc
-        function model = modelDraw(self)
+    end
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % Methods required by prtBrvMcmc
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    methods
+        function model = draw(self)
             model.covariance = iwishrnd(self.model.covPhi,self.model.covNu); %#STATS
             model.mean = prtRvUtilMvnDraw(self.model.meanMean,model.covariance/self.model.meanBeta);
         end
-        
+        function y = logPdfFromDraw(self, model, x)
+            y = prtRvUtilMvnLogPdf(x, model.mean, model.covariance);
+        end
+        function y = pdfFromDraw(self, model, x)
+            y = exp(logPdfFromDraw(self, model, x));
+        end
     end
+    
     
     methods (Hidden)
         function x = parseInputData(self,x) %#ok<MANU>

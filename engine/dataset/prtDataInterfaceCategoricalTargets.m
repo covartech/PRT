@@ -258,16 +258,57 @@ classdef prtDataInterfaceCategoricalTargets < prtDataInterfaceTargets
     
     methods 
         
+        function classInds = classNamesToClassInd(self,classNames)
+            % classInds = classNamesToClassInd(dataSet,classNames)
+            %   Return the class indices corresponding to the classes
+            %   specified in the character array or cell of strings,
+            %   classNames.
+            %
+            %   Note that the classInd is not necessarily the same as the
+            %   target value.
+            %
+            %  ds = prtDataGenIris;
+            %  ds.classNamesToClassInd('Iris-setosa'); %Setosa is the first
+            %
+            
+            
+            if isa(classNames,'char')
+                classNames = {classNames};
+            end
+            
+            uClasses = self.classNames;
+            classInds = nan(length(classNames),1);
+            for j = 1:length(classNames)
+                currentInd = find(strcmpi(classNames{j},uClasses));
+                if ~isempty(currentInd)
+                    classInds(j) = currentInd;
+                end
+            end
+        end
+        
         function obj = retainClasses(obj,classes)
             % retainClasses retain observations corresponding to specified
             % classes
             %
-            %   subDataSet = dataSet.retainClasses(targetVals) returns a
+            %   subDataSet = dataSet.retainClasses(classes) returns a
             %   data set subDataSet containing only the observations that
             %   have targets equal to the specied values
+            % 
+            %   classes can be specified as an array of class values,
+            %   or as a cell array of strings containing the class names.
+            %
+            %   ds = prtDataGenIris;
+            %   ds12 = ds.retainClasses([1:2]);
+            %   
+            %   ds12_v2 = ds.retainClasses({'Iris-setosa','Iris-versicolor'});
             
-            assert(isnumeric(classes) && isvector(classes),'classes must be a numeric vector');
-            [isActuallyAClass, classInds] = ismember(classes,obj.uniqueClasses); %#ok<ASGLU>
+            
+            if isa(classes,'cell') || isa(classes,'char')
+                classInds = obj.classNamesToClassInd(classes);
+            else
+                assert(isnumeric(classes) && isvector(classes),'classes must be a numeric vector or cell array of strings');
+                [isActuallyAClass, classInds] = ismember(classes,obj.uniqueClasses); %#ok<ASGLU>
+            end
             
             % I am not sure if we want to enforce this.
             % I don't think we do.
@@ -280,12 +321,24 @@ classdef prtDataInterfaceCategoricalTargets < prtDataInterfaceTargets
             % removeClasses remove observations corresponding to
             % specified classes
             %
-            %   subDataSet = dataSet.removeClasses(targetVals) returns a
+            %   subDataSet = dataSet.removeClasses(classes) returns a
             %   data set subDataSet containing only the observations that
             %   have DO NOT have targets equal to the specied values
+            %
+            %   classes can be specified as an array of class values,
+            %   or as a cell array of strings containing the class names.
+            %
+            %   ds = prtDataGenIris;
+            %   ds12 = ds.removeClasses(3);
+            %   
+            %   ds12_v2 = ds.removeClasses({'Iris-virginica'});
             
-            assert(isnumeric(classes) && isvector(classes),'classes must be a numeric vector');
-            [isActuallyAClass, classInds] = ismember(classes,obj.uniqueClasses); %#ok<ASGLU>            
+            if isa(classes,'cell') || isa(classes,'char')
+                classInds = obj.classNamesToClassInd(classes);
+            else
+                assert(isnumeric(classes) && isvector(classes),'classes must be a numeric vector or cell array of strings');
+                [isActuallyAClass, classInds] = ismember(classes,obj.uniqueClasses); %#ok<ASGLU>            
+            end
             
             % I am not sure if we want to enforce this.
             % I don't think we do.
@@ -308,6 +361,7 @@ classdef prtDataInterfaceCategoricalTargets < prtDataInterfaceTargets
             %             classInds = prtDataSetBase.parseIndices(obj.nClasses, classInds);
             
             allClassInds = 1:obj.nClasses;
+            classInds = classInds(~isnan(classInds));
             classInds = allClassInds(classInds);
             
             obj = obj.retainObservations(ismember(obj.getTargetsClassInd,classInds));
@@ -369,42 +423,6 @@ classdef prtDataInterfaceCategoricalTargets < prtDataInterfaceTargets
             %             warning('use getDataByClassInd');
             d = getDataByClassInd(obj, varargin{:});
         end
-        
-% % %         function d = getObservationsByClass(obj, class, featureIndices)
-% % %             % getObservationsByClass  Return the observations by class
-% % %             %
-% % %             %  OBS = dataSet.getObservationsByClass(CLASS) returns the
-% % %             %  observations of the dataSet object correspoding to the class
-% % %             %  CLASS. CLASS must be an integer index corresponding to one
-% % %             %  of the values contained in dataSet.uniqueClasses
-% % %             
-% % %             if nargin < 3 || isempty(featureIndices)
-% % %                 featureIndices = 1:obj.nFeatures;
-% % %             end
-% % %             utInd = find(obj.uniqueClasses == class,1);
-% % %             if isempty(utInd)
-% % %                 d = [];
-% % %                 return
-% % %             end
-% % %             d = getObservationsByClassInd(obj, utInd, featureIndices);
-% % %         end
-% % %         
-% % %         function d = getObservationsByClassInd(obj, classInd, featureIndices)
-% % %             
-% % %             if nargin < 3 || isempty(featureIndices)
-% % %                 featureIndices = 1:obj.nFeatures;
-% % %             end
-% % %             if ~obj.isLabeled
-% % %                 if classInd == 1
-% % %                     d = obj.getObservations(:,featureIndices);
-% % %                 else
-% % %                     error('prt:prtDataSetClass:getObservationsByClassInd','This dataSet is unlabeled and therefore contains only one class.');
-% % %                 end
-% % %             else
-% % %                 assert(classInd <= obj.nClasses,'prt:prtDataSetClass:getObservationsByClassInd','This requested class index (%d) exceeds the number of classes in this dataSet (%d).',classInd,obj.nClasses);
-% % %                 d = obj.getObservations(obj.getTargets == obj.uniqueClasses(classInd),featureIndices);
-% % %             end
-% % %         end
         
     end
     

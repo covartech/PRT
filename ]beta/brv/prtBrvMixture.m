@@ -21,7 +21,7 @@
 %       stabilized forgetting. (Alpha release, be careful!)
 
 
-classdef prtBrvMixture < prtBrv & prtBrvVbOnline & prtBrvMembershipModel
+classdef prtBrvMixture < prtBrv & prtBrvVbOnline & prtBrvMembershipModel & prtBrvMcmc
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Properties required by prtAction
@@ -191,6 +191,181 @@ classdef prtBrvMixture < prtBrv & prtBrvVbOnline & prtBrvMembershipModel
             training.endTime = now;
         end
     end
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % Methods for prtBrvMcmc
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    methods
+        function [self, training, samples] = mcmc(self, x)
+            
+           x = self.parseInputData(x);
+           
+           self = initialize(self,x);
+           
+           % Initialize
+           if self.mcmcVerboseText
+               fprintf('\n\nMCMC inference for a mixture model with %d components\n', self.nComponents)
+               fprintf('\tInitializing\n')
+           end
+           
+           [self, prior, training] = mcmcInitialize(self, x);
+           
+           if self.mcmcVerboseText
+               fprintf('\tSampling\n')
+           end
+           
+           for iteration = 1:self.mcmcTotalIterations
+               
+               % MCMC - M Step -  Conjugate update everyone
+               for iComp = 1:self.nComponents
+                   self.components(iComp) = self.components(iComp).weightedConjugateUpdate(prior.components(iComp), x, training.componentMemberships(:,iComp));
+               end
+               self.mixing = self.mixing.conjugateUpdate(prior.mixing, training.componentMemberships);
+               
+               % MCMC - M Step -   Sample from everyone
+               samples(iteration,1).mixing = self.mixing.draw;
+               for iComp = 1:self.nComponents
+                    samples(iteration,1).components(iComp,1) = self.components(iComp).draw;
+               end
+               
+               % MCMC - E Step
+               training.componentLogLikelihoods = zeros(size(x,1), self.nComponents);
+               for iComp = 1:self.nComponents
+                   training.componentLogLikelihoods(:, iComp) = self.components(iComp).logPdfFromDraw(samples(iteration).components(iComp), x);
+               end
+               training.componentLogLikelihoodsInModel = bsxfun(@plus, training.componentLogLikelihoods, log(samples(iteration).mixing.probabilities));
+               
+               training.membershipModels = exp(bsxfun(@minus,training.componentLogLikelihoodsInModel, prtUtilSumExp(training.componentLogLikelihoodsInModel')'));
+               
+               % Sample from the memberships
+               training.componentMemberships = double(cumsum(bsxfun(@gt,cumsum(training.membershipModels,2),rand(size(x,1),1)),2)==1);
+               
+               % Some form of convergence...
+               training.iterations.logLikelihood(iteration) = sum(sum(training.membershipModels.*training.componentLogLikelihoods));
+               
+               % Plot
+               if self.mcmcVerbosePlot && (mod(iteration-1,self.mcmcVerbosePlot) == 0)
+                   mcmcIterationPlot(self, prior, x, training, samples);
+                   
+                   if self.mcmcVerboseMovie
+                       if isempty(self.mcmcVerboseMovieFrames)
+                           self.mcmcVerboseMovieFrames = getframe(gcf);
+                       else
+                           self.mcmcVerboseMovieFrames(end+1) = getframe(gcf);
+                       end
+                   end
+               end
+               
+               if self.mcmcVerboseText && (mod(iteration-1,self.mcmcVerboseText) == 0)
+                   fprintf('\t\tCompleted Draw %d.\n',iteration)
+               end
+               
+           end
+           
+           if self.vbVerboseText
+               fprintf('\nSampling Complete.\n\n')
+           end
+           
+           training.endTime = now;
+        end
+        
+        function [obj, priorObj, training] = mcmcInitialize(obj, x)
+            training = prtBrvMixtureMcmcTraining;
+            
+            priorObj = obj;
+            [training.membershipModels, priorObj.components] = collectionInitialize(obj.components, priorObj.components, x);
+            
+            training.membershipModels = bsxfun(@rdivide, training.membershipModels, sum(training.membershipModels,2));
+            training.componentMemberships = double(cumsum(bsxfun(@gt,cumsum(training.membershipModels,2),rand(size(x,1),1)),2)==1);
+        end
+        
+        function mcmcIterationPlot(obj, prior, x, training, samples)
+               
+            colors = prtPlotUtilClassColors(obj.nComponents);
+            
+            set(gcf,'color',[1 1 1]);
+            
+            subplot(3,2,1)
+            mixingPropPostMean = samples(end).mixing.probabilities;
+            
+            [mixingPropPostMeanSorted, sortingInds] = sort(mixingPropPostMean,'descend');
+            
+            bar([mixingPropPostMeanSorted(:)'; nan(1,length(mixingPropPostMean(:)))])
+            colormap(colors(sortingInds,:));
+            ylim([0 1])
+            xlim([0.5 1.5])
+            set(gca,'XTick',[]);
+            title('Source Probabilities');
+            
+            subplot(3,2,2)
+            if ~isempty(training.iterations.logLikelihood)
+                plot(training.iterations.logLikelihood,'k-')
+                hold on
+                plot(training.iterations.logLikelihood,'rx','markerSize',8)
+                hold off
+                xlim([0.5 length(training.iterations.logLikelihood)+0.5]);
+            else
+                plot(nan,nan)
+                axis([0.5 1.5 0 1])
+            end
+            title('Convergence Criterion')
+            xlabel('Iteration')
+
+            subplot(3,1,2)
+
+            componentsToPlot = mixingPropPostMean > obj.plotComponentProbabilityThreshold;
+            if sum(componentsToPlot) > 0
+                plotCollection(obj.components(componentsToPlot),colors(componentsToPlot,:));
+            end
+               
+            subplot(3,1,3)
+            if obj.nDimensions < 4
+                [~, cY] = max(training.componentMemberships,[],2);
+                if size(x,1) < obj.vbIterationPlotNumSamplesThreshold;
+                    allHandles = plot(prtDataSetClass(x,cY));
+                else
+                    allHandles = plot(bootstrapByClass(prtDataSetClass(x,cY), ceil(obj.vbIterationPlotNumBootstrapSamples./obj.nComponents)));
+                end
+                
+                uY = unique(cY);
+                for s = 1:length(uY)
+                    cColor = colors(uY(s),:);
+                    set(allHandles(s),'MarkerFaceColor',cColor,'MarkerEdgeColor',prtPlotUtilLightenColors(cColor));
+                end
+                legend('off');
+                
+%                 plotLimits = [];
+%                 for s = 1:obj.nComponents
+%                     plotLimits(s,:) = obj.components(s).plotLimits();
+%                 end
+%                 plotLimits = plotLimits(componentsToPlot,:);
+%                 if ~isempty(plotLimits)
+%                     if obj.nDimensions == 1
+%                         xlim([min(plotLimits(:,1)),max(plotLimits(:,2))]);
+%                     elseif obj.nDimensions == 2
+%                         axis([min(plotLimits(:,1)),max(plotLimits(:,2)),min(plotLimits(:,3)),max(plotLimits(:,4))]);
+%                     end
+%                 end
+            
+            else
+                if size(training.componentMemberships,1) < obj.vbIterationPlotNumSamplesThreshold;
+                    area(training.componentMemberships(:,sortingInds),'edgecolor','none')
+                    % colormap set above in bar.
+                else
+                    cMemberships = training.componentMemberships(prtRvUtilRandomSample(size(training.componentMemberships,1),obj.vbIterationPlotNumBootstrapSamples),sortingInds);
+                    area(cMemberships,'edgecolor','none');
+                    % colormap set above in bar.
+                end
+                    ylim([0 1]);
+                    title('Cluster Memberships');
+            end
+            
+            drawnow;
+        
+        end
+    end
+    
+    
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % Methods for prtBrvVbMembershipModel
