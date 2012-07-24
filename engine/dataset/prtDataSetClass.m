@@ -565,8 +565,9 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
                 for cY = 1:nClasses
                     F(:,cY) = pdf(mle(prtRvKde('minimumBandwidth',Options.minimumKernelBandwidth),ds.getObservationsByClassInd(cY,iFeature)),xLoc(:));
                 end
-                
-                F = F./max(F(:))/2;
+                %                 keyboard
+                %                 F = F./max(F(:))/2;
+                F = bsxfun(@rdivide,F,sum(F));
                 %xLoc = (xLoc-mean(xLoc))./std(xLoc); % No longer centered
                 
                 for cY = 1:nClasses
@@ -574,7 +575,7 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
                     patchH(iFeature,cY) = patch(cPatch(:,1)+iFeature, cPatch(:,2), colors(cY,:),'edgecolor','none');
                 end
             end
-            
+
             set(patchH,'FaceAlpha',Options.faceAlpha);
             
             set(gca,'NextPlot',holdState);
