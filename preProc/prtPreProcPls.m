@@ -1,4 +1,4 @@
-classdef prtPreProcPls < prtPreProcClass
+classdef prtPreProcPls < prtPreProc
     % prtPreProcPls   Partial least squares
     %
     %   PLS = prtPreProcPls creates a partial least-squares pre-processing
@@ -76,13 +76,14 @@ classdef prtPreProcPls < prtPreProcClass
         function Obj = trainAction(Obj,DataSet)
             
             X = DataSet.getObservations;
-            if DataSet.nClasses > 2
-                Y = DataSet.getTargetsAsBinaryMatrix;
-            else
-                Y = DataSet.getTargetsAsBinaryMatrix;
-                Y = Y(:,2); %0's and 1's for H1
-            end
-            
+%             if DataSet.nClasses > 2
+%                 Y = DataSet.getTargetsAsBinaryMatrix;
+%             else
+%                 Y = DataSet.getTargetsAsBinaryMatrix;
+%                 Y = Y(:,2); %0's and 1's for H1
+%             end
+%             
+Y = DataSet.getY;
             maxComps = min(size(X));
             if Obj.nComponents > maxComps;
                 warning('prt:prtPreProcPls','nComponents (%d) > maximum components for the data set (%d); setting nComponents = %d',Obj.nComponents,maxComps,maxComps);
