@@ -100,7 +100,6 @@ classdef prtClassPlsda < prtClass
             
             Obj.yMeansFactor = yMeans - xMeans*Obj.Bpls;
             
-            
         end
         
         function DataSet = runAction(Obj,DataSet)

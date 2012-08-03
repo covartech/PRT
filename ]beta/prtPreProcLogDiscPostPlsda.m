@@ -68,12 +68,17 @@ classdef prtPreProcLogDiscPostPlsda < prtPreProcClass
             for iFeature = 1:length(Obj.logDiscWeights)
                 DataSet = DataSet.setObservations(sigmaFn(DataSet.getObservations(:,iFeature)*Obj.logDiscWeights(iFeature) + Obj.logDiscMeans(iFeature)),:,iFeature);
             end
+            
+            DataSet.X = bsxfun(@rdivide, DataSet.X, sum(DataSet.X,2));
+            
         end
         
         function X = runActionFast(Obj,X)
             for iFeature = 1:length(Obj.logDiscWeights)
                 X(:,iFeature) = 1./(1 + exp(- (X(:,iFeature)*Obj.logDiscWeights(iFeature) + Obj.logDiscMeans(iFeature))));
             end
+            X = bsxfun(@rdivide, X, sum(X,2));
+            
         end
     end
     

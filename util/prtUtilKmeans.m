@@ -21,7 +21,7 @@ function [classMeans,clusterIndex,maxIterReached] = prtUtilKmeans(data,nClusters
 %       metric to use.  distanceMetricFn(x,x) must return 0.  Default value
 %       is @(data,centers)prtDistanceEuclidean(data,centers));
 %
-%       handleEmptyCluster - string specifying how to handle empty
+%       handleEmptyClusters - string specifying how to handle empty
 %       clusters.  Allowed values are 'remove' and 'random'.  Default value
 %       is 'remove'.
 %

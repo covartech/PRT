@@ -103,7 +103,6 @@ classdef prtDataSetClassMultipleInstance < prtDataSetInMem & prtDataInterfaceCat
         function nOpb = getNumObservationsPerBag(self)
             nOpb = arrayfun(@(s)size(s.data,1),self.data);
         end
-
         
         function dsClass = toPrtDataSetClass(self)
             dsClass = prtDataSetClass(self.expandedData, self.expandedTargets);

@@ -2,12 +2,17 @@ classdef prtRvGamma < prtRv
     properties
         shape
         inverseScale
+        displayName = 'prtRv';
+        
     end
     
     properties (Hidden = true, Dependent = true)
         nDimensions
-    end
         
+        plotLimits
+        isPlottable
+        isValid
+    end
         
     properties
         mean
@@ -197,4 +202,3 @@ classdef prtRvGamma < prtRv
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     end % methods
 end % classdef
-
