@@ -104,20 +104,6 @@ classdef prtDataSetClassMultipleInstance < prtDataSetInMem & prtDataInterfaceCat
             nOpb = arrayfun(@(s)size(s.data,1),self.data);
         end
         
-        function self = reconstructFrom(self,ds,bagInds_)
-            
-            if nargin < 3
-                bagInds_ = self.bagInds;
-            end
-            uBags = unique(bagInds_);
-            for i = 1:length(uBags)
-                current = bagInds_ == uBags(i);
-                self.data(i).data = ds.data(current,:);
-                self.targets(i,:) = unique(ds.targets(current,:));
-            end
-        end
-
-        
         function dsClass = toPrtDataSetClass(self)
             dsClass = prtDataSetClass(self.expandedData, self.expandedTargets);
         end

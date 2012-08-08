@@ -33,9 +33,9 @@ classdef prtBrv < prtAction
         function val = plotLimits(self) %#ok<STOUT>
            missingMethodError(self,'plotLimits') 
         end
-        function plot(self)
-            plotCollection(self);
-        end
+        %function plot(self)
+        %    plotCollection(self);
+        %end
     end
     
     
