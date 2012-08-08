@@ -10,6 +10,7 @@ function Y = prtRvUtilMvnLogPdf(X,mu,Sigma)
 %
 % Outputs:
 %   Y - The value of the log of the pdf at the specified X values
+% 
 
 if nargin < 2 || isempty(mu)
     mu = zeros(1,size(X,2));

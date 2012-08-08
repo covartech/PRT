@@ -255,7 +255,7 @@ classdef prtAction
             outputClassName = class(DataSetOut);
             
             if Obj.classRunRetained && ~isequal(outputClassName,inputClassName)
-                error('prt:prtAction:incompatible','%s specifies that it retains the class of input datasets however, the class of the output dataset is %s and the class of the input dataset is %s. This may indicate an error with the runAction() method of %s.', class(Obj), Obj.classRun, inputClassName, class(Obj));
+                error('prt:prtAction:incompatible','%s specifies that it retains the class of input datasets however, the class of the output dataset is %s and the class of the input dataset is %s. This may indicate an error with the runAction() method of %s.', class(Obj), outputClassName, inputClassName, class(Obj));
             end
         end
         
@@ -403,8 +403,9 @@ classdef prtAction
                 waitBarObj.update(1);
             end
             
-            OutputDataSet = DataSet;
-            OutputDataSet = OutputDataSet.setObservations(OutputMat);
+            OutputDataSet = prtDataSetClass(OutputMat,DataSet.targets);
+            %             OutputDataSet = DataSet;
+            %             OutputDataSet = OutputDataSet.setObservations(OutputMat);
             %OutputDataSet = OutputDataSet.setFeatureNames(InternalOutputDataSet.getFeatureNames);
         end
         
