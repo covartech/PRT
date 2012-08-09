@@ -88,7 +88,7 @@ classdef prtRvMixture < prtRv
     methods
         function R = set.mixingProportions(R,weights)
             if isnumeric(weights)
-                if isvector(weights) && prtUtilApproxEqual(sum(weights),1,eps*sqrt(length(weights)))
+                if isvector(weights) && prtUtilApproxEqual(sum(weights),1,sqrt(eps)*sqrt(length(weights)))
                     weights = prtRvMultinomial('probabilities',weights(:)');
                 else
                     error('prt:prtRvMixture','prtRvMixture mixinigProportions must be a vector of probabilities (that sum to 1) or a prtRvMultinomial');
