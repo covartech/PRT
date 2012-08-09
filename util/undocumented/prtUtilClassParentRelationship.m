@@ -20,9 +20,10 @@ elseif nargin == 2
     for iProp = 1:length(I.Properties)
         %cInd = find(~cellfun(@isempty, strfind(OutStruct.propNames,I.Properties{iProp}.Name)),1);
         cInd = find(cellfun(@(s)isequal(I.Properties{iProp}.Name,s),OutStruct.propNames),1);
-        
+
         if isempty(cInd)
-            error('Maximum property assumption invalid');
+            continue
+             %error('Maximum property assumption invalid');
         end
         
         cSortedProperties{cInd} = I.Properties{iProp};

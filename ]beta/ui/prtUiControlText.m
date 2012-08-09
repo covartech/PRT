@@ -23,7 +23,6 @@ classdef prtUiControlText < hgsetget
             
             self = prtUtilAssignStringValuePairs(self, varargin{:});
         end
-        
         function set.backgroundColor(self, val)
             set(self.javaHandle,'Background',java.awt.Color(val(1),val(2),val(3)));
         end

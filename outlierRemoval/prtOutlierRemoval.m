@@ -84,7 +84,7 @@ classdef prtOutlierRemoval < prtAction
     end
     properties (SetAccess = protected)
         isSupervised = false; % False
-        isCrossValidateValid = false; % False
+        isCrossValidateValid = true; % False
     end
     
     methods

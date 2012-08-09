@@ -104,10 +104,45 @@ classdef prtDataSetClassMultipleInstance < prtDataSetInMem & prtDataInterfaceCat
         function nOpb = getNumObservationsPerBag(self)
             nOpb = arrayfun(@(s)size(s.data,1),self.data);
         end
-
         
         function dsClass = toPrtDataSetClass(self)
             dsClass = prtDataSetClass(self.expandedData, self.expandedTargets);
         end
-    end 
+        
+        function self = fromPrtDataSetClassData(self,dsClass,bagInds_)
+            if nargin < 3
+                bagInds_ = self.getBagInds;
+            end
+            
+            uBags = unique(bagInds_);
+            for i = 1:length(uBags);
+                current = find(bagInds_ == uBags(i));
+                self.data(i).data = dsClass.data(current,:);
+                self.targets(i) = unique(dsClass.targets(current,:));
+            end
+        end
+    end
+    methods (Hidden, Static)
+        
+        function dsMil = fromAchutStruct(achutStruct)
+            
+            bagNums = achutStruct.bagNum;
+            uBagNums = unique(bagNums);
+            
+            d = struct('data',nan(length(uBagNums),size(achutStruct,2)));
+            y = nan(length(uBagNums),1);
+            
+            for bagNumInd = 1:length(uBagNums);
+                cBag = uBagNums(bagNumInd);
+                current = achutStruct.bagNum == cBag;
+                
+                d(bagNumInd,1).data = achutStruct.data(current,:);
+                y(bagNumInd,1) = unique(achutStruct.label(current));
+
+            end
+            y = double(y == 1);
+            dsMil = prtDataSetClassMultipleInstance(d,y);
+        end
+    end
+        
 end

@@ -26,7 +26,7 @@ classdef ScrollPanel < hgsetget
 %       Units         - The units of the ScrollPanel object as well as the
 %                       ScrollArea.  The units of th me.
 %       Visible       - Sets the visibility of the object.
-%       ScrollMode          - Controls the appearance of scrollbars on the panel.
+%       ScrollMode    - Controls the appearance of scrollbars on the panel.
 %                       'auto'       - automatically shows the appropriate
 %                                      verticle or horizontal scrollbar if the
 %                                      height or width of the ScrollArea is
@@ -228,7 +228,7 @@ classdef ScrollPanel < hgsetget
             end
             
             % Create the objects that make up the ScrollPanel.
-            obj.hBorderPanel = uipanel('Parent', fig, 'BackgroundColor', 'b',...
+            obj.hBorderPanel = uipanel('Parent', fig, ...'BackgroundColor', 'b',...
                                        'HandleVisibility', 'off');
                                      
             obj.hViewportPanel = uipanel('Parent', fig, ...'BackgroundColor', 'r',...
@@ -381,6 +381,7 @@ classdef ScrollPanel < hgsetget
         function set.Position(obj, pos)
             % Go ahead and set the main viewport's position.
             drawnow;
+            
             set(obj.hViewportPanel, 'Position', pos);
             setBorderPosition(obj);
             
@@ -413,7 +414,11 @@ classdef ScrollPanel < hgsetget
                 end
             end
             set(obj.hScrollingPanel, 'Position', sPos);
+            set(obj.hBorderPanel, 'Position', pos);
             setSBPosition(obj, 'both')
+            
+            
+            
         end
         
         % Set/Get the following properties on the appropriate container.
