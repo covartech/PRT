@@ -959,29 +959,7 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
                         obj.name = inObj.name;
                         obj.description = inObj.description;
                         obj.userData = inObj.userData;
-                        obj.actionData = inObj.actionData;
                         
-                    case 1
-                        disp('case 1');
-                        error('not tested');
-                        %                         obj = obj.setObservationsAndTargets(inObj.dataDepHelper,inObj.targetsDepHelper);
-                        %                         obj.observationInfo = inObj.observationInfoDepHelper;
-                        %                         obj.featureInfo = inObj.featureInfoDepHelper;
-                        %                         if ~isempty(inObj.featureNames.cellValues)
-                        %                             obj = obj.setFeatureNames(inObj.featureNames.cellValues);
-                        %                         end
-                        %                         if ~isempty(inObj.observationNames.cellValues)
-                        %                             obj = obj.setObservationNames(inObj.observationNames.cellValues);
-                        %                         end
-                        %                         if ~isempty(inObj.targetNames.cellValues)
-                        %                             obj = obj.setTargetNames(inObj.targetNames.cellValues);
-                        %                         end
-                        %                         obj.plotOptions = inObj.plotOptions;
-                        %                         obj.name = inObj.name;
-                        %                         obj.description = inObj.description;
-                        %                         obj.userData = inObj.userData;
-                        %                         obj.actionData = inObj.actionData;
-                        %
                     otherwise
                         error('prt:prtDataSetStandard:loadObj','Unknown prtDataSetBase version %d, object cannot be laoded.',inputVersion);
                 end
@@ -989,5 +967,12 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
                 % Nothin special
             end
         end
-    end
+	end
+	
+	methods (Hidden)
+		function dsFoldOut = crossValidateCheckFoldResults(dsIn, dsTrain, dsTest, dsFoldOut)
+			dsFoldOut = crossValidateCheckFoldResults@prtDataSetBase(dsIn, dsTrain, dsTest, dsFoldOut);
+			dsFoldOut = crossValidateCheckFoldResultsWarnNumberOfClassesBad(dsIn, dsTrain, dsTest, dsFoldOut);
+		end
+	end
 end

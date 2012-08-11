@@ -137,7 +137,6 @@ classdef prtDataSetRegress < prtDataSetStandard
                         obj.name = inObj.name;
                         obj.description = inObj.description;
                         obj.userData = inObj.userData;
-                        obj.actionData = inObj.actionData;
                         
                     otherwise
                         error('prt:prtDataSetRegress:loadObj','Unknown prtDataSetBase version %d, object cannot be laoded.',inputVersion);

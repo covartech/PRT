@@ -1,4 +1,4 @@
-classdef prtDataInterfaceCategoricalTargets < prtDataInterfaceTargets
+classdef prtDataInterfaceCategoricalTargets
     
     properties (Access = private)
         classNamesArray = prtUtilIntegerAssociativeArrayClassNames;
@@ -64,10 +64,7 @@ classdef prtDataInterfaceCategoricalTargets < prtDataInterfaceTargets
         end
     end
     
-    
     methods (Hidden)
-        %this is used by some class objects, but breaks encapsulation. Hide
-        %it from 99% of users
         function self = updateTargetCache(self)
             targets = double(self.getTargets);
             if isempty(targets)
@@ -87,7 +84,13 @@ classdef prtDataInterfaceCategoricalTargets < prtDataInterfaceTargets
             else
                 self.targetCache.nNans = 0;
             end
-        end
+		end
+		
+		function dsFoldOut = crossValidateCheckFoldResultsWarnNumberOfClassesBad(dsIn, dsTrain, dsTest, dsFoldOut) %#ok<INUSL>
+			if dsTrain.nClasses ~= dsIn.nClasses
+				warning('prt:prtAction:crossValidateNClasses','A cross validation fold yielded a training data set with %d class(es) but the input data set contains %d classes. This may result in errors. It may be possible to resolve this by modifying the cross-validation keys.', dsTrain.nClasses, dsIn.nClasses);
+			end
+		end
     end
     
     methods
@@ -100,10 +103,8 @@ classdef prtDataInterfaceCategoricalTargets < prtDataInterfaceTargets
             end
         end
         
-        
         function d = getDataByClass(obj, class, varargin)
             % getDataByClass  Return the Data by class
-            %
             
             if isnan(class)
                 utInd = find(isnan(obj.uniqueClasses));
@@ -117,10 +118,6 @@ classdef prtDataInterfaceCategoricalTargets < prtDataInterfaceTargets
             d = getDataByClassInd(obj, utInd, varargin{:});
         end
         
-        %Note, things like this break encapsulation; this should actually
-        %be implemented in prtDataSetClass because it allows
-        %featureIndices.  That or we need to enforce "getNumColumns" as a
-        %default for getNumFeatures for everything that's inMem
         function d = getDataByClassInd(obj, classInd, varargin)
             
             if ~obj.isLabeled
@@ -135,8 +132,7 @@ classdef prtDataInterfaceCategoricalTargets < prtDataInterfaceTargets
                 d = obj.getData(obj.getTargets == obj.uniqueClasses(classInd),varargin{:});
             end
         end
-         
-        
+                 
         function ut = getUniqueClasses(self)
             if isempty(self.targetCache.uniqueClasses)
                 ut = unique(self.targets);
@@ -170,7 +166,6 @@ classdef prtDataInterfaceCategoricalTargets < prtDataInterfaceTargets
             n = self.numClasses;
         end
         
-        
         function u = get.uniqueClasses(self)
             u = self.getUniqueClasses;
         end
@@ -183,12 +178,6 @@ classdef prtDataInterfaceCategoricalTargets < prtDataInterfaceTargets
             
             trueClass = self.uniqueClasses(indices);
             cn = self.classNamesArray.get(trueClass);
-            % Slow:
-            %             cn = cell(length(indices),1);
-            %             for i = 1:length(indices)
-            %                 trueClass = self.uniqueClasses(indices(i));
-            %                 cn{i} = self.classNamesArray.get(trueClass);
-            %             end
         end
         
         function cn = getClassNames(self,indices)
@@ -199,13 +188,7 @@ classdef prtDataInterfaceCategoricalTargets < prtDataInterfaceTargets
             end
             
             cn = self.classNamesArray.get(indices);
-            % Slow:
-            %             cn = cell(length(indices),1);
-            %             for i = 1:length(indices)
-            %                 cn{i} = self.classNamesArray.get(indices(i));
-            %             end
         end
-        
         
         function y = getBinaryTargetsAsZeroOne(obj)
             % getBinaryTargetsAsZeroOne  Return the target vector from a
@@ -244,7 +227,6 @@ classdef prtDataInterfaceCategoricalTargets < prtDataInterfaceTargets
             
             for argin = 1:length(varargin)
                 if isa(varargin{argin},'prtDataSetBase') && varargin{argin}.isLabeled
-                    %self = mergeClassDefinitions(self,varargin{argin});
                     try
                         self.classNamesArray = merge(self.classNamesArray,varargin{argin}.classNamesArray);
                     catch ME
@@ -390,7 +372,6 @@ classdef prtDataInterfaceCategoricalTargets < prtDataInterfaceTargets
             obj = obj.retainClassesByInd(classInds);
         end        
         
-        
         function classInds = getTargetsClassInd(obj,varargin)
             % getTargetsClassIndex  Return the targets by class index
             %
@@ -408,19 +389,15 @@ classdef prtDataInterfaceCategoricalTargets < prtDataInterfaceTargets
             % too much.
         end
         
-        
         function d = getObservationsUnlabeled(obj,varargin)
-            %             warning('use getDataUnlabeled');
             d = getDataUnlabeled(obj,varargin{:});
         end
             
         function d = getObservationsByClass(obj,varargin)
-            %             warning('use getDataByClass');
             d = getDataByClass(obj, varargin{:});
         end
         
         function d = getObservationsByClassInd(obj,varargin)
-            %             warning('use getDataByClassInd');
             d = getDataByClassInd(obj, varargin{:});
         end
         
@@ -428,7 +405,7 @@ classdef prtDataInterfaceCategoricalTargets < prtDataInterfaceTargets
     
     methods
         
-        function classHist = get.nObservationsByClass(Obj)
+		function classHist = get.nObservationsByClass(Obj)
             % nObservationsByClass Return the number of observations per class
             % 
             %   N = dataSet.nObservationsByClass() returns a vector
@@ -486,8 +463,7 @@ classdef prtDataInterfaceCategoricalTargets < prtDataInterfaceTargets
             end    
             
             Out = retainObservations(Obj,newObsInds);
-        end
-        
-        
+		end
+		
     end
 end

@@ -77,14 +77,7 @@ classdef prtAlgorithm < prtAction
     end
     
     methods (Hidden = true)
-        function dataSet = updateDataSetFeatureNames(obj,dataSet) %#ok<MANU>
-            %Algorithms do not have to do this; since they are composed of
-            %class objects, we can just rely on the dataSet to have the
-            %right feature names already.
-            
-            %At least this is true for single-stream Algorithms
-        end
-        
+		
         function Obj = setVerboseStorage(Obj,val)
             assert(numel(val)==1 && (islogical(val) || (isnumeric(val) && (val==0 || val==1))),'prtAction:invalidVerboseStorage','verboseStorage must be a logical');
             Obj.verboseStorageInternal = logical(val);
@@ -93,20 +86,8 @@ classdef prtAlgorithm < prtAction
             for iAction = 1:length(Obj.actionCell)
                 Obj.actionCell{iAction}.verboseStorage = val;
             end
-            
         end
-        
-        function Obj = setVerboseFeatureNames(Obj,val)
-            assert(numel(val)==1 && (islogical(val) || (isnumeric(val) && (val==0 || val==1))),'prtAction:invalidVerboseFeatureNames','VerboseFeatureNames must be a logical');
-            Obj.verboseFeatureNamesInternal = logical(val);
-            
-            % Also set each actionCells
-            for iAction = 1:length(Obj.actionCell)
-                Obj.actionCell{iAction}.verboseFeatureNames = val;
-            end
-            
-        end
-        
+         
         function Obj = setShowProgressBar(Obj,val)
             if ~prtUtilIsLogicalScalar(val);
                 error('prt:prtAction','showProgressBar must be a scalar logical.');
