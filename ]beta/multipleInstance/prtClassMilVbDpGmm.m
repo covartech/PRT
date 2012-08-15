@@ -9,22 +9,32 @@ classdef prtClassMilVbDpGmm < prtClass
     
     
     properties
-        K0
-        K1
-        gamma_0_1_m0
-        gamma_0_2_m0
+        maxVbIter = 300;
+        
+        K0 = 5;
+        K1 = 5; 
+        gamma_0_1_m0 = 1;
+        gamma_0_2_m0 = .001;
+        gamma_0_1_m1 = 1;
+        gamma_0_2_m1 = .001;
+        alpha = [4 1]*10000;
+        
+        rvH1
+        rvH0
+    end
+    
+    properties (Hidden)
+        
+        %Dependent on "d"
         v_0_m
         v_1_m
         beta_1_m
         beta_0_m
+        
         rho_0_1
         rho_0_0
         Phi_0_1
         Phi_0_0
-        alpha
-        
-        rvH1
-        rvH0
     end
     
 	methods
@@ -53,11 +63,22 @@ classdef prtClassMilVbDpGmm < prtClass
             
             d = size(x,2);
             
-            params = struct('K0',5,'K1',5,'gamma_0_1_m0',1,'gamma_0_2_m0',.001,'gamma_0_1_m1',1,'gamma_0_2_m1',.001,...
-                'v_0_m',d+2,'v_1_m',d+2,'beta_1_m',d,'beta_0_m',d, ...
-                'rho_0_1',zeros(1,d),'rho_0_0',zeros(1,d),'Phi_0_1',eye(d)*d,'Phi_0_0',eye(d)*d,'alpha',[4 1]*10000);
+            self.v_0_m = d+2;
+            self.v_1_m = d+2;
+            self.beta_1_m = d;
+            self.beta_0_m = d;
+            self.rho_0_0 = zeros(1,d);
+            self.rho_0_1 = zeros(1,d);
             
-            [rvH0,rvH1,xH0,xH1] = initialize(self,{milStruct.data},bagLabels,params);
+            self.Phi_0_0 = eye(d)*d;
+            self.Phi_0_1 = eye(d)*d;
+            
+%             params = struct('K0',5,'K1',5,'gamma_0_1_m0',1,'gamma_0_2_m0',.001,'gamma_0_1_m1',1,'gamma_0_2_m1',.001,...
+%                 'v_0_m',d+2,'v_1_m',d+2,'beta_1_m',d,'beta_0_m',d, ...
+%                 'rho_0_1',zeros(1,d),'rho_0_0',zeros(1,d),'Phi_0_1',eye(d)*d,'Phi_0_0',eye(d)*d,'alpha',[4 1]*10000);
+            
+            
+            [rvH0,rvH1,xH0,xH1] = initialize(self,{milStruct.data},bagLabels);
             
             [p0,pp] = rvH0.pdf(x);
             phi_0_i = bsxfun(@rdivide,pp,sum(pp,2));
@@ -73,25 +94,25 @@ classdef prtClassMilVbDpGmm < prtClass
             
             locEps = 1e-6;
             
-            for vbIter = 1:500
+            for vbIter = 1:self.maxVbIter
                 %Equations 67 and 68; note, these are different from 20-21 (!)
-                %     gamma_i_1_m0 = sum(bsxfun(@times,phi_0_M,phi_0_i)) + params.gamma_0_1_m0;
-                %     gamma_i_2_m0 = cat(2,0,cumsum(gamma_i_1_m0(1:end-1),2)) + params.gamma_0_2_m0;
+                %     gamma_i_1_m0 = sum(bsxfun(@times,phi_0_M,phi_0_i)) + self.gamma_0_1_m0;
+                %     gamma_i_2_m0 = cat(2,0,cumsum(gamma_i_1_m0(1:end-1),2)) + self.gamma_0_2_m0;
                 %
-                %     gamma_i_1_m1 = sum(bsxfun(@times,phi_1_M,phi_1_i)) + params.gamma_0_1_m1;
-                %     gamma_i_2_m1 = cat(2,0,cumsum(gamma_i_1_m1(1:end-1),2)) + params.gamma_0_2_m1;
+                %     gamma_i_1_m1 = sum(bsxfun(@times,phi_1_M,phi_1_i)) + self.gamma_0_1_m1;
+                %     gamma_i_2_m1 = cat(2,0,cumsum(gamma_i_1_m1(1:end-1),2)) + self.gamma_0_2_m1;
                 
                 %Equations 20-21
-                gamma_i_1_m0 = sum(bsxfun(@times,phi_0_M,phi_0_i)) + params.gamma_0_1_m0;
-                gamma_i_2_m0 = fliplr(cumsum(fliplr(gamma_i_1_m0))) - gamma_i_1_m0 + params.gamma_0_2_m0;
+                gamma_i_1_m0 = sum(bsxfun(@times,phi_0_M,phi_0_i)) + self.gamma_0_1_m0;
+                gamma_i_2_m0 = fliplr(cumsum(fliplr(gamma_i_1_m0))) - gamma_i_1_m0 + self.gamma_0_2_m0;
                 
-                gamma_i_1_m1 = sum(bsxfun(@times,phi_1_M,phi_1_i)) + params.gamma_0_1_m1;
-                gamma_i_2_m1 = fliplr(cumsum(fliplr(gamma_i_1_m1))) - gamma_i_1_m1 + params.gamma_0_2_m1;
+                gamma_i_1_m1 = sum(bsxfun(@times,phi_1_M,phi_1_i)) + self.gamma_0_1_m1;
+                gamma_i_2_m1 = fliplr(cumsum(fliplr(gamma_i_1_m1))) - gamma_i_1_m1 + self.gamma_0_2_m1;
                 
                 %Update priors... H0 Gaussian; Equations 77-79 (H0)
                 respMat = bsxfun(@times,phi_0_M,phi_0_i);
                 nBar0 = sum(respMat)+locEps;  %avoid 1./0 problems
-                for cluster = 1:params.K0
+                for cluster = 1:self.K0
                     mu_i_0(cluster,:) = 1/nBar0(cluster)*sum(bsxfun(@times,respMat(:,cluster),x));
                     
                     xx = bsxfun(@times,sqrt(respMat(:,cluster)),bsxfun(@minus,x,mu_i_0(cluster,:)));
@@ -102,7 +123,7 @@ classdef prtClassMilVbDpGmm < prtClass
                 %Update priors... H1 Gaussian; Equations 77-79
                 respMat = bsxfun(@times,phi_1_M,phi_1_i);
                 nBar1 = sum(respMat)+locEps;
-                for cluster = 1:params.K1
+                for cluster = 1:self.K1
                     mu_i_1(cluster,:) = 1/nBar1(cluster)*sum(bsxfun(@times,respMat(:,cluster),x));
                     
                     xx = bsxfun(@times,sqrt(respMat(:,cluster)),bsxfun(@minus,x,mu_i_1(cluster,:)));
@@ -111,39 +132,39 @@ classdef prtClassMilVbDpGmm < prtClass
                 end
                 
                 %Updating hyper-parameters; eqns 81-84
-                nu_0 = params.v_0_m + nBar0;
-                nu_1 = params.v_1_m + nBar1;
+                nu_0 = self.v_0_m + nBar0;
+                nu_1 = self.v_1_m + nBar1;
                 
-                beta_0 = params.beta_0_m + nBar0;
-                beta_1 = params.beta_1_m + nBar1;
+                beta_0 = self.beta_0_m + nBar0;
+                beta_1 = self.beta_1_m + nBar1;
                 
                 
-                for cluster = 1:params.K0
-                    rho_0(cluster,:) = params.beta_0_m*params.rho_0_0 + nBar0(cluster)*mu_i_0(cluster,:);
+                for cluster = 1:self.K0
+                    rho_0(cluster,:) = self.beta_0_m*self.rho_0_0 + nBar0(cluster)*mu_i_0(cluster,:);
                     rho_0(cluster,:) = rho_0(cluster,:)./beta_0(cluster);
                     
                     %See equation 84; Note: this is different from Equation 84 - 84 is
                     %wrong
                     %covPart = nBar0(cluster) * reshape(cov_i_0(cluster,:),d,d) * ((mu_i_0(cluster,:) - rho_0(cluster,:))'*(mu_i_0(cluster,:) - rho_0(cluster,:)));
-                    covPart = nBar0(cluster) * params.beta_0_m * ((mu_i_0(cluster,:) - params.rho_0_0)'*(mu_i_0(cluster,:) - params.rho_0_0));
+                    covPart = nBar0(cluster) * self.beta_0_m * ((mu_i_0(cluster,:) - self.rho_0_0)'*(mu_i_0(cluster,:) - self.rho_0_0));
                     covPart = covPart ./ beta_0(cluster);
                     
-                    phiCov = params.Phi_0_0 + nBar0(cluster)*reshape(cov_i_0(cluster,:),d,d) + covPart;
+                    phiCov = self.Phi_0_0 + nBar0(cluster)*reshape(cov_i_0(cluster,:),d,d) + covPart;
                     Phi_0(cluster,:) = phiCov(:)';
                 end
                 
-                for cluster = 1:params.K1
-                    rho_1(cluster,:) = params.beta_1_m*params.rho_0_1 + nBar1(cluster)*mu_i_1(cluster,:);
+                for cluster = 1:self.K1
+                    rho_1(cluster,:) = self.beta_1_m*self.rho_0_1 + nBar1(cluster)*mu_i_1(cluster,:);
                     rho_1(cluster,:) = rho_1(cluster,:)./beta_1(cluster);
                     
                     %See equation 84; Note: this is different from Equation 84 - 84 is
                     %wrong
                     %covPart = nBar1(cluster) * reshape(cov_i_1(cluster,:),d,d) * ((mu_i_1(cluster,:) - rho_1(cluster,:))'*(mu_i_1(cluster,:) - rho_1(cluster,:)));
-                    %         covPart = nBar1(cluster) * reshape(cov_i_1(cluster,:),d,d) * ((mu_i_1(cluster,:) - params.rho_0_0)'*(mu_i_1(cluster,:) - params.rho_0_0));
-                    covPart = nBar1(cluster) * params.beta_1_m * ((mu_i_1(cluster,:) - params.rho_0_1)'*(mu_i_1(cluster,:) - params.rho_0_1));
+                    %         covPart = nBar1(cluster) * reshape(cov_i_1(cluster,:),d,d) * ((mu_i_1(cluster,:) - self.rho_0_0)'*(mu_i_1(cluster,:) - self.rho_0_0));
+                    covPart = nBar1(cluster) * self.beta_1_m * ((mu_i_1(cluster,:) - self.rho_0_1)'*(mu_i_1(cluster,:) - self.rho_0_1));
                     covPart = covPart ./ beta_1(cluster);
                     
-                    phiCov = params.Phi_0_1 + nBar1(cluster)*reshape(cov_i_1(cluster,:),d,d) + covPart;
+                    phiCov = self.Phi_0_1 + nBar1(cluster)*reshape(cov_i_1(cluster,:),d,d) + covPart;
                     Phi_1(cluster,:) = phiCov(:)';
                 end
                 
@@ -158,17 +179,17 @@ classdef prtClassMilVbDpGmm < prtClass
                 
                 
                 % <Log \eta_m>  Equation 105
-                nBarM0 = params.alpha(1) +  sum(phi_0_M(expandedBagLabels == 1,:));
-                nBarM1 = params.alpha(2) +  sum(phi_1_M(expandedBagLabels == 1,:));
+                nBarM0 = self.alpha(1) +  sum(phi_0_M(expandedBagLabels == 1,:));
+                nBarM1 = self.alpha(2) +  sum(phi_1_M(expandedBagLabels == 1,:));
                 log_eta = digamma([nBarM0,nBarM1]) - digamma(nBarM1+nBarM0);
                 
                 % <log det ||>
-                for cluster = 1:params.K0
+                for cluster = 1:self.K0
                     temp_det0 = sum(digamma((nu_0(cluster) + 1 - (1:d))/2));
                     temp_det0 = temp_det0 + d*log(2);
                     log_det_0(cluster) = temp_det0 + log(det(reshape(Phi_0(cluster,:),d,d)^-1));
                 end
-                for cluster = 1:params.K1
+                for cluster = 1:self.K1
                     temp_det1 = sum(digamma((nu_1(cluster) + 1 - (1:d))/2));
                     temp_det1 = temp_det1 + d*log(2);
                     log_det_1(cluster) = temp_det1 + log(det(reshape(Phi_1(cluster,:),d,d)^-1));
@@ -176,26 +197,26 @@ classdef prtClassMilVbDpGmm < prtClass
                 
                 
                 %Equatioin 113
-                for cluster = 1:params.K0
+                for cluster = 1:self.K0
                     c = reshape(Phi_0(cluster,:),d,d);
                     %         v = prtUtilCalcDiagXcInvXT(bsxfun(@minus,x,mu_i_0(cluster,:)),c);
                     v = prtUtilCalcDiagXcInvXT(bsxfun(@minus,x,rho_0(cluster,:)),c);
                     inner_0_n(:,cluster) = d/beta_0(cluster) + nu_0(cluster).*v;
                 end
                 
-                for cluster = 1:params.K1
+                for cluster = 1:self.K1
                     c = reshape(Phi_1(cluster,:),d,d);
                     %         v = prtUtilCalcDiagXcInvXT(bsxfun(@minus,x,mu_i_1(cluster,:)),c);
                     v = prtUtilCalcDiagXcInvXT(bsxfun(@minus,x,rho_1(cluster,:)),c);
                     inner_1_n(:,cluster) = d/beta_1(cluster) + nu_1(cluster).*v;
                 end
                 
-                for cluster = 1:params.K0
+                for cluster = 1:self.K0
                     eLogPdf0(:,cluster) = -d*log(2*pi) + log_det_0(cluster) - inner_0_n(:,cluster);
                 end
                 eLogPdf0 = eLogPdf0*1/2;
                 
-                for cluster = 1:params.K1
+                for cluster = 1:self.K1
                     eLogPdf1(:,cluster) = -d*log(2*pi) + log_det_1(cluster) - inner_1_n(:,cluster);
                 end
                 eLogPdf1 = eLogPdf1*1/2;
@@ -221,13 +242,17 @@ classdef prtClassMilVbDpGmm < prtClass
                 for i = 1:size(rho_0,1)
                     c = Phi_0(i,:)./nu_0(i);
                     c = reshape(c,d,d);
-                    plotMvnEllipse(rho_0(i,1:2),c(1:2,1:2),1);
+                    if d > 1
+                        plotMvnEllipse(rho_0(i,1:2),c(1:2,1:2),1);
+                    end
                     mm0(i) = prtRvMvn('mu',rho_0(i,:),'sigma',c);
                 end
                 for i = 1:size(rho_1,1)
                     c = Phi_1(i,:)./nu_1(i);
                     c = reshape(c,d,d);
-                    plotMvnEllipse(rho_1(i,1:2),c(1:2,1:2),1);
+                    if d > 1
+                        plotMvnEllipse(rho_1(i,1:2),c(1:2,1:2),1);
+                    end
                     mm1(i) = prtRvMvn('mu',rho_1(i,:),'sigma',c);
                 end
                 
@@ -242,37 +267,38 @@ classdef prtClassMilVbDpGmm < prtClass
                 self.rvH0 = rv0;
                 
                 
-                if ~mod(vbIter,10);
+                if ~mod(vbIter,20);
                     disp(vbIter)
-                    subplot(2,2,1);
+                    subplot(2,3,1);
                     stem(exp(log_pi_0));
-                    subplot(2,2,2);
+                    subplot(2,3,2);
+                    stem(exp(log_eta))
+                    subplot(2,3,3);
                     stem(exp(log_pi_1));
                     fprintf('exp(log_pi_0): %.2f\n',exp(log_pi_0))
                     fprintf('exp(log_pi_1): %.2f\n',exp(log_pi_1))
                     
-                    subplot(2,2,3:4);
-                    plot(x(expandedBagLabels == 0,1),x(expandedBagLabels == 0,2),'b.');
-                    hold on;
-                    plot(x(expandedBagLabels == 1,1),x(expandedBagLabels == 1,2),'r.');
-                    
-                    for i = 1:size(rho_0,1)
-                        c = Phi_0(i,:)./nu_0(i);
-                        c = reshape(c,d,d);
-                        plotMvnEllipse(rho_0(i,1:2),c(1:2,1:2),1);
-                        mm0(i) = prtRvMvn('mu',rho_0(i,:),'sigma',c);
+                    subplot(2,3,4:6);
+                    if d > 1
+                        plot(x(expandedBagLabels == 0,1),x(expandedBagLabels == 0,2),'b.');
+                        hold on;
+                        plot(x(expandedBagLabels == 1,1),x(expandedBagLabels == 1,2),'r.');
+                        
+                        for i = 1:size(rho_0,1)
+                            c = Phi_0(i,:)./nu_0(i);
+                            c = reshape(c,d,d);
+                            mm0(i) = prtRvMvn('mu',rho_0(i,:),'sigma',c);
+                        end
+                        for i = 1:size(rho_1,1)
+                            c = Phi_1(i,:)./nu_1(i);
+                            c = reshape(c,d,d);
+                            mm1(i) = prtRvMvn('mu',rho_1(i,:),'sigma',c);
+                        end
+                        hold on; h = plot(rho_0(:,1),rho_0(:,2),'ko'); set(h,'MarkerFaceColor','k');
+                        hold on; h = plot(rho_1(:,1),rho_1(:,2),'go'); set(h,'MarkerFaceColor','g');
+                        
+                        hold off;
                     end
-                    for i = 1:size(rho_1,1)
-                        c = Phi_1(i,:)./nu_1(i);
-                        c = reshape(c,d,d);
-                        plotMvnEllipse(rho_1(i,1:2),c(1:2,1:2),1);
-                        mm1(i) = prtRvMvn('mu',rho_1(i,:),'sigma',c);
-                    end
-                    hold on; h = plot(rho_0(:,1),rho_0(:,2),'ko'); set(h,'MarkerFaceColor','k');
-                    hold on; h = plot(rho_1(:,1),rho_1(:,2),'go'); set(h,'MarkerFaceColor','g');
-                    
-                    hold off;
-                    
                     drawnow;
                 end
                 
@@ -298,11 +324,11 @@ classdef prtClassMilVbDpGmm < prtClass
             yOut = prtDataSetClass(y,dsMil.targets);
         end
         
-        function [h0Mix,h1Mix,xH0,xH1] = initialize(self,xBag,bagLabels,params)
+        function [h0Mix,h1Mix,xH0,xH1] = initialize(self,xBag,bagLabels)
             
             %H0 Kmeans
             xH0 = cat(1,xBag{bagLabels == 0});
-            idx0 = kmeans(xH0,params.K0,'Replicates',50,'EmptyAction','singleton','MaxIter',100);
+            idx0 = kmeans(xH0,self.K0,'Replicates',50,'EmptyAction','singleton','MaxIter',100);
             uIds = unique(idx0);
             
             for idx = 1:length(uIds)
@@ -332,7 +358,7 @@ classdef prtClassMilVbDpGmm < prtClass
             end
             
             %H1 Kmeans
-            idx1 = kmeans(xH1,params.K1,'Replicates',50,'EmptyAction','singleton','MaxIter',100);
+            idx1 = kmeans(xH1,self.K1,'Replicates',50,'EmptyAction','singleton','MaxIter',100);
             uIds = unique(idx1);
             
             pi = [];

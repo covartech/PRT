@@ -54,20 +54,31 @@ classdef prtPreProcPca < prtPreProc
         totalPercentVarianceCumulative = []; %The perceont of the total training variance explained in totalVarianceCumulative
     end
     
+    properties (Hidden)
+        percentVarianceToAccountFor = 0; %Hidden property; [0 - 1];
+    end
+    
     methods
         
           % Allow for string, value pairs
-        function Obj = prtPreProcPca(varargin)
-            Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
+        function self = prtPreProcPca(varargin)
+            self = prtUtilAssignStringValuePairs(self,varargin{:});
         end
     end
     
     methods
-        function Obj = set.nComponents(Obj,nComp)
+        function self = set.nComponents(self,nComp)
+            %
+            
+            %Allows percent nComps
+            if isnumeric(nComp) && isscalar(nComp) && nComp < 1 && nComp> 0
+                self.nComponents = nComp;
+                return
+            end
             if ~isnumeric(nComp) || ~isscalar(nComp) || nComp < 1 || round(nComp) ~= nComp
                 error('prt:prtPreProcPca','nComponents (%s) must be a positive scalar integer',mat2str(nComp));
             end
-            Obj.nComponents = nComp;
+            self.nComponents = nComp;
         end
     end
     
@@ -77,40 +88,62 @@ classdef prtPreProcPca < prtPreProc
                 featureNames{i} = sprintf('PC Score %d',i);
             end
         end
+        
+        function self = optimizeNumComponents(self,ds,percentThreshold)
+            
+            maxComponents = min([ds.nObservations,ds.nFeatures]);
+            if nargin < 3                
+                percentThreshold = self.nComponents;
+            end
+            
+            n = maxComponents;
+            self.nComponents = n;
+            self = self.train(ds);
+            correctN = find(self.totalPercentVarianceCumulative(:) > percentThreshold,1,'first');
+            
+            self.nComponents = correctN;
+            
+            self.means = self.means(1:correctN);
+            self.pcaVectors = self.pcaVectors(:,1:correctN);
+            
+        end
     end
     
     methods (Access = protected, Hidden = true)
         
-        function Obj = trainAction(Obj,DataSet)
+        function self = trainAction(self,DataSet)
                        
-            Obj.means = prtUtilNanMean(DataSet.getObservations(),1);
-            x = bsxfun(@minus,DataSet.getObservations(),Obj.means);
-            
-            maxComponents = min(size(x));
-            
-            if Obj.nComponents > maxComponents
-                warning('prt:prtPreProcPca','User specified # PCA components (%d) is > maximum number of PCA allowed (min(size(dataSet.data)) = %d)',Obj.nComponents,maxComponents);
-                Obj.nComponents = maxComponents;
+            if self.nComponents < 1 
+                self = self.optimizeNumComponents(DataSet,self.nComponents);
             end
             
-            [s,u,v] = svds(x,Obj.nComponents); %#ok<ASGLU>
+            self.means = prtUtilNanMean(DataSet.getObservations(),1);
+            x = bsxfun(@minus,DataSet.getObservations(),self.means);
             
-            Obj.pcaVectors = v;
+            maxComponents = min(size(x));
+            if self.nComponents > maxComponents
+                warning('prt:prtPreProcPca','User specified # PCA components (%d) is > maximum number of PCA allowed (min(size(dataSet.data)) = %d)',self.nComponents,maxComponents);
+                self.nComponents = maxComponents;
+            end
             
-            Obj.trainingTotalVariance = sum(var(x));
+            [s,u,v] = svds(x,self.nComponents); %#ok<ASGLU>
+            
+            self.pcaVectors = v;
+            
+            self.trainingTotalVariance = sum(var(x));
             pcaVariance = cumsum(var(x*v));
             
-            Obj.totalVarianceCumulative = pcaVariance;
-            Obj.totalVariance = Obj.totalVarianceCumulative(end);
-            Obj.totalPercentVarianceCumulative = Obj.totalVarianceCumulative./Obj.trainingTotalVariance;
+            self.totalVarianceCumulative = pcaVariance;
+            self.totalVariance = self.totalVarianceCumulative(end);
+            self.totalPercentVarianceCumulative = self.totalVarianceCumulative./self.trainingTotalVariance;
         end
         
-        function DataSet = runAction(Obj,DataSet)
-            DataSet = DataSet.setObservations(Obj.runActionFast(DataSet.getObservations));
+        function DataSet = runAction(self,DataSet)
+            DataSet = DataSet.setObservations(self.runActionFast(DataSet.getObservations));
         end
         
-        function xOut = runActionFast(Obj,xIn)
-            xOut = bsxfun(@minus,xIn,Obj.means)*Obj.pcaVectors;
+        function xOut = runActionFast(self,xIn)
+            xOut = bsxfun(@minus,xIn,self.means)*self.pcaVectors;
         end
         
     end

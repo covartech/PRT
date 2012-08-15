@@ -1,9 +1,16 @@
 function ds = prtDataGenMsrcorid
+% ds = prtDataGenMsrcorid
+%  Requires some images we can't distribute, so we need to standardize
+%  where to get and where to put.
+% 
+%  (For now, clever googling should find them)
 
 baseDir = 'C:\Users\pete\Documents\data\images\msrcorid';
 completeFiles = prtUtilSubDir(baseDir,'*.jpg');
 
-imgMat = [];
+imResizeSize = [100,100];
+
+imgMat = nan(length(completeFiles),prod(imResizeSize));
 for i = 1:length(completeFiles);
     files{i} = strrep(lower(completeFiles{i}),lower(baseDir),'');
     
@@ -21,7 +28,7 @@ for i = 1:length(completeFiles);
         img = imcrop(img,[0,320-240+1,480,479]);
     end
     g = img.gray;
-    g = imresize(g,[100 100]);
+    g = imresize(g,imResizeSize);
     imgMat(i,:) = g(:);
 end
 
