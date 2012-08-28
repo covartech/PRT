@@ -39,20 +39,18 @@ classdef prtCluster < prtAction
     properties (SetAccess = protected)
         isSupervised = false;  % False
         isCrossValidateValid = true; % True
-    end
-
-    methods (Hidden = true)
-        function featureNames = updateFeatureNames(obj,featureNames)
+	end
+	
+	methods (Hidden = true)
+        function featureNameModificationFunction = getFeatureNameModificationFunction(obj)
             if ~obj.includesDecision
-                for i = 1:length(featureNames)
-                    featureNames{i} = sprintf('%s Membership in cluster %d',obj.nameAbbreviation,i);
-                end
-            else
-                featureNames{1} = 'Class label';
+				featureNameModificationFunction = @(strIn, index)sprintf('%s Membership in cluster %d',obj.nameAbbreviation,index);
+			else
+				featureNameModificationFunction = @(strIn, index)'Class Label';
             end
         end
-    end
-
+	end
+	
     methods
         function obj = prtCluster()
             % As an action subclass we must set the properties to reflect

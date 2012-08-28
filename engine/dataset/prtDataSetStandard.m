@@ -2,7 +2,7 @@ classdef prtDataSetStandard < prtDataSetInMem
 	
 	properties (Dependent, Hidden)
 		featureNames
-		featureNamesModificationFunction;
+		featureNameModificationFunction;
 	end
 	
 	properties (Dependent)
@@ -12,7 +12,7 @@ classdef prtDataSetStandard < prtDataSetInMem
 	
 	properties (GetAccess = 'protected',SetAccess = 'protected')
 		featureInfoInternal
-		featureNamesModificationFunctionInternal
+		featureNameModificationFunctionInternal
 	end
 	
 	properties (GetAccess = 'protected', SetAccess = 'protected', Hidden = true)
@@ -34,11 +34,11 @@ classdef prtDataSetStandard < prtDataSetInMem
 			fn = self.getFeatureNames;
 		end
 		
-		function self = set.featureNamesModificationFunction(self, val)
-			self.featureNamesModificationFunctionInternal = val;
+		function self = set.featureNameModificationFunction(self, val)
+			self.featureNameModificationFunctionInternal = val;
 		end
-		function val = get.featureNamesModificationFunction(self)
-			val = self.featureNamesModificationFunctionInternal;
+		function val = get.featureNameModificationFunction(self)
+			val = self.featureNameModificationFunctionInternal;
 		end
 		
 		
@@ -96,19 +96,35 @@ classdef prtDataSetStandard < prtDataSetInMem
 			end
 			indices = prtDataSetBase.parseIndices(obj.nFeatures,indices);
 			
+			% The code below requires indices not logicals.
+			if islogical(indices)
+				indices = find(indices);
+			end
+			
 			featNames = obj.featureNameIntegerAssocArray.get(indices);
 			if ~isa(featNames,'cell')
 				featNames = {featNames};
 			end
 			empty = cellfun(@(x)isempty(x),featNames);
 			emptyInd = find(empty);
-			featNames(emptyInd) = prtDataSetBase.generateDefaultFeatureNames(emptyInd);
+			featNames(emptyInd) = prtDataSetBase.generateDefaultFeatureNames(indices(emptyInd));
+			
+			% No modifications present
+			if isempty(obj.featureNameModificationFunction)
+				return
+			end
+			
+			% Make feature names appear correctly by evaluating
+			% modification function
+			for iFeat = 1:length(indices)
+				featNames{iFeat} = obj.featureNameModificationFunction(featNames{iFeat}, indices(iFeat));
+			end
 		end
 		
 		function d = getObservations(self,varargin)
 			%d = getObservations(dataSet)
 			%  Return dataSet.data
-			%
+			
 			if nargin == 1
 				d = self.data;
 				return;
@@ -399,6 +415,29 @@ classdef prtDataSetStandard < prtDataSetInMem
 						obj.userData = inObj.userData;
 						obj.actionData = inObj.actionData;
 						
+					case 2
+						obj = obj.setObservationsAndTargets(inObj.internalData ,inObj.internalTargets);
+						obj.observationInfo = inObj.observationInfoInternal;
+						
+						if ~isempty(inObj.featureInfoInternal);
+							obj.featureInfo = inObj.featureInfoInternal;
+						end
+						
+						if ~isempty(inObj.featureNameIntegerAssocArray)
+							obj = obj.setFeatureNames(inObj.featureNameIntegerAssocArray.cellValues,inObj.featureNameIntegerAssocArray.integerKeys);
+						end
+						if ~isempty(inObj.observationNamesInternal.cellValues)
+							obj = obj.setObservationNames(inObj.observationNamesInternal.cellValues,inObj.observationNamesInternal.integerKeys);
+							%obj = obj.setObservationNames(inObj.observationNames.cellValues);
+						end
+						if ~isempty(inObj.targetNamesInternal)
+							obj = obj.setTargetNames(inObj.targetNamesInternal.cellValues);
+						end
+						
+						obj.name = inObj.name;
+						obj.description = inObj.description;
+						obj.userData = inObj.userData;
+						
 					otherwise
 						error('prt:prtDataSetStandard:loadObj','Unknown prtDataSetBase version %d, object cannot be laoded.',inputVersion);
 				end
@@ -429,9 +468,14 @@ classdef prtDataSetStandard < prtDataSetInMem
 			%
 			% This allows actions to set feature names 
 			
-			keyboard
-			
-			%self.featureNameModificationFunction = []; %@(nameIn, index)nameIn; 
+			modFun = action.getFeatureNameModificationFunction();
+			if ~isempty(modFun)
+				if isempty(self.featureNameModificationFunction)
+					self.featureNameModificationFunction = modFun;
+				else
+					self.featureNameModificationFunction = @(nameIn, index)modFun(self.featureNameModificationFunction(nameIn, index),index);
+				end
+			end
 			
 			self = modifyNonDataAttributesFrom@prtDataSetBase(self, action);
 		end

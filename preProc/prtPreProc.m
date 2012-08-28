@@ -26,12 +26,10 @@ classdef prtPreProc < prtAction
             obj.classRun = 'prtDataSetStandard';
             obj.classRunRetained = true;
         end
-    end
-    methods (Hidden = true)
-        function featureNames = updateFeatureNames(obj,featureNames)
-            for i = 1:length(featureNames)
-                featureNames{i} = sprintf('%s_{%s}',featureNames{i},obj.nameAbbreviation);
-            end
+	end
+	methods (Hidden = true)
+        function featureNameModificationFunction = getFeatureNameModificationFunction(obj)
+            featureNameModificationFunction = @(strIn, index)sprintf('%s_{%s}',strIn,obj.nameAbbreviation);
         end
-    end
+    end    
 end

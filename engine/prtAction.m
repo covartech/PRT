@@ -70,17 +70,6 @@ classdef prtAction
         showProgressBarInternal = prtAction.getShowProgressBar();
 	end
     
-	properties (Hidden = true)
-		% This is a little strange because some actions can operate
-		% only on datasets that do not technically have features. In these
-		% cases this property should just be ignored. The alternative is to
-		% store this in a class of actions that opperate only on
-		% prtDataSetStandards. It has been decided that this would over
-		% complicate the class hierarchy since this is the only exception
-		% at this point and it is easily ignored
-		featureNameModificationFunction = []; %@(nameIn, index)nameIn; 
-	end
-	
     properties (Dependent)
         % Specifies whether or not to store the training prtDataset.
         % If true the training prtDataSet is stored internally prtAction.dataSet.
@@ -799,5 +788,27 @@ classdef prtAction
         function val = getShowProgressBar()
             val = prtOptionsGet('prtOptionsComputation','showProgressBar');
         end        
-    end
+	end
+	
+	methods (Hidden = true)
+		function fun = getFeatureNameModificationFunction(self) %#ok<MANU>
+			fun = []; % Default we output empty which means don't change anything...
+			
+			% The alternative is to output a function handle of the form
+			% @(nameIn, index)modificationFunction(nameIn); 
+			
+			% This is overloaded by prtClass to set the names to designate
+			% that they are now algorithm confidences
+			
+			% Putting this in prtAction is a little strange because some
+			% actions can operate only on datasets that do not technically
+			% have features. In these cases this method should just be
+			% ignored. The alternative is to store this in a class of
+			% actions that opperate only on prtDataSetStandards. It has
+			% been decided that this would over complicate the class
+			% hierarchy since this is the only exception at this point and
+			% it is easily ignored.
+		end
+	end
+	
 end

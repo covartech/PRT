@@ -175,10 +175,15 @@ classdef prtDataTypeImage < prtUtilActionDataAccess
             h = imagesc(imgData,varargin{:});
         end
         
-        function h = imshow(self,varargin)
+        function varargout = imshow(self,varargin)
             %h = imshow(self,varargin)
             imgData = self.getDataForImshow;
             h = imshow(imgData,varargin{:});
+			
+			varargout = {};
+			if nargout
+				varargout{1} = h;
+			end
         end
         
         function h = image(self,varargin)

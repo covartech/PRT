@@ -90,7 +90,7 @@ classdef prtDataSetBase
     end
     
     properties (Hidden, Access = protected)
-        version = 2;
+        version = 3;
     end
     
     % Only prtDataSetBase knows about these, use getObs... and getFeat.. to

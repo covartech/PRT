@@ -48,15 +48,13 @@ classdef prtPreProcSpca < prtPreProc
             end
             Obj.nComponents = nComp;
         end
-    end
+	end
     
-    methods (Hidden = true)
-        function featureNames = updateFeatureNames(obj,featureNames) %#ok<MANU>
-            for i = 1:length(featureNames)
-                featureNames{i} = sprintf('SPCA Score %d',i);
-            end
+	methods (Hidden = true)
+        function featureNameModificationFunction = getFeatureNameModificationFunction(obj) %#ok<MANU>
+            featureNameModificationFunction = @(strIn, index)sprintf('SPCA Score %d',index);
         end
-    end
+	end
     
     methods (Access=protected,Hidden=true)
         
