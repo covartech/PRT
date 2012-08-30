@@ -33,8 +33,6 @@ classdef prtClass < prtAction
     %   prtClassTreeBaggingCap, prtClassKmsd, prtClassKnn
     %
     %
-    
-    
     %
     %   Sub-classing prtClass:
     %       Concrete sub-classes of prtClass must define the abstract
@@ -99,12 +97,12 @@ classdef prtClass < prtAction
 	
     methods (Hidden = true)
         function featureNameModificationFunction = getFeatureNameModificationFunction(obj)
-            if ~obj.includesDecision
-				featureNameModificationFunction = @(strIn, index)sprintf('%s Output_{%d}',obj.nameAbbreviation,index);
+			if ~obj.includesDecision
+				featureNameModificationFunction = prtUtilFeatureNameModificationFunctionHandleCreator('%s Output_{#index#}', obj.nameAbbreviation);
 			else
-				featureNameModificationFunction = @(strIn, index)'Class Label';
-            end
-        end
+				featureNameModificationFunction = prtUtilFeatureNameModificationFunctionHandleCreator('Class Label');
+			end
+		end
     end    
     
     methods

@@ -61,7 +61,7 @@ classdef prtPreProcLda < prtPreProcClass
     
 	methods (Hidden = true)
         function featureNameModificationFunction = getFeatureNameModificationFunction(obj) %#ok<MANU>
-            featureNameModificationFunction = @(strIn, index)sprintf('LDA Score %d',index);
+            featureNameModificationFunction = prtUtilFeatureNameModificationFunctionHandleCreator('LDA Score #index#');
         end
 	end
     

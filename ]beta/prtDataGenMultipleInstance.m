@@ -14,7 +14,7 @@ end
 
 
 
-R{1} = prtRvGmm('nComponents',2,'mixingProportions',[0.5; 0.5],'components',cat(1,prtRvMvn('mu',[0 0],'sigma',eye(2)),prtRvMvn('mu',[-6 -6],'sigma',eye(2))));
+R{1} = prtRvGmm('nComponents',2,'mixingProportions',[0.5; 0.5],'components',cat(1,prtRvMvn('mu',[0 0],'sigma',eye(2)*2),prtRvMvn('mu',[-6 -6],'sigma',eye(2))));
 R{2} = prtRvGmm('nComponents',2,'mixingProportions',[0.5; 0.5],'components',cat(1,prtRvMvn('mu',[2 2],'sigma',[1 .5; .5 1]),prtRvMvn('mu',[-3 -3],'sigma',[1 .5; .5 1])));
 %R{2} = prtRvGmm('nComponents',2,'mixingProportions',[0.5; 0.5],'components',cat(1,prtRvMvn('mu',[6 6],'sigma',[1 .5; .5 1]),prtRvMvn('mu',[-6 6],'sigma',[1 .5; .5 1])));
 

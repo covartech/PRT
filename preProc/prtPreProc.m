@@ -29,7 +29,7 @@ classdef prtPreProc < prtAction
 	end
 	methods (Hidden = true)
         function featureNameModificationFunction = getFeatureNameModificationFunction(obj)
-            featureNameModificationFunction = @(strIn, index)sprintf('%s_{%s}',strIn,obj.nameAbbreviation);
+			featureNameModificationFunction = prtUtilFeatureNameModificationFunctionHandleCreator('#strIn#_{%s}', obj.nameAbbreviation);
         end
     end    
 end

@@ -60,6 +60,13 @@ classdef prtAlgorithm < prtAction
                 error('prtAlgorithm:actionCell','actionCell must be a vector cell array of prtActions')
             end
             
+            for i = 1:length(aCell)
+                if ~aCell{i}.classRunRetained
+                    Obj.classRunRetained = false;
+                    break;
+                end
+            end
+            
             %Set the internal action cell correctly
             Obj.internalActionCell = aCell;
         end
@@ -257,7 +264,16 @@ classdef prtAlgorithm < prtAction
             
             for i = 2:length(topoOrder)-1
                 
-                currentInput = catFeatures(input{Obj.connectivityMatrix(topoOrder(i),:)});
+                %Note: added this to fix catFeatures problems with data
+                %sets that don't have catFeatures; they can still work in
+                %"flat" algorithms.  See bug report on github and in
+                %runAction
+                inDataSets = find(Obj.connectivityMatrix(topoOrder(i),:));
+                if length(inDataSets) == 1
+                    currentInput = input{inDataSets};
+                else
+                    currentInput = catFeatures(input{Obj.connectivityMatrix(topoOrder(i),:)});
+                end
                 %keyboard
                 Obj.actionCell{topoOrder(i-1)}.verboseStorage = Obj.verboseStorage;
                 Obj.actionCell{topoOrder(i-1)} = train(Obj.actionCell{topoOrder(i-1)},currentInput);
@@ -283,7 +299,16 @@ classdef prtAlgorithm < prtAction
             input{1} = DataSet;
             
             for i = 2:length(topoOrder)-1
-                currentInput = catFeatures(input{Obj.connectivityMatrix(topoOrder(i),:)});
+                %Note: added this to fix catFeatures problems with data
+                %sets that don't have catFeatures; they can still work in
+                %"flat" algorithms.  See bug report on github, and in
+                %trainAction
+                inDataSets = find(Obj.connectivityMatrix(topoOrder(i),:));
+                if length(inDataSets) == 1
+                    currentInput = input{inDataSets};
+                else
+                    currentInput = catFeatures(input{Obj.connectivityMatrix(topoOrder(i),:)});
+                end
                 input{topoOrder(i)} = run(Obj.actionCell{topoOrder(i-1)},currentInput);
             end
             finalNodes = any(Obj.connectivityMatrix(Obj.outputNodes,:),1);

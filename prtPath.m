@@ -63,7 +63,7 @@ else
     fclose(fid);
     
     if isempty(strfind(lower(s),lower(startupCommand)));
-        h = warndlg(sprintf('The M-file startup.m does not seem to contain the command "%s"; to include all of the functionality of the PRT including HTML documentation, your startup.m file should include this command',startupCommand),'prtPath: Not in startup.m');
-        warning('prt:prtPath:missingCommand','The M-file startup.m does not seem to contain the command "%s".  To include all of the functionality of the PRT including HTML documentation, your startup.m file should include this command',startupCommand);
+        h = warndlg(sprintf('Your M-file startup.m does not seem to contain the command "%s"; to include all of the functionality of the PRT including HTML documentation, your startup.m file should include this command',startupCommand),'prtPath: Not in startup.m');
+        warning('prt:prtPath:missingCommand','Your M-file startup.m does not seem to contain the command "%s".  To include all of the functionality of the PRT including HTML documentation, your startup.m file should include this command',startupCommand);
     end
 end

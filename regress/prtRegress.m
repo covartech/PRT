@@ -12,7 +12,7 @@ classdef prtRegress < prtAction %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	
     methods (Hidden = true)
         function featureNameModificationFunction = getFeatureNameModificationFunction(obj)
-			featureNameModificationFunction = @(strIn, index)sprintf('%s Output_{%d}',obj.nameAbbreviation,index);
+			featureNameModificationFunction = prtUtilFeatureNameModificationFunctionHandleCreator('%s Output_{#index#}', obj.nameAbbreviation);
         end
 	end    
     

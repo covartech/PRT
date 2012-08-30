@@ -19,16 +19,16 @@ classdef prtClassGlrt < prtClass
     %
     %    Example:
     %
-    %     TestDataSet = prtDataGenUniModal;       % Create some test and
-    %     TrainingDataSet = prtDataGenUniModal;   % training data
+    %     testDataSet = prtDataGenUniModal;       % Create some test and
+    %     trainingDataSet = prtDataGenUniModal;   % training data
     %     classifier = prtClassGlrt;              % Create a classifier
-    %     classifier = classifier.train(TrainingDataSet);    % Train
+    %     classifier = classifier.train(trainingDataSet);    % Train
     %     classifier.plot;
-    %     classified = classifier.run(TestDataSet);
+    %     classified = classifier.run(testDataSet);
     %     subplot(2,1,1);
     %     classifier.plot;
     %     subplot(2,1,2);
-    %     [pf,pd] = prtScoreRoc(classified,TestDataSet);
+    %     [pf,pd] = prtScoreRoc(classified,testDataSet);
     %     h = plot(pf,pd,'linewidth',3);
     %     title('ROC'); xlabel('Pf'); ylabel('Pd');
     %
@@ -52,36 +52,36 @@ classdef prtClassGlrt < prtClass
     end
     
     methods
-        function Obj = set.rvH0(Obj,val)
+        function self = set.rvH0(self,val)
             assert(isa(val,'prtRv'),'prt:prtClassGlrt:setrvH0','rvH0 must be a subclass of prtRv, but value provided is a %s',class(val));
-            Obj.rvH0 = val;
+            self.rvH0 = val;
         end
-        function Obj = set.rvH1(Obj,val)
+        function self = set.rvH1(self,val)
             assert(isa(val,'prtRv'),'prt:prtClassGlrt:setrvH1','rvH1 must be a subclass of prtRv, but value provided is a %s',class(val));
-            Obj.rvH1 = val;
+            self.rvH1 = val;
         end
         
-        function Obj = prtClassGlrt(varargin)
+        function self = prtClassGlrt(varargin)
             
-            Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
+            self = prtUtilAssignStringValuePairs(self,varargin{:});
             
         end
     end
     
     methods (Access=protected, Hidden = true)
        
-        function Obj = trainAction(Obj,DataSet)
+        function self = trainAction(self,dataSet)
             
-            assert(DataSet.isBinary, 'prt:prtClassGlrt:nonBinaryData','prtClassGlrt requires a binary dataset.');
+            assert(dataSet.isBinary, 'prt:prtClassGlrt:nonBinaryData','prtClassGlrt requires a binary dataSet.');
             
-            Obj.rvH0 = mle(Obj.rvH0, DataSet.getObservationsByClassInd(1));
-            Obj.rvH1 = mle(Obj.rvH1, DataSet.getObservationsByClassInd(2));
+            self.rvH0 = mle(self.rvH0, dataSet.getObservationsByClassInd(1));
+            self.rvH1 = mle(self.rvH1, dataSet.getObservationsByClassInd(2));
         end
         
-        function DataSet = runAction(Obj,DataSet) 
-            logLikelihoodH0 = logPdf(Obj.rvH0, DataSet.getObservations());
-            logLikelihoodH1 = logPdf(Obj.rvH1, DataSet.getObservations());
-            DataSet = DataSet.setObservations(logLikelihoodH1 - logLikelihoodH0);
+        function dataSet = runAction(self,dataSet) 
+            logLikelihoodH0 = logPdf(self.rvH0, dataSet.getObservations());
+            logLikelihoodH1 = logPdf(self.rvH1, dataSet.getObservations());
+            dataSet = dataSet.setObservations(logLikelihoodH1 - logLikelihoodH0);
         end        
     end
 end

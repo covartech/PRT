@@ -52,7 +52,7 @@ classdef prtPreProcSpca < prtPreProc
     
 	methods (Hidden = true)
         function featureNameModificationFunction = getFeatureNameModificationFunction(obj) %#ok<MANU>
-            featureNameModificationFunction = @(strIn, index)sprintf('SPCA Score %d',index);
+            featureNameModificationFunction = prtUtilFeatureNameModificationFunctionHandleCreator('SPCA Score #index#');
         end
 	end
     

@@ -386,35 +386,21 @@ classdef prtDataSetStandard < prtDataSetInMem
 					return
 				end
 				
-				% The input version is less than the current version
-				% We need to
+				if inputVersion > currentVersionObj.version
+					% Versions new than current version!
+					warning('prt:prtDataSetStandard:loadNewVersion','Attempt to load an updated prtDataSetStandard from file. This prtDataSetStandard was saved using a new version of the PRT. This dataset may not load properly.')
+					return
+				end
+				
+				if inputVersion < 2
+					% Versions older than 2 are no longer supported.
+					warning('prt:prtDataSetStandard:loadOldVersion','Attempt to load obsolete prtDataSetStandard from file. This prtDataSetStandard may not load properly.')
+					return
+				end
+				
 				inObj = obj;
 				obj = currentVersionObj;
 				switch inputVersion
-					case 0
-						% The oldest version of prtDataSetBase
-						% We need to set the appropriate fields from the
-						% structure (inObj) into the prtDataSetClass of the
-						% current version
-						obj = obj.setObservationsAndTargets(inObj.dataDepHelper,inObj.targetsDepHelper);
-						obj.observationInfo = inObj.observationInfoDepHelper;
-						obj.featureInfo = inObj.featureInfoDepHelper;
-						if ~isempty(inObj.featureNamesDepHelper)
-							obj = obj.setFeatureNames(inObj.featureNamesDepHelper.cellValues,inObj.featureNamesDepHelper.integerKeys);
-						end
-						if ~isempty(inObj.observationNamesInternal.cellValues)
-							obj = obj.setObservationNames(inObj.observationNamesInternal.cellValues,inObj.observationNamesInternal.integerKeys);
-							%obj = obj.setObservationNames(inObj.observationNames.cellValues);
-						end
-						if ~isempty(inObj.targetNamesInternal)
-							obj = obj.setTargetNames(inObj.targetNamesInternal.cellValues);
-						end
-						
-						obj.name = inObj.name;
-						obj.description = inObj.description;
-						obj.userData = inObj.userData;
-						obj.actionData = inObj.actionData;
-						
 					case 2
 						obj = obj.setObservationsAndTargets(inObj.internalData ,inObj.internalTargets);
 						obj.observationInfo = inObj.observationInfoInternal;
@@ -426,10 +412,11 @@ classdef prtDataSetStandard < prtDataSetInMem
 						if ~isempty(inObj.featureNameIntegerAssocArray)
 							obj = obj.setFeatureNames(inObj.featureNameIntegerAssocArray.cellValues,inObj.featureNameIntegerAssocArray.integerKeys);
 						end
+						
 						if ~isempty(inObj.observationNamesInternal.cellValues)
 							obj = obj.setObservationNames(inObj.observationNamesInternal.cellValues,inObj.observationNamesInternal.integerKeys);
-							%obj = obj.setObservationNames(inObj.observationNames.cellValues);
 						end
+						
 						if ~isempty(inObj.targetNamesInternal)
 							obj = obj.setTargetNames(inObj.targetNamesInternal.cellValues);
 						end
@@ -437,10 +424,8 @@ classdef prtDataSetStandard < prtDataSetInMem
 						obj.name = inObj.name;
 						obj.description = inObj.description;
 						obj.userData = inObj.userData;
-						
-					otherwise
-						error('prt:prtDataSetStandard:loadObj','Unknown prtDataSetBase version %d, object cannot be laoded.',inputVersion);
 				end
+				
 			else
 				% Nothin special
 			end

@@ -44,9 +44,9 @@ classdef prtCluster < prtAction
 	methods (Hidden = true)
         function featureNameModificationFunction = getFeatureNameModificationFunction(obj)
             if ~obj.includesDecision
-				featureNameModificationFunction = @(strIn, index)sprintf('%s Membership in cluster %d',obj.nameAbbreviation,index);
+				featureNameModificationFunction = prtUtilFeatureNameModificationFunctionHandleCreator('%s Membership in cluster #index#', obj.nameAbbreviation);
 			else
-				featureNameModificationFunction = @(strIn, index)'Class Label';
+				featureNameModificationFunction = prtUtilFeatureNameModificationFunctionHandleCreator('Class Label');
             end
         end
 	end

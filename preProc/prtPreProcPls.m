@@ -65,7 +65,7 @@ classdef prtPreProcPls < prtPreProc
     
 	methods (Hidden = true)
         function featureNameModificationFunction = getFeatureNameModificationFunction(obj) %#ok<MANU>
-            featureNameModificationFunction = @(strIn, index)sprintf('PLS Score %d',index);
+            featureNameModificationFunction = prtUtilFeatureNameModificationFunctionHandleCreator('PLS Score #index#');
         end
 	end
 	
