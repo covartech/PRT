@@ -289,8 +289,10 @@ classdef prtAction
             end
             if ~isvector(validationKeys) || (numel(validationKeys) ~= dsIn.nObservations)
                 error('prt:prtAction:crossValidate','validationKeys must be a vector with a length equal to the number of observations in the data set');
-            end
-            
+			end
+			
+			validationKeys = validationKeys(:);
+			
             uKeys = unique(validationKeys);
             
             actuallyShowProgressBar = self.showProgressBar && (length(uKeys) > 1);

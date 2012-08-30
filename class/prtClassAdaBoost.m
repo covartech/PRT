@@ -117,7 +117,6 @@ classdef prtClassAdaBoost < prtClass
             
             classifier = self.baseClassifier + prtDecisionBinaryMinPe;
             classifier.verboseStorage = false;
-            classifier.verboseFeatureNames = false;
             
             y = double(dataSet.getTargetsAsBinaryMatrix);
             y = y(:,2);
@@ -159,7 +158,7 @@ classdef prtClassAdaBoost < prtClass
                     
                     tempClassifier = prtFeatSelStatic('selectedFeatures',feature) + self.baseClassifier + prtDecisionBinaryMinPe;
                     tempClassifier.verboseStorage = false;
-                    tempClassifier.verboseFeatureNames = false;
+                    %tempClassifier.verboseFeatureNames = false;
                     
                     classifier = train(tempClassifier,dataSetBootstrap);
                     yOut = run(classifier,dataSet);

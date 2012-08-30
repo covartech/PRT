@@ -817,7 +817,8 @@ classdef prtDataSetBase
 			dsOut = catObservations(dsTestCell{:});
 			
 			% Resort to the original order using retainObservations
-			dsOut = dsOut.retainObservations(cat(1,testIndices{:}));
+			[sortedTestIndices, unsortingInds] = sort(cat(1,testIndices{:}),'ascend');
+			dsOut = dsOut.retainObservations(unsortingInds(:));
 		end
 		
         function has = hasObservationNames(self)

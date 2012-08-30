@@ -48,7 +48,7 @@ classifier = prtClassCap;
 keys = mod(1:400,2);
 crossVal = classifier.crossValidate(TestDataSet,keys);
 classes  = crossVal.getX > .5;
-percentCorr = prtScorePercentCorrect(classes,TestDataSet.getTargets);
+percentCorr = prtScorePercentCorrect(classes, TestDataSet.getTargets);
 
 if (percentCorr < baselinePercentCorr)
     disp('prtClassCap cross-val below baseline')
@@ -56,7 +56,6 @@ if (percentCorr < baselinePercentCorr)
 end
 
 % k-folds
-
 crossVal = classifier.kfolds(TestDataSet,10);
 classes  = crossVal.getX > .5;
 percentCorr = prtScorePercentCorrect(classes,TestDataSet.getTargets);
