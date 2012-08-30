@@ -25,6 +25,7 @@ classdef prtClassMilVbDpGmm < prtClass
     
     properties (Hidden)
         
+        initialFit = [];
         %Dependent on "d"
         v_0_m
         v_1_m
@@ -79,6 +80,11 @@ classdef prtClassMilVbDpGmm < prtClass
             
             
             [rvH0,rvH1,xH0,xH1] = initialize(self,{milStruct.data},bagLabels);
+            %self.initialFit = self.calculateDataLogLikelihood(self,xH0,xH1);
+            ll0 = sum(rvH0.logPdf(xH0));
+            ll1 = rvH0.pdf(xH1).*self.alpha(1)/sum(self.alpha) + rvH1.pdf(xH1).*self.alpha(2)/sum(self.alpha);
+            self.initialFit = ll0 + sum(log(ll1));
+            
             
             [p0,pp] = rvH0.pdf(x);
             phi_0_i = bsxfun(@rdivide,pp,sum(pp,2));
@@ -242,18 +248,22 @@ classdef prtClassMilVbDpGmm < prtClass
                 for i = 1:size(rho_0,1)
                     c = Phi_0(i,:)./nu_0(i);
                     c = reshape(c,d,d);
-                    if d > 1
-                        plotMvnEllipse(rho_0(i,1:2),c(1:2,1:2),1);
+                    if vbIter == 1
+                        mm0(i) = prtRvMvn('mu',rho_0(i,:),'sigma',c);
+                    else
+                        mm0(i).mu = rho_0(i,:);
+                        mm0(i).sigma = c;
                     end
-                    mm0(i) = prtRvMvn('mu',rho_0(i,:),'sigma',c);
                 end
                 for i = 1:size(rho_1,1)
                     c = Phi_1(i,:)./nu_1(i);
                     c = reshape(c,d,d);
-                    if d > 1
-                        plotMvnEllipse(rho_1(i,1:2),c(1:2,1:2),1);
+                    if vbIter == 1
+                        mm1(i) = prtRvMvn('mu',rho_1(i,:),'sigma',c);
+                    else
+                        mm1(i).mu = rho_1(i,:);
+                        mm1(i).sigma = c;
                     end
-                    mm1(i) = prtRvMvn('mu',rho_1(i,:),'sigma',c);
                 end
                 
                 pi0 = exp(log_pi_0); pi0 = pi0./sum(pi0);
@@ -266,19 +276,25 @@ classdef prtClassMilVbDpGmm < prtClass
                 self.rvH1 = rv1;
                 self.rvH0 = rv0;
                 
-                
-                if ~mod(vbIter,20);
+                drawnow;
+                if ~mod(vbIter,500);
                     disp(vbIter)
-                    subplot(2,3,1);
+                    subplot(2,4,1);
                     stem(exp(log_pi_0));
-                    subplot(2,3,2);
+                    subplot(2,4,2);
                     stem(exp(log_eta))
-                    subplot(2,3,3);
+                    subplot(2,4,3);
                     stem(exp(log_pi_1));
                     fprintf('exp(log_pi_0): %.2f\n',exp(log_pi_0))
                     fprintf('exp(log_pi_1): %.2f\n',exp(log_pi_1))
                     
-                    subplot(2,3,4:6);
+                    
+                    subplot(2,4,4);
+                    self.isTrained = true;
+                    yOut = self.run(dsMil);
+                    prtScoreRoc(yOut);
+                    
+                    subplot(2,4,5:8);
                     if d > 1
                         plot(x(expandedBagLabels == 0,1),x(expandedBagLabels == 0,2),'b.');
                         hold on;
@@ -287,11 +303,17 @@ classdef prtClassMilVbDpGmm < prtClass
                         for i = 1:size(rho_0,1)
                             c = Phi_0(i,:)./nu_0(i);
                             c = reshape(c,d,d);
+                            if d > 1
+                                plotMvnEllipse(rho_0(i,1:2),c(1:2,1:2),1);
+                            end
                             mm0(i) = prtRvMvn('mu',rho_0(i,:),'sigma',c);
                         end
                         for i = 1:size(rho_1,1)
                             c = Phi_1(i,:)./nu_1(i);
                             c = reshape(c,d,d);
+                            if d > 1
+                                plotMvnEllipse(rho_1(i,1:2),c(1:2,1:2),1);
+                            end
                             mm1(i) = prtRvMvn('mu',rho_1(i,:),'sigma',c);
                         end
                         hold on; h = plot(rho_0(:,1),rho_0(:,2),'ko'); set(h,'MarkerFaceColor','k');
@@ -328,7 +350,7 @@ classdef prtClassMilVbDpGmm < prtClass
             
             %H0 Kmeans
             xH0 = cat(1,xBag{bagLabels == 0});
-            idx0 = kmeans(xH0,self.K0,'Replicates',50,'EmptyAction','singleton','MaxIter',100);
+            idx0 = kmeans(xH0,self.K0,'Replicates',1,'EmptyAction','singleton','MaxIter',100);
             uIds = unique(idx0);
             
             for idx = 1:length(uIds)
@@ -358,7 +380,7 @@ classdef prtClassMilVbDpGmm < prtClass
             end
             
             %H1 Kmeans
-            idx1 = kmeans(xH1,self.K1,'Replicates',50,'EmptyAction','singleton','MaxIter',100);
+            idx1 = kmeans(xH1,self.K1,'Replicates',1,'EmptyAction','singleton','MaxIter',100);
             uIds = unique(idx1);
             
             pi = [];
