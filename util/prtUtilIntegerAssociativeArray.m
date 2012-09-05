@@ -10,8 +10,7 @@ classdef prtUtilIntegerAssociativeArray
     
     methods
         
-        function out = merge(self,in2)
-            
+        function [out,integerSwaps] = combine(self,in2)
             
             keys1 = self.integerKeys;
             keys1 = keys1(:);
@@ -28,9 +27,65 @@ classdef prtUtilIntegerAssociativeArray
             [unionKeys,ind1,ind2] = union(keys1,keys2);
             commonKeys = intersect(keys1,keys2);
             
+            integerSwaps = [];
+            newKey = max(unionKeys)+1;
+            for i = 1:length(unionKeys)
+                theKey = unionKeys(i);
+                
+                %Handle duplicate values with mis-matched indices
+                % Note, technically this is not correct for an
+                % integerAssocArray; this enforces that during combining,
+                % no duplicate keys exist... this belongs elsewhere...
+                % this works for the places we use it in the PRT... but is
+                % not food for assoc.arrays in general... boo.
+                if ~isequal(self.get(theKey),in2.get(theKey)) && any(strcmpi(self.get(theKey),in2.cellValues))
+                    
+                    changeKey = in2.integerKeys(strcmpi(self.get(theKey),in2.cellValues));
+                    integerSwaps = cat(1,integerSwaps,[changeKey,theKey]);
+                    in2 = in2.remove(changeKey);
+                    
+                    %Handle new name
+                elseif ~isequal(self.get(theKey),in2.get(theKey))
+                    in2.integerKeys(in2.integerKeys == theKey) = newKey;
+                    integerSwaps = cat(1,integerSwaps,[theKey,newKey]);
+                    newKey = newKey + 1;
+                end
+            end
+            
+            %we should be OK nowl integerSwaps tells us which keys in in2
+            %became new keys, and this should run, since any conflicitng
+            %keys are no longer conflicting
+            out = merge(self,in2); 
+        end
+        
+        function out = merge(self,in2)
+            
+            
+            keys1 = self.integerKeys;
+            keys1 = keys1(:);
+            
+            vals1 = self.get(keys1);
+            if ~isa(vals1,'cell')
+                vals1 = {vals1};
+            end
+            vals1 = vals1(:);
+            
+            keys2 = in2.integerKeys;
+            keys2 = keys2(:);
+            
+            vals2 = in2.get(keys2);
+            if ~isa(vals2,'cell')
+                vals2 = {vals2};
+            end
+            vals2 = vals2(:);
+            
+            [unionKeys,ind1,ind2] = union(keys1,keys2);
+            commonKeys = intersect(keys1,keys2);
+            
             if ~isequal(self.get(commonKeys),in2.get(commonKeys))
                 error('prtUtilIntegerAssociativeArray:cannotMerge','Input arguments have keys in common with different values');
             end
+            
             out = prtUtilIntegerAssociativeArray(unionKeys(:),cat(1,vals1(ind1),vals2(ind2)));
             
         end

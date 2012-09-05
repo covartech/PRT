@@ -96,7 +96,16 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
 			%   Return a data set, dsOut, formed by vertically
 			%   concatenating the observations and targets in dataSet1 and
 			%   dataSet2.
+            %
+            %   Note that when dataSet1 and dataSet2 have different class
+            %   names, and/or targets dataSet1 and dataSet2's className
+            %   fields are used to generate a proper target/className
+            %   representation for the output dsOut.
+            %
+            %   As a result, the targets in the resulting dsOut may not
+            %   exactly match the output of cat(1,dataSet1,dataSet2)
 			%
+            
 			self = catObservations@prtDataSetStandard(self,varargin{:});
 			self = catClasses(self,varargin{:});
 			self = self.update;
@@ -938,7 +947,7 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
 					return
 				end
 				
-				if inputVersion < 2
+				if inputVersion == 1
 					% Versions older than 2 are no longer supported.
 					warning('prt:prtDataSetClass:loadOldVersion','Attempt to load obsolete prtDataSetClass from file. This prtDataSetClass may not load properly.')
 					return
@@ -947,6 +956,13 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
 				inObj = obj;
 				obj = currentVersionObj;
 				switch inputVersion
+                    case 0
+                        
+                        obj = obj.setObservationsAndTargets(inObj.dataDepHelper,inObj.targetsDepHelper);
+                        obj.observationInfo = inObj.observationInfoDepHelper;
+                        obj.setClassNames(inObj.classNamesInternal.cellValues);
+                        obj.userData = inObj.userData;
+                        warning('prt:prtDataSetClass:loadOldishVersion','Attempt to load old prtDataSetClass from file. Portions of this variable may not load properly.')
 					case 2
 						obj = obj.setObservationsAndTargets(inObj.internalData ,inObj.internalTargets);
 						obj.observationInfo = inObj.observationInfoInternal;

@@ -9,7 +9,7 @@ function prtTest(functionNames)
 
 if nargin < 1 || isempty(functionNames)
     testMFiles = dir(fullfile(fileparts(which(mfilename)),'*.m'));
-    functionNames = setdiff({testMFiles.name},{'prtTest.m'});
+    functionNames = setdiff({testMFiles.name},{'prtTest.m','prtTestClassifiers.m','prtTestSmoke.m'});
     [garbage, functionNames] = cellfun(@(c)fileparts(c),functionNames,'uniformOutput',false);
 end
 

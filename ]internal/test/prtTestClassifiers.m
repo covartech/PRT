@@ -15,4 +15,4 @@ dataGenMet = @prtDataGenUnimodal;
 evalMet = @(x,y)prtScorePercentCorrect(x,y);
 
 % run all tests
-result = prtTestRunCrossVal(files, baselineCell,dataGenMet, evalMet);
+result = prtTestRunCrossVal(files, baselineCell, dataGenMet, evalMet);
