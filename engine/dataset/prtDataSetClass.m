@@ -51,7 +51,27 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
 	methods
 		
 		function obj = prtDataSetClass(varargin)
-			
+            % prtDataSetClass Constructor for class prtDataSetClass
+            % 
+            % class = prtDataSetClass(X,Y)
+            %   Create a prtDataSetClass object with data X and targets Y.
+            %   X shouls be a #obs x #feat matrix, and Y should be a #obs x
+            %   1 vector of target labels.
+            %
+            % class = prtDataSetClass(X,Y,field1,val1,field2,val2,...)
+            %   As above, but also set additional public fields field1,
+            %   field2,... to values val1, val2, etc.
+            %
+            % x = randn(100,2);
+            % y = prtUtilY(50,50); 
+            % ds = prtDataSetClass(x,y);
+            % plot(ds); % An unseparable data set
+			% 
+            % x = randn(100,2);
+            % y = prtUtilY(50,50); 
+            % ds = prtDataSetClass(x,y,'name','My Data Set');
+            % plot(ds); % An unseparable data set
+            
 			if nargin == 0
 				return;
 			end
@@ -94,8 +114,8 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
 		function self = catObservations(self,varargin)
 			%dsOut = catObservations(dataSet1,dataSet2)
 			%   Return a data set, dsOut, formed by vertically
-			%   concatenating the observations and targets in dataSet1 and
-			%   dataSet2.
+			%   concatenating the observations, targets, and other fields
+            %   in dataSet1 and dataSet2.
             %
             %   Note that when dataSet1 and dataSet2 have different class
             %   names, and/or targets dataSet1 and dataSet2's className
@@ -112,8 +132,11 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
 		end
 		
 		function self = setTargets(self,targets)
-			% dataSet = setTargets(dataSet,targets)
-			%  Run dataSet.targets = targets;
+			% dataSet = setTargets(ds,targets)
+			%  setTargets outputs a dataSet with targets set to targetsIn.
+			%  targetsIn should be a ds.nObservations x 1 matrix of target
+			%  values.
+            %  
 			self = setTargets@prtDataSetStandard(self,targets);
 			self = self.update;
 		end
