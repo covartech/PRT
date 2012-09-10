@@ -17,8 +17,9 @@ classdef prtClassLibSvm < prtClass
     %
     %         svmType       - Whether to use a C-SVM, nu-SVM, one-class
     %                        SVM, epsilon-SVR, or nu-SVR
-    %         kernelType    - Kernel type to use - linear, polynomial,
-    %                         rbf (default) or sigmoid (base 0 index) 
+    %         kernelType    - Kernel type to use - linear (0), polynomial (1),
+    %                         rbf (2, default), sigmoid (3), or
+    %                         user-defined (4) - see below
     %         degree        - Kernel function parameter (some kernels)
     %         gamma         - Kernel function parameter (some kernels)
     %         coef0         - Kernel function parameter (some kernels)
@@ -46,6 +47,22 @@ classdef prtClassLibSvm < prtClass
     %     shrinking = 1;
     %     probabilityEstimates = 0;
     %     weight = 1;
+    %
+    %     userSpecKernel = [];  %only for kernelType = 4, see below
+    %
+    %   prtClassLibSvm allows the specification of user-defined kernels by
+    %   setting svm.kernelType to 4.  This requires further specification
+    %   of svm.userSpecKernel.  svm.userSpecKernel must be either a
+    %   function handle, fn(x,y) which outputs a matrix of size 
+    %   size(x,1) x size(y,1), or userSpecKernel can be a prtKernel object.
+    %
+    %   For example:
+    %     svm.kernelType = 4;
+    %     svm.userSpecKernel = @(x,y) (x*y'); % correlation kernel
+    %  
+    %     svm.kernelType = 4;
+    %     svm.userSpecKernel = prtKernelHyperbolicTangent; 
+    %
     %
     %   Additional options can be specified by modifying the field 
     %   obj.libSvmOptions using the format found here:
@@ -111,6 +128,8 @@ classdef prtClassLibSvm < prtClass
         weight = 1;
         
         libSvmOptions = '';
+        
+        userSpecKernel = [];
     end
     properties (Hidden = true)
         %Note, the libSvm has different opinions of what classes 1 and 0
@@ -126,7 +145,7 @@ classdef prtClassLibSvm < prtClass
             obj.svmType = val;
         end
         function obj = set.kernelType(obj,val)
-            assert(isscalar(val) && ismember(val,[0 1 2 3]),'kernelType must be one of 0,1,2,3; see the instructions at http://www.csie.ntu.edu.tw/~cjlin/libsvm/ for more information');
+            assert(isscalar(val) && ismember(val,[0 1 2 3 4]),'kernelType must be one of 0,1,2,3,4; see the instructions at http://www.csie.ntu.edu.tw/~cjlin/libsvm/ for more information');
             obj.kernelType = val;
         end
         function obj = set.degree(obj,val)
@@ -183,48 +202,81 @@ classdef prtClassLibSvm < prtClass
             obj.weight = val;
         end
         
-        function Obj = prtClassLibSvm(varargin)
-            Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
+        function self = prtClassLibSvm(varargin)
+            self = prtUtilAssignStringValuePairs(self,varargin{:});
         end    
     end
     
     methods (Access=protected, Hidden = true)
         
-        function Obj = trainAction(Obj,DataSet)
-            training_label_vector = DataSet.getTargets;
-            training_instance_matrix = DataSet.getObservations;
-            Obj.libSvmOptions = Obj.libSvmOptionString(DataSet);
-            Obj.libSvmOptionsTest = Obj.libSvmOptionStringTest(DataSet);
+        function self = trainAction(self,dataSet)
+            training_label_vector = dataSet.getTargets;
+            training_instance_matrix = dataSet.getObservations;
+            self.libSvmOptions = self.libSvmOptionString(dataSet);
+            self.libSvmOptionsTest = self.libSvmOptionStringTest(dataSet);
   
             % Its ok to have 1 class if its a 1 class classifier
-            if DataSet.nClasses ~= 2 && Obj.svmType ~=2
+            if dataSet.nClasses ~= 2 && self.svmType ~=2
                 error('prt:prtClassLibSvm:UnaryData','prtClassLibSvm requires binary data for training');
             end
-            if DataSet.nClasses ~= 1 && Obj.svmType ==2
+            if dataSet.nClasses ~= 1 && self.svmType ==2
                 error('prt:prtClassLibSvm:UnaryData','prtClassLibSvm requires unary data for training when svmType = 2');
             end
             
-            Obj.trainedSvm = prtExternal.libsvm.svmtrain(double(training_label_vector), training_instance_matrix, Obj.libSvmOptions);
+            if self.kernelType == 4
+                %self.userSpecKernel = prtKernelRbfNdimensionScale;
+                if ~isa(self.userSpecKernel,'prtKernel') && ~isa(self.userSpecKernel,'function_handle')
+                    error('prtClassLibSvm:KernelType4','For kernelType = 4 (user-specified kernel), svm.userSpecKernel must be a prtKernel or function handle');
+                end
+                if isa(self.userSpecKernel,'prtKernel')
+                    self.userSpecKernel = self.userSpecKernel.train(dataSet);
+                    kernelMat = self.userSpecKernel.run(dataSet);
+                    training_instance_matrix = kernelMat.data;
+                else
+                    training_instance_matrix = self.userSpecKernel(dataSet.X,dataSet.X);
+                end
+                training_instance_matrix = cat(2,(1:size(training_instance_matrix,1))',training_instance_matrix);
+            end
+            self.trainedSvm = prtExternal.libsvm.svmtrain(double(training_label_vector), training_instance_matrix, self.libSvmOptions);
             
             %Need to figure out whether to flip SVM outputs:
-            yOut = runAction(Obj,DataSet);
-            auc = prtScoreAuc(yOut.getObservations,DataSet.getTargets);
-            if auc < .5
-                Obj.gain = -1;
+            yOut = runAction(self,dataSet);
+            auc = prtScoreAuc(yOut.getObservations,dataSet.getTargets);
+            
+            %libSVM has some weird rules about target names.  the first target type it finds is called H1...
+            % We can fix this either above, or here
+            if auc < .5  
+                self.gain = -1;
             end
         end
         
-        function DataSetOut = runAction(Obj,DataSet)
+        function DataSetOut = runAction(self,dataSet)
 
-            testing_label_vector = double(DataSet.getTargets);
+            testing_label_vector = double(dataSet.getTargets);
             if isempty(testing_label_vector)
-                testing_label_vector = zeros(DataSet.nObservations,1);
+                testing_label_vector = zeros(dataSet.nObservations,1);
             end
-            testing_instance_matrix = DataSet.getObservations;
-            [dontNeed, dontNeed, decision_values] = prtExternal.libsvm.svmpredict(testing_label_vector, testing_instance_matrix, Obj.trainedSvm, Obj.libSvmOptionsTest); %#ok<ASGLU>
             
-            DataSetOut = DataSet;
-            DataSetOut = DataSetOut.setObservations(decision_values*Obj.gain);
+            if self.kernelType == 4
+                if ~isa(self.userSpecKernel,'prtKernel') && ~isa(self.userSpecKernel,'function_handle')
+                    error('prtClassLibSvm:KernelType4','For kernelType = 4 (user-specified kernel), svm.userSpecKernel must be a prtKernel or function handle');
+                end
+                if isa(self.userSpecKernel,'prtKernel')
+                    kernelMat = self.userSpecKernel.run(dataSet);
+                    testing_instance_matrix = kernelMat.data;
+                else
+                    %Function handle:
+                    testing_instance_matrix = self.userSpecKernel(dataSet.X,self.dataSet.X);
+                end
+                testing_instance_matrix = cat(2,(1:size(testing_instance_matrix,1))',testing_instance_matrix);
+            else
+                testing_instance_matrix = dataSet.getObservations;
+            end
+            
+            [dontNeed, dontNeed, decision_values] = prtExternal.libsvm.svmpredict(testing_label_vector, testing_instance_matrix, self.trainedSvm, self.libSvmOptionsTest); %#ok<ASGLU>
+            
+            DataSetOut = dataSet;
+            DataSetOut = DataSetOut.setObservations(decision_values*self.gain);
         end
         
         function dataSetOut = runActionFast(self,x,ds)
