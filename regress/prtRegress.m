@@ -8,15 +8,13 @@ classdef prtRegress < prtAction %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     properties (SetAccess = protected)
         isSupervised = true; % True
         isCrossValidateValid = true; % True
-    end
-    
+	end
+	
     methods (Hidden = true)
-        function featureNames = updateFeatureNames(obj,featureNames)
-            for i = 1:length(featureNames)
-                featureNames{i} = sprintf('%s Output_{%d}',obj.nameAbbreviation,i);
-            end
+        function featureNameModificationFunction = getFeatureNameModificationFunction(obj)
+			featureNameModificationFunction = prtUtilFeatureNameModificationFunctionHandleCreator('%s Output_{#index#}', obj.nameAbbreviation);
         end
-    end    
+	end    
     
     methods
         function obj = prtRegress()

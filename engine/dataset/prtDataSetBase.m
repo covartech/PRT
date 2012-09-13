@@ -8,7 +8,6 @@ classdef prtDataSetBase
     %   description     - Description of the data set
     %   userData        - Structure for holding additional related to the
     %                     data set
-    %   actionData      - Structure for prtActions to place additional data
     %
     %   observationInfo - Structure array holding additional
     %                     data per related to each observation
@@ -90,12 +89,8 @@ classdef prtDataSetBase
         userData = struct;    % Additional data per data set
     end
     
-    properties(Hidden)
-        actionData = struct;      % Data stored by a prtAction
-    end
-    
     properties (Hidden, Access = protected)
-        version = 2;
+        version = 3;
     end
     
     % Only prtDataSetBase knows about these, use getObs... and getFeat.. to
@@ -136,21 +131,8 @@ classdef prtDataSetBase
         data = getData(self,indices)
         targets = getTargets(self,indices)
         
-        %         self = setObservations(self,data,indices1,indices2)
-        %         self = setTargets(self,targets,indices)
-        %         self = setObservationsAndTargets(self,data,targets)
-        %
-        %         self = removeTargets(self,indices)
-        
         self = retainObservationData(self,indices)
         self = catObservationData(self,varargin)
-        
-        %         self = retainTargets(self,indices)
-        %         self = catObservationData(self,dataSet)
-        %
-        %         handles = plot(self)
-        %         export(self,prtExportObject)
-        %         Summary = summarize(self)
     end
     
     methods
@@ -276,7 +258,6 @@ classdef prtDataSetBase
     
     methods 
         function x = getObservations(self,varargin)
-            warning('use getData; getObservations is out of daters');
             x = self.getData(varargin{:});
         end
     end
@@ -779,18 +760,67 @@ classdef prtDataSetBase
     
     methods (Hidden = true)
         
-        function self = copyDescriptionFieldsFrom(self,dataSet)
-            if dataSet.hasObservationNames
-                self = self.setObservationNames(dataSet.getObservationNames);
-            end
-            if dataSet.hasTargetNames
+		function self = acquireNonDataAttributesFrom(self, dataSet)
+			if ~isempty(dataSet.targets) && isempty(self.targets)
+				self.targets = dataSet.targets;
+			end
+			
+			if ~isempty(dataSet.observationInfo) && isempty(self.observationInfo)
+				self.observationInfo = dataSet.observationInfo;
+			end
+			
+			if ~isempty(dataSet.targetInfo) && isempty(self.targetInfo)
+				self.targetInfo = dataSet.targetInfo;
+			end
+			
+			if dataSet.hasObservationNames && ~self.hasObservationNames
+				self = self.setObservationNames(dataSet.getObservationNames);
+			end
+			
+			if dataSet.hasTargetNames && ~self.hasTargetNames
                 self = self.setTargetNames(dataSet.getTargetNames);
-            end
-            self.name = dataSet.name;
+			end
+			
+			self.name = dataSet.name;
+			self.description = dataSet.description;
             self.userData = dataSet.userData;
-        end
+		end
         
-        
+		function self = modifyNonDataAttributesFrom(self, action) %#ok<INUSD>
+			% Modify the non-data attributes of dataset self given an
+			% aciton.
+			%
+			% This allows actions to set feature names for
+			% prtDataSetStandard. This can be overloaded (as in
+			% prtDataSetStandard) to modify other properties for patricular
+			% action classes.
+			
+			% Here we do nothing.
+		end
+		
+		function dsFoldOut = crossValidateCheckFoldResults(dsIn, dsTrain, dsTest, dsFoldOut) %#ok<MANU,INUSL>
+			% dsTest = crossValidateCheckFoldResults(dsIn, dsTrain, dsTest, dsFoldOut) %#ok<MANU,INUSL>
+			%
+			% Cheack the folds and the out used during crossvalidation
+			
+			if dsFoldOut.nObservations ~= dsTest.nObservations
+				error('prt:prtDataSetBase:crossValidateCheckFoldResults','A cross-validation returned a dataset with a different number of observations than the test dataset.')
+			end
+		end
+		
+		function dsOut = crossValidateCombineFoldResults(dsTestCell_first, dsTestCell, testIndices) %#ok<MANU>
+			% dsOut = crossValidateCombineFoldResults(dsTestCell_first, dsTestCell, testIndices)
+			%
+			% Combine the results of crossVal folds into one output dataset
+			
+			% Combine all of the folds via catObservations
+			dsOut = catObservations(dsTestCell{:});
+			
+			% Resort to the original order using retainObservations
+			[sortedTestIndices, unsortingInds] = sort(cat(1,testIndices{:}),'ascend');
+			dsOut = dsOut.retainObservations(unsortingInds(:));
+		end
+		
         function has = hasObservationNames(self)
             has = ~isempty(self.observationNamesInternal);
         end

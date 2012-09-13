@@ -1,4 +1,4 @@
-classdef prtDataInterfaceCategoricalTargets < prtDataInterfaceTargets
+classdef prtDataInterfaceCategoricalTargets
     
     properties (Access = private)
         classNamesArray = prtUtilIntegerAssociativeArrayClassNames;
@@ -12,7 +12,7 @@ classdef prtDataInterfaceCategoricalTargets < prtDataInterfaceTargets
         nClasses
         uniqueClasses
         nObservationsByClass   % histogram of samples x class
-        classNames
+        classNames = {};
     end
     
     methods (Abstract)
@@ -64,10 +64,7 @@ classdef prtDataInterfaceCategoricalTargets < prtDataInterfaceTargets
         end
     end
     
-    
     methods (Hidden)
-        %this is used by some class objects, but breaks encapsulation. Hide
-        %it from 99% of users
         function self = updateTargetCache(self)
             targets = double(self.getTargets);
             if isempty(targets)
@@ -87,7 +84,13 @@ classdef prtDataInterfaceCategoricalTargets < prtDataInterfaceTargets
             else
                 self.targetCache.nNans = 0;
             end
-        end
+		end
+		
+		function dsFoldOut = crossValidateCheckFoldResultsWarnNumberOfClassesBad(dsIn, dsTrain, dsTest, dsFoldOut) %#ok<INUSL>
+			if dsTrain.nClasses ~= dsIn.nClasses
+				warning('prt:prtAction:crossValidateNClasses','A cross validation fold yielded a training data set with %d class(es) but the input data set contains %d classes. This may result in errors. It may be possible to resolve this by modifying the cross-validation keys.', dsTrain.nClasses, dsIn.nClasses);
+			end
+		end
     end
     
     methods
@@ -100,10 +103,8 @@ classdef prtDataInterfaceCategoricalTargets < prtDataInterfaceTargets
             end
         end
         
-        
         function d = getDataByClass(obj, class, varargin)
             % getDataByClass  Return the Data by class
-            %
             
             if isnan(class)
                 utInd = find(isnan(obj.uniqueClasses));
@@ -117,10 +118,6 @@ classdef prtDataInterfaceCategoricalTargets < prtDataInterfaceTargets
             d = getDataByClassInd(obj, utInd, varargin{:});
         end
         
-        %Note, things like this break encapsulation; this should actually
-        %be implemented in prtDataSetClass because it allows
-        %featureIndices.  That or we need to enforce "getNumColumns" as a
-        %default for getNumFeatures for everything that's inMem
         function d = getDataByClassInd(obj, classInd, varargin)
             
             if ~obj.isLabeled
@@ -135,8 +132,7 @@ classdef prtDataInterfaceCategoricalTargets < prtDataInterfaceTargets
                 d = obj.getData(obj.getTargets == obj.uniqueClasses(classInd),varargin{:});
             end
         end
-         
-        
+                 
         function ut = getUniqueClasses(self)
             if isempty(self.targetCache.uniqueClasses)
                 ut = unique(self.targets);
@@ -153,7 +149,9 @@ classdef prtDataInterfaceCategoricalTargets < prtDataInterfaceTargets
             %ds = ds.setClassNames({'fasdf','asdf','asdfdsfdsf'});
             %ds = ds.setClassNames({{1,'fasdf'},{2,'fasdc'}})
             cellIn = varargin{1};
-            
+            if isa(cellIn,'char')
+                cellIn = {cellIn};
+            end
             if isa(cellIn{1},'char')
                 targets = self.uniqueClasses;
                 for i = 1:length(targets)
@@ -170,7 +168,6 @@ classdef prtDataInterfaceCategoricalTargets < prtDataInterfaceTargets
             n = self.numClasses;
         end
         
-        
         function u = get.uniqueClasses(self)
             u = self.getUniqueClasses;
         end
@@ -183,12 +180,6 @@ classdef prtDataInterfaceCategoricalTargets < prtDataInterfaceTargets
             
             trueClass = self.uniqueClasses(indices);
             cn = self.classNamesArray.get(trueClass);
-            % Slow:
-            %             cn = cell(length(indices),1);
-            %             for i = 1:length(indices)
-            %                 trueClass = self.uniqueClasses(indices(i));
-            %                 cn{i} = self.classNamesArray.get(trueClass);
-            %             end
         end
         
         function cn = getClassNames(self,indices)
@@ -199,13 +190,7 @@ classdef prtDataInterfaceCategoricalTargets < prtDataInterfaceTargets
             end
             
             cn = self.classNamesArray.get(indices);
-            % Slow:
-            %             cn = cell(length(indices),1);
-            %             for i = 1:length(indices)
-            %                 cn{i} = self.classNamesArray.get(indices(i));
-            %             end
         end
-        
         
         function y = getBinaryTargetsAsZeroOne(obj)
             % getBinaryTargetsAsZeroOne  Return the target vector from a
@@ -241,16 +226,46 @@ classdef prtDataInterfaceCategoricalTargets < prtDataInterfaceTargets
         end
         
         function self = catClasses(self,varargin)
+            %self = catClasses(self,ds1,ds2,...)
             
+            %We need to know what indices to start changing, which means we
+            %need to know the length of the original data set. but we get
+            %the *new* data set.  We need to reverse engineer the length of
+            %the original one.
+            totalAdd = 0;
+            for i = 1:length(varargin)
+                totalAdd = totalAdd + varargin{i}.nObservations;
+            end
+            startObs = self.nObservations-totalAdd+1;
+            
+            anySwaps = false;
             for argin = 1:length(varargin)
-                if isa(varargin{argin},'prtDataSetBase') && varargin{argin}.isLabeled
-                    %self = mergeClassDefinitions(self,varargin{argin});
-                    try
-                        self.classNamesArray = merge(self.classNamesArray,varargin{argin}.classNamesArray);
-                    catch ME
-                        error('prt:catClasses','Attempted to combine class descriptions with incompatible names');
+                ds = varargin{argin};
+                currentObsInds = startObs:startObs+ds.nObservations-1;
+                if isa(ds,'prtDataSetBase') && ds.isLabeled
+                    %                     try
+                    %                         self.classNamesArray = merge(self.classNamesArray,ds.classNamesArray);
+                    %                     catch ME
+                    %                         warning('prt:catClasses','Combine class descriptions with incompatible names; output target indices may not match input target indices');
+                    %                         [self.classNamesArray,integerSwaps] = combine(self.classNamesArray,ds.classNamesArray);
+                    %                         targets = self.targets(currentObsInds);
+                    %                         for swapInd = 1:size(integerSwaps,1)
+                    %                             targets(targets == integerSwaps(swapInd,1)) = integerSwaps(swapInd,2);
+                    %                         end
+                    %                         self.targets(currentObsInds) = targets;
+                    %                     end
+                    [self.classNamesArray,integerSwaps] = combine(self.classNamesArray,ds.classNamesArray);
+                    targets = self.targets(currentObsInds);
+                    for swapInd = 1:size(integerSwaps,1)
+                        anySwaps = true;
+                        targets(targets == integerSwaps(swapInd,1)) = integerSwaps(swapInd,2);
                     end
+                    self.targets(currentObsInds) = targets;
                 end
+                if anySwaps
+                    warning('prt:catClasses','Tried to combine class descriptions with incompatible names; output target indices may not match input target indices');
+                end
+                startObs = startObs+ds.nObservations;
             end
         end
 
@@ -390,7 +405,6 @@ classdef prtDataInterfaceCategoricalTargets < prtDataInterfaceTargets
             obj = obj.retainClassesByInd(classInds);
         end        
         
-        
         function classInds = getTargetsClassInd(obj,varargin)
             % getTargetsClassIndex  Return the targets by class index
             %
@@ -408,19 +422,15 @@ classdef prtDataInterfaceCategoricalTargets < prtDataInterfaceTargets
             % too much.
         end
         
-        
         function d = getObservationsUnlabeled(obj,varargin)
-            %             warning('use getDataUnlabeled');
             d = getDataUnlabeled(obj,varargin{:});
         end
             
         function d = getObservationsByClass(obj,varargin)
-            %             warning('use getDataByClass');
             d = getDataByClass(obj, varargin{:});
         end
         
         function d = getObservationsByClassInd(obj,varargin)
-            %             warning('use getDataByClassInd');
             d = getDataByClassInd(obj, varargin{:});
         end
         
@@ -428,7 +438,7 @@ classdef prtDataInterfaceCategoricalTargets < prtDataInterfaceTargets
     
     methods
         
-        function classHist = get.nObservationsByClass(Obj)
+		function classHist = get.nObservationsByClass(Obj)
             % nObservationsByClass Return the number of observations per class
             % 
             %   N = dataSet.nObservationsByClass() returns a vector
@@ -486,8 +496,7 @@ classdef prtDataInterfaceCategoricalTargets < prtDataInterfaceTargets
             end    
             
             Out = retainObservations(Obj,newObsInds);
-        end
-        
-        
+		end
+		
     end
 end

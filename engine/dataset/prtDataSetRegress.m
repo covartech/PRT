@@ -85,66 +85,76 @@ classdef prtDataSetRegress < prtDataSetStandard
                 varargout = {h};
             end
         end
-    end
+	end
+	
     methods (Static, Hidden = true)
         function plotOptions = initializePlotOptions()
             plotOptions = prtOptionsGet('prtOptionsDataSetRegressPlot');
         end
-    end
-    methods (Static)
-        function obj = loadobj(obj)
-            
-            if isstruct(obj)
-                
-                if ~isfield(obj,'version')
-                    % Version 0 - we didn't even specify version
-                    inputVersion = 0;
-                else
-                    inputVersion = obj.version;
-                end
-                
-                currentVersionObj = prtDataSetRegress;
-                
-                if inputVersion == currentVersionObj.version
-                    % Returning now will cause MATLAB to ignore this entire
-                    % loadobj() function and perform the default actions
-                    return
-                end
-                
-                % The input version is less than the current version
-                % We need to
-                inObj = obj;
-                obj = currentVersionObj;
-                switch inputVersion
-                    case 0
-                        % The oldest version of prtDataSetBase
-                        % We need to set the appropriate fields from the
-                        % structure (inObj) into the prtDataSetClass of the
-                        % current version
-                        obj = obj.setObservationsAndTargets(inObj.dataDepHelper,inObj.targetsDepHelper);
-                        obj.observationInfo = inObj.observationInfoDepHelper;
-                        obj.featureInfo = inObj.featureInfoDepHelper;
-                        if ~isempty(inObj.featureNames.cellValues)
-                            obj = obj.setFeatureNames(inObj.featureNames.cellValues);
-                        end
-                        if ~isempty(inObj.observationNames.cellValues)
-                            obj = obj.setObservationNames(inObj.observationNames.cellValues);
-                        end
-                        if ~isempty(inObj.targetNames.cellValues)
-                            obj = obj.setTargetNames(inObj.targetNames.cellValues);
-                        end
-                        obj.plotOptions = inObj.plotOptions;
-                        obj.name = inObj.name;
-                        obj.description = inObj.description;
-                        obj.userData = inObj.userData;
-                        obj.actionData = inObj.actionData;
-                        
-                    otherwise
-                        error('prt:prtDataSetRegress:loadObj','Unknown prtDataSetBase version %d, object cannot be laoded.',inputVersion);
-                end
-            else 
-                % Nothing special
-            end
-        end
-    end
+	end
+	
+	methods (Static)
+		function obj = loadobj(obj)
+			
+			if isstruct(obj)
+				if ~isfield(obj,'version')
+					% Version 0 - we didn't even specify version
+					inputVersion = 0;
+				else
+					inputVersion = obj.version;
+				end
+				
+				currentVersionObj = prtDataSetRegress;
+				
+				if inputVersion == currentVersionObj.version
+					% Returning now will cause MATLAB to ignore this entire
+					% loadobj() function and perform the default actions
+					return
+				end
+				
+				if inputVersion > currentVersionObj.version
+					% Versions new than current version!
+					warning('prt:prtDataSetRegress:loadNewVersion','Attempt to load an updated prtDataSetRegress from file. This prtDataSetRegress was saved using a new version of the PRT. This dataset may not load properly.')
+					return
+				end
+				
+				if inputVersion < 2
+					% Versions older than 2 are no longer supported.
+					warning('prt:prtDataSetRegress:loadOldVersion','Attempt to load obsolete prtDataSetRegress from file. This prtDataSetRegress may not load properly.')
+					return
+				end
+				
+				inObj = obj;
+				obj = currentVersionObj;
+				switch inputVersion
+					case 2
+						obj = obj.setObservationsAndTargets(inObj.internalData ,inObj.internalTargets);
+						obj.observationInfo = inObj.observationInfoInternal;
+						
+						if ~isempty(inObj.featureInfoInternal);
+							obj.featureInfo = inObj.featureInfoInternal;
+						end
+						
+						if ~isempty(inObj.featureNameIntegerAssocArray)
+							obj = obj.setFeatureNames(inObj.featureNameIntegerAssocArray.cellValues,inObj.featureNameIntegerAssocArray.integerKeys);
+						end
+						
+						if ~isempty(inObj.observationNamesInternal.cellValues)
+							obj = obj.setObservationNames(inObj.observationNamesInternal.cellValues,inObj.observationNamesInternal.integerKeys);
+						end
+						
+						if ~isempty(inObj.targetNamesInternal)
+							obj = obj.setTargetNames(inObj.targetNamesInternal.cellValues);
+						end
+						
+						obj.name = inObj.name;
+						obj.description = inObj.description;
+						obj.userData = inObj.userData;
+				end
+				
+			else
+				% Nothin special
+			end
+		end
+	end
 end

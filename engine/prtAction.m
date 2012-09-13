@@ -56,10 +56,9 @@ classdef prtAction
     end
     
     properties (Hidden = true)
-        
-        % A tag that can be used to reference a specific action within a
-        % prtAlgorithm
-        tag = '';
+		% A tag that can be used to reference a specific action within a
+		% prtAlgorithm
+        tag = ''; 
     end
     
     properties (Hidden = true, SetAccess=protected, GetAccess=protected)
@@ -67,40 +66,15 @@ classdef prtAction
         classRun = 'prtDataSetBase';
         classRunRetained = false;
         
-        verboseFeatureNamesInternal = false;
-        verboseStorageInternal = prtAction.getVerboseStorage();
+		verboseStorageInternal = prtAction.getVerboseStorage();
         showProgressBarInternal = prtAction.getShowProgressBar();
-    end
+	end
     
     properties (Dependent)
         % Specifies whether or not to store the training prtDataset.
         % If true the training prtDataSet is stored internally prtAction.dataSet.
         verboseStorage
         showProgressBar
-        % A logical to specify if modified feature names should be stored
-        % even if no feature names were specified for the dataset
-        verboseFeatureNames = true;
-    end
-    
-    methods (Hidden = true)
-        function dataSet = updateDataSetFeatureNames(obj,dataSet)
-            
-            if obj.verboseFeatureNames %this is redundant... but I'm not sure why the following code checks this anyway
-                if isa(dataSet,'prtDataSetStandard') && (dataSet.hasFeatureNames || obj.verboseFeatureNames)
-                    fNames = dataSet.getFeatureNames;
-                    fNames = obj.updateFeatureNames(fNames);
-                    if ~isempty(fNames) %it's possible that the feature set is *empty*; in which case, don't bother
-                        dataSet = dataSet.setFeatureNames(fNames);
-                    end
-                end
-            end
-        end
-    end
-    
-    methods (Hidden = true)
-        function featureNames = updateFeatureNames(obj,featureNames) %#ok<MANU>
-            %Default: do nothing
-        end
     end
     
     properties (SetAccess = protected)
@@ -130,182 +104,174 @@ classdef prtAction
     
     methods (Abstract, Access = protected, Hidden = true)
         % prtAction.trainAction() - Primary method for training a prtAction
-        %   Obj = prtAction.trainAction(Obj,DataSet)
-        Obj = trainAction(Obj, DataSet)
+        %   self = prtAction.trainAction(self,DataSet)
+        self = trainAction(self, ds)
         
         % prtAction.runAction() - Primary method for evaluating a prtAction
-        %   DataSet = runAction(Obj, DataSet)
-        DataSet = runAction(Obj, DataSet)
+        %   ds = runAction(self, ds)
+        ds = runAction(self, ds)
     end
     methods (Access = protected, Hidden = true)
-        function xOut = runActionFast(Obj, xIn, ds) %#ok<STOUT,INUSD>
-            error('prt:prtAction:runActionFast','The prtAction (%s) does not have a runActionFast() method. Therefore runFast() cannot be used.',class(Obj));
+        function xOut = runActionFast(self, xIn, ds) %#ok<STOUT,INUSD>
+            error('prt:prtAction:runActionFast','The prtAction (%s) does not have a runActionFast() method. Therefore runFast() cannot be used.',class(self));
         end
     end
     
     methods (Hidden)
-        function Obj = plus(in1,in2)
+        function self = plus(in1,in2)
             if isa(in2,'prtAlgorithm')
-                Obj = in2 - in1; % Use prtAlgorithm (use MINUS to flip left/right)
+                self = in2 - in1; % Use prtAlgorithm (use MINUS to flip left/right)
             elseif isa(in2,'prtAction') && (isa(in2,'prtAction') || all(cellfun(@(x)isa(x,'prtAction'),in2)))
-                Obj = prtAlgorithm(in1) + prtAlgorithm(in2);
+                self = prtAlgorithm(in1) + prtAlgorithm(in2);
             else
                 error('prt:prtAction:plus','prtAction.plus is only defined for second inputs of type prtAlgorithm or prtAction, but the second input is a %s',class(in2));
             end
         end
         
         
-        function Obj = mldivide(in1,in2)
+        function self = mldivide(in1,in2)
             if isa(in2,'prtAlgorithm')
-                Obj = in2 / in1; % Use prtAlgorithm(use MLDIVIDE to flip left/right)
+                self = in2 / in1; % Use prtAlgorithm(use MLDIVIDE to flip left/right)
             elseif isa(in2,'prtAction')
-                Obj = prtAlgorithm(in1) \ prtAlgorithm(in2);
+                self = prtAlgorithm(in1) \ prtAlgorithm(in2);
             else
                 error('prt:prtAction:mldivide','prtAction.mldivide is only defined for second inputs of type prtAlgorithm or prtAction, but the second input is a %s',class(in2));
             end
         end
         
-        function Obj = mrdivide(in1,in2)
+        function self = mrdivide(in1,in2)
             if isa(in2,'prtAlgorithm')
-                Obj = in2 \ in1; % Use prtAlgorithm(use MLDIVIDE to flip left/right)
+                self = in2 \ in1; % Use prtAlgorithm(use MLDIVIDE to flip left/right)
             elseif isa(in2,'prtAction')
-                Obj = prtAlgorithm(in1) / prtAlgorithm(in2);
+                self = prtAlgorithm(in1) / prtAlgorithm(in2);
             else
                 error('prt:prtAction:mrdivide','prtAction.mrdivide is only defined for second inputs of type prtAlgorithm or prtAction, but the second input is a %s',class(in2));
             end
         end
         
-        function DataSetOut = runOnTrainingData(Obj, DataSetIn)
+        function dsOut = runOnTrainingData(self, dsIn)
             % RUNONTRAININGDATA  Run a prtAction object on a prtDataSet
             % object during training of a prtAlgorithm
             %
-            %   OUTPUT = OBJ.run(DataSet) runs the prtAction object using
-            %   the prtDataSet DataSet. OUTPUT will be a prtDataSet object.
-            DataSetOut = preRunProcessing(Obj, DataSetIn);
-            DataSetOut = runActionOnTrainingData(Obj, DataSetOut);
-            DataSetOut = postRunProcessing(Obj, DataSetIn, DataSetOut);
+            %   OUTPUT = OBJ.run(ds) runs the prtAction object using
+            %   the prtDataSet ds. OUTPUT will be a prtDataSet object.
+            dsOut = preRunProcessing(self, dsIn);
+            dsOut = runActionOnTrainingData(self, dsOut);
+            dsOut = postRunProcessing(self, dsIn, dsOut);
         end
     end
     methods
-        function Obj = train(Obj, DataSet)
+        function self = train(self, ds)
             % TRAIN  Train a prtAction object using training a prtDataSet object.
             %
-            %   OBJ = OBJ.train(DataSet) trains the prtAction object using
-            %   the prtDataSet DataSet
+            %   self = Obj.train(ds) trains the prtAction object using
+            %   the prtDataSet ds
             
-            if ~isscalar(Obj)
-                error('prt:prtAction:NonScalarAction','train method expects scalar prtAction objects, prtAction provided was of size %s',mat2str(size(Obj)));
+            if ~isscalar(self)
+                error('prt:prtAction:NonScalarAction','train method expects scalar prtAction objects, prtAction provided was of size %s',mat2str(size(self)));
             end
 
-            inputClassType = class(DataSet);
-            if ~isempty(Obj.classTrain) && ~prtUtilDataSetClassCheck(inputClassType,Obj.classTrain)
-                error('prt:prtAction:incompatible','%s.train() requires datasets of type %s but the input is of type %s, which is not a subclass of %s', class(Obj), Obj.classTrain, inputClassType, Obj.classTrain);
+            inputClassType = class(ds);
+            if ~isempty(self.classTrain) && ~prtUtilDataSetClassCheck(inputClassType,self.classTrain)
+                error('prt:prtAction:incompatible','%s.train() requires datasets of type %s but the input is of type %s, which is not a subclass of %s', class(self), self.classTrain, inputClassType, self.classTrain);
             end
             
-            if Obj.isSupervised && ~DataSet.isLabeled
-                error('prt:prtAction:noLabels','%s is a supervised action and therefore requires that the training dataset is labeled',class(Obj));
+            if self.isSupervised && ~ds.isLabeled
+                error('prt:prtAction:noLabels','%s is a supervised action and therefore requires that the training dataset is labeled',class(self));
             end 
             
             % Default preTrainProcessing() stuff
-            Obj.dataSetSummary = summarize(DataSet);
+            self.dataSetSummary = summarize(ds);
             
-            %preTrainProcessing should make sure Obj has the right
+            %preTrainProcessing should make sure self has the right
             %verboseStorage
-            Obj = preTrainProcessing(Obj,DataSet);
+            self = preTrainProcessing(self,ds);
             
-            if Obj.verboseStorage
-                Obj.dataSet = DataSet;
+            if self.verboseStorage
+                self.dataSet = ds;
             end
             
-            Obj = trainAction(Obj, DataSet);
-            Obj.isTrained = true;
-            Obj = postTrainProcessing(Obj,DataSet);
+            self = trainAction(self, ds);
+            self.isTrained = true;
+            self = postTrainProcessing(self,ds);
         end
         
-        function [DataSetOut, extraOutput] = run(Obj, DataSetIn)         
+        function [dsOut, extraOutput] = run(self, dsIn)         
             % RUN  Run a prtAction object on a prtDataSet object.
             %
-            %   OUTPUT = OBJ.run(DataSet) runs the prtAction object using
+            %   dsOut = OBJ.run(ds) runs the prtAction object using
             %   the prtDataSet DataSet. OUTPUT will be a prtDataSet object.
             
-            if ~Obj.isTrained
-                error('prtAction:run:ActionNotTrained','Attempt to run a prtAction of type %s that was not trained',class(Obj));
+            if ~self.isTrained
+                error('prtAction:run:ActionNotTrained','Attempt to run a prtAction of type %s that was not trained',class(self));
             end
                 
-            inputClassName = class(DataSetIn);
+            inputClassName = class(dsIn);
             
-            if ~isempty(Obj.classRun) && ~prtUtilDataSetClassCheck(inputClassName,Obj.classRun)
-                error('prt:prtAction:incompatible','%s.run() requires datasets of type %s but the input is of type %s, which is not a subclass of %s.',class(Obj), Obj.classRun, inputClassName, Obj.classRun);
+            if ~isempty(self.classRun) && ~prtUtilDataSetClassCheck(inputClassName,self.classRun)
+                error('prt:prtAction:incompatible','%s.run() requires datasets of type %s but the input is of type %s, which is not a subclass of %s.',class(self), self.classRun, inputClassName, self.classRun);
             end
             
-            if isempty(DataSetIn)
-                DataSetOut = DataSetIn;
+            if isempty(dsIn)
+                dsOut = dsIn;
                 return
             end
             
-            DataSetOut = preRunProcessing(Obj, DataSetIn);
+            dsOut = preRunProcessing(self, dsIn);
             switch nargout
                 case 1
-                   DataSetOut = runAction(Obj, DataSetOut);
+                   dsOut = runAction(self, dsOut);
                 case 2 
-                    [DataSetOut, extraOutput] = runAction(Obj, DataSetOut);
+                    [dsOut, extraOutput] = runAction(self, dsOut);
             end
-            DataSetOut = postRunProcessing(Obj, DataSetIn, DataSetOut);
+            dsOut = postRunProcessing(self, dsIn, dsOut);
            
-            outputClassName = class(DataSetOut);
+            outputClassName = class(dsOut);
             
-            if Obj.classRunRetained && ~isequal(outputClassName,inputClassName)
-                error('prt:prtAction:incompatible','%s specifies that it retains the class of input datasets however, the class of the output dataset is %s and the class of the input dataset is %s. This may indicate an error with the runAction() method of %s.', class(Obj), outputClassName, inputClassName, class(Obj));
+            if self.classRunRetained && ~isequal(outputClassName,inputClassName)
+                error('prt:prtAction:incompatible','%s specifies that it retains the class of input datasets however, the class of the output dataset is %s and the class of the input dataset is %s. This may indicate an error with the runAction() method of %s.', class(self), self.classRun, inputClassName, class(self));
             end
         end
         
-        function Obj = set.classRun(Obj,val)
+        function self = set.classRun(self,val)
             assert(ischar(val),'prt:prtAction:classRun','classRun must be a string.');
-            Obj.classRun = val;
+            self.classRun = val;
         end
-        function Obj = set.classTrain(Obj,val)
+        function self = set.classTrain(self,val)
             assert(ischar(val),'prt:prtAction:classTrain','classTrain must be a string.');
-            Obj.classTrain = val;
+            self.classTrain = val;
         end
-        function Obj = set.classRunRetained(Obj,val)
+        function self = set.classRunRetained(self,val)
             assert(prtUtilIsLogicalScalar(val),'prt:prtAction:classRunRetained','classRunRetained must be a scalar logical.');
-            Obj.classRunRetained = val;
+            self.classRunRetained = val;
         end        
         
-        function Obj = set.verboseFeatureNames(Obj,val)
-            Obj = Obj.setVerboseFeatureNames(val);
+        function self = set.verboseStorage(self,val)
+            self = self.setVerboseStorage(val);
         end
         
-        function Obj = set.verboseStorage(Obj,val)
-            Obj = Obj.setVerboseStorage(val);
+        function self = set.showProgressBar(self,val)
+            self = self.setShowProgressBar(val);
         end
         
-        function Obj = set.showProgressBar(Obj,val)
-            Obj = Obj.setShowProgressBar(val);
+        function val = get.verboseStorage(self)
+            val = self.verboseStorageInternal;
         end
         
-        function val = get.verboseStorage(Obj)
-            val = Obj.verboseStorageInternal;
+        function val = get.showProgressBar(self)
+            val = self.showProgressBarInternal;
         end
         
-        function val = get.verboseFeatureNames(Obj)
-            val = Obj.verboseFeatureNamesInternal;
-        end
-        
-        function val = get.showProgressBar(Obj)
-            val = Obj.showProgressBarInternal;
-        end
-        
-        function [OutputDataSet, TrainedActions] = crossValidate(Obj, DataSet, validationKeys)
+        function [dsOut, trainedActions] = crossValidate(self, dsIn, validationKeys)
             % CROSSVALIDATE  Cross validate prtAction using prtDataSet and cross validation keys.
             %
             %  OUTPUTDATASET = OBJ.crossValidate(DATASET, KEYS) cross
             %  validates the prtAction object OBJ using the prtDataSet
             %  DATASET and the KEYS. DATASET must be a labeled prtDataSet.
             %  KEYS must be a vector of integers with the same number of
-            %  elements as DataSet has observations.
+            %  elements as DATASET has observations.
             %
-            %  The KEYS are are used to parition the input DataSet into
+            %  The KEYS are are used to parition the input DATASET into
             %  test and training data sets. For each unique key, a test set
             %  will be created out of the corresponding observations of the
             %  prtDataSet. The remaining observations will be used as
@@ -317,102 +283,90 @@ classdef prtAction
             %  unique KEYS.
             
             
-            if ~Obj.isCrossValidateValid
+            if ~self.isCrossValidateValid
                 %Should this error?
-                warning('prtAction:crossValidate','The input object of type %s has isCrossValidateValid set to false; the outputs of cross-validation may be meaningless',class(Obj));
+                warning('prtAction:crossValidate','The input object of type %s has isCrossValidateValid set to false; the outputs of cross-validation may be meaningless',class(self));
             end
-            if ~isvector(validationKeys) || (numel(validationKeys) ~= DataSet.nObservations)
+            if ~isvector(validationKeys) || (numel(validationKeys) ~= dsIn.nObservations)
                 error('prt:prtAction:crossValidate','validationKeys must be a vector with a length equal to the number of observations in the data set');
-            end
-            
+			end
+			
+			validationKeys = validationKeys(:);
+			
             uKeys = unique(validationKeys);
             
-            actuallyShowProgressBar = Obj.showProgressBar && (length(uKeys) > 1);
-            
+            actuallyShowProgressBar = self.showProgressBar && (length(uKeys) > 1);
             if actuallyShowProgressBar
-                waitBarObj = prtUtilProgressBar(0,sprintf('Crossvalidating - %s',Obj.name),'autoClose',true);
+                waitBarself = prtUtilProgressBar(0,sprintf('Crossvalidating - %s',self.name),'autoClose',true);
                 
-                % cleanupObj = onCleanup(@()close(waitBarObj));
-                % % The above would close the waitBar upon completion but
-                % % it doesn't play nice when there are many bars in the
-                % % same window
+				%cleanupself = onCleanup(@()close(waitBarself));
+				% The above would close the waitBar upon completion but
+				% it doesn't play nice when there are many bars in the
+				% same window
             end
             
-            isDataSetClass = isa(DataSet,'prtDataSetClass'); % Used below to provide a nicer error message in bad casses.
-            if isDataSetClass 
-                inputNumberOfClasses = DataSet.nClasses;
-            end
-            
-            for uInd = 1:length(uKeys);
-                    
-                if actuallyShowProgressBar
-                    waitBarObj.update((uInd-1)/length(uKeys));
-                end
-                
-                %get the testing indices:
-                if isa(uKeys(uInd),'cell')
-                    cTestLogical = strcmp(uKeys(uInd),validationKeys);
-                else
-                    cTestLogical = uKeys(uInd) == validationKeys;
-                end
-                
-                testDataSet = DataSet.retainObservations(cTestLogical);
-                if length(uKeys) == 1  %1-fold, incestuous train and test
-                    trainDataSet = testDataSet;
-                else
-                    trainDataSet = DataSet.removeObservations(cTestLogical);
-                end
-                %fprintf('Original: %d, Train: %d, Test: %d\n',DataSet.nObservations,trainDataSet.nObservations,testDataSet.nObservations);
-                
-                if isDataSetClass && trainDataSet.nClasses ~= inputNumberOfClasses
-                	warning('prt:prtAction:crossValidateNClasses','Cross validation fold %d yielded a test data set with %d class(es) but the input data set contains %d classes. This may result in errors. It may be possible to resolve this by modifying the cross-validation keys.', uInd, trainDataSet.nClasses, inputNumberOfClasses)
-                end
-                
-                classOut = Obj.train(trainDataSet);
-                currResults = classOut.run(testDataSet);
-                
-                if currResults.nObservations < 1
-                    error('prt:prtAction:crossValidate','A cross-validation fold returned a data set with no observations.')
-                end
-                if uInd == 1
-                    nOutputDimensions = length(currResults.getX(1,:));
-                end
-                if nOutputDimensions ~= length(currResults.getX(1,:));
-                    error('prt:prtAction:crossValidate','A cross-validation fold returned a data set with a different number of dimensions than a previous fold.')
-                end
-                
-                if uInd == 1
-                    InternalOutputDataSet = currResults;
-                    
-                    OutputMat = nan(DataSet.nObservations, nOutputDimensions);
-                end
-                OutputMat(cTestLogical,:) = currResults.getObservations();
-                
-                %only do this if the output is requested; otherwise this cell of
-                %classifiers can get very large, and slow things down.
-                if nargout >= 2
-                    if uInd == 1
-                        % First iteration pre-allocate
-                        TrainedActions = repmat(classOut,length(uKeys),1);
-                    else
-                        TrainedActions(uInd) = classOut;
-                    end
-                end
-            end	
-            if actuallyShowProgressBar
-                waitBarObj.update(1);
-            end
-            
-            OutputDataSet = prtDataSetClass(OutputMat,DataSet.targets);
-            %             OutputDataSet = DataSet;
-            %             OutputDataSet = OutputDataSet.setObservations(OutputMat);
-            %OutputDataSet = OutputDataSet.setFeatureNames(InternalOutputDataSet.getFeatureNames);
+			testingIndiciesCell = cell(length(uKeys),1);
+			outputDataSetCell = cell(length(uKeys),1);
+			for uInd = 1:length(uKeys);
+				
+				if actuallyShowProgressBar
+					waitBarself.update((uInd-1)/length(uKeys));
+				end
+				
+				% Get the testing indices
+				if isa(uKeys(uInd),'cell')
+					cTestLogical = strcmp(uKeys(uInd),validationKeys);
+				else
+					cTestLogical = uKeys(uInd) == validationKeys;
+				end
+				
+				% Store the indicies for resorting later
+				testingIndiciesCell{uInd} = find(cTestLogical);
+				testDs = dsIn.retainObservations(cTestLogical);
+				
+				% Get the training dataset
+				if length(uKeys) == 1  %1-fold, incestuous train and test
+					trainDs = testDs;
+				else
+					trainDs = dsIn.removeObservations(cTestLogical);
+				end
+				
+				% Train the action using the training dataset
+				trainedAction = self.train(trainDs);
+				
+				% Run the trained action on the test dataset
+				outputDataSetCell{uInd} = trainedAction.run(testDs);
+				
+				% Ask the input dataset to assess the quality of the fold
+				% and the results.
+				% This check allows prtDataSetClass to check to make sure
+				% that all classes are represented in each fold.
+				outputDataSetCell{uInd} = crossValidateCheckFoldResults(dsIn, trainDs, testDs, outputDataSetCell{uInd});
+				
+				% Only do this if the output is requested; otherwise this
+				% cell of actions can get large if verboseStorage is true
+				if nargout >= 2
+					if uInd == 1
+						% First iteration pre-allocate
+						trainedActions = repmat(trainedAction,length(uKeys),1);
+					else
+						trainedActions{uInd} = trainedAction;
+					end
+				end
+			end
+			if actuallyShowProgressBar
+				waitBarself.update(1);
+			end
+			
+			dsOut = crossValidateCombineFoldResults(outputDataSetCell{1}, outputDataSetCell, testingIndiciesCell);
+			
+			dsOut = dsOut.acquireNonDataAttributesFrom(dsIn);
         end
         
-        function varargout = kfolds(Obj,DataSet,K)
+        function varargout = kfolds(self, ds , k)
             % KFOLDS  Perform K-folds cross validation of prtAction
             % 
-            %    OUTPUTDATASET = Obj.KFOLDS(DATASET, K) performs K-folds
+            %    OUTPUTDATASET = self.KFOLDS(DATASET, K) performs K-folds
             %    cross validation of the prtAction object OBJ using the
             %    prtDataSet DATASET. DATASET must be a labeled prtDataSet,
             %    and K must be a scalar interger, representing the number
@@ -422,7 +376,7 @@ classdef prtAction
             %    held constant.
             %
             %    [OUTPUTDATASET, TRAINEDACTIONS, CROSSVALKEYS] =
-            %    Obj.KFOLDS(DATASET, K)  outputs the trained prtAction
+            %    self.KFOLDS(DATASET, K)  outputs the trained prtAction
             %    objects TRAINEDACTIONS, and the generated cross-validation
             %    keys CROSSVALKEYS.
             %
@@ -430,27 +384,27 @@ classdef prtAction
             %    which fold see crossValidate.
             
             
-            assert(isa(DataSet,'prtDataSetBase'),'First input must by a prtDataSet.');
+            assert(isa(ds,'prtDataSetBase'),'First input must by a prtDataSet.');
             
-            if nargin == 2 || isempty(K)
-                K = DataSet.nObservations;
+            if nargin == 2 || isempty(k)
+                k = ds.nObservations;
             end
             
-            assert(prtUtilIsPositiveScalarInteger(K),'prt:prtAction:kfolds','K must be a positive scalar integer');
+            assert(prtUtilIsPositiveScalarInteger(k),'prt:prtAction:kfolds','k must be a positive scalar integer');
             
-            nObs = DataSet.nObservations;
-            if K > nObs;
-                warning('prt:prtAction:kfolds:nFolds','Number of folds (%d) is greater than number of data points (%d); assuming Leave One Out training and testing',K,nObs);
-                K = nObs;
-            elseif K < 1
-                warning('prt:prtAction:kfolds:nFolds','Number of folds (%d) is less than 1 assuming FULL training and testing',K);
-                K = 1;
+            nObs = ds.nObservations;
+            if k > nObs;
+                warning('prt:prtAction:kfolds:nFolds','Number of folds (%d) is greater than number of data points (%d); assuming Leave One Out training and testing',k,nObs);
+                k = nObs;
+            elseif k < 1
+                warning('prt:prtAction:kfolds:nFolds','Number of folds (%d) is less than 1 assuming FULL training and testing',k);
+                k = 1;
             end
             
-            keys = DataSet.getKFoldKeys(K);
+            keys = ds.getKFoldKeys(k);
             
             outputs = cell(1,min(max(nargout,1),2));
-            [outputs{:}] = Obj.crossValidate(DataSet,keys);
+            [outputs{:}] = self.crossValidate(ds,keys);
             
             varargout = outputs(:);
             if nargout > 2
@@ -458,7 +412,7 @@ classdef prtAction
             end
         end
         
-        function Obj = set(Obj,varargin)
+        function self = set(self,varargin)
             % set - set the object properties
             %   
             % OBJ = OBJ.set(PARAM, VALUE) sets the parameter PARAM of OBJ
@@ -468,13 +422,13 @@ classdef prtAction
             % OBJ = OBJ.set(PARAM1, VALUE1, PARAM2, VALUE2....) sets all
             % the desired parameters to the specified values.
             
-            % ActionObj = get(ActionObj,paramNameStr,paramValue);
+            % Actionself = get(ActionObj,paramNameStr,paramValue);
             % ActionObj = get(ActionObj,paramNameStr1,paramValue1, paramNameStr2, paramNameValue2, ...); 
             
-            Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
+            self = prtUtilAssignStringValuePairs(self,varargin{:});
         end
         
-        function out = get(Obj,varargin)
+        function out = get(self,varargin)
             % get - get the object properties
             % 
             % val = obj.get(PARAM) retutns the value of the parameter
@@ -494,13 +448,13 @@ classdef prtAction
             
             % No additional inputs, assume all
             if isempty(nameStrs)
-                nameStrs = properties(Obj);
+                nameStrs = properties(self);
             end
             
             % Only one property requested
             % Return value
             if numel(nameStrs)==1
-                out = Obj.(nameStrs{1});
+                out = self.(nameStrs{1});
                 return
             end
 
@@ -508,14 +462,14 @@ classdef prtAction
             % Return structure of values
             out = struct;
             for iProp = 1:length(nameStrs)
-                out.(nameStrs{iProp}) = Obj.(nameStrs{iProp});
+                out.(nameStrs{iProp}) = self.(nameStrs{iProp});
             end
         end
         
     end
     
     methods (Access=protected, Hidden= true)
-        function ActionObj = preTrainProcessing(ActionObj,DataSet) %#ok<INUSD>
+        function self = preTrainProcessing(self, ds) %#ok<INUSD>
             % preTrainProcessing - Processing done prior to trainAction()
             %   Called by train(). Can be overloaded by prtActions to
             %   store specific information about the DataSet or Classifier
@@ -524,7 +478,7 @@ classdef prtAction
             %   ActionObj = preTrainProcessing(ActionObj,DataSet)
         end
         
-        function ActionObj = postTrainProcessing(ActionObj,DataSet) %#ok<INUSD>
+        function self = postTrainProcessing(self, ds) %#ok<INUSD>
             % postTrainProcessing - Processing done after trainAction()
             %   Called by train(). Can be overloaded by prtActions to
             %   store specific information about the DataSet or Classifier
@@ -533,7 +487,7 @@ classdef prtAction
             %   ActionObj = postTrainProcessing(ActionObj,DataSet)
         end
         
-        function DataSet = preRunProcessing(ActionObj, DataSet) %#ok<MANU>
+        function ds = preRunProcessing(self, ds) %#ok<MANU>
             % preRunProcessing - Processing done before runAction()
             %   Called by run(). Can be overloaded by prtActions to
             %   store specific information about the DataSet or Classifier
@@ -542,23 +496,22 @@ classdef prtAction
             %   DataSet = preRunProcessing(ActionObj, DataSet)
         end        
         
-        function DataSetOut = postRunProcessing(ActionObj, DataSetIn, DataSetOut)
+        function dsOut = postRunProcessing(self, dsIn, dsOut)
             % postRunProcessing - Processing done after runAction()
             %   Called by run(). Can be overloaded by prtActions to alter
             %   the results of run() to modify outputs using parameters of
             %   the prtAction.
             %   
-            %   DataSet = postRunProcessing(ActionObj, DataSet)
+            %   DataSetOut = postRunProcessing(ActionObj, DataSetIn, DataSetOut)
             
-            if DataSetIn.nObservations > 0
-                if ActionObj.isCrossValidateValid
-                    if DataSetIn.isLabeled && ~DataSetOut.isLabeled
-                        DataSetOut = DataSetOut.setTargets(DataSetIn.getTargets);
-                    end
-                    DataSetOut = DataSetOut.copyDescriptionFieldsFrom(DataSetIn);
-                end
-                DataSetOut = ActionObj.updateDataSetFeatureNames(DataSetOut);
-            end
+			if dsIn.nObservations > 0
+				if self.isCrossValidateValid
+					dsOut = dsOut.acquireNonDataAttributesFrom(dsIn);
+				end
+				
+				% Allow actions to modify featureNames
+				dsOut = dsOut.modifyNonDataAttributesFrom(self);
+			end
         end
         
         function xIn = preRunProcessingFast(ActionObj, xIn, ds) %#ok<INUSD,MANU>
@@ -570,18 +523,18 @@ classdef prtAction
             %   xOut = preRunProcessingFast(ActionObj, xIn, ds)
         end
         
-        function xOut = postRunProcessingFast(ActionObj, xIn, xOut, dsIn) %#ok<MANU,INUSD>
+        function xOut = postRunProcessingFast(self, xIn, xOut, dsIn) %#ok<INUSL,MANU,INUSD>
             % postRunProcessingFast - Processing done after runAction()
             %   Called by runFast(). Can be overloaded by prtActions to
             %   alter the results of run() to modify outputs using
             %   parameters of the prtAction.
             %   
-            %   DataSet = postRunProcessing(ActionObj, DataSet)
+            %   xOut = postRunProcessingFast(ActionObj, xIn, xOut, dsIn)
         end
         
     end
     methods (Access = protected, Hidden)
-        function DataSetOut = runActionOnTrainingData(Obj, DataSetIn)
+        function dsOut = runActionOnTrainingData(self, dsIn)
             % RUNACTIONONTRAININGDATA Run a prtAction object on a prtDataSet object
             %   This method differs from RUN() in that it is called after
             %   train() within prtAlgorithm prior to training of subsequent
@@ -589,13 +542,13 @@ classdef prtAction
             %   can be overloaded by prtActions to enable things such as 
             %   outlier removal.
             %
-            %    DataSetOut = runOnTrainingData(Obj DataSetIn);
+            %    dsOut = runOnTrainingData(self dsIn);
             
-            DataSetOut = runAction(Obj, DataSetIn);
+            dsOut = runAction(self, dsIn);
         end
     end
     methods (Hidden = false)
-        function [optimizedAction,performance] = optimize(Obj,DataSet,objFn,parameterName,parameterValues)
+        function [optimizedAction, performance] = optimize(self, ds , objFn, parameterName, parameterValues)
             % OPTIMIZE Optimize action parameter by exhaustive function maximization.
             %
             %  OPTIMACT = OPTIMIZE(DS, EVALFN, PARAMNAME, PARAMVALS)
@@ -617,7 +570,7 @@ classdef prtAction
             %
             %  ds = prtDataGenBimodal;  % Load a data set
             %  knn = prtClassKnn;       % Create a classifier
-            %  kVec = 3:5:50;          % Create a vector of parameters to
+            %  kVec = 3:5:50;           % Create a vector of parameters to
             %                           % optimze over
             %
             % % Optimize over the range of k values, using the area under
@@ -630,33 +583,33 @@ classdef prtAction
 
             
             %   objFn = @(act,ds)prtEvalAuc(act,ds,3);
-            %   [optimizedAction,performance] = optimize(Obj,DataSet,objFn,parameterName,parameterValues)
+            %   [optimizedAction,performance] = optimize(self,DataSet,objFn,parameterName,parameterValues)
             
             if isnumeric(parameterValues) || islogical(parameterValues)
                 parameterValues = num2cell(parameterValues);
             end
             performance = nan(length(parameterValues),1);
             
-            if Obj.showProgressBar
-                h = prtUtilProgressBar(0,sprintf('Optimizing %s.%s',class(Obj),parameterName),'autoClose',true);
+            if self.showProgressBar
+                h = prtUtilProgressBar(0,sprintf('Optimizing %s.%s',class(self),parameterName),'autoClose',true);
             end
             
             for i = 1:length(performance)
-                Obj.(parameterName) = parameterValues{i};
-                performance(i) = objFn(Obj,DataSet);
+                self.(parameterName) = parameterValues{i};
+                performance(i) = objFn(self, ds);
                 
-                if Obj.showProgressBar
+                if self.showProgressBar
                     h.update(i/length(performance));
                 end
             end
-            if Obj.showProgressBar
+            if self.showProgressBar
                 % Force close
                 h.update(1);
             end
             
             [maxPerformance,maxPerformanceInd] = max(performance); %#ok<ASGLU>
-            Obj.(parameterName) = parameterValues{maxPerformanceInd};
-            optimizedAction = train(Obj,DataSet);
+            self.(parameterName) = parameterValues{maxPerformanceInd};
+            optimizedAction = train(self,ds);
             
         end
     end
@@ -680,32 +633,32 @@ classdef prtAction
     end
     
     methods (Hidden = true)
-        function [out,varargout] = rt(Obj,in)
+        function [out,varargout] = rt(self,in)
             % Train and then run an action on a dataset
             switch nargout
                 case 1
-                    out = run(train(Obj,in),in);
+                    out = run(train(self,in),in);
                 otherwise
                     varargout = cell(1,nargout-1);
-                    [out,varargout{:}] = run(train(Obj,in),in);
+                    [out,varargout{:}] = run(train(self,in),in);
             end
         end
         
-        function Obj = setVerboseStorage(Obj,val)
+        function self = setVerboseStorage(self,val)
             assert(numel(val)==1 && (islogical(val) || (isnumeric(val) && (val==0 || val==1))),'prtAction:invalidVerboseStorage','verboseStorage must be a logical');
-            Obj.verboseStorageInternal = logical(val);
+            self.verboseStorageInternal = logical(val);
         end
         
-        function Obj = setVerboseFeatureNames(Obj,val)
+        function self = setVerboseFeatureNames(self,val)
             assert(numel(val)==1 && (islogical(val) || (isnumeric(val) && (val==0 || val==1))),'prtAction:invalidVerboseFeatureNames','verboseFeatureNames must be a logical');
-            Obj.verboseFeatureNamesInternal = logical(val);
+            self.verboseFeatureNamesInternal = logical(val);
         end
         
-        function Obj = setShowProgressBar(Obj,val)
+        function self = setShowProgressBar(self,val)
             if ~prtUtilIsLogicalScalar(val);
                 error('prt:prtAction','showProgressBar must be a scalar logical.');
             end
-            Obj.showProgressBarInternal = val;
+            self.showProgressBarInternal = val;
         end
         
         function varargout = export(obj,exportType,varargin)
@@ -767,16 +720,16 @@ classdef prtAction
             end
         end
         
-        function S = toStructure(obj)
-            % toStructure(obj)
+        function S = toStructure(self)
+            % toStructure(self)
             % This default prtAction method adds all properties defined in
-            % the class of obj into the structure, that are:
+            % the class of self into the structure, that are:
             %   GetAccess: public
             %   Hidden: false
             % other prtActions (that are properties, contained in cells,
             %   or fields of structures) are also converted to structures.
             
-            MetaInfo = meta.class.fromName(class(obj));
+            MetaInfo = meta.class.fromName(class(self));
             
             propNames = {};
             for iProperty = 1:length(MetaInfo.Properties)
@@ -786,11 +739,11 @@ classdef prtAction
             end
             
             S.class = 'prtAction';
-            S.prtActionType = class(obj);
-            S.isSupervised = obj.isSupervised;
-            S.dataSetSummary = obj.dataSetSummary;
+            S.prtActionType = class(self);
+            S.isSupervised = self.isSupervised;
+            S.dataSetSummary = self.dataSetSummary;
             for iProp = 1:length(propNames)
-                cProp = obj.(propNames{iProp});
+                cProp = self.(propNames{iProp});
                 for icProp = 1:length(cProp) % Allow for arrays of objects
                     cOut = prtUtilFintPrtActionsAndConvertToStructures(cProp(icProp));
                     if icProp == 1
@@ -801,16 +754,16 @@ classdef prtAction
                 end
                 S.(propNames{iProp}) = cVal;
             end
-            S.userData = obj.userData;
+            S.userData = self.userData;
         end
         
-        function xOut = runFast(Obj, xIn, ds)         
+        function xOut = runFast(self, xIn, ds)         
             % RUNFAST  Run a prtAction object on a matrix.
             %   The specific action must have overloaded the runActionFast
             %   method.
             
-            if ~Obj.isTrained
-                error('prtAction:runFast:ActionNotTrained','Attempt to run a prtAction of type %s that was not trained',class(Obj));
+            if ~self.isTrained
+                error('prtAction:runFast:ActionNotTrained','Attempt to run a prtAction of type %s that was not trained',class(self));
             end
                 
             if isempty(xIn)
@@ -819,13 +772,13 @@ classdef prtAction
             end
             
             if nargin > 2
-                xIn = preRunProcessingFast(Obj, xIn, ds);
-                xOut = runActionFast(Obj, xIn, ds);
-                xOut = postRunProcessingFast(Obj, xIn, xOut, ds);
+                xIn = preRunProcessingFast(self, xIn, ds);
+                xOut = runActionFast(self, xIn, ds);
+                xOut = postRunProcessingFast(self, xIn, xOut, ds);
             else
-                xIn = preRunProcessingFast(Obj, xIn);
-                xOut = runActionFast(Obj, xIn);
-                xOut = postRunProcessingFast(Obj, xIn, xOut);
+                xIn = preRunProcessingFast(self, xIn);
+                xOut = runActionFast(self, xIn);
+                xOut = postRunProcessingFast(self, xIn, xOut);
             end
         end
     end
@@ -837,5 +790,27 @@ classdef prtAction
         function val = getShowProgressBar()
             val = prtOptionsGet('prtOptionsComputation','showProgressBar');
         end        
-    end
+	end
+	
+	methods (Hidden = true)
+		function fun = getFeatureNameModificationFunction(self) %#ok<MANU>
+			fun = []; % Default we output empty which means don't change anything...
+			
+			% The alternative is to output a function handle of the form
+			% @(nameIn, index)modificationFunction(nameIn); 
+			
+			% This is overloaded by prtClass to set the names to designate
+			% that they are now algorithm confidences
+			
+			% Putting this in prtAction is a little strange because some
+			% actions can operate only on datasets that do not technically
+			% have features. In these cases this method should just be
+			% ignored. The alternative is to store this in a class of
+			% actions that opperate only on prtDataSetStandards. It has
+			% been decided that this would over complicate the class
+			% hierarchy since this is the only exception at this point and
+			% it is easily ignored.
+		end
+	end
+	
 end

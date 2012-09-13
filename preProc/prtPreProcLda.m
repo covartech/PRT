@@ -57,15 +57,13 @@ classdef prtPreProcLda < prtPreProcClass
         function Obj = prtPreProcLda(varargin)
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
         end
-    end
+	end
     
-    methods (Hidden = true)
-        function featureNames = updateFeatureNames(obj,featureNames) %#ok<MANU>
-            for i = 1:length(featureNames)
-                featureNames{i} = sprintf('LDA Score %d',i);
-            end
+	methods (Hidden = true)
+        function featureNameModificationFunction = getFeatureNameModificationFunction(obj) %#ok<MANU>
+            featureNameModificationFunction = prtUtilFeatureNameModificationFunctionHandleCreator('LDA Score #index#');
         end
-    end
+	end
     
     methods
         function Obj = set.nComponents(Obj,nComp)

@@ -33,8 +33,6 @@ classdef prtClass < prtAction
     %   prtClassTreeBaggingCap, prtClassKmsd, prtClassKnn
     %
     %
-    
-    
     %
     %   Sub-classing prtClass:
     %       Concrete sub-classes of prtClass must define the abstract
@@ -95,18 +93,16 @@ classdef prtClass < prtAction
     
     properties (Hidden = true)
         plotOptions = prtClass.initializePlotOptions();
-    end
-    
+	end
+	
     methods (Hidden = true)
-        function featureNames = updateFeatureNames(obj,featureNames)
-            if ~obj.includesDecision
-                for i = 1:length(featureNames)
-                    featureNames{i} = sprintf('%s Output_{%d}',obj.nameAbbreviation,i);
-                end
-            else
-                featureNames{1} = 'Class Label';
-            end
-        end
+        function featureNameModificationFunction = getFeatureNameModificationFunction(obj)
+			if ~obj.includesDecision
+				featureNameModificationFunction = prtUtilFeatureNameModificationFunctionHandleCreator('%s Output_{#index#}', obj.nameAbbreviation);
+			else
+				featureNameModificationFunction = prtUtilFeatureNameModificationFunctionHandleCreator('Class Label');
+			end
+		end
     end    
     
     methods
@@ -315,29 +311,29 @@ classdef prtClass < prtAction
             ClassObj = preTrainProcessing@prtAction(ClassObj,DataSet);
         end
         
-        function OutputDataSet = postRunProcessing(ClassObj, InputDataSet, OutputDataSet)
+        function dsOut = postRunProcessing(self, dsIn, dsOut)
             % Overload postRunProcessing (from prtAction) so that we can
             % enforce twoClassParadigm
             
-            if ~isempty(ClassObj.internalDecider)
-                OutputDataSet = ClassObj.internalDecider.run(OutputDataSet);
+            if ~isempty(self.internalDecider)
+                dsOut = self.internalDecider.run(dsOut);
             end
             
-            if ~isempty(ClassObj.yieldsMaryOutput) && ~isnan(ClassObj.yieldsMaryOutput)
-                if ClassObj.yieldsMaryOutput
+            if ~isempty(self.yieldsMaryOutput) && ~isnan(self.yieldsMaryOutput)
+                if self.yieldsMaryOutput
                     % Mary classifier output mary decision statistics
                     % enforce that it has output one for each class in the
                     % training data set.
-                    assert(OutputDataSet.nFeatures == ClassObj.dataSetSummary.nClasses,'M-ary classifiers must yield observations with nFeatures equal to the number of unique classes in the training data set. This classifier must be modified to output observations with the proper dimensionality. If integer outputs are desired, output a binary matrix.');
+                    assert(dsOut.nFeatures == self.dataSetSummary.nClasses,'M-ary classifiers must yield observations with nFeatures equal to the number of unique classes in the training data set. This classifier must be modified to output observations with the proper dimensionality. If integer outputs are desired, output a binary matrix.');
                 else
-                    % Run Function provided mary output but ClassObj knows
+                    % Run Function provided mary output but self knows
                     % not to supply this. We must run
                     % maryOutput2binaryOutput()
-                    OutputDataSet = maryOutput2binaryOutput(ClassObj,OutputDataSet);
+                    dsOut = maryOutput2binaryOutput(self,dsOut);
                 end
             end
             
-            OutputDataSet = postRunProcessing@prtAction(ClassObj, InputDataSet, OutputDataSet);
+            dsOut = postRunProcessing@prtAction(self, dsIn, dsOut);
         end
         
         function xOut = postRunProcessingFast(ClassObj, xIn, xOut, dsIn) %#ok<MANU,INUSD>

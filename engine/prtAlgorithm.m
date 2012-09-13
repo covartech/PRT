@@ -60,6 +60,13 @@ classdef prtAlgorithm < prtAction
                 error('prtAlgorithm:actionCell','actionCell must be a vector cell array of prtActions')
             end
             
+            for i = 1:length(aCell)
+                if ~aCell{i}.classRunRetained
+                    Obj.classRunRetained = false;
+                    break;
+                end
+            end
+            
             %Set the internal action cell correctly
             Obj.internalActionCell = aCell;
         end
@@ -77,14 +84,7 @@ classdef prtAlgorithm < prtAction
     end
     
     methods (Hidden = true)
-        function dataSet = updateDataSetFeatureNames(obj,dataSet) %#ok<MANU>
-            %Algorithms do not have to do this; since they are composed of
-            %class objects, we can just rely on the dataSet to have the
-            %right feature names already.
-            
-            %At least this is true for single-stream Algorithms
-        end
-        
+		
         function Obj = setVerboseStorage(Obj,val)
             assert(numel(val)==1 && (islogical(val) || (isnumeric(val) && (val==0 || val==1))),'prtAction:invalidVerboseStorage','verboseStorage must be a logical');
             Obj.verboseStorageInternal = logical(val);
@@ -93,20 +93,8 @@ classdef prtAlgorithm < prtAction
             for iAction = 1:length(Obj.actionCell)
                 Obj.actionCell{iAction}.verboseStorage = val;
             end
-            
         end
-        
-        function Obj = setVerboseFeatureNames(Obj,val)
-            assert(numel(val)==1 && (islogical(val) || (isnumeric(val) && (val==0 || val==1))),'prtAction:invalidVerboseFeatureNames','VerboseFeatureNames must be a logical');
-            Obj.verboseFeatureNamesInternal = logical(val);
-            
-            % Also set each actionCells
-            for iAction = 1:length(Obj.actionCell)
-                Obj.actionCell{iAction}.verboseFeatureNames = val;
-            end
-            
-        end
-        
+         
         function Obj = setShowProgressBar(Obj,val)
             if ~prtUtilIsLogicalScalar(val);
                 error('prt:prtAction','showProgressBar must be a scalar logical.');
@@ -276,7 +264,16 @@ classdef prtAlgorithm < prtAction
             
             for i = 2:length(topoOrder)-1
                 
-                currentInput = catFeatures(input{Obj.connectivityMatrix(topoOrder(i),:)});
+                %Note: added this to fix catFeatures problems with data
+                %sets that don't have catFeatures; they can still work in
+                %"flat" algorithms.  See bug report on github and in
+                %runAction
+                inDataSets = find(Obj.connectivityMatrix(topoOrder(i),:));
+                if length(inDataSets) == 1
+                    currentInput = input{inDataSets};
+                else
+                    currentInput = catFeatures(input{Obj.connectivityMatrix(topoOrder(i),:)});
+                end
                 %keyboard
                 Obj.actionCell{topoOrder(i-1)}.verboseStorage = Obj.verboseStorage;
                 Obj.actionCell{topoOrder(i-1)} = train(Obj.actionCell{topoOrder(i-1)},currentInput);
@@ -302,7 +299,16 @@ classdef prtAlgorithm < prtAction
             input{1} = DataSet;
             
             for i = 2:length(topoOrder)-1
-                currentInput = catFeatures(input{Obj.connectivityMatrix(topoOrder(i),:)});
+                %Note: added this to fix catFeatures problems with data
+                %sets that don't have catFeatures; they can still work in
+                %"flat" algorithms.  See bug report on github, and in
+                %trainAction
+                inDataSets = find(Obj.connectivityMatrix(topoOrder(i),:));
+                if length(inDataSets) == 1
+                    currentInput = input{inDataSets};
+                else
+                    currentInput = catFeatures(input{Obj.connectivityMatrix(topoOrder(i),:)});
+                end
                 input{topoOrder(i)} = run(Obj.actionCell{topoOrder(i-1)},currentInput);
             end
             finalNodes = any(Obj.connectivityMatrix(Obj.outputNodes,:),1);

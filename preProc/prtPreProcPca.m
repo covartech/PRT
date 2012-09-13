@@ -69,18 +69,15 @@ classdef prtPreProcPca < prtPreProc
             end
             Obj.nComponents = nComp;
         end
-    end
+	end
     
-    methods (Hidden = true)
-        function featureNames = updateFeatureNames(obj,featureNames) %#ok<MANU>
-            for i = 1:length(featureNames)
-                featureNames{i} = sprintf('PC Score %d',i);
-            end
+	methods (Hidden = true)
+        function featureNameModificationFunction = getFeatureNameModificationFunction(obj) %#ok<MANU>
+			featureNameModificationFunction = prtUtilFeatureNameModificationFunctionHandleCreator('PC Score #index#');
         end
-    end
-    
+	end
+	
     methods (Access = protected, Hidden = true)
-        
         function Obj = trainAction(Obj,DataSet)
                        
             Obj.means = prtUtilNanMean(DataSet.getObservations(),1);
