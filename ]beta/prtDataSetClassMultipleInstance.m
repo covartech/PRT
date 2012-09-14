@@ -23,6 +23,7 @@ classdef prtDataSetClassMultipleInstance < prtDataSetInMem & prtDataInterfaceCat
         
         function obj = prtDataSetClassMultipleInstance(varargin)
             %obj = prtDataSetImage(varargin)
+            obj.data.data = [];
             
             if nargin == 0
                 return;
