@@ -8,6 +8,7 @@ classdef prtClassMilPpmm < prtClass
     end
     properties
         
+        optimSvmCost = false;
         svm = prtClassLibSvm;
         numMeans = 30;
         numOptimKmeans = 50;
@@ -35,7 +36,6 @@ classdef prtClassMilPpmm < prtClass
             bagInds = dataSetMil.getBagInds;
             uBagInds = unique(bagInds);
             
-            disp('train');
             if ~self.numOptimKmeans
                 [self.clusterMeans,clusterIndex] = prtUtilKmeans(x,self.numMeans);
                 
@@ -49,7 +49,9 @@ classdef prtClassMilPpmm < prtClass
                 self.svm.userSpecKernel = prtKernelPpmm;
                 
                 %Get best cost
-                self.svm = self.svm.optimize(dsP, @(class,ds)prtEvalAuc(class,ds,3), 'cost', logspace(-2,2,10));
+                if self.optimSvmCost
+                    self.svm = self.svm.optimize(dsP, @(class,ds)prtEvalAuc(class,ds,3), 'cost', logspace(-2,2,10));
+                end
                 %Get corresponding best classifier
                 self.svm = self.svm.train(dsP);
                 %Get best score
@@ -57,6 +59,7 @@ classdef prtClassMilPpmm < prtClass
                 
             else
                 
+                fprintf('Optimizing over %d k-means\n',self.numOptimKmeans);
                 for i = 1:self.numOptimKmeans
                     [self.clusterMeans,clusterIndex] = prtUtilKmeans(x,self.numMeans);
                     kmeans{i}= self.clusterMeans;
@@ -73,14 +76,15 @@ classdef prtClassMilPpmm < prtClass
                     self.svm.cost = 1;
                     
                     %Get best cost
-                    self.svm = self.svm.optimize(dsP, @(class,ds)prtEvalAuc(class,ds,3), 'cost', logspace(-2,2,10));
+                    if self.optimSvmCost
+                        self.svm = self.svm.optimize(dsP, @(class,ds)prtEvalAuc(class,ds,3), 'cost', logspace(-2,2,10));
+                    end
                     %Get corresponding best classifier
                     self.svm = self.svm.train(dsP);
                     %Get best score
                     yOut = self.svm.run(dsP);
                     
                     pc(i) = prtScorePercentCorrect(rt(prtDecisionBinaryMinPe,yOut));
-                    disp([i, max(pc)]);
                     drawnow;
                 end
                 
