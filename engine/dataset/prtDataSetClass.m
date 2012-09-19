@@ -1,9 +1,13 @@
 classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTargets
 	%prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTargets
-	% DATASET = prtDataSetClass returns a prtDataSetClass object
+	% dataSet = prtDataSetClass generates a prtDataSetClass object
 	%
-	%     DATASET = prtDataSetClass(PROPERTY1, VALUE1, ...) constructs a
-	%     prtDataSetClass object DATASET with properties as specified by
+    %     dataSet = prtDataSetClass(X,Y) generates a prtDataSetClass from
+    %     the nObservations x nFeatures double matrix X and the
+    %     nObservations x 1 label vector Y.
+    %
+	%     dataSet = prtDataSetClass(PROPERTY1, VALUE1, ...) constructs a
+	%     prtDataSetClass object dataSet with properties as specified by
 	%     PROPERTY/VALUE pairs.
 	%
 	%     A prtDataSetClass object inherits all properties from the
@@ -947,7 +951,12 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
 	
 	methods (Static)
 		function obj = loadobj(obj)
-			
+			% dataSet = loadobj(obj)
+            %   Load a prtDataSetClass properly.  This requires checking
+            %   the object version number and possibly converting a few
+            %   things...
+            %
+            
 			if isstruct(obj)
 				if ~isfield(obj,'version')
 					% Version 0 - we didn't even specify version
