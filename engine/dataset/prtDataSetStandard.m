@@ -74,6 +74,7 @@ classdef prtDataSetStandard < prtDataSetInMem
 			if isempty(names)
 				%clear
 				self.featureNameIntegerAssocArray = prtUtilIntegerAssociativeArray;
+				self.featureNameModificationFunction = [];
 				return;
 			end
 			if nargin < 3
@@ -85,6 +86,7 @@ classdef prtDataSetStandard < prtDataSetInMem
 			for i = 1:length(names)
 				self.featureNameIntegerAssocArray = self.featureNameIntegerAssocArray.put(featureIndices(i),names{i});
 			end
+			self.featureNameModificationFunction = [];
 		end
 		
 		function featNames = getFeatureNames(obj,indices)
@@ -368,7 +370,9 @@ classdef prtDataSetStandard < prtDataSetInMem
 	%     end
 	
 	methods (Static)
-		function obj = loadobj(obj)
+		function obj = loadobj(obj, baseClass)
+			% We allow input baseClass here so that we can make a class of
+			% the specified object 
 			
 			if isstruct(obj)
 				if ~isfield(obj,'version')
@@ -378,30 +382,72 @@ classdef prtDataSetStandard < prtDataSetInMem
 					inputVersion = obj.version;
 				end
 				
-				currentVersionObj = prtDataSetStandard;
-				
-				if inputVersion == currentVersionObj.version
-					% Returning now will cause MATLAB to ignore this entire
-					% loadobj() function and perform the default actions
-					return
-				end
+				%currentVersionObj = prtDataSetStandard;
+				currentVersionObj = eval(baseClass); % Sorry about the eval
 				
 				if inputVersion > currentVersionObj.version
-					% Versions new than current version!
-					warning('prt:prtDataSetStandard:loadNewVersion','Attempt to load an updated prtDataSetStandard from file. This prtDataSetStandard was saved using a new version of the PRT. This dataset may not load properly.')
-					return
-				end
-				
-				if inputVersion < 2
-					% Versions older than 2 are no longer supported.
-					warning('prt:prtDataSetStandard:loadOldVersion','Attempt to load obsolete prtDataSetStandard from file. This prtDataSetStandard may not load properly.')
-					return
+					% Version newer than current version!
+					warning('prt:prtDataSetClass:loadNewVersion','Attempt to load an updated prtDataSetClass from file. This prtDataSetClass was saved using a new version of the PRT. This dataset may not load properly.')
 				end
 				
 				inObj = obj;
 				obj = currentVersionObj;
 				switch inputVersion
+					case {0,1}
+						
+						obj = obj.setObservationsAndTargets(inObj.dataDepHelper, inObj.targetsDepHelper);
+						
+						obj.observationInfo = inObj.observationInfoDepHelper;
+						
+						if ~isempty(inObj.featureInfoDepHelper);
+							obj.featureInfo = inObj.featureInfoDepHelper;
+						end
+						
+						if ~isempty(inObj.featureNamesDepHelper)
+							obj = obj.setFeatureNames(inObj.featureNamesDepHelper.cellValues,inObj.featureNamesDepHelper.integerKeys);
+						end
+						
+						if ~isempty(inObj.observationNamesInternal.cellValues)
+							obj = obj.setObservationNames(inObj.observationNamesInternal.cellValues,inObj.observationNamesInternal.integerKeys);
+						end
+						
+						if ~isempty(inObj.targetNamesInternal)
+							obj = obj.setTargetNames(inObj.targetNamesInternal.cellValues);
+						end
+						
+						obj.name = inObj.name;
+						obj.description = inObj.description;
+						obj.userData = inObj.userData;
+						
+						
 					case 2
+						obj = obj.setObservationsAndTargets(inObj.internalData ,inObj.internalTargets);
+						obj.observationInfo = inObj.observationInfoInternal;
+						
+						if ~isempty(inObj.featureInfoInternal);
+							obj.featureInfo = inObj.featureInfoInternal;
+						end
+						
+						if ~isempty(inObj.featureNameIntegerAssocArray)
+							obj = obj.setFeatureNames(inObj.featureNameIntegerAssocArray.cellValues,inObj.featureNameIntegerAssocArray.integerKeys);
+						end
+						
+						if ~isempty(inObj.observationNamesInternal.cellValues)
+							obj = obj.setObservationNames(inObj.observationNamesInternal.cellValues,inObj.observationNamesInternal.integerKeys);
+						end
+						
+						if ~isempty(inObj.targetNamesInternal)
+							obj = obj.setTargetNames(inObj.targetNamesInternal.cellValues);
+						end
+						
+						obj.name = inObj.name;
+						obj.description = inObj.description;
+						obj.userData = inObj.userData;
+					
+					case 3
+						
+						obj.plotOptions = inObj.plotOptions;
+						
 						obj = obj.setObservationsAndTargets(inObj.internalData ,inObj.internalTargets);
 						obj.observationInfo = inObj.observationInfoInternal;
 						
@@ -427,7 +473,9 @@ classdef prtDataSetStandard < prtDataSetInMem
 				end
 				
 			else
-				% Nothin special
+				% Nothin special hopefully?
+				% How did this happen?
+				% Hopefully it works out.
 			end
 		end
 	end

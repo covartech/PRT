@@ -1,5 +1,4 @@
 classdef prtClassPlsdaOptimize < prtClassPlsda
-    
     properties
         internalPlsda = prtClassPlsda;
         nComponentsRange = 3:40;
@@ -20,6 +19,5 @@ classdef prtClassPlsdaOptimize < prtClassPlsda
             %Note: this outputs an object of class prtClassPlsda; this can
             %cause all manner of... confusion
         end
-        
     end
 end
