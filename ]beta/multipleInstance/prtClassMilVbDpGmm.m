@@ -1,9 +1,32 @@
 classdef prtClassMilVbDpGmm < prtClass
-    % prtClassMilVbDpGmm
+    % prtClassMilVbDpGmm VBDPGMM MIL Classifier
+    %
+    %  A variational bayes classifier for multiple instance data.  There
+    %  are a number of parameters available for pruning/training.
+    %  Performnace should (in theory) be somewhat invariant to these.  See
+    %  the text of Manandhar et al., for descriptions.
+    %
+    %  You may need to reduce the dimensionality of the data being used via
+    %  PCA, PLS, or some other pre-processing prior to using
+    %  prtClassMilVbDpGmm.  We also recommend making sure the data is
+    %  approximately zero-mean, unit-variance in each of the columns.
+    %
+    %  dsTrain = prtDataGenMultipleInstance;
+    %  dsTest = prtDataGenMultipleInstance;
+    %  class = prtClassMilVbDpGmm;
+    %  class = class.train(dsTrain);
+    %  yOutTrain = class.run(dsTrain);
+    %  yOutTest = class.run(dsTest);
+    %
+    %  [pfTrain,pdTrain] = prtScoreRoc(yOutTrain);
+    %  [pfTest,pdTest] = prtScoreRoc(yOutTest);
+    %  subplot(1,1,1);
+    %  plot(pfTrain,pdTrain,pfTest,pdTest);
+    %
 
     properties (SetAccess=private)
-        name = 'MilVbDpGmm' % Fisher Linear Discriminant
-        nameAbbreviation = 'MilVbDpGmm'            % FLD
+        name = 'MilVbDpGmm' 
+        nameAbbreviation = 'MilVbDpGmm'   
         isNativeMary = false;  % False
     end
     
@@ -17,7 +40,7 @@ classdef prtClassMilVbDpGmm < prtClass
         gamma_0_2_m0 = .001;
         gamma_0_1_m1 = 1;
         gamma_0_2_m1 = .001;
-        alpha = [4 1]*10000;
+        alpha = [10 10];
         
         rvH1
         rvH0
@@ -277,7 +300,7 @@ classdef prtClassMilVbDpGmm < prtClass
                 self.rvH0 = rv0;
                 
                 drawnow;
-                if ~mod(vbIter,500);
+                if ~mod(vbIter,100);
                     disp(vbIter)
                     subplot(2,4,1);
                     stem(exp(log_pi_0));

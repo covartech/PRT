@@ -12,7 +12,7 @@ classdef prtDataInterfaceCategoricalTargets
         nClasses
         uniqueClasses
         nObservationsByClass   % histogram of samples x class
-        classNames
+        classNames = {};
     end
     
     methods (Abstract)
@@ -149,7 +149,9 @@ classdef prtDataInterfaceCategoricalTargets
             %ds = ds.setClassNames({'fasdf','asdf','asdfdsfdsf'});
             %ds = ds.setClassNames({{1,'fasdf'},{2,'fasdc'}})
             cellIn = varargin{1};
-            
+            if isa(cellIn,'char')
+                cellIn = {cellIn};
+            end
             if isa(cellIn{1},'char')
                 targets = self.uniqueClasses;
                 for i = 1:length(targets)
@@ -224,15 +226,46 @@ classdef prtDataInterfaceCategoricalTargets
         end
         
         function self = catClasses(self,varargin)
+            %self = catClasses(self,ds1,ds2,...)
             
+            %We need to know what indices to start changing, which means we
+            %need to know the length of the original data set. but we get
+            %the *new* data set.  We need to reverse engineer the length of
+            %the original one.
+            totalAdd = 0;
+            for i = 1:length(varargin)
+                totalAdd = totalAdd + varargin{i}.nObservations;
+            end
+            startObs = self.nObservations-totalAdd+1;
+            
+            anySwaps = false;
             for argin = 1:length(varargin)
-                if isa(varargin{argin},'prtDataSetBase') && varargin{argin}.isLabeled
-                    try
-                        self.classNamesArray = merge(self.classNamesArray,varargin{argin}.classNamesArray);
-                    catch ME
-                        error('prt:catClasses','Attempted to combine class descriptions with incompatible names');
+                ds = varargin{argin};
+                currentObsInds = startObs:startObs+ds.nObservations-1;
+                if isa(ds,'prtDataSetBase') && ds.isLabeled
+                    %                     try
+                    %                         self.classNamesArray = merge(self.classNamesArray,ds.classNamesArray);
+                    %                     catch ME
+                    %                         warning('prt:catClasses','Combine class descriptions with incompatible names; output target indices may not match input target indices');
+                    %                         [self.classNamesArray,integerSwaps] = combine(self.classNamesArray,ds.classNamesArray);
+                    %                         targets = self.targets(currentObsInds);
+                    %                         for swapInd = 1:size(integerSwaps,1)
+                    %                             targets(targets == integerSwaps(swapInd,1)) = integerSwaps(swapInd,2);
+                    %                         end
+                    %                         self.targets(currentObsInds) = targets;
+                    %                     end
+                    [self.classNamesArray,integerSwaps] = combine(self.classNamesArray,ds.classNamesArray);
+                    targets = self.targets(currentObsInds);
+                    for swapInd = 1:size(integerSwaps,1)
+                        anySwaps = true;
+                        targets(targets == integerSwaps(swapInd,1)) = integerSwaps(swapInd,2);
                     end
+                    self.targets(currentObsInds) = targets;
                 end
+                if anySwaps
+                    warning('prt:catClasses','Tried to combine class descriptions with incompatible names; output target indices may not match input target indices');
+                end
+                startObs = startObs+ds.nObservations;
             end
         end
 

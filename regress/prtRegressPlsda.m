@@ -1,10 +1,10 @@
 classdef prtRegressPlsda < prtRegress
-    % prtClassPlsda  Partial least squares discriminant regression
+    % prtRegressPlsda  Partial least squares discriminant regression
     %
-    %    REGRESS = prtClassPlsda returns a Partial least squares
+    %    REGRESS = prtRegressPlsda returns a Partial least squares
     %    discriminant regressor
     %
-    %    REGRESS = prtClassPlsda(PROPERTY1, VALUE1, ...) constructs a
+    %    REGRESS = prtRegressPlsda(PROPERTY1, VALUE1, ...) constructs a
     %    prtClassMAP object REGRESS with properties as specified by
     %    PROPERTY/VALUE pairs.
     %

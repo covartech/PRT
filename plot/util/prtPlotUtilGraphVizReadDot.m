@@ -1,10 +1,15 @@
-function FileStruct = prtPlotUtilGraphVizReadDot(filename)
+function FileStruct = prtPlotUtilGraphVizReadDot(filename,varargin)
 % Internal function, 
 % xxx Need Help xxx
 % prtPlotUtilGraphVizReadDot - Reads  GraphViz Dot file
 %   Not all aspects of the DOT file format are supported.
 %
 %   FileStruct = prtPlotUtilGraphVizReadDot(filename)
+
+p = inputparser;
+p.addParamValue('extractEdges',true);
+p.parse(varargin{:});
+inputs = p.Results;
 
 fid = fopen(filename);
 fileStrCell = textscan(fid,'%s','Delimiter',';','commentstyle','c');
@@ -99,6 +104,10 @@ for iLine = 1:length(fileStrCell)
         end
         
     elseif isEdgeDirected || isEdgeNonDirected
+        if ~inputs.extractEdges
+            return; %don't extract edges(!); this assumes edges come after everything
+        end
+        
         cEdge = cEdge + 1;
         
         EdgeInfoNames = regexp(fileStrCell{iLine},'(?<startName>\w+)\s*->\s*(?<stopName>\w+)','names');

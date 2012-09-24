@@ -1,5 +1,39 @@
 classdef prtDataSetClassMultipleInstance < prtDataSetInMem & prtDataInterfaceCategoricalTargets
-    % prtDataSetImage < prtDataSetInMem & prtDataInterfaceCategoricalTargets
+    % prtDataSetClassMultipleInstance < prtDataSetInMem & prtDataInterfaceCategoricalTargets
+    %   Class container for multiple instance (MI) data
+    %
+    % dsMil = prtDataSetClassMultipleInstance(milStruct,targets) generates
+    %   a multiple instance (MI) data set from the nObs x 1 structure
+    %   milStruct and the nObs x 1 label vector "targets".  The structure
+    %   milStruct must have a field called "data", which is a
+    %   nInstances x nFeatures matrix.  
+    %
+    %   For example, to generate a MI data set, we might do the following:
+    %
+    % prtPath('beta')
+    % rvH1 = prtRvMvn('mu',[3 3],'sigma',eye(2));
+    % rvH0 = prtRvMvn('mu',[0 0],'sigma',eye(2));
+    %
+    % nObservations = 100;
+    % nInstPerBag = 10;
+    %
+    % targets = nan(nObservations,1);
+    % milStruct = struct;
+    % for i = 1:nObservations
+    %     x = rvH0.draw(nInstPerBag);
+    %     targets(i,1) = 0;
+    %
+    %     if ~mod(i,2)
+    %         targets(i,1) = 1;
+    %         x(1,:) = rvH1.draw(1);
+    %     end
+    %     milStruct(i,1).data = x;
+    % end
+    % dsMil = prtDataSetClassMultipleInstance(milStruct,targets);
+    %    
+    % 
+    %  
+    %  
      
     methods (Access = protected)
         function self = update(self)
@@ -23,6 +57,7 @@ classdef prtDataSetClassMultipleInstance < prtDataSetInMem & prtDataInterfaceCat
         
         function obj = prtDataSetClassMultipleInstance(varargin)
             %obj = prtDataSetImage(varargin)
+            obj.data.data = [];
             
             if nargin == 0
                 return;

@@ -21,6 +21,7 @@ classdef prtKernelPpmm < prtKernel
             if self.trainP
                 x = ds.data;
                 y = ds.targets;
+                y = double(y);
                 
                 y(y == 0) = -1;
                 yy = y*y';

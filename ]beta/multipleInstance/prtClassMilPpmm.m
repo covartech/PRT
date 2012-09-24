@@ -8,9 +8,10 @@ classdef prtClassMilPpmm < prtClass
     end
     properties
         
-        svm = prtClassSvm;
+        optimSvmCost = false;
+        svm = prtClassLibSvm;
         numMeans = 30;
-        numOptimKmeans = 500;
+        numOptimKmeans = 50;
     end
     properties (SetAccess = protected)
         clusterMeans = [];
@@ -35,7 +36,6 @@ classdef prtClassMilPpmm < prtClass
             bagInds = dataSetMil.getBagInds;
             uBagInds = unique(bagInds);
             
-            disp('train');
             if ~self.numOptimKmeans
                 [self.clusterMeans,clusterIndex] = prtUtilKmeans(x,self.numMeans);
                 
@@ -45,12 +45,21 @@ classdef prtClassMilPpmm < prtClass
                 p = bsxfun(@rdivide,p,sum(p,2));
                 
                 dsP = prtDataSetClass(p,dataSetMil.targets);
-                self.svm.kernels = prtKernelPpmm;
-                self.svm.c = 1;
-                self.svm = self.svm.train(dsP);
-            else
-                disp('here');
+                self.svm.kernelType = 4;
+                self.svm.userSpecKernel = prtKernelPpmm;
                 
+                %Get best cost
+                if self.optimSvmCost
+                    self.svm = self.svm.optimize(dsP, @(class,ds)prtEvalAuc(class,ds,3), 'cost', logspace(-2,2,10));
+                end
+                %Get corresponding best classifier
+                self.svm = self.svm.train(dsP);
+                %Get best score
+                %yOut = self.svm.run(dsP);
+                
+            else
+                
+                fprintf('Optimizing over %d k-means\n',self.numOptimKmeans);
                 for i = 1:self.numOptimKmeans
                     [self.clusterMeans,clusterIndex] = prtUtilKmeans(x,self.numMeans);
                     kmeans{i}= self.clusterMeans;
@@ -62,12 +71,20 @@ classdef prtClassMilPpmm < prtClass
                     p = bsxfun(@rdivide,p,sum(p,2));
                     
                     dsP = prtDataSetClass(p,dataSetMil.targets);
-                    self.svm.kernels = prtKernelPpmm;
-                    self.svm.c = 1;
+                    self.svm.kernelType = 4;
+                    self.svm.userSpecKernel = prtKernelPpmm;
+                    self.svm.cost = 1;
+                    
+                    %Get best cost
+                    if self.optimSvmCost
+                        self.svm = self.svm.optimize(dsP, @(class,ds)prtEvalAuc(class,ds,3), 'cost', logspace(-2,2,10));
+                    end
+                    %Get corresponding best classifier
                     self.svm = self.svm.train(dsP);
+                    %Get best score
                     yOut = self.svm.run(dsP);
+                    
                     pc(i) = prtScorePercentCorrect(rt(prtDecisionBinaryMinPe,yOut));
-                    disp([i, max(pc)]);
                     drawnow;
                 end
                 
@@ -81,8 +98,9 @@ classdef prtClassMilPpmm < prtClass
                 p = bsxfun(@rdivide,p,sum(p,2));
                 
                 dsP = prtDataSetClass(p,dataSetMil.targets);
-                self.svm.kernels = prtKernelPpmm;
-                self.svm.c = 1;
+                self.svm.kernelType = 4;
+                self.svm.userSpecKernel = prtKernelPpmm;
+                self.svm.cost = 1;
                 self.svm = self.svm.train(dsP);
                 
             end
