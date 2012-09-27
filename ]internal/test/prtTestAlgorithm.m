@@ -23,7 +23,7 @@ resultClass = class.run(dataSetTest);
 alg = alg.train(dataSetTrain);
 resultAlg = alg.run(dataSetTest);
 
-if ~isequal(resultAlg, resultClass)
+if(~prtUtilApproxEqual(resultAlg.getX, resultClass.getX, eps*2))
     disp('prtAlgorithm basic classification not equal to prtClass result')
     result = false;
 end

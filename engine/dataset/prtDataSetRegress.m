@@ -95,66 +95,7 @@ classdef prtDataSetRegress < prtDataSetStandard
 	
 	methods (Static)
 		function obj = loadobj(obj)
-			
-			if isstruct(obj)
-				if ~isfield(obj,'version')
-					% Version 0 - we didn't even specify version
-					inputVersion = 0;
-				else
-					inputVersion = obj.version;
-				end
-				
-				currentVersionObj = prtDataSetRegress;
-				
-				if inputVersion == currentVersionObj.version
-					% Returning now will cause MATLAB to ignore this entire
-					% loadobj() function and perform the default actions
-					return
-				end
-				
-				if inputVersion > currentVersionObj.version
-					% Versions new than current version!
-					warning('prt:prtDataSetRegress:loadNewVersion','Attempt to load an updated prtDataSetRegress from file. This prtDataSetRegress was saved using a new version of the PRT. This dataset may not load properly.')
-					return
-				end
-				
-				if inputVersion < 2
-					% Versions older than 2 are no longer supported.
-					warning('prt:prtDataSetRegress:loadOldVersion','Attempt to load obsolete prtDataSetRegress from file. This prtDataSetRegress may not load properly.')
-					return
-				end
-				
-				inObj = obj;
-				obj = currentVersionObj;
-				switch inputVersion
-					case 2
-						obj = obj.setObservationsAndTargets(inObj.internalData ,inObj.internalTargets);
-						obj.observationInfo = inObj.observationInfoInternal;
-						
-						if ~isempty(inObj.featureInfoInternal);
-							obj.featureInfo = inObj.featureInfoInternal;
-						end
-						
-						if ~isempty(inObj.featureNameIntegerAssocArray)
-							obj = obj.setFeatureNames(inObj.featureNameIntegerAssocArray.cellValues,inObj.featureNameIntegerAssocArray.integerKeys);
-						end
-						
-						if ~isempty(inObj.observationNamesInternal.cellValues)
-							obj = obj.setObservationNames(inObj.observationNamesInternal.cellValues,inObj.observationNamesInternal.integerKeys);
-						end
-						
-						if ~isempty(inObj.targetNamesInternal)
-							obj = obj.setTargetNames(inObj.targetNamesInternal.cellValues);
-						end
-						
-						obj.name = inObj.name;
-						obj.description = inObj.description;
-						obj.userData = inObj.userData;
-				end
-				
-			else
-				% Nothin special
-			end
+			obj = loadobj@prtDataSetStandard(obj,'prtDataSetRegress');
 		end
 	end
 end
