@@ -1,4 +1,4 @@
-function [structure,nonNumericFields] = prtUtilImportCsvToStructure(csvFile)
+function [structure,nonNumericFields,fieldNames] = prtUtilImportCsvToStructure(csvFile)
 %structure = prtUtilImportCsvToStructure(csvFile)
 % Translate a well-formed CSV file into a structure.
 %
@@ -14,4 +14,4 @@ else
     [numeric,txt,csvCell] = prtUtilImportCsvXlsRead(csvFile);
 end
 
-[structure,nonNumericFields] = prtUtilImportCsvCellToStructure(csvCell);
+[structure,nonNumericFields,fieldNames] = prtUtilImportCsvCellToStructure(csvCell);

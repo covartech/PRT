@@ -1,16 +1,21 @@
 function percentCorrect = prtEvalPercentCorrect(classifier,dataSet,nFolds)
-% PERCENTCORRECT    Calculate percent correct of a classification operation
+% prtEvalPercentCorrect    Calculate percent correct of a classification operation
 % 
-%   PERCENTCORRECT = prtEvalPercentCorrect(CLASSIFIER, DATASET) returns the percentage
-%   of correctly classified elements of DATASET when classifier by
-%   CLASSIFIER. DATASET must be a labeled, prtDataSetStandard
-%   object. CLASSIFIER must be a prtClass object. 
+%   percentCorrect = prtEvalPercentCorrect(prtClassifier, prtDataSet)
+%   returns the percentage of correctly classified elements of prtDataSet
+%   when classifier by prtClassifier. prtDataSet must be a labeled,
+%   prtDataSetStandard object. prtClassifier must be a prtClass object.
 %
-%   PF = prtScorePercentCorrect(CLASSIFIER, DATASET, NFOLDS)  returns the
-%   percentage of correctly classified elements of DATASET when classifier
-%   by CLASSIFIER with K-fold cross-validation. DATASET must be a labeled,
-%   prtDataSetStandard object. CLASSIFIER must be a prtClass object.
-%   NFOLDS is the number of folds in the K-fold cross-validation.
+%   percentCorrect = prtEvalPercentCorrect(prtClassifier, prtDataSet,
+%   nFolds)  returns the percentage of correctly classified elements of
+%   prtDataSet when classifier by prtClassifier with K-fold
+%   cross-validation. prtDataSet must be a labeled, prtDataSetStandard
+%   object. prtClassifier must be a prtClass object. nFolds is the number
+%   of folds in the K-fold cross-validation.
+%
+%   percentCorrect = prtEvalPercentCorrect(prtClassifier, prtDataSet,
+%   xValInds) same as above, but use crossValidation with specified indices
+%   instead of random folds.
 %
 %   Example:
 %   dataSet = prtDataGenSpiral;
@@ -23,13 +28,10 @@ function percentCorrect = prtEvalPercentCorrect(classifier,dataSet,nFolds)
 
 % Copyright 2010, New Folder Consulting, L.L.C.
 
-assert(nargin >= 2,'prt:prtEvalPercentCorrect:BadInputs','prtEvalPercentCorrect requires two input arguments');
-assert(isa(classifier,'prtAction') && isa(dataSet,'prtDataSetBase'),'prt:prtEvalPercentCorrect:BadInputs','prtEvalPercentCorrect inputs must be sublcasses of prtClass and prtDataSetBase, but input one was a %s, and input 2 was a %s',class(classifier),class(dataSet));
-
 if nargin < 3 || isempty(nFolds)
     nFolds = 1;
 end
-results = classifier.kfolds(dataSet,nFolds);
+results = prtUtilEvalParseAndRun(classifier,dataSet,nFolds);
 
 %(note: can't check results.nFeatures here any more...)
 if dataSet.nClasses == 2 %binary classifier 

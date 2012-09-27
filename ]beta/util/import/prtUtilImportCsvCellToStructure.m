@@ -1,4 +1,4 @@
-function [structure,nonNumericFields] = prtUtilImportCsvCellToStructure(csvCell)
+function [structure,nonNumericFields,originalFnames] = prtUtilImportCsvCellToStructure(csvCell)
 %structure = prtUtilImportCsvCellToStructure(csvCell)
 % Translate a well-formed CSV cell into a structure.
 %
@@ -13,6 +13,7 @@ isEmptyCell = cellfun(@(s)isempty(s),csvCell);
 csvCell(isEmptyCell) = {nan};
 
 fNames = csvCell(1,:);
+originalFnames = fNames;
 %I'm not sure why this is here, but it seems important.  I think this
 %handles empty columns in CSV or XLS files.  To check.
 nanNames = (cellfun(@(x)all(isnan(x)),fNames));
@@ -30,6 +31,7 @@ if ~isempty(str2double(fNames{1})) && ~isnan(str2double(fNames{1}))
     %first value appears to be a number... need to handle this
     fNames = cellfun(@(s) sprintf('Feature_%d',s),num2cell(1:length(fNames)),'UniformOutput',false);
     csvCell(1,numericColumns) = num2cell(str2double(csvCell(1,numericColumns)));
+    originalFnames = fNames;
 else
     %If we used the first column as feature names, removeit.
     csvCell = csvCell(2:end,:);

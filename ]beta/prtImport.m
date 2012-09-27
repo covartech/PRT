@@ -1,18 +1,18 @@
 classdef prtImport
-    % Import Data from CSV, MAT files:
+    % Import Data from CSV or MAT files:
     %
     % p = prtImport;
-    % ds = p.import(csvFile);
+    % ds = p.import(csvOrMatFile);
     %
     % For CSV files, tries to handle:
     %   Header lines, numeric and string-valued columns, 'nan' and empty
     %   regions as NaN.
     %
     % For MAT files:
-    %   If mat file has a data set, use that
-    %   Otherwise, if mat file has x, look for y, and use x & y
-    %   Otherwise, if mat file has data, look for targets, and use data &
-    %   targets
+    %   If mat file has a prtDataSet, use that, otherwise, if mat file has a
+    %   variable x, look for y, and use x & y, otherwise, if mat file has a
+    %   variable data, look for targets, and use data & targets.
+    %
     
     properties
         theDataSet
@@ -23,14 +23,60 @@ classdef prtImport
             self = prtUtilAssignStringValuePairs(self,varargin{:});
         end
         
-        function ds = import(self,theFile,fileSpec)
+        function exportToCsv(self,dataSet,theFile)
+            % exportToCsv(self,dataSet,theFile)
+            %  Export the prtDataSet dataSet into the CSV file, theFile.
+            %  Note that exporting to CSV can remove significant
+            %  information from the data set; all that is retained are the
+            %  data, targets, and feature names.
+            %
+            % ds = prtDataGenIris;
+            % theFile = 'testExport.csv';
+            % 
+            % importer = prtImport;
+            % importer.exportToCsv(ds,theFile);
+            % dataSetImport = importer.import(theFile);
+            
+            
+            fid = fopen(theFile,'w');
+            c = onCleanup(@()fclose(fid));
+            
+            featureNames = dataSet.featureNames;
+            
+            format = '';
+            for i = 1:length(featureNames);
+                fprintf(fid,'%s, ',featureNames{i});
+                format = sprintf('%s%%f,',format);
+            end
+            %add a column for targets, if not empty
+            if ~isempty(dataSet.targets);
+                fprintf(fid,'targets, ');
+                format = sprintf('%s%%f,',format);
+            end
+            fprintf(fid,'\r\n');
+            format = sprintf('%s\\r\\n',format); %add new-line
+            
+            x = cat(2,dataSet.X,dataSet.Y);
+            fprintf(fid,format,x');
+            
+        end
+        
+        function ds = import(self,theFile)
+            % ds = import(self,theFile)
+            %   Import a prtDataSet from the specified file.  If no file is
+            %   specified, use uigetfile to find an appropriate file.
+            %
+            % ds = prtDataGenBimodal;
+            % theFile = 'testExport.csv';
+            % 
+            % importer = prtImport;
+            % importer.exportToCsv(ds,theFile);
+            % dataSetImport = importer.import(theFile);
             
             [p,f,e] = fileparts(theFile);
             
             switch e
-                case ''
-                    disp('No extension... this is hard');
-                case {'.txt','.csv','.xls'}
+                case {'.txt','.csv','.xls','.xlsx'}
                     % Algo: 
                     %   1) Figure out if it has a header line
                     %   2) Read rest of data
@@ -40,7 +86,7 @@ classdef prtImport
                     % parameter to csvToStructure, "compressed" which
                     % passes through to csvCellToStructure, and switches
                     % the way the struct gets made
-                    [structure,nonNumericFields] = prtUtilImportCsvToStructure(theFile);
+                    [structure,nonNumericFields,featureNames] = prtUtilImportCsvToStructure(theFile);
                     
                     fields = fieldnames(structure);
                     x = nan(length(structure),length(fields));
@@ -60,7 +106,7 @@ classdef prtImport
                     if ~isempty(nonNumericFields)
                         ds.featureInfo = featureInfo;
                     end
-                    ds.featureNames = fields;
+                    ds.featureNames = featureNames;
                     
                     ds = userChooseTargetVariable(self,ds);
                     
@@ -118,6 +164,8 @@ classdef prtImport
                         
                         return;
                     end
+                otherwise
+                    error('prtImport can only import from files with known file extensions: txt, csv, xls, xlsx, or mat');
             end
         end
         

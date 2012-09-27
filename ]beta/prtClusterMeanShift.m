@@ -1,7 +1,7 @@
 classdef prtClusterMeanShift < prtCluster
     % nMaxClusters   Kmeans clustering object
     %
-    %    CLUSTER = prtClusterMeanShift returns a Kmeans clustering object.
+    %    CLUSTER = prtClusterMeanShift returns a MeanShift clustering object.
     %
     %    CLUSTER = prtClusterMeanShift(PROPERTY1, VALUE1, ...) constructs a
     %    prtClusterMeanShift object CLUSTER with properties as specified by
