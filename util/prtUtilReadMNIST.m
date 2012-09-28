@@ -69,7 +69,7 @@ labels = fread(fid, readDigits, 'uint8');
 fclose(fid);
 
 % Calc avg digit and count
-imgs = trimDigits(imgs, 4);
+% imgs = trimDigits(imgs, 4);
 imgs = normalizePixValue(imgs);
 %[avg num stddev] = getDigitStats(imgs, labels);
 
