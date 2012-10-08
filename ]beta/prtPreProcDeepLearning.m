@@ -32,6 +32,8 @@ classdef prtPreProcDeepLearning < prtPreProc
     % References:
     %   Hinton, Salakhutdinov, "Reducing the Dimensionality of Data with
     %   Neural Networks", Science, 2006.
+    % 
+    % 
     
     properties (SetAccess=private)
         name = 'Deep Learning' % Principal Component Analysis
