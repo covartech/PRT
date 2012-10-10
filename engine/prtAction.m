@@ -219,9 +219,7 @@ classdef prtAction
             
             dsOut = preRunProcessing(self, dsIn);
             switch nargout
-                case 0
-                   dsOut = runAction(self, dsOut); 
-                case 1
+                case {0,1}
                    dsOut = runAction(self, dsOut);
                 case 2 
                     [dsOut, extraOutput] = runAction(self, dsOut);

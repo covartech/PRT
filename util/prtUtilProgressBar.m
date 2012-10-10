@@ -301,7 +301,9 @@ classdef prtUtilProgressBar
              
             % Save bar data in figure
             prtUtilProgressBarData.bars(Obj.barIndex) = bar;
-            guidata(Obj.figureHandle,prtUtilProgressBarData);
+			if ishandle(Obj.figureHandle)
+				guidata(Obj.figureHandle,prtUtilProgressBarData);
+			end
             
             if all(abs(percentage-1)<1e-9)
                 

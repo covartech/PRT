@@ -1,9 +1,13 @@
 classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTargets
 	%prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTargets
-	% DATASET = prtDataSetClass returns a prtDataSetClass object
+	% dataSet = prtDataSetClass generates a prtDataSetClass object
 	%
-	%     DATASET = prtDataSetClass(PROPERTY1, VALUE1, ...) constructs a
-	%     prtDataSetClass object DATASET with properties as specified by
+    %     dataSet = prtDataSetClass(X,Y) generates a prtDataSetClass from
+    %     the nObservations x nFeatures double matrix X and the
+    %     nObservations x 1 label vector Y.
+    %
+	%     dataSet = prtDataSetClass(PROPERTY1, VALUE1, ...) constructs a
+	%     prtDataSetClass object dataSet with properties as specified by
 	%     PROPERTY/VALUE pairs.
 	%
 	%     A prtDataSetClass object inherits all properties from the
@@ -947,7 +951,12 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
 	
 	methods (Static)
 		function obj = loadobj(obj)
-			
+			% dataSet = loadobj(obj)
+            %   Load a prtDataSetClass properly.  This requires checking
+            %   the object version number and possibly converting a few
+            %   things...
+            %
+            
 			if isstruct(obj)
 				if ~isfield(obj,'version')
 					% Version 0 - we didn't even specify version
@@ -956,67 +965,35 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
 					inputVersion = obj.version;
 				end
 				
-				currentVersionObj = prtDataSetClass;
-				
-				if inputVersion == currentVersionObj.version
-					% Returning now will cause MATLAB to ignore this entire
-					% loadobj() function and perform the default actions
-					return
-				end
-				
-				if inputVersion > currentVersionObj.version
-					% Versions new than current version!
-					warning('prt:prtDataSetClass:loadNewVersion','Attempt to load an updated prtDataSetClass from file. This prtDataSetClass was saved using a new version of the PRT. This dataset may not load properly.')
-					return
-				end
-				
-				if inputVersion == 1
-					% Versions older than 2 are no longer supported.
-					warning('prt:prtDataSetClass:loadOldVersion','Attempt to load obsolete prtDataSetClass from file. This prtDataSetClass may not load properly.')
-					return
-				end
-				
+
 				inObj = obj;
-				obj = currentVersionObj;
+			    obj = loadobj@prtDataSetStandard(inObj,'prtDataSetClass');
+				
 				switch inputVersion
-                    case 0
-                        
-                        obj = obj.setObservationsAndTargets(inObj.dataDepHelper,inObj.targetsDepHelper);
-                        obj.observationInfo = inObj.observationInfoDepHelper;
-                        obj.setClassNames(inObj.classNamesInternal.cellValues);
-                        obj.userData = inObj.userData;
-                        warning('prt:prtDataSetClass:loadOldishVersion','Attempt to load old prtDataSetClass from file. Portions of this variable may not load properly.')
+					case {0,1}
+						
+						if ~isempty(inObj.classNamesInternal.cellValues)
+							obj = obj.setClassNames(inObj.classNamesInternal.cellValues, inObj.classNamesInternal.integerKeys);
+						end
+						
 					case 2
-						obj = obj.setObservationsAndTargets(inObj.internalData ,inObj.internalTargets);
-						obj.observationInfo = inObj.observationInfoInternal;
-						
-						if ~isempty(inObj.featureInfoInternal);
-							obj.featureInfo = inObj.featureInfoInternal;
+
+						if ~isempty(inObj.classNamesArray.cellValues)
+							obj = obj.setClassNames(inObj.classNamesArray.cellValues, inObj.classNamesArray.integerKeys);
 						end
 						
-						if ~isempty(inObj.featureNameIntegerAssocArray)
-							obj = obj.setFeatureNames(inObj.featureNameIntegerAssocArray.cellValues,inObj.featureNameIntegerAssocArray.integerKeys);
-						end
-						
-						if ~isempty(inObj.observationNamesInternal.cellValues)
-							obj = obj.setObservationNames(inObj.observationNamesInternal.cellValues,inObj.observationNamesInternal.integerKeys);
-						end
-						
-						if ~isempty(inObj.targetNamesInternal)
-							obj = obj.setTargetNames(inObj.targetNamesInternal.cellValues);
-						end
+					case 3
 						
 						if ~isempty(inObj.classNamesArray.cellValues)
 							obj = obj.setClassNames(inObj.classNamesArray.cellValues, inObj.classNamesArray.integerKeys);
 						end
 						
-						obj.name = inObj.name;
-						obj.description = inObj.description;
-						obj.userData = inObj.userData;
 				end
 				
 			else
-				% Nothin special
+				% Nothin special hopefully?
+				% How did this happen?
+				% Hopefully it works out.
 			end
 		end
 	end
