@@ -1,5 +1,7 @@
 function graph = prtGraphDataGenSlashdot
 % graph = prtGraphDataGenSlashdot
+% 
+% See: http://snap.stanford.edu/%C2%ADdata/
 
 [baseDir,bigDataDir] = prtGraphDataDir;
 gmlFile = fullfile(bigDataDir,'slashdotDatabase.mat');
