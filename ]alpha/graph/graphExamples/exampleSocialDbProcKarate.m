@@ -5,16 +5,5 @@ close all;
 clear classes
 clc;
 
-baseDir = prtGraphDataDir;
-gmlFile = 'karate.gml';
-file = fullfile(baseDir,gmlFile);
-
-[sparseGraph,names] = prtUtilReadGml(file);
-graph = prtDataTypeGraph(sparseGraph,names);
-
-%%
-close all;
+graph = prtGraphDataGenKarate;
 plot(graph);
-
-%%
-graph.explore;
