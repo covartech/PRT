@@ -31,6 +31,16 @@ classdef prtDataSetRegress < prtDataSetStandard
             prtDataSet = prtDataSet@prtDataSetStandard(varargin{:});
         end
         
+        function keys = getKFoldKeys(DataSet,K)
+            % keys = getKFoldKeys(dataSet,K)
+            %   Return a vector of integers specifying fold indices.  THis
+            %   is used in prtAction.kfolds, for example.
+        
+            % This is overloaded here as the default behvior in base
+            % assumes categorical targets.
+            keys = prtUtilEquallySubDivideData(ones(DataSet.nObservations,1),K);
+        end  
+        
         function varargout = plot(obj, featureIndices)
             % Plot   Plot the prtDataSetRegress object
             %
