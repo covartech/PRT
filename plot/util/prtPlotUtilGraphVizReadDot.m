@@ -6,7 +6,7 @@ function FileStruct = prtPlotUtilGraphVizReadDot(filename,varargin)
 %
 %   FileStruct = prtPlotUtilGraphVizReadDot(filename)
 
-p = inputparser;
+p = inputParser;
 p.addParamValue('extractEdges',true);
 p.parse(varargin{:});
 inputs = p.Results;
