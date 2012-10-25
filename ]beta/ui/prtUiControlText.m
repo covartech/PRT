@@ -18,8 +18,9 @@ classdef prtUiControlText < hgsetget
     end
     methods
         function self = prtUiControlText(parent, pixelPos, varargin)
+            %jLabel = javaObjectEDT('javax.swing.JLabel','');
+            %[self.javaHandle, self.handle]  = javacomponent(jLabel,pixelPos, parent);
             [self.javaHandle, self.handle]  = javacomponent('javax.swing.JLabel',pixelPos, parent);
-            
             
             self = prtUtilAssignStringValuePairs(self, varargin{:});
         end

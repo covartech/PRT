@@ -557,8 +557,6 @@ classdef prtDataSetBase
     end
     
     methods
-        
-        %this might could be moved to prtDataInterfaceCategorical...
         function keys = getKFoldKeys(DataSet,K)
             % keys = getKFoldKeys(dataSet,K)
             %   Return a vector of integers specifying fold indices.  THis
@@ -570,7 +568,7 @@ classdef prtDataSetBase
                 %can cross-val on unlabeled data, too!
                 keys = prtUtilEquallySubDivideData(ones(DataSet.nObservations,1),K);
             end
-        end        
+        end  
         
         function [obj,keep] = select(obj, selectFunction)
             % Select observations to retain by specifying a function

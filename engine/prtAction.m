@@ -350,7 +350,7 @@ classdef prtAction
 						% First iteration pre-allocate
 						trainedActions = repmat(trainedAction,length(uKeys),1);
 					else
-						trainedActions{uInd} = trainedAction;
+						trainedActions(uInd) = trainedAction;
 					end
 				end
 			end

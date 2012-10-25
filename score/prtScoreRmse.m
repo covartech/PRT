@@ -1,4 +1,4 @@
-function rmse = prtScoreRmse(varargin)
+function rmse = prtScoreRmse(dataSet1, dataSet2)
 % RMSE = prtScoreRmse(GUESS, TRUTH)
 %
 %   RMSE = prtScoreRmse(GUESS, TRUTH) returns the
@@ -20,7 +20,11 @@ function rmse = prtScoreRmse(varargin)
 %     
 %   See also prtScoreConfusionMatrix, prtScoreRoc, prtScorePercentCorrect
 
-[guesses,targets] = prtUtilScoreParseFirstTwoInputs(varargin{:});
+if nargin < 2
+    dataSet2 = dataSet1;
+end 
+
+[guesses,targets] = prtUtilScoreParseFirstTwoInputs(dataSet1,dataSet2);
 
 if size(guesses,2) == 1
     rmse = sqrt(mean((guesses-targets).^2));
