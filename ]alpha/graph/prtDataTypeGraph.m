@@ -31,6 +31,9 @@ classdef prtDataTypeGraph
         internalNodeNames = {};
         internalNodeInfo = [];
     end
+    properties (Hidden)
+        explorePlotFunction = [];
+    end
     %use these to get the data in different formats
     properties (Dependent)
         graph
@@ -109,7 +112,7 @@ classdef prtDataTypeGraph
     
     methods
         
-        function self = retainByDegree(self,varargin)
+        function [self,retainedInds] = retainByDegree(self,varargin)
             % graph = retainByDegree(graph,d) 
             %   Return a graph consisting of only elements with degree
             %   greater than or equal to d.
@@ -127,6 +130,11 @@ classdef prtDataTypeGraph
                 keep = d >= varargin{1};
             elseif isa(varargin{1},'function_handle')
                 keep = varargin{1}(d);
+            end
+            if islogical(keep)
+                retainedInds = find(keep);
+            else
+                retainedInds = keep;
             end
             self = self.retainNodes(keep);
         end
@@ -392,6 +400,7 @@ classdef prtDataTypeGraph
                 
                 set(h,'color',c(i,:));
                 set(h,'markersize',30);
+                set(h,'hittest','off');
                 hold on;
             end
             
@@ -402,9 +411,11 @@ classdef prtDataTypeGraph
                 nSamples = length(linkI);
                 indices = 1:nSamples;
             else
-                nSamples = 1000;
+                nSamples = 3000;
+                %nSamples = length(linkI);
                 indices = ceil(rand(nSamples,1)*length(linkI));
             end
+            
             
             for i = indices(:)';
                 plotLocs = cat(1,plotLocs,locs([linkI(i),linkJ(i)],:),[nan nan]);
@@ -412,22 +423,42 @@ classdef prtDataTypeGraph
             
             hLines = plot(plotLocs(:,1),plotLocs(:,2),'c');
             uistack(hLines,'bottom');
+            set(hLines,'hittest','off');
             hold off;
             
-            nStrings = min([50 size(graph,1)]);
+            nStrings = min([100 size(graph,1)]);
             nodality = sum(graph,2);
             [~,inds] = sort(nodality,'descend');
+            inds = randperm(length(inds)); %random names
             if ~isempty(self.nodeNames)
                 for i = 1:nStrings;
                     theLoc = locs(inds(i),:);
                     h = text(theLoc(1),theLoc(2),self.nodeNames{inds(i)});
                     set(h,'fontsize',15,'fontweight','bold');
+                    set(h,'hittest','off');
                 end
             end
         end
         
         function explore(self)
             prtUtilGraphExplore(self);
+        end
+        
+    end
+    methods (Hidden = true)
+        function [index,minDist,clickPoint] = findClosestAxesHit(self,e,v)
+           cP = get(gca,'currentPoint');
+           clickPoint = cP(1,1:2);
+           locs = self.plotLocations;
+           [minDist,index] = min(prtDistanceEuclidean(clickPoint,locs));
+        end
+        
+        function exploreOnClickInternal(self,e,v)
+            index = self.findClosestAxesHit(e,v);
+            disp(index)
+            if ~isempty(self.explorePlotFunction)
+                self.explorePlotFunction(self,index);
+            end
         end
     end
 end

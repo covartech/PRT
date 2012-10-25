@@ -158,9 +158,11 @@ classdef prtDataTypeImage < prtUtilActionDataAccess
             switch self.imageType
                 case 'mat'
                     data = self.gray;
+                    data = data - min(data(:));
                     data = round(data./max(data(:))*255);
                 case 'gray'
                     data = self.gray;
+                    data = data - min(data(:));
                     data = round(data./max(data(:))*255);
                 case 'hsv'
                     data = self.rgb;

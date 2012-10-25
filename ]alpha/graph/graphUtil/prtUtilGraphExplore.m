@@ -63,6 +63,7 @@ hLines = [];
             hold on
             hLines = plot(plotLocs(:,1),plotLocs(:,2),'c');
             uistack(hLines,'bottom');
+            set(hLines,'hittest','off');
             hold off;
             
         end
@@ -72,6 +73,7 @@ hLines = [];
         for i = 1:min([20,length(inds)]);
             hText(i) = text(cLocs(inds(i),1),cLocs(inds(i),2),cNames{inds(i)});
             set(hText(i),'fontsize',15,'fontweight','bold');
+            set(hText,'hittest','off');
         end
     end
 end
