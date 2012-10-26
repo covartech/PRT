@@ -121,13 +121,13 @@ classdef prtUiControlText < hgsetget
             val = get(self.handle,'parent');
         end
         
-        function delete(self)
-            try
-                delete(self.handle)
-            end
-            try
-                delete(self.javaHandle)
-            end
-        end
+%         function delete(self)
+%             try
+%                 delete(self.handle)
+%             end
+%             try
+%                 delete(self.javaHandle)
+%             end
+%         end
     end
 end

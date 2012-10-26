@@ -173,5 +173,15 @@ classdef prtClassTreeBaggingCap < prtClass
             
             ClassifierResults = prtDataSetClass(Yout/length(theRoot));
         end
+        function Yout = runActionFast(self, X)
+            nClasses = self.dataSetSummary.nClasses;
+            
+            Yout = zeros(size(X,1), nClasses);
+            theRoot = self.root;
+            
+            for iTree = 1:self.nTrees
+                Yout = Yout + prtUtilEvalCapTreeMex(theRoot(iTree), X, nClasses);
+            end
+        end
     end
 end
