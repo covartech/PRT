@@ -118,9 +118,15 @@ classdef prtDataSetStandard < prtDataSetInMem
 			
 			% Make feature names appear correctly by evaluating
 			% modification function
-			for iFeat = 1:length(indices)
-				featNames{iFeat} = obj.featureNameModificationFunction(featNames{iFeat}, indices(iFeat));
-			end
+            for iFeat = 1:length(indices)
+                if iscell(obj.featureNameModificationFunction)
+                    for iCell = 1:length(obj.featureNameModificationFunction)
+                        featNames{iFeat} = obj.featureNameModificationFunction{iCell}(featNames{iFeat}, indices(iFeat));
+                    end
+                else
+                    featNames{iFeat} = obj.featureNameModificationFunction(featNames{iFeat}, indices(iFeat));
+                end
+            end
 		end
 		
 		function d = getObservations(self,varargin)
@@ -501,15 +507,29 @@ classdef prtDataSetStandard < prtDataSetInMem
 			%
 			% This allows actions to set feature names 
 			
-			modFun = action.getFeatureNameModificationFunction();
-			if ~isempty(modFun)
-				if isempty(self.featureNameModificationFunction)
-					self.featureNameModificationFunction = modFun;
-				else
-					self.featureNameModificationFunction = @(nameIn, index)modFun(self.featureNameModificationFunction(nameIn, index),index);
+ 			modFun = action.getFeatureNameModificationFunction();
+            currentModFun = self.featureNameModificationFunction;
+ 			if ~isempty(modFun)
+ 				if isempty(currentModFun)
+ 					self.featureNameModificationFunction = modFun;
+                elseif iscell(currentModFun)
+                    self.featureNameModificationFunction = cat(1,currentModFun,{modFun});
+                else % Currently a single function handle (hopefully)
+                    self.featureNameModificationFunction = {currentModFun;modFun};
 				end
 			end
-			
+            
+            
+% 			modFun = action.getFeatureNameModificationFunction();
+%           currentModFun = self.featureNameModificationFunction;
+% 			if ~isempty(modFun)
+% 				if isempty(currentModFun)
+% 					self.featureNameModificationFunction = modFun;
+% 				else
+% 					self.featureNameModificationFunction = @(nameIn, index)modFun(currentModFun(nameIn, index),index);
+% 				end
+% 			end
+            
 			self = modifyNonDataAttributesFrom@prtDataSetBase(self, action);
 		end
 	end
