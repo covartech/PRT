@@ -53,31 +53,40 @@ classdef prtPreProcLogDiscPostPlsda < prtPreProcClass
         
         function Obj = trainAction(Obj,DataSet)
             
-            LogDisc = prtClassLogisticDiscriminant;
-            y = DataSet.getTargetsAsBinaryMatrix;
-            for iFeature = 1:DataSet.nFeatures
-                cLogDisc = LogDisc.train(setTargets(DataSet.retainFeatures(iFeature),y(:,iFeature)));
-                Obj.logDiscMeans(iFeature) = cLogDisc.w(1);
-                Obj.logDiscWeights(iFeature) = cLogDisc.w(2);
-            end
+			y = DataSet.getTargetsAsBinaryMatrix;
+			LogDisc = prtClassLogisticDiscriminant;
+			for iFeature = 1:DataSet.nFeatures
+				cLogDisc = LogDisc.train(setTargets(DataSet.retainFeatures(iFeature),y(:,iFeature)));
+				Obj.logDiscMeans(iFeature) = cLogDisc.w(1);
+				Obj.logDiscWeights(iFeature) = cLogDisc.w(2);
+			end
             
         end
         
         function DataSet = runAction(Obj,DataSet)
-            sigmaFn = @(x) 1./(1 + exp(-x));
-            for iFeature = 1:length(Obj.logDiscWeights)
-                DataSet = DataSet.setObservations(sigmaFn(DataSet.getObservations(:,iFeature)*Obj.logDiscWeights(iFeature) + Obj.logDiscMeans(iFeature)),:,iFeature);
-            end
+			sigmaFn = @(x) 1./(1 + exp(-x));
+			for iFeature = 1:length(Obj.logDiscWeights)
+				DataSet = DataSet.setObservations(sigmaFn(DataSet.getObservations(:,iFeature)*Obj.logDiscWeights(iFeature) + Obj.logDiscMeans(iFeature)),:,iFeature);
+			end
             
-            DataSet.X = bsxfun(@rdivide, DataSet.X, sum(DataSet.X,2));
+			if length(Obj.logDiscWeights) > 1
+				DataSet.X = bsxfun(@rdivide, DataSet.X, sum(DataSet.X,2));
+			%else
+			%	DataSet.X = 1-DataSet.X;
+			end
             
         end
-        
-        function X = runActionFast(Obj,X)
-            for iFeature = 1:length(Obj.logDiscWeights)
-                X(:,iFeature) = 1./(1 + exp(- (X(:,iFeature)*Obj.logDiscWeights(iFeature) + Obj.logDiscMeans(iFeature))));
-            end
-            X = bsxfun(@rdivide, X, sum(X,2));
+		
+		function X = runActionFast(Obj,X)
+			for iFeature = 1:length(Obj.logDiscWeights)
+				X(:,iFeature) = 1./(1 + exp(- (X(:,iFeature)*Obj.logDiscWeights(iFeature) + Obj.logDiscMeans(iFeature))));
+			end
+			if size(X,2) > 1
+				X = bsxfun(@rdivide, X, sum(X,2));
+			else
+				X = 1-X;
+			end
+			
             
         end
     end
