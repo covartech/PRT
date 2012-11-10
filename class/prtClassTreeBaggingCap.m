@@ -94,7 +94,6 @@ classdef prtClassTreeBaggingCap < prtClass
             assert(isscalar(val) && islogical(val),'prt:prtClassTreeBaggingCap:useMex','useMex must be a logical value, but value provided is a %s',class(val));
             Obj.useMex = val;
         end
-        
         function Obj = prtClassTreeBaggingCap(varargin)
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
         end

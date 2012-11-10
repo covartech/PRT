@@ -506,7 +506,7 @@ classdef prtDataSetStandard < prtDataSetInMem
 				if isempty(self.featureNameModificationFunction)
 					self.featureNameModificationFunction = modFun;
 				else
-					self.featureNameModificationFunction = @(nameIn, index)modFun(self.featureNameModificationFunction(nameIn, index),index);
+                    					self.featureNameModificationFunction = @(nameIn, index)modFun(self.featureNameModificationFunction(nameIn, index),index);
 				end
 			end
 			

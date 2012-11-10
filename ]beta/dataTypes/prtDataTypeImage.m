@@ -26,6 +26,7 @@ classdef prtDataTypeImage < prtUtilActionDataAccess
     %
     
     properties
+        patchExtractionMode = 'gray';
         imageData = [];
         imageType = ''; %'mat','gray','rgb','hsv'
         i
@@ -55,12 +56,21 @@ classdef prtDataTypeImage < prtUtilActionDataAccess
                 theKeypoints = self.keypoints;
             end
             patches = cell(size(theKeypoints,1),1);
-            theGray = self.gray;
+            switch self.patchExtractionMode
+                case 'gray'
+                    theData = self.gray;
+                    patch3 = [];
+                case 'rgb'
+                    theData = self.rgb;
+                    patch3 = 3;
+                otherwise
+                    error('invalid patchExtractionMode');
+            end
             for keyIndex = 1:size(theKeypoints,1)
                 cropRect = [theKeypoints(keyIndex,:)-ceil(patchSize/2),patchSize-1];
-                patches{keyIndex} = imcrop(theGray,cropRect);
+                patches{keyIndex} = imcrop(theData,cropRect);
             end
-            fullPatch = cellfun(@(x) isequal(size(x),patchSize), patches);
+            fullPatch = cellfun(@(x) isequal(size(x),[patchSize,patch3]), patches);
         end
         
         function [self,points] = extractKeypoints(self,varargin)
