@@ -796,13 +796,13 @@ classdef prtDataSetBase
 			% Here we do nothing.
 		end
 		
-		function dsFoldOut = crossValidateCheckFoldResults(dsIn, dsTrain, dsTest, dsFoldOut) %#ok<MANU,INUSL>
+		function dsFoldOut = crossValidateCheckFoldResults(dsIn, dsTrain, dsTest, dsFoldOut) %#ok<INUSL>
 			% dsTest = crossValidateCheckFoldResults(dsIn, dsTrain, dsTest, dsFoldOut) %#ok<MANU,INUSL>
 			%
 			% Cheack the folds and the out used during crossvalidation
 			
 			if dsFoldOut.nObservations ~= dsTest.nObservations
-				error('prt:prtDataSetBase:crossValidateCheckFoldResults','A cross-validation returned a dataset with a different number of observations than the test dataset.')
+				error('prt:prtDataSetBase:crossValidateCheckFoldResults','Cross-validation returned a dataset with a different number of observations than the test dataset.')
 			end
 		end
 		

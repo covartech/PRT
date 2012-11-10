@@ -283,14 +283,14 @@ classdef prtAction
             %  unique KEYS.
             
             
-            if ~self.isCrossValidateValid
-                %Should this error?
-                warning('prtAction:crossValidate','The input object of type %s has isCrossValidateValid set to false; the outputs of cross-validation may be meaningless',class(self));
-            end
+            % Check for isCrossValidateValid removed - 2012-11-08
+            % This now handled by allowing the dataset to check the the
+            % fold results.
+
             if ~isvector(validationKeys) || (numel(validationKeys) ~= dsIn.nObservations)
                 error('prt:prtAction:crossValidate','validationKeys must be a vector with a length equal to the number of observations in the data set');
-			end
-			
+            end
+            
 			validationKeys = validationKeys(:);
 			
             uKeys = unique(validationKeys);
