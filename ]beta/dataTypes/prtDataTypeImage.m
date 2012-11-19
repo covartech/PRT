@@ -70,7 +70,7 @@ classdef prtDataTypeImage < prtUtilActionDataAccess
                 cropRect = [theKeypoints(keyIndex,:)-ceil(patchSize/2),patchSize-1];
                 patches{keyIndex} = imcrop(theData,cropRect);
             end
-            fullPatch = cellfun(@(x) isequal(size(x),[patchSize,patch3]), patches);
+            fullPatch = cellfun(@(x) isequal(size(x),[fliplr(patchSize),patch3]), patches);
         end
         
         function [self,points] = extractKeypoints(self,varargin)

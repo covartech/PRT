@@ -67,6 +67,8 @@ classdef prtClassTreeBaggingCap < prtClass
         bootStrapDataAtRoots = true; % Flag indicating whether or not to boostrap at roots
         
         useMex = true;     % Flag indicating whether or not to use the Mex file
+        
+        fastTraining = true; % Whether to truly optimize operating points at each branch (false), or take a rough guess (true)
     end
     properties (Hidden = true)
         eml = true;
@@ -149,7 +151,11 @@ classdef prtClassTreeBaggingCap < prtClass
                 DataSet = DataSet.bootstrapByClass();
             end
             
-            tree = prtUtilRecursiveCapTree(Obj, tree, DataSet.getObservations, logical(DataSet.getTargetsAsBinaryMatrix), 1);
+            if Obj.fastTraining
+                tree = prtUtilRecursiveCapTreeFast(Obj, tree, DataSet.getObservations, logical(DataSet.getTargetsAsBinaryMatrix), 1);
+            else
+                tree = prtUtilRecursiveCapTree(Obj, tree, DataSet.getObservations, logical(DataSet.getTargetsAsBinaryMatrix), 1);
+            end
         end
         
         function ClassifierResults = runAction(Obj,PrtDataSet)
