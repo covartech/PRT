@@ -16,13 +16,27 @@ classdef prtClassTreeBaggingCap < prtClass
     %
     %    nTrees                       - The number of trees
     %    nFeatures                    - The number of features
+    %
     %    featureSelectWithReplacement - Flag indicating whether or not to
     %                                   do feature selection with 
     %                                   replacement
+    %
     %    bootStrapDataAtRoots         - Flag indicating whether or not
     %                                   to bootstrap at roots
-    %    useMex                       - flag indicating wheter or not to
+    %
+    %    useMex                       - Flag indicating wheter or not to
     %                                   use the Mex file for speedup.
+    %
+    %    fastTraining                 - Flag indicating whether to use
+    %                                   "fast" training.  Fast training
+    %                                   does not necessarily choose the
+    %                                   optimal operating point at each
+    %                                   node, but is much faster, and often
+    %                                   has competetive (or even superior)
+    %                                   cross-validation performance, at
+    %                                   the expense of increased
+    %                                   tree-length.
+    %    
     %
     %  For more information on random tree classifiers, see:
     %   http://en.wikipedia.org/wiki/Random_forest
