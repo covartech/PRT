@@ -38,6 +38,11 @@ classdef prtDataTypeImage < prtUtilActionDataAccess
         internalRgbData = [];
         internalGrayData = [];
         internalHsvData = [];
+        internalLabData = [];
+        internalYuvData = [];
+        
+        internalRgbToLabConverter = [];
+        internalLabToRgbConverter = [];
     end
     
     %use these to get the data in different formats
@@ -45,6 +50,8 @@ classdef prtDataTypeImage < prtUtilActionDataAccess
         gray
         rgb
         hsv
+        lab
+        yuv
     end
     
     methods
@@ -91,7 +98,7 @@ classdef prtDataTypeImage < prtUtilActionDataAccess
             % prtDataTypeImage - video processing image constructor
             %   obj = prtDataTypeImage(imgData,imgType)
             %       Accepts an NxM or NxMx3 matrix and imgType
-            %       {'mat','gray','rgb', or 'hsv'}
+            %       {'mat', 'gray', 'rgb', 'hsv', 'lab', 'yuv'}
             %
             %   obj = prtDataTypeImage(imgData)
             %       Accepts an NxM or NxMx3 and assumes the image is either
@@ -102,7 +109,6 @@ classdef prtDataTypeImage < prtUtilActionDataAccess
             %       imgFile.
             %
             if nargin == 0
-                self.internalRgbData = nan;
                 self.imageType = 'gray';
                 return;
             end
@@ -214,112 +220,135 @@ classdef prtDataTypeImage < prtUtilActionDataAccess
                 case 'hsv'
                     self.internalHsvData = self.hsv;
                 case 'rgb'
-                    self.internalHsvData = self.rgb;
+                    self.internalRgbData = self.rgb;
+                case 'lab'
+                    self.internalLabData = self.lab;
+                case 'yuv'
+                    self.internalYuvData = self.yuv;
+                case 'all'
+                    self.internalGrayData = self.gray;
+                    self.internalRgbData = self.rgb;
+                    self.internalHsvData = self.hsv;
+                    self.internalLabData = self.lab;
+                    self.internalYuvData = self.yuv;
+                    
                 otherwise
                     error('prtDataTypeImage:invalidSpec','The specified image format was not valid');
             end
         end
+        
         
         function self = clearStorage(self)
             self.internalRgbData = [];
             self.internalHsvData = [];
             self.internalGrayData = [];
-        end
-        
-        function self = updateStorage(self)
-            switch lower(self.imageType)
-                case 'mat'
-                    self.internalRgbData = [];
-                    self.internalHsvData = [];
-                    self.internalGrayData = mat2gray(self.imageData);
-                case 'gray'
-                    self.internalRgbData = [];
-                    self.internalHsvData = [];
-                case 'rgb'
-                    self.internalGrayData = rgb2gray(self.imageData);
-                    self.internalHsvData = rgb2hsv(self.imageData);
-                case 'hsv'
-                    self.internalRgbData = rgb2gray(self.imageData);
-                    self.internalGrayData = rgb2gray(self.internalRgbData);
-                otherwise
-                    error('prtDataTypeImage:invalidSpec','The specified image format was not valid');
-            end
+            self.internalLabData = [];
+            self.internalYuvData = [];
         end
         
         function g = get.gray(self)
-            if ~isempty(self.internalGrayData)
-                g = self.internalGrayData;
-                return;
-            else
+            if isempty(self.internalGrayData)
                 switch lower(self.imageType)
                     case 'mat'
                         self.internalGrayData = mat2gray(self.imageData);
-                        g = self.internalGrayData;
+                        
                     case 'gray'
                         self.internalGrayData = self.imageData;
-                        g = self.internalGrayData;
+                        
                     case 'rgb'
                         self.internalGrayData = rgb2gray(self.imageData);
-                        g = self.internalGrayData;
-                    case 'hsv'
-                        self.internalRgbData = rgb2gray(self.imageData);
-                        self.internalGrayData = rgb2gray(self.internalRgbData);
-                        g = self.internalGrayData;
+                        
+                    case {'hsv', 'lab', 'yuv'}
+                        self.internalGrayData = rgb2gray(self.rgb); % Force conversion to rgb then to gray
+                        
                     otherwise 
                         error('prtDataTypeImage:invalidSpec','The specified image format was not valid');
                 end
-                return;
-            end     
+            end
+            g = self.internalGrayData;
         end
         
         function r = get.rgb(self)
-            if ~isempty(self.internalRgbData)
-                r = self.internalRgbData;
-                return;
-            else
+            if isempty(self.internalRgbData)
                 switch lower(self.imageType)
                     case 'mat'
-                        %                         error('prtDataTypeImage:invalidSpec','Cannot convert from internal storage "mat" to "rgb"');
-                        r = nan;
+                        self.internalRgbData = repmat(self.gray,[1 1 3]); % Convert to gray, then repmat for 3 color dims
                     case 'gray'
-                        %                         error('prtDataTypeImage:invalidSpec','Cannot convert from internal storage "gray" to "rgb"');
-                        r = nan;
+                        self.internalRgbData = repmat(self.imageData,[1 1 3]); % then repmat for 3 color dims
                     case 'rgb'
                         self.internalRgbData = self.imageData;
-                        r = self.internalRgbData;
                     case 'hsv'
-                        self.internalRgbData = rgb2gray(self.imageData);
-                        r = self.internalRgbData;
+                        self.internalRgbData = hsv2rgb(self.imageData);
+                    case 'lab'
+                        if isempty(self.internalLabToRgbConverter)
+                            self.internalLabToRgbConverter = makecform('lab2srgb');
+                        end
+                        self.internalRgbData = applycform(self.imageData, self.internalLabToRgbConverter);
+                    case 'yuv'
+                        self.internalRgbData = ycbcr2rgb(self.imageData);
+                        
                     otherwise 
                         error('prtDataTypeImage:invalidSpec','The specified image format was not valid');
                 end
-                return;
             end     
+            r = self.internalRgbData;
         end
         
         function h = get.hsv(self)
-            if ~isempty(self.internalHsvData)
-                h = self.internalHsvData;
-                return;
-            else
+            if isempty(self.internalHsvData)
                 switch lower(self.imageType)
-                    case 'mat'
-                        %                         error('prtDataTypeImage:invalidSpec','Cannot convert from internal storage "mat" to "hsv"');
-                        h = nan;
-                    case 'gray'
-                        %                         error('prtDataTypeImage:invalidSpec','Cannot convert from internal storage "gray" to "hsv"');
-                        h = nan;
+                    case {'mat' 'gray' 'lab' 'yuv'} % Convert to RGB then to hsv
+                        self.internalHsvData = rgb2hsv(self.rgb); 
+                        
                     case 'rgb'
                         self.internalHsvData = rgb2hsv(self.imageData);
-                        h = self.internalHsvData;
+                        
                     case 'hsv'
                         self.internalHsvData = self.imageData;
-                        h = self.internalHsvData;
+                        
                     otherwise 
                         error('prtDataTypeImage:invalidSpec','The specified image format was not valid');
                 end
-                return;
-            end     
+            end 
+            h = self.internalHsvData;
+        end
+        
+        function y = get.yuv(self)
+            if isempty(self.internalYuvData)
+                switch lower(self.imageType)
+                    case {'mat' 'gray' 'lab' 'hsv'} % Convert to RGB then to yuv
+                        self.internalYuvData = rgb2ycbcr(self.rgb);
+                        
+                    case 'rgb'
+                        self.internalYuvData = rgb2ycbcr(self.imageData);
+                        
+                    case 'yuv'
+                        self.internalYuvData = self.imageData;
+                        
+                    otherwise
+                        error('prtDataTypeImage:invalidSpec','The specified image format was not valid');
+                end
+            end
+            y = self.internalYuvData;
+        end
+        
+        function y = get.lab(self)
+            if isempty(self.internalLabData)
+                switch lower(self.imageType)
+                    case {'mat' 'gray' 'rgb' 'hsv' 'yuv'} % Convert to RGB then to lab
+                        if isempty(self.internalRgbToLabConverter)
+                            self.internalRgbToLabConverter = makecform('srgb2lab');
+                        end
+                        self.internalLabData = applycform(self.rgb, self.internalRgbToLabConverter);
+                        
+                    case 'lab'
+                        self.internalLabData = self.imageData;
+                        
+                    otherwise
+                        error('prtDataTypeImage:invalidSpec','The specified image format was not valid');
+                end
+            end
+            y = self.internalLabData;
         end
     end
 end
