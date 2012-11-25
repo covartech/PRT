@@ -113,7 +113,7 @@ classdef prtRvGmmApproxDp < prtRv
             error('nComponents cannot be set');
         end
         function val = get.nComponents(R)
-            val = R.mixtureRv.nComponentsDepHelp;
+            val = R.nComponentsDepHelp;
         end
         function val = get.nComponentsDepHelp(R)
             val = R.mixtureRv.nComponents;
