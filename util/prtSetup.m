@@ -40,8 +40,11 @@ htmlFiles{1} = dir(fullfile(tempDocDir));
 htmlFiles{1} = htmlFiles{1}(~cat(1,htmlFiles{1}.isdir));
 htmlFiles{2} = dir(fullfile(tempDocDir,'functionReference','*.html'));
 
-rmdir(fullfile(prtRoot,'doc'),'s');
-
+try
+    rmdir(fullfile(prtRoot,'doc'),'s');
+catch ME
+    % do nothing
+end
 mkdir(fullfile(prtRoot,'doc'));
 mkdir(fullfile(prtRoot,'doc','functionReference'));
 for iFile = 1:length(htmlFiles{1})
