@@ -87,42 +87,43 @@ classdef prtClassTreeBaggingCap < prtClass
     properties (Hidden = true)
         eml = true;
         Memory = struct('nAppend',1000); % Used in prtUtilRecursiveCapTree
+        trackTreePerformance = false;
     end
     
     methods
-        function Obj = set.nTrees(Obj,val)
+        function self = set.nTrees(self,val)
             assert(isscalar(val) && isnumeric(val) && val > 0 && val == round(val),'prt:prtClassTreeBaggingCap:nTrees','nTrees must be a scalar integer greater than 0, but value provided is %s',mat2str(val));
-            Obj.nTrees = val;
+            self.nTrees = val;
         end
-        function Obj = set.nFeatures(Obj,val)
+        function self = set.nFeatures(self,val)
             assert(isscalar(val) && isnumeric(val) && val > 0 && val == round(val),'prt:prtClassTreeBaggingCap:nFeatures','nFeatures must be a scalar integer greater than 0, but value provided is %s',mat2str(val));
-            Obj.nFeatures = val;
+            self.nFeatures = val;
         end
-        function Obj = set.featureSelectWithReplacement(Obj,val)
+        function self = set.featureSelectWithReplacement(self,val)
             assert(isscalar(val) && islogical(val),'prt:prtClassTreeBaggingCap:featureSelectWithReplacement','featureSelectWithReplacement must be a logical value, but value provided is a %s',class(val));
-            Obj.featureSelectWithReplacement = val;
+            self.featureSelectWithReplacement = val;
         end
-        function Obj = set.bootStrapDataAtRoots(Obj,val)
+        function self = set.bootStrapDataAtRoots(self,val)
             assert(isscalar(val) && islogical(val),'prt:prtClassTreeBaggingCap:bootStrapDataAtRoots','bootStrapDataAtRoots must be a logical value, but value provided is a %s',class(val));
-            Obj.bootStrapDataAtRoots = val;
+            self.bootStrapDataAtRoots = val;
         end
-        function Obj = set.useMex(Obj,val)
+        function self = set.useMex(self,val)
             assert(isscalar(val) && islogical(val),'prt:prtClassTreeBaggingCap:useMex','useMex must be a logical value, but value provided is a %s',class(val));
-            Obj.useMex = val;
+            self.useMex = val;
         end
-        function Obj = prtClassTreeBaggingCap(varargin)
-            Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
+        function self = prtClassTreeBaggingCap(varargin)
+            self = prtUtilAssignStringValuePairs(self,varargin{:});
         end
     end
     
     methods (Access=protected, Hidden = true)
-        function Obj = trainAction(Obj,DataSet)
+        function self = trainAction(self,dataSet)
             
-            for i = 1:Obj.nTrees
-                treeRoot(i) = generateCAPTree(Obj,DataSet);  %#ok<AGROW>
+            for i = 1:self.nTrees
+                treeRoot(i) = generateCAPTree(self,dataSet);  %#ok<AGROW>
                 
                 if i == 1
-                    treeRoot = repmat(treeRoot,Obj.nTrees,1);
+                    treeRoot = repmat(treeRoot,self.nTrees,1);
                 end
                 
                 len = length(find(~isnan(treeRoot(i).W(1,:))));
@@ -133,7 +134,7 @@ classdef prtClassTreeBaggingCap < prtClass
                 treeRoot(i).terminalVote = treeRoot(i).terminalVote(:,1:len);  %#ok<AGROW>
             end
             
-            if Obj.eml
+            if self.eml
                 wSizes = cellfun(@(x)size(x),{treeRoot.W},'uniformOutput',false);
                 wSizes = cat(1,wSizes{:});
                 maxWSize = max(wSizes,[],1);
@@ -146,12 +147,12 @@ classdef prtClassTreeBaggingCap < prtClass
                 end
             end
             
-            Obj.root = treeRoot;
+            self.root = treeRoot;
             
         end
         
-        function tree = generateCAPTree(Obj,DataSet)
-            %tree = generateCAPTree(Obj,DataSet)
+        function tree = generateCAPTree(self,dataSet)
+            %tree = generateCAPTree(self,dataSet)
             
             tree.W = [];
             tree.threshold = [];
@@ -161,36 +162,51 @@ classdef prtClassTreeBaggingCap < prtClass
             tree.maxReservedLen = 0;
             
             tree.father = 0;
-            if Obj.bootStrapDataAtRoots
-                DataSet = DataSet.bootstrapByClass();
+            if self.bootStrapDataAtRoots
+                dataSet = dataSet.bootstrapByClass();
             end
             
-            if Obj.fastTraining
-                tree = prtUtilRecursiveCapTreeFast(Obj, tree, DataSet.getObservations, logical(DataSet.getTargetsAsBinaryMatrix), 1);
+            if self.fastTraining
+                tree = prtUtilRecursiveCapTreeFast(self, tree, dataSet.getObservations, logical(dataSet.getTargetsAsBinaryMatrix), 1);
             else
-                tree = prtUtilRecursiveCapTree(Obj, tree, DataSet.getObservations, logical(DataSet.getTargetsAsBinaryMatrix), 1);
+                tree = prtUtilRecursiveCapTree(self, tree, dataSet.getObservations, logical(dataSet.getTargetsAsBinaryMatrix), 1);
             end
+            
         end
         
-        function ClassifierResults = runAction(Obj,PrtDataSet)
+        function ClassifierResults = runAction(self,PrtDataSet)
             
-            Yout = zeros(PrtDataSet.nObservations,Obj.dataSetSummary.nClasses);
+            Yout = zeros(PrtDataSet.nObservations,self.dataSetSummary.nClasses);
             x = PrtDataSet.getObservations;
-            theRoot = Obj.root;
+            theRoot = self.root;
             
-            if Obj.useMex
-                for iTree = 1:Obj.nTrees
-                    Yout = Yout + prtUtilEvalCapTreeMex(theRoot(iTree), x, Obj.dataSetSummary.nClasses);
+            if self.useMex
+                for iTree = 1:self.nTrees
+                    treeOut = prtUtilEvalCapTreeMex(theRoot(iTree), x, self.dataSetSummary.nClasses);
+                    Yout = Yout + treeOut;
+                    
+                    if self.trackTreePerformance
+                        if iTree == 1
+                            treeOutCell = repmat({treeOut},self.nTrees,1);
+                        else
+                            treeOutCell{iTree} = treeOut;
+                        end
+                    end
                 end
             else
                 for jSample = 1:PrtDataSet.nObservations
-                    for iTree = 1:Obj.nTrees
-                        Yout(jSample,:) = Yout(jSample,:) + prtUtilEvalCAPtree(theRoot(iTree),x(jSample,:),Obj.dataSetSummary.nClasses);
+                    for iTree = 1:self.nTrees
+                        Yout(jSample,:) = Yout(jSample,:) + prtUtilEvalCAPtree(theRoot(iTree),x(jSample,:),self.dataSetSummary.nClasses);
                     end
                 end
             end
             
             ClassifierResults = prtDataSetClass(Yout/length(theRoot));
+            if self.trackTreePerformance
+                for iTree = 1:self.nTrees;
+                    ClassifierResults = ClassifierResults.setObservationInfo(sprintf('tree%05d',iTree),treeOutCell{iTree});
+                end
+            end
         end
         function Yout = runActionFast(self, X)
             nClasses = self.dataSetSummary.nClasses;
