@@ -46,7 +46,9 @@ for n=1:numel(S)
             val = S(n).(fn{1});
             if isstruct(val)
                 val = Struct2Hashmap(val);
-            end
+            elseif isa(val,'function_handle');
+                val = functiontostring(val);
+            end        
             
             vn = java.util.ArrayList();
             if not(isscalar(val)) && not(ischar(val)) && not(isa(val,'java.util.LinkedHashMap') || isa(val,'java.util.ArrayList'))

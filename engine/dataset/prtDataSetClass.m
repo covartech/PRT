@@ -192,9 +192,15 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
 			maxVal = max(abs(obj.getObservations(:,featureIndices)));
 			
 			nFeats = length(featureIndices);
-			classColors = obj.plotOptions.colorsFunction(obj.nClasses);
+			classColors = obj.plotOptions.colorsFunction(max(obj.nClasses,1));
 			
-			uClasses = obj.uniqueClasses;
+            if obj.isLabeled
+                uClasses = obj.uniqueClasses;
+                targs = obj.getTargets;
+            else
+                uClasses = 1;
+                targs = ones(obj.nObservations,1);
+            end
 			holdState = get(gca,'nextPlot');
 			for i = 1:obj.nObservations;
 				[centerI,centerJ] = ind2sub([M,M],i);
@@ -206,10 +212,7 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
 				ppoints = cat(2,points,points(:,1));
 				
 				h = plot([repmat(centerI,nFeats,1),points(1,:)']',[repmat(centerJ,nFeats,1),points(2,:)']',ppoints(1,:)',ppoints(2,:)','lineWidth',obj.plotOptions.starLineWidth);
-				classInd = obj.getTargets(i) == uClasses;
-				if isempty(classInd) %unlabeled dataset
-					classInd = 1;
-				end
+				classInd = targs(i) == uClasses;
 				
 				set(h,'color',classColors(classInd,:));
 				hold on;
@@ -265,9 +268,16 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
 			maxVal = max(abs(obj.getObservations(:,featureIndices)));
 			
 			nFeats = length(featureIndices);
-			classColors = obj.plotOptions.colorsFunction(obj.nClasses);
-			
-			uClasses = obj.uniqueClasses;
+			classColors = obj.plotOptions.colorsFunction(max(obj.nClasses,1));
+            
+            if obj.isLabeled
+                uClasses = obj.uniqueClasses;
+                targs = obj.getTargets;
+            else
+                uClasses = 1;
+                targs = ones(obj.nObservations,1);
+            end
+            
 			holdState = get(gca,'nextPlot');
 			if strcmpi(holdState,'replace')
 				delete(gca);
@@ -284,7 +294,7 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
 				ppoints = cat(2,points,points(:,1));
 				
 				h = plot([repmat(centerI,nFeats,1),points(1,:)']',[repmat(centerJ,nFeats,1),points(2,:)']',ppoints(1,:)',ppoints(2,:)','lineWidth',obj.plotOptions.starLineWidth);
-				classInd = obj.getTargets(i) == uClasses;
+				classInd = targs(i) == uClasses;
 				set(h,'color',classColors(classInd,:));
 			end
 			title(obj.name);

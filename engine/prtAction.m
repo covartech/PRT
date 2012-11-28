@@ -744,14 +744,20 @@ classdef prtAction
             S.dataSetSummary = self.dataSetSummary;
             for iProp = 1:length(propNames)
                 cProp = self.(propNames{iProp});
-                for icProp = 1:length(cProp) % Allow for arrays of objects
-                    cOut = prtUtilFintPrtActionsAndConvertToStructures(cProp(icProp));
-                    if icProp == 1
-                        cVal = repmat(cOut,size(cProp));
-                    else
-                        cVal(icProp) = cOut;
+                if ischar(cProp) || isnumeric(cProp) || isa(cProp,'function_handle') || islogical(cProp)
+                    cVal = cProp;
+                else
+                    for icProp = 1:length(cProp) % Allow for arrays of objects
+                        cOut = prtUtilFintPrtActionsAndConvertToStructures(cProp(icProp));
+                        
+                        if icProp == 1
+                            cVal = repmat(cOut,size(cProp));
+                        else
+                            cVal(icProp) = cOut;
+                        end
                     end
                 end
+                
                 S.(propNames{iProp}) = cVal;
             end
             S.userData = self.userData;
