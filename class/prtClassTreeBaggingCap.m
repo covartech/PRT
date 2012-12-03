@@ -88,7 +88,7 @@ classdef prtClassTreeBaggingCap < prtClass
         
         useMex = true;     % Flag indicating whether or not to use the Mex file
         
-        fastTraining = true; % Whether to truly optimize operating points at each branch (false), or take a rough guess (true)
+        fastTraining = false; % Whether to truly optimize operating points at each branch (false), or take a rough guess (true)
 	    
 		computePercIncrMisclassRate = false; % Flag indicating whether or not to compute percent increase in misclassification rate
     end
