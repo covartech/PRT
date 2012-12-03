@@ -141,8 +141,69 @@ threshold = median(tempY);
 
 pE = 1-sum(tempY >= threshold == yTest)/length(tempY);
 if pE >= .5
-    w = -w;
-    yOut = -yOut;
+    %     threshold = -threshold;
+    %     w = -w;
+    %     yOut = -yOut;
+    %
+    %     pE = 1-sum(tempY >= threshold == yTest)/length(tempY);
+    %     %     if pE > .5
+    %         %We tried the median, then -w, and the -median, and prob(error) was
+    %         %still too high. That says that the median just won't work.  So use
+    %         %the ROC curve:
+    %
+    %         w = -w; %un-negate (!)
+    %         yOut = (w*x')';
+    %         yTest = y(selectedClasses,sortedClassInds(2));
+    %
+    %         % figure out the threshold: (1)
+    %         [pf,pd,thresh] = prtScoreRoc(yOut(selectedClasses,:),yTest,'uniqueLabels',[0 1]);
+    %
+    %         % figure out the threshold: (2)
+    %         % uY = unique(yTest);
+    %         % binLabels = yTest ~= uY(1);
+    %         % [~,~,pf,pd,thresh] = prtUtilMinPeThreshold(yOut(selectedClasses,:),binLabels);
+    %
+    %         pE = prtUtilPfPd2Pe(pf,pd);
+    %         [minPe,I] = min(pE);
+    %         if numel(I) > 1
+    %             I = unique(I);
+    %         end
+    %
+    %         if I < length(thresh)
+    %             %for categorical variables, the threshold should live between the
+    %             %samples we've seen; this is true for continuous variables too.  Makes
+    %             %a big difference when multiple values take the same value
+    %             thresholdValue = mean([thresh(I),thresh(I+1)]);
+    %         else
+    %             thresholdValue = thresh(I);
+    %         end
+    %
+    %         if minPe >= 0.5
+    %             w = -w;
+    %             yOut = -yOut;
+    %             % % figure out the threshold:
+    %             [pf,pd,thresh] = prtScoreRoc(yOut(selectedClasses,:),yTest,'uniqueLabels',[0 1]);
+    %             pE = prtUtilPfPd2Pe(pf,pd);
+    %             [minPe,I] = min(pE);
+    %             if numel(I) > 1
+    %                 I = unique(I);
+    %             end
+    %             if I < length(thresh)
+    %                 %for categorical variables, the threshold should live between the
+    %                 %samples we've seen; this is true for continuous variables too.  Makes
+    %                 %a big difference when multiple values take the same value
+    %                 thresholdValue = mean([thresh(I),thresh(I+1)]);
+    %             else
+    %                 thresholdValue = thresh(I);
+    %             end
+    %
+    %         end
+    %         threshold = thresholdValue;
+    %         pE = minPe;
+    %     end
+end
+if pE > .5
+    threshold = -inf;
 end
 thresholdValue = threshold;
 end

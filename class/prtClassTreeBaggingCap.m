@@ -66,12 +66,13 @@ classdef prtClassTreeBaggingCap < prtClass
        
         isNativeMary = true;    % False
         
-        % Array of Central Axis Projection Trees
+         % Array of Central Axis Projection Trees
         root = [];
+        
     end
     
     properties
-        
+       
         nTrees = 100; % The number of trees
         
         nFeatures = 2;  % The number of features at each node
@@ -168,6 +169,9 @@ classdef prtClassTreeBaggingCap < prtClass
             
             if self.fastTraining
                 tree = prtUtilRecursiveCapTreeFast(self, tree, dataSet.getObservations, logical(dataSet.getTargetsAsBinaryMatrix), 1);
+                if all(~isfinite(tree.W(:)))
+                    keyboard
+                end
             else
                 tree = prtUtilRecursiveCapTree(self, tree, dataSet.getObservations, logical(dataSet.getTargetsAsBinaryMatrix), 1);
             end
@@ -200,7 +204,6 @@ classdef prtClassTreeBaggingCap < prtClass
                     end
                 end
             end
-            
             ClassifierResults = prtDataSetClass(Yout/length(theRoot));
             if self.trackTreePerformance
                 for iTree = 1:self.nTrees;
