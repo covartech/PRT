@@ -241,7 +241,11 @@ set(navFigH,'visible','on');
     function displayInfo(clickedObsInd)
         obsName = ds.getObservationNames(clickedObsInd);
         
-        cClassInd = ds.getTargetsClassInd(clickedObsInd);
+        if ds.isLabeled
+            cClassInd = ds.getTargetsClassInd(clickedObsInd);
+        else
+            cClassInd = [];
+        end
         
         if isempty(cClassInd)
             cString = sprintf('Closest Observation:\n\t Name: %s',obsName{1});
@@ -250,18 +254,25 @@ set(navFigH,'visible','on');
             if ~iscell(className)
                 className = {className};
             end
-            cString = sprintf('Closest Observation:\n\t Name: %s\t\nClass: %s',obsName{1},className{1});
+            cString = sprintf('Closest Observation:\n\t Name: %s\n\tClass: %s',obsName{1},className{1});
         end
-        
-        
-        set(tabGroupH.infoText,'string',cString);
         
         if length(ds.observationInfo) > clickedObsInd
             infoClickedInd = clickedObsInd;
             set(tabGroupH.infoButton,'enable','on');
+            if ~isdeployed % can't use evalc if deployed
+                s = ds.observationInfo(infoClickedInd);
+                infoStr = evalc('display(s)');
+                infoStr = infoStr(6:end); % 6 here is for the 's =   '
+                
+                cString = sprintf(cat(2, cString, '\n\nObservation Info:\n',infoStr));
+            end
         else
             set(tabGroupH.infoButton,'enable','off');
         end
+        
+        
+        set(tabGroupH.infoText,'string',cString);
         
     end
 

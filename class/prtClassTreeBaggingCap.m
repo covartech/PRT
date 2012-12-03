@@ -36,6 +36,10 @@ classdef prtClassTreeBaggingCap < prtClass
     %                                   cross-validation performance, at
     %                                   the expense of increased
     %                                   tree-length.
+	%
+	%    computePercIncrMisclassRate  - Flag indicating whether or not to
+	%                                   compute percent increase in
+	%                                   misclassification rate
     %    
     %
     %  For more information on random tree classifiers, see:
@@ -68,7 +72,8 @@ classdef prtClassTreeBaggingCap < prtClass
         
          % Array of Central Axis Projection Trees
         root = [];
-        
+		
+		percIncrMisclassRate = [];
     end
     
     properties
@@ -84,6 +89,8 @@ classdef prtClassTreeBaggingCap < prtClass
         useMex = true;     % Flag indicating whether or not to use the Mex file
         
         fastTraining = true; % Whether to truly optimize operating points at each branch (false), or take a rough guess (true)
+	    
+		computePercIncrMisclassRate = false; % Flag indicating whether or not to compute percent increase in misclassification rate
     end
     properties (Hidden = true)
         eml = true;
@@ -112,6 +119,10 @@ classdef prtClassTreeBaggingCap < prtClass
             assert(isscalar(val) && islogical(val),'prt:prtClassTreeBaggingCap:useMex','useMex must be a logical value, but value provided is a %s',class(val));
             self.useMex = val;
         end
+        function Obj = set.computePercIncrMisclassRate(Obj,val)
+            assert(isscalar(val) && islogical(val),'prt:prtClassTreeBaggingCap:computePercIncrMisclassRate','computePercIncrMisclassRate must be a logical value, but value provided is a %s',class(val));
+            Obj.computePercIncrMisclassRate = val;
+        end
         function self = prtClassTreeBaggingCap(varargin)
             self = prtUtilAssignStringValuePairs(self,varargin{:});
         end
@@ -120,20 +131,28 @@ classdef prtClassTreeBaggingCap < prtClass
     methods (Access=protected, Hidden = true)
         function self = trainAction(self,dataSet)
             
-            for i = 1:self.nTrees
-                treeRoot(i) = generateCAPTree(self,dataSet);  %#ok<AGROW>
-                
-                if i == 1
-                    treeRoot = repmat(treeRoot,self.nTrees,1);
-                end
-                
-                len = length(find(~isnan(treeRoot(i).W(1,:))));
-                treeRoot(i).W = treeRoot(i).W(:,1:len);   %#ok<AGROW>
-                treeRoot(i).threshold = treeRoot(i).threshold(:,1:len);  %#ok<AGROW>
-                treeRoot(i).featureIndices = treeRoot(i).featureIndices(:,1:len);  %#ok<AGROW>
-                treeRoot(i).treeIndices = treeRoot(i).treeIndices(:,1:len);  %#ok<AGROW>
-                treeRoot(i).terminalVote = treeRoot(i).terminalVote(:,1:len);  %#ok<AGROW>
-            end
+			percIncrMisclassRate = zeros(dataSet.nFeatures,1);
+			for i = 1:self.nTrees
+				
+				if self.computePercIncrMisclassRate
+					[treeRoot(i),pimcr] = generateCAPTree(self,dataSet);  %#ok<AGROW>
+					percIncrMisclassRate = (percIncrMisclassRate*(i-1)+pimcr)/i;
+				else
+					treeRoot(i) = generateCAPTree(self,dataSet);  %#ok<AGROW>
+				end
+				
+				if i == 1
+					treeRoot = repmat(treeRoot,self.nTrees,1);
+				end
+				
+				len = length(find(~isnan(treeRoot(i).W(1,:))));
+				treeRoot(i).W = treeRoot(i).W(:,1:len);   %#ok<AGROW>
+				treeRoot(i).threshold = treeRoot(i).threshold(:,1:len);  %#ok<AGROW>
+				treeRoot(i).featureIndices = treeRoot(i).featureIndices(:,1:len);  %#ok<AGROW>
+				treeRoot(i).treeIndices = treeRoot(i).treeIndices(:,1:len);  %#ok<AGROW>
+				treeRoot(i).terminalVote = treeRoot(i).terminalVote(:,1:len);  %#ok<AGROW>
+			end
+			self.percIncrMisclassRate = percIncrMisclassRate;
             
             if self.eml
                 wSizes = cellfun(@(x)size(x),{treeRoot.W},'uniformOutput',false);
@@ -152,8 +171,8 @@ classdef prtClassTreeBaggingCap < prtClass
             
         end
         
-        function tree = generateCAPTree(self,dataSet)
-            %tree = generateCAPTree(self,dataSet)
+        function varargout = generateCAPTree(self,dataSet)
+			%[tree,percIncMisclassRate] = generateCAPTree(Obj,DataSet)
             
             tree.W = [];
             tree.threshold = [];
@@ -164,17 +183,36 @@ classdef prtClassTreeBaggingCap < prtClass
             
             tree.father = 0;
             if self.bootStrapDataAtRoots
-                dataSet = dataSet.bootstrapByClass();
+				[bootstrapDataSet,chosenObsInds] = dataSet.bootstrapByClass();
             end
             
             if self.fastTraining
-                tree = prtUtilRecursiveCapTreeFast(self, tree, dataSet.getObservations, logical(dataSet.getTargetsAsBinaryMatrix), 1);
-                if all(~isfinite(tree.W(:)))
-                    keyboard
-                end
+                tree = prtUtilRecursiveCapTreeFast(self, tree, bootstrapDataSet.getObservations, logical(bootstrapDataSet.getTargetsAsBinaryMatrix), 1);
             else
-                tree = prtUtilRecursiveCapTree(self, tree, dataSet.getObservations, logical(dataSet.getTargetsAsBinaryMatrix), 1);
+                tree = prtUtilRecursiveCapTree(self, tree, bootstrapDataSet.getObservations, logical(bootstrapDataSet.getTargetsAsBinaryMatrix), 1);
             end
+			varargout{1} = tree;
+			
+			if self.computePercIncrMisclassRate
+				outOfBagDataSet = dataSet.removeObservations(chosenObsInds);
+				misClassRate = zeros(outOfBagDataSet.nFeatures,1);
+				for i = 1:outOfBagDataSet.nFeatures
+					permutedDataSet = outOfBagDataSet.permuteFeatures(i);
+					x = permutedDataSet.getObservations;
+					if self.useMex
+						[featInd,~] = find(prtUtilEvalCapTreeMex(tree, x, self.dataSetSummary.nClasses)');
+					else
+						for jSample = 1:permutedDataSet.nObservations
+							[featInd,~] = find(prtUtilEvalCAPtree(tree,x(jSample,:),self.dataSetSummary.nClasses)');
+						end
+					end
+					misClassRate(i) = sum(outOfBagDataSet.targets~=(featInd-1))/outOfBagDataSet.nObservations;
+				end
+				[featInd,~] = find(prtUtilEvalCapTreeMex(tree, outOfBagDataSet.getObservations, self.dataSetSummary.nClasses)');
+				nonPermMisclassRate = sum(outOfBagDataSet.targets~=(featInd-1))/outOfBagDataSet.nObservations;
+				percIncrMisclassRate = (misClassRate-nonPermMisclassRate)/nonPermMisclassRate;
+				varargout{2} = percIncrMisclassRate;
+			end
             
         end
         

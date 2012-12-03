@@ -273,6 +273,19 @@ classdef prtDataSetStandard < prtDataSetInMem
 			obj = obj.update;
 		end
 		
+		function obj = permuteFeatures(obj,permuteFeatureInds)
+			% dsOut = permuteFeatures(dataSet,permuteFeatureInds)
+			%  Return a data set formed by independently, randomly
+			%  permuting each of the specified features across
+			%  observations.
+			
+			for i = 1:numel(permuteFeatureInds)
+				newObsInds = randperm(obj.nObservations);
+				obj.data(:,permuteFeatureInds(i)) = obj.data(newObsInds,permuteFeatureInds(i));
+			end
+			obj = obj.update;
+		end
+		
 		function nFeatures = getNumFeatures(obj)
 			nFeatures = size(obj.data,2);
 		end

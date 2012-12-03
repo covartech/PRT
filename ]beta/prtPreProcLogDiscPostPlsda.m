@@ -71,8 +71,8 @@ classdef prtPreProcLogDiscPostPlsda < prtPreProcClass
             
 			if length(Obj.logDiscWeights) > 1
 				DataSet.X = bsxfun(@rdivide, DataSet.X, sum(DataSet.X,2));
-			%else
-			%	DataSet.X = 1-DataSet.X;
+			else
+				DataSet.X = 1-DataSet.X;
 			end
             
         end
