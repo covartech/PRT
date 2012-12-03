@@ -248,6 +248,7 @@ classdef prtAction
         
         function self = set.verboseStorage(self,val)
             self = self.setVerboseStorage(val);
+			self.dataSet = [];
         end
         
         function self = set.showProgressBar(self,val)
