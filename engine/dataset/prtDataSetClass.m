@@ -1012,6 +1012,10 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
 		function dsFoldOut = crossValidateCheckFoldResults(dsIn, dsTrain, dsTest, dsFoldOut)
 			dsFoldOut = crossValidateCheckFoldResults@prtDataSetBase(dsIn, dsTrain, dsTest, dsFoldOut);
 			dsFoldOut = crossValidateCheckFoldResultsWarnNumberOfClassesBad(dsIn, dsTrain, dsTest, dsFoldOut);
-		end
+        end
+		function self = acquireNonDataAttributesFrom(self, dataSet)
+            self = acquireNonDataAttributesFrom@prtDataSetBase(self, dataSet);
+            self = acquireCategoricalTargetsNonDataAttributes(self, dataSet);
+        end
 	end
 end
