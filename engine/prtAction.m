@@ -14,13 +14,13 @@ classdef prtAction
     %                          object has been trained                          
     %   isCrossValidateValid - Flag indicating whether or not
     %                          cross-validation is a valid operation on 
-    %                          this prtAction object.
+    %                          this prtAction object
     %   verboseStorage       - Flag to allow or disallow verbose storage
     %   dataSetSummary       - A struct, set during training, containing
     %                          information about the training data set
     %   dataSet              - A prtDataSet, containing the training data,
     %                          only used if verboseStorage is true
-    %   userData             - A struct containing user specified data
+    %   userData             - A struct containing user-specified data
     %
     %   All prtAction objects have the following methods:
     %
@@ -29,10 +29,10 @@ classdef prtAction
     %   runOnTrainingData - Evaluate the prtAction object on a prtDataSet
     %                       during training prior to training of other
     %                       prtActions within a prtAlgorithm
-    %   crossValidate     - Cross-validate a prtAction object using a 
-    %                       labeled prtDataSet and cross-validation keys.
-    %   kfolds            - K-folds cross-validate a prtAction object using
-    %                       a labeled prtDataSet
+    %   crossValidate     - Cross-validate the prtAction object using a 
+    %                       labeled prtDataSet and cross-validation keys
+    %   kfolds            - K-folds cross-validate the prtAction object
+	%                       using a labeled prtDataSet
     %   optimize          - Optimize the prtAction for a specified
     %                       parameter
     % See Also: prtAction/train, prtAction/run, prtAction/crossValidate,
@@ -155,6 +155,7 @@ classdef prtAction
             %
             %   OUTPUT = OBJ.run(ds) runs the prtAction object using
             %   the prtDataSet ds. OUTPUT will be a prtDataSet object.
+			
             dsOut = preRunProcessing(self, dsIn);
             dsOut = runActionOnTrainingData(self, dsOut);
             dsOut = postRunProcessing(self, dsIn, dsOut);
@@ -165,7 +166,7 @@ classdef prtAction
             % TRAIN  Train a prtAction object using training a prtDataSet object.
             %
             %   self = Obj.train(ds) trains the prtAction object using
-            %   the prtDataSet ds
+            %   the prtDataSet ds.
             
             if ~isscalar(self)
                 error('prt:prtAction:NonScalarAction','train method expects scalar prtAction objects, prtAction provided was of size %s',mat2str(size(self)));
@@ -266,7 +267,7 @@ classdef prtAction
         function [dsOut, trainedActions] = crossValidate(self, dsIn, validationKeys)
             % CROSSVALIDATE  Cross validate prtAction using prtDataSet and cross validation keys.
             %
-            %  OUTPUTDATASET = OBJ.crossValidate(DATASET, KEYS) cross
+            %  OUTPUTDATASET = OBJ.crossValidate(DATASET, KEYS) cross-
             %  validates the prtAction object OBJ using the prtDataSet
             %  DATASET and the KEYS. DATASET must be a labeled prtDataSet.
             %  KEYS must be a vector of integers with the same number of
@@ -285,8 +286,8 @@ classdef prtAction
             
             
             % Check for isCrossValidateValid removed - 2012-11-08
-            % This now handled by allowing the dataset to check the the
-            % fold results.
+            % This now handled by allowing the dataset to check the fold
+            % results.
 
             if ~isvector(validationKeys) || (numel(validationKeys) ~= dsIn.nObservations)
                 error('prt:prtAction:crossValidate','validationKeys must be a vector with a length equal to the number of observations in the data set');
@@ -365,24 +366,24 @@ classdef prtAction
         end
         
         function varargout = kfolds(self, ds , k)
-            % KFOLDS  Perform K-folds cross validation of prtAction
+            % KFOLDS  Perform K-folds cross-validation of prtAction
             % 
             %    OUTPUTDATASET = self.KFOLDS(DATASET, K) performs K-folds
-            %    cross validation of the prtAction object OBJ using the
+            %    cross-validation of the prtAction object OBJ using the
             %    prtDataSet DATASET. DATASET must be a labeled prtDataSet,
-            %    and K must be a scalar interger, representing the number
-            %    of folds. KFOLDS Generates cross validation keys by
-            %    patitioning the dataSet into K groups such that the number
-            %    of samples of each uniqut target type is attempted to be
-            %    held constant.
+            %    and K must be a scalar integer, representing the number
+            %    of folds. KFOLDS Generates cross-validation keys by
+            %    partitioning the dataSet into K groups such that the
+			%    number of samples of each unique target type is held
+			%    approximately constant.
             %
             %    [OUTPUTDATASET, TRAINEDACTIONS, CROSSVALKEYS] =
             %    self.KFOLDS(DATASET, K)  outputs the trained prtAction
             %    objects TRAINEDACTIONS, and the generated cross-validation
             %    keys CROSSVALKEYS.
             %
-            %    To manually set which observations correspond are in 
-            %    which fold see crossValidate.
+            %    To manually set which observations are in which folds, see
+            %    crossValidate.
             
             
             assert(isa(ds,'prtDataSetBase'),'First input must by a prtDataSet.');
@@ -432,7 +433,7 @@ classdef prtAction
         function out = get(self,varargin)
             % get - get the object properties
             % 
-            % val = obj.get(PARAM) retutns the value of the parameter
+            % val = obj.get(PARAM) returns the value of the parameter
             % specified by the string PARAM.
             %
             % vals = obj.get(PARAM1, PARAM2....) returns a structure
@@ -483,7 +484,7 @@ classdef prtAction
             % postTrainProcessing - Processing done after trainAction()
             %   Called by train(). Can be overloaded by prtActions to
             %   store specific information about the DataSet or Classifier
-            %   prior to training.
+            %   after training.
             %   
             %   ActionObj = postTrainProcessing(ActionObj,DataSet)
         end
@@ -500,8 +501,7 @@ classdef prtAction
         function dsOut = postRunProcessing(self, dsIn, dsOut)
             % postRunProcessing - Processing done after runAction()
             %   Called by run(). Can be overloaded by prtActions to alter
-            %   the results of run() to modify outputs using parameters of
-            %   the prtAction.
+            %   the results of run() using parameters of the prtAction.
             %   
             %   DataSetOut = postRunProcessing(ActionObj, DataSetIn, DataSetOut)
             
@@ -527,8 +527,8 @@ classdef prtAction
         function xOut = postRunProcessingFast(self, xIn, xOut, dsIn) %#ok<INUSL,MANU,INUSD>
             % postRunProcessingFast - Processing done after runAction()
             %   Called by runFast(). Can be overloaded by prtActions to
-            %   alter the results of run() to modify outputs using
-            %   parameters of the prtAction.
+            %   alter the results of run() using parameters of the
+			%   prtAction.
             %   
             %   xOut = postRunProcessingFast(ActionObj, xIn, xOut, dsIn)
         end
@@ -560,8 +560,8 @@ classdef prtAction
             %  prtAction object, for example a prtEval function. PARAMNAME
             %  must be a string that indicates the parameter of the
             %  prtAction that is to be optimized. PARAMVALS must be a
-            %  vector of possible values of the parameter that the
-            %  prtAction will be evaluated at.
+            %  vector of possible values of the parameter at which
+            %  prtAction will be evaluated.
             %
             %  [OPTIMACT, PERF]  = OPTIMIZE(...) returns a vector of
             %  performance values that correspond to each element of
