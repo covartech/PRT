@@ -73,6 +73,7 @@ classdef prtDataTypeImage < prtUtilActionDataAccess
                 otherwise
                     error('invalid patchExtractionMode');
             end
+            %             patchSize = fliplr(patchSize);
             for keyIndex = 1:size(theKeypoints,1)
                 cropRect = [theKeypoints(keyIndex,:)-ceil(patchSize/2),patchSize-1];
                 patches{keyIndex} = imcrop(theData,cropRect);
