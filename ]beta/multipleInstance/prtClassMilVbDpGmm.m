@@ -327,7 +327,7 @@ classdef prtClassMilVbDpGmm < prtClass
                             c = Phi_0(i,:)./nu_0(i);
                             c = reshape(c,d,d);
                             if d > 1
-                                plotMvnEllipse(rho_0(i,1:2),c(1:2,1:2),1);
+                                %                                 plotMvnEllipse(rho_0(i,1:2),c(1:2,1:2),1);
                             end
                             mm0(i) = prtRvMvn('mu',rho_0(i,:),'sigma',c);
                         end
@@ -335,7 +335,7 @@ classdef prtClassMilVbDpGmm < prtClass
                             c = Phi_1(i,:)./nu_1(i);
                             c = reshape(c,d,d);
                             if d > 1
-                                plotMvnEllipse(rho_1(i,1:2),c(1:2,1:2),1);
+                                %                                 plotMvnEllipse(rho_1(i,1:2),c(1:2,1:2),1);
                             end
                             mm1(i) = prtRvMvn('mu',rho_1(i,:),'sigma',c);
                         end
