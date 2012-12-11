@@ -198,28 +198,28 @@ classdef prtClassMilVbDpGmm < prtClass
                 end
                 
                 % <log_pi>  Equation 102
-                matGamma = digamma(gamma_i_1_m0) - digamma(gamma_i_1_m0 + gamma_i_2_m0);
-                matGamma2 = digamma(gamma_i_2_m0) - digamma(gamma_i_1_m0 + gamma_i_2_m0);
+                matGamma = psi(gamma_i_1_m0) - psi(gamma_i_1_m0 + gamma_i_2_m0);
+                matGamma2 = psi(gamma_i_2_m0) - psi(gamma_i_1_m0 + gamma_i_2_m0);
                 log_pi_0 = matGamma + cat(2,0,cumsum(matGamma2(1:end-1)));
                 
-                matGamma = digamma(gamma_i_1_m1) - digamma(gamma_i_1_m1 + gamma_i_2_m1);
-                matGamma2 = digamma(gamma_i_2_m1) - digamma(gamma_i_1_m1 + gamma_i_2_m1);
+                matGamma = psi(gamma_i_1_m1) - psi(gamma_i_1_m1 + gamma_i_2_m1);
+                matGamma2 = psi(gamma_i_2_m1) - psi(gamma_i_1_m1 + gamma_i_2_m1);
                 log_pi_1 = matGamma + cat(2,0,cumsum(matGamma2(1:end-1)));
                 
                 
                 % <Log \eta_m>  Equation 105
                 nBarM0 = self.alpha(1) +  sum(phi_0_M(expandedBagLabels == 1,:));
                 nBarM1 = self.alpha(2) +  sum(phi_1_M(expandedBagLabels == 1,:));
-                log_eta = digamma([nBarM0,nBarM1]) - digamma(nBarM1+nBarM0);
+                log_eta = psi([nBarM0,nBarM1]) - psi(nBarM1+nBarM0);
                 
                 % <log det ||>
                 for cluster = 1:self.K0
-                    temp_det0 = sum(digamma((nu_0(cluster) + 1 - (1:d))/2));
+                    temp_det0 = sum(psi((nu_0(cluster) + 1 - (1:d))/2));
                     temp_det0 = temp_det0 + d*log(2);
                     log_det_0(cluster) = temp_det0 + log(det(reshape(Phi_0(cluster,:),d,d)^-1));
                 end
                 for cluster = 1:self.K1
-                    temp_det1 = sum(digamma((nu_1(cluster) + 1 - (1:d))/2));
+                    temp_det1 = sum(psi((nu_1(cluster) + 1 - (1:d))/2));
                     temp_det1 = temp_det1 + d*log(2);
                     log_det_1(cluster) = temp_det1 + log(det(reshape(Phi_1(cluster,:),d,d)^-1));
                 end
