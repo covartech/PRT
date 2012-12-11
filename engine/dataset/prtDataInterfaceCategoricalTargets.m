@@ -499,4 +499,14 @@ classdef prtDataInterfaceCategoricalTargets
 		end
 		
     end
+    methods (Hidden)
+        function self = acquireCategoricalTargetsNonDataAttributes(self, dataSet)
+            if isa(dataSet,'prtDataInterfaceCategoricalTargets') && dataSet.hasClassNames && ~self.hasClassNames
+                self = self.setClassNames(dataSet.getClassNames);
+            end
+        end
+        function has = hasClassNames(self)
+            has = ~isempty(self.classNamesArray);
+        end
+    end
 end
