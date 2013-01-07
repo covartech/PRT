@@ -1,7 +1,7 @@
 function varargout = prtPlotUtilMvnEllipse(mu,Sigma,nStds,n)
-% PLOTMVNELLIPSE plots the confidence region of a multivariate Gaussian
+% prtPlotUtilMvnEllipse plots the confidence region of a multivariate Gaussian
 %
-% Syntax: [ellipseHandle, contourXY] = plotMvnEllipse(mu,Sigma,nStds)
+% Syntax: [ellipseHandle, contourXY] = prtPlotUtilMvnEllipse(mu,Sigma,nStds)
 %
 % Adapted From: http://www.mathworks.com/matlabcentral/fileexchange/8793
 % Then re-adpated from Beals Mixture of Factor Analyzes Code

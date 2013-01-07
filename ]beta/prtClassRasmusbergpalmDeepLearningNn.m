@@ -7,15 +7,14 @@ classdef prtClassRasmusbergpalmDeepLearningNn < prtClass
  
 
     properties (SetAccess=private)
-        
         name = 'Deep Learning NN'
         nameAbbreviation = 'DLNN'
         isNativeMary = true;
     end
     
-    properties
+    properties 
         nn
-        nnLayerSpec = 100;
+        nnLayerSpec = [100 10]; %note: first & last layers are assumed to be nFeatures and nClasses respectively; these values specify the sizes of the hidden layers
         nnLambda = 1e-5;
         nnAlpha = 1;
         numepochs = 100;
@@ -24,7 +23,7 @@ classdef prtClassRasmusbergpalmDeepLearningNn < prtClass
     
     methods
         
-        function Obj = prtClassRasmusbergpalmDeepLearningNn(varargin)
+        function Obj = prtClassFld(varargin)
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
         end
         
@@ -32,28 +31,27 @@ classdef prtClassRasmusbergpalmDeepLearningNn < prtClass
     
     methods (Access=protected, Hidden = true)
         
-        function self = trainAction(self,DataSet)
+        function self = trainAction(self,dataSet)
             
             prtUtilTestRasmusbergpalmPath;
             
-            nnLayers = [DataSet.nFeatures self.nnLambda DataSet.nClasses];
-            nnTemp = nnsetup(nnLayers);
+            fullSpec = cat(2,dataSet.nFeatures,self.nnLayerSpec,dataSet.nClasses);
+            nnTemp = nnsetup(fullSpec);
             
-            nnTemp.lambda = self.nnLambda;     %  L2 weight decay
+            nnTemp.lambda = self.nnLambda;      %  L2 weight decay
             nnTemp.alpha  = self.nnAlpha;       %  Learning rate
             opts.numepochs =  self.numepochs;   %  Number of full sweeps through data
             opts.batchsize = self.batchsize;    %  Take a mean gradient step over this many samples
             
-            yBin = DataSet.getTargetsAsBinaryMatrix;
-            self.nn = nntrain(nnTemp, DataSet.X, yBin, opts);
-
+            yBin = dataSet.getTargetsAsBinaryMatrix;
+            self.nn = nntrain(nnTemp, dataSet.X, yBin, opts);
         end
         
-        function DataSet = runAction(self,DataSet)
+        function dataSet = runAction(self,dataSet)
             
-            tempY = zeros(size(DataSet.X,1),self.dataSetSummary.nClasses); %need a way to figure out 10 here
-            netOut = nnff(self.nn, DataSet.X, tempY);
-            DataSet.X = netOut.a{end};
+            tempY = zeros(size(dataSet.X,1),size(self.nn.b{end},1));
+            netOut = nnff(self.nn, dataSet.X, tempY);
+            dataSet.X = netOut.a{end};
             
         end
         
