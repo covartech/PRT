@@ -29,10 +29,9 @@ classdef prtDataTypeImage < prtUtilActionDataAccess
         patchExtractionMode = 'gray';
         imageData = [];
         imageType = ''; %'mat','gray','rgb','hsv'
-        i
-        j
-        keypoints
         actionData
+        
+        keypoints
     end
     
     properties (Access = protected)
@@ -57,37 +56,6 @@ classdef prtDataTypeImage < prtUtilActionDataAccess
     
     methods
         
-        function [patches,fullPatch] = extractKeypointPatches(self,patchSize,theKeypoints)
-            %[patches,fullPatch] = extractKeypointPatches(self,patchSize)
-            if nargin < 3
-                theKeypoints = self.keypoints;
-            end
-            patches = cell(size(theKeypoints,1),1);
-            switch self.patchExtractionMode
-                case 'gray'
-                    theData = self.gray;
-                    patch3 = [];
-                case 'rgb'
-                    theData = self.rgb;
-                    patch3 = 3;
-                otherwise
-                    error('invalid patchExtractionMode');
-            end
-            %             patchSize = fliplr(patchSize);
-            for keyIndex = 1:size(theKeypoints,1)
-                cropRect = [theKeypoints(keyIndex,:)-ceil(patchSize/2),patchSize-1];
-                patches{keyIndex} = imcrop(theData,cropRect);
-            end
-            fullPatch = cellfun(@(x) isequal(size(x),[fliplr(patchSize),patch3]), patches);
-        end
-        
-        function [self,points] = extractKeypoints(self,varargin)
-            %[self,points] = extractKeypoints(self,varargin)
-            %  Call this like you would "corner"
-            % to do: add scales
-            points = corner(self.gray,varargin{:});
-        end
-        
         function sz = getImageSize(self,varargin)
             %sz = getImageSize(self,varargin)
             sz = size(self.imageData,varargin{:});
@@ -103,6 +71,40 @@ classdef prtDataTypeImage < prtUtilActionDataAccess
             %self = imcrop(self,varargin)
             [imgData,rect] = imcrop(self.imageData,varargin{:});
             self = prtDataTypeImage(imgData,self.imageType);
+        end
+        
+        function varargout = imagesc(self,varargin)
+            %h = imagesc(self,varargin)
+            imgData = self.getDataForImage;
+            h = imagesc(imgData,varargin{:});
+            
+            varargout = {};
+			if nargout
+				varargout{1} = h;
+			end
+        end
+        
+        function varargout = imshow(self,varargin)
+            %h = imshow(self,varargin)
+            imgData = self.getDataForImshow;
+            h = imshow(imgData,varargin{:});
+			
+			varargout = {};
+			if nargout
+				varargout{1} = h;
+			end
+        end
+        
+        function varargout = image(self,varargin)
+            %h = image(self,varargin)
+            imgData = self.getDataForImage;
+            h = image(imgData,varargin{:});
+            set(h,'CDataMapping','scaled');
+            
+            varargout = {};
+			if nargout
+				varargout{1} = h;
+			end
         end
         
         function self = prtDataTypeImage(varargin) 
@@ -155,7 +157,7 @@ classdef prtDataTypeImage < prtUtilActionDataAccess
             if ~isValid(self)
                 error('Need to specify imageData and imageType');
             end
-            %self = updateStorage(self);
+            
         end
         
         function data = getDataForImshow(self)
@@ -188,29 +190,6 @@ classdef prtDataTypeImage < prtUtilActionDataAccess
             end
         end
         
-        function h = imagesc(self,varargin)
-            %h = imagesc(self,varargin)
-            imgData = self.getDataForImage;
-            h = imagesc(imgData,varargin{:});
-        end
-        
-        function varargout = imshow(self,varargin)
-            %h = imshow(self,varargin)
-            imgData = self.getDataForImshow;
-            h = imshow(imgData,varargin{:});
-			
-			varargout = {};
-			if nargout
-				varargout{1} = h;
-			end
-        end
-        
-        function h = image(self,varargin)
-            %h = image(self,varargin)
-            imgData = self.getDataForImage;
-            h = image(imgData,varargin{:});
-            set(h,'CDataMapping','scaled');
-        end
         
         function self = setImageDataAndType(self,imgData,imgType)
             %self = setImageDataAndType(self,imgData,imgType)
@@ -247,7 +226,6 @@ classdef prtDataTypeImage < prtUtilActionDataAccess
                     error('prtDataTypeImage:invalidSpec','The specified image format was not valid');
             end
         end
-        
         
         function self = clearStorage(self)
             self.internalRgbData = [];
@@ -361,5 +339,38 @@ classdef prtDataTypeImage < prtUtilActionDataAccess
             end
             y = self.internalLabData;
         end
+        
+          
+        function [patches,fullPatch] = extractKeypointPatches(self,patchSize,theKeypoints)
+            %[patches,fullPatch] = extractKeypointPatches(self,patchSize)
+            if nargin < 3
+                theKeypoints = self.keypoints;
+            end
+            patches = cell(size(theKeypoints,1),1);
+            switch self.patchExtractionMode
+                case 'gray'
+                    theData = self.gray;
+                    patch3 = [];
+                case 'rgb'
+                    theData = self.rgb;
+                    patch3 = 3;
+                otherwise
+                    error('invalid patchExtractionMode');
+            end
+            %             patchSize = fliplr(patchSize);
+            for keyIndex = 1:size(theKeypoints,1)
+                cropRect = [theKeypoints(keyIndex,:)-ceil(patchSize/2),patchSize-1];
+                patches{keyIndex} = imcrop(theData,cropRect);
+            end
+            fullPatch = cellfun(@(x) isequal(size(x),[fliplr(patchSize),patch3]), patches);
+        end
+        
+        function [self,points] = extractKeypoints(self,varargin)
+            %[self,points] = extractKeypoints(self,varargin)
+            %  Call this like you would "corner"
+            % to do: add scales
+            points = corner(self.gray,varargin{:});
+        end
+        
     end
 end

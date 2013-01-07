@@ -3,7 +3,7 @@ function [U, S, V, AHat] = prtUtilSvdEm(A,k)
 % Preform SVD decomposition for a matrix with missing values
 % Missing values should be represented by NaN
 
-nMaxIterations = 50;
+nMaxIterations = 100;
 verbosePlot = true;
 verboseText = true;
 proportionChangeThreshold = 5e-5;
@@ -20,16 +20,11 @@ for iter = 1:nMaxIterations
     % Set the true data where it belongs
     AHat(hasVote) = A(hasVote);
     oldAHatNoVote = AHat(~hasVote);
+   
     
-    % Perform SVD - ML's built in does not allow one to specify the number
-    % to retain. This is really a limitation of LAPACK not ML.
-    [U,S,V] = svd(AHat,0);
-    U = U(:,1:k);
-    S = S(1:k,1:k);
-    V = V(:,1:k);
+    [U,S,V] = svds(AHat,k);
     
-    % H = V(:,1:k); % From Zhang, 2005
-    AHat = AHat*V(:,1:k)*V(:,1:k)';
+    AHat = AHat*V*V';
     
     trueDataError = sum((A(hasVote)-AHat(hasVote)).^2);
     
