@@ -290,7 +290,7 @@ classdef prtClassLibSvm < prtClass
                 otherwise
                     error('prtClassLibSvm','Unsupported kernel type for runActionFast');
             end
-            dataSetOut = yOut(:);
+            dataSetOut = yOut(:)*self.gain;
         end
         
     end

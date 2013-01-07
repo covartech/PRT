@@ -15,6 +15,7 @@ classdef prtUiControlText < hgsetget
         userData
         visible
         parent
+        position
     end
     methods
         function self = prtUiControlText(parent, pixelPos, varargin)
@@ -119,6 +120,13 @@ classdef prtUiControlText < hgsetget
         end
         function val = get.parent(self)
             val = get(self.handle,'parent');
+        end
+        
+        function val =get.position(self)
+            val = get(self.handle,'position');
+        end
+        function set.position(self,val)
+            set(self.handle, 'position',val)
         end
         
 %         function delete(self)

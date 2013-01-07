@@ -1,4 +1,4 @@
-function prtPlotUtilSetLineProperties(lineHandles, labels, varargin)
+function varargout = prtPlotUtilSetLineProperties(lineHandles, labels, varargin)
 % prtPlotUtilSetLineProperties(lineHandles, labels, varargin)
 %   Change the properties of an array of lineHandles according to the
 %   specified labels.
@@ -97,6 +97,7 @@ options.lineStyles = {'-','--',':'};
 options.markerSizes = [4 8 10 12];
 options.lineWidths = [1 2 3];
 options.markerEdgeColorModificationFunction = @prtPlotUtilLightenColors;
+options.legendStrings = {};
 
 parser = inputParser;
 parser.CaseSensitive = false;
@@ -112,7 +113,7 @@ addParamValue(parser,'lineStyles',options.lineStyles, @(s)(iscell(s) && all(cell
 addParamValue(parser,'markerSizes',options.markers, @(s)isnumeric(s));
 addParamValue(parser,'lineWidths',options.lineWidths, @(s)isnumeric(s));
 addParamValue(parser,'markerEdgeColorModificationFunction',options.markerEdgeColorModificationFunction, @(s)isempty(s) || isa(s,'function_handle'));
-
+addParamValue(parser,'legendStrings',options.legendStrings, @(s)iscell(s));
 parse(parser,varargin{:});
 
 options = parser.Results;
@@ -217,10 +218,8 @@ nLines = length(options.lineStyles);
 nWidths = length(options.lineWidths);
 nSizes = length(options.markerSizes);
 
-
-
 % Here we go
-
+legendOutput = cell(size(lineHandles));
 for iL = 1:numel(lineHandles)
     cH = lineHandles(iL);
     
@@ -228,6 +227,14 @@ for iL = 1:numel(lineHandles)
         cStyleType = options.styleOrder(iStyle);
         
         cInd = labelInds(iL,iStyle);
+        
+        if ~isempty(options.legendStrings)
+            if iStyle > 1
+                legendOutput{iL} = cat(2,legendOutput{iL},' - ',options.legendStrings{iStyle}{cInd});
+            else
+                legendOutput{iL} = options.legendStrings{iStyle}{cInd};
+            end
+        end
         
         switch lower(cStyleType)
             case 'c'
@@ -292,4 +299,8 @@ for iL = 1:numel(lineHandles)
                 error('Unknown styleType identifier %s. Only c, m, f, e, l, w and s are valid.',cStyleType);
         end
     end
+end
+
+if nargout
+    varargout = {legendOutput};
 end

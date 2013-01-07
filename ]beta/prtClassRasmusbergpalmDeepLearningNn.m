@@ -13,9 +13,9 @@ classdef prtClassRasmusbergpalmDeepLearningNn < prtClass
         isNativeMary = true;
     end
     
-    properties (SetAccess = protected)
+    properties
         nn
-        nnLayerSpec = [784 100 10]; %note: last layer size MUST be equal to number of classes in data set
+        nnLayerSpec = 100;
         nnLambda = 1e-5;
         nnAlpha = 1;
         numepochs = 100;
@@ -24,7 +24,7 @@ classdef prtClassRasmusbergpalmDeepLearningNn < prtClass
     
     methods
         
-        function Obj = prtClassFld(varargin)
+        function Obj = prtClassRasmusbergpalmDeepLearningNn(varargin)
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
         end
         
@@ -36,9 +36,10 @@ classdef prtClassRasmusbergpalmDeepLearningNn < prtClass
             
             prtUtilTestRasmusbergpalmPath;
             
-            nnTemp = nnsetup(self.nnLayerSpec);
+            nnLayers = [DataSet.nFeatures self.nnLambda DataSet.nClasses];
+            nnTemp = nnsetup(nnLayers);
             
-            nnTemp.lambda = self.nnLambda;      %  L2 weight decay
+            nnTemp.lambda = self.nnLambda;     %  L2 weight decay
             nnTemp.alpha  = self.nnAlpha;       %  Learning rate
             opts.numepochs =  self.numepochs;   %  Number of full sweeps through data
             opts.batchsize = self.batchsize;    %  Take a mean gradient step over this many samples
@@ -50,7 +51,7 @@ classdef prtClassRasmusbergpalmDeepLearningNn < prtClass
         
         function DataSet = runAction(self,DataSet)
             
-            tempY = zeros(size(DataSet.X,1),10); %need a way to figure out 10 here
+            tempY = zeros(size(DataSet.X,1),self.dataSetSummary.nClasses); %need a way to figure out 10 here
             netOut = nnff(self.nn, DataSet.X, tempY);
             DataSet.X = netOut.a{end};
             
