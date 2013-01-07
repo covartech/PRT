@@ -40,6 +40,16 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
 	%                                  estimates on the diagonals
 	%     plotDensity                - Plot the density of each feature
 	%                                  independently as a volume
+    %
+    %     Note: As of Jan 5, 2013 prtDataSetClass enables the use of NAN
+    %     values in the target vector to specify unlabled data.  This data
+    %     and class value (NAN) are treated specially.  e.g., NAN labels do
+    %     not count towards the nClasses and will not appear in
+    %     uniqueClasses.  It is not possible to set the name of
+    %     the class corresponding to NAN.  See
+    %     prtDataInterfaceCategoricalTargets for more information.
+    %       
+    % 
 	
 	
 	properties (Hidden = true)

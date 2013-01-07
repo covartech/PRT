@@ -1,4 +1,22 @@
 classdef prtDataInterfaceCategoricalTargets
+    % prtDataInterfaceCategoricalTargets
+    %  Super class for data sets with discrete number of possible labels.
+    %
+    %  Handles all logic involving classn names, class indices, etc.,
+    %
+    %  Also enables use of NAN as unlabeled data; use 
+    %     hasUnlabeled
+    %     retainUnlabeled
+    %     removeUnlabeled
+    %     retainLabeled(obj)
+    %     removeLabeled(obj)
+    % 
+    %  to handle unlabeled observations.  
+    %
+    %  Note: NAN labels do not count towards the nClasses and will
+    %  not appear in uniqueClasses.  It is not possible to set the name of
+    %  the class corresponding to NAN.  
+    % 
     
     properties (Access = private)
         classNamesArray = prtUtilIntegerAssociativeArrayClassNames;
@@ -81,9 +99,11 @@ classdef prtDataInterfaceCategoricalTargets
                 return
             end
             self.targetCache.uniqueClasses = unique(targets);
+            self.targetCache.uniqueClasses = self.targetCache.uniqueClasses(~isnan(self.targetCache.uniqueClasses));
             self.targetCache.hist = histc(targets,self.uniqueClasses);
             self.targetCache.nClasses = length(self.targetCache.uniqueClasses);
-            self.targetCache.hasNans = any(isnan(self.targetCache.uniqueClasses));
+            self.targetCache.hasNans = any(isnan(unique(targets)));
+            
             if self.targetCache.hasNans
                 self.targetCache.nNans = sum(isnan(targets));
             else
@@ -304,6 +324,20 @@ classdef prtDataInterfaceCategoricalTargets
                     classInds(j) = currentInd;
                 end
             end
+        end
+        
+        function obj = retainUnlabeled(obj)
+            obj = obj.retainObservations(isnan(obj.Y));
+        end
+        function obj = removeUnlabeled(obj)
+            obj = obj.removeObservations(isnan(obj.Y));
+        end
+        
+        function obj = retainLabeled(obj)
+            obj = obj.retainObservations(~isnan(obj.Y));
+        end
+        function obj = removeLabeled(obj)
+            obj = obj.removeObservations(~isnan(obj.Y));
         end
         
         function obj = retainClasses(obj,classes)
