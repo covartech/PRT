@@ -27,6 +27,14 @@ if nDivisions == length(Y)
    return
 end
 
+% Y may contain NaNs. These are treated at missing data. All NaNs are
+% distributed evenly across the folds. To do this we make a virtual class
+% for nan and then use the same code below.
+nanVals = isnan(Y);
+if any(nanVals)
+    Y(nanVals) = max(Y(~nanVals))+1;
+end
+
 sortedY = sort(Y);
 nSamples = length(Y);
 sortedGroupAssignment = repmat((1:nDivisions)',ceil(nSamples/nDivisions),1);
