@@ -203,7 +203,8 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
 			
 			nFeats = length(featureIndices);
 			classColors = obj.plotOptions.colorsFunction(max(obj.nClasses,1));
-			
+			unlabeledColor = prtPlotUtilClassColorUnlabeled;
+            
             if obj.isLabeled
                 uClasses = obj.uniqueClasses;
                 targs = obj.getTargets;
@@ -212,6 +213,7 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
                 targs = ones(obj.nObservations,1);
             end
 			holdState = get(gca,'nextPlot');
+            
 			for i = 1:obj.nObservations;
 				[centerI,centerJ] = ind2sub([M,M],i);
 				centerJ = M - centerJ;
@@ -224,17 +226,29 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
 				h = plot([repmat(centerI,nFeats,1),points(1,:)']',[repmat(centerJ,nFeats,1),points(2,:)']',ppoints(1,:)',ppoints(2,:)','lineWidth',obj.plotOptions.starLineWidth);
 				classInd = targs(i) == uClasses;
 				
-				set(h,'color',classColors(classInd,:));
+                if ~any(classInd)
+                    cColor = unlabeledColor;
+                else
+                    cColor = classColors(classInd,:);
+                end
+                   
+                set(h,'color',cColor);
 				hold on;
-			end
-			handleArray = zeros(obj.nClasses,1);
-			for iClass = 1:obj.nClasses
-				handleArray(iClass) = plot(nan,nan,'color',classColors(iClass,:));
-			end
-			
-			% Create legend
+            end
+            handleArray = zeros(obj.nClasses + obj.hasUnlabeled,1);
+            for iClass = 1:obj.nClasses
+                handleArray(iClass) = plot(nan,nan,'color',classColors(iClass,:));
+            end
+            if obj.hasUnlabeled
+                handleArray(end) = plot(nan,nan,'color',unlabeledColor);
+            end
+            
+            % Create legend
 			if obj.isLabeled
 				legendStrings = getClassNames(obj);
+                if obj.hasUnlabeled
+                    legendStrings = cat(1,legendStrings,{prtPlotUtilUnlabeledLegendString});
+                end
 				legend(handleArray,legendStrings,'Location','SouthEast');
 			end
 			
@@ -279,6 +293,7 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
 			
 			nFeats = length(featureIndices);
 			classColors = obj.plotOptions.colorsFunction(max(obj.nClasses,1));
+            unlabeledColor = prtPlotUtilClassColorUnlabeled;
             
             if obj.isLabeled
                 uClasses = obj.uniqueClasses;
@@ -305,7 +320,15 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
 				
 				h = plot([repmat(centerI,nFeats,1),points(1,:)']',[repmat(centerJ,nFeats,1),points(2,:)']',ppoints(1,:)',ppoints(2,:)','lineWidth',obj.plotOptions.starLineWidth);
 				classInd = targs(i) == uClasses;
-				set(h,'color',classColors(classInd,:));
+                
+                
+                if ~any(classInd)
+                    cColor = unlabeledColor;
+                else
+                    cColor = classColors(classInd,:);
+                end
+                   
+                set(h,'color',cColor);
 			end
 			title(obj.name);
 			
@@ -328,14 +351,20 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
 			end
 			axis([-1 1 -1 1]*(axesLength + 0.4));
 			
-			handleArray = zeros(obj.nClasses,1);
-			for iClass = 1:obj.nClasses
-				handleArray(iClass) = plot(nan,nan,'color',classColors(iClass,:));
-			end
+			handleArray = zeros(obj.nClasses + obj.hasUnlabeled,1);
+            for iClass = 1:obj.nClasses
+                handleArray(iClass) = plot(nan,nan,'color',classColors(iClass,:));
+            end
+            if obj.hasUnlabeled
+                handleArray(end) = plot(nan,nan,'color',unlabeledColor);
+            end
 			
 			% Create legend
 			if obj.isLabeled
 				legendStrings = getClassNames(obj);
+                if obj.hasUnlabeled
+                    legendStrings = cat(1,legendStrings,{prtPlotUtilUnlabeledLegendString});
+                end
 				legend(handleArray,legendStrings,'Location','SouthEast');
 			end
 			
@@ -492,7 +521,7 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
 				obj = obj.retainFeatures(featureInd);
 			end
 			
-			assert(obj.nFeatures==1,'prt:prtDataSetClass:plotFeatureDensity','prtDataSetClass must have only one feature');
+			assert(obj.nFeatures==1,'prt:prtDataSetClass:plotFeatureDensity','prtDataSetClass must have only one feature or the feature to be plotted must be specified.');
 			
 			% Parse Options (additional string value pairs)
 			Options.nDensitySamples = 500;
@@ -515,14 +544,19 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
 			
 			Summary = obj.summarize();
 			nClasses = obj.nClasses;
-			colors = obj.plotOptions.colorsFunction(nClasses);
+			colors = cat(1,obj.plotOptions.colorsFunction(nClasses), prtPlotUtilClassColorUnlabeled); % FIX me. Use plotOptions
 			
+            
 			xLoc = linspace(Summary.lowerBounds, Summary.upperBounds, nKSDsamples);
 			
-			F = zeros([nKSDsamples, nClasses]);
-			for cY = 1:nClasses;
-				F(:,cY) = pdf(mle(prtRvKde('minimumBandwidth',Options.minimumKernelBandwidth),obj.getObservationsByClassInd(cY)),xLoc(:));
-			end
+            F = zeros([nKSDsamples, nClasses+obj.hasUnlabeled]);
+            for cY = 1:nClasses;
+                F(:,cY) = pdf(mle(prtRvKde('minimumBandwidth',Options.minimumKernelBandwidth),obj.getObservationsByClassInd(cY)),xLoc(:));
+            end
+            
+            if obj.hasUnlabeled
+                F(:,end) = pdf(mle(prtRvKde('minimumBandwidth',Options.minimumKernelBandwidth),obj.getDataUnlabeled),xLoc(:));
+            end
 			
 			hs = plot(xLoc,F);
 			for iLine = 1:length(hs)
@@ -536,6 +570,9 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
 			% Create legend
 			if obj.isLabeled
 				legendStrings = getClassNames(obj);
+                if obj.hasUnlabeled
+                    legendStrings = cat(1,legendStrings,{prtPlotUtilUnlabeledLegendString});
+                end
 				legend(hs,legendStrings,'Location','NorthEast');
 			end
 			
@@ -594,8 +631,8 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
 				nClasses = 1;
 			end
 			
-			patchH = zeros(Summary.nFeatures,nClasses);
-			colors = prtPlotUtilClassColors(nClasses);
+			patchH = zeros(Summary.nFeatures,nClasses + ds.hasUnlabeled);
+			colors = cat(1,ds.plotOptions.colorsFunction(nClasses), prtPlotUtilClassColorUnlabeled); % FIX me. Use plotOptions
 			holdState = get(gca,'NextPlot');
 			
 			if strcmpi(get(gcf,'NextPlot'),'New')
@@ -616,20 +653,30 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
 				
 				xLoc = linspace(low, high, Options.nDensitySamples);
 				xLoc = sort(cat(1,xLoc(:),ds.getObservations(:,iFeature)),'ascend');
+                
+                F = zeros([length(xLoc), nClasses+ ds.hasUnlabeled]);
+                for cY = 1:nClasses
+                    F(:,cY) = pdf(mle(prtRvKde('minimumBandwidth',Options.minimumKernelBandwidth),ds.getObservationsByClassInd(cY,iFeature)),xLoc(:));
+                end
+                if ds.hasUnlabeled
+                    F(:,end) = pdf(mle(prtRvKde('minimumBandwidth',Options.minimumKernelBandwidth),ds.getDataUnlabeled(iFeature)),xLoc(:));
+                end
 				
-				F = zeros([length(xLoc), nClasses]);
-				for cY = 1:nClasses
-					F(:,cY) = pdf(mle(prtRvKde('minimumBandwidth',Options.minimumKernelBandwidth),ds.getObservationsByClassInd(cY,iFeature)),xLoc(:));
-				end
-				%                 keyboard
-				%                 F = F./max(F(:))/2;
-				F = bsxfun(@rdivide,F,sum(F));
+                %F = bsxfun(@rdivide,F,trapz(xLoc, F));
+                %F = bsxfun(@rdivide,F,max(F,[],1));.>
+                F = bsxfun(@rdivide,F,max(max(F),trapz(xLoc, F))); % Prefer to integrate but it might not look right, so if big peaks in density (>1)set the max to 1
+                
 				%xLoc = (xLoc-mean(xLoc))./std(xLoc); % No longer centered
 				
-				for cY = 1:nClasses
-					cPatch = cat(2,cat(1,-F(:,cY),flipud(F(:,cY))), cat(1,xLoc, flipud(xLoc)));
+                for cY = 1:nClasses
+                    cPatch = cat(2,cat(1,-F(:,cY),flipud(F(:,cY))), cat(1,xLoc, flipud(xLoc)));
+                    patchH(iFeature,cY) = patch(cPatch(:,1)+iFeature, cPatch(:,2), colors(cY,:),'edgecolor','none');
+                end
+                if ds.hasUnlabeled
+                    cY = cY + 1;
+                    cPatch = cat(2,cat(1,-F(:,cY),flipud(F(:,cY))), cat(1,xLoc, flipud(xLoc)));
 					patchH(iFeature,cY) = patch(cPatch(:,1)+iFeature, cPatch(:,2), colors(cY,:),'edgecolor','none');
-				end
+                end
 			end
 			
 			set(patchH,'FaceAlpha',Options.faceAlpha);
@@ -642,6 +689,9 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
 			% Create legend
 			if ds.isLabeled
 				legendStrings = getClassNames(ds);
+                if ds.hasUnlabeled
+                    legendStrings = cat(1,legendStrings,{prtPlotUtilUnlabeledLegendString});
+                end
 				legend(patchH(1,:),legendStrings,'Location','SouthEast');
 			end
 			
@@ -764,6 +814,25 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
 			
 			holdState = get(gca,'nextPlot');
 			
+            if obj.hasUnlabeled
+                % There are unlabeled observations so we should plot those
+                % first That way they appear underneath of the labeled
+                % observations
+                
+                cX = obj.getDataUnlabeled(featureIndices);
+                classColor = prtPlotUtilClassColorUnlabeled; % FIX: Move to plotOptions?
+                
+                if nargin < 3
+                    xInd = 1:size(cX,2);
+                else
+                    xInd = xData;
+                end
+                
+                unlabeledHandles = prtPlotUtilLinePlot(xInd,cX,classColor,lineWidth);
+                unlabeledHandle = unlabeledHandles(1);
+            end
+            hold on
+            
 			% Loop through classes and plot
 			for i = 1:nClasses
 				%Use "i" here because it's by uniquetargetIND
@@ -787,9 +856,18 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
 			% Set title
 			title(obj.name);
 			
+            if obj.hasUnlabeled
+                handleArray = cat(1,handleArray(:),unlabeledHandle);
+                allHandles = cat(1, allHandles(:), {unlabeledHandles});
+            end
+            
+            
 			% Create legend
 			if obj.isLabeled
 				legendStrings = getClassNames(obj);
+                if obj.hasUnlabeled
+                    legendStrings = cat(1,legendStrings,{prtPlotUtilUnlabeledLegendString});
+                end
 				legend(handleArray,legendStrings,'Location','SouthEast');
 			end
 			
@@ -865,6 +943,20 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
 			% This call to gca will create a figure if it doesn't already
 			% exist
 			
+            if obj.hasUnlabeled
+                % There are unlabeled observations so we should plot those
+                % first That way they appear underneath of the labeled
+                % observations
+                
+                cX = obj.getDataUnlabeled(featureIndices);
+                classEdgeColor = prtPlotUtilClassColorUnlabeled; % FIX: Move to plotOptions?
+                classColor = prtPlotUtilClassColorUnlabeled; % FIX: Move to plotOptions?
+                classSymbol = prtPlotUtilClassSymbolsUnlabeled; % FIX: Move to plotOptions
+                unlabaledLegenedName = prtPlotUtilUnlabeledLegendString; % FIX: Move to plotOptions
+                unlabeledHandle = prtPlotUtilScatter(cX,cell(size(cX,2),1),classSymbol,classColor,classEdgeColor,lineWidth, markerSize);
+            end
+            hold on
+            
 			% Loop through classes and plot
 			uniqueClasses = obj.uniqueClasses;
 			for i = 1:nClasses
@@ -884,20 +976,23 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
 					featureNames{end+1} = 'Target'; %#ok<AGROW>
 				end
 				handleArray(i) = prtPlotUtilScatter(cX,featureNames,classSymbols(i),classColors(i,:),classEdgeColor,lineWidth, markerSize);
-				
-				if i == 1
-					hold on;
-				end
 			end
 			set(gca,'nextPlot',holdState);
 			% Set title
 			title(obj.name);
 			
+            if obj.hasUnlabeled
+                handleArray = cat(1, handleArray(:), unlabeledHandle);
+            end
+            
 			% Create legend
 			legendStrings = [];
 			if obj.isLabeled
 				legendStrings = getClassNames(obj);
-				legend(handleArray,legendStrings,'Location','SouthEast');
+                if obj.hasUnlabeled
+                    legendStrings = cat(1,legendStrings,{unlabaledLegenedName});
+                end
+                legend(handleArray,legendStrings,'Location','SouthEast');
 			end
 			
 			% Handle Outputs

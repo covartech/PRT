@@ -309,7 +309,6 @@ classdef prtDataInterfaceCategoricalTargets
             %
             %  ds = prtDataGenIris;
             %  ds.classNamesToClassInd('Iris-setosa'); %Setosa is the first
-            %
             
             
             if isa(classNames,'char')
