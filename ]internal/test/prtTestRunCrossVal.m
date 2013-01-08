@@ -15,7 +15,6 @@ function result = prtTestRunCrossVal(files,baselineCell,dataGen, scoreMetric)
 
 result = true;
 
-
 for i = 1:length(files)
     
      class = files{i};
@@ -67,7 +66,7 @@ for i = 1:length(files)
         
         resultMetric = scoreMetric(crossVal, TestDataSet);
         
-        if(~prtUtilApproxEqual(resultMetric, baselineCell{idx,4}, 1e-3));
+        if(~prtUtilApproxEqual(resultMetric, baselineCell{idx,4}, 1e-2));
             
             disp([files{i} ' k-folds below baseline'])
             result = false;

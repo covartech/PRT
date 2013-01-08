@@ -184,6 +184,8 @@ classdef prtClassTreeBaggingCap < prtClass
             tree.father = 0;
             if self.bootStrapDataAtRoots
 				[bootstrapDataSet,chosenObsInds] = dataSet.bootstrapByClass();
+            else
+                bootstrapDataSet = dataSet;
             end
             
             if self.fastTraining
