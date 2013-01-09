@@ -89,6 +89,7 @@ result = result & (percentCorr > baselinePercentCorr);
 try
     % classifier.bootStrapDataAtNodes = false;
     classifier.bootStrapDataAtRoots = false;
+    
     classifier = classifier.train(TestDataSet);
     classified = run(classifier, TestDataSet);
     
