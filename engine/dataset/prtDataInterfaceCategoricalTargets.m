@@ -98,6 +98,7 @@ classdef prtDataInterfaceCategoricalTargets
                 self.targetCache.nNans = 0;
                 return
             end
+            
             self.targetCache.uniqueClasses = unique(targets);
             self.targetCache.uniqueClasses = self.targetCache.uniqueClasses(~isnan(self.targetCache.uniqueClasses));
             self.targetCache.hist = histc(targets,self.uniqueClasses);
@@ -159,11 +160,8 @@ classdef prtDataInterfaceCategoricalTargets
         end
                  
         function ut = getUniqueClasses(self)
-            if isempty(self.targetCache.uniqueClasses)
-                ut = unique(self.targets);
-            else
-                ut = self.targetCache.uniqueClasses;
-            end
+            
+            ut = self.targetCache.uniqueClasses;
         end
         
         function nClasses = numClasses(self)

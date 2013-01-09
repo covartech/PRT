@@ -927,7 +927,7 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
 				return;
 			end
 			nClasses = obj.nClasses;
-			if nClasses == 0;
+			if ~obj.isLabeled %If the targets are empty, and not-nan
 				obj.Y = zeros(obj.nObservations,1);
 				nClasses = obj.nClasses;
 			end
