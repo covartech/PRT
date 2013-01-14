@@ -32,7 +32,7 @@ function varargout = prtPlotUtilSetLineProperties(lineHandles, labels, varargin)
 %   - an Nx3 color matrix or
 %   - a function handle that accepts a scalar integer (N) and returns an
 %       Nx3 color matrix
-%   The default is @prtPlotUtilClassColorsu.
+%   The default is @prtPlotUtilClassColors.
 %
 % markerFaceColors:
 %   - an Nx3 color matrix or
@@ -59,7 +59,7 @@ function varargout = prtPlotUtilSetLineProperties(lineHandles, labels, varargin)
 %
 % lineStyles:
 %   - an 1xN cell array of chars of valid lineStyle specifications
-%   The default is {'-','--',':'}.
+%   The default is {'-','--',':','-.'}.
 %
 % markerSizes:
 %   - an 1xN integer array of marker sizes
@@ -93,7 +93,7 @@ options.colors = @prtPlotUtilClassColors;
 options.markerFaceColors = []; % If empty, tied to colors
 options.markerEdgeColors = []; % If empty, tied to markerFaceColor using markerEdgeColorModifer
 options.markers = @prtPlotUtilClassSymbols;
-options.lineStyles = {'-','--',':'};
+options.lineStyles = {'-','--',':','-.'};
 options.markerSizes = [4 8 10 12];
 options.lineWidths = [1 2 3];
 options.markerEdgeColorModificationFunction = @prtPlotUtilLightenColors;
