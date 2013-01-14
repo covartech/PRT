@@ -57,6 +57,7 @@ try
 catch
     
 end
+
 if ~isequal(lastwarn, 'User specified # PCA components (20) is > maximum number of PCA allowed (min(size(dataSet.data)) = 16)')
     error = false;
     disp('error#5, too many components')
