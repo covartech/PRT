@@ -48,6 +48,10 @@ classdef prtClassMap < prtClass
         % Constructor
         function Obj = prtClassMap(varargin)
             
+            Obj.classTrain = 'prtDataInterfaceCategoricalTargets';
+            Obj.classRun = 'prtDataSetBase';
+            Obj.classRunRetained = false;
+            
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
         end
         % Set function
