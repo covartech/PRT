@@ -210,6 +210,8 @@ classdef prtClassLogisticDiscriminant < prtClass
                     error('Invalid value for Options.wInitTechnique; wInitTechnique must be one of {''FLD'',''randn'',''manual''}');
             end
             
+            DataSet = DataSet.retainLabeled; % Only use labeled data to train
+            
             x = DataSet.getObservations;
             x = cat(2,ones(size(x,1),1),x);  %append "ones"
             %             y = DataSet.getTargets;
