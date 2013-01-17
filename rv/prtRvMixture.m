@@ -349,11 +349,20 @@ classdef prtRvMixture < prtRv
                 error('prt:prtRvMixture:maximizeParameters','An error was encountered while maximizing the parameters of the mixture. Perhaps the number of components is too high.')
             end
         end
-        
-        function [R, membershipMat, componentRemoved] = removeComponents(R,X,membershipMat)
+    end
+    methods (Hidden) %prtRvHmm wants this...  need a "friend" operator...
+        function [R, membershipMat, componentRemoved, componentsToRemove] = removeComponents(R,X,membershipMat)
             nSamplesPerComponent = sum(membershipMat,1);
             componentsToRemove = nSamplesPerComponent < R.minimumComponentMembership;
             
+            %Never remove ALL the components; if we try to do that, just
+            %remove one
+            if all(componentsToRemove) && isscalar(componentsToRemove)
+                error('Attempt to remove the last remaining component in a mixture');
+            end
+            if all(componentsToRemove)
+                componentsToRemove(nSamplesPerComponent > min(nSamplesPerComponent)) = false;
+            end
             componentRemoved = any(componentsToRemove);
             
             if componentRemoved

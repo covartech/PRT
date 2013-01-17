@@ -182,7 +182,7 @@ classdef prtRvHmm < prtRv
             data = cat(1,xCell{:});
             
             membershipMat = initialComponentMembership(self,data);
-            self.initialStateProbabilities = [1 1 1]./3;
+            [self,membershipMat] = removeComponents(self,data,membershipMat);
             
             alpha = cell(size(xCell));
             gamma = cell(size(xCell));
@@ -192,7 +192,7 @@ classdef prtRvHmm < prtRv
                 error('prtRvHmm:noComponents','You must set rv.components to an nStates x 1 vector of prtRvs prior to calling MLE');
             end
             if isempty(self.pi)
-                self.pi = [1 1 1]./3;
+                self.pi = ones(1,self.nComponents)./self.nComponents;
             end
             if isempty(self.transitionMatrix)
                 temp = eye(length(self.components));
@@ -234,6 +234,9 @@ classdef prtRvHmm < prtRv
                 membershipMat = exp(ll);
                 membershipMat = bsxfun(@rdivide,membershipMat,sum(membershipMat,2));
                 
+                %                 keyboard
+                [self, membershipMat, componentRemoved] = removeComponents(self,data,membershipMat);
+                
                 %Get forward/backwards, this updates alpha, gamma, for next
                 %step
                 tempPi = 0;
@@ -249,11 +252,15 @@ classdef prtRvHmm < prtRv
                 cLogLikelihood = sum(logPdf(self,inputData));
                 self.learningResults.iterationLogLikelihood(end+1) = cLogLikelihood;
                 
-                if abs(cLogLikelihood - pLogLikelihood)*abs(mean([cLogLikelihood  pLogLikelihood])) < self.learningConvergenceThreshold
-                    break
-                elseif (pLogLikelihood - cLogLikelihood) > self.learningApproximatelyEqualThreshold
-                    warning('prt:prtRvMixture:learning','Log-Likelihood has decreased!!! Exiting.');
-                    break
+                if ~componentRemoved
+                    if abs(cLogLikelihood - pLogLikelihood)*abs(mean([cLogLikelihood  pLogLikelihood])) < self.learningConvergenceThreshold
+                        break
+                    elseif (pLogLikelihood - cLogLikelihood) > self.learningApproximatelyEqualThreshold
+                        warning('prt:prtRvMixture:learning','Log-Likelihood has decreased!!! Exiting.');
+                        break
+                    else
+                        pLogLikelihood = cLogLikelihood;
+                    end
                 else
                     pLogLikelihood = cLogLikelihood;
                 end
@@ -282,7 +289,20 @@ classdef prtRvHmm < prtRv
             end
         end
         
-        function [logPdf, individualLogPdf, stateLogPdf] = logPdf(self,X)
+        function mixture = toMixture(self)
+            mixture = prtRvMixture('components',self.components,'mixingProportions',ones(size(self.components))./length(self.components));
+            mixture.minimumComponentMembership = self.minimumComponentMembership;
+        end
+        
+        function plotPdf(self)
+            plotPdf(self.toMixture);
+        end
+        
+        function plotLogPdf(self)
+            plotLogPdf(self.toMixture);
+        end
+        
+        function [logPdf, stateLogPdf] = logPdf(self,X)
             
             X = self.dataInputParse(X); % Basic error checking etc
             assert(size(X{1},2) == self.nDimensions,'Data, RV dimensionality missmatch. Input data, X, has dimensionality %d and this RV has dimensionality %d.', size(X,2), self.nDimensions)
@@ -447,40 +467,16 @@ classdef prtRvHmm < prtRv
         end
         
         function [self, membershipMat, componentRemoved] = removeComponents(self,X,membershipMat)
-            nSamplesPerComponent = sum(membershipMat,1);
-            componentsToRemove = nSamplesPerComponent < self.minimumComponentMembership;
             
-            componentRemoved = any(componentsToRemove);
-            
+            [~,membershipMat,componentRemoved,componentsToRemove] = removeComponents(self.toMixture,X,membershipMat);
+            membershipMat = bsxfun(@rdivide,membershipMat,sum(membershipMat,2));
             if componentRemoved
-                
-                warning('prt:prtRvMixture:removeComponents','A component of this prtRvMixture had a responsibility below the threshold. This component has been removed from the model. %d components remain.',sum(~componentsToRemove));
-                
-                
-                % One might assume we can do this. 
-                % >> membershipMat = membershipMat(:,~componentsToRemove);
-                % >> membershipMat = bsxfun(@rdivide,membershipMat,sum(membershipMat,2));
-                % However, we may be removing a cluster that an observation
-                % has a membership of 1. Therefore, the above would yield a
-                % row of the membership matrix with NaNs.
-                % Instead, we have to recalculate the membership matrix
-                % from the remaining clusters. In order to do that though
-                % we must update the mixing proportions first and then
-                % after.
-                self.components = self.components(~componentsToRemove);
-                self.mixingProportions = prtRvMultinomial('probabilities',nSamplesPerComponent(~componentsToRemove)/sum(nSamplesPerComponent(~componentsToRemove)));
-                
-                % However if the components aren't yet valid (because this
-                % is the first iteration) we have to deal with the NaNs.
-                if self.components(1).isValid
-                    membershipMat = expectedComponentMembership(self,X);
-                else
-                    membershipMat = membershipMat(:,~componentsToRemove);
-                    
-                    % When we renormalize it's possible that we create NaNs
-                    % So we look for and fix this.
-                    membershipMat = bsxfun(@rdivide,membershipMat,sum(membershipMat,2));
-                    membershipMat(any(isnan(membershipMat),2),:) = 1/size(membershipMat,2);
+                retain = ~componentsToRemove;
+                self.components = self.components(retain);
+                if ~isempty(self.pi)
+                    self.pi = self.pi(retain)./sum(self.pi(retain));
+                    temp = self.transitionMatrix(retain,retain);
+                    self.transitionMatrix = bsxfun(@rdivide,temp,sum(temp,2));
                 end
             end
         end
