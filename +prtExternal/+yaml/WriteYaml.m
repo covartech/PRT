@@ -32,8 +32,17 @@ import prtExternal.yaml.*;
 
 packagePath = fullfile(prtRoot,'+prtExternal','+yaml','YAMLMatlab','external-packages','snakeyaml');
 jarPath = fullfile(packagePath,'snakeyaml-1.8.jar');
-if isempty(strfind(javaclasspath,packagePath))
-    javaaddpath(jarPath)
+
+cPath = javaclasspath;
+
+if iscell(cPath)
+    if all(cellfun(@isempty,strfind(cPath,packagePath)))
+        javaaddpath(jarPath)
+    end
+else
+    if isempty(strfind(javaclasspath,packagePath))
+        javaaddpath(jarPath)
+    end
 end
 
 import('org.yaml.snakeyaml.Yaml');
