@@ -18,7 +18,7 @@ classdef prtDataInterfaceCategoricalTargets
     %  the class corresponding to NAN.  
     % 
     
-    properties (Access = private)
+    properties (Hidden)
         classNamesArray = prtUtilIntegerAssociativeArrayClassNames;
         internalUniqueClasses = [];
         

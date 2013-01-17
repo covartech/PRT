@@ -226,7 +226,7 @@ classdef prtAction
                     [dsOut, extraOutput] = runAction(self, dsOut);
             end
             dsOut = postRunProcessing(self, dsIn, dsOut);
-           
+            
             outputClassName = class(dsOut);
             
             if self.classRunRetained && ~isequal(outputClassName,inputClassName)
@@ -338,7 +338,7 @@ classdef prtAction
 				
 				% Run the trained action on the test dataset
 				outputDataSetCell{uInd} = trainedAction.run(testDs);
-				
+                
 				% Ask the input dataset to assess the quality of the fold
 				% and the results.
 				% This check allows prtDataSetClass to check to make sure
@@ -512,7 +512,7 @@ classdef prtAction
 				
 				% Allow actions to modify featureNames
 				dsOut = dsOut.modifyNonDataAttributesFrom(self);
-			end
+            end
         end
         
         function xIn = preRunProcessingFast(ActionObj, xIn, ds) %#ok<INUSD,MANU>

@@ -96,6 +96,7 @@ classdef prtClassTreeBaggingCap < prtClass
         eml = true;
         Memory = struct('nAppend',1000); % Used in prtUtilRecursiveCapTree
         trackTreePerformance = false;
+        equalizeInstancesPerClass = false;
     end
     
     methods
@@ -183,7 +184,11 @@ classdef prtClassTreeBaggingCap < prtClass
             
             tree.father = 0;
             if self.bootStrapDataAtRoots
-				[bootstrapDataSet,chosenObsInds] = dataSet.bootstrapByClass();
+                if self.equalizeInstancesPerClass
+                    [bootstrapDataSet,chosenObsInds] = dataSet.bootstrapByClass(ceil(median(dataSet.nObservationsByClass)));
+                else
+    				[bootstrapDataSet,chosenObsInds] = dataSet.bootstrapByClass();
+                end
             else
                 bootstrapDataSet = dataSet;
             end
@@ -244,7 +249,9 @@ classdef prtClassTreeBaggingCap < prtClass
                     end
                 end
             end
-            ClassifierResults = prtDataSetClass(Yout/length(theRoot));
+            ClassifierResults = PrtDataSet;
+            ClassifierResults.X = Yout/length(theRoot);
+            
             if self.trackTreePerformance
                 for iTree = 1:self.nTrees;
                     ClassifierResults = ClassifierResults.setObservationInfo(sprintf('tree%05d',iTree),treeOutCell{iTree});

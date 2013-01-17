@@ -510,7 +510,6 @@ classdef prtDataSetStandard < prtDataSetInMem
 			% error messages
 			
 			assert(length(unique(cellfun(@(c)c.nFeatures,dsTestCell)))==1,'The number of features is different across the output of the cross-validation folds. This may indicate a problem with the cross-validation keys or perhaps the action.');
-			
 			dsOut = crossValidateCombineFoldResults@prtDataSetBase(dsTestCell_first, dsTestCell, testIndices);
 		end
 		

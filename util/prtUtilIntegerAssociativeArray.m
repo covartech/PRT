@@ -38,17 +38,21 @@ classdef prtUtilIntegerAssociativeArray
                 % no duplicate keys exist... this belongs elsewhere...
                 % this works for the places we use it in the PRT... but is
                 % not food for assoc.arrays in general... boo.
-                if ~isequal(self.get(theKey),in2.get(theKey)) && any(strcmpi(self.get(theKey),in2.cellValues))
-                    
-                    changeKey = in2.integerKeys(strcmpi(self.get(theKey),in2.cellValues));
-                    integerSwaps = cat(1,integerSwaps,[changeKey,theKey]);
-                    in2 = in2.remove(changeKey);
-                    
-                    %Handle new name
-                elseif ~isequal(self.get(theKey),in2.get(theKey))
-                    in2.integerKeys(in2.integerKeys == theKey) = newKey;
-                    integerSwaps = cat(1,integerSwaps,[theKey,newKey]);
-                    newKey = newKey + 1;
+                if ~self.containsKey(theKey); %if we don't have the key, it's OK to add it
+                    self = self.put(theKey,in2.get(theKey));
+                else
+                    if ~isequal(self.get(theKey),in2.get(theKey)) && any(strcmpi(self.get(theKey),in2.cellValues))
+                        
+                        changeKey = in2.integerKeys(strcmpi(self.get(theKey),in2.cellValues));
+                        integerSwaps = cat(1,integerSwaps,[changeKey,theKey]);
+                        in2 = in2.remove(changeKey);
+                        
+                        %Handle new name
+                    elseif ~isequal(self.get(theKey),in2.get(theKey))
+                        in2.integerKeys(in2.integerKeys == theKey) = newKey;
+                        integerSwaps = cat(1,integerSwaps,[theKey,newKey]);
+                        newKey = newKey + 1;
+                    end
                 end
             end
             
