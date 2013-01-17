@@ -23,6 +23,7 @@ classdef prtRvHmm < prtRv
     % nth cell containing a matrix of size nTimeSamples(n) x nFeatures.
     %  
     % %Example usage:
+    % prtPath( 'alpha', 'beta' ); %for prtDataSetTimeSeries
     % A = [.9 .1 0; 0 .9 .1; .1 0 .9];
     % gaussians = repmat(prtRvMvn('sigma',eye(2)),3,1);
     % gaussians(1).mu = [-2 -2];
