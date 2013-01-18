@@ -954,9 +954,9 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
                 classSymbol = prtPlotUtilClassSymbolsUnlabeled; % FIX: Move to plotOptions
                 unlabaledLegenedName = prtPlotUtilUnlabeledLegendString; % FIX: Move to plotOptions
                 unlabeledHandle = prtPlotUtilScatter(cX,cell(size(cX,2),1),classSymbol,classColor,classEdgeColor,lineWidth, markerSize);
-                hold on
+                
             end
-            
+            hold on
             
             % Loop through classes and plot
             uniqueClasses = obj.uniqueClasses;
