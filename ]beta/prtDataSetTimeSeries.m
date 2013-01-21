@@ -1,105 +1,39 @@
-classdef prtDataSetTimeSeries < prtDataSetInMem & prtDataInterfaceCategoricalTargets
-	%prtDataSetTimeSeries < prtDataSetInMem & prtDataInterfaceCategoricalTargets
+classdef prtDataSetTimeSeries < prtDataSetCellArray
+	%prtDataSetTimeSeries < prtDataSetCellArray
 	% dataSet = prtDataSetTimeSeries generates a prtDataSetTimeSeries object
 	%
 	
-	properties (Hidden = true)
-		plotOptions = prtDataSetClass.initializePlotOptions();
-	end
-	
-	methods (Static, Hidden = true)
-		function po = initializePlotOptions()
-			po = prtOptionsGet('prtOptionsDataSetClassPlot');
-		end
-	end
-	
+	properties (Dependent)
+        expandedData 
+    end
+    
 	methods
-		
-		function obj = prtDataSetTimeSeries(varargin)
-            % prtDataSetClass Constructor for class prtDataSetClass
-            % 
-            % class = prtDataSetClass(X,Y)
-            %   Create a prtDataSetClass object with data X and targets Y.
-            %   X shouls be a #obs x 1 cell-array, and Y should be a #obs x
-            %   1 vector of target labels.  Each element of X is a
-            %   #features x #samples time-series.
-            
-			if nargin == 0
-				return;
-			end
-			if isa(varargin{1},'prtDataSetClass')
-				obj = varargin{1};
-				varargin = varargin(2:end);
-			end
-			
-			%handle first input data:
-			if length(varargin) >= 1 && iscell(varargin{1})
-				obj = obj.setObservations(varargin{1});
-				varargin = varargin(2:end);
-				%handle first input data, second input targets:
-				if length(varargin) >= 1 && ~isa(varargin{1},'char')
-					if (isa(varargin{1},'double') || isa(varargin{1},'logical'))
-						obj = obj.setTargets(varargin{1});
-						varargin = varargin(2:end);
-					else
-						error('prtDataSet:InvalidTargets','Targets must be a double or logical array; but targets provided is a %s',class(varargin{1}));
-					end
-				end
-			end
-			
-			obj = prtUtilAssignStringValuePairs(obj,varargin{:});
-		end
-	end
 	
-	
-	methods (Access = protected)
-		function self = update(self)
-			% Updated chached target info
-			self = updateTargetCache(self);
-			% Updated chached data info
-			self = updateObservationsCache(self);
-		end
-	end
-	
-	methods
-		
-		function self = catObservations(self,varargin)
-			%dsOut = catObservations(dataSet1,dataSet2)
-			%   Return a data set, dsOut, formed by vertically
-			%   concatenating the observations, targets, and other fields
-            %   in dataSet1 and dataSet2.
-            %
-            %   Note that when dataSet1 and dataSet2 have different class
-            %   names, and/or targets dataSet1 and dataSet2's className
-            %   fields are used to generate a proper target/className
-            %   representation for the output dsOut.
-            %
-            %   As a result, the targets in the resulting dsOut may not
-            %   exactly match the output of cat(1,dataSet1,dataSet2)
-			%
-            
-			self = catObservations@prtDataSetInMem(self,varargin{:});
-			self = catClasses(self,varargin{:});
-			self = self.update;
-		end
-		
-		function self = setTargets(self,targets)
-			% dataSet = setTargets(ds,targets)
-			%  setTargets outputs a dataSet with targets set to targetsIn.
-			%  targetsIn should be a ds.nObservations x 1 matrix of target
-			%  values.
-            %  
-			self = setTargets@prtDataSetInMem(self,targets);
-			self = self.update;
-		end
-		
+        function val = get.expandedData(self)
+            val = getExpandedData(self);
+        end
+        function val = getExpandedData(self)
+           val = cat(1,self.X{:});
+        end
+        
+        function ds = prtDataSetTimeSeries(varargin)
+            ds = ds@prtDataSetCellArray(varargin{:});
+        end
+        
 		function Summary = summarize(self)
 			% Summarize   Summarize the prtDataSetStandard object
 			%
 			% SUMMARY = dataSet.summarize() Summarizes the prtDataSetStandard
 			% object and returns the result in the struct SUMMARY.
 			
-			Summary = summarize@prtDataSetInMem(self);
+            x = self.getExpandedData;
+            
+			Summary.upperBounds = max(x);
+			Summary.lowerBounds = min(x);
+			Summary.nFeatures = size(x,2);
+			Summary.nTargetDimensions = self.nTargetDimensions;
+			Summary.nObservations = self.nObservations;
+            
 			%from prtDataInterfaceCategoricalTargets
 			Summary = summarize@prtDataInterfaceCategoricalTargets(self,Summary);
 		end
@@ -108,7 +42,7 @@ classdef prtDataSetTimeSeries < prtDataSetInMem & prtDataInterfaceCategoricalTar
 	methods %Plotting methods
 		
 		
-		function varargout = plot(obj,xData)
+		function varargout = plot(obj)
 			% plotAsTimeSeries  Plot the data set as time series data
 			%
 			% dataSet.plotAsTimeSeries() plots the data contained in
@@ -164,63 +98,4 @@ classdef prtDataSetTimeSeries < prtDataSetInMem & prtDataInterfaceCategoricalTar
         end
     end
 	
-	methods (Static)
-		function obj = loadobj(obj)
-			% dataSet = loadobj(obj)
-            %   Load a prtDataSetClass properly.  This requires checking
-            %   the object version number and possibly converting a few
-            %   things...
-            %
-            
-			if isstruct(obj)
-				if ~isfield(obj,'version')
-					% Version 0 - we didn't even specify version
-					inputVersion = 0;
-				else
-					inputVersion = obj.version;
-				end
-				
-
-				inObj = obj;
-			    obj = loadobj@prtDataSetStandard(inObj,'prtDataSetClass');
-				
-				switch inputVersion
-					case {0,1}
-						
-						if ~isempty(inObj.classNamesInternal.cellValues)
-							obj = obj.setClassNames(inObj.classNamesInternal.cellValues, inObj.classNamesInternal.integerKeys);
-						end
-						
-					case 2
-
-						if ~isempty(inObj.classNamesArray.cellValues)
-							obj = obj.setClassNames(inObj.classNamesArray.cellValues, inObj.classNamesArray.integerKeys);
-						end
-						
-					case 3
-						
-						if ~isempty(inObj.classNamesArray.cellValues)
-							obj = obj.setClassNames(inObj.classNamesArray.cellValues, inObj.classNamesArray.integerKeys);
-						end
-						
-				end
-				
-			else
-				% Nothin special hopefully?
-				% How did this happen?
-				% Hopefully it works out.
-			end
-		end
-	end
-	
-	methods (Hidden)
-		function dsFoldOut = crossValidateCheckFoldResults(dsIn, dsTrain, dsTest, dsFoldOut)
-			dsFoldOut = crossValidateCheckFoldResults@prtDataSetBase(dsIn, dsTrain, dsTest, dsFoldOut);
-			dsFoldOut = crossValidateCheckFoldResultsWarnNumberOfClassesBad(dsIn, dsTrain, dsTest, dsFoldOut);
-        end
-		function self = acquireNonDataAttributesFrom(self, dataSet)
-            self = acquireNonDataAttributesFrom@prtDataSetBase(self, dataSet);
-            self = acquireCategoricalTargetsNonDataAttributes(self, dataSet);
-        end
-	end
 end

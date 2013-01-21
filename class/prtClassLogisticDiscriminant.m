@@ -68,7 +68,8 @@ classdef prtClassLogisticDiscriminant < prtClass
         isNativeMary = false;  % True
     end
     
-    properties (SetAccess = protected)
+    % properties (SetAccess = protected)
+    properties
         % w  
         %   w is a DataSet.nDimensions + 1 x 1 vector of projection weights
         %   learned during LogDisc.train(DataSet)

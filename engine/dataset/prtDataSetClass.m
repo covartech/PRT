@@ -830,8 +830,9 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
                 
                 unlabeledHandles = prtPlotUtilLinePlot(xInd,cX,classColor,lineWidth);
                 unlabeledHandle = unlabeledHandles(1);
+                hold on;
             end
-            hold on
+            
             
             % Loop through classes and plot
             for i = 1:nClasses

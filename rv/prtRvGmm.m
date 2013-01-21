@@ -66,7 +66,7 @@ classdef prtRvGmm < prtRv
         covariancePoolDepHelp = false;
     end
     
-    properties (SetAccess='private', Hidden=true)
+    properties (SetAccess='protected', Hidden=true)
         mixtureRv = prtRvMixture('components',prtRvMvn('covarianceStructure','full'),'mixingProportions',prtRvMultinomial('probabilities',1));
     end
     
