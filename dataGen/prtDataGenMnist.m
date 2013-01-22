@@ -1,6 +1,15 @@
 function ds = prtDataGenMnist(nImages)
-%ds = prtDataGenMnist
-%ds = prtDataGenMnist(nImages = 10000)
+%  prtDataGenMnist Generate a prtDataSetClass containing the MNIST training
+%   data
+% 
+% ds = prtDataGenMnist; Generates a prtDataSetClass, ds, containing the
+%   first 10000 images from the MNIST data.  The images are 28x28 pixels, and
+%   are stored as 1x784 feature vectors, so ds.getX(1) returns a 1x784
+%   element vector.  Class targets (ds.getY(i)) correspond to the correct
+%   written digit.
+% 
+% ds = prtDataGenMnist(nImages) returns nImages total images from the MNIST
+%  training set.  nImages must be less than or equal to 60000.
 
 maxImages = 60000; %its a fact
 if nargin < 1

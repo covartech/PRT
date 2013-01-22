@@ -956,8 +956,8 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
                 unlabaledLegenedName = prtPlotUtilUnlabeledLegendString; % FIX: Move to plotOptions
                 unlabeledHandle = prtPlotUtilScatter(cX,cell(size(cX,2),1),classSymbol,classColor,classEdgeColor,lineWidth, markerSize);
                 
+                hold on;
             end
-            hold on
             
             % Loop through classes and plot
             uniqueClasses = obj.uniqueClasses;
@@ -977,6 +977,7 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
                     end
                     featureNames{end+1} = 'Target'; %#ok<AGROW>
                 end
+                hold on;
                 handleArray(i) = prtPlotUtilScatter(cX,featureNames,classSymbols(i),classColors(i,:),classEdgeColor,lineWidth, markerSize);
             end
             set(gca,'nextPlot',holdState);

@@ -89,7 +89,6 @@ classdef prtClassBinaryToMaryOneVsAll < prtClass
                 
                 % Replace the targets with binary targets for this class
                 cDataSet = DataSet.setTargets(DataSet.getTargetsAsBinaryMatrix(:,iY));
-                
                 % We need the classifier to act like a binary and we dont 
                 % want a bunch of DataSets lying around
                 Obj.baseClassifier(iY).verboseStorage = false;

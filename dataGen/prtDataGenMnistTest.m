@@ -1,6 +1,13 @@
 function ds = prtDataGenMnistTest(nImages)
-%ds = prtDataGenMnistTest
-%ds = prtDataGenMnistTest(nImages = 10000)
+% prtDataGenMnistTest Generate a prtDataSetClass containing the MNIST test
+%   data
+% 
+% ds = prtDataGenMnistTest; Generates a prtDataSetClass, ds, containing the
+%   10000 images from the MNIST test data.  The images are 28x28 pixels, and
+%   are stored as 1x784 feature vectors, so ds.getX(1) returns a 1x784
+%   element vector.  Class targets (ds.getY(i)) correspond to the correct
+%   written digit.
+% 
 
 maxImages = 10000; %its a fact
 if nargin < 1

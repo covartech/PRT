@@ -59,6 +59,14 @@ classdef prtPreProcZmuv < prtPreProc
             % Compute the means and standard deviation
             Obj.stds = prtUtilNanStd(DataSet.getObservations(),1);
             Obj.means = prtUtilNanMean(DataSet.getObservations(),1);
+            if any(~isfinite(Obj.stds) | Obj.stds == 0)
+                warning('prtPreProcZmuv:nonFiniteStds','Non-finite or zero standard deviation encountered.  Replacing invalid standard deviations with 1');
+                Obj.stds(~isfinite(Obj.stds) | Obj.stds == 0) = 1;
+            end
+            if any(~isfinite(Obj.means))
+                warning('prtPreProcZmuv:nonFiniteMean','Non-finite mean encountered.  Replacing invalid means with 0');
+                Obj.means(~isfinite(Obj.means)) = 0;
+            end
         end
         
         function DataSet = runAction(Obj,DataSet)
