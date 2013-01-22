@@ -977,8 +977,9 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
                     end
                     featureNames{end+1} = 'Target'; %#ok<AGROW>
                 end
-                hold on;
                 handleArray(i) = prtPlotUtilScatter(cX,featureNames,classSymbols(i),classColors(i,:),classEdgeColor,lineWidth, markerSize);
+                
+                hold on;
             end
             set(gca,'nextPlot',holdState);
             % Set title
