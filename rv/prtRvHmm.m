@@ -22,25 +22,48 @@ classdef prtRvHmm < prtRv
     % a cell array, use a cell array of size #Observations x 1, with the
     % nth cell containing a matrix of size nTimeSamples(n) x nFeatures.
     %  
-    % %Example usage:
-    % prtPath( 'alpha', 'beta' ); %for prtDataSetTimeSeries
-    % A = [.9 .1 0; 0 .9 .1; .1 0 .9];
-    % gaussians = repmat(prtRvMvn('sigma',eye(2)),3,1);
-    % gaussians(1).mu = [-2 -2];
-    % gaussians(2).mu = [2 -2];
-    % gaussians(3).mu = [2 2];
     %
-    % sourceHmm = prtRvHmm('pi',[1 1 1]/3,...
+    %  RV = prtRvHmm(PROPERTY1, VALUE1,...) creates a prtRvHmm object RV
+    %   with properties as specified by PROPERTY/VALUE pairs.
+    %
+    %   A prtRvHmm object inherits all properties from the prtRv class. In
+    %   addition, it has the following properties:
+    %
+    %   transitionMatrix  - A nStatex x nStates transition probability
+    %                       matrix, where A(i,j) specifies the probability
+    %                       of transitioning to state j from state i.
+    %
+    %   components        - A nStates x 1 array of prtRV objects which
+    %                       serve as the within-state distributions.  Any
+    %                       type of prtRV can be used, as long as the RV
+    %                       defines the weightedMle method.  E.g.,
+    %                       prtRvMvn, prtRvMultinomial, etc.
+    %
+    %   pi               - A 1 x nStates vector of intial state
+    %                       probabilities.  Must sum to 1.
+    %   
+    %  A prtRvHmm object inherits all methods from the prtRv class. The MLE
+    %  method can be used to estimate the distribution parameters from
+    %  data.
+    %
+    % %Example usage:
+    %   prtPath( 'alpha', 'beta' ); %for prtDataSetTimeSeries
+    %   A = [.9 .1 0; 0 .9 .1; .1 0 .9];
+    %   gaussians = repmat(prtRvMvn('sigma',eye(2)),3,1);
+    %   gaussians(1).mu = [-2 -2];
+    %   gaussians(2).mu = [2 -2];
+    %   gaussians(3).mu = [2 2];
+    %
+    %   sourceHmm = prtRvHmm('pi',[1 1 1]/3,...
     %     'transitionMatrix',A,...
     %     'components',gaussians);
-    % x = sourceHmm.draw([100 100 100 100 100 100]);
-    % ds = prtDataSetTimeSeries(x);
+    %   x = sourceHmm.draw([100 100 100 100 100 100]);
+    %   ds = prtDataSetTimeSeries(x);
     %
-    %
-    % gaussiansLearn = repmat(prtRvMvn,3,1);
-    % learnHmm = prtRvHmm('components',gaussiansLearn);
-    % learnHmm = learnHmm.mle(ds);
-    % learnHmm.logPdf(ds)
+    %   gaussiansLearn = repmat(prtRvMvn,3,1);
+    %   learnHmm = prtRvHmm('components',gaussiansLearn);
+    %   learnHmm = learnHmm.mle(ds);
+    %   learnHmm.logPdf(ds)
     %
     
     
