@@ -330,11 +330,13 @@ classdef prtDataInterfaceCategoricalTargets
             obj = obj.removeObservations(isnan(obj.Y));
         end
         
-        function obj = retainLabeled(obj)
-            obj = obj.retainObservations(~isnan(obj.Y));
+        function [obj,retainInd] = retainLabeled(obj)
+            retainInd = ~isnan(obj.Y);
+            obj = obj.retainObservations(retainInd);
         end
-        function obj = removeLabeled(obj)
-            obj = obj.removeObservations(~isnan(obj.Y));
+        function [obj,removed] = removeLabeled(obj)
+            removed = ~isnan(obj.Y);
+            obj = obj.removeObservations(removed);
         end
         
         function obj = retainClasses(obj,classes)

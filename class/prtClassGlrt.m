@@ -83,5 +83,11 @@ classdef prtClassGlrt < prtClass
             logLikelihoodH1 = logPdf(self.rvH1, dataSet.getObservations());
             dataSet = dataSet.setObservations(logLikelihoodH1 - logLikelihoodH0);
         end        
+        
+        function xOut = runActionFast(self,xIn,ds) %#ok<INUSD>
+            logLikelihoodH0 = logPdf(self.rvH0, xIn);
+            logLikelihoodH1 = logPdf(self.rvH1, xIn);
+            xOut = logLikelihoodH1 - logLikelihoodH0;
+        end
     end
 end

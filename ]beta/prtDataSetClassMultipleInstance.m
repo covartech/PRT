@@ -55,6 +55,14 @@ classdef prtDataSetClassMultipleInstance < prtDataSetInMem & prtDataInterfaceCat
     
     methods
         
+        function Summary = summarize(self)
+            % Summarize   Summarize the prtDataSetStandard object
+            %
+            % SUMMARY = dataSet.summarize() Summarizes the prtDataSetStandard
+            % object and returns the result in the struct SUMMARY.
+            Summary = summarize(toPrtDataSetClass(self));
+        end
+        
         function obj = prtDataSetClassMultipleInstance(varargin)
             %obj = prtDataSetImage(varargin)
             obj.data.data = [];
