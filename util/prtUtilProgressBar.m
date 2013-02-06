@@ -295,7 +295,6 @@ classdef prtUtilProgressBar
                 
                 Obj.updateFigureName(prtUtilProgressBarData);
                 
-                
                 drawnow;
             end
              

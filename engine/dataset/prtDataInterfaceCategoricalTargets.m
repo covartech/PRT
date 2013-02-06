@@ -339,7 +339,7 @@ classdef prtDataInterfaceCategoricalTargets
             obj = obj.removeObservations(removed);
         end
         
-        function obj = retainClasses(obj,classes)
+        function [obj,retain] = retainClasses(obj,classes)
             % retainClasses retain observations corresponding to specified
             % classes
             %
@@ -367,7 +367,7 @@ classdef prtDataInterfaceCategoricalTargets
             % I don't think we do.
             % assert(all(isActuallyAClass),'all classes to retain must be represented in dataSet')
             
-            obj = retainClassesByInd(obj,classInds);
+            [obj,retain] = retainClassesByInd(obj,classInds);
         end
         
         function obj = removeClasses(obj,classes)
@@ -400,7 +400,7 @@ classdef prtDataInterfaceCategoricalTargets
             obj = obj.removeClassesByInd(classInds);
         end
         
-        function obj = retainClassesByInd(obj,classInds)
+        function [obj,retain] = retainClassesByInd(obj,classInds)
             % retainClassesByInd retain observations corresponding to
             % specified class indexes
             %
@@ -416,7 +416,7 @@ classdef prtDataInterfaceCategoricalTargets
             allClassInds = 1:obj.nClasses;
             classInds = classInds(~isnan(classInds));
             classInds = allClassInds(classInds);
-            
+            retain = ismember(obj.getTargetsClassInd,classInds);
             obj = obj.retainObservations(ismember(obj.getTargetsClassInd,classInds));
         end        
         
