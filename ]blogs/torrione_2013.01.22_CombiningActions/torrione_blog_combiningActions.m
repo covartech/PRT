@@ -94,7 +94,7 @@ pcaGlrt = prtPreProcPca('nComponents',2) + prtClassGlrt;
 % prtActions (e.g., prtPreProcPca) to mean "Combine these into one object,
 % where that object will perform each action in sequence from left to
 % right".  Technically this returns a special kind of prtAction, called a
-% prtAlgorithm.  That's just the date type we use to store a bunch of
+% prtAlgorithm.  That's just the data type we use to store a bunch of
 % actions.  You can see that here:
 disp(pcaGlrt)
 %% 

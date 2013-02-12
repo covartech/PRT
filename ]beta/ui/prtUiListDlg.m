@@ -28,6 +28,8 @@ classdef prtUiListDlg < prtUiManagerPanel
         cancelStr = 'Cancel';
         okStr = 'OK';        
         
+        enableMultiSelect = false;
+        
         handleStruct
     end
     
@@ -40,8 +42,11 @@ classdef prtUiListDlg < prtUiManagerPanel
             
             if nargin == 1
                 self.inputStruct = varargin{1};
-            else
+            elseif ~mod(nargin,2)
                 self = prtUtilAssignStringValuePairs(self,varargin{:});
+            else
+                self.inputStruct = varargin{1};
+                self = prtUtilAssignStringValuePairs(self,varargin{2:end});
             end
             
             if nargin~=0 && ~self.hgIsValid
@@ -104,7 +109,9 @@ classdef prtUiListDlg < prtUiManagerPanel
             self.handleStruct.jTable.setNonContiguousCellSelection(false)
             
             % Force selection of a single row only
-            self.handleStruct.jTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+            if ~self.enableMultiSelect
+                self.handleStruct.jTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+            end
             
             % Set the column widths to take up the whole area
             self.handleStruct.jTable.setAutoResizeMode(self.handleStruct.jTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
@@ -143,7 +150,9 @@ classdef prtUiListDlg < prtUiManagerPanel
                     close(self.handleStruct.figureHandle);
                 end
             else
-                delete(self.handleStruct.table);
+                try
+                    delete(self.handleStruct.table);
+                end
             end
             
         end
@@ -239,7 +248,11 @@ classdef prtUiListDlg < prtUiManagerPanel
             end
         end
         function reportedSelection = getSelection(self)
-            reportedSelection = self.handleStruct.jTable.getSelectedRow()+1;% Java is 0 referenced
+            if ~self.enableMultiSelect
+                reportedSelection = self.handleStruct.jTable.getSelectedRow()+1;% Java is 0 referenced
+            else
+                reportedSelection = self.handleStruct.jTable.getSelectedRows()+1;% Java is 0 referenced
+            end
         end
         function set.inputStruct(self, val)
             assert(isstruct(val) || iscellstr(val),'inputStruct must be a structure array or a cellstr');

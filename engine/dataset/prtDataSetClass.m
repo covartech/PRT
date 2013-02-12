@@ -543,7 +543,7 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
             nKSDsamples =  Options.nDensitySamples;
             
             Summary = obj.summarize();
-            nClasses = obj.nClasses;
+            nClasses = max(obj.nClasses,1);
             colors = cat(1,obj.plotOptions.colorsFunction(nClasses), prtPlotUtilClassColorUnlabeled); % FIX me. Use plotOptions
             
             
@@ -551,7 +551,13 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
             
             F = zeros([nKSDsamples, nClasses+obj.hasUnlabeled]);
             for cY = 1:nClasses;
-                F(:,cY) = pdf(mle(prtRvKde('minimumBandwidth',Options.minimumKernelBandwidth),obj.getObservationsByClassInd(cY)),xLoc(:));
+                if obj.nClasses == 0
+                    cX = obj.X;
+                else
+                    cX = obj.getObservationsByClassInd(cY);
+                end
+                    
+                F(:,cY) = pdf(mle(prtRvKde('minimumBandwidth',Options.minimumKernelBandwidth),cX),xLoc(:));
             end
             
             if obj.hasUnlabeled
@@ -928,7 +934,7 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
                 return;
             end
             nClasses = obj.nClasses;
-            if nClasses == 0;
+            if nClasses == 0 && ~obj.hasUnlabeled
                 obj.Y = zeros(obj.nObservations,1);
                 nClasses = obj.nClasses;
             end
