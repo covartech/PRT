@@ -245,7 +245,7 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
             
             % Create legend
             if obj.isLabeled
-                legendStrings = getClassNames(obj);
+                legendStrings = getClassNamesInterp(obj);
                 if obj.hasUnlabeled
                     legendStrings = cat(1,legendStrings,{prtPlotUtilUnlabeledLegendString});
                 end
@@ -361,7 +361,7 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
             
             % Create legend
             if obj.isLabeled
-                legendStrings = getClassNames(obj);
+                legendStrings = getClassNamesInterp(obj);
                 if obj.hasUnlabeled
                     legendStrings = cat(1,legendStrings,{prtPlotUtilUnlabeledLegendString});
                 end
@@ -466,7 +466,7 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
                     if (iFeature==N && jFeature==N)
                         % Create legend
                         if obj.isLabeled
-                            legendStrings = getClassNames(obj);
+                            legendStrings = getClassNamesInterp(obj);
                             legendHandle = legend(hs{iFeature,jFeature},legendStrings,'Location','SouthEast'); %#ok<NASGU>
                         else
                             legendHandle = []; %#ok<NASGU>
@@ -575,7 +575,7 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
             
             % Create legend
             if obj.isLabeled
-                legendStrings = getClassNames(obj);
+                legendStrings = getClassNamesInterp(obj);
                 if obj.hasUnlabeled
                     legendStrings = cat(1,legendStrings,{prtPlotUtilUnlabeledLegendString});
                 end
@@ -694,7 +694,7 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
             
             % Create legend
             if ds.isLabeled
-                legendStrings = getClassNames(ds);
+                legendStrings = getClassNamesInterp(ds);
                 if ds.hasUnlabeled
                     legendStrings = cat(1,legendStrings,{prtPlotUtilUnlabeledLegendString});
                 end
@@ -871,7 +871,7 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
             
             % Create legend
             if obj.isLabeled
-                legendStrings = getClassNames(obj);
+                legendStrings = getClassNamesInterp(obj);
                 if obj.hasUnlabeled
                     legendStrings = cat(1,legendStrings,{prtPlotUtilUnlabeledLegendString});
                 end
@@ -998,7 +998,7 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
             % Create legend
             legendStrings = [];
             if obj.isLabeled
-                legendStrings = getClassNames(obj);
+                legendStrings = getClassNamesInterp(obj);
                 if obj.hasUnlabeled
                     legendStrings = cat(1,legendStrings,{unlabaledLegenedName});
                 end
@@ -1062,7 +1062,7 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
             
             % Create legend
             if obj.isLabeled
-                legendStrings = getClassNames(obj);
+                legendStrings = getClassNamesInterp(obj);
                 legend(handleArray,legendStrings,'Location','SouthEast');
             end
             
