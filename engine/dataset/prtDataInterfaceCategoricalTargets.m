@@ -4,19 +4,19 @@ classdef prtDataInterfaceCategoricalTargets
     %
     %  Handles all logic involving classn names, class indices, etc.,
     %
-    %  Also enables use of NAN as unlabeled data; use 
+    %  Also enables use of NAN as unlabeled data; use
     %     hasUnlabeled
     %     retainUnlabeled
     %     removeUnlabeled
     %     retainLabeled(obj)
     %     removeLabeled(obj)
-    % 
-    %  to handle unlabeled observations.  
+    %
+    %  to handle unlabeled observations.
     %
     %  Note: NAN labels do not count towards the nClasses and will
     %  not appear in uniqueClasses.  It is not possible to set the name of
-    %  the class corresponding to NAN.  
-    % 
+    %  the class corresponding to NAN.
+    %
     
     properties (Hidden)
         classNamesArray = prtUtilIntegerAssociativeArrayClassNames;
@@ -44,8 +44,12 @@ classdef prtDataInterfaceCategoricalTargets
         isUnary                % True if the number of classes = 1
         isBinary               % True if the number of classes = 2
         isMary                 % True if the number of classes > 2
-        isZeroOne              % True if the uniqueClasses are 0 and 
+        isZeroOne              % True if the uniqueClasses are 0 and
         hasUnlabeled           % True if any of the labels are nan
+    end
+    
+    properties (Hidden)
+        plotInterpStringFunction = @(s) strrep(s,'_','\_'); %by default, escape underscores
     end
     
     methods
@@ -78,10 +82,22 @@ classdef prtDataInterfaceCategoricalTargets
         end
     end
     
+    methods (Hidden)
+        
+        function cn = getClassNamesInterp(self)
+            % Get the classnames, but run self.plotInterpStringFunction on
+            % them first to make them suitable for MATLAB figure
+            % interpretation
+            cn = self.getClassNames;
+            cn = self.plotInterpStringFunction(cn);
+        end
+    end
+    
     methods
         function cn = get.classNames(self)
             cn = self.getClassNames;
         end
+        
         function self = set.classNames(self,in)
             self = self.setClassNames(in);
         end
@@ -110,13 +126,13 @@ classdef prtDataInterfaceCategoricalTargets
             else
                 self.targetCache.nNans = 0;
             end
-		end
-		
-		function dsFoldOut = crossValidateCheckFoldResultsWarnNumberOfClassesBad(dsIn, dsTrain, dsTest, dsFoldOut) %#ok<INUSL>
-			if dsTrain.nClasses ~= dsIn.nClasses
-				warning('prt:prtAction:crossValidateNClasses','A cross validation fold yielded a training data set with %d class(es) but the input data set contains %d classes. This may result in errors. It may be possible to resolve this by modifying the cross-validation keys.', dsTrain.nClasses, dsIn.nClasses);
-			end
-		end
+        end
+        
+        function dsFoldOut = crossValidateCheckFoldResultsWarnNumberOfClassesBad(dsIn, dsTrain, dsTest, dsFoldOut) %#ok<INUSL>
+            if dsTrain.nClasses ~= dsIn.nClasses
+                warning('prt:prtAction:crossValidateNClasses','A cross validation fold yielded a training data set with %d class(es) but the input data set contains %d classes. This may result in errors. It may be possible to resolve this by modifying the cross-validation keys.', dsTrain.nClasses, dsIn.nClasses);
+            end
+        end
     end
     
     methods
@@ -158,7 +174,7 @@ classdef prtDataInterfaceCategoricalTargets
                 d = obj.getData(obj.getTargets == obj.uniqueClasses(classInd),varargin{:});
             end
         end
-                 
+        
         function ut = getUniqueClasses(self)
             
             ut = self.targetCache.uniqueClasses;
@@ -291,10 +307,10 @@ classdef prtDataInterfaceCategoricalTargets
                 startObs = startObs+ds.nObservations;
             end
         end
-
+        
     end
     
-    methods 
+    methods
         
         function classInds = classNamesToClassInd(self,classNames)
             % classInds = classNamesToClassInd(dataSet,classNames)
@@ -346,13 +362,13 @@ classdef prtDataInterfaceCategoricalTargets
             %   subDataSet = dataSet.retainClasses(classes) returns a
             %   data set subDataSet containing only the observations that
             %   have targets equal to the specied values
-            % 
+            %
             %   classes can be specified as an array of class values,
             %   or as a cell array of strings containing the class names.
             %
             %   ds = prtDataGenIris;
             %   ds12 = ds.retainClasses([1:2]);
-            %   
+            %
             %   ds12_v2 = ds.retainClasses({'Iris-setosa','Iris-versicolor'});
             
             
@@ -383,19 +399,19 @@ classdef prtDataInterfaceCategoricalTargets
             %
             %   ds = prtDataGenIris;
             %   ds12 = ds.removeClasses(3);
-            %   
+            %
             %   ds12_v2 = ds.removeClasses({'Iris-virginica'});
             
             if isa(classes,'cell') || isa(classes,'char')
                 classInds = obj.classNamesToClassInd(classes);
             else
                 assert(isnumeric(classes) && isvector(classes),'classes must be a numeric vector or cell array of strings');
-                [isActuallyAClass, classInds] = ismember(classes,obj.uniqueClasses); %#ok<ASGLU>            
+                [isActuallyAClass, classInds] = ismember(classes,obj.uniqueClasses); %#ok<ASGLU>
             end
             
             % I am not sure if we want to enforce this.
             % I don't think we do.
-            % assert(all(isActuallyAClass),'all classes to retain must be represented in dataSet')            
+            % assert(all(isActuallyAClass),'all classes to retain must be represented in dataSet')
             
             obj = obj.removeClassesByInd(classInds);
         end
@@ -418,7 +434,7 @@ classdef prtDataInterfaceCategoricalTargets
             classInds = allClassInds(classInds);
             retain = ismember(obj.getTargetsClassInd,classInds);
             obj = obj.retainObservations(ismember(obj.getTargetsClassInd,classInds));
-        end        
+        end
         
         function obj = removeClassesByInd(obj,classInds)
             % removeClasses remove observations corresponding to
@@ -441,7 +457,7 @@ classdef prtDataInterfaceCategoricalTargets
             end
             
             obj = obj.retainClassesByInd(classInds);
-        end        
+        end
         
         function classInds = getTargetsClassInd(obj,varargin)
             % getTargetsClassIndex  Return the targets by class index
@@ -463,7 +479,7 @@ classdef prtDataInterfaceCategoricalTargets
         function d = getObservationsUnlabeled(obj,varargin)
             d = getDataUnlabeled(obj,varargin{:});
         end
-            
+        
         function d = getObservationsByClass(obj,varargin)
             d = getDataByClass(obj, varargin{:});
         end
@@ -476,9 +492,9 @@ classdef prtDataInterfaceCategoricalTargets
     
     methods
         
-		function classHist = get.nObservationsByClass(Obj)
+        function classHist = get.nObservationsByClass(Obj)
             % nObservationsByClass Return the number of observations per class
-            % 
+            %
             %   N = dataSet.nObservationsByClass() returns a vector
             %   consisting of the number of observations per class.
             
@@ -486,7 +502,7 @@ classdef prtDataInterfaceCategoricalTargets
         end
         
         function [Out, newObsInds] = bootstrapByClass(Obj,N)
-      
+            
             if nargin < 2 || isempty(N)
                 N = Obj.nObservationsByClass;
             end
@@ -504,7 +520,7 @@ classdef prtDataInterfaceCategoricalTargets
             if length(N) ~= nClasses
                 error('Number of samples (N) must be either scalar integer or a vector integer of dataSet.nClasses (%d), N is a %s %s',nClasses,mat2str(size(N)),class(N));
             end
-      
+            
             if ~Obj.isLabeled
                 % nClasses will return one but we do not need to look at
                 % targets; instead rely on good olde bootstrap
@@ -531,11 +547,11 @@ classdef prtDataInterfaceCategoricalTargets
                 % rapidly bootstrap so we do not use the object.
                 sampleIndices = prtRvUtilRandomSample(Obj.nObservationsByClass(iClass),N(iClass));
                 newObsInds(cNewInds) = cObsInds(sampleIndices);
-            end    
+            end
             
             Out = retainObservations(Obj,newObsInds);
-		end
-		
+        end
+        
     end
     methods (Hidden)
         function self = acquireCategoricalTargetsNonDataAttributes(self, dataSet)
