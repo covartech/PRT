@@ -476,12 +476,12 @@ classdef prtUiStructDlg < prtUiManagerPanel
                         end
                         
                     case 'char'
-                        % look for file
                         
+                        % look for file
                         if length(fvalue)>=7 && strcmpi(fvalue(1:7),'#<file>')% && exist(fname(8:end),'file')
                             % File
                             self.controls = [self.controls; {'file' fname}];
-                            return
+                            continue
                         end
                         
                         %look for multiline string

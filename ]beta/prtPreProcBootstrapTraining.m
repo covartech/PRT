@@ -1,18 +1,20 @@
 classdef prtPreProcBootstrapTraining < prtPreProc
     % prtPreProcBootstrapTraining  Bootstrap data during training; do nothing
-    %   at RUN time.
+    %   at run time.
     %
     % prtPreProcBootstrapTraining creats a BootstrapTraining object which
     % when used as part of an algorithm, bootstrap's data during training,
     % and passes data through to the next block without bootstrapping
     % at run time.  This is generally the expected behavior - we
     % down-sample to train, but don't use a bootstrap estimate to generate
-    % our ROC curves.
+    % our ROC curves.  prtPreProcBootstrapTraining is useful for building
+    % algorithms from data sets where the computational complexity of
+    % training is computationally intractable for the entire data set.
     %
     % Properties:
     %   nSamples (1000): The number of samples to bootstrap
     %
-    %   boostrapByClass (trie): Whether to call dataSet.bootstrapByClass 
+    %   boostrapByClass (true): Whether to call dataSet.bootstrapByClass 
     %       or dataSet.bootstrap
     %
     %  % Example use; this generates 10 different FLD's using very few (10)
@@ -75,7 +77,8 @@ classdef prtPreProcBootstrapTraining < prtPreProc
     methods (Access=protected,Hidden=true)
         
         function self = trainAction(self,DataSet)
-            %do nothing
+            %do nothing; this should never be called. since we overload
+            %runOnTrainingData
         end
         
         function DataSet = runAction(self,DataSet)
@@ -84,6 +87,11 @@ classdef prtPreProcBootstrapTraining < prtPreProc
             % prtAlgorithm
         end
         
+        function DataSet = runActionFast(self,DataSet)
+            % Note, prtPreProcBootstrap.run does nothing;
+            % .runOnTrainingData does all the work, and only within a
+            % prtAlgorithm
+        end
     end
     
 end

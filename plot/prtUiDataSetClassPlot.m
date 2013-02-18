@@ -1,0 +1,327 @@
+classdef prtUiDataSetClassPlot < prtUiManagerPanel
+    
+    % ds = prtDataGenIris;
+    % p = prtUiDataSetClassPlot(ds);
+    %
+    % %% At this point a plot has been created. These commands modify it
+    % p.colors(1,:) = [0 0 0];
+    % p.edgeColors(1,:) = [0 0 0];
+    % p.markers(3) = 'p';
+    % p.markers(2) = 's';
+    % p.markerSizes(3) = 12;
+    % p.markerSizes(1) = 4;
+    %
+    % %% You can also switch the features that are plotted;
+    %
+    % p.featureIndices = [2 3 4]
+    %
+    % There are potential issues with closing the window and maipulating
+    % "p" but just dont do that for now
+    
+    properties
+        dataSet
+        
+        titleStr = 'prtDataSetClassPlot';
+        
+        handles
+        
+        defaultColorFunction = @(n)prtPlotUtilClassColors(n);
+        defaultEdgeColorFunction = @(n)prtPlotUtilSymbolEdgeColorModification(prtPlotUtilClassColors(n));
+        defaultMarkerFunction = @(n)prtPlotUtilClassSymbols(n);
+        defaultMarkerLineWidth = 1;
+        defaultMarkerSize = 8;
+        defaultIsVisible = true;
+        
+        % These will be set 
+        featureIndices = []; %1, 2 or 3 natural numbers
+        
+        markerSizes = [];
+        colors = [];
+        edgeColors = [];
+        markerLineWidths = [];
+        markers = [];
+        isVisible = []; 
+        
+        legendStrings = {};
+        featureNames = {};
+        
+        
+        colorUnlabeled = prtPlotUtilClassColorUnlabeled;
+        edgeColorUnlabeled = prtPlotUtilClassColorUnlabeled;
+        markerUnlabeled = prtPlotUtilClassSymbolsUnlabeled;
+        markerLineWidthUnlabeled = 1;
+        markerSizeUnlabeled = 8;
+        isVisibleUnlabeled = true;
+        
+        legendStringUnlabeled = prtPlotUtilUnlabeledLegendString;
+    
+        madeThisWindow = false;
+    end
+    
+    methods
+        function self = prtUiDataSetClassPlot(varargin)
+            
+            if nargin == 1
+                self.dataSet = varargin{1};
+            elseif ~mod(nargin,2)
+                self = prtUtilAssignStringValuePairs(self,varargin{:});
+            else
+                self.dataSet = varargin{1};
+                self = prtUtilAssignStringValuePairs(self,varargin{2:end});
+            end
+            
+            if nargin~=0 && ~self.hgIsValid
+                self.create()
+            end
+            
+            init(self);
+        end
+        
+        function create(self)
+            
+            self.handles.figure = figure('Name',self.titleStr);
+            
+            self.managedHandle = uipanel(self.handles.figure, ...
+                'units','normalized',...
+                'BorderType','none',...
+                'Position',[0 0 1 1]);
+            
+            self.madeThisWindow = true;
+        end
+        
+        function init(self)
+            if isempty(self.dataSet)
+                error('dataSet must be defined');
+            end
+            
+            self.handles.axes = axes('parent', self.handles.figure);
+            
+            nClasses = self.dataSet.nClasses;
+            if nClasses == 0 && ~self.dataSet.hasUnlabeled
+                self.dataSet.Y = zeros(self.dataSet.nObservations,1);
+                nClasses = 1;
+            end
+            
+            self.markerSizes = ones(1,nClasses)*self.defaultMarkerSize;
+            self.colors = self.defaultColorFunction(nClasses);
+            self.edgeColors = self.defaultEdgeColorFunction(nClasses);
+            self.markers = self.defaultMarkerFunction(nClasses);
+            self.markerLineWidths = ones(1,nClasses)*self.defaultMarkerLineWidth;
+            self.isVisible = true(1,nClasses).*self.defaultIsVisible;
+            
+            self.legendStrings = getClassNames(self.dataSet);
+            
+            self.featureIndices = 1:min(2,self.dataSet.nFeatures);
+            
+            self.plot();
+            
+        end
+        
+        function plot(self)
+            % Plot   Plot the prtDataSetClass object
+            %
+            %   dataSet.plot() Plots the prtDataSetClass object.
+            
+            nClasses = self.dataSet.nClasses;
+            nFeatures = length(self.featureIndices);
+            self.featureNames = self.dataSet.getFeatureNames(self.featureIndices);
+            
+            if nFeatures == 1
+                self.featureNames{end+1} = 'Target';
+            end
+            
+            holdState = get(gca,'nextPlot');
+            
+            self.handles.lineUnlabeled = [];
+            if self.dataSet.hasUnlabeled
+                cX = self.dataSet.getObservationsUnlabeled(self.featureIndices);
+                if size(cX,1) == 1
+                    cX = cat(2,cX, zeros(size(cX,1),1));
+                end
+                
+                self.handles.lineUnlabeled = prtPlotUtilScatter(cX, self.featureNames, self.markerUnlabeled, self.colorUnlabeled, self.edgeColorUnlabeled, self.markerLineWidthUnlabeled, self.markerSizeUnlabeled);
+                hold on;
+            end
+            
+            uClasses = self.dataSet.uniqueClasses;
+            self.handles.lines = zeros(1,self.dataSet.nClasses);
+            for iClass = 1:nClasses
+                
+                cX = self.dataSet.getObservationsByClassInd(iClass, self.featureIndices);
+                
+                if size(cX,2) == 1
+                    cX = cat(2,cX,repmat(uClasses(iClass),size(cX,1),1));
+                end
+                
+                self.handles.lines(iClass) = prtPlotUtilScatter(cX, self.featureNames, self.markerUnlabeled , self.colorUnlabeled, self.edgeColorUnlabeled, self.markerLineWidthUnlabeled, self.markerSizeUnlabeled); % For now
+                
+                hold on;
+            end
+            
+            set(gca,'nextPlot',holdState);
+            
+            self.setAllClassAttributes;
+            
+            % Set title
+            title(self.dataSet.name);
+            
+             % Create legend
+            if self.dataSet.isLabeled
+                if self.dataSet.hasUnlabeled
+                    strs = cat(1,self.legendStrings,{self.legendStringUnlabeled});
+                    hands = cat(1,self.handles.lines(:), self.handles.lineHandleUnlabeled);
+                else
+                    strs = self.legendStrings;
+                    hands = self.handles.lines(:);
+                end
+                self.handles.legend = legend(hands,strs,'Location','SouthEast');
+            end
+        end
+        
+        function setAllClassAttributes(self)
+            if ~isempty(self.handles) && isfield(self.handles,'lines') && ~isempty(self.handles.lines)
+                for iClass = 1:length(self.handles.lines)
+                    self.setClassAttributes(iClass, true);
+                end
+            end
+        end
+        
+        function setClassAttributes(self, iClass, byPass)
+            if nargin < 3
+                byPass = false;
+            end
+            if byPass || (~isempty(self.handles) && isfield(self.handles,'lines') && ~isempty(self.handles.lines))
+                onOff = {'off','on'};
+                set(self.handles.lines(iClass),'marker',self.markers(iClass),...
+                    'markerSize',self.markerSizes(iClass),...
+                    'markerFaceColor',self.colors(iClass,:),...
+                    'MarkerEdgeColor',self.edgeColors(iClass,:),...
+                    'lineWidth',self.markerLineWidths(iClass),...
+                    'visible',onOff{self.isVisible(iClass)+1});
+            end
+        end
+        
+        function setUnlabeledAttributes(self)
+            if ~isempty(self.handles) && isfield(self.handles,'lines') && ~isempty(self.handles.lineUnlabeled)
+                onOff = {'off','on'};
+                set(self.handles.lineUnlabeled,'marker', self.symbolUnlabeled, ...
+                    'markerFaceColor',self.colorUnlabeled, ...
+                    'markerEdgeColor',self.edgeColorUnlabeled, ...
+                    'lineWidth',self.symbolLineWidthUnlabeled, ...
+                    'markerSize',self.makerSizeUnlabeled,...
+                    'visible',onOff{self.isVisibleUnlabeled(iClass)+1});
+            end
+        end
+        
+        function close(self)
+            if self.madeThisWindow
+                try %#ok<TRYNC>
+                    close(self.handleStruct.figureHandle);
+                end
+            else
+                % I don't know
+            end
+        end
+        
+        function set.markers(self,val)
+            self.markers = val;
+            self.setAllClassAttributes();
+        end
+        
+        function set.markerSizes(self,val)
+            self.markerSizes = val;
+            self.setAllClassAttributes();
+        end
+        
+        function set.colors(self,val)
+            self.colors = val;
+            self.setAllClassAttributes();
+        end
+        
+        function set.edgeColors(self, val)
+            self.edgeColors = val;
+            self.setAllClassAttributes();
+        end
+        function set.markerLineWidths(self, val)
+            self.markerLineWidths = val;
+            self.setAllClassAttributes();
+        end
+        
+        function set.isVisible(self, val)
+            self.isVisible = val;
+            self.setAllClassAttributes();
+        end
+        
+        function set.markerUnlabeled(self,val)
+            self.markerUnlabeled = val;
+            self.setUnlabeledAttributes();
+        end
+        
+        function set.markerSizeUnlabeled(self,val)
+            self.markerSizeUnlabeled = val;
+            self.setUnlabeledAttributes();
+        end
+        
+        function set.colorUnlabeled(self,val)
+            self.colorUnlabeled = val;
+            self.setUnlabeledAttributes();
+        end
+        
+        function set.edgeColorUnlabeled(self, val)
+            self.edgeColorUnlabeled = val;
+            self.setUnlabeledAttributes();
+        end
+        function set.markerLineWidthUnlabeled(self, val)
+            self.markerLineWidthUnlabeled = val;
+            self.setUnlabeledAttributes();
+        end
+        function set.isVisibleUnlabeled(self, val)
+            self.isVisibleUnlabeled = val;
+            self.setUnlabeledAttributes();
+        end
+        
+        function set.featureIndices(self, val)
+            oldVal = self.featureIndices;
+            
+            self.featureIndices = val;
+            
+            if isempty(oldVal)
+                % First set, don't update plot
+                return;
+            end
+            
+            % Store some legend properties, just incased it was
+            % moved/altered.
+            legendStruct = getPersistantLegendProperties(self);
+            
+            self.plot();
+            
+            % Restore the legend properties
+            setPersistantLegendProperties(self,legendStruct);
+        end
+       
+        function controller = controls(self)
+            controller = prtUiDataSetClassExploreWidget('plotManager',self);
+        end
+        
+    end
+    methods (Hidden)
+        function legendStruct = getPersistantLegendProperties(self)
+            if isfield(self.handles,'legend') && ishandle(self.handles.legend)
+                legendStruct.Position = get(self.handles.legend,'Position');
+                legendStruct.Location = get(self.handles.legend, 'Location');
+                legendStruct.Orientation = get(self.handles.legend,'Orientation');
+                legendStruct.String = get(self.handles.legend,'String');
+            end
+        end
+        
+        function setPersistantLegendProperties(self,legendStruct)
+            if isfield(self.handles,'legend') && ishandle(self.handles.legend)
+                set(self.handles.legend,'Position',legendStruct.Position);
+                set(self.handles.legend, 'Location',legendStruct.Location);
+                set(self.handles.legend,'Orientation',legendStruct.Orientation);
+                set(self.handles.legend,'String',legendStruct.String);
+            end
+        end
+    end
+end

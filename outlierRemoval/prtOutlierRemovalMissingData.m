@@ -1,7 +1,7 @@
 classdef prtOutlierRemovalMissingData < prtOutlierRemoval
     % prtOutlierRemovalMissingData  Removes missing data from a prtDataSet
     %
-    %   NSTDOUT = prtOutlierRemovalNStd creates a pre-processing
+    %   NSTDOUT = prtOutlierRemovalMissingData creates a pre-processing
     %   object that removes all missing data as outliers. Missing data are
     %   respresented as NaN's in the original data set.
     %

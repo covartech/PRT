@@ -7,9 +7,9 @@ classdef prtOutlierRemoval < prtAction
     %   from the prtAction object. prtOutlierRemoval objects have the
     %   following additional properties:
     %
-    %   runMode - Specifie how the outlier removal processing behaves when run on a
-    %   data set.  runMode specifies how the action behaves during typical
-    %   calls to RUN. Valid strings are as follows:
+    %   runMode - Specify how the outlier removal processing behaves when
+    %   run on a data set.  runMode specifies how the action behaves during
+    %   typical calls to RUN. Valid strings are as follows:
     %
     %       'noAction' - When running the outlier removal action, do
     %       nothing.  This ensures that the outlier removal action outputs
@@ -22,7 +22,7 @@ classdef prtOutlierRemoval < prtAction
     %
     %       'removeObservation' - When running the outlier removal action,
     %       remove observations where any feature value is flagged as an
-    %       outlier.  This can change the size of the data set during
+    %       outlier.  Note: This can change the size of the data set during
     %       running and can result in invalid cross-validation folds.
     %
     %       'removeFeature'  - When running the outlier removal action,

@@ -25,15 +25,19 @@ if ~iscellstr(paramStrs)
 end
 
 
-% Get available propert names
-% Note you cant just use
-% >> propNames = properties(Obj);
-% Because this does not include hidden properties
-ObjMeta = metaclass(Obj);
-propNames = cellfun(@(c)c.Name,ObjMeta.Properties,'uniformoutput',false);
-setAccesses = cellfun(@(c)c.SetAccess,ObjMeta.Properties,'uniformoutput',false);
-availableToBeSet = strcmpi(setAccesses,'public');
-propNames = propNames(availableToBeSet);
+% Get available property names
+if isstruct(Obj)
+	propNames = fieldnames(Obj);
+else
+	% Note you cant just use
+	% >> propNames = properties(Obj);
+	% Because this does not include hidden properties
+	ObjMeta = metaclass(Obj);
+	propNames = cellfun(@(c)c.Name,ObjMeta.Properties,'uniformoutput',false);
+	setAccesses = cellfun(@(c)c.SetAccess,ObjMeta.Properties,'uniformoutput',false);
+	availableToBeSet = strcmpi(setAccesses,'public');
+	propNames = propNames(availableToBeSet);
+end
 
 for iPair = 1:length(paramStrs)
     cParamName = paramStrs{iPair};

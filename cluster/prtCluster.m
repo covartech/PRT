@@ -42,9 +42,9 @@ classdef prtCluster < prtAction
 	end
 	
 	methods (Hidden = true)
-        function featureNameModificationFunction = getFeatureNameModificationFunction(obj)
-            if ~obj.includesDecision
-				featureNameModificationFunction = prtUtilFeatureNameModificationFunctionHandleCreator('%s Membership in cluster #index#', obj.nameAbbreviation);
+        function featureNameModificationFunction = getFeatureNameModificationFunction(self)
+            if ~self.includesDecision
+				featureNameModificationFunction = prtUtilFeatureNameModificationFunctionHandleCreator('%s Membership in cluster #index#', self.nameAbbreviation);
 			else
 				featureNameModificationFunction = prtUtilFeatureNameModificationFunctionHandleCreator('Class Label');
             end
@@ -52,49 +52,49 @@ classdef prtCluster < prtAction
 	end
 	
     methods
-        function obj = prtCluster()
+        function self = prtCluster()
             % As an action subclass we must set the properties to reflect
             % our dataset requirements
-            obj.classTrain = 'prtDataSetClass';
-            obj.classRun = 'prtDataSetStandard';
-            obj.classRunRetained = true;
+            self.classTrain = 'prtDataSetClass'; % Can't this be prtDataSetStandard?
+            self.classRun = 'prtDataSetStandard';
+            self.classRunRetained = true;
         end
         
-        function val = get.internalDecider(obj)
-            val = obj.internalDeciderDepHelper;
+        function val = get.internalDecider(self)
+            val = self.internalDeciderDepHelper;
         end
-        function obj = set.internalDecider(obj,val)
+        function self = set.internalDecider(self,val)
             if ~isempty(val) && ~isa(val,'prtDecision')
                 error('prtClass:internalDecider','internalDecider must be an empty vector ([]) of type prtDecision, but input is a %s',class(val));
             end
             
-            if ~isempty(val) && ~val.isTrained && obj.isTrained
+            if ~isempty(val) && ~val.isTrained && self.isTrained
                 % We are adding a non-trained decision to a trained
                 % classifier if we have verboseStorage = true we can train
                 % the decider. If we don't we have to untrain and warn
                 
-                if ~isempty(obj.dataSet)
+                if ~isempty(self.dataSet)
                     % We have the dataset
-                    obj.internalDeciderDepHelper = val;
-                    obj = postTrainProcessing(obj, obj.dataSet);
-                    obj.yieldsMaryOutput = false;
+                    self.internalDeciderDepHelper = val;
+                    self = postTrainProcessing(self, self.dataSet);
+                    self.yieldsMaryOutput = false;
                 else
-                    %Make obj.isTrained false:
-                    obj.isTrained = false;
+                    %Make self.isTrained false:
+                    self.isTrained = false;
                     %warn user?
                     warning('prt:internalDecider:isTrained','Setting the internalDecider property of a prtClass object with an un-trained internalDecider sets the prtClass object''s isTrained to false');
                 end
             else
-                obj.internalDeciderDepHelper = val;
+                self.internalDeciderDepHelper = val;
             end
             
         end
         
-        function has = get.includesDecision(obj)
-            has = ~isempty(obj.internalDecider);
+        function has = get.includesDecision(self)
+            has = ~isempty(self.internalDecider);
         end
         
-        function varargout = plot(Obj)
+        function varargout = plot(self)
             % PLOT  Plot the output of the prtCluster object
             %
             %   OBJ.plot() plots the output confidence of a prtClass
@@ -105,117 +105,118 @@ classdef prtCluster < prtAction
             %
             %   See also: prtClass\plotDecision
             
-            assert(Obj.isTrained,'Clusterer must be trained before it can be plotted.');
-            assert(Obj.dataSetSummary.nFeatures < 4, 'nFeatures in the training dataset must be less than or equal to 3');
+            assert(self.isTrained,'Clusterer must be trained before it can be plotted.');
+            assert(self.dataSetSummary.nFeatures < 4, 'nFeatures in the training dataset must be less than or equal to 3');
             
-            if Obj.yieldsMaryOutput
-                Obj = trainAutoDecision(Obj);
+            if self.yieldsMaryOutput
+                self = trainAutoDecision(self);
             end
             
-            HandleStructure = plotBinaryClusterConfidence(Obj);
+            handleStructure = plotBinaryClusterConfidence(self);
                 
-            if ~isempty(Obj.dataSet) && ~isempty(Obj.dataSet.name)
-                title(sprintf('%s (%s)',Obj.name,Obj.dataSet.name));
+            if ~isempty(self.dataSet) && ~isempty(self.dataSet.name)
+                title(sprintf('%s (%s)',self.name,self.dataSet.name));
             else
-                title(Obj.name);
+                title(self.name);
             end
             
             varargout = {};
             if nargout > 0
-                varargout = {HandleStructure};
+                varargout = {handleStructure};
             end
         end
     end
 
     methods (Access = protected, Hidden = true)
 
-        function Obj = postTrainProcessing(Obj,DataSet)
-             if ~isempty(Obj.internalDecider)
-                tempObj = Obj;
-                tempObj.internalDecider = [];
-                yOut = tempObj.run(DataSet);
-                Obj.internalDecider = Obj.internalDecider.train(yOut);
-                Obj.internalDecider.classList = 1:Obj.nClusters;
+        function self = postTrainProcessing(self,ds)
+             if ~isempty(self.internalDecider)
+                tempself = self;
+                tempself.internalDecider = [];
+                yOut = tempself.run(ds);
+                self.internalDecider = self.internalDecider.train(yOut);
+                self.internalDecider.classList = 1:self.nClusters;
             end
         end
 
-        function ClassObj = preTrainProcessing(ClassObj, DataSet)
+        function self = preTrainProcessing(self, ds)
             % Overload preTrainProcessing() so that we can determine mary
             % output status
             
-            ClassObj.yieldsMaryOutput = ~ClassObj.includesDecision;
+            self.yieldsMaryOutput = ~self.includesDecision;
 
-            ClassObj = preTrainProcessing@prtAction(ClassObj,DataSet);
+            self = preTrainProcessing@prtAction(self, ds);
         end
 
-        function OutputDataSet = postRunProcessing(ClassObj, InputDataSet, OutputDataSet)
+        function outputDs = postRunProcessing(self, inputDs, outputDs)
             % Overload postRunProcessing (from prtAction) so that we can
-            % enforce twoClassParadigm
+            % enforce the internaldecider
             
-            if ~isempty(ClassObj.internalDecider)
-                OutputDataSet = ClassObj.internalDecider.run(OutputDataSet);
+            if ~isempty(self.internalDecider)
+                outputDs = self.internalDecider.run(outputDs);
             end
             
-            OutputDataSet = postRunProcessing@prtAction(ClassObj, InputDataSet, OutputDataSet);
+            outputDs = postRunProcessing@prtAction(self, inputDs, outputDs);
         end
         
         % Plotting functions
-        function [OutputDataSet, linGrid, gridSize] = runClustererOnGrid(Obj, upperBounds, lowerBounds)
+        function [outputDs, linGrid, gridSize] = runClustererOnGrid(self, upperBounds, lowerBounds)
 
             if nargin < 3 || isempty(lowerBounds)
-                lowerBounds = Obj.dataSetSummary.lowerBounds;
+                lowerBounds = self.dataSetSummary.lowerBounds;
             end
 
             if nargin < 2 || isempty(upperBounds)
-                upperBounds = Obj.dataSetSummary.upperBounds;
+                upperBounds = self.dataSetSummary.upperBounds;
             end
 
-            [linGrid, gridSize] = prtPlotUtilGenerateGrid(upperBounds, lowerBounds, Obj.plotOptions.nSamplesPerDim);
+            [linGrid, gridSize] = prtPlotUtilGenerateGrid(upperBounds, lowerBounds, self.plotOptions.nSamplesPerDim);
 
-            OutputDataSet = run(Obj,prtDataSetClass(linGrid));
+            outputDs = run(self,prtDataSetClass(linGrid));
         end
 
         
-        function HandleStructure = plotBinaryClusterConfidence(Obj)
+        function handleStructure = plotBinaryClusterConfidence(self)
             
-            [OutputDataSet, linGrid, gridSize] = runClustererOnGrid(Obj);
+            [outputDs, linGrid, gridSize] = runClustererOnGrid(self);
             
             %internalDeciders* output the right colors:
-            imageHandle = prtPlotUtilPlotGriddedEvaledClassifier(OutputDataSet.getObservations(), linGrid, gridSize, prtPlotUtilLightenColors(Obj.plotOptions.colorsFunction(Obj.nClusters)),Obj);
+            imageHandle = prtPlotUtilPlotGriddedEvaledClassifier(outputDs.getObservations(), linGrid, gridSize, prtPlotUtilLightenColors(self.plotOptions.colorsFunction(self.nClusters)),self);
             
-            if ~isempty(Obj.dataSet)
+            if ~isempty(self.dataSet)
                 hold on;
-                handles = plot(Obj.dataSet);
+                handles = plot(self.dataSet);
                 hold off;
-                HandleStructure.Axes = struct('imageHandle',{imageHandle},'handles',{handles});
+                handleStructure.Axes = struct('imageHandle',{imageHandle},'handles',{handles});
             else
-                HandleStructure.Axes = struct('imageHandle',{imageHandle},'handles',{[]});
+                handleStructure.Axes = struct('imageHandle',{imageHandle},'handles',{[]});
             end
         end
         
-        function Obj = trainAutoDecision(Obj)
-            if ~isempty(Obj.dataSet)
+        function self = trainAutoDecision(self)
+            if ~isempty(self.dataSet)
                 % warning('prt:prtCluster:plot:autoDecision','prtCluster.plot() requires a prtCluster with an internal decider. A prtDecisionMap has been trained and set as the internalDecider to enable plotting.');
                 
                 % It is much easier (and safer) to just train the
                 % prtDecisionMap
-                Obj.internalDecider =  prtDecisionMap;
-                Obj = postTrainProcessing(Obj, Obj.dataSet);
-                Obj.yieldsMaryOutput = false;
+                self.internalDecider = prtDecisionMap;
+                self = postTrainProcessing(self, self.dataSet);
+                self.yieldsMaryOutput = false;
             else
                 % warning('prt:prtCluster:plot:autoDecision','prtCluster.plot() requires a prtCluster with an internal decider. A prtDecisionMap has been trained and set as the internalDecider to enable plotting.');
                 % error('prt:prtCluster:plot','prtCluster.plot() requires a prtCluster with an internal decider. A prtDecisionMap cannot be trained and set as the internalDecider to enable plotting because this cluster object does not have verboseStorege turned on and therefore the dataSet used to train the clusterer is unknow. To enable plotting, set an internalDecider and retrain the clusterer.');
                 
                 % Since we don't have the dataset we just mock train
                 % This is slightly dangerous in the case when
-                % prtDecisionMap changes to include more parameters.
+                % prtDecisionMap changes to include more parameters. or
+                % dataSetSummary changes. (It is currently only a struct)
                 tempInternalDecider = prtDecisionMap;
                 tempInternalDecider.isTrained = true;
-                tempInternalDecider.classList = 1:Obj.nClusters;
-                tempInternalDecider.dataSetSummary = Obj.dataSetSummary;
-                tempInternalDecider.dataSetSummary.nFeatures = Obj.nClusters;
+                tempInternalDecider.classList = 1:self.nClusters;
+                tempInternalDecider.dataSetSummary = self.dataSetSummary;
+                tempInternalDecider.dataSetSummary.nFeatures = self.nClusters;
                 
-                Obj.internalDecider = tempInternalDecider;
+                self.internalDecider = tempInternalDecider;
             end
         end
     end

@@ -11,7 +11,7 @@ classdef prtKernelDirect < prtKernel
     %  Direct kernel functions can be used sparse machine learning contexts
     %  to perform sparse linear feature selection.
     %   
-    %  prtKernelHyperbolicTangent objects inherit the TRAIN, RUN, and AND
+    %  prtKernelDirect objects inherit the TRAIN, RUN, and AND
     %  methods from prtKernel.
     %
     %  % Example:
