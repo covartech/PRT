@@ -1,6 +1,6 @@
-classdef prtUiDataSetClassExploreWidgetTabPlotOptions < prtUiDataSetClassExploreWidgetTabPlotOptions
+classdef prtUiDataSetClassExploreWidgetTabPlotOptions < prtUiDataSetClassExploreWidgetTab
     properties
-        title = 'Plot Options';
+        titleStr = 'Plot Options';
         
         handles
     end
@@ -22,16 +22,19 @@ classdef prtUiDataSetClassExploreWidgetTabPlotOptions < prtUiDataSetClassExplore
             self.handles.table = uitable('parent',self.managedHandle,...
                 'units','normalized','position',[0 0 1 1]); % Dummy position
             
-            self.handles.jScrollPane = findjobj(self.handleStruct.table);
-            self.handles.jTable = self.handleStruct.jScrollPane.getViewport.getView;
+            self.handles.jScrollPane = findjobj(self.handles.table);
+            self.handles.jTable = self.handles.jScrollPane.getViewport.getView;
+            
+            %self.tableFieldNames
+            
             
             % Set the actual data in the cell
-%             set(self.handleStruct.table,'data',self.dataCell,...
+%             set(self.handles.table,'data',self.dataCell,...
 %                 'columnName',self.tableFieldNames,...
-%                 'RearrangeableColumns','on',...
+%                 'RearrangeableColumns','off',...
 %                 'RowName',{},...
-%                 'TooltipString','Available Options',...
-%                 'ColumnEditable',false(1,length(self.tableFieldNames)),...
+%                 'TooltipString','Plotting Options',...
+%                 'ColumnEditable',true(1,length(self.tableFieldNames)),...
 %                 'KeyPressFcn',@self.tableKeyPressFcn,...
 %                 'CellSelectionCallback',@self.cellCelectionFcn);
            
@@ -44,7 +47,7 @@ classdef prtUiDataSetClassExploreWidgetTabPlotOptions < prtUiDataSetClassExplore
             %end
             
             % Set the column widths to take up the whole area
-            self.handleStruct.jTable.setAutoResizeMode(self.handleStruct.jTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
+            self.handles.jTable.setAutoResizeMode(self.handles.jTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
         end
     end
 end

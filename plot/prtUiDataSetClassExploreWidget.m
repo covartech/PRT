@@ -11,7 +11,7 @@ classdef prtUiDataSetClassExploreWidget < prtUiManagerPanel
         
         titleStr = 'prtDataSetClass Explorer Widget';
         
-        tabObjectCallbacks = {@prtUiDataSetClassExploreWidgetTabPlotOptions};
+        tabObjectConstructors = {@prtUiDataSetClassExploreWidgetTabSelectAxes @prtUiDataSetClassExploreWidgetTabPlotOptions};
         
         handles
         tabs
@@ -101,15 +101,16 @@ classdef prtUiDataSetClassExploreWidget < prtUiManagerPanel
         
         function init(self)
             self.handles.tabGroup = prtUtilUitabgroup('parent',self.managedHandle);
-            nTabs = length(self.tabObjectCallbacks);
+            nTabs = length(self.tabObjectConstructors);
             self.handles.tabs = zeros(nTabs,1);
             self.handles.tabPanels = zeros(nTabs,1);
             for iTab = 1:nTabs
                 self.handles.tabs(iTab) = prtUtilUitab(self.handles.tabGroup, 'title', 'Temp');
                 self.handles.tabPanels(iTab) = uipanel(self.handles.tabs(iTab));
                 
-                %self.tabs{iTab} = self.tabObjectCallbacks{iTab}('managedHandle',self.handles.tabPanels(iTab),'widget',self);
-                %set(self.handles.tabs(iTab), 'title', self.tabs{iTab}.title);
+                self.tabs{iTab} = self.tabObjectConstructors{iTab}('managedHandle',self.handles.tabPanels(iTab),'widget',self);
+                
+                set(self.handles.tabs(iTab), 'title', self.tabs{iTab}.titleStr);
                 
             end
             

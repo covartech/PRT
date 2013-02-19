@@ -20,7 +20,7 @@ classdef prtUiManager < hgsetget
         function val = get.managedHandle(self)
             val = self.managedHandleDepHelper;
             if ~ishandle(val)
-                error('prt:prtGuiManager:invalidHandle','Managed handle graphics object is no longer valid.');
+                val = [];
             end
         end
         

@@ -1,4 +1,4 @@
-function DataSet = prtDataGenFeatureSelection(N)
+function DataSet = prtDataGenFeatureSelection(N, nExtraDims)
 %prtDataGenFeatureSelection   Generates some unimodal example data for the prt.
 %  DataSet = prtDataGenFeatureSelection(N)
 %  The data is distributed:
@@ -27,11 +27,16 @@ function DataSet = prtDataGenFeatureSelection(N)
 
 % Copyright 2010, New Folder Consulting, L.L.C.
 
-if nargin == 0
+if nargin < 1 || isempty(N);
     nSamples = 200;
 else
     nSamples = N;
 end
+
+if nargin < 2 || isempty(nExtraDims)
+    nExtraDims = 0;
+end
+
 mu0 = [0 0 0 0 0 0 0 0 0 0];
 mu1 = [0 1 0 .5 0 1 0 .5 0 1];
 
@@ -41,6 +46,13 @@ rv(1) = prtRvMvn('mu',mu0,'sigma',sigma0);
 rv(2) = prtRvMvn('mu',mu1,'sigma',sigma1);
 
 X = cat(1,draw(rv(1),nSamples),draw(rv(2),nSamples));
+
+if nExtraDims > 0
+    rvNoise = prtRvMvn('mu',zeros(1,nExtraDims),'sigma',eye(nExtraDims));
+    
+    X = cat(2, X, rvNoise.draw(nSamples*2));
+end
+
 Y = prtUtilY(nSamples,nSamples);
 
 DataSet = prtDataSetClass(X,Y,'name',mfilename);

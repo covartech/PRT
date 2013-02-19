@@ -422,20 +422,37 @@ classdef prtDataSetStandard < prtDataSetInMem
 			% This could leave featureNameModificationFunctions that are
 			% applied to no features. Is it worthwhile checking for this?
 		end
-		
-		function self = setFeatureInfo(self,info)
-			if length(info) ~= self.nFeatures
-				error('size mismatch');
-			end
-			%assorted error checking
-			self.featureInfoInternal = info;
-		end
-		
-		function featInfo = getFeatureInfo(self)
-			featInfo = self.featureInfoInternal;
-		end
-		
-	end
+    end
+    
+    methods
+        function self = setFeatureInfo(self,varargin)
+            
+            if isempty(varargin{1})
+                self.featureInfoInternal = varargin{1};
+                return;
+            end
+            if length(varargin) == 1
+                val = varargin{1};
+            else
+                origStruct = self.featureInfoInternal;
+                val = prtUtilSimpleStruct(origStruct,varargin{:});
+            end
+            if ~isa(val,'struct')
+                error('featureInfo must be a structure array');
+            end
+            if ~isvector(val)
+                error('featureInfo must be a structure array');
+            end
+            if length(val) ~= self.nFeatures && self.nFeatures ~= 0
+                error('featureInfo is length %d; should be a structure array of length %d',length(val),self.nFeatures);
+            end
+            self.featureInfoInternal = val(:)';
+        end
+        
+        function featInfo = getFeatureInfo(self)
+            featInfo = self.featureInfoInternal;
+        end
+    end
 	
 	% %     methods (Static)
 	% %         function featNames = generateDefaultFeatureNames(indices)

@@ -26,7 +26,7 @@ for iList = 1:length(listFunctions)
     end
     fwrite(fid,sprintf('%%\n'));
 end
-fwrite(fid,sprintf('%% Copyright 2011 New Folder Consulting L.L.C.'));
+fwrite(fid,sprintf('%% Copyright 2013 New Folder Consulting L.L.C.'));
 
 fclose(fid);
 

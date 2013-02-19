@@ -70,10 +70,6 @@ classdef prtUiDataSetClassPlot < prtUiManagerPanel
                 self = prtUtilAssignStringValuePairs(self,varargin{2:end});
             end
             
-            if nargin~=0 && ~self.hgIsValid
-                self.create()
-            end
-            
             init(self);
         end
         
@@ -91,11 +87,24 @@ classdef prtUiDataSetClassPlot < prtUiManagerPanel
         
         function init(self)
             if isempty(self.dataSet)
-                error('dataSet must be defined');
+                error('prt:prtDataSetClassPlot:noDataSet','dataSet must be defined');
             end
             
-            self.handles.axes = axes('parent', self.handles.figure);
+            self.initAxes();
             
+            self.setDataSetDependentProperties();
+            self.plot();
+        end
+        function initAxes(self)
+            if isempty(self.managedHandle) || ~ishandle(self.managedHandle)
+                % The figure has closed or never existed
+                % so I guess we will call create
+                self.create();
+            end
+            self.handles.axes = axes('parent', self.managedHandle);
+        end
+        
+        function setDataSetDependentProperties(self)
             nClasses = self.dataSet.nClasses;
             if nClasses == 0 && ~self.dataSet.hasUnlabeled
                 self.dataSet.Y = zeros(self.dataSet.nObservations,1);
@@ -112,9 +121,6 @@ classdef prtUiDataSetClassPlot < prtUiManagerPanel
             self.legendStrings = getClassNames(self.dataSet);
             
             self.featureIndices = 1:min(2,self.dataSet.nFeatures);
-            
-            self.plot();
-            
         end
         
         function plot(self)
@@ -122,23 +128,45 @@ classdef prtUiDataSetClassPlot < prtUiManagerPanel
             %
             %   dataSet.plot() Plots the prtDataSetClass object.
             
+            if ~ishandle(self.handles.axes)
+                % Something happen to our axes? What should we do? quit? 
+                % I decided to just remake the axes
+                self.initAxes();
+            end
+            % make our axes the current axes;
+            axes(self.handles.axes);
+            
+            
+            isRealFeature = self.featureIndices>0;
+            
+            isTruthFeature = ~isRealFeature;
+            
+            selFeatsNoZeros = self.featureIndices(isRealFeature);
+            
             nClasses = self.dataSet.nClasses;
             nFeatures = length(self.featureIndices);
-            self.featureNames = self.dataSet.getFeatureNames(self.featureIndices);
             
-            if nFeatures == 1
-                self.featureNames{end+1} = 'Target';
-            end
+            realFeatureNames = self.dataSet.getFeatureNames(selFeatsNoZeros);
             
-            holdState = get(gca,'nextPlot');
+            self.featureNames = cell(1,nFeatures);
+            self.featureNames(isRealFeature) = realFeatureNames;
+            self.featureNames(isTruthFeature) = repmat({'Target'}, 1, sum(isTruthFeature));
+            
+            holdState = get(self.handles.axes, 'nextPlot');
             
             self.handles.lineUnlabeled = [];
             if self.dataSet.hasUnlabeled
-                cX = self.dataSet.getObservationsUnlabeled(self.featureIndices);
-                if size(cX,1) == 1
-                    cX = cat(2,cX, zeros(size(cX,1),1));
+                cRealX = self.dataSet.getObservationsUnlabeled(selFeatsNoZeros);
+                if any(isTruthFeature)
+                    cX = nan(size(cRealX,1), nFeatures);
+                    cX(:, isRealFeature) = cRealX;
+                    % We just use nans for the targets that are
+                    % techinically nan? Not sure what to do. This way they
+                    % wont plot
+                else
+                    cX = cRealX;
                 end
-                
+                    
                 self.handles.lineUnlabeled = prtPlotUtilScatter(cX, self.featureNames, self.markerUnlabeled, self.colorUnlabeled, self.edgeColorUnlabeled, self.markerLineWidthUnlabeled, self.markerSizeUnlabeled);
                 hold on;
             end
@@ -147,10 +175,15 @@ classdef prtUiDataSetClassPlot < prtUiManagerPanel
             self.handles.lines = zeros(1,self.dataSet.nClasses);
             for iClass = 1:nClasses
                 
-                cX = self.dataSet.getObservationsByClassInd(iClass, self.featureIndices);
                 
-                if size(cX,2) == 1
-                    cX = cat(2,cX,repmat(uClasses(iClass),size(cX,1),1));
+                if any(isTruthFeature)
+                    cRealX = self.dataSet.getObservationsByClassInd(iClass,selFeatsNoZeros);
+                    
+                    cX = uClasses(iClass)*ones(size(cRealX,1), nFeatures);
+                    cX(:, isRealFeature) = cRealX;
+                    
+                else
+                    cX = self.dataSet.getObservationsByClassInd(iClass, selFeatsNoZeros);
                 end
                 
                 self.handles.lines(iClass) = prtPlotUtilScatter(cX, self.featureNames, self.markerUnlabeled , self.colorUnlabeled, self.edgeColorUnlabeled, self.markerLineWidthUnlabeled, self.markerSizeUnlabeled); % For now
@@ -160,7 +193,7 @@ classdef prtUiDataSetClassPlot < prtUiManagerPanel
             
             set(gca,'nextPlot',holdState);
             
-            self.setAllClassAttributes;
+            self.setAllClassAttributes();
             
             % Set title
             title(self.dataSet.name);
@@ -190,7 +223,8 @@ classdef prtUiDataSetClassPlot < prtUiManagerPanel
             if nargin < 3
                 byPass = false;
             end
-            if byPass || (~isempty(self.handles) && isfield(self.handles,'lines') && ~isempty(self.handles.lines))
+            
+            if (byPass || (~isempty(self.handles) && isfield(self.handles,'lines') && ~isempty(self.handles.lines))) && (length(self.handles.lines) >= iClass) && ishandle(self.handles.lines(iClass))
                 onOff = {'off','on'};
                 set(self.handles.lines(iClass),'marker',self.markers(iClass),...
                     'markerSize',self.markerSizes(iClass),...
@@ -202,7 +236,7 @@ classdef prtUiDataSetClassPlot < prtUiManagerPanel
         end
         
         function setUnlabeledAttributes(self)
-            if ~isempty(self.handles) && isfield(self.handles,'lines') && ~isempty(self.handles.lineUnlabeled)
+            if ~isempty(self.handles) && isfield(self.handles,'lines') && ~isempty(self.handles.lineUnlabeled) && ishandle(self.handles.lineUnlabeled)
                 onOff = {'off','on'};
                 set(self.handles.lineUnlabeled,'marker', self.symbolUnlabeled, ...
                     'markerFaceColor',self.colorUnlabeled, ...
@@ -285,8 +319,8 @@ classdef prtUiDataSetClassPlot < prtUiManagerPanel
             
             self.featureIndices = val;
             
-            if isempty(oldVal)
-                % First set, don't update plot
+            if isempty(oldVal) || isequal(oldVal, val)
+                % First set, or same set don't update plot
                 return;
             end
             
@@ -299,10 +333,18 @@ classdef prtUiDataSetClassPlot < prtUiManagerPanel
             % Restore the legend properties
             setPersistantLegendProperties(self,legendStruct);
         end
+        
+        function set.dataSet(self,val)
+            self.dataSet = val;
+            self.setDataSetDependentProperties();
+        end
+        
        
         function controller = controls(self)
             controller = prtUiDataSetClassExploreWidget('plotManager',self);
         end
+        
+        
         
     end
     methods (Hidden)
@@ -312,11 +354,17 @@ classdef prtUiDataSetClassPlot < prtUiManagerPanel
                 legendStruct.Location = get(self.handles.legend, 'Location');
                 legendStruct.Orientation = get(self.handles.legend,'Orientation');
                 legendStruct.String = get(self.handles.legend,'String');
+            else
+                legendStruct = [];
             end
         end
         
         function setPersistantLegendProperties(self,legendStruct)
-            if isfield(self.handles,'legend') && ishandle(self.handles.legend)
+            if isempty(legendStruct)
+                return
+            end
+            
+            if isfield(self.handles,'legend') && ishandle(self.handles.legend) 
                 set(self.handles.legend,'Position',legendStruct.Position);
                 set(self.handles.legend, 'Location',legendStruct.Location);
                 set(self.handles.legend,'Orientation',legendStruct.Orientation);
