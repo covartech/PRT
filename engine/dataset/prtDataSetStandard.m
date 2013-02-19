@@ -56,14 +56,7 @@ classdef prtDataSetStandard < prtDataSetInMem
 	
 	methods (Access = 'protected',Hidden = true)
 		
-		function has = hasFeatures(obj)
-			has = ~isempty(obj.featureNameIntegerAssocArray)||~isempty(obj.featureNameModificationFunction);
-		end
-		
 		function obj = catFeatureNames(obj,dataSet2)
-			if ~dataSet2.hasFeatures
-				return;
-			end
 			nOldFeatures = obj.nFeatures;
 			% concatenate explicit featureNames
 			for i = 1:dataSet2.nFeatures
