@@ -3,6 +3,7 @@ classdef prtDataSetStandard < prtDataSetInMem
 	properties (Dependent, Hidden)
 		featureNames
 		featureNameModificationFunction;
+		featureNameModificationMask;
 	end
 	
 	properties (Dependent)
@@ -13,6 +14,7 @@ classdef prtDataSetStandard < prtDataSetInMem
 	properties (GetAccess = 'protected',SetAccess = 'protected')
 		featureInfoInternal
 		featureNameModificationFunctionInternal
+		featureNameModificationMaskInternal
 	end
 	
 	properties (GetAccess = 'protected', SetAccess = 'protected', Hidden = true)
@@ -41,6 +43,13 @@ classdef prtDataSetStandard < prtDataSetInMem
 			val = self.featureNameModificationFunctionInternal;
 		end
 		
+		function self = set.featureNameModificationMask(self, val)
+			self.featureNameModificationMaskInternal = val;
+		end
+		function val = get.featureNameModificationMask(self)
+			val = self.featureNameModificationMaskInternal;
+		end
+		
 		
 		
 	end
@@ -48,19 +57,64 @@ classdef prtDataSetStandard < prtDataSetInMem
 	methods (Access = 'protected',Hidden = true)
 		
 		function has = hasFeatures(obj)
-			has = ~isempty(obj.featureNameIntegerAssocArray);
+			has = ~isempty(obj.featureNameIntegerAssocArray)||~isempty(obj.featureNameModificationFunction);
 		end
 		
 		function obj = catFeatureNames(obj,dataSet2)
 			if ~dataSet2.hasFeatures
 				return;
 			end
+			nOldFeatures = obj.nFeatures;
+			% concatenate explicit featureNames
 			for i = 1:dataSet2.nFeatures
 				currFeatName = dataSet2.featureNameIntegerAssocArray.get(i);
 				if ~isempty(currFeatName)
 					obj.featureNameIntegerAssocArray = obj.featureNameIntegerAssocArray.put(obj.nFeatures + i, currFeatName);
 				end
 			end
+			% pad featureNameModificationMasks with zeros to prepare for
+			% concatenation
+			if iscell(obj.featureNameModificationFunction)
+				for iCell = 1:length(obj.featureNameModificationFunction)
+					if ~isempty(obj.featureNameModificationFunction{iCell})
+						obj.featureNameModificationMask{iCell} = cat(1,obj.featureNameModificationMask{iCell},zeros(dataSet2.nFeatures,1));
+					end
+				end
+			else
+				if ~isempty(obj.featureNameModificationFunction)
+					obj.featureNameModificationMask = cat(1,obj.featureNameModificationMask,zeros(dataSet2.nFeatures,1));
+				end
+			end
+			if iscell(dataSet2.featureNameModificationFunction)
+				for iCell = 1:length(dataSet2.featureNameModificationFunction)
+					if ~isempty(dataSet2.featureNameModificationFunction{iCell})
+						dataSet2.featureNameModificationMask{iCell} = cat(1,zeros(nOldFeatures,1),dataSet2.featureNameModificationMask{iCell});
+					end
+				end
+			else
+				if ~isempty(dataSet2.featureNameModificationFunction)
+					dataSet2.featureNameModificationMask = cat(1,zeros(nOldFeatures,1),dataSet2.featureNameModificationMask);
+				end
+			end
+			% concatenate featureNameModificationFunctions and
+			% featureNameModificationMasks
+			if iscell(obj.featureNameModificationFunction)
+				if iscell(dataSet2.featureNameModificationFunction)
+					obj.featureNameModificationFunction = cat(1,obj.featureNameModificationFunction,dataSet2.featureNameModificationFunction);
+					obj.featureNameModificationMask = cat(1,obj.featureNameModificationMask,dataSet2.featureNameModificationMask);
+				else
+					obj.featureNameModificationFunction = cat(1,obj.featureNameModificationFunction,{dataSet2.featureNameModificationFunction});
+					obj.featureNameModificationMask = cat(1,obj.featureNameModificationMask,{dataSet2.featureNameModificationMask});
+				end
+			else
+				if iscell(dataSet2.featureNameModificationFunction)
+					obj.featureNameModificationFunction = cat(1,{obj.featureNameModificationFunction},dataSet2.featureNameModificationFunction);
+					obj.featureNameModificationMask = cat(1,{obj.featureNameModificationMask},dataSet2.featureNameModificationMask);
+				else
+					obj.featureNameModificationFunction = {obj.featureNameModificationFunction;dataSet2.featureNameModificationFunction};
+					obj.featureNameModificationMask = {obj.featureNameModificationMask;dataSet2.featureNameModificationMask};
+				end
+			end	
 		end
 	end
 	
@@ -75,6 +129,7 @@ classdef prtDataSetStandard < prtDataSetInMem
 				%clear
 				self.featureNameIntegerAssocArray = prtUtilIntegerAssociativeArray;
 				self.featureNameModificationFunction = [];
+				self.featureNameModificationMask = [];
 				return;
 			end
 			if nargin < 3
@@ -87,6 +142,7 @@ classdef prtDataSetStandard < prtDataSetInMem
 				self.featureNameIntegerAssocArray = self.featureNameIntegerAssocArray.put(featureIndices(i),names{i});
 			end
 			self.featureNameModificationFunction = [];
+			self.featureNameModificationMask = [];
 		end
 		
 		function featNames = getFeatureNames(obj,indices)
@@ -102,6 +158,14 @@ classdef prtDataSetStandard < prtDataSetInMem
 			if islogical(indices)
 				indices = find(indices);
 			end
+			
+% 			for iCell = 1:length(obj.featureNameModificationFunction)
+% 				if ~isempty(obj.featureNameModificationFunction{iCell})
+% 					indices{iCell} = cumsum(obj.featureNameModificationMask{iCell});
+% 				else
+% 					indices{iCell};
+% 				end
+% 			end
 			
 			featNames = obj.featureNameIntegerAssocArray.get(indices);
 			if ~isa(featNames,'cell')
@@ -121,10 +185,15 @@ classdef prtDataSetStandard < prtDataSetInMem
             for iFeat = 1:length(indices)
                 if iscell(obj.featureNameModificationFunction)
                     for iCell = 1:length(obj.featureNameModificationFunction)
-                        featNames{iFeat} = obj.featureNameModificationFunction{iCell}(featNames{iFeat}, indices(iFeat));
+						if ~isempty(obj.featureNameModificationFunction{iCell}) && obj.featureNameModificationMask{iCell}(iFeat)
+							%featNames{iFeat} = obj.featureNameModificationFunction{iCell}(featNames{iFeat}, indices(iFeat));
+							featNames{iFeat} = obj.featureNameModificationFunction{iCell}(featNames{iFeat}, sum(obj.featureNameModificationMask{iCell}(1:iFeat)));
+						end
                     end
-                else
-                    featNames{iFeat} = obj.featureNameModificationFunction(featNames{iFeat}, indices(iFeat));
+				else
+					if ~isempty(obj.featureNameModificationFunction) && obj.featureNameModificationMask(iFeat)
+						featNames{iFeat} = obj.featureNameModificationFunction(featNames{iFeat}, indices(iFeat));
+					end
                 end
             end
 		end
@@ -260,16 +329,16 @@ classdef prtDataSetStandard < prtDataSetInMem
 			% dsOut = retainFeatures(dataSet,retainFeatureInds)
 			%  Return a data set formed by retaining the specified features.
 			
-			try
+% 			try
 				obj = obj.retainFeatureNames(retainFeatureInds);
 				obj.data = obj.data(:,retainFeatureInds);
 				if ~isempty(obj.featureInfo)
 					obj.featureInfo = obj.featureInfo(retainFeatureInds);
 				end
-			catch ME
-				prtDataSetBase.parseIndices(obj.nFeatures, retainFeatureInds);
-				throw(ME);
-			end
+% 			catch ME
+% 				prtDataSetBase.parseIndices(obj.nFeatures, retainFeatureInds);
+% 				throw(ME);
+% 			end
 			obj = obj.update;
 		end
 		
@@ -352,6 +421,13 @@ classdef prtDataSetStandard < prtDataSetInMem
 			keys = 1:length(retainFeatureInds);
 			names = self.featureNameIntegerAssocArray.get(retainFeatureInds);
 			self.featureNameIntegerAssocArray = prtUtilIntegerAssociativeArray(keys,names);
+			for iCell = 1:length(self.featureNameModificationMask)
+				if ~isempty(self.featureNameModificationMask{iCell})
+					self.featureNameModificationMask{iCell} = self.featureNameModificationMask{iCell}(retainFeatureInds);
+				end
+			end
+			% This could leave featureNameModificationFunctions that are
+			% applied to no features. Is it worthwhile checking for this?
 		end
 		
 		function self = setFeatureInfo(self,info)
@@ -515,19 +591,23 @@ classdef prtDataSetStandard < prtDataSetInMem
 		
 		function self = modifyNonDataAttributesFrom(self, action)
 			% Modify the non-data attributes of dataset self given an
-			% aciton.
+			% action.
 			%
 			% This allows actions to set feature names 
 			
  			modFun = action.getFeatureNameModificationFunction();
             currentModFun = self.featureNameModificationFunction;
+			currentModMask = self.featureNameModificationMask;
  			if ~isempty(modFun)
  				if isempty(currentModFun)
  					self.featureNameModificationFunction = modFun;
+					self.featureNameModificationMask = ones(self.nFeatures,1);
                 elseif iscell(currentModFun)
                     self.featureNameModificationFunction = cat(1,currentModFun,{modFun});
+					self.featureNameModificationMask = cat(1,currentModMask,{ones(self.nFeatures,1)});
                 else % Currently a single function handle (hopefully)
                     self.featureNameModificationFunction = {currentModFun;modFun};
+					self.featureNameModificationMask = {currentModMask;ones(self.nFeatures,1)};
 				end
 			end
             
