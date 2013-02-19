@@ -1,7 +1,7 @@
 %% Datasets in the Pattern Recognition Toolbox
 % Before you can perform any actions with the PRT, your data must be stored
 % in a PRT dataset object.
-% 
+%
 % There are 3 basic types of dataset objects, prtDataSetStandard,
 % prtDataSetClass, and prtDataSetRegress. The prtDataSetStandard object is
 % a generic object, containing much of the functionality needed to work
@@ -51,9 +51,9 @@ ds = ds.setX([1 2; 3 4; 5 6])
 % per observation. The first observation, feature 1 equals 1, feature 2
 % equals 2, etc.
 %
-% Right now, the dataset is not labeled. To set labels, we can use the
-% setY (or setTargets) function. Suppose we want to simply label the data
-% as being a member of class 0 or class 1, you can do the following:
+% Right now, the dataset is not labeled. To set labels, we can use the setY
+% (or setTargets) function. Suppose we want to simply label the data as
+% being a member of class 0 or class 1, you can do the following:
 
 ds = ds.setY([1;0;1])
 
@@ -79,69 +79,68 @@ ds = ds.setObservationInfo('info1',[7 8 9]')
 % corresponds to observation 1, etc. The same functionality works for
 % features:
 
- ds = ds.setFeatureInfo('featInfo1', [11 12])
- 
- %%
- % Where the value 11 corresponds to feature 1. Note, in general, it is not
- % required to use the observationInfo or featureInfo fields. They just
- % exist in case you have additional data that you wish to carry around,
- % but do not necessarily want it to be processed by any of the PRT
- % functions.
- 
- %% prtDataSetClass
- %
- % The prtDataSetClass object is an extension of the prtDataSetStandard,
- % with several additional properties and methods specific to data that is
- % to be used for classification.  All PRT classification objects require
- % prtDataSetClass object for training and running. To illustrate, load a
- % binary dataset using the funcion prtDataGenUnimodal:
- 
- ds = prtDataGenUnimodal
+ds = ds.setFeatureInfo('featInfo1', [11 12]')
 
- %%
- % prtDataGenUnimodal randomly generates a dataset with 2 classes, with 2
- % dimensions, and 200 observations per class. Note the additional
- % properties such as nClasses, which equals 2. isBinary is therefore set
- % to true because it is a binary data set. Since this dataset has 2
- % dimensions, it can be plotted with the following command:
- 
- ds.plot
- 
- %%
- % When a dataset has 3 or fewer dimensions, it can be plotted on a
- % scatterplot in this manner. When the dataset has more than 3 dimensions,
- % the PRT provides several ways for visualizing the data, such as the
- % PRT explorer, or methods such as plotStar, plotAsTimeSeries, plotPairs.
- % For an example of a higher dimension prtDataSetClass, load the Iris
- % dataset:
- 
- ds = prtDataGenIris
- 
- 
- %%
- % This dataset has 4 classes, and 4 features per class. The isMary
- % property is therefore set to true. Experiment with the different ways to
- % visualize this dataset. For example, try the plotStar function:
- 
- ds.plotStar
- 
- %%
- % For more information on the prtDataSetClass, please refer to
- % <./functionReference/prtDataSetClass.html prtDataSetClass>
- 
- %% prtDataSetRegress
- %
- % prtDataSetRegress is also an extension of prtDataSetStandard, with
- % methods overloaded with functionality specific to plotting regression
- % data. All PRT classification objects require prtDataSetClass object for
- % training and running. For example, load a regression data set, and plot
- % it:
- 
- ds = prtDataGenNoisySinc
- ds.plot
+%%
+% Where the value 11 corresponds to feature 1. Note, in general, it is not
+% required to use the observationInfo or featureInfo fields. They just
+% exist in case you have additional data that you wish to carry around,
+% but do not necessarily want it to be processed by any of the PRT
+% functions.
 
- %%
- % For more information on prtDataSetRegress, please refer to
- % <./functionReference/prtDataSetRegress.html prtDataSetRegress>
+%% prtDataSetClass
+%
+% The prtDataSetClass object is an extension of the prtDataSetStandard,
+% with several additional properties and methods specific to data that is
+% to be used for classification.  All PRT classification objects require
+% prtDataSetClass object for training and running. To illustrate, load a
+% binary dataset using the funcion prtDataGenUnimodal:
+
+ds = prtDataGenUnimodal
+
+%%
+% prtDataGenUnimodal randomly generates a dataset with 2 classes, with 2
+% dimensions, and 200 observations per class. Note the additional
+% properties such as nClasses, which equals 2. isBinary is therefore set
+% to true because it is a binary data set. Since this dataset has 2
+% dimensions, it can be plotted with the following command:
+
+ds.plot
+
+%%
+% When a dataset has 3 or fewer dimensions, it can be plotted on a
+% scatterplot in this manner. When the dataset has more than 3 dimensions,
+% the PRT provides several ways for visualizing the data, such as the PRT
+% explorer, or methods such as plotStar, plotAsTimeSeries, plotPairs. For
+% an example of a higher dimension prtDataSetClass, load the Iris dataset:
+
+ds = prtDataGenIris
+
+
+%%
+% This dataset has 4 classes, and 4 features per class. The isMary
+% property is therefore set to true. Experiment with the different ways to
+% visualize this dataset. For example, try the plotStar function:
+
+ds.plotStar
+
+%%
+% For more information on the prtDataSetClass, please refer to
+% <./functionReference/prtDataSetClass.html prtDataSetClass>
+
+%% prtDataSetRegress
+%
+% prtDataSetRegress is also an extension of prtDataSetStandard, with
+% methods overloaded with functionality specific to plotting regression
+% data. All PRT classification objects require prtDataSetClass object for
+% training and running. For example, load a regression data set, and plot
+% it:
+
+ds = prtDataGenNoisySinc
+ds.plot
+
+%%
+% For more information on prtDataSetRegress, please refer to
+% <./functionReference/prtDataSetRegress.html prtDataSetRegress>
 
 

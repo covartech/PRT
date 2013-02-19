@@ -10,19 +10,20 @@ classifier = prtClassAdaBoost                    % Create a classifier
 
 
 %%
-% Note that classifier has two properties related to boosting, the number
-% of boosts, nBoosts, which defaults to 30, and the baseClassifier. The
-% number of boosts indicates how many instances of the base classifier will
-% be used to construct the overall classifier. The base classifier can be
-% any prtClass object, however, it is recommended that this classifier be a
-% simple classifier that trains quickly, such as prtClassFld or
-% prtClassGlrt. If you select a classifier that has a long training time,
-% the boosting classifier will take substantially longer.
+% Note that classifier has two properties related to boosting, the maximum number
+% of boosts, maxIters, which defaults to 30, and the baseClassifier. The
+% maximum number of interations indicates the upper bound on the number of
+% instances of the base classifier that will be used to construct the
+% overall classifier. The base classifier can be any prtClass object,
+% however, it is recommended that this classifier be a simple classifier
+% that trains quickly, such as prtClassFld or prtClassGlrt. If you select a
+% classifier that has a long training time, the boosting classifier will
+% take substantially longer.
 %
-% For example, set the number of boosts to 20 and the baseClassifier to a
-% prtClassGlrt.
+% For example, set the number of maximum iterations to 20 and the
+% baseClassifier to a prtClassGlrt.
 
-classifier.nBoosts = 20;
+classifier.maxIters = 20;
 classifier.baseClassifier = prtClassGlrt;
 %%
 % Create a data set, train and plot the receiver operating curve
@@ -127,10 +128,10 @@ resultTest = classifier.run(DataTest);
 
 resultTrain = classifier.run(DataRemain);
 
-Pd = sum(resultTrain.getX)/resultTrain.determineNumObservations
+Pd = sum(resultTrain.getX)/resultTrain.nObservations
 
 % In this context, Pf refers to the percentage of data that is not a member
 % of the desired class, but was catergorized as a member of that class.
-Pf = sum(resultTest.getX)/resultTest.determineNumObservations
+Pf = sum(resultTest.getX)/resultTest.nObservations
 
  

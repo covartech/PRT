@@ -4,6 +4,7 @@
 %% prtClass
 % * <./functionReference/prtClass.html prtClass>
 % * <./functionReference/prtClassAdaBoost.html prtClassAdaBoost>
+% * <./functionReference/prtClassAdaBoostFastAuc.html prtClassAdaBoostFastAuc>
 % * <./functionReference/prtClassBagging.html prtClassBagging>
 % * <./functionReference/prtClassBinaryToMaryOneVsAll.html prtClassBinaryToMaryOneVsAll>
 % * <./functionReference/prtClassBumping.html prtClassBumping>
@@ -71,8 +72,11 @@
 % * <./functionReference/prtDistanceSquare.html prtDistanceSquare>
 %
 %% PRT Engine
+% * <./functionReference/prtDataInterfaceCategoricalTargets.html prtDataInterfaceCategoricalTargets>
 % * <./functionReference/prtDataSetBase.html prtDataSetBase>
 % * <./functionReference/prtDataSetClass.html prtDataSetClass>
+% * <./functionReference/prtDataSetImage.html prtDataSetImage>
+% * <./functionReference/prtDataSetInMem.html prtDataSetInMem>
 % * <./functionReference/prtDataSetRegress.html prtDataSetRegress>
 % * <./functionReference/prtDataSetStandard.html prtDataSetStandard>
 % * <./functionReference/prtNewClass.html prtNewClass>
@@ -90,6 +94,7 @@
 % * <./functionReference/prtEvalPdAtPf.html prtEvalPdAtPf>
 % * <./functionReference/prtEvalPercentCorrect.html prtEvalPercentCorrect>
 % * <./functionReference/prtEvalPfAtPd.html prtEvalPfAtPd>
+% * <./functionReference/prtEvalRmse.html prtEvalRmse>
 %
 %% prtFeatSel
 % * <./functionReference/prtFeatSel.html prtFeatSel>
@@ -122,6 +127,7 @@
 % * <./functionReference/prtPreProcMinMaxRows.html prtPreProcMinMaxRows>
 % * <./functionReference/prtPreProcPca.html prtPreProcPca>
 % * <./functionReference/prtPreProcPls.html prtPreProcPls>
+% * <./functionReference/prtPreProcStdNormalizeRows.html prtPreProcStdNormalizeRows>
 % * <./functionReference/prtPreProcZeroMeanColumns.html prtPreProcZeroMeanColumns>
 % * <./functionReference/prtPreProcZeroMeanRows.html prtPreProcZeroMeanRows>
 % * <./functionReference/prtPreProcZmuv.html prtPreProcZmuv>
@@ -129,6 +135,7 @@
 %% prtRegress
 % * <./functionReference/prtRegress.html prtRegress>
 % * <./functionReference/prtRegressLslr.html prtRegressLslr>
+% * <./functionReference/prtRegressPlsda.html prtRegressPlsda>
 % * <./functionReference/prtRegressRvm.html prtRegressRvm>
 % * <./functionReference/prtRegressRvmSequential.html prtRegressRvmSequential>
 %
@@ -136,8 +143,10 @@
 % * <./functionReference/prtRv.html prtRv>
 % * <./functionReference/prtRvDiscrete.html prtRvDiscrete>
 % * <./functionReference/prtRvGmm.html prtRvGmm>
+% * <./functionReference/prtRvHmm.html prtRvHmm>
 % * <./functionReference/prtRvIndependent.html prtRvIndependent>
 % * <./functionReference/prtRvKde.html prtRvKde>
+% * <./functionReference/prtRvMemebershipModel.html prtRvMemebershipModel>
 % * <./functionReference/prtRvMixture.html prtRvMixture>
 % * <./functionReference/prtRvMultinomial.html prtRvMultinomial>
 % * <./functionReference/prtRvMvn.html prtRvMvn>
@@ -154,4 +163,4 @@
 % * <./functionReference/prtScoreRoc.html prtScoreRoc>
 % * <./functionReference/prtScoreRocNfa.html prtScoreRocNfa>
 %
-% Copyright 2011 New Folder Consulting L.L.C.
+% Copyright 2013 New Folder Consulting L.L.C.

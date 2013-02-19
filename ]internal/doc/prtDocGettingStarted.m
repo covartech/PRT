@@ -9,4 +9,4 @@
 % * <prtDocGettingStartedExamples.html Some examples of using the PRT>
 % * <prtDocFunctionList.html A list of commonly used functions>
 %
-% Copyright 2011 New Folder Consulting L.L.C. 
+% Copyright 2013 New Folder Consulting L.L.C. 

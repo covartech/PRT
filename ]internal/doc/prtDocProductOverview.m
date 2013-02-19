@@ -37,55 +37,54 @@
 %
 % The following are some commonly used prt M-file prefixes:
 %
-%   prtClass - M-file classes for implementing classification algorithms.
-%   Examples include prtClassFld, prtClassKnn, and prtClassRvm.
+% * prtClass* - M-file classes for implementing classification algorithms.
+% Examples include prtClassFld, prtClassKnn, and prtClassRvm.
 %
-%   prtCluster - M-file classes for implementing clustering algorithms.
-%   Examples include prtClusterGmm and prtClusterKmeans.
+% * prtCluster* - M-file classes for implementing clustering algorithms.
+% Examples include prtClusterGmm and prtClusterKmeans.
 %
-%   prtDataGen* - M-file functions for creating standard data sets for
-%   experimentation and algorithm evaluation.  Examples include
-%   prtDataGenUnimodal, prtDataGenBimodal, and prtDataGenIris.
+% * prtDataGen* - M-file functions for creating standard data sets for
+% experimentation and algorithm evaluation.  Examples include
+% prtDataGenUnimodal, prtDataGenBimodal, and prtDataGenIris.
 %
-%   prtDataSet* - M-file classes implementing data storage and bookkeeping
-%   for collections of data, known as "data sets".  The most commonly used
-%   prtDataSet classes are prtDataSetClass and prtDataSetRegress.
+% * prtDataSet* - M-file classes implementing data storage and bookkeeping
+% for collections of data, known as "data sets".  The most commonly used
+% prtDataSet classes are prtDataSetClass and prtDataSetRegress.
 %
-%   prtDecision* - M-file classes implementing decision making.  These are
-%   commonly used after prtClass objects to turn continuous outputs from
-%   classifiers into binary or M-ary decisions.  Examples include
-%   prtDecisionBinaryMinPe and prtDecisionMap.
+% * prtDecision* - M-file classes implementing decision making.  These are
+% commonly used after prtClass objects to turn continuous outputs from
+% classifiers into binary or M-ary decisions.  Examples include
+% prtDecisionBinaryMinPe and prtDecisionMap.
 %
-%   prtEval* - M-file functions for evaluating the performance of
-%   prtAlgorithms.  These are commonly used in prtFeatSel objects to define
-%   a metric to optimize over.  Examples include prtEvalAuc and
-%   prtEvalPfAtPd.
+% * prtEval* - M-file functions for evaluating the performance of
+% prtAlgorithms.  These are commonly used in prtFeatSel objects to define
+% a metric to optimize over.  Examples include prtEvalAuc and
+% prtEvalPfAtPd.
 %
-%   prtKernel* - M-file classes implementing Kernel functions.  Kernels are
-%   often used in machine learning, and in particular are used in
-%   prtClassRvm and prtClassSvm.  Example prtKernel objects are
+% * prtKernel* - M-file classes implementing Kernel functions.  Kernels are
+% often used in machine learning, and in particular are used in
+% prtClassRvm and prtClassSvm.  Example prtKernel objects are
 %   prtKernelRbf and prtKernelDc.
 %
-%   prtPreProc* - M-file classes implementing data transformations often
-%   used in data pre-processing.  Commonly used objects are prtPreProPca,
-%   prtPreProcZmuv, and prtPreProcLda.
+% * prtPreProc* - M-file classes implementing data transformations often
+% used in data pre-processing.  Commonly used objects are prtPreProPca,
+% prtPreProcZmuv, and prtPreProcLda.
 %
-%   prtPlotUtil* - M-file functions used internally to the PRT.  These are
-%   mostly undocumented and are subject to change.  They should not be
-%   called directly.
+% * prtPlotUtil* - M-file functions used internally to the PRT.  These are
+% mostly undocumented and are subject to change.  They should not be
+% called directly.
 %
-%   prtRegress* - M-file classes for implementing regression algorithms.
-%   Examples include prtRegressLslr and prtRegressRvm.
+% * prtRegress* - M-file classes for implementing regression algorithms.
+% Examples include prtRegressLslr and prtRegressRvm.
 %
-%   prtRv* - M-file classes for implementing random variables.  These
-%   classes encapsulate PDF and CDF calculation, and maximum likelihood
-%   parameter estimation.  Examples include prtRvMvn and prtRvUnif.
+% * prtRv* - M-file classes for implementing random variables.  These
+% classes encapsulate PDF and CDF calculation, and maximum likelihood
+% parameter estimation.  Examples include prtRvMvn and prtRvUnif.
 %
-%   prtScore* - M-file functions for evaluating the performance of
-%   different PRT algorithms.  Examples inclide prtScoreRoc and
-%   prtScoreConfusionMatrix.
+% * prtScore* - M-file functions for evaluating the performance of
+% different PRT algorithms.  Examples inclide prtScoreRoc and
+% prtScoreConfusionMatrix.
 %
-%   prtUtil* - M-file functions used internally to the PRT.  These are
-%   mostly undocumented and are subject to change.  They should not be
-%   called directly.
-%
+% * prtUtil* - M-file functions used internally to the PRT.  These are
+% mostly undocumented and are subject to change.  They should not be
+% called directly.
