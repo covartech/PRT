@@ -15,44 +15,25 @@
          </tr>
       </table>
       <div class="title">prtDataSetClass/prtDataSetClass</div>
-      <div class="helptext"><pre><!--helptext -->  <span class="helptopic">prtDataSetClass</span>  Data set object for classification
+      <div class="helptext"><pre><!--helptext -->  <span class="helptopic">prtDataSetClass</span> Constructor for class <span class="helptopic">prtDataSetClass</span>
  
-    DATASET = <span class="helptopic">prtDataSetClass</span> returns a <span class="helptopic">prtDataSetClass</span> object
+  class = <span class="helptopic">prtDataSetClass</span>(X,Y)
+    Create a <span class="helptopic">prtDataSetClass</span> object with data X and targets Y.
+    X shouls be a #obs x #feat matrix, and Y should be a #obs x
+    1 vector of target labels.
  
-    DATASET = <span class="helptopic">prtDataSetClass</span>(PROPERTY1, VALUE1, ...) constructs a
-    <span class="helptopic">prtDataSetClass</span> object DATASET with properties as specified by
-    PROPERTY/VALUE pairs.
+  class = <span class="helptopic">prtDataSetClass</span>(X,Y,field1,val1,field2,val2,...)
+    As above, but also set additional public fields field1,
+    field2,... to values val1, val2, etc.
  
-    A <span class="helptopic">prtDataSetClass</span> object inherits all properties from the
-    prtDataSetStandard class. In addition, it has the following properties:
+  x = randn(100,2);
+  y = prtUtilY(50,50);
+  ds = <span class="helptopic">prtDataSetClass</span>(x,y);
+  plot(ds); % An unseparable data set
  
-    nClasses             - The number of classes
-    uniqueClasses        - An array of the integer class labels
-    isUnary              - True if the number of classes = 1
-    isBinary             - True if the number of classes = 2
-    isMary               - True if the number of classes &gt; 2
-    isZeroOne            - True if the unique classes are 0 and 1
-    nObservationsByClass - The number of observations per class.
- 
-    A <span class="helptopic">prtDataSetClass</span> inherits all methods from the prtDataSetStandard
-    class. In addition, it has the following methods:
- 
-    getObservationsByClass     - Return the observations per class
-    getObservationsByClassInd  - Return the observations by class and index
-    getTargetsAsBinaryMatrix   - Return a binary matrix of targets.
-    explore                    - Explore the <span class="helptopic">prtDataSetClass</span> object
-    plot                       - Plot the data set
-    plotFeatureDensity         - Plot the probability density estimate 
-                                 of a single feature, labeled by class.
-    plotStar                   - Create a star plot to visualize higher
-                                 dimensional data
-    plotAsTimeSeries           - Plot the <span class="helptopic">prtDataSetClass</span> object as a
-                                 time series
-    plotPairs                  - Plot a grid of plots containing each
-                                 set of two-features with density
-                                 estimates on the diagonals
-    plotDensity                - Plot the density of each feature
-                                 independently as a volume</pre></div><!--after help --><!--seeAlso--><div class="footerlinktitle">See also</div><div class="footerlink"> <a href="./../prtDataSetBase.html">prtDataSetBase</a>, <a href="./../prtDataSetStandard.html">prtDataSetStandard</a>, <a href="./../prtDataSetRegress.html">prtDataSetRegress</a>
-</div>
+  x = randn(100,2);
+  y = prtUtilY(50,50);
+  ds = <span class="helptopic">prtDataSetClass</span>(x,y,'name','My Data Set');
+  plot(ds); % An unseparable data set</pre></div><!--after help -->
    </body>
 </html>

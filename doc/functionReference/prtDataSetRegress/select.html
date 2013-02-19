@@ -17,9 +17,9 @@
       <div class="title">prtDataSetRegress/select</div>
       <div class="helptext"><pre><!--helptext -->  Select observations to retain by specifying a function
     The specified function is evaluated on each obesrvation.
-  
+ 
   selectedDs = ds.select(selectFunction);
-  
+ 
   There are two ways to define selectionFunction
     One input, One logical vector output
         selectFunction recieves the input data set and must
@@ -30,19 +30,19 @@
  
   Examples:
     ds = prtDataGenIris;
-    ds = ds.setobservationInfo('asdf',randn(ds.nObservations,1));
-    
+    ds = ds.setObservationInfo(struct('asdf',num2cell(randn(ds.nObservations,1))));
+ 
     dsSmallobservationInfoSelect = ds.select(@(ObsInfo)ObsInfo.asdf &gt; 0.5);
-    
+ 
     dsSmallObservationSelect = ds.select(@(inputDs)inputDs.getObservations(:,1)&gt;6);
 
-Help for <span class="helptopic">prtDataSetRegress/select</span> is inherited from superclass <a href="./../prtDataSetStandard.html">prtDataSetStandard</a></pre></div><!--after help -->
+Help for <span class="helptopic">prtDataSetRegress/select</span> is inherited from superclass <a href="./../prtDataSetBase.html">prtDataSetBase</a></pre></div><!--after help -->
       <!--Method-->
       <div class="sectiontitle">Method Details</div>
       <table class="class-details">
          <tr>
             <td class="class-detail-label">Defining Class</td>
-            <td>prtDataSetStandard</td>
+            <td>prtDataSetBase</td>
          </tr>
          <tr>
             <td class="class-detail-label">Access</td>

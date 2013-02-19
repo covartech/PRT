@@ -15,24 +15,24 @@
          </tr>
       </table>
       <div class="title">prtDecision/kfolds</div>
-      <div class="helptext"><pre><!--helptext -->  <span class="helptopic">kfolds</span>  Perform K-folds cross validation of prtAction
+      <div class="helptext"><pre><!--helptext -->  <span class="helptopic">kfolds</span>  Perform K-folds cross-validation of prtAction
   
-     OUTPUTDATASET = Obj.<span class="helptopic">kfolds</span>(DATASET, K) performs K-folds
-     cross validation of the prtAction object OBJ using the
+     OUTPUTDATASET = self.<span class="helptopic">kfolds</span>(DATASET, K) performs K-folds
+     cross-validation of the prtAction object OBJ using the
      prtDataSet DATASET. DATASET must be a labeled prtDataSet,
-     and K must be a scalar interger, representing the number
-     of folds. <span class="helptopic">kfolds</span> Generates cross validation keys by
-     patitioning the dataSet into K groups such that the number
-     of samples of each uniqut target type is attempted to be
-     held constant.
+     and K must be a scalar integer, representing the number
+     of folds. <span class="helptopic">kfolds</span> Generates cross-validation keys by
+     partitioning the dataSet into K groups such that the
+     number of samples of each unique target type is held
+     approximately constant.
  
      [OUTPUTDATASET, TRAINEDACTIONS, CROSSVALKEYS] =
-     Obj.<span class="helptopic">kfolds</span>(DATASET, K)  outputs the trained prtAction
+     self.<span class="helptopic">kfolds</span>(DATASET, K)  outputs the trained prtAction
      objects TRAINEDACTIONS, and the generated cross-validation
      keys CROSSVALKEYS.
  
-     To manually set which observations correspond are in 
-     which fold see crossValidate.
+     To manually set which observations are in which folds, see
+     crossValidate.
 
 Help for <span class="helptopic">prtDecision/kfolds</span> is inherited from superclass <a href="./../prtAction.html">prtAction</a></pre></div><!--after help -->
       <!--Method-->

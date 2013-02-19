@@ -6,68 +6,72 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>Product Installation and Accessing Documentation</title><meta name="generator" content="MATLAB 7.13"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2011-12-13"><meta name="DC.source" content="prtDocInstallation.m"><style type="text/css">
+      --><title>Product Installation and Accessing Documentation</title><meta name="generator" content="MATLAB 8.0"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2013-02-19"><meta name="DC.source" content="prtDocInstallation.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
-body {
-  background-color: white;
-  margin:10px;
-}
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
 
-h1 {
-  color: #990000; 
-  font-size: x-large;
-}
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
 
-h2 {
-  color: #990000;
-  font-size: medium;
-}
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
 
-/* Make the text shrink to fit narrow windows, but not stretch too far in 
-wide windows. */ 
-p,h1,h2,div.content div {
-  max-width: 600px;
-  /* Hack for IE6 */
-  width: auto !important; width: 600px;
-}
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img { margin-bottom:0px; } 
 
-pre.codeinput {
-  background: #EEEEEE;
-  padding: 10px;
-}
-@media print {
-  pre.codeinput {word-wrap:break-word; width:100%;}
-} 
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
 
-span.keyword {color: #0000FF}
-span.comment {color: #228B22}
-span.string {color: #A020F0}
-span.untermstring {color: #B20000}
-span.syscmd {color: #B28C00}
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
 
-pre.codeoutput {
-  color: #666666;
-  padding: 10px;
-}
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
 
-pre.error {
-  color: red;
-}
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
 
-p.footer {
-  text-align: right;
-  font-size: xx-small;
-  font-weight: lighter;
-  font-style: italic;
-  color: gray;
-}
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
 
-  </style></head><body><div class="content"><h1>Product Installation and Accessing Documentation</h1><!--introduction--><p>To install the PRT, simply un-zip the PRT folder into your working MATLAB directory.  This should create a folder called "prt".  To ensure that all of the PRT functions are on your MATLAB path, edit your startup.m file to include the folder "prt" on your path, and then run "prtPath".  On a typical windows system, these lines in your startup.m might look like this:</p><pre> addpath C:\Users\theUser\Documents\MATLAB\prt
- prtPath;</pre><p>Note: if the above lines are not placed in your startup.m, but are run after MATLAB has started, the PRT will not be available in the MATLAB doc browser.</p><p>Once installed, the PRT documentation is available in several ways.</p><pre> 1) Run the command "prtDoc" at the command line.
- 2) From the MATLAB "Start" button, Start --&gt; Toolboxes --&gt; PRT
- 3) All the PRT documentation is also available here:
-     http://www.newfolderconsulting.com/prt/doc/</pre><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Setting the PRT for First Time Usage</a></li><li><a href="#2">Building MEX Files</a></li><li><a href="#3">That's it!</a></li></ul></div><h2>Setting the PRT for First Time Usage<a name="1"></a></h2><p>The PRT provides several utility functions to help ensure that all the power of the PRT is readily available.  Once the PRT is installed following the directions above, we need to add the PRT to the MATLAB Documentation search index, and also make sure that GraphViz is installed on your computer.  The command "prtSetup" will attempt to handle this process for you.  Simply type:</p><p>prtSetup</p><p>At the MATLAB command prompt to start this process.  If GraphViz is not installed, the PRT will warn you and provide the URL of a website where you can download GraphViz for your system.</p><p>Note: building the search index can take a little while, please be patient while prtSetup is running.</p><h2>Building MEX Files<a name="2"></a></h2><p>Several of the PRT's functions are implemented as MEX file for speed and convenience.  However MEX files may need to be re-compiled to work on your system.  Rebuilding MEX files with the PRT is quite easy.  All we need to do is 1) make sure you have a supported compiler, 2) Run mex -setup, and 3) Compiler the PRT MEX files.  The following sections outline how to accomplish these three tasks.</p><p>1) First, make sure you have a MATLAB Supported compiler for your system (there are free ones available for making MEX files on all operating systems).  You can find a list of supported compilers for your version of MATLAB <a href="http://www.mathworks.com/support/compilers/previous_releases.html">here</a>.</p><p>2) Once your compiler is installed, run the MATLAB command</p><p>mex -setup</p><p>And pick the compiler you've installed to let MATLAB know which compiler you'd like to use.</p><p>3) The PRT command "prtSetupMex" is provided to automatically recompile all the MEX files included in the PRT.  Running</p><p>prtSetupMex</p><p>Should compile all the necessary files.</p><h2>That's it!<a name="3"></a></h2><p>Congratulations!  You've successfully installed the PRT and it should be working properly now.  To learn more, please check out the rest of the documentation, including:</p><div><ul><li><a href="prtDocProductOverview.html">Product Overview</a></li><li><a href="prtDocPatternRecognition.html">What is Pattern Recognition?</a></li><li><a href="prtDocGettingStartedExamples.html">Some examples of using the PRT</a></li><li><a href="prtDocFunctionList.html">A list of commonly used functions</a></li></ul></div><p>Copyright 2011 New Folder Consulting L.L.C.</p><p class="footer"><br>
-      Published with MATLAB&reg; 7.13<br></p></div><!--
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Product Installation and Accessing Documentation</h1><!--introduction--><p>To install the PRT, simply un-zip the PRT folder into your working MATLAB directory.  This should create a folder called "prt".  To ensure that all of the PRT functions are on your MATLAB path, edit your startup.m file to include the folder "prt" on your path, and then run "prtPath".  On a typical windows system, these lines in your startup.m might look like this:</p><pre class="language-matlab">addpath <span class="string">C:\Users\theUser\Documents\MATLAB\prt</span>
+prtPath;
+</pre><p>Note: if the above lines are not placed in your startup.m, but are run after MATLAB has started, the PRT will not be available in the MATLAB doc browser.</p><p>Once installed, the PRT documentation is available in several ways.</p><pre class="language-matlab">1) Run <span class="string">the</span> <span class="string">command</span> <span class="string">"prtDoc"</span> <span class="string">at</span> <span class="string">the</span> <span class="string">command</span> <span class="string">line.</span>
+2) From <span class="string">the</span> <span class="string">MATLAB</span> <span class="string">"Start"</span> <span class="string">button</span>, Start <span class="string">--&gt;</span> <span class="string">Toolboxes</span> <span class="string">--&gt;</span> <span class="string">PRT</span>
+3) All <span class="string">the</span> <span class="string">PRT</span> <span class="string">documentation</span> <span class="string">is</span> <span class="string">also</span> <span class="string">available</span> <span class="string">here:</span>
+    http://www.newfolderconsulting.com/prt/doc/
+</pre><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Setting the PRT for First Time Usage</a></li><li><a href="#2">Building MEX Files</a></li><li><a href="#3">That's it!</a></li></ul></div><h2>Setting the PRT for First Time Usage<a name="1"></a></h2><p>The PRT provides several utility functions to help ensure that all the power of the PRT is readily available.  Once the PRT is installed following the directions above, we need to add the PRT to the MATLAB Documentation search index, and also make sure that GraphViz is installed on your computer.  The command "prtSetup" will attempt to handle this process for you.  Simply type:</p><p>prtSetup</p><p>At the MATLAB command prompt to start this process.  If GraphViz is not installed, the PRT will warn you and provide the URL of a website where you can download GraphViz for your system.</p><p>Note: building the search index can take a little while, please be patient while prtSetup is running.</p><h2>Building MEX Files<a name="2"></a></h2><p>Several of the PRT's functions are implemented as MEX file for speed and convenience.  However MEX files may need to be re-compiled to work on your system.  Rebuilding MEX files with the PRT is quite easy.  All we need to do is 1) make sure you have a supported compiler, 2) Run mex -setup, and 3) Compiler the PRT MEX files.  The following sections outline how to accomplish these three tasks.</p><p>1) First, make sure you have a MATLAB Supported compiler for your system (there are free ones available for making MEX files on all operating systems).  You can find a list of supported compilers for your version of MATLAB <a href="http://www.mathworks.com/support/compilers/previous_releases.html">here</a>.</p><p>2) Once your compiler is installed, run the MATLAB command</p><p>mex -setup</p><p>And pick the compiler you've installed to let MATLAB know which compiler you'd like to use.</p><p>3) The PRT command "prtSetupMex" is provided to automatically recompile all the MEX files included in the PRT.  Running</p><p>prtSetupMex</p><p>Should compile all the necessary files.</p><h2>That's it!<a name="3"></a></h2><p>Congratulations!  You've successfully installed the PRT and it should be working properly now.  To learn more, please check out the rest of the documentation, including:</p><div><ul><li><a href="prtDocProductOverview.html">Product Overview</a></li><li><a href="prtDocPatternRecognition.html">What is Pattern Recognition?</a></li><li><a href="prtDocGettingStartedExamples.html">Some examples of using the PRT</a></li><li><a href="prtDocFunctionList.html">A list of commonly used functions</a></li></ul></div><p>Copyright 2011 New Folder Consulting L.L.C.</p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2012b</a><br></p></div><!--
 ##### SOURCE BEGIN #####
 %% Product Installation and Accessing Documentation
 %

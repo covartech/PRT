@@ -15,21 +15,19 @@
          </tr>
       </table>
       <div class="title">prtDataSetRegress/setObservationsAndTargets</div>
-      <div class="helptext"><pre><!--helptext -->  <span class="helptopic">setObservationsAndTargets</span>  Set the observations and targets
-  of a prtDataSetStandard object.
+      <div class="helptext"><pre><!--helptext --> dataSet = <span class="helptopic">setObservationsAndTargets</span>(dataSet,data,targets)
+  Replace both the data and targets in a data set with new
+  "data" and "targets".  The inputs should have the same size
+  in the first dimension.
  
-  dataSet = dataSet.<span class="helptopic">setObservationsAndTargets</span>(DATA, TARGETS)
-  sets the observations and targets to the DATA and TARGETS.
-  The number of TARGETS must be equal to the number of
-  observations contained in DATA.
-
-Help for <span class="helptopic">prtDataSetRegress/setObservationsAndTargets</span> is inherited from superclass <a href="./../prtDataSetStandard.html">prtDataSetStandard</a></pre></div><!--after help -->
+  <span class="helptopic">setObservationsAndTargets</span> is useful when the size of a data
+  set has to change.</pre></div><!--after help -->
       <!--Method-->
       <div class="sectiontitle">Method Details</div>
       <table class="class-details">
          <tr>
             <td class="class-detail-label">Defining Class</td>
-            <td>prtDataSetStandard</td>
+            <td>prtDataSetInMem</td>
          </tr>
          <tr>
             <td class="class-detail-label">Access</td>

@@ -15,12 +15,18 @@
          </tr>
       </table>
       <div class="title">prtDataSetClass/catObservations</div>
-      <div class="helptext"><pre><!--helptext -->  <span class="helptopic">catObservations</span>   Concatenate the observations of a prtDataSetClass object
+      <div class="helptext"><pre><!--helptext --> dsOut = <span class="helptopic">catObservations</span>(dataSet1,dataSet2)
+    Return a data set, dsOut, formed by vertically
+    concatenating the observations, targets, and other fields
+    in dataSet1 and dataSet2.
  
-    dataSet = dataSet.<span class="helptopic">catObservations</span>(OBS) concatenates the
-    OBS to the observations of the dataSet object. OBS must
-    have the same number of features as the dataSet object.
-    dataSet must be an unlabled prtDataSetClass object.</pre></div><!--after help -->
+    Note that when dataSet1 and dataSet2 have different class
+    names, and/or targets dataSet1 and dataSet2's className
+    fields are used to generate a proper target/className
+    representation for the output dsOut.
+ 
+    As a result, the targets in the resulting dsOut may not
+    exactly match the output of cat(1,dataSet1,dataSet2)</pre></div><!--after help -->
       <!--Method-->
       <div class="sectiontitle">Method Details</div>
       <table class="class-details">

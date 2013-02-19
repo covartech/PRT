@@ -36,14 +36,14 @@
      DECSTATS is PRTDATASETCLASS.getObservations() and LABELS is
      PRTDATASETCLASS.getTargets(). If PRTDATASETCLASS.nFeatures &gt; 1 cell
      arrays are provided as outputs.
-    
+ 
  
      Example:
      TestDataSet = prtDataGenSpiral;       % Create some test and
      TrainingDataSet = prtDataGenSpiral;   % training data
      classifier = prtClassSvm;             % Create a classifier
      classifier = classifier.train(TrainingDataSet);    % Train
-     classified = run(classifier, TestDataSet);     
+     classified = run(classifier, TestDataSet);
      %  Plot the ROC
      <span class="helptopic">prtScoreRoc</span>(classified.getX, TestDataSet.getY);</pre></div><!--after help --><!--seeAlso--><div class="footerlinktitle">See also</div><div class="footerlink"> <a href="./prtScoreConfusionMatrix.html">prtScoreConfusionMatrix</a>, <a href="./prtScoreRmse.html">prtScoreRmse</a>, <a href="./prtScoreRocNfa.html">prtScoreRocNfa</a>,
              <a href="./prtScorePercentCorrect.html">prtScorePercentCorrect</a>, <a href="./prtScoreAuc.html">prtScoreAuc</a>

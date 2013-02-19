@@ -27,9 +27,23 @@
      class prtClass. In addition is has the following properties:
  
      baseClassifier     - the prtClass object that forms the "weak" or
-                          "Base" classifier for the AdaBoost.
-     nBoosts            - Number of iterations to run (number of weak
+                          "Base" classifier for the AdaBoost.  This
+                          classifier is iteratively trained on each of
+                          the features in succession.
+     maxIters            - Number of iterations to run (maximum number of weak
                           classifiers to train)
+     deltaPeThreshold (.05) - Specify the minimum error distance (from
+                         0.5) allowed.  Smaller values result in more
+                         complicated adaBoost classifiers, larger
+                         values in less complicated classifiers.
+     
+     downSampleBootstrap (false) - Specify whether (and how many)
+                            bootstrap-by class bootstrap samples to
+                            take at each iteration.  False or 0 uses
+                            the default number of bootstrap samples.
+                            Any other integer specifies the number of
+                            samples to use from
+                            ds.bootstrapDataByClass.
  
      AdaBoost is a meta algorithm for training ensembles of weak
      classifiers on different sub-sets of the complete data set, with
@@ -39,6 +53,11 @@
      more information AdaBoost can be found at the following URL:
  
      <a href="http://en.wikipedia.org/wiki/AdaBoost">http://en.wikipedia.org/wiki/AdaBoost</a>
+ 
+     The PRT AdaBoost uses individual features to constitute each weak
+     learner in each iteration.  At each iteration, the feature
+     corresponding to the best weak learner operating on the current
+     weighted data distribution is used in the aggregate classifier.
  
      A <span class="helptopic">prtClassAdaBoost</span> object inherits the TRAIN, RUN, CROSSVALIDATE and
      KFOLDS methods from prtAction. It also inherits the PLOT
@@ -56,10 +75,7 @@
      subplot(2,1,2);
      [pf,pd] = prtScoreRoc(classified,TestDataSet);
      h = plot(pf,pd,'linewidth',3);
-     title('ROC'); xlabel('Pf'); ylabel('Pd');</pre></div><!--after help --><!--seeAlso--><div class="footerlinktitle">See also</div><div class="footerlink"> <a href="./prtClass.html">prtClass</a>, <a href="./prtClassLogisticDiscriminant.html">prtClassLogisticDiscriminant</a>, <a href="./prtClassBagging.html">prtClassBagging</a>,
-     <a href="./prtClassMap.html">prtClassMap</a>, <a href="./prtClassFld.html">prtClassFld</a>, <a href="./prtClassBinaryToMaryOneVsAll.html">prtClassBinaryToMaryOneVsAll</a>, <a href="./prtClassDlrt.html">prtClassDlrt</a>,
-     <a href="./prtClassPlsda.html">prtClassPlsda</a>, <a href="./prtClassFld.html">prtClassFld</a>, <a href="./prtClassRvm.html">prtClassRvm</a>, <a href="./prtClassGlrt.html">prtClassGlrt</a>,  <a href="./prtClassSvm.html">prtClassSvm</a>,
-     <a href="./prtClassTreeBaggingCap.html">prtClassTreeBaggingCap</a>, <a href="./prtClassKmsd.html">prtClassKmsd</a>, <a href="./prtClassKnn.html">prtClassKnn</a>
+     title('ROC'); xlabel('Pf'); ylabel('Pd');</pre></div><!--after help --><!--seeAlso--><div class="footerlinktitle">See also</div><div class="footerlink"> <a href="./prtClassAdaBoostFastAuc.html">prtClassAdaBoostFastAuc</a>
 </div>
       <!--Class-->
       <div class="sectiontitle">Class Details</div>
@@ -103,6 +119,14 @@
             <td class="m-help">Structure that summarizes prtDataSet.&nbsp;</td>
          </tr>
          <tr class="summary-item">
+            <td class="name"><a href="./prtClassAdaBoost/deltaPeThreshold.html">deltaPeThreshold</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassAdaBoost/downSampleBootstrap.html">downSampleBootstrap</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
             <td class="name"><a href="./prtClassAdaBoost/internalDecider.html">internalDecider</a></td>
             <td class="m-help">Optional prtDecider object for making decisions&nbsp;</td>
          </tr>
@@ -123,8 +147,8 @@
             <td class="m-help">Indicates if prtAction object has been trained.&nbsp;</td>
          </tr>
          <tr class="summary-item">
-            <td class="name"><a href="./prtClassAdaBoost/nBoosts.html">nBoosts</a></td>
-            <td class="m-help">The number of boosts&nbsp;</td>
+            <td class="name"><a href="./prtClassAdaBoost/maxIters.html">maxIters</a></td>
+            <td class="m-help">Max number of iterations&nbsp;</td>
          </tr>
          <tr class="summary-item">
             <td class="name"><a href="./prtClassAdaBoost/name.html">name</a></td>
@@ -164,6 +188,14 @@
             <td class="m-help">Cross validate prtAction using prtDataSet and cross validation keys.&nbsp;</td>
          </tr>
          <tr class="summary-item">
+            <td class="attributes">Static 
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClassAdaBoost/fastRoc.html">fastRoc</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
             <td class="attributes">
                &nbsp;
                
@@ -177,7 +209,7 @@
                
             </td>
             <td class="name"><a href="./prtClassAdaBoost/kfolds.html">kfolds</a></td>
-            <td class="m-help">Perform K-folds cross validation of prtAction&nbsp;</td>
+            <td class="m-help">Perform K-folds cross-validation of prtAction&nbsp;</td>
          </tr>
          <tr class="summary-item">
             <td class="attributes">

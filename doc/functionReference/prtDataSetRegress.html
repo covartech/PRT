@@ -64,7 +64,7 @@
       <table class="summary-list">
          <tr class="summary-item">
             <td class="name"><a href="./prtDataSetRegress/data.html">data</a></td>
-            <td class="m-help">The observations&nbsp;</td>
+            <td class="m-help">&nbsp;</td>
          </tr>
          <tr class="summary-item">
             <td class="name"><a href="./prtDataSetRegress/description.html">description</a></td>
@@ -73,6 +73,30 @@
          <tr class="summary-item">
             <td class="name"><a href="./prtDataSetRegress/featureInfo.html">featureInfo</a></td>
             <td class="m-help">Additional data (structure) per feature&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtDataSetRegress/featureInfoInternal.html">featureInfoInternal</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtDataSetRegress/featureNameModificationFunctionInternal.html">featureNameModificationFunctionInternal</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtDataSetRegress/featureNameModificationMaskInternal.html">featureNameModificationMaskInternal</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtDataSetRegress/internalData.html">internalData</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtDataSetRegress/internalSizeConsitencyCheck.html">internalSizeConsitencyCheck</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtDataSetRegress/internalTargets.html">internalTargets</a></td>
+            <td class="m-help">&nbsp;</td>
          </tr>
          <tr class="summary-item">
             <td class="name"><a href="./prtDataSetRegress/isLabeled.html">isLabeled</a></td>
@@ -88,7 +112,7 @@
          </tr>
          <tr class="summary-item">
             <td class="name"><a href="./prtDataSetRegress/nTargetDimensions.html">nTargetDimensions</a></td>
-            <td class="m-help">The number of dimensions of the target data&nbsp;</td>
+            <td class="m-help">The number of target dimensions&nbsp;</td>
          </tr>
          <tr class="summary-item">
             <td class="name"><a href="./prtDataSetRegress/name.html">name</a></td>
@@ -96,7 +120,11 @@
          </tr>
          <tr class="summary-item">
             <td class="name"><a href="./prtDataSetRegress/observationInfo.html">observationInfo</a></td>
-            <td class="m-help">Additional data (structure) per observation&nbsp;</td>
+            <td class="m-help">Struct of observation information&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtDataSetRegress/observationInfoInternal.html">observationInfoInternal</a></td>
+            <td class="m-help">&nbsp;</td>
          </tr>
          <tr class="summary-item">
             <td class="name"><a href="./prtDataSetRegress/observationNamesInternal.html">observationNamesInternal</a></td>
@@ -108,7 +136,7 @@
          </tr>
          <tr class="summary-item">
             <td class="name"><a href="./prtDataSetRegress/targets.html">targets</a></td>
-            <td class="m-help">The targets&nbsp;</td>
+            <td class="m-help">&nbsp;</td>
          </tr>
          <tr class="summary-item">
             <td class="name"><a href="./prtDataSetRegress/userData.html">userData</a></td>
@@ -125,7 +153,7 @@
                
             </td>
             <td class="name"><a href="./prtDataSetRegress/bootstrap.html">bootstrap</a></td>
-            <td class="m-help">boostrap a prtDataSetStandard object&nbsp;</td>
+            <td class="m-help">dsBoot = bootstrap(dataSet,nSamples)&nbsp;</td>
          </tr>
          <tr class="summary-item">
             <td class="attributes">
@@ -133,38 +161,14 @@
                
             </td>
             <td class="name"><a href="./prtDataSetRegress/catFeatures.html">catFeatures</a></td>
-            <td class="m-help">Concatenate the features of a prtDataSetStandard object&nbsp;</td>
+            <td class="m-help">dsOut = catFeatures(dataSet1,dataSet2)&nbsp;</td>
          </tr>
          <tr class="summary-item">
-            <td class="attributes">
+            <td class="attributes">protected 
                &nbsp;
                
             </td>
-            <td class="name"><a href="./prtDataSetRegress/catObservations.html">catObservations</a></td>
-            <td class="m-help">Concatenate to the observations of a&nbsp;</td>
-         </tr>
-         <tr class="summary-item">
-            <td class="attributes">
-               &nbsp;
-               
-            </td>
-            <td class="name"><a href="./prtDataSetRegress/catTargets.html">catTargets</a></td>
-            <td class="m-help">Concatenate the targets of a prtDataSetStandard&nbsp;</td>
-         </tr>
-         <tr class="summary-item">
-            <td class="attributes">
-               &nbsp;
-               
-            </td>
-            <td class="name"><a href="./prtDataSetRegress/determineNumFeatures.html">determineNumFeatures</a></td>
-            <td class="m-help">nFeatures  Return the number of features from a&nbsp;</td>
-         </tr>
-         <tr class="summary-item">
-            <td class="attributes">
-               &nbsp;
-               
-            </td>
-            <td class="name"><a href="./prtDataSetRegress/determineNumObservations.html">determineNumObservations</a></td>
+            <td class="name"><a href="./prtDataSetRegress/catObservationInfo.html">catObservationInfo</a></td>
             <td class="m-help">&nbsp;</td>
          </tr>
          <tr class="summary-item">
@@ -172,8 +176,40 @@
                &nbsp;
                
             </td>
+            <td class="name"><a href="./prtDataSetRegress/catObservations.html">catObservations</a></td>
+            <td class="m-help">dsOut = catObservations(dataSet1,dataSet2)&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetRegress/catTargets.html">catTargets</a></td>
+            <td class="m-help">dsOut = catTargets(dataSet1,dataSet2)&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">protected Static 
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetRegress/checkConsistency.html">checkConsistency</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetRegress/getData.html">getData</a></td>
+            <td class="m-help">data = getData(dataSet)&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
             <td class="name"><a href="./prtDataSetRegress/getFeatureInfo.html">getFeatureInfo</a></td>
-            <td class="m-help">Allow for fast retrieval of feature info by specifying&nbsp;</td>
+            <td class="m-help">&nbsp;</td>
          </tr>
          <tr class="summary-item">
             <td class="attributes">
@@ -181,7 +217,7 @@
                
             </td>
             <td class="name"><a href="./prtDataSetRegress/getFeatureNames.html">getFeatureNames</a></td>
-            <td class="m-help">Return the prtDataSetStandard feature names&nbsp;</td>
+            <td class="m-help">names = getFeatureNames(dataSet)&nbsp;</td>
          </tr>
          <tr class="summary-item">
             <td class="attributes">
@@ -197,6 +233,14 @@
                
             </td>
             <td class="name"><a href="./prtDataSetRegress/getKFoldKeys.html">getKFoldKeys</a></td>
+            <td class="m-help">keys = getKFoldKeys(dataSet,K)&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetRegress/getNumFeatures.html">getNumFeatures</a></td>
             <td class="m-help">&nbsp;</td>
          </tr>
          <tr class="summary-item">
@@ -204,8 +248,24 @@
                &nbsp;
                
             </td>
+            <td class="name"><a href="./prtDataSetRegress/getNumObservations.html">getNumObservations</a></td>
+            <td class="m-help">nObs = getNumObservations(dataSet)&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetRegress/getNumTargetDimensions.html">getNumTargetDimensions</a></td>
+            <td class="m-help">nTargets = getNumTargetDimensions(dataSet)&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
             <td class="name"><a href="./prtDataSetRegress/getObservationInfo.html">getObservationInfo</a></td>
-            <td class="m-help">Allow for fast retrieval of observation info by specifying&nbsp;</td>
+            <td class="m-help">obsInfo = getObservationInfo(dataSet)&nbsp;</td>
          </tr>
          <tr class="summary-item">
             <td class="attributes">
@@ -221,15 +281,7 @@
                
             </td>
             <td class="name"><a href="./prtDataSetRegress/getObservations.html">getObservations</a></td>
-            <td class="m-help">Get the observations of a prtDataSetStandard&nbsp;</td>
-         </tr>
-         <tr class="summary-item">
-            <td class="attributes">
-               &nbsp;
-               
-            </td>
-            <td class="name"><a href="./prtDataSetRegress/getObservationsAndTargets.html">getObservationsAndTargets</a></td>
-            <td class="m-help">Get the observations and targets&nbsp;</td>
+            <td class="m-help">d = getObservations(dataSet)&nbsp;</td>
          </tr>
          <tr class="summary-item">
             <td class="attributes">
@@ -237,7 +289,7 @@
                
             </td>
             <td class="name"><a href="./prtDataSetRegress/getTargetNames.html">getTargetNames</a></td>
-            <td class="m-help">Return the target names of a dataset&nbsp;</td>
+            <td class="m-help">Return the target names from a dataset&nbsp;</td>
          </tr>
          <tr class="summary-item">
             <td class="attributes">
@@ -245,7 +297,7 @@
                
             </td>
             <td class="name"><a href="./prtDataSetRegress/getTargets.html">getTargets</a></td>
-            <td class="m-help">Get the targets of a prtDataSetStandard object.&nbsp;</td>
+            <td class="m-help">targets = getTargets(dataSet)&nbsp;</td>
          </tr>
          <tr class="summary-item">
             <td class="attributes">
@@ -277,7 +329,15 @@
                
             </td>
             <td class="name"><a href="./prtDataSetRegress/loadobj.html">loadobj</a></td>
-            <td class="m-help">&nbsp;</td>
+            <td class="m-help">We allow input baseClass here so that we can make a class of&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetRegress/permuteFeatures.html">permuteFeatures</a></td>
+            <td class="m-help">dsOut = permuteFeatures(dataSet,permuteFeatureInds)&nbsp;</td>
          </tr>
          <tr class="summary-item">
             <td class="attributes">
@@ -293,7 +353,7 @@
                
             </td>
             <td class="name"><a href="./prtDataSetRegress/removeFeatures.html">removeFeatures</a></td>
-            <td class="m-help">retainFeatures   Retain the features of a prtDataSetStandard object.&nbsp;</td>
+            <td class="m-help">dsOut = removeFeatures(dataSet,removeFeatureInds)&nbsp;</td>
          </tr>
          <tr class="summary-item">
             <td class="attributes">
@@ -301,7 +361,7 @@
                
             </td>
             <td class="name"><a href="./prtDataSetRegress/removeObservations.html">removeObservations</a></td>
-            <td class="m-help">Remove observations from a prtDataSetStandard object&nbsp;</td>
+            <td class="m-help">dsOut = removeObservations(dataSet,indices)&nbsp;</td>
          </tr>
          <tr class="summary-item">
             <td class="attributes">
@@ -309,7 +369,15 @@
                
             </td>
             <td class="name"><a href="./prtDataSetRegress/removeTargets.html">removeTargets</a></td>
-            <td class="m-help">Remove targets from a prtDataSetStandard&nbsp;</td>
+            <td class="m-help">dsOut = removeTargets(dataSet,indices)&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">protected 
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetRegress/retainFeatureNames.html">retainFeatureNames</a></td>
+            <td class="m-help">&nbsp;</td>
          </tr>
          <tr class="summary-item">
             <td class="attributes">
@@ -317,7 +385,15 @@
                
             </td>
             <td class="name"><a href="./prtDataSetRegress/retainFeatures.html">retainFeatures</a></td>
-            <td class="m-help">Retain the features of a prtDataSetStandard&nbsp;</td>
+            <td class="m-help">dsOut = retainFeatures(dataSet,retainFeatureInds)&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">protected 
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetRegress/retainObservationInfo.html">retainObservationInfo</a></td>
+            <td class="m-help">&nbsp;</td>
          </tr>
          <tr class="summary-item">
             <td class="attributes">
@@ -325,7 +401,7 @@
                
             </td>
             <td class="name"><a href="./prtDataSetRegress/retainObservations.html">retainObservations</a></td>
-            <td class="m-help">Retain observations from a prtDataSetStandard object&nbsp;</td>
+            <td class="m-help">dsOut = removeObservations(dataSet,indices)&nbsp;</td>
          </tr>
          <tr class="summary-item">
             <td class="attributes">
@@ -333,7 +409,7 @@
                
             </td>
             <td class="name"><a href="./prtDataSetRegress/retainTargets.html">retainTargets</a></td>
-            <td class="m-help">Retain targets from a prtDataSetStandard&nbsp;</td>
+            <td class="m-help">dsOut = retainTargets(dataSet,indices)&nbsp;</td>
          </tr>
          <tr class="summary-item">
             <td class="attributes">
@@ -348,8 +424,16 @@
                &nbsp;
                
             </td>
+            <td class="name"><a href="./prtDataSetRegress/setData.html">setData</a></td>
+            <td class="m-help">dsOut = setData(dataSet,dataIn)&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
             <td class="name"><a href="./prtDataSetRegress/setFeatureInfo.html">setFeatureInfo</a></td>
-            <td class="m-help">Allow setting of feature info by specifying string value&nbsp;</td>
+            <td class="m-help">&nbsp;</td>
          </tr>
          <tr class="summary-item">
             <td class="attributes">
@@ -357,7 +441,7 @@
                
             </td>
             <td class="name"><a href="./prtDataSetRegress/setFeatureNames.html">setFeatureNames</a></td>
-            <td class="m-help">Set the prtDataSetStandard feature names&nbsp;</td>
+            <td class="m-help">dataSet = setFeatureNames(dataSet,names)&nbsp;</td>
          </tr>
          <tr class="summary-item">
             <td class="attributes">
@@ -365,7 +449,7 @@
                
             </td>
             <td class="name"><a href="./prtDataSetRegress/setFeatures.html">setFeatures</a></td>
-            <td class="m-help">Set the features of a prtDataSetStandard object&nbsp;</td>
+            <td class="m-help">dsOut = setFeatures(dataSet,data,indices)&nbsp;</td>
          </tr>
          <tr class="summary-item">
             <td class="attributes">
@@ -373,7 +457,7 @@
                
             </td>
             <td class="name"><a href="./prtDataSetRegress/setObservationInfo.html">setObservationInfo</a></td>
-            <td class="m-help">Allow setting of observation info by specifying string value&nbsp;</td>
+            <td class="m-help">dataSet = setObservationInfo(dataSet,obsInfoStruct)&nbsp;</td>
          </tr>
          <tr class="summary-item">
             <td class="attributes">
@@ -389,7 +473,7 @@
                
             </td>
             <td class="name"><a href="./prtDataSetRegress/setObservations.html">setObservations</a></td>
-            <td class="m-help">Set the observations prtDataSetStandard&nbsp;</td>
+            <td class="m-help">dataSet = setObservations(dataSet,data)&nbsp;</td>
          </tr>
          <tr class="summary-item">
             <td class="attributes">
@@ -397,7 +481,7 @@
                
             </td>
             <td class="name"><a href="./prtDataSetRegress/setObservationsAndTargets.html">setObservationsAndTargets</a></td>
-            <td class="m-help">Set the observations and targets&nbsp;</td>
+            <td class="m-help">dataSet = setObservationsAndTargets(dataSet,data,targets)&nbsp;</td>
          </tr>
          <tr class="summary-item">
             <td class="attributes">
@@ -413,7 +497,7 @@
                
             </td>
             <td class="name"><a href="./prtDataSetRegress/setTargets.html">setTargets</a></td>
-            <td class="m-help">Set the Targets prtDataSetStandard object.&nbsp;</td>
+            <td class="m-help">dsOut = setTargets(dataSet,dataIn)&nbsp;</td>
          </tr>
          <tr class="summary-item">
             <td class="attributes">
@@ -438,6 +522,22 @@
             </td>
             <td class="name"><a href="./prtDataSetRegress/setY.html">setY</a></td>
             <td class="m-help">Shortcut for setTargets&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">protected 
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetRegress/update.html">update</a></td>
+            <td class="m-help">default behaviour is to do nothing&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">protected 
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetRegress/updateObservationsCache.html">updateObservationsCache</a></td>
+            <td class="m-help">default behaviour is to do nothing&nbsp;</td>
          </tr>
       </table>
    </body>

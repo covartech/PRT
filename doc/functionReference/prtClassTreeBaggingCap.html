@@ -32,13 +32,31 @@
  
      nTrees                       - The number of trees
      nFeatures                    - The number of features
+ 
      featureSelectWithReplacement - Flag indicating whether or not to
                                     do feature selection with 
                                     replacement
+ 
      bootStrapDataAtRoots         - Flag indicating whether or not
                                     to bootstrap at roots
-     useMex                       - flag indicating wheter or not to
+ 
+     useMex                       - Flag indicating wheter or not to
                                     use the Mex file for speedup.
+ 
+     fastTraining                 - Flag indicating whether to use
+                                    "fast" training.  Fast training
+                                    does not necessarily choose the
+                                    optimal operating point at each
+                                    node, but is much faster, and often
+                                    has competetive (or even superior)
+                                    cross-validation performance, at
+                                    the expense of increased
+                                    tree-length.
+ 
+     computePercIncrMisclassRate  - Flag indicating whether or not to
+                                    compute percent increase in
+                                    misclassification rate
+     
  
    For more information on random tree classifiers, see:
     <a href="http://en.wikipedia.org/wiki/Random_forest">http://en.wikipedia.org/wiki/Random_forest</a>
@@ -92,12 +110,20 @@
             <td class="m-help">Flag indicating whether or not to boostrap at roots&nbsp;</td>
          </tr>
          <tr class="summary-item">
+            <td class="name"><a href="./prtClassTreeBaggingCap/computePercIncrMisclassRate.html">computePercIncrMisclassRate</a></td>
+            <td class="m-help">Flag indicating whether or not to compute percent increase in misclassification rate&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
             <td class="name"><a href="./prtClassTreeBaggingCap/dataSet.html">dataSet</a></td>
             <td class="m-help">The training prtDataSet, only stored if verboseStorage is true. &nbsp;</td>
          </tr>
          <tr class="summary-item">
             <td class="name"><a href="./prtClassTreeBaggingCap/dataSetSummary.html">dataSetSummary</a></td>
             <td class="m-help">Structure that summarizes prtDataSet.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassTreeBaggingCap/fastTraining.html">fastTraining</a></td>
+            <td class="m-help">Whether to truly optimize operating points at each branch (false), or take a rough guess (true)&nbsp;</td>
          </tr>
          <tr class="summary-item">
             <td class="name"><a href="./prtClassTreeBaggingCap/featureSelectWithReplacement.html">featureSelectWithReplacement</a></td>
@@ -138,6 +164,10 @@
          <tr class="summary-item">
             <td class="name"><a href="./prtClassTreeBaggingCap/nameAbbreviation.html">nameAbbreviation</a></td>
             <td class="m-help">TBCAP&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassTreeBaggingCap/percIncrMisclassRate.html">percIncrMisclassRate</a></td>
+            <td class="m-help">&nbsp;</td>
          </tr>
          <tr class="summary-item">
             <td class="name"><a href="./prtClassTreeBaggingCap/root.html">root</a></td>
@@ -190,7 +220,7 @@
                
             </td>
             <td class="name"><a href="./prtClassTreeBaggingCap/kfolds.html">kfolds</a></td>
-            <td class="m-help">Perform K-folds cross validation of prtAction&nbsp;</td>
+            <td class="m-help">Perform K-folds cross-validation of prtAction&nbsp;</td>
          </tr>
          <tr class="summary-item">
             <td class="attributes">

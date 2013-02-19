@@ -18,12 +18,26 @@
       <div class="helptext"><pre><!--helptext -->  <span class="helptopic">retainClasses</span> retain observations corresponding to specified
   classes
  
-    subDataSet = dataSet.<span class="helptopic">retainClasses</span>(targetVals) returns a
+    subDataSet = dataSet.<span class="helptopic">retainClasses</span>(classes) returns a
     data set subDataSet containing only the observations that
-    have targets equal to the specied values</pre></div><!--after help -->
+    have targets equal to the specied values
+ 
+    classes can be specified as an array of class values,
+    or as a cell array of strings containing the class names.
+ 
+    ds = prtDataGenIris;
+    ds12 = ds.<span class="helptopic">retainClasses</span>([1:2]);
+ 
+    ds12_v2 = ds.<span class="helptopic">retainClasses</span>({'Iris-setosa','Iris-versicolor'});
+
+Help for <span class="helptopic">prtDataSetClass/retainClasses</span> is inherited from superclass <a href="./../prtDataInterfaceCategoricalTargets.html">prtDataInterfaceCategoricalTargets</a></pre></div><!--after help -->
       <!--Method-->
       <div class="sectiontitle">Method Details</div>
       <table class="class-details">
+         <tr>
+            <td class="class-detail-label">Defining Class</td>
+            <td>prtDataInterfaceCategoricalTargets</td>
+         </tr>
          <tr>
             <td class="class-detail-label">Access</td>
             <td>public</td>

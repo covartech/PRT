@@ -6,90 +6,105 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>PRT Product Overview</title><meta name="generator" content="MATLAB 7.13"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2011-12-13"><meta name="DC.source" content="prtDocProductOverview.m"><style type="text/css">
+      --><title>PRT Product Overview</title><meta name="generator" content="MATLAB 8.0"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2013-02-19"><meta name="DC.source" content="prtDocProductOverview.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
-body {
-  background-color: white;
-  margin:10px;
-}
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
 
-h1 {
-  color: #990000; 
-  font-size: x-large;
-}
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
 
-h2 {
-  color: #990000;
-  font-size: medium;
-}
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
 
-/* Make the text shrink to fit narrow windows, but not stretch too far in 
-wide windows. */ 
-p,h1,h2,div.content div {
-  max-width: 600px;
-  /* Hack for IE6 */
-  width: auto !important; width: 600px;
-}
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img { margin-bottom:0px; } 
 
-pre.codeinput {
-  background: #EEEEEE;
-  padding: 10px;
-}
-@media print {
-  pre.codeinput {word-wrap:break-word; width:100%;}
-} 
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
 
-span.keyword {color: #0000FF}
-span.comment {color: #228B22}
-span.string {color: #A020F0}
-span.untermstring {color: #B20000}
-span.syscmd {color: #B28C00}
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
 
-pre.codeoutput {
-  color: #666666;
-  padding: 10px;
-}
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
 
-pre.error {
-  color: red;
-}
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
 
-p.footer {
-  text-align: right;
-  font-size: xx-small;
-  font-weight: lighter;
-  font-style: italic;
-  color: gray;
-}
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
 
-  </style></head><body><div class="content"><h1>PRT Product Overview</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">PRT Toolbox Overview</a></li><li><a href="#2">Installation</a></li><li><a href="#3">Using This Guide</a></li><li><a href="#4">PRT Organization</a></li></ul></div><h2>PRT Toolbox Overview<a name="1"></a></h2><p>The PRT is a collection of MATLAB objects and utility functions for developing pattern recognition algorithms.  The toolbox provides a command-line interface to let you rapidly develop classification algorithms and evaluate algorithm performance.</p><h2>Installation<a name="2"></a></h2><p>Please see: <a href="prtDocInstallation.html">Installing the PRT</a></p><h2>Using This Guide<a name="3"></a></h2><p>If you are new to pattern recognition in general, start out by reading <a href="prtDocPatternRecognition.html">What is Pattern Recognition?</a>.  Otherwise, if you want to dive right into the PRT, see <a href="prtDocGettingStartedExamples.html">Some examples of using the PRT</a>.  For installation and documentation questions, please see <a href="prtDocInstallation.html">Installing the PRT</a>.</p><h2>PRT Organization<a name="4"></a></h2><p>The PRT provides several hundred MATLAB M-files implementing various pattern classification objects and utility functions.  To prevent cluttering the MATLAB namespace, all PRT classes and functions begin with the string "prt".  Typing "prt", then <i>tab</i> at the MATLAB command prompt will bring up a list of all the PRT M-files available (assuming the PRT's path has been set properly, see "Installation" below).</p><p>To simplify finding the M-file a user is looking for, the PRT implements a hierarchical M-file naming scheme, so that all PRT M-files of a particular type start with "prtType" where <i>Type</i> is replaced by a short mnemonic describing the object or function implemented in the M-file.</p><p>The following are some commonly used prt M-file prefixes:</p><pre> prtClass - M-file classes for implementing classification algorithms.
- Examples include prtClassFld, prtClassKnn, and prtClassRvm.</pre><pre> prtCluster - M-file classes for implementing clustering algorithms.
- Examples include prtClusterGmm and prtClusterKmeans.</pre><pre> prtDataGen* - M-file functions for creating standard data sets for
- experimentation and algorithm evaluation.  Examples include
- prtDataGenUnimodal, prtDataGenBimodal, and prtDataGenIris.</pre><pre> prtDataSet* - M-file classes implementing data storage and bookkeeping
- for collections of data, known as "data sets".  The most commonly used
- prtDataSet classes are prtDataSetClass and prtDataSetRegress.</pre><pre> prtDecision* - M-file classes implementing decision making.  These are
- commonly used after prtClass objects to turn continuous outputs from
- classifiers into binary or M-ary decisions.  Examples include
- prtDecisionBinaryMinPe and prtDecisionMap.</pre><pre> prtEval* - M-file functions for evaluating the performance of
- prtAlgorithms.  These are commonly used in prtFeatSel objects to define
- a metric to optimize over.  Examples include prtEvalAuc and
- prtEvalPfAtPd.</pre><pre> prtKernel* - M-file classes implementing Kernel functions.  Kernels are
- often used in machine learning, and in particular are used in
- prtClassRvm and prtClassSvm.  Example prtKernel objects are
- prtKernelRbf and prtKernelDc.</pre><pre> prtPreProc* - M-file classes implementing data transformations often
- used in data pre-processing.  Commonly used objects are prtPreProPca,
- prtPreProcZmuv, and prtPreProcLda.</pre><pre> prtPlotUtil* - M-file functions used internally to the PRT.  These are
- mostly undocumented and are subject to change.  They should not be
- called directly.</pre><pre> prtRegress* - M-file classes for implementing regression algorithms.
- Examples include prtRegressLslr and prtRegressRvm.</pre><pre> prtRv* - M-file classes for implementing random variables.  These
- classes encapsulate PDF and CDF calculation, and maximum likelihood
- parameter estimation.  Examples include prtRvMvn and prtRvUnif.</pre><pre> prtScore* - M-file functions for evaluating the performance of
- different PRT algorithms.  Examples inclide prtScoreRoc and
- prtScoreConfusionMatrix.</pre><pre> prtUtil* - M-file functions used internally to the PRT.  These are
- mostly undocumented and are subject to change.  They should not be
- called directly.</pre><p class="footer"><br>
-      Published with MATLAB&reg; 7.13<br></p></div><!--
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>PRT Product Overview</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">PRT Toolbox Overview</a></li><li><a href="#2">Installation</a></li><li><a href="#3">Using This Guide</a></li><li><a href="#4">PRT Organization</a></li></ul></div><h2>PRT Toolbox Overview<a name="1"></a></h2><p>The PRT is a collection of MATLAB objects and utility functions for developing pattern recognition algorithms.  The toolbox provides a command-line interface to let you rapidly develop classification algorithms and evaluate algorithm performance.</p><h2>Installation<a name="2"></a></h2><p>Please see: <a href="prtDocInstallation.html">Installing the PRT</a></p><h2>Using This Guide<a name="3"></a></h2><p>If you are new to pattern recognition in general, start out by reading <a href="prtDocPatternRecognition.html">What is Pattern Recognition?</a>.  Otherwise, if you want to dive right into the PRT, see <a href="prtDocGettingStartedExamples.html">Some examples of using the PRT</a>.  For installation and documentation questions, please see <a href="prtDocInstallation.html">Installing the PRT</a>.</p><h2>PRT Organization<a name="4"></a></h2><p>The PRT provides several hundred MATLAB M-files implementing various pattern classification objects and utility functions.  To prevent cluttering the MATLAB namespace, all PRT classes and functions begin with the string "prt".  Typing "prt", then <i>tab</i> at the MATLAB command prompt will bring up a list of all the PRT M-files available (assuming the PRT's path has been set properly, see "Installation" below).</p><p>To simplify finding the M-file a user is looking for, the PRT implements a hierarchical M-file naming scheme, so that all PRT M-files of a particular type start with "prtType" where <i>Type</i> is replaced by a short mnemonic describing the object or function implemented in the M-file.</p><p>The following are some commonly used prt M-file prefixes:</p><pre class="language-matlab">prtClass - M-file classes <span class="string">for</span> <span class="string">implementing</span> <span class="string">classification</span> <span class="string">algorithms.</span>
+Examples <span class="string">include</span> <span class="string">prtClassFld</span>, prtClassKnn, and <span class="string">prtClassRvm.</span>
+</pre><pre class="language-matlab">prtCluster - M-file classes <span class="string">for</span> <span class="string">implementing</span> <span class="string">clustering</span> <span class="string">algorithms.</span>
+Examples <span class="string">include</span> <span class="string">prtClusterGmm</span> <span class="string">and</span> <span class="string">prtClusterKmeans.</span>
+</pre><pre class="language-matlab">prtDataGen* - M-file functions <span class="string">for</span> <span class="string">creating</span> <span class="string">standard</span> <span class="string">data</span> <span class="string">sets</span> <span class="string">for</span>
+experimentation <span class="string">and</span> <span class="string">algorithm</span> <span class="string">evaluation.</span>  <span class="string">Examples</span> <span class="string">include</span>
+prtDataGenUnimodal, prtDataGenBimodal, and <span class="string">prtDataGenIris.</span>
+</pre><pre class="language-matlab">prtDataSet* - M-file classes <span class="string">implementing</span> <span class="string">data</span> <span class="string">storage</span> <span class="string">and</span> <span class="string">bookkeeping</span>
+<span class="keyword">for</span> collections of <span class="string">data</span>, known <span class="string">as</span> <span class="string">"data</span> <span class="string">sets".</span>  <span class="string">The</span> <span class="string">most</span> <span class="string">commonly</span> <span class="string">used</span>
+prtDataSet <span class="string">classes</span> <span class="string">are</span> <span class="string">prtDataSetClass</span> <span class="string">and</span> <span class="string">prtDataSetRegress.</span>
+</pre><pre class="language-matlab">prtDecision* - M-file classes <span class="string">implementing</span> <span class="string">decision</span> <span class="string">making.</span>  <span class="string">These</span> <span class="string">are</span>
+commonly <span class="string">used</span> <span class="string">after</span> <span class="string">prtClass</span> <span class="string">objects</span> <span class="string">to</span> <span class="string">turn</span> <span class="string">continuous</span> <span class="string">outputs</span> <span class="string">from</span>
+classifiers <span class="string">into</span> <span class="string">binary</span> <span class="string">or</span> <span class="string">M-ary</span> <span class="string">decisions.</span>  <span class="string">Examples</span> <span class="string">include</span>
+prtDecisionBinaryMinPe <span class="string">and</span> <span class="string">prtDecisionMap.</span>
+</pre><pre class="language-matlab">prtEval* - M-file functions <span class="string">for</span> <span class="string">evaluating</span> <span class="string">the</span> <span class="string">performance</span> <span class="string">of</span>
+prtAlgorithms.  These are <span class="string">commonly</span> <span class="string">used</span> <span class="string">in</span> <span class="string">prtFeatSel</span> <span class="string">objects</span> <span class="string">to</span> <span class="string">define</span>
+a <span class="string">metric</span> <span class="string">to</span> <span class="string">optimize</span> <span class="string">over.</span>  <span class="string">Examples</span> <span class="string">include</span> <span class="string">prtEvalAuc</span> <span class="string">and</span>
+prtEvalPfAtPd.
+</pre><pre class="language-matlab">prtKernel* - M-file classes <span class="string">implementing</span> <span class="string">Kernel</span> <span class="string">functions.</span>  <span class="string">Kernels</span> <span class="string">are</span>
+often <span class="string">used</span> <span class="string">in</span> <span class="string">machine</span> <span class="string">learning</span>, and <span class="string">in</span> <span class="string">particular</span> <span class="string">are</span> <span class="string">used</span> <span class="string">in</span>
+prtClassRvm <span class="string">and</span> <span class="string">prtClassSvm.</span>  <span class="string">Example</span> <span class="string">prtKernel</span> <span class="string">objects</span> <span class="string">are</span>
+prtKernelRbf <span class="string">and</span> <span class="string">prtKernelDc.</span>
+</pre><pre class="language-matlab">prtPreProc* - M-file classes <span class="string">implementing</span> <span class="string">data</span> <span class="string">transformations</span> <span class="string">often</span>
+used <span class="string">in</span> <span class="string">data</span> <span class="string">pre-processing.</span>  <span class="string">Commonly</span> <span class="string">used</span> <span class="string">objects</span> <span class="string">are</span> <span class="string">prtPreProPca</span>,
+prtPreProcZmuv, and <span class="string">prtPreProcLda.</span>
+</pre><pre class="language-matlab">prtPlotUtil* - M-file functions <span class="string">used</span> <span class="string">internally</span> <span class="string">to</span> <span class="string">the</span> <span class="string">PRT.</span>  <span class="string">These</span> <span class="string">are</span>
+mostly <span class="string">undocumented</span> <span class="string">and</span> <span class="string">are</span> <span class="string">subject</span> <span class="string">to</span> <span class="string">change.</span>  <span class="string">They</span> <span class="string">should</span> <span class="string">not</span> <span class="string">be</span>
+called <span class="string">directly.</span>
+</pre><pre class="language-matlab">prtRegress* - M-file classes <span class="string">for</span> <span class="string">implementing</span> <span class="string">regression</span> <span class="string">algorithms.</span>
+Examples <span class="string">include</span> <span class="string">prtRegressLslr</span> <span class="string">and</span> <span class="string">prtRegressRvm.</span>
+</pre><pre class="language-matlab">prtRv* - M-file classes <span class="string">for</span> <span class="string">implementing</span> <span class="string">random</span> <span class="string">variables.</span>  <span class="string">These</span>
+classes <span class="string">encapsulate</span> <span class="string">PDF</span> <span class="string">and</span> <span class="string">CDF</span> <span class="string">calculation</span>, and <span class="string">maximum</span> <span class="string">likelihood</span>
+parameter <span class="string">estimation.</span>  <span class="string">Examples</span> <span class="string">include</span> <span class="string">prtRvMvn</span> <span class="string">and</span> <span class="string">prtRvUnif.</span>
+</pre><pre class="language-matlab">prtScore* - M-file functions <span class="string">for</span> <span class="string">evaluating</span> <span class="string">the</span> <span class="string">performance</span> <span class="string">of</span>
+different <span class="string">PRT</span> <span class="string">algorithms.</span>  <span class="string">Examples</span> <span class="string">inclide</span> <span class="string">prtScoreRoc</span> <span class="string">and</span>
+prtScoreConfusionMatrix.
+</pre><pre class="language-matlab">prtUtil* - M-file functions <span class="string">used</span> <span class="string">internally</span> <span class="string">to</span> <span class="string">the</span> <span class="string">PRT.</span>  <span class="string">These</span> <span class="string">are</span>
+mostly <span class="string">undocumented</span> <span class="string">and</span> <span class="string">are</span> <span class="string">subject</span> <span class="string">to</span> <span class="string">change.</span>  <span class="string">They</span> <span class="string">should</span> <span class="string">not</span> <span class="string">be</span>
+called <span class="string">directly.</span>
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2012b</a><br></p></div><!--
 ##### SOURCE BEGIN #####
 %% PRT Product Overview
 % 

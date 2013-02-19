@@ -15,19 +15,28 @@
          </tr>
       </table>
       <div class="title">prtDataSetClass/bootstrap</div>
-      <div class="helptext"><pre><!--helptext -->  bootstrap  boostrap a prtDataSetStandard object
+      <div class="helptext"><pre><!--helptext -->  dsBoot = bootstrap(dataSet,nSamples)
+    Bootstrap (sample with replacement) nSamples from the data
+    set dataSet, and return the new data in dsBoot.
  
-  dataSet = dataSet.boostrap(NSAMPLES) returns a dataSet object
-  consisting of NSAMPLES randomly selected samples from the
-  original dataSet object.
+  [dsBoot,indices] = bootstrap(dataSet,nSamples) also returns
+  the indices of the extracted data points in dataSet.
+ 
+  [...] = bootstrap(dataSet,nSamples,p) sample from a
+  non-uniform distribution specified by the nObservations x 1
+  vector p.  p should "approximately" sum to 1, e.g.
+     prtUtilApproxEqual(sum(p),1,eps(self.nObservations))
+  Should return "true"
+ 
+  
 
-Help for <span class="helptopic">prtDataSetClass/bootstrap</span> is inherited from superclass <a href="./../prtDataSetStandard.html">prtDataSetStandard</a></pre></div><!--after help -->
+Help for <span class="helptopic">prtDataSetClass/bootstrap</span> is inherited from superclass <a href="./../prtDataSetBase.html">prtDataSetBase</a></pre></div><!--after help -->
       <!--Method-->
       <div class="sectiontitle">Method Details</div>
       <table class="class-details">
          <tr>
             <td class="class-detail-label">Defining Class</td>
-            <td>prtDataSetStandard</td>
+            <td>prtDataSetBase</td>
          </tr>
          <tr>
             <td class="class-detail-label">Access</td>

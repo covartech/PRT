@@ -15,13 +15,13 @@
          </tr>
       </table>
       <div class="title">prtDataSetClass/setObservationInfo</div>
-      <div class="helptext"><pre><!--helptext -->  Allow setting of observation info by specifying string value
-  pairs
+      <div class="helptext"><pre><!--helptext --> dataSet = <span class="helptopic">setObservationInfo</span>(dataSet,obsInfoStruct)
+  Set the observationInfo field of the data set to the
+  structure array obsInfoStruct.  obsInfoStruct should be
+  dataSet.nObservations x 1.
   
-  DS = prtDataGenIris;
-  DS = DS.<span class="helptopic">setObservationInfo</span>('asdf',randn(DS.nObservations,1),'qwer',randn(DS.nObservations,1),'poiu',randn(DS.nObservations,10),'lkjh',mat2cell(randn(DS.nObservations,1),ones(DS.nObservations,1),1),'mnbv',mat2cell(randn(DS.nObservations,10),ones(DS.nObservations,1),10));
-
-Help for <span class="helptopic">prtDataSetClass/setObservationInfo</span> is inherited from superclass <a href="./../prtDataSetStandard.html">prtDataSetStandard</a></pre></div><!--after help -->
+  observationInfo can be used to store arbitrary information
+  about a data set.</pre></div><!--after help -->
       <!--Method-->
       <div class="sectiontitle">Method Details</div>
       <table class="class-details">

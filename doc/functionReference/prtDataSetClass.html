@@ -15,51 +15,61 @@
          </tr>
       </table>
       <div class="title">prtDataSetClass</div>
-      <div class="helptext"><pre><!--helptext -->  <span class="helptopic">prtDataSetClass</span>  Data set object for classification
+      <div class="helptext"><pre><!--helptext --> <span class="helptopic">prtDataSetClass</span> &lt; prtDataSetStandard &amp; prtDataInterfaceCategoricalTargets
+  dataSet = <span class="helptopic">prtDataSetClass</span> generates a <span class="helptopic">prtDataSetClass</span> object
  
-    DATASET = <span class="helptopic">prtDataSetClass</span> returns a <span class="helptopic">prtDataSetClass</span> object
+      dataSet = <span class="helptopic">prtDataSetClass</span>(X,Y) generates a <span class="helptopic">prtDataSetClass</span> from
+      the nObservations x nFeatures double matrix X and the
+      nObservations x 1 label vector Y.
  
-    DATASET = <span class="helptopic">prtDataSetClass</span>(PROPERTY1, VALUE1, ...) constructs a
-    <span class="helptopic">prtDataSetClass</span> object DATASET with properties as specified by
-    PROPERTY/VALUE pairs.
+      dataSet = <span class="helptopic">prtDataSetClass</span>(PROPERTY1, VALUE1, ...) constructs a
+      <span class="helptopic">prtDataSetClass</span> object dataSet with properties as specified by
+      PROPERTY/VALUE pairs.
  
-    A <span class="helptopic">prtDataSetClass</span> object inherits all properties from the
-    prtDataSetStandard class. In addition, it has the following properties:
+      A <span class="helptopic">prtDataSetClass</span> object inherits all properties from the
+      prtDataSetStandard class. In addition, it has the following properties:
  
-    nClasses             - The number of classes
-    uniqueClasses        - An array of the integer class labels
-    isUnary              - True if the number of classes = 1
-    isBinary             - True if the number of classes = 2
-    isMary               - True if the number of classes &gt; 2
-    isZeroOne            - True if the unique classes are 0 and 1
-    nObservationsByClass - The number of observations per class.
+      nClasses             - The number of classes
+      uniqueClasses        - An array of the integer class labels
+      isUnary              - True if the number of classes = 1
+      isBinary             - True if the number of classes = 2
+      isMary               - True if the number of classes &gt; 2
+      isZeroOne            - True if the unique classes are 0 and 1
+      nObservationsByClass - The number of observations per class.
  
-    A <span class="helptopic">prtDataSetClass</span> inherits all methods from the prtDataSetStandard
-    class. In addition, it has the following methods:
+      A <span class="helptopic">prtDataSetClass</span> inherits all methods from the prtDataSetStandard
+      class. In addition, it has the following methods:
  
-    getObservationsByClass     - Return the observations per class
-    getObservationsByClassInd  - Return the observations by class and index
-    getTargetsAsBinaryMatrix   - Return a binary matrix of targets.
-    explore                    - Explore the <span class="helptopic">prtDataSetClass</span> object
-    plot                       - Plot the data set
-    plotFeatureDensity         - Plot the probability density estimate 
-                                 of a single feature, labeled by class.
-    plotStar                   - Create a star plot to visualize higher
-                                 dimensional data
-    plotAsTimeSeries           - Plot the <span class="helptopic">prtDataSetClass</span> object as a
-                                 time series
-    plotPairs                  - Plot a grid of plots containing each
-                                 set of two-features with density
-                                 estimates on the diagonals
-    plotDensity                - Plot the density of each feature
-                                 independently as a volume</pre></div><!--after help --><!--seeAlso--><div class="footerlinktitle">See also</div><div class="footerlink"> <a href="./prtDataSetBase.html">prtDataSetBase</a>, <a href="./prtDataSetStandard.html">prtDataSetStandard</a>, <a href="./prtDataSetRegress.html">prtDataSetRegress</a>
-</div>
+      getObservationsByClass     - Return the observations per class
+      getObservationsByClassInd  - Return the observations by class and index
+      getTargetsAsBinaryMatrix   - Return a binary matrix of targets.
+      explore                    - Explore the <span class="helptopic">prtDataSetClass</span> object
+      plot                       - Plot the data set
+      plotFeatureDensity         - Plot the probability density estimate
+                                   of a single feature, labeled by class.
+      plotStar                   - Create a star plot to visualize higher
+                                   dimensional data
+      plotAsTimeSeries           - Plot the <span class="helptopic">prtDataSetClass</span> object as a
+                                   time series
+      plotPairs                  - Plot a grid of plots containing each
+                                   set of two-features with density
+                                   estimates on the diagonals
+      plotDensity                - Plot the density of each feature
+                                   independently as a volume
+ 
+      Note: As of Jan 5, 2013 <span class="helptopic">prtDataSetClass</span> enables the use of NAN
+      values in the target vector to specify unlabled data.  This data
+      and class value (NAN) are treated specially.  e.g., NAN labels do
+      not count towards the nClasses and will not appear in
+      uniqueClasses.  It is not possible to set the name of
+      the class corresponding to NAN.  See
+      prtDataInterfaceCategoricalTargets for more information.</pre></div><!--after help -->
       <!--Class-->
       <div class="sectiontitle">Class Details</div>
       <table class="class-details">
          <tr>
             <td class="class-detail-label">Superclasses</td>
-            <td><a href="./prtDataSetStandard.html">prtDataSetStandard</a></td>
+            <td><a href="./prtDataSetStandard.html">prtDataSetStandard</a>, <a href="./prtDataInterfaceCategoricalTargets.html">prtDataInterfaceCategoricalTargets</a></td>
          </tr>
          <tr>
             <td class="class-detail-label">Sealed</td>
@@ -76,7 +86,7 @@
       <table class="summary-list">
          <tr class="summary-item">
             <td class="name"><a href="./prtDataSetClass/prtDataSetClass.html">prtDataSetClass</a></td>
-            <td class="m-help">Data set object for classification&nbsp;</td>
+            <td class="m-help">Constructor for class prtDataSetClass&nbsp;</td>
          </tr>
       </table>
       <!--Properties-->
@@ -84,8 +94,12 @@
       </div>
       <table class="summary-list">
          <tr class="summary-item">
+            <td class="name"><a href="./prtDataSetClass/classNames.html">classNames</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
             <td class="name"><a href="./prtDataSetClass/data.html">data</a></td>
-            <td class="m-help">The observations&nbsp;</td>
+            <td class="m-help">&nbsp;</td>
          </tr>
          <tr class="summary-item">
             <td class="name"><a href="./prtDataSetClass/description.html">description</a></td>
@@ -94,6 +108,34 @@
          <tr class="summary-item">
             <td class="name"><a href="./prtDataSetClass/featureInfo.html">featureInfo</a></td>
             <td class="m-help">Additional data (structure) per feature&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtDataSetClass/featureInfoInternal.html">featureInfoInternal</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtDataSetClass/featureNameModificationFunctionInternal.html">featureNameModificationFunctionInternal</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtDataSetClass/featureNameModificationMaskInternal.html">featureNameModificationMaskInternal</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtDataSetClass/hasUnlabeled.html">hasUnlabeled</a></td>
+            <td class="m-help">True if any of the labels are nan&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtDataSetClass/internalData.html">internalData</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtDataSetClass/internalSizeConsitencyCheck.html">internalSizeConsitencyCheck</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtDataSetClass/internalTargets.html">internalTargets</a></td>
+            <td class="m-help">&nbsp;</td>
          </tr>
          <tr class="summary-item">
             <td class="name"><a href="./prtDataSetClass/isBinary.html">isBinary</a></td>
@@ -113,11 +155,11 @@
          </tr>
          <tr class="summary-item">
             <td class="name"><a href="./prtDataSetClass/isZeroOne.html">isZeroOne</a></td>
-            <td class="m-help">True if the uniqueClasses are 0 and 1&nbsp;</td>
+            <td class="m-help">True if the uniqueClasses are 0 and&nbsp;</td>
          </tr>
          <tr class="summary-item">
             <td class="name"><a href="./prtDataSetClass/nClasses.html">nClasses</a></td>
-            <td class="m-help">The number of classes&nbsp;</td>
+            <td class="m-help">&nbsp;</td>
          </tr>
          <tr class="summary-item">
             <td class="name"><a href="./prtDataSetClass/nFeatures.html">nFeatures</a></td>
@@ -129,11 +171,11 @@
          </tr>
          <tr class="summary-item">
             <td class="name"><a href="./prtDataSetClass/nObservationsByClass.html">nObservationsByClass</a></td>
-            <td class="m-help">The number of observations per class&nbsp;</td>
+            <td class="m-help">histogram of samples x class&nbsp;</td>
          </tr>
          <tr class="summary-item">
             <td class="name"><a href="./prtDataSetClass/nTargetDimensions.html">nTargetDimensions</a></td>
-            <td class="m-help">The number of dimensions of the target data&nbsp;</td>
+            <td class="m-help">The number of target dimensions&nbsp;</td>
          </tr>
          <tr class="summary-item">
             <td class="name"><a href="./prtDataSetClass/name.html">name</a></td>
@@ -141,7 +183,11 @@
          </tr>
          <tr class="summary-item">
             <td class="name"><a href="./prtDataSetClass/observationInfo.html">observationInfo</a></td>
-            <td class="m-help">Additional data (structure) per observation&nbsp;</td>
+            <td class="m-help">Struct of observation information&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtDataSetClass/observationInfoInternal.html">observationInfoInternal</a></td>
+            <td class="m-help">&nbsp;</td>
          </tr>
          <tr class="summary-item">
             <td class="name"><a href="./prtDataSetClass/observationNamesInternal.html">observationNamesInternal</a></td>
@@ -153,11 +199,11 @@
          </tr>
          <tr class="summary-item">
             <td class="name"><a href="./prtDataSetClass/targets.html">targets</a></td>
-            <td class="m-help">The targets&nbsp;</td>
+            <td class="m-help">&nbsp;</td>
          </tr>
          <tr class="summary-item">
             <td class="name"><a href="./prtDataSetClass/uniqueClasses.html">uniqueClasses</a></td>
-            <td class="m-help">The unique class&nbsp;</td>
+            <td class="m-help">&nbsp;</td>
          </tr>
          <tr class="summary-item">
             <td class="name"><a href="./prtDataSetClass/userData.html">userData</a></td>
@@ -174,7 +220,7 @@
                
             </td>
             <td class="name"><a href="./prtDataSetClass/bootstrap.html">bootstrap</a></td>
-            <td class="m-help">boostrap a prtDataSetStandard object&nbsp;</td>
+            <td class="m-help">dsBoot = bootstrap(dataSet,nSamples)&nbsp;</td>
          </tr>
          <tr class="summary-item">
             <td class="attributes">
@@ -182,7 +228,15 @@
                
             </td>
             <td class="name"><a href="./prtDataSetClass/bootstrapByClass.html">bootstrapByClass</a></td>
-            <td class="m-help">Generate bootstrap samples from prtDataSetClass object&nbsp;</td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetClass/catClasses.html">catClasses</a></td>
+            <td class="m-help">self = catClasses(self,ds1,ds2,...)&nbsp;</td>
          </tr>
          <tr class="summary-item">
             <td class="attributes">
@@ -190,7 +244,15 @@
                
             </td>
             <td class="name"><a href="./prtDataSetClass/catFeatures.html">catFeatures</a></td>
-            <td class="m-help">Concatenate the features of a prtDataSetStandard object&nbsp;</td>
+            <td class="m-help">dsOut = catFeatures(dataSet1,dataSet2)&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">protected 
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetClass/catObservationInfo.html">catObservationInfo</a></td>
+            <td class="m-help">&nbsp;</td>
          </tr>
          <tr class="summary-item">
             <td class="attributes">
@@ -198,7 +260,7 @@
                
             </td>
             <td class="name"><a href="./prtDataSetClass/catObservations.html">catObservations</a></td>
-            <td class="m-help">Concatenate the observations of a prtDataSetClass object&nbsp;</td>
+            <td class="m-help">dsOut = catObservations(dataSet1,dataSet2)&nbsp;</td>
          </tr>
          <tr class="summary-item">
             <td class="attributes">
@@ -206,23 +268,23 @@
                
             </td>
             <td class="name"><a href="./prtDataSetClass/catTargets.html">catTargets</a></td>
-            <td class="m-help">Concatenate the targets of a prtDataSetStandard&nbsp;</td>
+            <td class="m-help">dsOut = catTargets(dataSet1,dataSet2)&nbsp;</td>
          </tr>
          <tr class="summary-item">
-            <td class="attributes">
+            <td class="attributes">protected Static 
                &nbsp;
                
             </td>
-            <td class="name"><a href="./prtDataSetClass/determineNumFeatures.html">determineNumFeatures</a></td>
-            <td class="m-help">nFeatures  Return the number of features from a&nbsp;</td>
-         </tr>
-         <tr class="summary-item">
-            <td class="attributes">
-               &nbsp;
-               
-            </td>
-            <td class="name"><a href="./prtDataSetClass/determineNumObservations.html">determineNumObservations</a></td>
+            <td class="name"><a href="./prtDataSetClass/checkConsistency.html">checkConsistency</a></td>
             <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetClass/classNamesToClassInd.html">classNamesToClassInd</a></td>
+            <td class="m-help">classInds = classNamesToClassInd(dataSet,classNames)&nbsp;</td>
          </tr>
          <tr class="summary-item">
             <td class="attributes">
@@ -254,7 +316,7 @@
                
             </td>
             <td class="name"><a href="./prtDataSetClass/getClassNames.html">getClassNames</a></td>
-            <td class="m-help">Returns the class names&nbsp;</td>
+            <td class="m-help">cn = getClassNames(self,indices)&nbsp;</td>
          </tr>
          <tr class="summary-item">
             <td class="attributes">
@@ -262,7 +324,39 @@
                
             </td>
             <td class="name"><a href="./prtDataSetClass/getClassNamesByClassInd.html">getClassNamesByClassInd</a></td>
-            <td class="m-help">Return the class names &nbsp;</td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetClass/getData.html">getData</a></td>
+            <td class="m-help">data = getData(dataSet)&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetClass/getDataByClass.html">getDataByClass</a></td>
+            <td class="m-help">Return the Data by class&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetClass/getDataByClassInd.html">getDataByClassInd</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetClass/getDataUnlabeled.html">getDataUnlabeled</a></td>
+            <td class="m-help">&nbsp;</td>
          </tr>
          <tr class="summary-item">
             <td class="attributes">
@@ -270,7 +364,7 @@
                
             </td>
             <td class="name"><a href="./prtDataSetClass/getFeatureInfo.html">getFeatureInfo</a></td>
-            <td class="m-help">Allow for fast retrieval of feature info by specifying&nbsp;</td>
+            <td class="m-help">&nbsp;</td>
          </tr>
          <tr class="summary-item">
             <td class="attributes">
@@ -278,7 +372,7 @@
                
             </td>
             <td class="name"><a href="./prtDataSetClass/getFeatureNames.html">getFeatureNames</a></td>
-            <td class="m-help">Return the prtDataSetStandard feature names&nbsp;</td>
+            <td class="m-help">names = getFeatureNames(dataSet)&nbsp;</td>
          </tr>
          <tr class="summary-item">
             <td class="attributes">
@@ -294,6 +388,14 @@
                
             </td>
             <td class="name"><a href="./prtDataSetClass/getKFoldKeys.html">getKFoldKeys</a></td>
+            <td class="m-help">keys = getKFoldKeys(dataSet,K)&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetClass/getNumFeatures.html">getNumFeatures</a></td>
             <td class="m-help">&nbsp;</td>
          </tr>
          <tr class="summary-item">
@@ -301,8 +403,24 @@
                &nbsp;
                
             </td>
+            <td class="name"><a href="./prtDataSetClass/getNumObservations.html">getNumObservations</a></td>
+            <td class="m-help">nObs = getNumObservations(dataSet)&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetClass/getNumTargetDimensions.html">getNumTargetDimensions</a></td>
+            <td class="m-help">nTargets = getNumTargetDimensions(dataSet)&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
             <td class="name"><a href="./prtDataSetClass/getObservationInfo.html">getObservationInfo</a></td>
-            <td class="m-help">Allow for fast retrieval of observation info by specifying&nbsp;</td>
+            <td class="m-help">obsInfo = getObservationInfo(dataSet)&nbsp;</td>
          </tr>
          <tr class="summary-item">
             <td class="attributes">
@@ -318,15 +436,7 @@
                
             </td>
             <td class="name"><a href="./prtDataSetClass/getObservations.html">getObservations</a></td>
-            <td class="m-help">Get the observations of a prtDataSetStandard&nbsp;</td>
-         </tr>
-         <tr class="summary-item">
-            <td class="attributes">
-               &nbsp;
-               
-            </td>
-            <td class="name"><a href="./prtDataSetClass/getObservationsAndTargets.html">getObservationsAndTargets</a></td>
-            <td class="m-help">Get the observations and targets&nbsp;</td>
+            <td class="m-help">d = getObservations(dataSet)&nbsp;</td>
          </tr>
          <tr class="summary-item">
             <td class="attributes">
@@ -334,7 +444,7 @@
                
             </td>
             <td class="name"><a href="./prtDataSetClass/getObservationsByClass.html">getObservationsByClass</a></td>
-            <td class="m-help">Return the observations by class&nbsp;</td>
+            <td class="m-help">&nbsp;</td>
          </tr>
          <tr class="summary-item">
             <td class="attributes">
@@ -342,7 +452,7 @@
                
             </td>
             <td class="name"><a href="./prtDataSetClass/getObservationsByClassInd.html">getObservationsByClassInd</a></td>
-            <td class="m-help">Return the observations by class index&nbsp;</td>
+            <td class="m-help">&nbsp;</td>
          </tr>
          <tr class="summary-item">
             <td class="attributes">
@@ -350,7 +460,7 @@
                
             </td>
             <td class="name"><a href="./prtDataSetClass/getObservationsUnlabeled.html">getObservationsUnlabeled</a></td>
-            <td class="m-help">Return the observations that&nbsp;</td>
+            <td class="m-help">&nbsp;</td>
          </tr>
          <tr class="summary-item">
             <td class="attributes">
@@ -358,7 +468,7 @@
                
             </td>
             <td class="name"><a href="./prtDataSetClass/getTargetNames.html">getTargetNames</a></td>
-            <td class="m-help">Return the target names of a dataset&nbsp;</td>
+            <td class="m-help">Return the target names from a dataset&nbsp;</td>
          </tr>
          <tr class="summary-item">
             <td class="attributes">
@@ -366,7 +476,7 @@
                
             </td>
             <td class="name"><a href="./prtDataSetClass/getTargets.html">getTargets</a></td>
-            <td class="m-help">Get the targets of a prtDataSetStandard object.&nbsp;</td>
+            <td class="m-help">targets = getTargets(dataSet)&nbsp;</td>
          </tr>
          <tr class="summary-item">
             <td class="attributes">
@@ -383,6 +493,14 @@
             </td>
             <td class="name"><a href="./prtDataSetClass/getTargetsClassInd.html">getTargetsClassInd</a></td>
             <td class="m-help">getTargetsClassIndex  Return the targets by class index&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetClass/getUniqueClasses.html">getUniqueClasses</a></td>
+            <td class="m-help">&nbsp;</td>
          </tr>
          <tr class="summary-item">
             <td class="attributes">
@@ -414,7 +532,23 @@
                
             </td>
             <td class="name"><a href="./prtDataSetClass/loadobj.html">loadobj</a></td>
+            <td class="m-help">dataSet = loadobj(obj)&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetClass/numClasses.html">numClasses</a></td>
             <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetClass/permuteFeatures.html">permuteFeatures</a></td>
+            <td class="m-help">dsOut = permuteFeatures(dataSet,permuteFeatureInds)&nbsp;</td>
          </tr>
          <tr class="summary-item">
             <td class="attributes">
@@ -502,7 +636,15 @@
                
             </td>
             <td class="name"><a href="./prtDataSetClass/removeFeatures.html">removeFeatures</a></td>
-            <td class="m-help">retainFeatures   Retain the features of a prtDataSetStandard object.&nbsp;</td>
+            <td class="m-help">dsOut = removeFeatures(dataSet,removeFeatureInds)&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetClass/removeLabeled.html">removeLabeled</a></td>
+            <td class="m-help">&nbsp;</td>
          </tr>
          <tr class="summary-item">
             <td class="attributes">
@@ -510,7 +652,7 @@
                
             </td>
             <td class="name"><a href="./prtDataSetClass/removeObservations.html">removeObservations</a></td>
-            <td class="m-help">Remove observations from a prtDataSetStandard object&nbsp;</td>
+            <td class="m-help">dsOut = removeObservations(dataSet,indices)&nbsp;</td>
          </tr>
          <tr class="summary-item">
             <td class="attributes">
@@ -518,7 +660,15 @@
                
             </td>
             <td class="name"><a href="./prtDataSetClass/removeTargets.html">removeTargets</a></td>
-            <td class="m-help">Remove targets from a prtDataSetStandard&nbsp;</td>
+            <td class="m-help">dsOut = removeTargets(dataSet,indices)&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetClass/removeUnlabeled.html">removeUnlabeled</a></td>
+            <td class="m-help">&nbsp;</td>
          </tr>
          <tr class="summary-item">
             <td class="attributes">
@@ -537,12 +687,36 @@
             <td class="m-help">retain observations corresponding to&nbsp;</td>
          </tr>
          <tr class="summary-item">
+            <td class="attributes">protected 
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetClass/retainFeatureNames.html">retainFeatureNames</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
             <td class="attributes">
                &nbsp;
                
             </td>
             <td class="name"><a href="./prtDataSetClass/retainFeatures.html">retainFeatures</a></td>
-            <td class="m-help">Retain the features of a prtDataSetStandard&nbsp;</td>
+            <td class="m-help">dsOut = retainFeatures(dataSet,retainFeatureInds)&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetClass/retainLabeled.html">retainLabeled</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">protected 
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetClass/retainObservationInfo.html">retainObservationInfo</a></td>
+            <td class="m-help">&nbsp;</td>
          </tr>
          <tr class="summary-item">
             <td class="attributes">
@@ -550,7 +724,7 @@
                
             </td>
             <td class="name"><a href="./prtDataSetClass/retainObservations.html">retainObservations</a></td>
-            <td class="m-help">Retain observations from a prtDataSetStandard object&nbsp;</td>
+            <td class="m-help">dsOut = removeObservations(dataSet,indices)&nbsp;</td>
          </tr>
          <tr class="summary-item">
             <td class="attributes">
@@ -558,7 +732,15 @@
                
             </td>
             <td class="name"><a href="./prtDataSetClass/retainTargets.html">retainTargets</a></td>
-            <td class="m-help">Retain targets from a prtDataSetStandard&nbsp;</td>
+            <td class="m-help">dsOut = retainTargets(dataSet,indices)&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetClass/retainUnlabeled.html">retainUnlabeled</a></td>
+            <td class="m-help">&nbsp;</td>
          </tr>
          <tr class="summary-item">
             <td class="attributes">
@@ -574,15 +756,15 @@
                
             </td>
             <td class="name"><a href="./prtDataSetClass/setClassNames.html">setClassNames</a></td>
-            <td class="m-help">Sets the class names&nbsp;</td>
+            <td class="m-help">ds = ds.setClassNames({'fasdf','asdf','asdfdsfdsf'});&nbsp;</td>
          </tr>
          <tr class="summary-item">
             <td class="attributes">
                &nbsp;
                
             </td>
-            <td class="name"><a href="./prtDataSetClass/setClassNamesByClassInd.html">setClassNamesByClassInd</a></td>
-            <td class="m-help">Sets the class names&nbsp;</td>
+            <td class="name"><a href="./prtDataSetClass/setData.html">setData</a></td>
+            <td class="m-help">dsOut = setData(dataSet,dataIn)&nbsp;</td>
          </tr>
          <tr class="summary-item">
             <td class="attributes">
@@ -590,7 +772,7 @@
                
             </td>
             <td class="name"><a href="./prtDataSetClass/setFeatureInfo.html">setFeatureInfo</a></td>
-            <td class="m-help">Allow setting of feature info by specifying string value&nbsp;</td>
+            <td class="m-help">&nbsp;</td>
          </tr>
          <tr class="summary-item">
             <td class="attributes">
@@ -598,7 +780,7 @@
                
             </td>
             <td class="name"><a href="./prtDataSetClass/setFeatureNames.html">setFeatureNames</a></td>
-            <td class="m-help">Set the prtDataSetStandard feature names&nbsp;</td>
+            <td class="m-help">dataSet = setFeatureNames(dataSet,names)&nbsp;</td>
          </tr>
          <tr class="summary-item">
             <td class="attributes">
@@ -606,7 +788,7 @@
                
             </td>
             <td class="name"><a href="./prtDataSetClass/setFeatures.html">setFeatures</a></td>
-            <td class="m-help">Set the features of a prtDataSetStandard object&nbsp;</td>
+            <td class="m-help">dsOut = setFeatures(dataSet,data,indices)&nbsp;</td>
          </tr>
          <tr class="summary-item">
             <td class="attributes">
@@ -614,7 +796,7 @@
                
             </td>
             <td class="name"><a href="./prtDataSetClass/setObservationInfo.html">setObservationInfo</a></td>
-            <td class="m-help">Allow setting of observation info by specifying string value&nbsp;</td>
+            <td class="m-help">dataSet = setObservationInfo(dataSet,obsInfoStruct)&nbsp;</td>
          </tr>
          <tr class="summary-item">
             <td class="attributes">
@@ -630,7 +812,7 @@
                
             </td>
             <td class="name"><a href="./prtDataSetClass/setObservations.html">setObservations</a></td>
-            <td class="m-help">Set the observations prtDataSetStandard&nbsp;</td>
+            <td class="m-help">dataSet = setObservations(dataSet,data)&nbsp;</td>
          </tr>
          <tr class="summary-item">
             <td class="attributes">
@@ -638,7 +820,7 @@
                
             </td>
             <td class="name"><a href="./prtDataSetClass/setObservationsAndTargets.html">setObservationsAndTargets</a></td>
-            <td class="m-help">Set the observations and targets&nbsp;</td>
+            <td class="m-help">dataSet = setObservationsAndTargets(dataSet,data,targets)&nbsp;</td>
          </tr>
          <tr class="summary-item">
             <td class="attributes">
@@ -654,7 +836,7 @@
                
             </td>
             <td class="name"><a href="./prtDataSetClass/setTargets.html">setTargets</a></td>
-            <td class="m-help">Set the Targets prtDataSetStandard object.&nbsp;</td>
+            <td class="m-help">dataSet = setTargets(ds,targets)&nbsp;</td>
          </tr>
          <tr class="summary-item">
             <td class="attributes">
@@ -686,7 +868,23 @@
                
             </td>
             <td class="name"><a href="./prtDataSetClass/summarize.html">summarize</a></td>
-            <td class="m-help">Summarize the prtDataSetClass object&nbsp;</td>
+            <td class="m-help">Summarize the prtDataSetStandard object&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">protected 
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetClass/update.html">update</a></td>
+            <td class="m-help">Updated chached target info&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">protected 
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetClass/updateObservationsCache.html">updateObservationsCache</a></td>
+            <td class="m-help">default behaviour is to do nothing&nbsp;</td>
          </tr>
       </table>
    </body>

@@ -35,16 +35,16 @@
  
      Example:
  
-      TestDataSet = prtDataGenUniModal;       % Create some test and
-      TrainingDataSet = prtDataGenUniModal;   % training data
+      testDataSet = prtDataGenUniModal;       % Create some test and
+      trainingDataSet = prtDataGenUniModal;   % training data
       classifier = <span class="helptopic">prtClassGlrt</span>;              % Create a classifier
-      classifier = classifier.train(TrainingDataSet);    % Train
+      classifier = classifier.train(trainingDataSet);    % Train
       classifier.plot;
-      classified = classifier.run(TestDataSet);
+      classified = classifier.run(testDataSet);
       subplot(2,1,1);
       classifier.plot;
       subplot(2,1,2);
-      [pf,pd] = prtScoreRoc(classified,TestDataSet);
+      [pf,pd] = prtScoreRoc(classified,testDataSet);
       h = plot(pf,pd,'linewidth',3);
       title('ROC'); xlabel('Pf'); ylabel('Pd');</pre></div><!--after help --><!--seeAlso--><div class="footerlinktitle">See also</div><div class="footerlink"> <a href="./../prtClass.html">prtClass</a>, <a href="./../prtClassLogisticDiscriminant.html">prtClassLogisticDiscriminant</a>, <a href="./../prtClassBagging.html">prtClassBagging</a>,
      <a href="./../prtClassMap.html">prtClassMap</a>, <a href="./../prtClassCap.html">prtClassCap</a>, <a href="./../prtClassBinaryToMaryOneVsAll.html">prtClassBinaryToMaryOneVsAll</a>

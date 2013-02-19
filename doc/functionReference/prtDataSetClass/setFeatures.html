@@ -15,15 +15,11 @@
          </tr>
       </table>
       <div class="title">prtDataSetClass/setFeatures</div>
-      <div class="helptext"><pre><!--helptext -->  <span class="helptopic">setFeatures</span>   Set the features of a prtDataSetStandard object
+      <div class="helptext"><pre><!--helptext -->  dsOut = <span class="helptopic">setFeatures</span>(dataSet,data,indices)
+    Set the columns of dataSet.data corresponding to indices to
+    the input matrix, data:
  
-  dataSet = dataSet.<span class="helptopic">setFeatures</span>(FEATURES) set the features of
-  the dataSet object to FEATURES
- 
-  dataSet = dataSet.<span class="helptopic">setFeatures</span>(FEATURES, INDICES) set the features of
-  the dataSet object to FEATURES at the specified INDICES
-
-Help for <span class="helptopic">prtDataSetClass/setFeatures</span> is inherited from superclass <a href="./../prtDataSetStandard.html">prtDataSetStandard</a></pre></div><!--after help -->
+    dsOut.data(:,indices) = data;</pre></div><!--after help -->
       <!--Method-->
       <div class="sectiontitle">Method Details</div>
       <table class="class-details">

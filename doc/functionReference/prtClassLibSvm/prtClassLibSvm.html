@@ -33,8 +33,9 @@
  
           svmType       - Whether to use a C-SVM, nu-SVM, one-class
                          SVM, epsilon-SVR, or nu-SVR
-          kernelType    - Kernel type to use - linear, polynomial, rbf,
-                         or sigmoid 
+          kernelType    - Kernel type to use - linear (0), polynomial (1),
+                          rbf (2, default), sigmoid (3), or
+                          user-defined (4) - see below
           degree        - Kernel function parameter (some kernels)
           gamma         - Kernel function parameter (some kernels)
           coef0         - Kernel function parameter (some kernels)
@@ -62,6 +63,22 @@
       shrinking = 1;
       probabilityEstimates = 0;
       weight = 1;
+ 
+      userSpecKernel = [];  %only for kernelType = 4, see below
+ 
+    <span class="helptopic">prtClassLibSvm</span> allows the specification of user-defined kernels by
+    setting svm.kernelType to 4.  This requires further specification
+    of svm.userSpecKernel.  svm.userSpecKernel must be either a
+    function handle, fn(x,y) which outputs a matrix of size 
+    size(x,1) x size(y,1), or userSpecKernel can be a prtKernel object.
+ 
+    For example:
+      svm.kernelType = 4;
+      svm.userSpecKernel = @(x,y) (x*y'); % correlation kernel
+   
+      svm.kernelType = 4;
+      svm.userSpecKernel = prtKernelHyperbolicTangent; 
+ 
  
     Additional options can be specified by modifying the field 
     obj.libSvmOptions using the format found here:

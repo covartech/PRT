@@ -24,7 +24,6 @@
     description     - Description of the data set
     userData        - Structure for holding additional related to the
                       data set
-    actionData      - Structure for prtActions to place additional data
  
     observationInfo - Structure array holding additional
                       data per related to each observation
@@ -120,6 +119,14 @@
             <td class="m-help">A string naming the data set&nbsp;</td>
          </tr>
          <tr class="summary-item">
+            <td class="name"><a href="./prtDataSetBase/observationInfo.html">observationInfo</a></td>
+            <td class="m-help">Struct of observation information&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtDataSetBase/observationInfoInternal.html">observationInfoInternal</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
             <td class="name"><a href="./prtDataSetBase/observationNamesInternal.html">observationNamesInternal</a></td>
             <td class="m-help">The observations names&nbsp;</td>
          </tr>
@@ -141,6 +148,46 @@
                &nbsp;
                
             </td>
+            <td class="name"><a href="./prtDataSetBase/bootstrap.html">bootstrap</a></td>
+            <td class="m-help">dsBoot = bootstrap(dataSet,nSamples)&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">protected 
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetBase/catObservationInfo.html">catObservationInfo</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetBase/catObservations.html">catObservations</a></td>
+            <td class="m-help">dsOut = catObservations(dataSet1,dataSet2)&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetBase/getKFoldKeys.html">getKFoldKeys</a></td>
+            <td class="m-help">keys = getKFoldKeys(dataSet,K)&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetBase/getObservationInfo.html">getObservationInfo</a></td>
+            <td class="m-help">obsInfo = getObservationInfo(dataSet)&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
             <td class="name"><a href="./prtDataSetBase/getObservationNames.html">getObservationNames</a></td>
             <td class="m-help">Return DataSet's Observation Names&nbsp;</td>
          </tr>
@@ -149,8 +196,16 @@
                &nbsp;
                
             </td>
+            <td class="name"><a href="./prtDataSetBase/getObservations.html">getObservations</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
             <td class="name"><a href="./prtDataSetBase/getTargetNames.html">getTargetNames</a></td>
-            <td class="m-help">Return the target names of a dataset&nbsp;</td>
+            <td class="m-help">Return the target names from a dataset&nbsp;</td>
          </tr>
          <tr class="summary-item">
             <td class="attributes">
@@ -175,6 +230,46 @@
             </td>
             <td class="name"><a href="./prtDataSetBase/getY.html">getY</a></td>
             <td class="m-help">Shortcut for getTargets&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetBase/removeObservations.html">removeObservations</a></td>
+            <td class="m-help">dsOut = removeObservations(dataSet,indices)&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">protected 
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetBase/retainObservationInfo.html">retainObservationInfo</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetBase/retainObservations.html">retainObservations</a></td>
+            <td class="m-help">dsOut = removeObservations(dataSet,indices)&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetBase/select.html">select</a></td>
+            <td class="m-help">observations to retain by specifying a function&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetBase/setObservationInfo.html">setObservationInfo</a></td>
+            <td class="m-help">dataSet = setObservationInfo(dataSet,obsInfoStruct)&nbsp;</td>
          </tr>
          <tr class="summary-item">
             <td class="attributes">
@@ -217,11 +312,27 @@
             <td class="m-help">Shortcut for setTargets&nbsp;</td>
          </tr>
          <tr class="summary-item">
+            <td class="attributes">protected 
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetBase/update.html">update</a></td>
+            <td class="m-help">default behaviour is to do nothing&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">protected 
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetBase/updateObservationsCache.html">updateObservationsCache</a></td>
+            <td class="m-help">default behaviour is to do nothing&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
             <td class="attributes">Abstract 
                &nbsp;
                
             </td>
-            <td class="name"><a href="./prtDataSetBase/catObservations.html">catObservations</a></td>
+            <td class="name"><a href="./prtDataSetBase/catObservationData.html">catObservationData</a></td>
             <td class="m-help">&nbsp;</td>
          </tr>
          <tr class="summary-item">
@@ -229,7 +340,7 @@
                &nbsp;
                
             </td>
-            <td class="name"><a href="./prtDataSetBase/catTargets.html">catTargets</a></td>
+            <td class="name"><a href="./prtDataSetBase/getData.html">getData</a></td>
             <td class="m-help">&nbsp;</td>
          </tr>
          <tr class="summary-item">
@@ -237,7 +348,7 @@
                &nbsp;
                
             </td>
-            <td class="name"><a href="./prtDataSetBase/export.html">export</a></td>
+            <td class="name"><a href="./prtDataSetBase/getNumObservations.html">getNumObservations</a></td>
             <td class="m-help">&nbsp;</td>
          </tr>
          <tr class="summary-item">
@@ -245,15 +356,7 @@
                &nbsp;
                
             </td>
-            <td class="name"><a href="./prtDataSetBase/getObservations.html">getObservations</a></td>
-            <td class="m-help">Return the data by indices&nbsp;</td>
-         </tr>
-         <tr class="summary-item">
-            <td class="attributes">Abstract 
-               &nbsp;
-               
-            </td>
-            <td class="name"><a href="./prtDataSetBase/getObservationsAndTargets.html">getObservationsAndTargets</a></td>
+            <td class="name"><a href="./prtDataSetBase/getNumTargetDimensions.html">getNumTargetDimensions</a></td>
             <td class="m-help">&nbsp;</td>
          </tr>
          <tr class="summary-item">
@@ -269,71 +372,7 @@
                &nbsp;
                
             </td>
-            <td class="name"><a href="./prtDataSetBase/plot.html">plot</a></td>
-            <td class="m-help">&nbsp;</td>
-         </tr>
-         <tr class="summary-item">
-            <td class="attributes">Abstract 
-               &nbsp;
-               
-            </td>
-            <td class="name"><a href="./prtDataSetBase/removeObservations.html">removeObservations</a></td>
-            <td class="m-help">&nbsp;</td>
-         </tr>
-         <tr class="summary-item">
-            <td class="attributes">Abstract 
-               &nbsp;
-               
-            </td>
-            <td class="name"><a href="./prtDataSetBase/removeTargets.html">removeTargets</a></td>
-            <td class="m-help">&nbsp;</td>
-         </tr>
-         <tr class="summary-item">
-            <td class="attributes">Abstract 
-               &nbsp;
-               
-            </td>
-            <td class="name"><a href="./prtDataSetBase/retainObservations.html">retainObservations</a></td>
-            <td class="m-help">&nbsp;</td>
-         </tr>
-         <tr class="summary-item">
-            <td class="attributes">Abstract 
-               &nbsp;
-               
-            </td>
-            <td class="name"><a href="./prtDataSetBase/retainTargets.html">retainTargets</a></td>
-            <td class="m-help">&nbsp;</td>
-         </tr>
-         <tr class="summary-item">
-            <td class="attributes">Abstract 
-               &nbsp;
-               
-            </td>
-            <td class="name"><a href="./prtDataSetBase/setObservations.html">setObservations</a></td>
-            <td class="m-help">&nbsp;</td>
-         </tr>
-         <tr class="summary-item">
-            <td class="attributes">Abstract 
-               &nbsp;
-               
-            </td>
-            <td class="name"><a href="./prtDataSetBase/setObservationsAndTargets.html">setObservationsAndTargets</a></td>
-            <td class="m-help">&nbsp;</td>
-         </tr>
-         <tr class="summary-item">
-            <td class="attributes">Abstract 
-               &nbsp;
-               
-            </td>
-            <td class="name"><a href="./prtDataSetBase/setTargets.html">setTargets</a></td>
-            <td class="m-help">&nbsp;</td>
-         </tr>
-         <tr class="summary-item">
-            <td class="attributes">Abstract 
-               &nbsp;
-               
-            </td>
-            <td class="name"><a href="./prtDataSetBase/summarize.html">summarize</a></td>
+            <td class="name"><a href="./prtDataSetBase/retainObservationData.html">retainObservationData</a></td>
             <td class="m-help">&nbsp;</td>
          </tr>
       </table>

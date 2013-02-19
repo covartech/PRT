@@ -25,8 +25,8 @@
    prtAction object, for example a prtEval function. PARAMNAME
    must be a string that indicates the parameter of the
    prtAction that is to be optimized. PARAMVALS must be a
-   vector of possible values of the parameter that the
-   prtAction will be evaluated at.
+   vector of possible values of the parameter at which
+   prtAction will be evaluated.
  
    [OPTIMACT, PERF]  = <span class="helptopic">optimize</span>(...) returns a vector of
    performance values that correspond to each element of
@@ -36,7 +36,7 @@
  
    ds = prtDataGenBimodal;  % Load a data set
    knn = prtClassKnn;       % Create a classifier
-   kVec = 3:5:50;          % Create a vector of parameters to
+   kVec = 3:5:50;           % Create a vector of parameters to
                             % optimze over
  
   % Optimize over the range of k values, using the area under

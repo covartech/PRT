@@ -17,13 +17,13 @@
       <div class="title">prtFeatSelExhaustive/crossValidate</div>
       <div class="helptext"><pre><!--helptext -->  <span class="helptopic">crossValidate</span>  Cross validate prtAction using prtDataSet and cross validation keys.
  
-   OUTPUTDATASET = OBJ.<span class="helptopic">crossValidate</span>(DATASET, KEYS) cross
+   OUTPUTDATASET = OBJ.<span class="helptopic">crossValidate</span>(DATASET, KEYS) cross-
    validates the prtAction object OBJ using the prtDataSet
    DATASET and the KEYS. DATASET must be a labeled prtDataSet.
    KEYS must be a vector of integers with the same number of
-   elements as DataSet has observations.
+   elements as DATASET has observations.
  
-   The KEYS are are used to parition the input DataSet into
+   The KEYS are are used to parition the input DATASET into
    test and training data sets. For each unique key, a test set
    will be created out of the corresponding observations of the
    prtDataSet. The remaining observations will be used as
