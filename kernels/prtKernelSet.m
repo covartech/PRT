@@ -149,7 +149,10 @@ classdef prtKernelSet < prtKernel
             %Plot each kernel:
             h = zeros(length(Obj.kernelCell),1);
             for i = 1:length(Obj.kernelCell)
-                h(i) = Obj.kernelCell{i}.plot;
+                hT = Obj.kernelCell{i}.plot;
+                if ~isempty(hT)
+                    h(i) = hT;
+                end
             end
         end
     end
