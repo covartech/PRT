@@ -77,14 +77,14 @@ classdef prtKernelRbfNeighborhoodScaled < prtKernel
             if Obj.internalDataSet.nObservations == 0
                 dsOut = prtDataSetClass;
             else
-                gram = prtKernelRbfNeighboorhoodScaled.kernelFn(ds.getObservations,Obj.internalDataSet.getObservations,Obj.sigmas);
+                gram = prtKernelRbfNeighborhoodScaled.kernelFn(ds.getObservations,Obj.internalDataSet.getObservations,Obj.sigmas);
                 dsOut = ds.setObservations(gram);
             end
         end
     end
     
     methods
-        function Obj = prtKernelRbfNeighboorhoodScaled(varargin)
+        function Obj = prtKernelRbfNeighborhoodScaled(varargin)
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
         end
     end
