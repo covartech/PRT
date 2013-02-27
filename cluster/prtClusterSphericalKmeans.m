@@ -97,14 +97,14 @@ classdef prtClusterSphericalKmeans < prtCluster
         function dataSet = runAction(self,dataSet)
             
             X = dataSet.X;
-            inner = X*self.clusterCenters;
-
-            [val,indJ] = max(inner,[],2);
-            matInd = sub2ind(size(inner),(1:length(indJ))',indJ);
-            boolMat = false(size(inner));
-            boolMat(matInd) = true;
-
-            dataSet.X = double(boolMat);
+            inner = X*self.clusterCenters;  
+            dataSet.X = inner;
+            %             [val,indJ] = max(inner,[],2);
+            %             matInd = sub2ind(size(inner),(1:length(indJ))',indJ);
+            %             boolMat = false(size(inner));
+            %             boolMat(matInd) = true;
+            %
+            %             dataSet.X = double(boolMat);
 
 
         end
