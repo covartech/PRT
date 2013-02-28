@@ -13,7 +13,7 @@ function prtUtilApplyLicense(fileName,doIt)
 %   This functionality is too dangerous to DOC.  Just edit the M-file and
 %   poke around.
 
-% To make it do something, make doIt true.  
+% To make it do something, make doIt true...
 
 % Copyright (c) 2013 New Folder Consulting
 %
