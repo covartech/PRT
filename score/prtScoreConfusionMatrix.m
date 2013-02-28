@@ -123,4 +123,8 @@ if nargout
 else
     %prtUtilPlotConfusionMatrix(bsxfun(@rdivide,confusionMat,occurances),guessClassNames,truthClassNames);
     prtUtilPlotConfusionMatrix(confusionMat,guessClassNames,truthClassNames);
+    
+    pc = prtScorePercentCorrect(guess,truth);
+    title(sprintf('%.2f%% Correct',pc*100));
+
 end

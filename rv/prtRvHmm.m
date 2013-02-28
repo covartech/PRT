@@ -339,6 +339,7 @@ classdef prtRvHmm < prtRv
             for cellInd = 1:length(X)
                 data = X{cellInd};
                 
+                ll = nan(size(data,1),self.nComponents);
                 for state = 1:length(self.components)
                     ll(:,state) = self.components(state).logPdf(double(data));
                 end
