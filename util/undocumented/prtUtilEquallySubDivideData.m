@@ -14,7 +14,6 @@ function groupAssignment = prtUtilEquallySubDivideData(Y,nDivisions)
 %       datapoint. These are randomly drawn
 %
 
-% Copyright 2010, New Folder Consulting, L.L.C.
 
 if nDivisions > length(Y)
    warning('The number of requested divisions is larger than the amount of data. The number of divisions was changed to the length of the data.')

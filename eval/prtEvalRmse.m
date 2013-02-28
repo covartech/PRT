@@ -25,8 +25,6 @@ function rmse = prtEvalRmse(regressor,dataSet,nFolds)
 %   prtEvalMinCost
 
 
-% Copyright 2010, New Folder Consulting, L.L.C.
-
 assert(nargin >= 2,'prt:prtEvalRmse:BadInputs','prtEvalPercentCorrect requires two input arguments');
 assert(isa(regressor,'prtAction') && isa(dataSet,'prtDataSetBase'),'prt:prtEvalMse:BadInputs','prtEvalMse inputs must be sublcasses of prtClass and prtDataSetBase, but input one was a %s, and input 2 was a %s',class(regressor),class(dataSet));
 

@@ -15,6 +15,4 @@ function prtDir = prtRoot
 %   prtRoot
 %
 
-% Copyright 2010, New Folder Consulting, L.L.C.
-
 prtDir = fileparts(mfilename('fullpath'));

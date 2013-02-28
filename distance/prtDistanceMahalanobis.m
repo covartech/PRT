@@ -28,7 +28,6 @@ function D = prtDistanceMahalanobis(dataSet1,dataSet2,covar)
 % See also: prtDistanceCityBlock, prtDistanceLNorm, prtDistanceEuclidean,
 % prtDistanceSquare, prtDistanceChebychev
 
-% Copyright 2010, New Folder Consulting, L.L.C.
 
 [data1,data2] = prtUtilDistanceParseInputs(dataSet1,dataSet2);
 if nargin < 3

@@ -22,7 +22,6 @@ function D = prtDistanceLNorm(dataSet1,dataSet2,Lnorm)
 % See also: prtDistanceCityBlock, prtDistanceChebychev
 % prtDistanceMahalanobis, prtDistanceSquare, prtDistanceEuclidean
 
-% Copyright 2010, New Folder Consulting, L.L.C.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % A portion of IPDM from MATLAB Central is used in this function see

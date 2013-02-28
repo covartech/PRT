@@ -13,8 +13,6 @@ function DataSet = prtDataGenCircles
 %   prtDataGenMary, prtDataGenNoisySinc, prtDataGenOldFaithful,
 %   prtDataGenSpiral, prtDataGenUnimodal, prtDataGenUnimodal, prtDataGenXor
 
-% Copyright 2010, New Folder Consulting, L.L.C.
-
 nSamplesEachHypothesis = 200;
 noiseStd = 0.05;
 centers = [1 1; 1 1;];

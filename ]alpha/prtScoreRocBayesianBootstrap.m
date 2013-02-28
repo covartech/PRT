@@ -94,7 +94,6 @@ function varargout = prtScoreRocBayesianBootstrap(ds, y, nBootStrapSamples, nPfS
 %   ds = x.^2;
 %   prtScoreRocBayesianBootstrap(ds, y)
 
-% Copyright 2010, New Folder Consulting, L.L.C.
 
 [ds,y,classLabels] = prtUtilScoreParseFirstTwoInputs(ds,y);
 

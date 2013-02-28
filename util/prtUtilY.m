@@ -18,8 +18,6 @@ function Y = prtUtilY(varargin)
 %
 % See also: prtDataGen*
 
-% Copyright 2010, New Folder Consulting, L.L.C.
-
 Y = [];
 
 if nargin == 1

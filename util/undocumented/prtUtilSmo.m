@@ -8,7 +8,6 @@ function [alpha,beta] = prtUtilSmo(x,y,gram,c,tol)
 %   for Training Support Vector Machines, Microsoft Research Technical
 %   Report MSR-TR-98-14, (1998). 
 
-% Copyright 2010, New Folder Consulting, L.L.C.
 
 % For debugging:
 % rand('state',0) %randomness is used in randperm

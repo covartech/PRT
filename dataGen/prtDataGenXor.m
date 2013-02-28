@@ -16,7 +16,6 @@ function DataSet = prtDataGenXor(N)
 %   prtDataGenMary, prtDataGenNoisySinc, prtDataGenOldFaithful,
 %   prtDataGenSpiral, prtDataGenUnimodal, prtDataGenUnimodal, prtDataGenXor
 
-% Copyright 2010, New Folder Consulting, L.L.C.
 
 if nargin == 0
     nSamples = 200;

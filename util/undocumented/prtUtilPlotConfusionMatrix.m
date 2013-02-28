@@ -33,7 +33,6 @@ function varargout = prtUtilPlotConfusionMatrix(confusionMat,classLabels,classLa
 %
 % See also: confusionMatrix.m confusion2PercentCorrect.m
 
-% Copyright 2011, New Folder Consulting, L.L.C.
 
 nClass = size(confusionMat,1);
 

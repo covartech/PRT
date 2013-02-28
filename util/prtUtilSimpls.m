@@ -23,7 +23,6 @@ function [Bpls, R, P, Q, T, U] = prtUtilSimpls(X,Y,nComponents)
 %   U - Y Scores
 %
 
-% Copyright 2010, New Folder Consulting, L.L.C.
 
 [nSamples, nDimensions] = size(X);
 

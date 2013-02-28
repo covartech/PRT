@@ -34,8 +34,6 @@ function varargout = prtScoreRoc(ds,y,varargin)
 %   See also prtScoreConfusionMatrix, prtScoreRmse, prtScoreRocNfa,
 %            prtScorePercentCorrect, prtScoreAuc
 
-% Copyright 2010, New Folder Consulting, L.L.C.
-
 
 if (nargin == 1 || isempty(y)) && isa(ds,'prtDataSetClass')
 	y = ds;

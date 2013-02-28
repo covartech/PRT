@@ -14,7 +14,6 @@ function DataSet = prtDataGenFeatureSelection(nSamples,nFeatures,goodFeatures)
 %   plot(ds)
 %   
 
-% Copyright 2010, New Folder Consulting, L.L.C.
 
 % Internal Help:
 %   DATASET = prtDataGenFeatureSelection(nSamples) specifies the number of

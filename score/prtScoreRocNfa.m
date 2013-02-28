@@ -41,7 +41,6 @@ function varargout = prtScoreRocNfa(ds,y)
 %       PD - double Vec - Probability of detection
 %
 
-% Copyright 2010, New Folder Consulting, L.L.C.
 
 if nargin < 2
     [nf,pd,thresholds,auc] = prtScoreRoc(ds);

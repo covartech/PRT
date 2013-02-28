@@ -26,7 +26,6 @@ function percentCorrect = prtEvalPercentCorrect(classifier,dataSet,nFolds)
 %   prtEvalMinCost
 
 
-% Copyright 2010, New Folder Consulting, L.L.C.
 
 if nargin < 3 || isempty(nFolds)
     nFolds = 1;

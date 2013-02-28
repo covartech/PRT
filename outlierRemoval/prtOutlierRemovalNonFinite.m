@@ -24,9 +24,7 @@ classdef prtOutlierRemovalNonFinite < prtOutlierRemoval
     %
     %   See Also:  prtOutlierRemoval,
     %   prtOutlierRemovalMissingData ,prtOutlierRemovalNstd
-    
-    % Copyright 2011, New Folder Consulting, L.L.C.
-    
+        
     properties (SetAccess=private)
         % Required by prtAction
         name = 'Non Finite Data Outlier Removal';  % NonFinite Data Outlier Removal

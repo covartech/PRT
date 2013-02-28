@@ -15,9 +15,6 @@ function DataSet = prtDataGenSpiral(N)
 
 
 
-
-% Copyright 2010, New Folder Consulting, L.L.C.
-
 if nargin < 1
     nSamples = 200;
 else 

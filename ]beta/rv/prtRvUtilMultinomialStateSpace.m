@@ -21,7 +21,6 @@ function s = prtRvUtilMultinomialStateSpace(n,m)
 % Subfunctions: none
 % MAT-files required: none
 
-% Copyright 2011, New Folder Consulting, L.L.C.
 
 
 if nargin == 1

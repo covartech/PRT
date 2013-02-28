@@ -16,9 +16,6 @@ function DataSet = prtDataGenBimodal(N)
 %   prtDataGenMary, prtDataGenNoisySinc, prtDataGenOldFaithful,
 %   prtDataGenSpiral, prtDataGenUnimodal, prtDataGenUnimodal, prtDataGenXor
 
-
-% Copyright 2010, New Folder Consulting, L.L.C.
-
 if nargin == 0
 	N = 100;
 end

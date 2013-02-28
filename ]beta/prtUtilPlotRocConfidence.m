@@ -27,7 +27,6 @@ function varargout = prtUtilPlotRocConfidence(varargin)
 %  [pfSamples, pdMean, pdConfRegion, pds] = prtScoreRocBayesianBootstrap(Output.getObservations() ,Output.getTargets());
 %  prtUtilPlotRocConfidence(pfSamples,pdMean,pdConfRegion)
 
-% Copyright 2010, New Folder Consulting, L.L.C.
 
 faceAlphaValue = 0.4;
 

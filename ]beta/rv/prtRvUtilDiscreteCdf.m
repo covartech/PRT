@@ -3,8 +3,6 @@ function y = prtRvUtilDiscreteCdf(X,values,probabilities)
 %	Return the cdf of a discrete distribution with values and
 %	probabilities.
 
-% Copyright 2011, New Folder Consulting, L.L.C.
-
 [Xsort,IND] = sort(X);
 y = zeros(size(Xsort));
 for i = 1:size(Xsort(:),1);

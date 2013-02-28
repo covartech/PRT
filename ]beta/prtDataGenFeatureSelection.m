@@ -25,7 +25,6 @@ function DataSet = prtDataGenFeatureSelection(N, nExtraDims)
 %
 % See also: prtDataGenUnimodal
 
-% Copyright 2010, New Folder Consulting, L.L.C.
 
 if nargin < 1 || isempty(N);
     nSamples = 200;

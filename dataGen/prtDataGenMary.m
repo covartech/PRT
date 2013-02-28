@@ -18,8 +18,6 @@ function DataSet = prtDataGenMary
 %   prtDataGenSpiral, prtDataGenUnimodal, prtDataGenUnimodal, prtDataGenXor
 
 
-% Copyright 2010, New Folder Consulting, L.L.C.
-
 rvH1 = prtRvMvn('mu',[0 0],'sigma',0.5*eye(2));
 rvH2 = prtRvMvn('mu',[0.5 0.5],'sigma',0.1*eye(2));
 rvH3 = prtRvMvn('mu',[-2 -2],'sigma',eye(2));

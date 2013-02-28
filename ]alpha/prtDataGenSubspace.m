@@ -5,7 +5,6 @@ function DataSet = prtDataGenSubspace(subspaceH1,subspaceH0,N)
 %       X(i,:) = subspace * \theta
 %   Where each element of \theta is uniformly distributed.
 
-% Copyright 2010, New Folder Consulting, L.L.C.
 
 if nargin < 3
     N = 400;
