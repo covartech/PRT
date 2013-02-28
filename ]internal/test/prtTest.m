@@ -75,12 +75,11 @@ for iFun = 1:length(functionNames)
 end
 fprintf(' All Tests Evaluated.')
 
-
 if all(~overallFailure)
     fprintf(' All Tests Validated.\n')
 else
     fprintf('\n\n');
-    fprintf(' Some Tests have Failed Validation! %d overall failures.\n',sum(overallFailure))
+    fprintf(' Some Tests have Failed Validation! %d overall failures\n',sum(overallFailure))
     for iFun = 1:length(functionNames)
         if overallFailure(iFun)
             if executionFailure(iFun)
