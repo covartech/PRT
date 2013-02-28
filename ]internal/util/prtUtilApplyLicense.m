@@ -1,9 +1,48 @@
-function prtUtilApplyLicense(fileName)
+function prtUtilApplyLicense(fileName,doIt)
 % prtUtilApplyLicense(fileName)
 %   Used internaly to update license information in the PRT
+%
+%  Uses prtUtilLicense to get the right license string.
+%  Ignores files containing prtExternal or prtDoc.
+%  Ignores files that already have "% Copyright (c) 2013 New Folder" in
+%  them.
+%  May duplicate copyrights in other files, so be careful.
+%  When we update the license file, we need to write prtUtilRemoveLicense
+%
+%  Edit this M-file to see how to call it to make it actually do something.
+%   This functionality is too dangerous to DOC.  Just edit the M-file and
+%   poke around.
+
+% To make it do something, make doIt true.  
+
+% Copyright (c) 2013 New Folder
+%
+% Permission is hereby granted, free of charge, to any person obtaining a
+% copy of this software and associated documentation files (the
+% "Software"), to deal in the Software without restriction, including
+% without limitation the rights to use, copy, modify, merge, publish,
+% distribute, sublicense, and/or sell copies of the Software, and to permit
+% persons to whom the Software is furnished to do so, subject to the
+% following conditions:
+%
+% The above copyright notice and this permission notice shall be included
+% in all copies or substantial portions of the Software.
+%
+% THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+% OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+% MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+% NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+% DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+% OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+% USE OR OTHER DEALINGS IN THE SOFTWARE.
+
 
 % g = subDir(prtRoot,'*.m');
 % for i = 1:length(g); prtUtilApplyLicense(g{i}); end
+
+if nargin < 2
+    doIt = false;
+end
 
 if ~isempty(strfind(lower(fileName),'prtexternal'))
     [p,f] = fileparts(fileName);
@@ -27,6 +66,10 @@ if ~isempty(strfind(lower(s),'copyright'))
     %     edit(fileName);
 end
 fclose(fid);
+if ~isempty(strfind(s,'% Copyright (c) 2013 New Folder'))
+    fprintf('NFC Copyright already in: %s (Ignoring)\n',f);
+    return;
+end
 
 fid = fopen(fileName);
 cLine = fgetl(fid);
@@ -47,6 +90,7 @@ while ~startFound & ~feof(fid);
         end
     end
 end
+
 newStr = sprintf('%s\n\n%s\n%s\n',newStr,licenseStr,cLine);
 
 while ~feof(fid)
@@ -54,11 +98,12 @@ while ~feof(fid)
     newStr = sprintf('%s\n%s',newStr,cLine);
 end
 newStr = sprintf('%s\n',newStr);
-
 fclose(fid);
 
-[p,f] = fileparts(fileName);
-fOut = fullfile('C:\Users\Pete\Documents\MATLAB\toolboxes\nfPrt\test',[f,'.m']);
-fidOut = fopen(fOut,'w');
-fprintf(fidOut,'%s',newStr);
-fclose(fidOut);
+if doIt
+    fOut = fopen(fileName,'w');
+    fprintf(fOut,'%s',newStr);
+    fclose(fOut);
+else
+    disp('Not doing anything; see the help');
+end
