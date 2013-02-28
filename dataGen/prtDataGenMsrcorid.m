@@ -34,6 +34,10 @@ function [ds,allClasses] = prtDataGenMsrcorid(classList)
 %   of all the class designations from the MSRCORID.
 %
 %   Note that the output of prtDataGenMsrcorid is a prtDataSetCellArray.
+%
+%   % Example:
+%   ds = prtDataGenMsrcorid;
+%   imshow(ds.X{1});
 
 
 prtPath('beta')
