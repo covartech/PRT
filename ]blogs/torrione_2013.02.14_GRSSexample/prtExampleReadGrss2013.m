@@ -11,7 +11,7 @@ function [dsCasi,dsLidar] = prtExampleReadGrss2013(baseDir)
 %     http://hyperspectral.ee.uh.edu/?page_id=459
 %  
 
-% Copyright (c) 2013 New Folder
+% Copyright (c) 2013 New Folder Consulting
 %
 % Permission is hereby granted, free of charge, to any person obtaining a
 % copy of this software and associated documentation files (the

@@ -8,7 +8,7 @@ function [alpha,beta] = prtUtilSmo(x,y,gram,c,tol)
 %   for Training Support Vector Machines, Microsoft Research Technical
 %   Report MSR-TR-98-14, (1998). 
 
-% Copyright (c) 2013 New Folder
+% Copyright (c) 2013 New Folder Consulting
 %
 % Permission is hereby granted, free of charge, to any person obtaining a
 % copy of this software and associated documentation files (the

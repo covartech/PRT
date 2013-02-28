@@ -22,7 +22,7 @@ function D = prtDistanceLNorm(dataSet1,dataSet2,Lnorm)
 % See also: prtDistanceCityBlock, prtDistanceChebychev
 % prtDistanceMahalanobis, prtDistanceSquare, prtDistanceEuclidean
 
-% Copyright (c) 2013 New Folder
+% Copyright (c) 2013 New Folder Consulting
 %
 % Permission is hereby granted, free of charge, to any person obtaining a
 % copy of this software and associated documentation files (the

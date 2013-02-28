@@ -5,7 +5,7 @@ function obj = prtUiSubplot(inputSpec,constructorFun)
 % obj = prtUiSubplot([2,2,1:2],prtUiManagerAxesType1);
 % obj = prtUiSubplot([2,2],prtUiManagerAxesType1);
 
-% Copyright (c) 2013 New Folder
+% Copyright (c) 2013 New Folder Consulting
 %
 % Permission is hereby granted, free of charge, to any person obtaining a
 % copy of this software and associated documentation files (the

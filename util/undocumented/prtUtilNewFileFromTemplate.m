@@ -11,7 +11,7 @@ function prtUtilNewFileFromTemplate(defaultFileName,preferredMfilePrefix,templat
 %       Also replace any occurances of find# with the string replace#.
 %    
 
-% Copyright (c) 2013 New Folder
+% Copyright (c) 2013 New Folder Consulting
 %
 % Permission is hereby granted, free of charge, to any person obtaining a
 % copy of this software and associated documentation files (the

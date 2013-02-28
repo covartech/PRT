@@ -25,7 +25,7 @@ classdef prtDataTypeImage < prtUtilActionDataAccess
     % imgFromFile = prtDataTypeImage('peppers.png');
     %
 
-% Copyright (c) 2013 New Folder
+% Copyright (c) 2013 New Folder Consulting
 %
 % Permission is hereby granted, free of charge, to any person obtaining a
 % copy of this software and associated documentation files (the

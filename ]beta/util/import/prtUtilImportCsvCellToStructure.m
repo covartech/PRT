@@ -9,7 +9,7 @@ function [structure,nonNumericFields,originalFnames] = prtUtilImportCsvCellToStr
 %   string or numeric values, where each column has a consistent type
 %
 
-% Copyright (c) 2013 New Folder
+% Copyright (c) 2013 New Folder Consulting
 %
 % Permission is hereby granted, free of charge, to any person obtaining a
 % copy of this software and associated documentation files (the

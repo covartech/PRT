@@ -3,7 +3,7 @@ function tf = prtUtilDataSetClassCheck(proposedDataSetClass, dataSetRequirement)
 % Determines whether proposedDataSetClass is acceptable to use as input to
 % prtAction that states that dataSetRequirement is require for input
 
-% Copyright (c) 2013 New Folder
+% Copyright (c) 2013 New Folder Consulting
 %
 % Permission is hereby granted, free of charge, to any person obtaining a
 % copy of this software and associated documentation files (the

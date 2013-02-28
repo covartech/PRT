@@ -35,7 +35,7 @@ function C = prtUtilNextChoose(N,K)
 %
 % See also,  nchoosek, perms, combinator, npermutek (both on the FEX)
 
-% Copyright (c) 2013 New Folder
+% Copyright (c) 2013 New Folder Consulting
 %
 % Permission is hereby granted, free of charge, to any person obtaining a
 % copy of this software and associated documentation files (the

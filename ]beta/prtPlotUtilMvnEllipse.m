@@ -6,7 +6,7 @@ function varargout = prtPlotUtilMvnEllipse(mu,Sigma,nStds,n)
 % Adapted From: http://www.mathworks.com/matlabcentral/fileexchange/8793
 % Then re-adpated from Beals Mixture of Factor Analyzes Code
 
-% Copyright (c) 2013 New Folder
+% Copyright (c) 2013 New Folder Consulting
 %
 % Permission is hereby granted, free of charge, to any person obtaining a
 % copy of this software and associated documentation files (the

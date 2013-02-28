@@ -16,7 +16,7 @@ function cslCell = prtUtilStruct2cslCell(S)
 % Author: Kenneth D. Morton Jr.
 % Date Created: 05-Aug-2008
 
-% Copyright (c) 2013 New Folder
+% Copyright (c) 2013 New Folder Consulting
 %
 % Permission is hereby granted, free of charge, to any person obtaining a
 % copy of this software and associated documentation files (the

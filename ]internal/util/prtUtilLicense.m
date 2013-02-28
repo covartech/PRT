@@ -1,6 +1,6 @@
 function s = prtUtilLicense
 
-% Copyright (c) 2013 New Folder
+% Copyright (c) 2013 New Folder Consulting
 %
 % Permission is hereby granted, free of charge, to any person obtaining a
 % copy of this software and associated documentation files (the
@@ -22,7 +22,7 @@ function s = prtUtilLicense
 % USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-s = cat(2,'% Copyright (c) 2013 New Folder',char(10), '%', char(10),...
+s = cat(2,'% Copyright (c) 2013 New Folder Consulting Consulting',char(10), '%', char(10),...
     '% Permission is hereby granted, free of charge, to any person obtaining a',char(10),...
     '% copy of this software and associated documentation files (the',char(10),...
     '% "Software"), to deal in the Software without restriction, including',char(10),...

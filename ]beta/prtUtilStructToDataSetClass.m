@@ -8,7 +8,7 @@ function ds = prtUtilStructToDataSetClass(S)
 %   S must be a vector structure array.
 %   Each field of S specified as a datafField must be a scalar numeric value.
 
-% Copyright (c) 2013 New Folder
+% Copyright (c) 2013 New Folder Consulting
 %
 % Permission is hereby granted, free of charge, to any person obtaining a
 % copy of this software and associated documentation files (the

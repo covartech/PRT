@@ -2,7 +2,7 @@ function [graph,nodeNames,nodeInfo] = prtUtilReadGml(file)
 %[graph,names,etc] = prtUtilReadGml(file)
 %  Read graph-spec files with .gml formating.
 
-% Copyright (c) 2013 New Folder
+% Copyright (c) 2013 New Folder Consulting
 %
 % Permission is hereby granted, free of charge, to any person obtaining a
 % copy of this software and associated documentation files (the

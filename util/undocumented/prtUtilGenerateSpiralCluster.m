@@ -1,7 +1,7 @@
 function X = generateSpiralCluster(t,f,theta,mux,muy,dx,dy,std)
 % xxx Need Help xxx
 
-% Copyright (c) 2013 New Folder
+% Copyright (c) 2013 New Folder Consulting
 %
 % Permission is hereby granted, free of charge, to any person obtaining a
 % copy of this software and associated documentation files (the

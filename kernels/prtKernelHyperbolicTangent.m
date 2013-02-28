@@ -45,7 +45,7 @@ classdef prtKernelHyperbolicTangent < prtKernel
     %   See also: prtKernel,prtKernelSet, prtKernelDc, prtKernelDirect,
     %   prtKernelPolynomial, prtKernelRbf, prtKernelRbfNdimensionScale, 
 
-% Copyright (c) 2013 New Folder
+% Copyright (c) 2013 New Folder Consulting
 %
 % Permission is hereby granted, free of charge, to any person obtaining a
 % copy of this software and associated documentation files (the

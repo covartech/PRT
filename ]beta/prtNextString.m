@@ -40,7 +40,7 @@ function C = prtNextString(N,K)
 % Date: 6/9/2009
 % Reference:  http://mathworld.wolfram.com/BallPicking.html
 
-% Copyright (c) 2013 New Folder
+% Copyright (c) 2013 New Folder Consulting
 %
 % Permission is hereby granted, free of charge, to any person obtaining a
 % copy of this software and associated documentation files (the

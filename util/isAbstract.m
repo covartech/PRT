@@ -4,7 +4,7 @@ function ab = isAbstract(class)
 %  ABSTRACT = ISABSTRACT(CLASS) returns true of the string CLASS refers to
 %  an abstract class, and false otherwise.
 
-% Copyright (c) 2013 New Folder
+% Copyright (c) 2013 New Folder Consulting
 %
 % Permission is hereby granted, free of charge, to any person obtaining a
 % copy of this software and associated documentation files (the

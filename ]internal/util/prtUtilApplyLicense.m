@@ -4,7 +4,7 @@ function prtUtilApplyLicense(fileName,doIt)
 %
 %  Uses prtUtilLicense to get the right license string.
 %  Ignores files containing prtExternal or prtDoc.
-%  Ignores files that already have "% Copyright (c) 2013 New Folder" in
+%  Ignores files that already have "% Copyright (c) 2013 New Folder Consulting" in
 %  them.
 %  May duplicate copyrights in other files, so be careful.
 %  When we update the license file, we need to write prtUtilRemoveLicense
@@ -15,7 +15,7 @@ function prtUtilApplyLicense(fileName,doIt)
 
 % To make it do something, make doIt true.  
 
-% Copyright (c) 2013 New Folder
+% Copyright (c) 2013 New Folder Consulting
 %
 % Permission is hereby granted, free of charge, to any person obtaining a
 % copy of this software and associated documentation files (the
@@ -60,15 +60,16 @@ licenseStr = prtUtilLicense;
 
 fid = fopen(fileName);
 s = fscanf(fid,'%c');
+fclose(fid);
+
+if ~isempty(strfind(s,'% Copyright (c) 2013 New Folder Consulting'))
+    fprintf('NFC Copyright already in: %s (Ignoring)\n',f);
+    return;
+end
 if ~isempty(strfind(lower(s),'copyright'))
     [p,f] = fileparts(fileName);
     fprintf('Copyright found in: %s (OK if it doesn''t conflict with ours)\n',f);
     %     edit(fileName);
-end
-fclose(fid);
-if ~isempty(strfind(s,'% Copyright (c) 2013 New Folder'))
-    fprintf('NFC Copyright already in: %s (Ignoring)\n',f);
-    return;
 end
 
 fid = fopen(fileName);

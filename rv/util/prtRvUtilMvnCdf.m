@@ -11,7 +11,7 @@ function Y = prtRvUtilMvnCdf(X,mu,Sigma)
 % Outputs:
 %   Y - The value of the log of the pdf at the specified X values
 
-% Copyright (c) 2013 New Folder
+% Copyright (c) 2013 New Folder Consulting
 %
 % Permission is hereby granted, free of charge, to any person obtaining a
 % copy of this software and associated documentation files (the

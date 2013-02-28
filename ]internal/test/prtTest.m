@@ -6,7 +6,7 @@ function prtTest(functionNames)
 % Each of these functions must take zero input arguments and return a 
 % logical saying whether the code executed properly.
 
-% Copyright (c) 2013 New Folder
+% Copyright (c) 2013 New Folder Consulting
 %
 % Permission is hereby granted, free of charge, to any person obtaining a
 % copy of this software and associated documentation files (the

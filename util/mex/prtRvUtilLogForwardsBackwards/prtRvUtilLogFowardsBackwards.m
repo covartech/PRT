@@ -13,7 +13,7 @@
 %   gamma - State probability by time - nObservations x nStates 
 %   xi - state transition probability by time - nStates x nStates x nObservations
 
-% Copyright (c) 2013 New Folder
+% Copyright (c) 2013 New Folder Consulting
 %
 % Permission is hereby granted, free of charge, to any person obtaining a
 % copy of this software and associated documentation files (the

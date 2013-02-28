@@ -27,7 +27,7 @@ classdef prtClusterSphericalKmeans < prtCluster
     %    See the entry in ]blogs\torrione_2013.03.15_CoatesNg_Kmeans for
     %    example usage
 
-% Copyright (c) 2013 New Folder
+% Copyright (c) 2013 New Folder Consulting
 %
 % Permission is hereby granted, free of charge, to any person obtaining a
 % copy of this software and associated documentation files (the

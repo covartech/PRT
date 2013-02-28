@@ -13,7 +13,7 @@
 %   vbCheckConvergence - Used to check convergence at the end of each VB
 %       iteration. Checks the percentage change in negative free energy.
 
-% Copyright (c) 2013 New Folder
+% Copyright (c) 2013 New Folder Consulting
 %
 % Permission is hereby granted, free of charge, to any person obtaining a
 % copy of this software and associated documentation files (the

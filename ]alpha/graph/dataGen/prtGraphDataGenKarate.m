@@ -10,7 +10,7 @@ function graph = prtGraphDataGenKarate
 % Zachary, An information flow model for conflict and fission in small
 % groups, Journal of Anthropological Research 33, 452-473 (1977).
 
-% Copyright (c) 2013 New Folder
+% Copyright (c) 2013 New Folder Consulting
 %
 % Permission is hereby granted, free of charge, to any person obtaining a
 % copy of this software and associated documentation files (the

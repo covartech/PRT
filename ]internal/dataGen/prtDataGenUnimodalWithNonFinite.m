@@ -3,7 +3,7 @@ function DataSet = prtDataGenUnimodalWithNonFinite(N,mu0,mu1,sigma0,sigma1)
 %   non-finite (nan and inf) elements.  This is intended for internal
 %   testing.
 
-% Copyright (c) 2013 New Folder
+% Copyright (c) 2013 New Folder Consulting
 %
 % Permission is hereby granted, free of charge, to any person obtaining a
 % copy of this software and associated documentation files (the

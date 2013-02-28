@@ -2,7 +2,7 @@ function prtPath(varargin)
 % prtPath Adds necessary directories for the PRT to your path.
 %
 
-% Copyright (c) 2013 New Folder
+% Copyright (c) 2013 New Folder Consulting
 %
 % Permission is hereby granted, free of charge, to any person obtaining a
 % copy of this software and associated documentation files (the

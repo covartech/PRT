@@ -20,7 +20,7 @@ function [DataSet,A,S] = prtDataGenSparseFactors(dimensionality,nSamples,nFactor
 %       subplot(2,1,1); plot(A); title('Loadings A');
 %       subplot(2,1,2); plot(X'); title('Data X');
 
-% Copyright (c) 2013 New Folder
+% Copyright (c) 2013 New Folder Consulting
 %
 % Permission is hereby granted, free of charge, to any person obtaining a
 % copy of this software and associated documentation files (the

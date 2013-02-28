@@ -7,7 +7,7 @@
 % long time very widely used in the ML literature as an example of an easy
 % to use real data set to evaluate new ideas.
 
-% Copyright (c) 2013 New Folder
+% Copyright (c) 2013 New Folder Consulting
 %
 % Permission is hereby granted, free of charge, to any person obtaining a
 % copy of this software and associated documentation files (the

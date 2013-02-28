@@ -5,7 +5,7 @@ classdef prtUiDataSetClassExploreWidget < prtUiManagerPanel
     %   Make the legened stay where we put it
     %   uicontext menu feature select
 
-% Copyright (c) 2013 New Folder
+% Copyright (c) 2013 New Folder Consulting
 %
 % Permission is hereby granted, free of charge, to any person obtaining a
 % copy of this software and associated documentation files (the

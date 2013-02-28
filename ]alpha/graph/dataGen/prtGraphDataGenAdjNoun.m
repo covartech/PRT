@@ -13,7 +13,7 @@ function graph = prtGraphDataGenAdjNoun
 % community structure in networks using the eigenvectors of matrices,
 % Preprint physics/0605087 (2006).
 
-% Copyright (c) 2013 New Folder
+% Copyright (c) 2013 New Folder Consulting
 %
 % Permission is hereby granted, free of charge, to any person obtaining a
 % copy of this software and associated documentation files (the

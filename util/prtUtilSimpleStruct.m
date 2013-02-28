@@ -4,7 +4,7 @@ function s = prtUtilSimpleStruct(varargin)
 %s = prtUtilSimpleStruct('asdf',randn(100,1),'fff',randn(100,1),'asfsadf',prtUtilCellPrintf('%s',num2cell(1:100)'))
 %s = prtUtilSimpleStruct(origStruct,...)
 
-% Copyright (c) 2013 New Folder
+% Copyright (c) 2013 New Folder Consulting
 %
 % Permission is hereby granted, free of charge, to any person obtaining a
 % copy of this software and associated documentation files (the

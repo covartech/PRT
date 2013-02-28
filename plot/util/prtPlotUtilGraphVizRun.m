@@ -8,7 +8,7 @@ function FileInfo = prtPlotUtilGraphVizRun(connectivity)
 %   This requires that GraphViz is installed and available from the command
 %   prompt
 
-% Copyright (c) 2013 New Folder
+% Copyright (c) 2013 New Folder Consulting
 %
 % Permission is hereby granted, free of charge, to any person obtaining a
 % copy of this software and associated documentation files (the

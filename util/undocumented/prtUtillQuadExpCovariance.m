@@ -6,7 +6,7 @@ function K = prtUtillQuadExpCovariance(x1, x2, theta0, theta1, theta2, theta3)
 %
 % Bishop, Pattern Recognition and Machine Learning Eq. 6.63
 
-% Copyright (c) 2013 New Folder
+% Copyright (c) 2013 New Folder Consulting
 %
 % Permission is hereby granted, free of charge, to any person obtaining a
 % copy of this software and associated documentation files (the
