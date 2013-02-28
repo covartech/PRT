@@ -1,5 +1,5 @@
 % Pattern Recognition Toolbox
-% Version 4.0 (R2008a+) 18-Feb-2013
+% Version 4.0.01 (R2008a+) 27-Feb-2013
 
 % Copyright (c) 2013 New Folder
 %
