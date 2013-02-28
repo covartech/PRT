@@ -208,6 +208,13 @@ classdef prtUiDataSetClassPlot < prtUiManagerPanel
                     hands = self.handles.lines(:);
                 end
                 self.handles.legend = legend(hands,strs,'Location','SouthEast');
+                
+                % Get a function handle to refresh this legend
+                uic = get(self.handles.legend,'UIContextMenu');
+                uimenu_refresh = findall(uic,'Label','Refresh');
+                self.handles.legendRefresh =  get(uimenu_refresh,'Callback');
+                
+                %hgfeval(callback,[],[]);
             end
         end
         
@@ -312,6 +319,33 @@ classdef prtUiDataSetClassPlot < prtUiManagerPanel
         function set.isVisibleUnlabeled(self, val)
             self.isVisibleUnlabeled = val;
             self.setUnlabeledAttributes();
+        end
+        
+        function set.legendStrings(self, val)
+            self.legendStrings = val;
+            self.updateLegendStrings;
+        end
+        
+        function set.legendStringUnlabeled(self, val)
+            self.legendStringUnlabeled = val;
+            self.updateLegendStrings;
+        end
+        function updateLegendStrings(self)
+            if isfield(self.handles,'legend') && ishandle(self.handles.legend)
+                
+                if self.dataSet.hasUnlabeled
+                    strs = cat(1,self.legendStrings,{self.legendStringUnlabeled});
+                else
+                    strs = self.legendStrings;
+                end
+                
+                set(self.handles.legend,'String',strs);
+            end
+        end
+        function legendRefresh(self)
+            try %#ok<TRYNC>
+                hgfeval(self.handles.legendRefresh,[],[]); 
+            end
         end
         
         function set.featureIndices(self, val)
