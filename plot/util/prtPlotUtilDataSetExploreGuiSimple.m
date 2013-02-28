@@ -107,8 +107,8 @@ updatePlot;
     
     function [rotatedData,rotatedClick] = rotateDataAndClick(data)
         %[rotatedData,rotatedClick] = rotateDataAndClick(data)
-        % Used internally; from Click3dPoint from matlab central; need
-        % copyright here.
+        % Used internally; from Click3dPoint from matlab central; Copyright
+        % follows
         
         %         Copyright (c) 2009, Babak Taati
         % All rights reserved.

@@ -1,14 +1,30 @@
 function prtUtilApplyLicense(fileName)
+% prtUtilApplyLicense(fileName)
+%   Used internaly to update license information in the PRT
+
+% g = subDir(prtRoot,'*.m');
+% for i = 1:length(g); prtUtilApplyLicense(g{i}); end
+
+if ~isempty(strfind(lower(fileName),'prtexternal'))
+    [p,f] = fileparts(fileName);
+    fprintf('prtExternal file ignored: %s (in %s)\n',p,f);
+    return;
+end
+if ~isempty(strfind(lower(fileName),'prtdoc'))
+    [p,f] = fileparts(fileName);
+    fprintf('prtDoc file ignored: %s (in %s)\n',f,p);
+    return;
+end 
 
 newStr = '';
-
 licenseStr = prtUtilLicense;
 
 fid = fopen(fileName);
 s = fscanf(fid,'%c');
 if ~isempty(strfind(lower(s),'copyright'))
-    fprintf('A copyright was found in file %s\n',fileName);
-    edit(fileName);
+    [p,f] = fileparts(fileName);
+    fprintf('Copyright found in: %s (OK if it doesn''t conflict with ours)\n',f);
+    %     edit(fileName);
 end
 fclose(fid);
 
