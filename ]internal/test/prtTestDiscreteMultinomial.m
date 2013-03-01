@@ -188,12 +188,13 @@ end
 
 
 % Should error out on non-count matrix input
-try
-    RV = prtRvMultinomial;
-    Y = [ 1 2 3; 4 5 6];
-    RV = mle(RV,Y);
-    disp('prtRvMultinomial non-count matrix input');
-    result = false;
-catch
-    % no-op
-end
+% I decided that it shouldn't error - KDM 2013-03-01
+% try
+%     RV = prtRvMultinomial;
+%     Y = [ 1 2 3; 4 5 6];
+%     RV = mle(RV,Y);
+%     disp('prtRvMultinomial non-count matrix input');
+%     result = false;
+% catch
+%     % no-op
+% end

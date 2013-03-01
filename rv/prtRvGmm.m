@@ -264,12 +264,12 @@ classdef prtRvGmm < prtRv
             end
             
             % Pool covariances
-            meanCov = zeros(size(RMix.components(1).covariance));
+            meanCov = zeros(size(RMix.components(1).sigma));
             for iComp = 1:RMix.nComponents
-                meanCov = meanCov + RMix.mixingProportions.probabilities(iComp)*RMix.components(iComp).covariance;
+                meanCov = meanCov + RMix.mixingProportions.probabilities(iComp)*RMix.components(iComp).sigma;
             end
             for iComp = 1:RMix.nComponents
-                RMix.components(iComp).covariance = meanCov;
+                RMix.components(iComp).sigma = meanCov;
             end
         end
     end

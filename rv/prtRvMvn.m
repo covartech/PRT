@@ -99,6 +99,10 @@ classdef prtRvMvn < prtRv & prtRvMemebershipModel
         covarianceStructureDepHelper = 'full';
     end
     
+    properties (Hidden = true)
+        covarianceBias = [];
+    end
+    
     properties (Hidden = true, Dependent = true)
         nDimensions
     end
@@ -347,6 +351,10 @@ classdef prtRvMvn < prtRv & prtRvMemebershipModel
                     R.sigmaDepHelper = eye(size(sigma)).*sigma;
                 case 'spherical'
                     R.sigmaDepHelper = eye(size(sigma))*mean(diag(sigma));
+            end
+            
+            if ~isempty(R.covarianceBias)
+                R.sigmaDepHelper = R.sigmaDepHelper + R.covarianceBias.*eye(size(sigma));
             end
             
             [dontNeed, cholErr] = chol(R.sigmaDepHelper); %#ok<ASGLU>

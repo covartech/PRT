@@ -114,9 +114,14 @@ classdef prtRvMultinomial < prtRv & prtRvMemebershipModel
             %             if ~isequal(unique(X(:)),[0;1])
             %                 error('prtRvMultinomial:invalidData','Input matrix must contain only ones and zeros');
             %             end
-            if ~prtUtilApproxEqual(sum(X,2),1,1e-6);
-                error('prtRvMultinomial:invalidData','Rows of input data must contain no more than one "1"');
-            end
+            
+            % Do we really want to or need to enforce this?
+            % Can't we allow learning of the probability from multinomial
+            % draws that had N greater than 1?
+            % I don't see why not. - KDM 2013-03-01
+            %if ~prtUtilApproxEqual(sum(X,2),1,1e-6);
+            %    error('prtRvMultinomial:invalidData','Rows of input data must contain no more than one "1"');
+            %end
             
             X = R.dataInputParse(X); % Basic error checking etc
             
