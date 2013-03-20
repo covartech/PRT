@@ -37,7 +37,7 @@ classdef prtOptionsRvPlot
     % xxx Need Help xxx
     properties
         nSamplesPerDim = [100 40 20]; % Number of samples to use for plotting
-        colorMapFunction = @(n)flipud(hot(n)); % Two class colormap function handle
+        colorMapFunction = @(n)hot(n); % Two class colormap function handle
         nColorMapSamples = 256;
     end
     

@@ -1,27 +1,27 @@
-classdef prtUiDataSetClassPlot < prtUiManagerPanel
-
-% Copyright (c) 2013 New Folder Consulting
-%
-% Permission is hereby granted, free of charge, to any person obtaining a
-% copy of this software and associated documentation files (the
-% "Software"), to deal in the Software without restriction, including
-% without limitation the rights to use, copy, modify, merge, publish,
-% distribute, sublicense, and/or sell copies of the Software, and to permit
-% persons to whom the Software is furnished to do so, subject to the
-% following conditions:
-%
-% The above copyright notice and this permission notice shall be included
-% in all copies or substantial portions of the Software.
-%
-% THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-% OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-% MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-% NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-% DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-% OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-% USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-
+classdef prtUiDataSetClassPlot < hgsetget
+    
+    % Copyright (c) 2013 New Folder Consulting
+    %
+    % Permission is hereby granted, free of charge, to any person obtaining a
+    % copy of this software and associated documentation files (the
+    % "Software"), to deal in the Software without restriction, including
+    % without limitation the rights to use, copy, modify, merge, publish,
+    % distribute, sublicense, and/or sell copies of the Software, and to permit
+    % persons to whom the Software is furnished to do so, subject to the
+    % following conditions:
+    %
+    % The above copyright notice and this permission notice shall be included
+    % in all copies or substantial portions of the Software.
+    %
+    % THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+    % OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+    % MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+    % NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+    % DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+    % OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+    % USE OR OTHER DEALINGS IN THE SOFTWARE.
+    
+    
     % ds = prtDataGenIris;
     % p = prtUiDataSetClassPlot(ds);
     %
@@ -54,7 +54,7 @@ classdef prtUiDataSetClassPlot < prtUiManagerPanel
         defaultMarkerSize = 8;
         defaultIsVisible = true;
         
-        % These will be set 
+        % These will be set
         featureIndices = []; %1, 2 or 3 natural numbers
         
         markerSizes = [];
@@ -62,7 +62,7 @@ classdef prtUiDataSetClassPlot < prtUiManagerPanel
         edgeColors = [];
         markerLineWidths = [];
         markers = [];
-        isVisible = []; 
+        isVisible = [];
         
         legendStrings = {};
         featureNames = {};
@@ -76,7 +76,7 @@ classdef prtUiDataSetClassPlot < prtUiManagerPanel
         isVisibleUnlabeled = true;
         
         legendStringUnlabeled = prtPlotUtilUnlabeledLegendString;
-    
+        
         madeThisWindow = false;
     end
     
@@ -95,35 +95,43 @@ classdef prtUiDataSetClassPlot < prtUiManagerPanel
             init(self);
         end
         
-        function create(self)
-            
-            self.handles.figure = figure('Name',self.titleStr);
-            
-            self.managedHandle = uipanel(self.handles.figure, ...
-                'units','normalized',...
-                'BorderType','none',...
-                'Position',[0 0 1 1]);
-            
-            self.madeThisWindow = true;
-        end
-        
         function init(self)
             if isempty(self.dataSet)
                 error('prt:prtDataSetClassPlot:noDataSet','dataSet must be defined');
             end
             
-            self.initAxes();
+            initContainerGraphics(self);
             
             self.setDataSetDependentProperties();
             self.plot();
         end
-        function initAxes(self)
-            if isempty(self.managedHandle) || ~ishandle(self.managedHandle)
-                % The figure has closed or never existed
-                % so I guess we will call create
-                self.create();
+        function initContainerGraphics(self)
+            
+            % Check if there is currently an axis
+            % If that is the case then we should
+            if ~isfield(self.handles,'axes') || isempty(self.handles.axes)
+                maybeGcf = get(0,'CurrentFigure');
+                if isempty(maybeGcf)
+                    % No figure open
+                    self.initFigure();
+                else
+                    self.handles.figure = gcf;
+                end
+                
+                maybeGca = get(self.handles.figure,'CurrentAxes');
+                if isempty(maybeGca);
+                    self.initAxes();
+                else
+                    self.handles.axes = gca;
+                end
             end
-            self.handles.axes = axes('parent', self.managedHandle);
+        end
+        
+        function initFigure(self)
+            self.handles.figure = figure('Name',self.titleStr);
+        end
+        function initAxes(self)
+            self.handles.axes = axes('parent', self.handles.figure);
         end
         
         function setDataSetDependentProperties(self)
@@ -151,9 +159,9 @@ classdef prtUiDataSetClassPlot < prtUiManagerPanel
             %   dataSet.plot() Plots the prtDataSetClass object.
             
             if ~ishandle(self.handles.axes)
-                % Something happen to our axes? What should we do? quit? 
+                % Something happen to our axes? What should we do? quit?
                 % I decided to just remake the axes
-                self.initAxes();
+                initContainerGraphics(self);
             end
             % make our axes the current axes;
             axes(self.handles.axes);
@@ -188,7 +196,7 @@ classdef prtUiDataSetClassPlot < prtUiManagerPanel
                 else
                     cX = cRealX;
                 end
-                    
+                
                 self.handles.lineUnlabeled = prtPlotUtilScatter(cX, self.featureNames, self.markerUnlabeled, self.colorUnlabeled, self.edgeColorUnlabeled, self.markerLineWidthUnlabeled, self.markerSizeUnlabeled);
                 hold on;
             end
@@ -220,7 +228,7 @@ classdef prtUiDataSetClassPlot < prtUiManagerPanel
             % Set title
             title(self.dataSet.name);
             
-             % Create legend
+            % Create legend
             if self.dataSet.isLabeled
                 if self.dataSet.hasUnlabeled
                     strs = cat(1,self.legendStrings,{self.legendStringUnlabeled});
@@ -276,15 +284,15 @@ classdef prtUiDataSetClassPlot < prtUiManagerPanel
             end
         end
         
-        function close(self)
-            if self.madeThisWindow
-                try %#ok<TRYNC>
-                    close(self.handleStruct.figureHandle);
-                end
-            else
-                % I don't know
-            end
-        end
+        %         function close(self)
+        %             if self.madeThisWindow
+        %                 try %#ok<TRYNC>
+        %                     close(self.handleStruct.figureHandle);
+        %                 end
+        %             else
+        %                 % I don't know
+        %             end
+        %         end
         
         function set.markers(self,val)
             self.markers = val;
@@ -366,7 +374,7 @@ classdef prtUiDataSetClassPlot < prtUiManagerPanel
         end
         function legendRefresh(self)
             try %#ok<TRYNC>
-                hgfeval(self.handles.legendRefresh,[],[]); 
+                hgfeval(self.handles.legendRefresh,[],[]);
             end
         end
         
@@ -395,7 +403,7 @@ classdef prtUiDataSetClassPlot < prtUiManagerPanel
             self.setDataSetDependentProperties();
         end
         
-       
+        
         function controller = controls(self)
             controller = prtUiDataSetClassExploreWidget('plotManager',self);
         end
@@ -420,7 +428,7 @@ classdef prtUiDataSetClassPlot < prtUiManagerPanel
                 return
             end
             
-            if isfield(self.handles,'legend') && ishandle(self.handles.legend) 
+            if isfield(self.handles,'legend') && ishandle(self.handles.legend)
                 set(self.handles.legend,'Position',legendStruct.Position);
                 set(self.handles.legend, 'Location',legendStruct.Location);
                 set(self.handles.legend,'Orientation',legendStruct.Orientation);

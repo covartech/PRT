@@ -25,7 +25,7 @@ classdef prtRvMemebershipModel
         self = weightedMle(self, x, weights)
     end
     methods
-        function initMembershipMat = initializeMixtureMembership(Rs,X)
+        function [Rs,initMembershipMat] = initializeMixtureMembership(Rs,X)
             
             learningInitialMembershipFactor = 0.9;
             

@@ -1,4 +1,4 @@
-classdef prtRvMixture < prtRv
+classdef prtRvMixture < prtRv & prtRvMemebershipModel
     % prtRvMixture  Mixture Random Variable
     %
     %   RV = prtRvMixture creates a prtRvMixture object with empty
@@ -96,6 +96,8 @@ classdef prtRvMixture < prtRv
         learningMaxIterations = 1000;
         learningConvergenceThreshold = 1e-6;
         learningApproximatelyEqualThreshold = 1e-4;
+        
+        learningMembershipMatrixInternal = []; % This will be used if a mixture is used in a membership model (like an HMM).
     end
     
     methods
@@ -151,7 +153,7 @@ classdef prtRvMixture < prtRv
             
             X = R.dataInputParse(X); % Basic error checking etc
             
-            membershipMat = initialComponentMembership(R,X);
+            [R,membershipMat] = initialComponentMembership(R,X);
 
             [R,membershipMat] = removeComponents(R, X, membershipMat);
             
@@ -337,13 +339,71 @@ classdef prtRvMixture < prtRv
         end
     end
     
+    methods % for prtRvMembershipModel (so that we can use mixtures in HMMs)
+        function self = weightedMle(self, x, weights)
+            
+            realMembershipMatrix =  bsxfun(@times, self.learningMembershipMatrixInternal, weights);
+            
+            self = self.maximizeParameters( x, realMembershipMatrix);
+            
+            self.learningMembershipMatrixInternal = self.expectedComponentMembership(x);
+            
+            %[R, membershipMat, componentRemoved, componentsToRemove] = removeComponents(R,X,membershipMat)
+        end
+        
+        function [Rs, initMembershipMat] = initializeMixtureMembership(Rs,X)
+            
+            learningInitialMembershipFactor = 0.9;
+            
+            nSubComponents = zeros(length(Rs),1);
+            for iR = 1:length(Rs)
+                nSubComponents(iR) = Rs(iR).nComponents;
+            end
+            
+            nTotalComponents = sum(nSubComponents);
+            
+            [classMeans,kmMembership] = prtUtilKmeans(X,nTotalComponents,'handleEmptyClusters','random'); %#ok<ASGLU>
+            
+            initMembershipMatBig = zeros(size(X,1),nTotalComponents);
+            for iComp = 1:nTotalComponents
+                initMembershipMatBig(kmMembership == iComp, iComp) = 1;
+            end
+            
+            edgePoints = [0; cumsum(nSubComponents)];
+            initMembershipMat = zeros(size(X,1), length(Rs));
+            for iComp = 1:length(Rs)
+                cMembershipMat = initMembershipMatBig(:,(edgePoints(iComp)+1):edgePoints(iComp+1));
+                
+                initMembershipMat(:,iComp) = sum(cMembershipMat,2);
+                
+                cMembershipMat = bsxfun(@rdivide,cMembershipMat, initMembershipMat(:,iComp));
+                cMembershipMat = cMembershipMat*learningInitialMembershipFactor;
+                cMembershipMat(cMembershipMat==0) = (1-learningInitialMembershipFactor)./(nSubComponents(iComp)-1);
+                
+                cMembershipMat(~isfinite(cMembershipMat)) = 1/nSubComponents(iComp);
+                
+                cMembershipMat = bsxfun(@rdivide,cMembershipMat, sum(cMembershipMat,2));
+               
+                Rs(iComp).learningMembershipMatrixInternal = cMembershipMat;
+            end
+            
+            initMembershipMat = initMembershipMat*learningInitialMembershipFactor;
+            initMembershipMat(initMembershipMat==0) = (1-learningInitialMembershipFactor)./(length(Rs)-1);
+            
+            % We should normalize this just in case the
+            % learningInitialMembershipFactor was set poorly
+            initMembershipMat = bsxfun(@rdivide,initMembershipMat,sum(initMembershipMat,2));
+        end
+        
+    end
+    
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % These Methods are private helper functions for mle
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     methods (Access = 'private')
         
-        function initMembershipMat = initialComponentMembership(R,X)
-            initMembershipMat = initializeMixtureMembership(R.components,X);
+        function [R, initMembershipMat] = initialComponentMembership(R,X)
+            [R.components, initMembershipMat] = initializeMixtureMembership(R.components,X);
         end
         
         function membershipMat = expectedComponentMembership(R,X)
