@@ -10,6 +10,7 @@ classdef prtPreProcBootstrapTraining < prtPreProc
     % our ROC curves.  prtPreProcBootstrapTraining is useful for building
     % algorithms from data sets where the computational complexity of
     % training is computationally intractable for the entire data set.
+	%
     %
     % Properties:
     %   nSamples (1000): The number of samples to bootstrap
