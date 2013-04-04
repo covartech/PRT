@@ -98,6 +98,10 @@ classdef prtFeatSelStatic < prtFeatSel %
                 error('prt:prtFeatSelStatic','Manually set selectedFeatures field of prtFeatSelStatic to succesfully train and run');
             end
             DataSet = DataSet.retainFeatures(Obj.selectedFeatures);
-        end
+		end
+		
+		function xOut = runActionFast(Obj,xIn,ds)
+			xOut = xIn(:,Obj.selectedFeatures);
+		end
     end
 end
