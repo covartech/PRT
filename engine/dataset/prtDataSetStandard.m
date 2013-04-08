@@ -436,9 +436,15 @@ classdef prtDataSetStandard < prtDataSetInMem
 			keys = 1:length(retainFeatureInds);
 			names = self.featureNameIntegerAssocArray.get(retainFeatureInds);
 			self.featureNameIntegerAssocArray = prtUtilIntegerAssociativeArray(keys,names);
-			for iCell = 1:length(self.featureNameModificationMask)
-				if ~isempty(self.featureNameModificationMask{iCell})
-					self.featureNameModificationMask{iCell} = self.featureNameModificationMask{iCell}(retainFeatureInds);
+			if iscell(self.featureNameModificationFunction)
+				for iCell = 1:length(self.featureNameModificationMask)
+					if ~isempty(self.featureNameModificationMask{iCell})
+						self.featureNameModificationMask{iCell} = self.featureNameModificationMask{iCell}(retainFeatureInds);
+					end
+				end
+			else
+				if ~isempty(self.featureNameModificationFunction)
+					self.featureNameModificationMask = self.featureNameModificationMask(retainFeatureInds);
 				end
 			end
 			% This could leave featureNameModificationFunctions that are
