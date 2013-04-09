@@ -102,6 +102,7 @@ classdef prtRvHmm < prtRv
     properties
         components  % A vector of the components
         minimumComponentMembership = 0;
+        nTrainingIterations = 3000;
     end
     
     properties (Dependent = true)
@@ -119,6 +120,8 @@ classdef prtRvHmm < prtRv
     properties (SetAccess = 'private', GetAccess = 'private', Hidden=true)
         transitionProbabilitiesDepHelper = prtRvMultinomial;
         initialStateProbabilitiesDepHelper = prtRvMultinomial;
+        transitionMatrixDepStorage = [];
+        transitionMatrixValid = false;
     end
     
     properties (Hidden = true)
@@ -163,7 +166,8 @@ classdef prtRvHmm < prtRv
                 if prtUtilApproxEqual(sum(weights,2),1,sqrt(eps)*sqrt(length(weights)))
                     multi = repmat(prtRvMultinomial,size(weights,1),1);
                     for i = 1:size(weights,1)
-                    	multi(i) = prtRvMultinomial('probabilities',weights(i,:));
+                    	%multi(i) = prtRvMultinomial('probabilities',weights(i,:));
+                        multi(i).probabilities = weights(i,:);
                     end
                     weights = multi;
                 else
@@ -182,7 +186,12 @@ classdef prtRvHmm < prtRv
             end
             
             self.transitionProbabilitiesDepHelper = weights;
+            
+            self.transitionMatrixValid = false;
+            self.transitionMatrixDepStorage = self.transitionMatrix;
+            self.transitionMatrixValid = true;
         end
+        
         function val = get.transitionProbabilities(self)
             val = self.transitionProbabilitiesDepHelper;
             
@@ -190,6 +199,7 @@ classdef prtRvHmm < prtRv
                 val = [];
             end
         end
+        
         function self = set.components(self,CompArray)
             if ~isempty(CompArray)
                 assert(isa(CompArray(1),'prtRv') && isa(CompArray(1),'prtRvMemebershipModel'),'components must be a prtRv and inherit from prtRvMemebershipModel');
@@ -201,9 +211,13 @@ classdef prtRvHmm < prtRv
         
         function A = get.transitionMatrix(self)
             A = [];
-            for i = 1:length(self.transitionProbabilitiesDepHelper)
-                A = cat(1,A,self.transitionProbabilitiesDepHelper(i).probabilities);
-            end
+            if ~self.transitionMatrixValid
+                for i = 1:length(self.transitionProbabilitiesDepHelper)
+                    A = cat(1,A,self.transitionProbabilitiesDepHelper(i).probabilities);
+                end
+            else
+                A = self.transitionMatrixDepStorage;
+            end 
         end
         
         function self = set.transitionMatrix(self,A)
@@ -259,8 +273,7 @@ classdef prtRvHmm < prtRv
             
             pLogLikelihood = nan;
             self.learningResults.iterationLogLikelihood = [];
-            for iteration = 1:300
-                
+            for iteration = 1:self.nTrainingIterations
                 %Update the components, A, pi
                 gammaMat = cat(2,gamma{:});
                 self = maximizeParameters(self,data,exp(gammaMat'));
@@ -287,10 +300,12 @@ classdef prtRvHmm < prtRv
                 %step
                 tempPi = 0;
                 start = 1;
+                logPi = log(self.pi(:)');
+                logA = log(self.transitionMatrix);
                 for cellInd = 1:length(xCell)
                     stop = start + size(xCell{cellInd},1) - 1;
                     cMembership = membershipMat(start:stop,:);
-                    [alpha{cellInd},~,gamma{cellInd},xi{cellInd}] = prtRvUtilLogForwardsBackwards(log(self.pi(:)'),log(self.transitionMatrix),log(cMembership)');
+                    [alpha{cellInd},~,gamma{cellInd},xi{cellInd}] = prtRvUtilLogForwardsBackwards(logPi,logA,log(cMembership)');
                     tempPi = tempPi + exp(alpha{cellInd}(:,1))./sum(exp(alpha{cellInd}(:,1)));
                     start = stop + 1;
                 end
@@ -358,17 +373,35 @@ classdef prtRvHmm < prtRv
             
             stateLogPdf = cell(size(X));
             logPdf = nan(size(X));
+            
+            %                         for cellInd = 1:length(X)
+            %                             data = X{cellInd};
+            %
+            %                             ll = nan(size(data,1),self.nComponents);
+            %                             for state = 1:length(self.components)
+            %                                 ll(:,state) = self.components(state).logPdf(double(data));
+            %                             end
+            %                             alpha = prtRvUtilLogForwardsBackwards(log(self.pi(:)'),log(self.transitionMatrix),ll');
+            %                             stateLogPdf{cellInd} = alpha;
+            %                             logPdf(cellInd) = prtUtilSumExp(alpha(:,end));
+            %                         end
+            
+            % PT, 2013.04.09 - process the whole data set at once... much
+            % faster:
+            xMat = cat(1,X{:});
+            ll = nan(size(xMat,1),self.nComponents);
+            for state = 1:length(self.components)
+                ll(:,state) = self.components(state).logPdf(double(xMat));
+            end
+            llCell = mat2cell(ll,cellfun(@(c)size(c,1),X),size(ll,2));
+            logPi = log(self.pi(:)');
+            logA = log(self.transitionMatrix);
             for cellInd = 1:length(X)
-                data = X{cellInd};
-                
-                ll = nan(size(data,1),self.nComponents);
-                for state = 1:length(self.components)
-                    ll(:,state) = self.components(state).logPdf(double(data));
-                end
-                alpha = prtRvUtilLogForwardsBackwards(log(self.pi(:)'),log(self.transitionMatrix),ll');
+                alpha = prtRvUtilLogForwardsBackwards(logPi,logA,llCell{cellInd}');
                 stateLogPdf{cellInd} = alpha;
                 logPdf(cellInd) = prtUtilSumExp(alpha(:,end));
             end
+            
         end
         
         function y = cdf(self,X)
