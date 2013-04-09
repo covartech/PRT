@@ -241,7 +241,7 @@ classdef prtRvHmm < prtRv
             xCell = dataInputParse(self,inputData);
             data = cat(1,xCell{:});
             
-            membershipMat = initialComponentMembership(self,data);
+            [self, membershipMat] = initialComponentMembership(self,data);
             [self,membershipMat] = removeComponents(self,data,membershipMat);
             
             alpha = cell(size(xCell));
@@ -516,8 +516,8 @@ classdef prtRvHmm < prtRv
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     methods (Access = 'private')
         
-        function initMembershipMat = initialComponentMembership(self,X)
-            initMembershipMat = initializeMixtureMembership(self.components,X);
+        function [self, initMembershipMat] = initialComponentMembership(self,X)
+            [self.components, initMembershipMat] = initializeMixtureMembership(self.components,X);
         end
         
         function membershipMat = expectedComponentMembership(self,X)

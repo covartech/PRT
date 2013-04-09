@@ -1,4 +1,4 @@
-classdef prtRvGmm < prtRv
+classdef prtRvGmm < prtRv & prtRvMemebershipModel
     % prtRvGmm - Gaussian Mixture Model Random Variable
     %
     %   RV = prtRvGmm creates a prtRvGmm object with empty
@@ -180,7 +180,7 @@ classdef prtRvGmm < prtRv
             
             R.mixtureRv = mle(R.mixtureRv,X);
         end
-        
+       
         function [y, componentPdf] = pdf(R,X)
             [y, componentPdf] = pdf(R.mixtureRv,X);
         end 
@@ -198,6 +198,58 @@ classdef prtRvGmm < prtRv
         end
     end
 
+    methods % These are for prtRvMembershipModel
+         
+        function self = weightedMle(self, x, weights)
+            self.mixtureRv = weightedMle(self.mixtureRv, x, weights);
+        end
+        
+        function [Rs, initMembershipMat] = initializeMixtureMembership(Rs,X)
+            
+            learningInitialMembershipFactor = 0.9;
+            
+            nSubComponents = zeros(length(Rs),1);
+            for iR = 1:length(Rs)
+                nSubComponents(iR) = Rs(iR).nComponents;
+            end
+            
+            nTotalComponents = sum(nSubComponents);
+            
+            [classMeans,kmMembership] = prtUtilKmeans(X,nTotalComponents,'handleEmptyClusters','random'); %#ok<ASGLU>
+            
+            initMembershipMatBig = zeros(size(X,1),nTotalComponents);
+            for iComp = 1:nTotalComponents
+                initMembershipMatBig(kmMembership == iComp, iComp) = 1;
+            end
+            
+            edgePoints = [0; cumsum(nSubComponents)];
+            initMembershipMat = zeros(size(X,1), length(Rs));
+            for iComp = 1:length(Rs)
+                cMembershipMat = initMembershipMatBig(:,(edgePoints(iComp)+1):edgePoints(iComp+1));
+                
+                initMembershipMat(:,iComp) = sum(cMembershipMat,2);
+                
+                cMembershipMat = bsxfun(@rdivide,cMembershipMat, initMembershipMat(:,iComp));
+                cMembershipMat = cMembershipMat*learningInitialMembershipFactor;
+                cMembershipMat(cMembershipMat==0) = (1-learningInitialMembershipFactor)./(nSubComponents(iComp)-1);
+                
+                cMembershipMat(~isfinite(cMembershipMat)) = 1/nSubComponents(iComp);
+                
+                cMembershipMat = bsxfun(@rdivide,cMembershipMat, sum(cMembershipMat,2));
+               
+                Rs(iComp).mixtureRv.learningMembershipMatrixInternal = cMembershipMat;
+            end
+            
+            initMembershipMat = initMembershipMat*learningInitialMembershipFactor;
+            initMembershipMat(initMembershipMat==0) = (1-learningInitialMembershipFactor)./(length(Rs)-1);
+            
+            % We should normalize this just in case the
+            % learningInitialMembershipFactor was set poorly
+            initMembershipMat = bsxfun(@rdivide,initMembershipMat,sum(initMembershipMat,2));
+        end
+        
+    end
+    
     methods (Hidden=true)
         
         function [gmmCell,bic] = bicOptimize(self,ds,componentRange)

@@ -1,6 +1,6 @@
 function DataSet = prtDataGenFeatureSelection(N, nExtraDims)
 %prtDataGenFeatureSelection   Generates some unimodal example data for the prt.
-%  DataSet = prtDataGenFeatureSelection(N)
+%  DataSet = prtDataGenFeatureSelection
 %  The data is distributed:
 %       H0: N([0 0 0 0 0 0 0 0 0 0],eye(10))
 %       H1: N([0 2 0 1 0 2 0 1 0 2],eye(10))
@@ -11,13 +11,12 @@ function DataSet = prtDataGenFeatureSelection(N, nExtraDims)
 %       N ~ number of samples per class (200)
 %
 % Outputs:
-%   X - 400x2 Unimodal data
-%   Y - 400x1 Class labels
+%   X - 2Nx2 Unimodal data
+%   Y - 2Nx1 Class labels
 %
 % Example:
 %   DataSet = prtDataGenFeatureSelection;
 %   explore(DataSet)
-%
 %
 % Other m-files required: none
 % Subfunctions: none
@@ -59,7 +58,7 @@ if nargin < 2 || isempty(nExtraDims)
 end
 
 mu0 = [0 0 0 0 0 0 0 0 0 0];
-mu1 = [0 1 0 .5 0 1 0 .5 0 1];
+mu1 = [0 1 0 .5 0 1 0 .5 0 1]*2;
 
 sigma0 = eye(length(mu0));
 sigma1 = eye(length(mu1));
