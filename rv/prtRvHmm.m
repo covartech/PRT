@@ -181,8 +181,8 @@ classdef prtRvHmm < prtRv
             end
             
             if self.nComponents > 0
-                nSpecifiiedComponents = self.nComponents;
-                assert(multi(1).nCategories == nSpecifiiedComponents,'The length of these mixingProportions does not mach the number of components of this prtRvMixture.')
+                nSpecifiedComponents = self.nComponents;
+                assert(multi(1).nCategories == nSpecifiedComponents,'The length of these mixingProportions does not mach the number of components of this prtRvMixture.')
             end
             
             self.transitionProbabilitiesDepHelper = weights;
