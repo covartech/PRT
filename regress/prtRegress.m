@@ -98,7 +98,11 @@ classdef prtRegress < prtAction %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     end
     methods (Static, Hidden = true)
         function plotOptions = initializePlotOptions()
-            plotOptions = prtOptionsGet('prtOptionsRegressPlot');
+            if ~isdeployed
+                plotOptions = prtOptionsGet('prtOptionsRegressPlot');
+            else
+                plotOptions = prtOptions.prtOptionsRegressPlot;
+            end
         end
     end
 end

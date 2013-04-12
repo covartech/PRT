@@ -244,8 +244,12 @@ classdef prtCluster < prtAction
     end
 
     methods (Static, Hidden = true)
-        function plotOptions = initializePlotOptions()
-            plotOptions = prtOptionsGet('prtOptionsClusterPlot');
+        function plotOptions = initializePlotOptions()            
+            if ~isdeployed
+                plotOptions = prtOptionsGet('prtOptionsClusterPlot');
+            else
+                plotOptions = prtOptions.prtOptionsClusterPlot;
+            end
         end
     end
 end

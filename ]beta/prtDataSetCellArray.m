@@ -32,12 +32,6 @@ classdef prtDataSetCellArray < prtDataSetInMem & prtDataInterfaceCategoricalTarg
 		plotOptions = prtDataSetClass.initializePlotOptions();
 	end
 	
-	methods (Static, Hidden = true)
-		function po = initializePlotOptions()
-			po = prtOptionsGet('prtOptionsDataSetClassPlot');
-		end
-	end
-	
 	methods
 		
 		function obj = prtDataSetCellArray(varargin)

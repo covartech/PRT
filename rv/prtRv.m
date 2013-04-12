@@ -61,7 +61,8 @@ classdef prtRv < prtAction
 
 
     properties
-        plotOptions  = prtRv.initializePlotOptions()
+        %plotOptions  = prtRv.initializePlotOptions()
+        plotOptions  = [];
     end
     properties (Abstract = true, Hidden = true, Dependent = true)
         nDimensions % The number of dimensions
@@ -259,9 +260,14 @@ classdef prtRv < prtAction
     end
     methods (Access = 'private',Hidden = true,Static = true)
         function plotOptions = initializePlotOptions()
-            plotOptions = prtOptionsGet('prtOptionsRvPlot');
+            if ~isdeployed
+                plotOptions = prtOptionsGet('prtOptionsRvPlot');
+            else
+                plotOptions = prtOptions.prtOptionsRvPlot;
+            end
         end
     end
+    
     methods (Access = 'protected', Hidden = true)
         function X = dataInputParse(R,X) %#ok<MANU>
             % dataInputParse - Parse inputs for RVs that only require the
