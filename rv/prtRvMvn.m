@@ -158,13 +158,16 @@ classdef prtRvMvn < prtRv & prtRvMemebershipModel
             % nDims matrix, where N is the number of locations to evaluate
             % the pdf, and nDims is the same as the number of dimensions,
             % nDimensions, of the prtRv object RV.
-            [isValid, reasonStr] = R.isValid;
-            assert(isValid,'LOGPDF cannot yet be evaluated. This RV is not yet valid %s.',reasonStr);
             
             X = R.dataInputParse(X); % Basic error checking etc
-            
-            assert(size(X,2) == R.nDimensions,'Data, RV dimensionality missmatch. Input data, X, has dimensionality %d and this RV has dimensionality %d.', size(X,2), R.nDimensions)
-            vals = prtRvUtilMvnLogPdf(X,R.mu,R.sigma);
+            try
+               vals = prtRvUtilMvnLogPdf(X,R.mu,R.sigma);
+            catch ME
+                [isValid, reasonStr] = R.isValid;
+                assert(isValid,'LOGPDF cannot yet be evaluated. This RV is not yet valid %s.',reasonStr);
+                assert(size(X,2) == R.nDimensions,'Data, RV dimensionality missmatch. Input data, X, has dimensionality %d and this RV has dimensionality %d.', size(X,2), R.nDimensions)
+                throw(ME);
+            end
         end
         
         function varargout = plotCdf(R,varargin)
