@@ -26,6 +26,7 @@ function prtPath(varargin)
 if isdeployed;
     return;
 end
+startupCheck = true;
 if startupCheck
     checkPrtInStartup;
 end
