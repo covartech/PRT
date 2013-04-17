@@ -120,6 +120,7 @@ classdef prtDataSetRegress < prtDataSetStandard
 	end
 	
     methods (Static, Hidden = true)
+        
         function plotOptions = initializePlotOptions()
             
             if ~isdeployed

@@ -649,17 +649,17 @@ classdef prtDataSetStandard < prtDataSetInMem
 				end
 			end
             
-%           % Nested function handles get very slow to make
-%           % This method was replaced with cell array method
-% 			modFun = action.getFeatureNameModificationFunction();
-%           currentModFun = self.featureNameModificationFunction;
-% 			if ~isempty(modFun)
-% 				if isempty(currentModFun)
-% 					self.featureNameModificationFunction = modFun;
-% 				else
-% 					self.featureNameModificationFunction = @(nameIn, index)modFun(currentModFun(nameIn, index),index);
-% 				end
-% 			end
+            %           % Nested function handles get very slow to make
+            %           % This method was replaced with cell array method
+            % 			modFun = action.getFeatureNameModificationFunction();
+            %           currentModFun = self.featureNameModificationFunction;
+            % 			if ~isempty(modFun)
+            % 				if isempty(currentModFun)
+            % 					self.featureNameModificationFunction = modFun;
+            % 				else
+            % 					self.featureNameModificationFunction = @(nameIn, index)modFun(currentModFun(nameIn, index),index);
+            % 				end
+            % 			end
             
 			self = modifyNonDataAttributesFrom@prtDataSetBase(self, action);
 		end
