@@ -104,6 +104,7 @@ classdef prtClassLogisticDiscriminant < prtClass
         
         nIterations = nan;  % The number of iterations used in training
         
+        wPriorSigma = nan;  % Prior standard deviation on weight vector, use NAN to implement maximum likelihood estimates
     end
     properties
         % irlsStepSize 
@@ -272,7 +273,11 @@ classdef prtClassLogisticDiscriminant < prtClass
                             error('Invalid Obj.handleNonPosDefR field');
                     end
                 end
-                
+                if isnan(Obj.wPriorSigma)
+                    priorSigma = inf;
+                else
+                    priorSigma = Obj.wPriorSigma;
+                end
                 if isa(Obj.irlsStepSize,'char') && strcmpi(Obj.irlsStepSize,'hessian')
                     % Bishop equations:
                     %         wOld = w;
@@ -285,7 +290,7 @@ classdef prtClassLogisticDiscriminant < prtClass
                     %Non-matrix R Bishop equations (memory saving equations):
                     wOld = Obj.w;
                     z = x*wOld - bsxfun(@times,rVec.^-1,(yOut - y));
-                    Obj.w = (x'*bsxfun(@times,rVec,x))^-1*x'*bsxfun(@times,rVec,z);
+                    Obj.w = (x'*bsxfun(@times,rVec,x) + eye(size(x,2))*1./priorSigma)^-1*x'*bsxfun(@times,rVec,z);
                     %re-calculate yOut and R
                     yOut = sigmaFn((x*Obj.w)')';
                     rVec = yOut.*(1-yOut);
@@ -303,8 +308,8 @@ classdef prtClassLogisticDiscriminant < prtClass
                     
                     %Non-matrix R Raw equations (memory saving equations):
                     wOld = Obj.w;
-                    H = x'*bsxfun(@times,rVec,x);
-                    
+                    H = x'*bsxfun(@times,rVec,x) + eye(size(x,2))*1./priorSigma;
+
                     if rcond(H) < eps
                         warning('prt:generateLogDisc:stepSize','rcond(H) < eps; Exiting; Try reducing Options.irlsStepSize');
                         return;

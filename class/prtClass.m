@@ -444,7 +444,13 @@ classdef prtClass < prtAction
     
     methods (Static, Hidden = true)
         function plotOptions =initializePlotOptions()
-            plotOptions = prtOptionsGet('prtOptionsClassPlot');
+            
+            if ~isdeployed
+                plotOptions = prtOptionsGet('prtOptionsClassPlot');
+            else
+                plotOptions = prtOptions.prtOptionsClassPlot;
+            end
+            
         end
     end
 end

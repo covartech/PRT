@@ -120,8 +120,14 @@ classdef prtDataSetRegress < prtDataSetStandard
 	end
 	
     methods (Static, Hidden = true)
+        
         function plotOptions = initializePlotOptions()
-            plotOptions = prtOptionsGet('prtOptionsDataSetRegressPlot');
+            
+            if ~isdeployed
+                plotOptions = prtOptionsGet('prtOptionsDataSetRegressPlot');
+            else
+                plotOptions = prtOptions.prtOptionsDataSetRegressPlot;
+            end
         end
 	end
 	

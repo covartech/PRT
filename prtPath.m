@@ -23,7 +23,9 @@ function prtPath(varargin)
 % OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
 % USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-
+if isdeployed
+    return;
+end
 startupCheck = true;
 if startupCheck
     checkPrtInStartup;

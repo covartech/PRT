@@ -184,8 +184,12 @@ classdef prtKernel < prtAction
     end
     
     methods (Static, Hidden = true)
-        function plotOptions = initializePlotOptions()
-            plotOptions = prtOptionsGet('prtOptionsKernelPlot');
+        function plotOptions = initializePlotOptions()            
+            if ~isdeployed
+                plotOptions = prtOptionsGet('prtOptionsKernelPlot');
+            else
+                plotOptions = prtOptions.prtOptionsKernelPlot;
+            end
         end
     end        
 end

@@ -814,10 +814,12 @@ classdef prtAction
     
     methods (Hidden, Static)
         function val = getVerboseStorage()
-            val = prtOptionsGet('prtOptionsComputation','verboseStorage');
+            val = true;
+%             val = prtOptionsGet('prtOptionsComputation','verboseStorage');
         end
         function val = getShowProgressBar()
-            val = prtOptionsGet('prtOptionsComputation','showProgressBar');
+            val = true;
+%             val = prtOptionsGet('prtOptionsComputation','showProgressBar');
         end        
 	end
 	

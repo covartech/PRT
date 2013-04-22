@@ -436,9 +436,15 @@ classdef prtDataSetStandard < prtDataSetInMem
 			keys = 1:length(retainFeatureInds);
 			names = self.featureNameIntegerAssocArray.get(retainFeatureInds);
 			self.featureNameIntegerAssocArray = prtUtilIntegerAssociativeArray(keys,names);
-			for iCell = 1:length(self.featureNameModificationMask)
-				if ~isempty(self.featureNameModificationMask{iCell})
-					self.featureNameModificationMask{iCell} = self.featureNameModificationMask{iCell}(retainFeatureInds);
+			if iscell(self.featureNameModificationFunction)
+				for iCell = 1:length(self.featureNameModificationMask)
+					if ~isempty(self.featureNameModificationMask{iCell})
+						self.featureNameModificationMask{iCell} = self.featureNameModificationMask{iCell}(retainFeatureInds);
+					end
+				end
+			else
+				if ~isempty(self.featureNameModificationFunction)
+					self.featureNameModificationMask = self.featureNameModificationMask(retainFeatureInds);
 				end
 			end
 			% This could leave featureNameModificationFunctions that are
@@ -643,17 +649,17 @@ classdef prtDataSetStandard < prtDataSetInMem
 				end
 			end
             
-%           % Nested function handles get very slow to make
-%           % This method was replaced with cell array method
-% 			modFun = action.getFeatureNameModificationFunction();
-%           currentModFun = self.featureNameModificationFunction;
-% 			if ~isempty(modFun)
-% 				if isempty(currentModFun)
-% 					self.featureNameModificationFunction = modFun;
-% 				else
-% 					self.featureNameModificationFunction = @(nameIn, index)modFun(currentModFun(nameIn, index),index);
-% 				end
-% 			end
+            %           % Nested function handles get very slow to make
+            %           % This method was replaced with cell array method
+            % 			modFun = action.getFeatureNameModificationFunction();
+            %           currentModFun = self.featureNameModificationFunction;
+            % 			if ~isempty(modFun)
+            % 				if isempty(currentModFun)
+            % 					self.featureNameModificationFunction = modFun;
+            % 				else
+            % 					self.featureNameModificationFunction = @(nameIn, index)modFun(currentModFun(nameIn, index),index);
+            % 				end
+            % 			end
             
 			self = modifyNonDataAttributesFrom@prtDataSetBase(self, action);
 		end

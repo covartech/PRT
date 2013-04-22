@@ -79,8 +79,12 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
     end
     
     methods (Static, Hidden = true)
-        function po = initializePlotOptions()
-            po = prtOptionsGet('prtOptionsDataSetClassPlot');
+        function plotOptions = initializePlotOptions()
+            if ~isdeployed
+                plotOptions = prtOptionsGet('prtOptionsDataSetClassPlot');
+            else
+                plotOptions = prtOptions.prtOptionsDataSetClassPlot;
+            end
         end
     end
     
