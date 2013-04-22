@@ -724,7 +724,10 @@ classdef prtDataSetBase
             %   output data set, dsOut, will have nObservations =
             %   dataSet1.nObservations + dataSet2.nObservations.
             %
-            
+            if nargin == 1 && length(self) > 1
+                varargin = num2cell(self(2:end));
+                self = self(1);
+            end
             self = self.catObservationInfo(varargin{:});
             self = self.catObservationData(varargin{:});
             self = self.update;

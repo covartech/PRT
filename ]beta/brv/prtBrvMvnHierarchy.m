@@ -1,4 +1,4 @@
-% PRTBRVMVNHIERARCHY - PRT BRV MVN Hierarchical model structure
+% PRTBRVMVTHIERARCHY - PRT BRV MVT Hierarchical model structure
 %   Has parameters that specify a Normal-Inverse-Wishart Density
 
 % Copyright (c) 2013 New Folder Consulting
