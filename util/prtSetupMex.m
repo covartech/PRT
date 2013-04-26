@@ -84,12 +84,15 @@ if isempty(mexFile1) || isempty(mexFile2) || overRideBuild
     mex('-outdir',fullfile(prtRoot,'+prtExternal','+libsvm'),'-output','libsvmwrite',fullfile(prtRoot,'+prtExternal','+libsvm','libsvmwrite.c'),extraInputs{:});
 end
 
-
+% Combinator
+mex(fullfile(prtRoot,'+prtExternal','+combinator','cumsumall.cpp'));
 
 mexFile = which('prtRvUtilLogForwardsBackwards');
 if isempty(mexFile) || overRideBuild
     mex('-outdir',fullfile(prtRoot,'util','mex','prtRvUtilLogForwardsBackwards'),'-output','prtRvUtilLogForwardsBackwards',fullfile(prtRoot,'util','mex','prtRvUtilLogForwardsBackwards','prtRvUtilLogForwardsBackwards.c'));
 end
+
+
 
 
 

@@ -430,7 +430,6 @@ set(navFigH,'visible','on');
             'FontSize',0.5,...
             'callback',{@featureSelectPopupCallback 2});
         
-        
         H.zAxesLabel = uicontrol(H.navTab(1),'style','text',...
             'units','normalized',...
             'position',[0.025 0.225 0.95 0.1],...
@@ -461,6 +460,13 @@ set(navFigH,'visible','on');
             set(H.zPopUp,'value',1) % None;
         end
         
+        
+        if ds.hasUnlabeled
+            tableData = cat(2,cat(1,ds.getClassNames,{prtPlotUtilUnlabeledLegendString}),num2cell(true(ds.nClasses+1,1)));
+        else
+            tableData = cat(2,ds.getClassNames,num2cell(true(ds.nClasses,1)));
+        end
+        
         % Make classes uitable with tick boxes
         H.uitable = uitable('parent',H.navPanel(2),...
             'units','Normalized',...
@@ -473,7 +479,7 @@ set(navFigH,'visible','on');
             'FontSize',0.1,...
             'SelectionHighlight','off',...
             'CellEditCallback',@uitableEditFun,...
-            'data',cat(2,ds.getClassNames,num2cell(true(ds.nClasses,1))));
+            'data',tableData);
         
         % Column widths must be specified in pixels
         set(H.uitable,'units','pixels')
