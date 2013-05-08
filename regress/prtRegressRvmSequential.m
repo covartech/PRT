@@ -242,7 +242,7 @@ classdef prtRegressRvmSequential < prtRegressRvm
                 end
                 
                 if maxChangeVal > Obj.learningPoorlyScaledLikelihoodThreshold
-                    warning('prtClassRvmSequential:BadKernelMatrix','Kernel matrix is poorly conditioned. Consider modifying your kernels. Optimization Exiting...' );
+                    warning('prtClassRvmSequential:BadKernelMatrix','Kernel matrix is poorly conditioned. Consider modifying your kernels or normalizing your features. Optimization Exiting...' );
                     break
                 end
                 
