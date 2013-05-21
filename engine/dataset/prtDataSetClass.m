@@ -938,6 +938,88 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
             prtPlotUtilDataSetExploreGuiSimple(obj)
         end
         
+        function varargout = imagesc(dataSet,varargin)
+            % imagesc Generate an imagesc-like visualization of dataSet
+            %
+            % imagesc(dataSet) genereates an imagesc visualization of
+            %   the data field in dataSet, with lines separating the data
+            %   from various classes.  Class names are specified along the
+            %   Y-axis.  Features are along the X-axis.  Prior to
+            %   visualization, the data set is re-ordered so classes with
+            %   the same class index are contiguous and class indices are
+            %   monotonically increasing.
+            %
+            % imagesc(dataSet,cLims) specify the limits of
+            %   the colormap for visualization.  See imagesc for more
+            %   information.
+            %
+            % [imHandle,lineHandle] = prtUtilDataSetImagesc(...) output a
+            %   handle to the image and lines used in the visualization.
+            %
+            % ds = prtDataGenMary;
+            % ds.imagesc;
+            %
+            
+            lineWidthSpec = 3;
+            
+            % Handle sorting, make image, and figure out class names:
+            x = dataSet.X;
+            [sortedTargets,inds] = sort(dataSet.targets);
+            uTargets = unique(sortedTargets);
+            if any(isnan(uTargets))
+                uTargets = uTargets(~isnan(uTargets));
+                uTargets(end+1) = nan;
+            end
+            x = x(inds,:);
+            
+            if nargin < 2
+                handleOut = imagesc(x);
+            else
+                handleOut = imagesc(x,cLims);
+            end
+            
+            legendStrings = getClassNamesInterp(dataSet);
+            if dataSet.hasUnlabeled
+                unlabledLegenedName = prtPlotUtilUnlabeledLegendString;
+                legendStrings = cat(1,legendStrings,{unlabledLegenedName});
+            end
+            
+            
+            % Find the places to draw the lines, and the places to make the ticks
+            prevFound = 0;
+            textLocs = [];
+            lHandleOut = nan(length(uTargets)-1);
+            for i = 2:length(uTargets)
+                cTarget = uTargets(i);
+                found = find(sortedTargets == cTarget);
+                if isempty(found)
+                    found = find(isnan(sortedTargets));
+                end
+                found = found(1);
+                
+                textLocs = cat(1,textLocs,mean([found,prevFound]));
+                hold on;
+                lHandleOut(i) = plot([0,size(x,2)+1],[found,found],'k');
+                set(lHandleOut(i),'linewidth',lineWidthSpec);
+                hold off;
+                prevFound = found;
+            end
+            textLocs = cat(1,textLocs,mean([prevFound,size(x,1)]));
+            
+            % Make the ticks
+            xlabel('Features');
+            set(gca,'xtick',unique(round(get(gca,'xtick'))));
+            set(gca,'ytick',textLocs);
+            set(gca,'ytickLabel',legendStrings);
+            title(dataSet.name);
+            
+            % Handle silent outputs
+            if nargout > 0
+                varargout = {handleOut lHandleOut};
+            end
+            
+        end
+        
         function varargout = plot(obj, featureIndices)
             % Plot   Plot the prtDataSetClass object
             %
@@ -953,10 +1035,12 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
             nPlotDimensions = length(featureIndices);
             if nPlotDimensions < 1
                 warning('prt:plot:NoPlotDimensionality','No plot dimensions requested.');
+                varargout = {[]};
                 return
             elseif nPlotDimensions > 3
                 %Too many dimensions; default to explore()
                 explore(obj);
+                varargout = {[]};
                 return;
             end
             nClasses = obj.nClasses;
