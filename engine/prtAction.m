@@ -571,6 +571,21 @@ classdef prtAction
             dsOut = runAction(self, dsIn);
         end
     end
+    methods (Hidden)
+        function self = setIsTrained(self,val)
+            if nargin < 2 || isempty(val)
+                error('A value must be specified');
+            end
+            assert(prtUtilIsLogicalScalar(val),'isTrained must be a logical scalar');
+            
+            self.isTrained = true;
+        end
+        function self = setDataSet(self, val)
+            self.dataSet = val;
+        end
+    end
+              
+    
     methods (Hidden = false)
         function [optimizedAction, performance] = optimize(self, ds , objFn, parameterName, parameterValues)
             % OPTIMIZE Optimize action parameter by exhaustive function maximization.

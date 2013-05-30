@@ -8,7 +8,7 @@ classdef prtActionBig
     end
     
     properties (Hidden = true, SetAccess=protected, GetAccess=protected) % These attributes are to match those of classTrain etc.
-        classTrainBig = 'prtDataSetBase';
+        classTrainBig = ''; % We could specify restrictions here
     end
         
     methods
@@ -26,7 +26,7 @@ classdef prtActionBig
             
             inputClassType = class(ds);
             if ~isempty(self.classTrainBig) && ~prtUtilDataSetClassCheck(inputClassType,self.classTrainBig)
-                error('prt:prtAction:incompatible','%s.trainBig() requires datasets of type %s but the input is of type %s, which is not a subclass of %s', class(self), self.classTrainBig, inputClassType, self.classTrain);
+                error('prt:prtAction:incompatible','%s.trainBig() requires datasets of type %s but the input is of type %s, which is not a subclass of %s', class(self), self.classTrainBig, inputClassType, self.classTrainBig);
             end
             
             if self.isSupervised && ~ds.isLabeled
@@ -34,18 +34,13 @@ classdef prtActionBig
             end
             
             % Default preTrainProcessing() stuff
-            self.dataSetSummary = summarize(ds);
+            % self.dataSetSummary = summarize(ds); 
             
-            %preTrainProcessing should make sure self has the right
-            %verboseStorage
             self = preTrainBigProcessing(self,ds);
-            
-            if self.verboseStorage
-                self.dataSet = ds;
-            end
-            
+
             self = trainActionBig(self, ds);
-            self.isTrained = true;
+            self = setIsTrained(self, true);
+            
             self = postTrainBigProcessing(self,ds);
         end
         

@@ -11,5 +11,4 @@ classdef prtMapReduceMean < prtMapReduce
             reduce = mean./sum(cat(1,mapStructs.counts));
         end
     end
-    
 end

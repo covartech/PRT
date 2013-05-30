@@ -92,7 +92,22 @@ classdef prtPreProcZmuv < prtPreProc & prtActionBig
         end
         
         function self = trainActionBig(self, dsBig)
-            keyboard
+            mrMeanObj = prtMapReduceMean;
+            self.means = mrMeanObj.run(dsBig);
+
+            %mrStdObj = prtMapReduceStd;
+            %mrStdObj.mean = self.means;
+            %self.stds = mrStdObj.run(dsBig);
+            self.stds = ones(size(self.means));
+            
+            if any(~isfinite(self.stds) | self.stds == 0)
+                warning('prtPreProcZmuv:nonFiniteStds','Non-finite or zero standard deviation encountered.  Replacing invalid standard deviations with 1');
+                self.stds(~isfinite(self.stds) | self.stds == 0) = 1;
+            end
+            if any(~isfinite(self.means))
+                warning('prtPreProcZmuv:nonFiniteMean','Non-finite mean encountered.  Replacing invalid means with 0');
+                self.means(~isfinite(self.means)) = 0;
+            end
         end
         
         function ds = runAction(self,ds)
