@@ -1,4 +1,4 @@
-classdef prtPreProcZmuv < prtPreProc
+classdef prtPreProcZmuv < prtPreProc & prtActionBig
     % prtPreProcZmuv   Zero mean unit variance processing
     %
     %   ZMUV = prtPreProcZmuv creates a zero mean unit variance pre
@@ -77,27 +77,31 @@ classdef prtPreProcZmuv < prtPreProc
     
     methods (Access=protected,Hidden=true)
         
-        function Obj = trainAction(Obj,DataSet)
+        function self = trainAction(self,ds)
             % Compute the means and standard deviation
-            Obj.stds = prtUtilNanStd(DataSet.getObservations(),1);
-            Obj.means = prtUtilNanMean(DataSet.getObservations(),1);
-            if any(~isfinite(Obj.stds) | Obj.stds == 0)
+            self.stds = prtUtilNanStd(ds.getObservations(),1);
+            self.means = prtUtilNanMean(ds.getObservations(),1);
+            if any(~isfinite(self.stds) | self.stds == 0)
                 warning('prtPreProcZmuv:nonFiniteStds','Non-finite or zero standard deviation encountered.  Replacing invalid standard deviations with 1');
-                Obj.stds(~isfinite(Obj.stds) | Obj.stds == 0) = 1;
+                self.stds(~isfinite(self.stds) | self.stds == 0) = 1;
             end
-            if any(~isfinite(Obj.means))
+            if any(~isfinite(self.means))
                 warning('prtPreProcZmuv:nonFiniteMean','Non-finite mean encountered.  Replacing invalid means with 0');
-                Obj.means(~isfinite(Obj.means)) = 0;
+                self.means(~isfinite(self.means)) = 0;
             end
         end
         
-        function DataSet = runAction(Obj,DataSet)
-            % Remove the means and normalize the variance
-            DataSet = DataSet.setObservations(bsxfun(@rdivide,bsxfun(@minus,DataSet.getObservations(),Obj.means),Obj.stds));
+        function self = trainActionBig(self, dsBig)
+            keyboard
         end
         
-        function xOut = runActionFast(Obj,xIn,ds) %#ok<INUSD>
-           xOut = bsxfun(@rdivide,bsxfun(@minus,xIn,Obj.means),Obj.stds);
+        function ds = runAction(self,ds)
+            % Remove the means and normalize the variance
+            ds = ds.setObservations(bsxfun(@rdivide,bsxfun(@minus,ds.getObservations(),self.means),self.stds));
+        end
+        
+        function xOut = runActionFast(self,xIn,ds) %#ok<INUSD>
+           xOut = bsxfun(@rdivide,bsxfun(@minus,xIn,self.means),self.stds);
         end
     end
 end
