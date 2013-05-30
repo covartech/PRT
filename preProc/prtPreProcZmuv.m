@@ -95,10 +95,9 @@ classdef prtPreProcZmuv < prtPreProc & prtActionBig
             mrMeanObj = prtMapReduceMean;
             self.means = mrMeanObj.run(dsBig);
 
-            %mrStdObj = prtMapReduceStd;
-            %mrStdObj.mean = self.means;
-            %self.stds = mrStdObj.run(dsBig);
-            self.stds = ones(size(self.means));
+            mrStdObj = prtMapReduceStd;
+            mrStdObj.mean = self.means;
+            self.stds = mrStdObj.run(dsBig);
             
             if any(~isfinite(self.stds) | self.stds == 0)
                 warning('prtPreProcZmuv:nonFiniteStds','Non-finite or zero standard deviation encountered.  Replacing invalid standard deviations with 1');

@@ -28,7 +28,7 @@ classdef prtDataSetClassBig
         end
         function ds = getBlock(self,index)
             ds = self.dataHandler.getBlock(index);
-            ds = ds.internalRunAction;
+            ds = self.internalRunAction(ds);
         end
         function n = getNumBlocks(self)
             n = self.dataHandler.getNumBlocks;
