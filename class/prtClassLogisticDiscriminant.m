@@ -1,4 +1,4 @@
-classdef prtClassLogisticDiscriminant < prtClass
+classdef prtClassLogisticDiscriminant < prtClass & prtActionBig
     % prtClassLogisticDiscriminant  Logistic Discriminant classifier
     %
     %    CLASSIFIER = prtClassLogisticDiscriminant returns a LogisticDiscriminant classifier
@@ -332,17 +332,59 @@ classdef prtClassLogisticDiscriminant < prtClass
                 end
                 nIter = nIter + 1;
             end
-
-            
         end
         
-        function ClassifierResults = runAction(Obj,DataSet)
-            %ClassifierResults = runAction(Obj,DataSet)
+        function self = trainActionBig(self,ds)
+            nTriesForNonEmptyBlock = 1000;
+            for iter = 1:self.maxIter
+                
+                % Try to load a block
+                for blockLoadTry = 1:nTriesForNonEmptyBlock
+                    cBlockDs = ds.getRandomBlock;
+                    if ~isempty(cBlockDs)
+                        break
+                    end
+                end
+                if blockLoadTry == nTriesForNonEmptyBlock
+                    warning('Exiting after %d empty blocks were consecutlivly found.', nTriesForNonEmptyBlock);
+                    break
+                end
+                
+                % cBlockDs is now our dataset
+                
+                if iter==1
+                    cW = zeros(cBlockDs.nFeatures+1,1);
+                    wOld = inf;
+                end
+                cX = cat(2,ones(cBlockDs.nObservations,1), cBlockDs.X);
+                cY = cBlockDs.getTargetsAsBinaryMatrix;
+                cY = cY(:,2);
+                cY(cY == 0) = -1;
+                
+                cW = cW + self.irlsStepSize*sum(bsxfun(@times,cY./(1 + exp(cY.*(cX*cW))),cX),1)';
+                
+                if norm(cW - wOld) < self.wTolerance
+                    converged = true;
+                    break
+                end
+                
+                wOld = cW;
+                
+                %plot(w)
+                %drawnow;
+            end
             
-            sigmaFn = @(x) 1./(1 + exp(-x));
-            x = cat(2,ones(DataSet.nObservations,1),DataSet.getX());
-            y = sigmaFn((x*Obj.w)')';
-            ClassifierResults = DataSet.setObservations(y);
+            
+            self.w = cW;
+        end
+        
+        function ds = runAction(self,ds)
+            ds.X = runFast(self,ds.X);
+        end
+        
+        function y = runActionFast(self, x)
+            x = cat(2,ones(size(x,1),1),x);
+            y = 1./(1 + exp(-((x*self.w)')'));
         end
     end
 end
