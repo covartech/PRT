@@ -12,6 +12,14 @@ classdef prtMapReduce
     
     methods
         
+        function self = preMapReduceProcess(self,dataSetBig) %#ok<INUSD>
+            
+        end
+        
+        function [self,maps,reduced] = postMapReduceProcess(self,dataSetbig,maps,reduced) %#ok<INUSL>
+            
+        end
+        
         function [reduced, maps] = run(self,dataSetBig)
             % [reduced, maps] = run(self,dataSetBig)
             % 
@@ -23,6 +31,7 @@ classdef prtMapReduce
                 blockInds = 1:nBlocks;
             end
             
+            self = preMapReduceProcess(self,dataSetBig);
             maps = cell(nBlocks,1);
             dataHandler = dataSetBig.dataHandler;
             parfor (i = 1:nBlocks,self.maxPool)
@@ -31,6 +40,7 @@ classdef prtMapReduce
                 maps{i} = self.mapFn(ds);         %#ok<PFBNS>
             end;
             reduced = self.reduceFn(maps);
+            [~,maps,reduced] = postMapReduceProcess(self,dataSetBig,maps,reduced);
         end
         
         function [expectedTime,elapsedTime,maps,reduced] = estimateTime(self,dataSetBig,nIters)
