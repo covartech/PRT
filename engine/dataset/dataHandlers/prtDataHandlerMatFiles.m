@@ -1,4 +1,5 @@
 classdef prtDataHandlerMatFiles < prtDataHandler
+    % prtDataHandlerMatFiles Provide an interface 
     % 
     % h = prtDataHandlerMatFiles('fileList','Y:\swap\prtBigDataTest');
     % parfor (i = 1:h.nBlocks,4); 
@@ -59,6 +60,9 @@ classdef prtDataHandlerMatFiles < prtDataHandler
             switch self.matFileType
                 case 'xy'
                     s = load(self.fileList{i});
+                    if ~isfield(s,'X') || ~isfield(s,'Y')
+                        error('prt:prtDataHandlerMatFiles','prtDataHandlerMatFiles requires that MAT files not containing a prtDataSet* have at least two variables named "X" and "Y"');
+                    end
                     ds = prtDataSetClass(s.X,s.Y);
                     if isfield(s,'observationInfo')
                         ds.observationInfo = s.observationInfo;
