@@ -29,9 +29,9 @@ classdef prtActionBig
                 error('prt:prtAction:incompatible','%s.trainBig() requires datasets of type %s but the input is of type %s, which is not a subclass of %s', class(self), self.classTrainBig, inputClassType, self.classTrainBig);
             end
             
-            if self.isSupervised && ~ds.isLabeled
-                error('prt:prtAction:noLabels','%s is a supervised action and therefore requires that the training dataset is labeled',class(self));
-            end
+%             if self.isSupervised && ~ds.isLabeled
+%                 error('prt:prtAction:noLabels','%s is a supervised action and therefore requires that the training dataset is labeled',class(self));
+%             end
             
             % Default preTrainProcessing() stuff
             % self.dataSetSummary = summarize(ds); 
@@ -79,6 +79,7 @@ classdef prtActionBig
                 ds.action = ds.action + self;
             end
         end
+        
     end
     
     methods

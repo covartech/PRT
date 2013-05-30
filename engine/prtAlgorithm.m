@@ -1,4 +1,4 @@
-classdef prtAlgorithm < prtAction
+classdef prtAlgorithm < prtAction & prtActionBig
     % prtAlgorithm  Combine prtActions 
     %
     %  ALG = prtAlgorithm creates an empty prtAlgorithm object. prtAction
@@ -313,6 +313,45 @@ classdef prtAlgorithm < prtAction
                 
             end
         end
+        
+        function Obj = trainActionBig(Obj,DataSet)
+            
+            topoOrder = prtUtilTopographicalSort(Obj.connectivityMatrix');
+            input = cell(size(Obj.connectivityMatrix,1),1);
+            input{1} = DataSet;
+            
+            for i = 2:length(topoOrder)-1
+                
+                %Note: added this to fix catFeatures problems with data
+                %sets that don't have catFeatures; they can still work in
+                %"flat" algorithms.  See bug report on github and in
+                %runAction
+                inDataSets = find(Obj.connectivityMatrix(topoOrder(i),:));
+                if length(inDataSets) == 1
+                    currentInput = input{inDataSets};
+                else
+                    error('Only serial prtAlgorithms can be trained using big data'); % This is the first line that is different than trainAction
+                    currentInput = catFeatures(input{Obj.connectivityMatrix(topoOrder(i),:)});
+                end
+                %keyboard
+                Obj.actionCell{topoOrder(i-1)}.verboseStorage = Obj.verboseStorage;
+                Obj.actionCell{topoOrder(i-1)} = trainBig(Obj.actionCell{topoOrder(i-1)},currentInput); % This is the second line that is different than trainAction
+                
+                %Don't run the action if there are no other prtActions
+                %(besides outputNodes) that rely on the output.
+                
+                outputDependentActions = find(Obj.connectivityMatrix(:,topoOrder(i)));
+                if ~all(ismember(outputDependentActions,find(outputNodes(Obj))))
+                    %fprintf('running %s\n',class(Obj.actionCell{topoOrder(i-1)}));
+                    input{topoOrder(i)} = runBig(Obj.actionCell{topoOrder(i-1)},currentInput); % This is the third line that is different than trainAction
+                else
+                    %fprintf('not running %s\n',class(Obj.actionCell{topoOrder(i-1)}));
+                end
+                
+            end
+        end
+        
+        
         
         function [DataSet, input] = runAction(Obj,DataSet)
             

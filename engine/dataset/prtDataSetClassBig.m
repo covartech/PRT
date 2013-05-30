@@ -36,6 +36,10 @@ classdef prtDataSetClassBig
         function type = getDataSetType(self)
             type = self.dataHandler.getDataSetType;
         end
+        function ds = getRandomBlock(self)
+            ind = ceil((self.getNumBlocks)*rand);
+            ds = getBlock(self,ind);
+        end
     end
     
     methods (Hidden)
