@@ -11,6 +11,7 @@ classdef prtMapReduceStd < prtMapReduce
                 self.mean = run(prtMapReduceMean,dataSetBig);
             end
         end
+        
         function map = mapFn(self,dataSet) %#ok<INUSL>
             map = struct('sumSquared',sum(dataSet.X.^2),'counts',size(dataSet.X,1));
         end

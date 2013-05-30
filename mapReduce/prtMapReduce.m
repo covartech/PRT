@@ -3,6 +3,7 @@ classdef prtMapReduce
     properties 
         maxPool = 4;
         maxNumBlocks = inf;
+        runParallel = true;  %set to false to debug mapFns
     end
     
     methods (Abstract)
@@ -34,11 +35,19 @@ classdef prtMapReduce
             self = preMapReduceProcess(self,dataSetBig);
             maps = cell(nBlocks,1);
             dataHandler = dataSetBig.dataHandler;
-            parfor (i = 1:nBlocks,self.maxPool)
-                theIndex = blockInds(i);
-                ds = dataHandler.getBlock(theIndex);     %#ok<PFBNS>
-                maps{i} = self.mapFn(ds);         %#ok<PFBNS>
-            end;
+            if self.runParallel
+                parfor (i = 1:nBlocks,self.maxPool)
+                    theIndex = blockInds(i);
+                    ds = dataHandler.getBlock(theIndex);     %#ok<PFBNS>
+                    maps{i} = self.mapFn(ds);         %#ok<PFBNS>
+                end;
+            else
+                for i = 1:nBlocks
+                    theIndex = blockInds(i);
+                    ds = dataHandler.getBlock(theIndex);     %#ok<PFBNS>
+                    maps{i} = self.mapFn(ds);         %#ok<PFBNS>
+                end;
+            end
             reduced = self.reduceFn(maps);
             [~,maps,reduced] = postMapReduceProcess(self,dataSetBig,maps,reduced);
         end
