@@ -4,6 +4,7 @@ classdef prtMapReduce
         maxPool = 4;
         maxNumBlocks = inf;
         runParallel = true;  %set to false to debug mapFns
+        handleEmptyClusters = 'remove';
     end
     
     methods (Abstract)

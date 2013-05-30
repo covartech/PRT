@@ -1,4 +1,5 @@
 classdef prtMapReduceStd < prtMapReduce
+    % prtMapReduceStd < prtMapReduce
     
     properties
         mean = [];

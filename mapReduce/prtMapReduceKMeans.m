@@ -1,12 +1,31 @@
 classdef prtMapReduceKMeans < prtMapReduce
     
     properties
-        clusterCenters
+        nClusters = 3;
+        clusterCenters = [];
+        distanceMetricFn = @(x,y)prtDistanceEuclidean(x,y);
+        initialMeans = 'random';
     end
     
     methods
+        
+        function self = preMapReduceProcess(self,dataSetBig)
+            
+            switch lower(self.initialMeans)
+                case 'random'
+                    randInds = ceil(rand(self.nClusters,1)*dataSetBig.getNumBlocks);
+                    for i = 1:self.nClusters;
+                        ds = dataSetBig.getBlock(randInds(i));
+                        randIndex = ceil(rand*ds.nObservations);
+                        self.clusterCenters(i,:) = ds.X(randIndex,:);
+                    end
+                otherwise
+                    error('prtMapReduceKMeans only allows random sample initialization of means');
+            end
+        end
+            
         function map = mapFn(self,dataSet)
-            proximity = prtDistanceEuclidean(self.clusterCenters,dataSet.X);
+            proximity = self.distanceMetricFn(self.clusterCenters,dataSet.X);
             [~,inds] = min(proximity,[],1);
             
             clusterStruct = repmat(struct('sum',[],'counts',[]),1,size(proximity,1));
@@ -22,8 +41,10 @@ classdef prtMapReduceKMeans < prtMapReduce
             reduce = nan(size(mapStructs,2),length(mapStructs(1).sum));
             for clusterInd = 1:size(mapStructs,2)
                 mean = sum(cat(1,mapStructs(:,clusterInd).sum));
+                %To do: check for empty clusters
                 reduce(clusterInd,:) = mean./sum(cat(1,mapStructs(:,clusterInd).counts));
             end
+            
         end
     end
     
