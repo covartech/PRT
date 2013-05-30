@@ -3,7 +3,7 @@ classdef prtDataSetInMem < prtDataSetBase
     %   Extends prtDataSetBase to include data, targets, and observation
     %   info that are assumed to be in memory. It also addes observation
     %   and target names
-    
+    %
     % Properties:
     %   observationInfo - Structure array holding additional
     %                     data per related to each observation
