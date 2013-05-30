@@ -188,7 +188,7 @@ classdef prtDataSetStandard < prtDataSetInMem
 			end
 			empty = cellfun(@(x)isempty(x),featNames);
 			emptyInd = find(empty);
-			featNames(emptyInd) = prtDataSetBase.generateDefaultFeatureNames(indices(emptyInd));
+			featNames(emptyInd) = prtUtilGenerateDefaultFeatureNames(indices(emptyInd));
 			
 			% No modifications present
 			if isempty(obj.featureNameModificationFunction)

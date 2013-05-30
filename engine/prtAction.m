@@ -88,6 +88,9 @@ classdef prtAction
         classRun = 'prtDataSetBase';
         classRunRetained = false;
         
+        classRunBig = 'prtDataSetBase'; %@new
+        classRunBigRetained = false; %@new
+        
 		verboseStorageInternal = prtAction.getVerboseStorage();
         showProgressBarInternal = prtAction.getShowProgressBar();
 	end
