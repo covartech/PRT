@@ -11,6 +11,9 @@ classdef prtMapReduceKMeans < prtMapReduce
         
         function self = preMapReduceProcess(self,dataSetBig)
             
+            if ~isempty(self.clusterCenters)
+                return;
+            end
             switch lower(self.initialMeans)
                 case 'random'
                     randInds = ceil(rand(self.nClusters,1)*dataSetBig.getNumBlocks);
