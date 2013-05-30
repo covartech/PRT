@@ -2,6 +2,7 @@ classdef prtDataSetClassBig
 
     properties
         dataHandler
+        action
     end
     
     properties (Hidden)
@@ -13,13 +14,8 @@ classdef prtDataSetClassBig
             self = prtUtilAssignStringValuePairs(self,varargin{:});
         end
         
-        function out = mapReduce(self, mapFn, reduceFn)
-            dh = self.dataHandler;
-            parfor (i = 1:self.getNumBlocks,self.maxPool)
-                ds = dh.getBlock(i);  %#ok<PFBNS>
-                mapOut(i) = mapFn(ds); %#ok<PFBNS>
-            end;
-            out = reduceFn(mapOut);
+        function [reduced, maps] = mapReduce(self, mapReduceObj)            
+            [reduced, maps] = mapReduceObj.run(self);
         end
     end
     
@@ -28,15 +24,27 @@ classdef prtDataSetClassBig
     methods 
         function ds = getNextBlock(self)
             ds = self.dataHandler.getNextBlock;
+            ds = self.internalRunAction(ds);
         end
         function ds = getBlock(self,index)
             ds = self.dataHandler.getBlock(index);
+            ds = ds.internalRunAction;
         end
         function n = getNumBlocks(self)
             n = self.dataHandler.getNumBlocks;
         end
         function type = getDataSetType(self)
             type = self.dataHandler.getDataSetType;
+        end
+    end
+    
+    methods (Hidden)
+        function ds = internalRunAction(self,ds)
+            if isempty(self.action)
+                return
+            else
+                ds = run(self.action,ds);
+            end
         end
     end
     
