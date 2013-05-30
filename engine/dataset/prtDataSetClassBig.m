@@ -1,15 +1,34 @@
 classdef prtDataSetClassBig
-
+    
     properties
         dataHandler
         action
     end
     
     properties (Hidden)
+        summaryCache
+    end
+    
+    properties (Hidden)
         maxPool = 4;
     end
     
+    methods (Hidden)
+        function self = clearSummaryCache(self)
+            self.summaryCache = [];
+        end
+    end
+    
     methods
+        
+        function summary = summarize(self)
+            if isempty(self.summaryCache)
+                mrSummary = prtMapReduceSummarizeDataSet;
+                self.summaryCache = mrSummary.run(self);
+            end
+            summary = self.summaryCache;
+        end
+        
         function self = prtDataSetClassBig(varargin)
             self = prtUtilAssignStringValuePairs(self,varargin{:});
         end

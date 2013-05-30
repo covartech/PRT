@@ -35,17 +35,16 @@ classdef prtMapReduce
             
             self = preMapReduceProcess(self,dataSetBig);
             maps = cell(nBlocks,1);
-            dataHandler = dataSetBig.dataHandler;
             if self.runParallel
                 parfor (i = 1:nBlocks,self.maxPool)
                     theIndex = blockInds(i);
-                    ds = dataHandler.getBlock(theIndex);     %#ok<PFBNS>
+                    ds = dataSetBig.getBlock(theIndex);     %#ok<PFBNS>
                     maps{i} = self.mapFn(ds);         %#ok<PFBNS>
                 end;
             else
                 for i = 1:nBlocks
                     theIndex = blockInds(i);
-                    ds = dataHandler.getBlock(theIndex);     %#ok<PFBNS>
+                    ds = dataSetBig.getBlock(theIndex);     %#ok<PFBNS>
                     maps{i} = self.mapFn(ds);         %#ok<PFBNS>
                 end;
             end
@@ -59,10 +58,9 @@ classdef prtMapReduce
             nBlocksTotal = min([self.maxNumBlocks,dataSetBig.getNumBlocks]);
             
             maps = cell(nIters,1);
-            dataHandler = dataSetBig.dataHandler;
             tic;
             parfor (i = 1:nIters,self.maxPool)
-                ds = dataHandler.getBlock(i);     %#ok<PFBNS>
+                ds = dataSetBig.getBlock(i);     %#ok<PFBNS>
                 maps{i} = self.mapFn(ds);         %#ok<PFBNS>
             end;
             reduced = self.reduceFn(maps);

@@ -95,7 +95,7 @@ classdef prtPreProcZmuv < prtPreProc & prtActionBig
             mrMeanObj = prtMapReduceMean;
             self.means = mrMeanObj.run(dsBig);
 
-            mrStdObj = prtMapReduceStd;
+            mrStdObj = prtMapReduceStd; 
             mrStdObj.mean = self.means;
             self.stds = mrStdObj.run(dsBig);
             

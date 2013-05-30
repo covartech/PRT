@@ -189,6 +189,7 @@ classdef prtAlgorithm < prtAction & prtActionBig
                 
                 Obj1.isSupervised = any(cellfun(@(c)c.isSupervised,Obj1.actionCell));
                 Obj1.isCrossValidateValid = all(cellfun(@(c)c.isCrossValidateValid,Obj1.actionCell));
+                Obj1.isTrained = all(cellfun(@(c)c.isTrained,Obj1.actionCell));
             else
                 error('prt:prtAlgorithm:plus','prtAlgorithm.plus is only defined for second inputs of type prtAlgorithm or prtAction, but the second input is a %s',class(Obj2));
             end

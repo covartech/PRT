@@ -33,8 +33,10 @@ classdef prtActionBig
 %                 error('prt:prtAction:noLabels','%s is a supervised action and therefore requires that the training dataset is labeled',class(self));
 %             end
             
-            % Default preTrainProcessing() stuff
-            % self.dataSetSummary = summarize(ds); 
+            self = self.setDataSetSummary(summarize(ds)); 
+            if self.verboseStorage
+                self = self.setDataSet(ds);
+            end
             
             self = preTrainBigProcessing(self,ds);
 
@@ -78,6 +80,7 @@ classdef prtActionBig
             else
                 ds.action = ds.action + self;
             end
+            ds = ds.clearSummaryCache;
         end
         
     end
