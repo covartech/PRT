@@ -1,7 +1,10 @@
 classdef prtMapReduceSummarizeDataSet < prtMapReduce
     
     methods
-            
+        function self = prtMapReduceSummarizeDataSet(varargin)
+            self = prtUtilAssignStringValuePairs(self,varargin{:});
+        end
+        
         function map = mapFn(self,dataSet)
             map = dataSet.summarize;
         end

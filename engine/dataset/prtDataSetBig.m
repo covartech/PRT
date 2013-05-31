@@ -17,13 +17,24 @@ classdef prtDataSetBig
         function self = clearSummaryCache(self)
             self.summaryCache = [];
         end
+        
+        function self = cacheBuild(self,force)
+            % self = cacheBuild(self,force)
+            %   
+            if nargin < 2
+                force = false;
+            end
+            if force || isempty(self.summaryCache)
+                [~,self] = self.summarize;
+            end
+        end
     end
     
     methods
         
-        function summary = summarize(self)
+        function [summary,self] = summarize(self)
             if isempty(self.summaryCache)
-                mrSummary = prtMapReduceSummarizeDataSet;
+                mrSummary = prtMapReduceSummarizeDataSet('runParallel',false);
                 self.summaryCache = mrSummary.run(self);
             end
             summary = self.summaryCache;

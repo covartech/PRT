@@ -40,7 +40,8 @@ classdef prtPreProcKmeans < prtPreProc & prtActionBig
             maxIters = 1000;
             prevCenters = self.clusterCenters;
             
-            visualizeLearning = true;
+            visualizeLearning = false;
+            disp('kmeans');
             for iter = 1:maxIters
                 clusterCents = mrKmeans.run(dataSetBig);
                 self.clusterCenters = clusterCents;

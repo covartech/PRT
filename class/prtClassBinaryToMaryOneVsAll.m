@@ -1,4 +1,4 @@
-classdef prtClassBinaryToMaryOneVsAll < prtClass
+classdef prtClassBinaryToMaryOneVsAll < prtClass & prtActionBig
     % prtClassBinaryToMaryOneVsAll  M-Ary Emulation Classifier
     %
     %    CLASSIFIER = prtClassBinaryToMaryOneVsAll returns a M-ary "one
@@ -92,25 +92,25 @@ classdef prtClassBinaryToMaryOneVsAll < prtClass
     
     methods (Access = protected,Hidden = true)
         
-        function Obj = trainAction(Obj,DataSet)
+        function Obj = trainAction(Obj,dataSet)
             % Repmat the Classifier objects to get one for each class
             Obj.nameAbbreviation = sprintf('OneVsAll_{%s}',Obj.baseClassifier(1).nameAbbreviation);
-            Obj.baseClassifier = repmat(Obj.baseClassifier(:), (DataSet.nClasses - length(Obj.baseClassifier)+1),1);
-            Obj.baseClassifier = Obj.baseClassifier(1:DataSet.nClasses);
+            Obj.baseClassifier = repmat(Obj.baseClassifier(:), (dataSet.nClasses - length(Obj.baseClassifier)+1),1);
+            Obj.baseClassifier = Obj.baseClassifier(1:dataSet.nClasses);
             
-            actuallyShowProgressBar = Obj.showProgressBar && (DataSet.nClasses > 1);
+            actuallyShowProgressBar = Obj.showProgressBar && (dataSet.nClasses > 1);
             
             if actuallyShowProgressBar
                 waitBarObj = prtUtilProgressBar(0,'Training M-Ary Emulation Classifier (One vs. All)','autoClose',true);
             end
             
-            for iY = 1:DataSet.nClasses
+            for iY = 1:dataSet.nClasses
                 if actuallyShowProgressBar
-                    waitBarObj.update((iY-1)/DataSet.nClasses);
+                    waitBarObj.update((iY-1)/dataSet.nClasses);
                 end
                 
                 % Replace the targets with binary targets for this class
-                cDataSet = DataSet.setTargets(DataSet.getTargetsAsBinaryMatrix(:,iY));
+                cDataSet = dataSet.setTargets(dataSet.getTargetsAsBinaryMatrix(:,iY));
                 % We need the classifier to act like a binary and we dont 
                 % want a bunch of DataSets lying around
                 Obj.baseClassifier(iY).verboseStorage = false;
@@ -125,11 +125,47 @@ classdef prtClassBinaryToMaryOneVsAll < prtClass
             
         end
 
-        function DataSetOut = runAction(Obj,DataSet)
-            DataSetOut = prtDataSetClass(zeros(DataSet.nObservations, length(Obj.baseClassifier)));
+        function Obj = trainActionBig(Obj,dataSetBig)
+            % Repmat the Classifier objects to get one for each class
+            dataSetBig = cacheBuild(dataSetBig,true);
+            keyboard
+            Obj.nameAbbreviation = sprintf('OneVsAll_{%s}',Obj.baseClassifier(1).nameAbbreviation);
+            Obj.baseClassifier = repmat(Obj.baseClassifier(:), (dataSetBig.nClasses - length(Obj.baseClassifier)+1),1);
+            Obj.baseClassifier = Obj.baseClassifier(1:dataSetBig.nClasses);
+            
+            actuallyShowProgressBar = Obj.showProgressBar && (dataSetBig.nClasses > 1);
+            
+            if actuallyShowProgressBar
+                waitBarObj = prtUtilProgressBar(0,'Training M-Ary Emulation Classifier (One vs. All)','autoClose',true);
+            end
+            
+            for iY = 1:dataSetBig.nClasses
+                if actuallyShowProgressBar
+                    waitBarObj.update((iY-1)/dataSetBig.nClasses);
+                end
+                
+                mapper = prtPreProcFunctionTargets('transformationFunction',@(y)y == dataSetBig.uniqueClasses(iY));
+                mapper = mapper.trainBig(dataSetBig);
+                dsTemp = mapper.runBig(dataSetBig);
+                
+                % want a bunch of DataSets lying around
+                Obj.baseClassifier(iY).verboseStorage = false;
+                Obj.baseClassifier(iY).twoClassParadigm = 'binary';
+                
+                % Train this Classifier
+                Obj.baseClassifier(iY) = trainBig(Obj.baseClassifier(iY), dsTemp);
+            end
+            if actuallyShowProgressBar
+                waitBarObj.update(1);
+            end
+            
+        end
+        
+        function DataSetOut = runAction(Obj,dataSet)
+            DataSetOut = prtDataSetClass(zeros(dataSet.nObservations, length(Obj.baseClassifier)));
             
             for iY = 1:length(Obj.baseClassifier)
-                cOutput = run(Obj.baseClassifier(iY), DataSet);
+                cOutput = run(Obj.baseClassifier(iY), dataSet);
                 
                 DataSetOut = DataSetOut.setObservations(cOutput.getObservations(),:,iY);
             end
