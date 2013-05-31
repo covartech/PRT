@@ -34,7 +34,7 @@ classdef prtDataSetBig
         
         function [summary,self] = summarize(self)
             if isempty(self.summaryCache)
-                mrSummary = prtMapReduceSummarizeDataSet('runParallel',false);
+                mrSummary = prtMapReduceSummarizeDataSet;
                 self.summaryCache = mrSummary.run(self);
             end
             summary = self.summaryCache;

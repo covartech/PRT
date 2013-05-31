@@ -34,13 +34,15 @@ classdef prtDataSetBigClass < prtDataSetBig
             end
             n = self.uniqueClassesStaticHelper;
         end
-        function summary = summarize(self)
+        
+        function [summary,self] = summarize(self)
             if isempty(self.summaryCache)
                 mrSummary = prtMapReduceSummarizeDataSetClass;
                 self.summaryCache = mrSummary.run(self);
             end
             summary = self.summaryCache;
         end
+        
         function plot(self)
             plot(self.getRandomBlock())
         end
