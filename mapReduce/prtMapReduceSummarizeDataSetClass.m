@@ -1,10 +1,7 @@
-classdef prtMapReduceSummarizeDataSet < prtMapReduce
+classdef prtMapReduceSummarizeDataSetClass < prtMapReduce
     
     methods
-        function self = prtMapReduceSummarizeDataSet(varargin)
-            self = prtUtilAssignStringValuePairs(self,varargin{:});
-        end
-        
+            
         function map = mapFn(self,dataSet)
             map = dataSet.summarize;
         end
@@ -16,9 +13,14 @@ classdef prtMapReduceSummarizeDataSet < prtMapReduce
             lowerBounds = min(cat(1,mapStructs.lowerBounds));
             nFeatures = unique(cat(1,mapStructs.nFeatures));
             nTargetDimensions = unique(cat(1,mapStructs.nTargetDimensions));
+            uniqueClasses = unique(cat(1,mapStructs.uniqueClasses));
+            nClasses = length(uniqueClasses);
+            isMary = length(nClasses) > 2;
+            
             
             reduce = struct('upperBounds',upperBounds,'lowerBounds',lowerBounds,'nFeatures',nFeatures,...
-                'nTargetDimensions',nTargetDimensions);            
+                'nTargetDimensions',nTargetDimensions,'uniqueClasses',uniqueClasses,'nClasses',nClasses,...
+                'isMary',isMary);            
         end
     end
     

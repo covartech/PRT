@@ -155,9 +155,10 @@ classdef prtClassLogisticDiscriminant < prtClass & prtActionBig
         handleNonPosDefR = 'exit';  % The action taken when R is non-positive definite
         
         
-        sgdLearningRate = 0.05;
-        sgdRegularization = 0.1;
-        sgdNumSamples = [];
+        sgdLearningRate = @(t)((sqrt(t) + 5)^(-0.9));
+        sgdRegularization = 0;
+        sgdWeightTolerance = 1e-6;
+        
     end
     
     methods
@@ -342,6 +343,9 @@ classdef prtClassLogisticDiscriminant < prtClass & prtActionBig
         function self = trainActionBig(self,ds)
             
             nTriesForNonEmptyBlock = 1000;
+            useVariableLearningRate = isa(self.sgdLearningRate,'function_handle');
+            converged = false;
+            
             for iter = 1:self.maxIter
                 
                 % Try to load a block
@@ -362,10 +366,6 @@ classdef prtClassLogisticDiscriminant < prtClass & prtActionBig
                     cW = zeros(cBlockDs.nFeatures+1,1);
                     wOld = inf;
                     
-                    if isempty(self.sgdNumSamples)
-                        self.sgdNumSamples = ds.getNumBlocks*cBlockDs.nObservations;
-                    end
-                    G = eye(cBlockDs.nFeatures);
                 end
                 cX = cat(2,ones(cBlockDs.nObservations,1), cBlockDs.X);
                 
@@ -376,13 +376,17 @@ classdef prtClassLogisticDiscriminant < prtClass & prtActionBig
                 
                 %cW = cW + self.irlsStepSize*sum(bsxfun(@times,cY./(1 + exp(cY.*(cX*cW))),cX),1)';
                 
-                cLearningRate = self.sgdLearningRate;
-                cStep = (self.sgdRegularization*cW - self.sgdNumSamples*mean(bsxfun(@times,cY./(1 + exp(cY.*(cX*cW))),cX),1)');
+                if useVariableLearningRate
+                    cLearningRate = self.sgdLearningRate(iter);
+                else
+                    cLearningRate = self.sgdLearningRate;
+                end
+                cStep = (self.sgdRegularization*cW - mean(bsxfun(@times,cY./(1 + exp(cY.*(cX*cW))),cX),1)');
                 cW = cW - cLearningRate*cStep;
                 
                 %cW = cW - cLearningRate*G^(-1/2)*cStep;
-                
-                if norm(cW - wOld) < self.wTolerance
+                cChange = norm(cW - wOld)/norm(cW);
+                if cChange < self.sgdWeightTolerance
                     converged = true;
                     break
                 end
@@ -392,13 +396,13 @@ classdef prtClassLogisticDiscriminant < prtClass & prtActionBig
                 plotOnIter = 1;
                 if plotOnIter && ~mod(iter,plotOnIter)
                     plot(cW)
+                    title(sprintf('iteration=%d - change=%0.3f',iter,cChange));
                     drawnow;
                 end
             end
             
             if ~converged
                 warning('prt:prtClassLogisticDiscriminant:notConverged','Convergence was not reached in the maximum number of allowed iterations.');
-                return;
             end
             
             self.w = cW;
