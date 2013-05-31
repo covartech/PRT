@@ -46,6 +46,7 @@ x = textscan(fid,'%s%f%f%f%f%f%f','headerlines',1,'delimiter',',');
 fclose(fid);
 
 X = cat(2,datenum(x{1}),x{2},x{3},x{4},x{5},x{6},x{7});
+X = flipud(X);
 featureNames = {'Date','Open','High','Low','Close','Volume','AdjClose'};
 X = flipud(X);
 ds = prtDataSetClass(X);

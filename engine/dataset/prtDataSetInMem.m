@@ -224,15 +224,15 @@ classdef prtDataSetInMem < prtDataSetBase
     methods (Hidden = true)
         %Don't call these; they get called internally
         
-		function Summary = summarize(self,Summary)
-			% Summarize   Summarize the prtDataSetStandard object
-			%
-			% SUMMARY = dataSet.summarize() Summarizes the prtDataSetStandard
-			% object and returns the result in the struct SUMMARY.
-			if nargin == 1
+        function Summary = summarize(self,Summary)
+            % Summarize   Summarize the prtDataSetStandard object
+            %
+            % SUMMARY = dataSet.summarize() Summarizes the prtDataSetStandard
+            % object and returns the result in the struct SUMMARY.
+            if nargin == 1
                 Summary = struct;
             end
-			Summary.nObservations = Obj.nObservations;
+            Summary.nObservations = self.nObservations;
         end
         
         function self = catObservationData(self, varargin)
