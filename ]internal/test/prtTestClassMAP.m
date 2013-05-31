@@ -60,7 +60,7 @@ result = result & (percentCorr > baselinePercentCorr);
 %% Check that cross-val and k-folds work
 
 TestDataSet = prtDataGenUnimodal;
-classifier = prtClassMAP;
+classifier = prtClassMap;
 
 % cross-val
 keys = mod(1:400,2);

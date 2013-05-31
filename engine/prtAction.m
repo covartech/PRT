@@ -88,7 +88,7 @@ classdef prtAction
         classRun = 'prtDataSetBase';
         classRunRetained = false;
         
-		verboseStorageInternal = prtAction.getVerboseStorage();
+        verboseStorageInternal = prtAction.getVerboseStorage();
         showProgressBarInternal = prtAction.getShowProgressBar();
 	end
     
@@ -133,6 +133,7 @@ classdef prtAction
         %   ds = runAction(self, ds)
         ds = runAction(self, ds)
     end
+    
     methods (Access = protected, Hidden = true)
         function xOut = runActionFast(self, xIn, ds) %#ok<STOUT,INUSD>
             error('prt:prtAction:runActionFast','The prtAction (%s) does not have a runActionFast() method. Therefore runFast() cannot be used.',class(self));
@@ -264,6 +265,7 @@ classdef prtAction
             assert(ischar(val),'prt:prtAction:classTrain','classTrain must be a string.');
             self.classTrain = val;
         end
+        
         function self = set.classRunRetained(self,val)
             assert(prtUtilIsLogicalScalar(val),'prt:prtAction:classRunRetained','classRunRetained must be a scalar logical.');
             self.classRunRetained = val;
@@ -511,7 +513,7 @@ classdef prtAction
             %   ActionObj = postTrainProcessing(ActionObj,DataSet)
         end
         
-        function ds = preRunProcessing(self, ds) %#ok<MANU>
+        function ds = preRunProcessing(self, ds)  %#ok<INUSL>
             % preRunProcessing - Processing done before runAction()
             %   Called by run(). Can be overloaded by prtActions to
             %   store specific information about the DataSet or Classifier
@@ -527,17 +529,17 @@ classdef prtAction
             %   
             %   DataSetOut = postRunProcessing(ActionObj, DataSetIn, DataSetOut)
             
-			if dsIn.nObservations > 0
-				if self.isCrossValidateValid
-					dsOut = dsOut.acquireNonDataAttributesFrom(dsIn);
-				end
-				
-				% Allow actions to modify featureNames
-				dsOut = dsOut.modifyNonDataAttributesFrom(self);
+            if dsIn.nObservations > 0
+                if self.isCrossValidateValid
+                    dsOut = dsOut.acquireNonDataAttributesFrom(dsIn);
+                end
+                
+                % Allow actions to modify featureNames
+                dsOut = dsOut.modifyNonDataAttributesFrom(self);
             end
         end
         
-        function xIn = preRunProcessingFast(ActionObj, xIn, ds) %#ok<INUSD,MANU>
+        function xIn = preRunProcessingFast(ActionObj, xIn, ds) %#ok<INUSL,INUSD>
             % preRunProcessingFast - Processing done before runAction()
             %   Called by runFast(). Can be overloaded by prtActions to
             %   store specific information about the xIn or Classifier
@@ -554,7 +556,6 @@ classdef prtAction
             %   
             %   xOut = postRunProcessingFast(ActionObj, xIn, xOut, dsIn)
         end
-        
     end
     methods (Access = protected, Hidden)
         function dsOut = runActionOnTrainingData(self, dsIn)
@@ -570,6 +571,24 @@ classdef prtAction
             dsOut = runAction(self, dsIn);
         end
     end
+    methods (Hidden)
+        function self = setIsTrained(self,val)
+            if nargin < 2 || isempty(val)
+                error('A value must be specified');
+            end
+            assert(prtUtilIsLogicalScalar(val),'isTrained must be a logical scalar');
+            
+            self.isTrained = true;
+        end
+        function self = setDataSet(self, val)
+            self.dataSet = val;
+        end
+        function self = setDataSetSummary(self, summary)
+            self.dataSetSummary = summary;
+        end
+    end
+              
+    
     methods (Hidden = false)
         function [optimizedAction, performance] = optimize(self, ds , objFn, parameterName, parameterValues)
             % OPTIMIZE Optimize action parameter by exhaustive function maximization.
