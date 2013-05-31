@@ -13,7 +13,8 @@ classdef prtPreProcBootstrapTraining < prtPreProc
 	%
     %
     % Properties:
-    %   nSamples (1000): The number of samples to bootstrap
+    %   nSamples (1000): The number of samples to bootstrap in total or
+    %       from each class; see boostrapByClass.
     %
     %   boostrapByClass (true): Whether to call dataSet.bootstrapByClass 
     %       or dataSet.bootstrap
