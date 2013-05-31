@@ -1,4 +1,4 @@
-classdef prtDataSetClassBig
+classdef prtDataSetBig
     
     properties
         dataHandler
@@ -29,7 +29,7 @@ classdef prtDataSetClassBig
             summary = self.summaryCache;
         end
         
-        function self = prtDataSetClassBig(varargin)
+        function self = prtDataSetBig(varargin)
             self = prtUtilAssignStringValuePairs(self,varargin{:});
         end
         
