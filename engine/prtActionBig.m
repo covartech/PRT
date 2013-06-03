@@ -80,7 +80,7 @@ classdef prtActionBig
             else
                 ds.action = ds.action + self;
             end
-            ds = ds.clearSummaryCache;
+            ds = ds.summaryClear;
         end
         
     end

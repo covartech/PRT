@@ -1,4 +1,4 @@
-classdef prtDataSetClassBig
+classdef prtDataSetBig
     
     properties
         dataHandler
@@ -14,22 +14,40 @@ classdef prtDataSetClassBig
     end
     
     methods (Hidden)
-        function self = clearSummaryCache(self)
+        function self = summaryClear(self)
+            % self = summaryClear(self)
             self.summaryCache = [];
+        end
+        
+        function self = summaryRebuild(self)
+            % self = summaryRebuild(self)
+            self = summaryClear(self);
+            self = summaryBuild(self,true);
+        end
+        
+        function self = summaryBuild(self,force)
+            % self = summaryBuild(self,force)
+            % 
+            if nargin < 2
+                force = false;
+            end
+            if force || isempty(self.summaryCache)
+                mrSummary = prtMapReduceSummarizeDataSet;
+                self.summaryCache = mrSummary.run(self);
+            end
         end
     end
     
     methods
         
         function summary = summarize(self)
-            if isempty(self.summaryCache)
-                mrSummary = prtMapReduceSummarizeDataSet;
-                self.summaryCache = mrSummary.run(self);
-            end
             summary = self.summaryCache;
+            if isempty(summary)
+                error('prtDataSetBig:summaryNotBuild','The data set big object does not have a valid summary; use ds = ds.summaryBuild to build and cache one');
+            end
         end
         
-        function self = prtDataSetClassBig(varargin)
+        function self = prtDataSetBig(varargin)
             self = prtUtilAssignStringValuePairs(self,varargin{:});
         end
         

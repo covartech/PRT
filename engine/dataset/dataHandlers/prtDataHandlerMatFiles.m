@@ -7,6 +7,7 @@ classdef prtDataHandlerMatFiles < prtDataHandler
     %   x(i,:) = mean(ds.X); 
     % end
     %
+    
     properties (Dependent)
         fileList
     end
@@ -25,11 +26,15 @@ classdef prtDataHandlerMatFiles < prtDataHandler
     methods
         
         function set.fileList(self,val)
+            
             if ischar(val) && exist(val,'dir')
                 dirList = prtUtilSubDir(val,'*.mat');
             elseif isa(val,'cell')
                 dirList = val;
+            else
+                error('prtDataHandlerMatFiles:invalidInput','The provided fileList was neither a directory nor a cell array of files');
             end
+            
             self.fileListDepHelper = dirList;
             
             varNames = whos('-file',self.fileList{1});
