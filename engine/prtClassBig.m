@@ -13,9 +13,7 @@ classdef prtClassBig < prtActionBig
         function self = preTrainBigProcessing(self, ds)
             % Overload preTrainProcessing() so that we can determine mary
             % output status
-            self.yieldsMaryOutput = determineMaryOutputBig(self,ds);
-            
-            self = preTrainBigProcessing@prtAction(self,ds);
+            self = self.setYieldsMaryOutput(determineMaryOutputBig(self,ds));
         end
         
         function produceMaryOutput = determineMaryOutputBig(self,ds)

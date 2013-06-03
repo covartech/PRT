@@ -212,6 +212,9 @@ classdef prtClass < prtAction
     end
 
     methods (Hidden = true)
+        function self = setYieldsMaryOutput(self,val)
+            self.yieldsMaryOutput = val;
+        end
         function explore(Obj)
             % explore() Explore the decision contours of classifiers
             % operating on high dimensional data.
@@ -288,7 +291,7 @@ classdef prtClass < prtAction
                 error('prt:prtClass:determineMaryOutput:invalidInput','Invalid input.');
             end
             produceMaryOutput = false; % Default answer only do mary in special conditions
-            keyboard
+            
             if isnan(ClassObj.isNativeMary)
                 produceMaryOutput = [];
                 return; %let it do it's thing.

@@ -154,9 +154,9 @@ classdef prtClassLogisticDiscriminant < prtClass & prtClassBig
         
         handleNonPosDefR = 'exit';  % The action taken when R is non-positive definite
         
-        
+        sgdPassesThroughTheData = 10;
         sgdLearningRate = @(t)((sqrt(t) + 10).^(-0.9));
-        sgdRegularization = 0;
+        sgdRegularization = 0.1;
         sgdWeightTolerance = 1e-6;
         
     end
@@ -346,7 +346,9 @@ classdef prtClassLogisticDiscriminant < prtClass & prtClassBig
             useVariableLearningRate = isa(self.sgdLearningRate,'function_handle');
             converged = false;
             
-            for iter = 1:self.maxIter
+            nMaxIterations = self.sgdPassesThroughTheData*ds.nBlocks;
+            
+            for iter = 1:nMaxIterations
                 
                 % Try to load a block
                 for blockLoadTry = 1:nTriesForNonEmptyBlock

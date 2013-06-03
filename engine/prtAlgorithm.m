@@ -136,7 +136,7 @@ classdef prtAlgorithm < prtAction & prtActionBig
         function plot(Obj)
             % Plots a block diagram of the algorithm 
             % Requires graphviz
-            prtPlotUtilAlgorithmGui(Obj.connectivityMatrix, Obj.actionCell);
+            prtPlotUtilAlgorithmGui(Obj.connectivityMatrix, Obj.actionCell, Obj);
         end
         
         function in = inputNodes(Obj)

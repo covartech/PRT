@@ -70,8 +70,12 @@ classdef prtDataSetBigClass < prtDataSetBig & prtDataInterfaceCategoricalTargets
             end
         end
         
-        function plot(self)
-            plot(self.getRandomBlock())
+        function varargout = plot(self)
+            plotHandles = plot(self.getRandomBlock());
+            varargout = {};
+            if nargout
+                varargout = {plotHandles};
+            end
         end
     end
 end
