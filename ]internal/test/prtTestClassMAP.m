@@ -83,7 +83,7 @@ result = result & (percentCorr > baselinePercentCorr);
 
 error = true;  % We will want all these things to error
 
-classifier = prtClassMAP;
+classifier = prtClassMap;
 
 try
     classifier.rvs = 1;
