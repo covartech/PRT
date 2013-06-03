@@ -1,4 +1,4 @@
-classdef prtDataSetBig
+classdef prtDataSetBig < prtDataSetBase
     
     properties
         dataHandler
@@ -88,5 +88,24 @@ classdef prtDataSetBig
             end
         end
     end
-    
+    methods % Abstract from prtDataSetBase (We actually don't want to use these)
+        function n = getNumObservations(self)
+            error('prt:prtDataSetBig:doNotUse','This method cannot be used with objects of type prtDataSetBig.');
+        end
+        function nTargets = getNumTargetDimensions(self)
+            error('prt:prtDataSetBig:doNotUse','This method cannot be used with objects of type prtDataSetBig.');
+        end
+        function data = getData(self,indices)
+            error('prt:prtDataSetBig:doNotUse','This method cannot be used with objects of type prtDataSetBig.');
+        end
+        function targets = getTargets(self,indices)
+            error('prt:prtDataSetBig:doNotUse','This method cannot be used with objects of type prtDataSetBig.');
+        end
+        function self = retainObservationData(self,indices)
+            error('prt:prtDataSetBig:doNotUse','This method cannot be used with objects of type prtDataSetBig.');
+        end
+        function self = catObservationData(self,varargin)
+            error('prt:prtDataSetBig:doNotUse','This method cannot be used with objects of type prtDataSetBig.');
+        end
+    end
 end

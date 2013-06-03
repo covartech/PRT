@@ -1,4 +1,4 @@
-classdef prtClassLogisticDiscriminant < prtClass & prtActionBig
+classdef prtClassLogisticDiscriminant < prtClass & prtClassBig
     % prtClassLogisticDiscriminant  Logistic Discriminant classifier
     %
     %    CLASSIFIER = prtClassLogisticDiscriminant returns a LogisticDiscriminant classifier
@@ -155,7 +155,7 @@ classdef prtClassLogisticDiscriminant < prtClass & prtActionBig
         handleNonPosDefR = 'exit';  % The action taken when R is non-positive definite
         
         
-        sgdLearningRate = @(t)((sqrt(t) + 5)^(-0.9));
+        sgdLearningRate = @(t)((sqrt(t) + 10).^(-0.9));
         sgdRegularization = 0;
         sgdWeightTolerance = 1e-6;
         

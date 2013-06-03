@@ -13,12 +13,12 @@ classdef prtClassBig < prtActionBig
         function self = preTrainBigProcessing(self, ds)
             % Overload preTrainProcessing() so that we can determine mary
             % output status
-            self.yieldsMaryOutput = determineMaryOutput(self,ds);
+            self.yieldsMaryOutput = determineMaryOutputBig(self,ds);
             
             self = preTrainBigProcessing@prtAction(self,ds);
         end
         
-        function produceMaryOutput = determineMaryOutput(self,ds)
+        function produceMaryOutput = determineMaryOutputBig(self,ds)
             % Determine if an Mary output will be provided by the classifier
             % Determined by the ds the classifier capabilities and the            
             % twoClassParadigm switch

@@ -8,8 +8,8 @@ classdef prtDataSetBigClass < prtDataSetBig
         uniqueClasses
         isMary
         nFeatures
-        nObservations
-        nTargetDimensions
+        %nObservations
+        %nTargetDimensions
     end
     
     properties (Hidden)
@@ -47,12 +47,12 @@ classdef prtDataSetBigClass < prtDataSetBig
             n = summary.nFeatures;
         end
         
-        function n = get.nObservations(self)
+        function n = getNumObservations(self)
             summary = self.summarize;
             n = summary.nObservations;
         end
         
-        function n = get.nTargetDimensions(self)
+        function n = getNumTargetDimensions(self)
             summary = self.summarize;
             n = summary.nTargetDimensions;
         end
