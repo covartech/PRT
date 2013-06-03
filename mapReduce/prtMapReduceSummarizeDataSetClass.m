@@ -19,11 +19,12 @@ classdef prtMapReduceSummarizeDataSetClass < prtMapReduce
             uniqueClasses = unique(cat(1,mapStructs.uniqueClasses));
             nClasses = length(uniqueClasses);
             isMary = length(nClasses) > 2;
-            
+            nObservations = sum(cat(1,mapStructs.nObservations));
+            nBlocks = length(mapStructs);
             
             reduce = struct('upperBounds',upperBounds,'lowerBounds',lowerBounds,'nFeatures',nFeatures,...
                 'nTargetDimensions',nTargetDimensions,'uniqueClasses',uniqueClasses,'nClasses',nClasses,...
-                'isMary',isMary);            
+                'isMary',isMary,'nObservations',nObservations,'nBlocks',nBlocks);
         end
     end
     

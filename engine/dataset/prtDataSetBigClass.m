@@ -6,6 +6,10 @@ classdef prtDataSetBigClass < prtDataSetBig
     properties (Hidden) %for users:
         nClasses
         uniqueClasses
+        isMary
+        nFeatures
+        nObservations
+        nTargetDimensions
     end
     
     properties (Hidden)
@@ -17,6 +21,26 @@ classdef prtDataSetBigClass < prtDataSetBig
         
         function self = prtDataSetBigClass(varargin)
             self = prtUtilAssignStringValuePairs(self, varargin{:});
+        end
+        
+        function is = get.isMary(self)
+            summary = self.summarize;
+            is = summary.isMary;
+        end
+        
+        function n = get.nFeatures(self)
+            summary = self.summarize;
+            n = summary.nFeatures;
+        end
+        
+        function n = get.nObservations(self)
+            summary = self.summarize;
+            n = summary.nObservations;
+        end
+        
+        function n = get.nTargetDimensions(self)
+            summary = self.summarize;
+            n = summary.nTargetDimensions;
         end
         
         function n = get.nClasses(self)
