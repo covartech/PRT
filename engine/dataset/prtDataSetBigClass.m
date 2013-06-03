@@ -17,6 +17,20 @@ classdef prtDataSetBigClass < prtDataSetBig
         uniqueClassesStaticHelper
     end
     
+    methods (Hidden)
+        function self = summaryBuild(self,force)
+            % self = summaryBuild(self,force)
+            % 
+            if nargin < 2
+                force = false;
+            end
+            if force || isempty(self.summaryCache)
+                mrSummary = prtMapReduceSummarizeDataSetClass;
+                self.summaryCache = mrSummary.run(self);
+            end
+        end
+    end
+    
     methods
         
         function self = prtDataSetBigClass(varargin)
@@ -59,12 +73,11 @@ classdef prtDataSetBigClass < prtDataSetBig
             n = self.uniqueClassesStaticHelper;
         end
         
-        function [summary,self] = summarize(self)
-            if isempty(self.summaryCache)
-                mrSummary = prtMapReduceSummarizeDataSetClass;
-                self.summaryCache = mrSummary.run(self);
-            end
+        function summary = summarize(self)
             summary = self.summaryCache;
+            if isempty(summary)
+                error('prtDataSetBig:summaryNotBuild','The data set big object does not have a valid summary; use ds = ds.summaryBuild to build and cache one');
+            end
         end
         
         function plot(self)

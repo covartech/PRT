@@ -18,7 +18,7 @@ classdef prtMapReduceSummarizeDataSetClass < prtMapReduce
             nTargetDimensions = unique(cat(1,mapStructs.nTargetDimensions));
             uniqueClasses = unique(cat(1,mapStructs.uniqueClasses));
             nClasses = length(uniqueClasses);
-            isMary = length(nClasses) > 2;
+            isMary = nClasses > 2;
             nObservations = sum(cat(1,mapStructs.nObservations));
             nBlocks = length(mapStructs);
             
