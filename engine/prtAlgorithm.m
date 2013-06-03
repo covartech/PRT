@@ -404,6 +404,23 @@ classdef prtAlgorithm < prtAction & prtActionBig
     end
 
     methods (Hidden)
+        
+        function plotAsClassifier(self)
+            % plotAsClassifier(self)
+            %   Plot an algorithm as though it were a classifier - e.g.,
+            %   build the decision surface and visualize it.  Valid for
+            %   algorithms trained with data sets with 3 or fewer features,
+            %   and when the *very last* action is a prtClass.
+            %
+            % e.g.
+            %   ds = prtDataGenBimodal;
+            %   algoKmeans = prtPreProcKmeans('nClusters',4) + prtClassLogisticDiscriminant;
+            %   algoKmeans = train(algoKmeans,ds);
+            %   algoKmeans.plotAsClassifier;
+            
+            plot(prtUtilClassAlgorithmWrapper('trainedAlgorithm',self));
+        end
+        
         function [optimizedAlgorithm,performance] = optimize(Obj,DataSet,objFn,tag,parameterName,parameterValues)
             % OPTIMIZE Optimize action parameter by exhaustive function maximization. 
             %

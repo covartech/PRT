@@ -77,8 +77,8 @@ classdef prtClassFld < prtClass
     end
     
     properties (SetAccess = protected)
-        % w is a DataSet.nDimensions x 1 vector of projection weights
-        % learned during Fld.train(DataSet)
+        % w is a dataSet.nDimensions x 1 vector of projection weights
+        % learned during Fld.train(dataSet)
         
         w = []; % The vector of weights, learned during training
         
@@ -90,13 +90,13 @@ classdef prtClassFld < prtClass
     methods
      
                % Allow for string, value pairs
-        function Obj = prtClassFld(varargin)
-            Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
+        function self = prtClassFld(varargin)
+            self = prtUtilAssignStringValuePairs(self,varargin{:});
         end
         
-        function Obj = set.plotProjections(Obj,value)
+        function self = set.plotProjections(self,value)
             if islogical(value) || (isnumeric(value) && (value == 1 || value == 0))
-                Obj.plotProjections = value;
+                self.plotProjections = value;
             else
                 error('prt:prtClassFld:plotProjections','plotProjections can only take true or false (boolean or 0/1) values; user speficied value %d',value);
             end
@@ -105,21 +105,21 @@ classdef prtClassFld < prtClass
     
     methods (Access=protected, Hidden = true)
         
-        function Obj = trainAction(Obj,DataSet)
+        function self = trainAction(self,dataSet)
             
-            n = DataSet.nObservations;
-            p = DataSet.nFeatures;
+            n = dataSet.nObservations;
+            p = dataSet.nFeatures;
             
             if p > n
-                warning('prt:prtClassFld:train:illconditioned','DataSet has n (%d) < p (%d); prtClassFld may not be stable',n,p);
+                warning('prt:prtClassFld:train:illconditioned','dataSet has n (%d) < p (%d); prtClassFld may not be stable',n,p);
             end
-            if ~DataSet.isBinary
+            if ~dataSet.isBinary
                 error('prtClassFld:nonBinaryTraining','Input dataSet for prtClassFld.train must be binary');
             end
             
             
-            dataH0 = DataSet.getObservationsByClassInd(1);
-            dataH1 = DataSet.getObservationsByClassInd(2);
+            dataH0 = dataSet.getObservationsByClassInd(1);
+            dataH1 = dataSet.getObservationsByClassInd(2);
             
             M0 = mean(dataH0,1);
             M1 = mean(dataH1,1);
@@ -129,26 +129,26 @@ classdef prtClassFld < prtClass
             
             Sw = s1 + s0;
             
-            Obj.w = Sw\(M1-M0)'; %w = Sw^-1 * (M1-M0)'; % But better
+            self.w = Sw\(M1-M0)'; %w = Sw^-1 * (M1-M0)'; % But better
             
-            Obj.w = Obj.w./norm(Obj.w);
+            self.w = self.w./norm(self.w);
             
         end
         
-        function DataSet = runAction(Obj,DataSet)
-            DataSet = prtDataSetClass((Obj.w'*DataSet.getObservations()')');
+        function dataSet = runAction(self,dataSet)
+            dataSet = prtDataSetClass((self.w'*dataSet.getObservations()')');
         end
         
-        function imageHandle = plotGriddedEvaledClassifier(Obj, DS, linGrid, gridSize, cMap)
+        function imageHandle = plotGriddedEvaledClassifier(self, DS, linGrid, gridSize, cMap)
             
             % Call the original plot function
-            imageHandle = plotGriddedEvaledClassifier@prtClass(Obj, DS, linGrid, gridSize, cMap);
+            imageHandle = plotGriddedEvaledClassifier@prtClass(self, DS, linGrid, gridSize, cMap);
             
-            W = Obj.w;
+            W = self.w;
             limits = axis;
             nDims = length(W);
             
-            if Obj.plotBasis
+            if self.plotBasis
                 hold on
                 switch nDims
                     case 1
@@ -186,19 +186,19 @@ classdef prtClassFld < prtClass
                 end
             end
 
-            if Obj.plotProjections && ~isempty(Obj.DataSet)
-                OutputDataSet = run(Obj, Obj.DataSet);
+            if self.plotProjections && ~isempty(self.dataSet)
+                OutputDataSet = run(self, self.dataSet);
                 hold on;
                 switch nDims
                     case 2
-                        for i = 1:double(Obj.plotProjections):Obj.DataSet.nObservations
-                            cX = Obj.DataSet.getObservations(i,:);
+                        for i = 1:double(self.plotProjections):self.dataSet.nObservations
+                            cX = self.dataSet.getObservations(i,:);
                             cYout = OutputDataSet.getObservations(i,:);
                             plot([cX(1),cYout*W(1)],[cX(2),cYout*W(2)],'k');
                         end
                     case 3
-                        for i = 1:double(Obj.plotProjections):Obj.DataSet.nObservations
-                            cX = Obj.DataSet.getObservations(i,:);
+                        for i = 1:double(self.plotProjections):self.dataSet.nObservations
+                            cX = self.dataSet.getObservations(i,:);
                             cYout = OutputDataSet.getObservations(i,:);
                             plot3([cX(1),cYout*W(1)],[cX(2),cYout*W(2)],[cX(3),cYout*W(3)],'k');
                         end
