@@ -1,4 +1,4 @@
-function prtPlotUtilAlgorithmGui(connectivityMatrix, actionCell)
+function prtPlotUtilAlgorithmGui(connectivityMatrix, actionCell, algo)
 % Internal function, for PRT use only, makes use of GraphViz
 % xxx NEED HELP xxx
 
@@ -140,6 +140,8 @@ set(gcf,'NextPlot','new')
                 BlockObject = Layout.Blocks(blockIndex).Object;
                 if ~isempty(BlockObject) && BlockObject.isTrained && prtUtilIsMethodIncludeHidden(BlockObject,'plot') && BlockObject.dataSetSummary.nFeatures < 4
                     plot(BlockObject);
+                elseif (blockIndex == length(Layout.Blocks)) && algo.isPlottableAsClassifier
+                    plotAsClassifier(algo);
                 end
                 
             otherwise % case 'normal'
@@ -204,8 +206,12 @@ set(gcf,'NextPlot','new')
         Layout.Blocks(iBlock).polygonPosition = position;
         Layout.Blocks(iBlock).handle = rectangle('Position',[position,blockSize,blockSize],'Curvature',[0.25, 0.25],'FaceColor',blockColor,'LineWidth',2);
         
-        if ~isempty(BlockObject) && BlockObject.isTrained && prtUtilIsMethodIncludeHidden(BlockObject,'plot') && BlockObject.dataSetSummary.nFeatures < 4
+        if (~isempty(BlockObject) && BlockObject.isTrained && prtUtilIsMethodIncludeHidden(BlockObject,'plot') && BlockObject.dataSetSummary.nFeatures < 4)
             %set(Layout.Blocks(iBlock).handle,'lineWidth',2,'EdgeColor',[1 1 0.1]);
+            set(Layout.Blocks(iBlock).handle,'lineWidth',4);
+        end
+        
+        if (iBlock == Layout.nBlocks) && algo.isPlottableAsClassifier
             set(Layout.Blocks(iBlock).handle,'lineWidth',4);
         end
         

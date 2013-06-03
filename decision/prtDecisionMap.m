@@ -1,4 +1,4 @@
-classdef prtDecisionMap < prtDecision
+classdef prtDecisionMap < prtDecision & prtActionBig
     % prtDecisionMap Maximum a-posteriori decision making
     %
     % prtDec = prtDecisionMap creates a prtDecisionBinaryMap
@@ -82,6 +82,22 @@ classdef prtDecisionMap < prtDecision
     end
     methods (Access=protected,Hidden=true)
         
+        function self = trainActionBig(self, dataSet)
+            if isa(dataSet,'prtDataSetBigClass')
+                self.classList = dataSet.uniqueClasses;
+            else
+                self.classList = 1:dataSet.nFeatures;
+            end
+            %binary classification
+            if dataSet.nClasses == 2 && dataSet.nFeatures == 1
+                warning('prtDecisionMap:binaryData','User specified MAP decision, but input data was binary, and classifier provided binary decision statistics.  MAP will default to prtDecisionBinaryMinPe, but there are subtle differences between these approaches.  This warning will only be shown once.  To turn it off permanently, use "warning off prtDecisionMap:binaryData" in your startup M-file');
+                warning off prtDecisionMap:binaryData
+                self.runBinary = true;
+                self.minPeDecision = prtDecisionBinaryMinPe;
+                self.minPeDecision = self.minPeDecision.trainBig(dataSet);
+            end
+        end
+        
         function self = trainAction(self, dataSet)
             if isa(dataSet,'prtDataSetClass')
                 self.classList = dataSet.uniqueClasses;
@@ -97,6 +113,7 @@ classdef prtDecisionMap < prtDecision
                 self.minPeDecision = self.minPeDecision.train(dataSet);
             end
         end
+        
         function dataSet = runAction(self,dataSet)
             yOut = dataSet.getObservations;
             

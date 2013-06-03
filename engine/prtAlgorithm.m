@@ -136,7 +136,7 @@ classdef prtAlgorithm < prtAction & prtActionBig
         function plot(Obj)
             % Plots a block diagram of the algorithm 
             % Requires graphviz
-            prtPlotUtilAlgorithmGui(Obj.connectivityMatrix, Obj.actionCell);
+            prtPlotUtilAlgorithmGui(Obj.connectivityMatrix, Obj.actionCell, Obj);
         end
         
         function in = inputNodes(Obj)
@@ -404,6 +404,42 @@ classdef prtAlgorithm < prtAction & prtActionBig
     end
 
     methods (Hidden)
+        
+        function plotAsClassifier(self)
+            % plotAsClassifier(self)
+            %   Plot an algorithm as though it were a classifier - e.g.,
+            %   build the decision surface and visualize it.  Valid for
+            %   algorithms trained with data sets with 3 or fewer features,
+            %   and when the *very last* action is a prtClass.
+            %
+            % e.g.
+            %   ds = prtDataGenBimodal;
+            %   algoKmeans = prtPreProcKmeans('nClusters',4) + prtClassLogisticDiscriminant;
+            %   algoKmeans = train(algoKmeans,ds);
+            %   algoKmeans.plotAsClassifier;
+            
+            if isPlottableAsClassifier(self)
+                plot(prtUtilClassAlgorithmWrapper('trainedAlgorithm',self));
+            else
+                error('prt:prtAlgorithm:plotAsClassifier','This prtAlgorithm cannot be plotted as a classifier');
+            end
+        end
+        function tf = isPlottableAsClassifier(self)
+            
+            tf = false;
+            if self.dataSetSummary.nFeatures <= 3
+                if sum(self.outputNodes)==1
+                    lastNodes = self.connectivityMatrix(find(self.outputNodes,1,'first'),:);
+                    if sum(lastNodes)==1
+                        if isa(self.actionCell{find(lastNodes,1,'first')-1},'prtClass')
+                            tf = true;
+                        end
+                    end
+                end
+            end
+        end
+        
+        
         function [optimizedAlgorithm,performance] = optimize(Obj,DataSet,objFn,tag,parameterName,parameterValues)
             % OPTIMIZE Optimize action parameter by exhaustive function maximization. 
             %

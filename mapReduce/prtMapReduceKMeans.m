@@ -33,7 +33,7 @@ classdef prtMapReduceKMeans < prtMapReduce
             
             clusterStruct = repmat(struct('sum',[],'counts',[]),1,size(proximity,1));
             for clusterInd = 1:size(proximity,1)
-                clusterStruct(1,clusterInd) = struct('sum',sum(dataSet.X(inds == clusterInd,:)),'counts',sum(inds == clusterInd));
+                clusterStruct(1,clusterInd) = struct('sum',sum(dataSet.X(inds == clusterInd,:),1),'counts',sum(inds == clusterInd));
             end
             map = clusterStruct;
         end

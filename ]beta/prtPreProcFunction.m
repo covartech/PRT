@@ -60,6 +60,10 @@ classdef prtPreProcFunction < prtPreProc
         transformationFunction = @(x)x;
     end
     
+    properties (Hidden)
+        operateOnMatrix = false; % Set to true for faster operation, but be careful
+    end
+    
     methods
         function self = prtPreProcFunction(varargin)
             self = prtUtilAssignStringValuePairs(self,varargin{:});
@@ -73,12 +77,21 @@ classdef prtPreProcFunction < prtPreProc
         end
         
         function ds = runAction(self,ds)
-            % Remove the means and normalize the variance
-            ds = ds.setObservations(feval(self.transformationFunction,ds.getObservations()));
+           ds.X = runActionFast(self,ds.X);
         end
         
-        function xOut = runActionFast(self,xIn,ds) %#ok<INUSD>
-            xOut = feval(self.transformationFunction, xIn);
+        function x = runActionFast(self,x)
+            if self.operateOnMatrix
+                x = feval(self.transformationFunction,x);
+                
+            else % operateOnRows
+                xOut = repmat(self.transformationFunction(x(1,:)),size(x,1),1);
+                for i = 2:size(x,1)
+                    xOut(i,:) = self.transformationFunction(x(i,:));
+                end
+                x = xOut;
+                
+             end
         end
     end
     methods

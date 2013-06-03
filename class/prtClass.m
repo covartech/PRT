@@ -168,10 +168,10 @@ classdef prtClass < prtAction
             has = ~isempty(obj.internalDecider);
         end
         
-        function varargout = plot(Obj)
-            % PLOT  Plot the output confidence of a prtClass object
+        function varargout = plot(self)
+            % PLOT  Plot the output confidence of a prtClass ds
             % 
-            %   OBJ.plot() plots the output confidence of a prtClass
+            %   ds.plot() plots the output confidence of a prtClass
             %   object. This function only operates when the dimensionality
             %   of dataset is 3 or less. When verboseStorage is set to
             %   'true', the training data points are also displayed on the
@@ -179,24 +179,24 @@ classdef prtClass < prtAction
             %  
             %   See also: prtClass\explore()
             
-            assert(Obj.isTrained,'Classifier must be trained before it can be plotted.');
-            assert(Obj.dataSetSummary.nFeatures < 4, 'nFeatures in the training dataset must be less than or equal to 3');
+            assert(self.isTrained,'Classifier must be trained before it can be plotted.');
+            assert(self.dataSetSummary.nFeatures < 4, 'nFeatures in the training dataset must be less than or equal to 3');
             
-            if Obj.yieldsMaryOutput
-                if ~isempty(Obj.dataSet)
+            if self.yieldsMaryOutput
+                if ~isempty(self.dataSet)
                     warning('prt:prtClass:plot:autoDecision','prtClass.plot() requires a binary prtClass or a prtClass with an internal decider. A prtDecisionMap has been trained and set as the internalDecider to enable plotting.');
                 else
                     error('prt:prtClass:plot','prtClass.plot() requires a binary prtClass or a prtClass with an internal decider. A prtDecisionMap cannot be trained and set as the internalDecider to enable plotting because this classifier object does not have verboseStorege turned on and therefore the dataSet used to train the classifier is unknow. To enable plotting, set an internalDecider and retrain the classifier.');
                 end
-                Obj.internalDecider = prtDecisionMap;
+                self.internalDecider = prtDecisionMap;
             end
            
-            HandleStructure = plotBinaryClassifierConfidence(Obj); % This handles both the binary classifier confidence plot and binary and m-ary decision plots.
+            HandleStructure = plotBinaryClassifierConfidence(self); % This handles both the binary classifier confidence plot and binary and m-ary decision plots.
            
-            if ~isempty(Obj.dataSet) && ~isempty(Obj.dataSet.name)
-                title(sprintf('%s (%s)',Obj.name,Obj.dataSet.name));
+            if ~isempty(self.dataSet) && ~isempty(self.dataSet.name)
+                title(sprintf('%s (%s)',self.name,self.dataSet.name));
             else
-                title(Obj.name);
+                title(self.name);
             end
             varargout = {};
             if nargout > 0
@@ -212,6 +212,9 @@ classdef prtClass < prtAction
     end
 
     methods (Hidden = true)
+        function self = setYieldsMaryOutput(self,val)
+            self.yieldsMaryOutput = val;
+        end
         function explore(Obj)
             % explore() Explore the decision contours of classifiers
             % operating on high dimensional data.
