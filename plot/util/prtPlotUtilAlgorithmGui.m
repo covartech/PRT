@@ -140,15 +140,9 @@ set(gcf,'NextPlot','new')
                 BlockObject = Layout.Blocks(blockIndex).Object;
                 if ~isempty(BlockObject) && BlockObject.isTrained && prtUtilIsMethodIncludeHidden(BlockObject,'plot') && BlockObject.dataSetSummary.nFeatures < 4
                     plot(BlockObject);
-                end
-                keyboard
-                if (blockIndex == length(Layout.Blocks))
+                elseif (blockIndex == length(Layout.Blocks)) && algo.isPlottableAsClassifier
                     plotAsClassifier(algo);
                 end
-                
-                %if BlockObject
-                    %plot
-                %end
                 
             otherwise % case 'normal'
                 
@@ -217,12 +211,9 @@ set(gcf,'NextPlot','new')
             set(Layout.Blocks(iBlock).handle,'lineWidth',4);
         end
         
-        
-        if (iBlock == length(Layout.Blocks))
-            keyboard
+        if (iBlock == Layout.nBlocks) && algo.isPlottableAsClassifier
+            set(Layout.Blocks(iBlock).handle,'lineWidth',4);
         end
-        
-        
         
         Layout.Blocks(iBlock).textHandle = text(position(1)+blockSize/2,position(2)+blockSize/2,blockStr,'VerticalAlignment','Middle','HorizontalAlignment','Center','Color',textColor,'FontUnits','Normalized','FontSize',textSize,'FontWeight','Bold');
         

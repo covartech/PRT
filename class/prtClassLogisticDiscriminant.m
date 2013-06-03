@@ -346,7 +346,7 @@ classdef prtClassLogisticDiscriminant < prtClass & prtClassBig
             useVariableLearningRate = isa(self.sgdLearningRate,'function_handle');
             converged = false;
             
-            nMaxIterations = self.sgdPassesThroughTheData*ds.nBlocks;
+            nMaxIterations = self.sgdPassesThroughTheData*ds.getNumBlocks();
             
             for iter = 1:nMaxIterations
                 

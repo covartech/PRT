@@ -418,8 +418,27 @@ classdef prtAlgorithm < prtAction & prtActionBig
             %   algoKmeans = train(algoKmeans,ds);
             %   algoKmeans.plotAsClassifier;
             
-            plot(prtUtilClassAlgorithmWrapper('trainedAlgorithm',self));
+            if isPlottableAsClassifier(self)
+                plot(prtUtilClassAlgorithmWrapper('trainedAlgorithm',self));
+            else
+                error('prt:prtAlgorithm:plotAsClassifier','This prtAlgorithm cannot be plotted as a classifier');
+            end
         end
+        function tf = isPlottableAsClassifier(self)
+            
+            tf = false;
+            if self.dataSetSummary.nFeatures <= 3
+                if sum(self.outputNodes)==1
+                    lastNodes = self.connectivityMatrix(find(self.outputNodes,1,'first'),:);
+                    if sum(lastNodes)==1
+                        if isa(self.actionCell{find(lastNodes,1,'first')-1},'prtClass')
+                            tf = true;
+                        end
+                    end
+                end
+            end
+        end
+        
         
         function [optimizedAlgorithm,performance] = optimize(Obj,DataSet,objFn,tag,parameterName,parameterValues)
             % OPTIMIZE Optimize action parameter by exhaustive function maximization. 
