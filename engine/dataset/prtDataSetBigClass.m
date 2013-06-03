@@ -1,12 +1,12 @@
-classdef prtDataSetBigClass < prtDataSetBig
+classdef prtDataSetBigClass < prtDataSetBig & prtDataInterfaceCategoricalTargetsBig
     % prtDataSetBigClass is a class for prtDataSetBig that are for
     % classification. It is currently a placeholder for future
     % classification specific helper methods.
     
     properties (Hidden) %for users:
-        nClasses
-        uniqueClasses
-        isMary
+        %         nClasses
+        %         uniqueClasses
+        %         isMary
         nFeatures
         %nObservations
         %nTargetDimensions
@@ -17,7 +17,15 @@ classdef prtDataSetBigClass < prtDataSetBig
         uniqueClassesStaticHelper
     end
     
+    
     methods (Hidden)
+            
+        function self = summaryClear(self)
+            % self = summaryClear(self)
+            self.summaryCache = [];
+            self.targetCacheInitialized = false;
+        end
+        
         function self = summaryBuild(self,force)
             % self = summaryBuild(self,force)
             % 
@@ -27,6 +35,9 @@ classdef prtDataSetBigClass < prtDataSetBig
             if force || isempty(self.summaryCache)
                 mrSummary = prtMapReduceSummarizeDataSetClass;
                 self.summaryCache = mrSummary.run(self);
+                self.targetCache = self.summaryCache.targetCache;
+                self.classNames = self.targetCache.classNames;
+                self.targetCacheInitialized = true;
             end
         end
     end
@@ -35,11 +46,6 @@ classdef prtDataSetBigClass < prtDataSetBig
         
         function self = prtDataSetBigClass(varargin)
             self = prtUtilAssignStringValuePairs(self, varargin{:});
-        end
-        
-        function is = get.isMary(self)
-            summary = self.summarize;
-            is = summary.isMary;
         end
         
         function n = get.nFeatures(self)
@@ -55,22 +61,6 @@ classdef prtDataSetBigClass < prtDataSetBig
         function n = getNumTargetDimensions(self)
             summary = self.summarize;
             n = summary.nTargetDimensions;
-        end
-        
-        function n = get.nClasses(self)
-            if isempty(self.nClassesStaticHelper)
-                summary = self.summarize;
-                self.nClassesStaticHelper = summary.nClasses;
-            end
-            n = self.nClassesStaticHelper;
-        end
-        
-        function n = get.uniqueClasses(self)
-            if isempty(self.uniqueClassesStaticHelper)
-                summary = self.summarize;
-                self.uniqueClassesStaticHelper = summary.uniqueClasses;
-            end
-            n = self.uniqueClassesStaticHelper;
         end
         
         function summary = summarize(self)
