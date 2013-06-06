@@ -11,7 +11,7 @@ classdef prtClusterMeanShift < prtCluster
     %    the abstract class prtCluster. In addition is has the following
     %    properties:
     %
-    %    nClusters              - Maximum Number of cluster to learn 
+    %    sigma - RBF Kernel Parameter
     %
     %    A prtClusterMeanShift object inherits the TRAIN, RUN,
     %    CROSSVALIDATE and KFOLDS methods from prtAction. It also inherits
@@ -22,80 +22,65 @@ classdef prtClusterMeanShift < prtCluster
     %    the cluster center it is closest to. The cluster centers are found
     %    during training.
     %
+    %   The Algorithm used here is the Accelerated Gaussian Blur Mean Shift
+    %   presented in: http://dl.acm.org/citation.cfm?id=1143864
+    %   Fast Nonparametric Clustering with Gaussian Blurring Mean-Shift
+    %       Miguel A. Carreira-Perpin˜an
+    %       ICML 2006
+    %
     %   Example:
     %
-    %   ds = prtDataGenMary                  % Load a prtDataSet
-    %   clusterAlgo = prtClusterMeanShift;   % Create a prtClusterMeanShift object
-    %   clusterAlgo.nClusters = 10;       % Set the max number of desired clusters
+    %   ds = prtDataGenUnimodal;                  % Load a prtDataSet
+    %   clusterAlgo = prtClusterMeanShift('sigma',1);   % Create a prtClusterMeanShift object
+    %   clusterAlgo = train(clusterAlgo, ds);
     %
-    %   % Set the internal decision rule to be MAP. Not required for
-    %   % clustering, but necessary to plot the results.
-    %   clusterAlgo.internalDecider = prtDecisionMap;
-    %   clusterAlgo = clusterAlgo.train(ds); % Train the cluster algorithm
     %   plot(clusterAlgo);                   % Plot the results
-    %   
+    %
     %   See also prtCluster, prtClusterGmm
-
-% Copyright (c) 2013 New Folder Consulting
-%
-% Permission is hereby granted, free of charge, to any person obtaining a
-% copy of this software and associated documentation files (the
-% "Software"), to deal in the Software without restriction, including
-% without limitation the rights to use, copy, modify, merge, publish,
-% distribute, sublicense, and/or sell copies of the Software, and to permit
-% persons to whom the Software is furnished to do so, subject to the
-% following conditions:
-%
-% The above copyright notice and this permission notice shall be included
-% in all copies or substantial portions of the Software.
-%
-% THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-% OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-% MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-% NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-% DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-% OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-% USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-
+    
+    % Copyright (c) 2013 New Folder Consulting
+    %
+    % Permission is hereby granted, free of charge, to any person obtaining a
+    % copy of this software and associated documentation files (the
+    % "Software"), to deal in the Software without restriction, including
+    % without limitation the rights to use, copy, modify, merge, publish,
+    % distribute, sublicense, and/or sell copies of the Software, and to permit
+    % persons to whom the Software is furnished to do so, subject to the
+    % following conditions:
+    %
+    % The above copyright notice and this permission notice shall be included
+    % in all copies or substantial portions of the Software.
+    %
+    % THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+    % OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+    % MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+    % NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+    % DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+    % OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+    % USE OR OTHER DEALINGS IN THE SOFTWARE.
+    
+    
     properties (SetAccess=private)
         name = 'Mean Shift Clustering'
         nameAbbreviation = 'MeanShift'
     end
     
     properties
-        nClusters = 5;
-
+        nClusters = nan;
+        
+        sigma = 1;
+        
+        minimumClusterSeparation = 1e-3;
+        
         nMaxIterations = 100;
-        meanShiftThreshold = 1e-5;
-
-        meanSeparationThreshold = 1; % Must be exceeded to 
-
-        membershipDistance = 1;
-        distanceFunction = @(ds,mu)prtDistanceEuclidean(ds,mu);
-
-    end
-    properties (SetAccess = protected)
+        nEntropyBinsFactor = @(N)0.9*N;
+        meanShiftThreshold = 1e-3;
+        entropyThreshold = 1e-8;
+        
         clusterCenters = [];   % The cluster centers
     end
     
     methods
-        
-        function self = set.nClusters(self,value)
-            if ~prtUtilIsPositiveScalarInteger(value)
-                error('prt:prtClusterMeanShift:nClusters','value (%s) must be a positive scalar integer',mat2str(value));
-            end
-            self.nClusters = value;
-        end
-        
-        function self = set.distanceFunction(self,value)
-            if ~isa(value,'function_handle')
-                error('prt:prtClusterMeanShift:distanceFunction','distanceFunction must be a function handle');
-            elseif nargin(value) ~= 2
-                error('prt:prtClusterMeanShift:distanceFunction','distanceFunction must be a function handle that takes two input arguments');            
-            end
-            self.distanceMetricFn = value;
-        end
         function self = prtClusterMeanShift(varargin)
             % Allow for string, value pairs
             self = prtUtilAssignStringValuePairs(self,varargin{:});
@@ -106,65 +91,95 @@ classdef prtClusterMeanShift < prtCluster
         
         function self = trainAction(self,ds)
             
-            X = ds.X;
-            beenMappedToAMean = false(ds.nObservations,1);
+            B = self.nEntropyBinsFactor(ds.nObservations);
             
-            means = nan(self.nClusters,ds.nFeatures);
-            for iCluster = 1:self.nClusters
+            X = ds.X;
+            PI = 1./ds.nObservations*ones(ds.nObservations,1);
+            
+            hT = nan;
+            exitFlag = 0;
+
+            distMat = prtDistanceEuclidean(X,X).^2;
+            for iter = 1:self.nMaxIterations
+                Xin = X;
                 
-                if all(beenMappedToAMean) % Visited every point
+                W = exp(-1/2/self.sigma*distMat);
+                Dinv = diag(1./sum(bsxfun(@times,PI,W),1));
+                X = (X'*bsxfun(@times,PI,W)*Dinv)';
+                
+                eT = sqrt(sum((X-Xin).^2,2));
+                
+                hTMinus1 = hT;
+                
+                f = hist(eT,linspace(0,max(eT),B));
+                f = f./size(X,1);
+                logf = log(f);
+                logf(~isfinite(logf)) = 0;
+                
+                hT = -sum(f.*logf);
+                
+                if mean(eT) < self.meanShiftThreshold
+                    exitFlag = 1;
+                    break
+                end
+                if abs(hT-hTMinus1) < self.entropyThreshold
+                    exitFlag = 2;
                     break
                 end
                 
-                cPossibleSeedPoints = find(~beenMappedToAMean);
-                cSeedPoint = cPossibleSeedPoints(prtRvUtilRandomSample(length(cPossibleSeedPoints)));
+                % CollapsX and PI
+                distMat = prtDistanceEuclidean(X,X).^2;
                 
-                % Pick random point as this mean;
-                cMean = X(cSeedPoint,:);
+                isTooClose = distMat < self.minimumClusterSeparation;
+                isTooClose(logical(eye(size(isTooClose)))) = 0;
                 
-                for iter = 1:self.nMaxIterations
-                    cD = self.distanceFunction(X, cMean);
-                    isMemberThisCluster = cD < self.membershipDistance;
+                if any(isTooClose(:))
+                    % We have a collision of some kind
+                    [S, C] = graphconncomp(sparse(isTooClose)); % Bio Infomatics toolbox
+                    keepMe = true(size(X,1),1);
                     
-                    beenMappedToAMean(isMemberThisCluster) = true;
-                    
-                    newMean = mean(X(isMemberThisCluster,:),1);
-                    
-                    if norm(cMean-newMean) < self.meanShiftThreshold
-                        break
-                    else
-                        cMean = newMean;
+                    for iCluster = 1:S
+                        isThisCluster = C == iCluster;
+                        if sum(isThisCluster) > 1
+                            cClusterInds = find(isThisCluster);
+                            
+                            cD = distMat(isThisCluster,isThisCluster);
+                            
+                            [~, keepThisObs] = min(mean(cD,2));
+                            
+                            PI(cClusterInds(keepThisObs)) = sum(PI(cClusterInds));
+                            
+                            cRemoveMe = true(length(cClusterInds),1);
+                            cRemoveMe(keepThisObs) = false;
+                            keepMe(cClusterInds(cRemoveMe)) = false;
+                        end
                     end
+                    
+                    X = X(keepMe,:);
+                    PI = PI(keepMe);
+                    distMat = distMat(keepMe,keepMe);
+                    
                 end
                 
-                % Throw out cluster if too close to existing
-                cGoodMeans = means(~any(isnan(means),2),:);
-                if ~isempty(cGoodMeans)
-                    
-                    distanceFromThisMeanToOthers = self.distanceFunction(cMean, cGoodMeans);
-                    
-                    if min(distanceFromThisMeanToOthers) < self.meanSeparationThreshold
-                        cMean = nan(1,size(X,2)); % Set to nan so that we will throw away below.
-                    end
-                end
-                
-                means(iCluster,:) = cMean;
             end
-            
-            % Clean up - Remove clusters we didn't use or threw away.
-            self.clusterCenters = means(~any(isnan(means),2),:);
-            
+
+            self.clusterCenters = X;
+            self.nClusters = size(self.clusterCenters,1);
+            switch exitFlag
+                case 0 
+                    % You didn't exit
+                case 1
+                    % Mean shift exit
+                case 2
+                    % Entropy exit
+            end
             
         end
         
         function ds = runAction(self,ds)
             
-            fn = self.distanceFunction;
-            distance = fn(ds.getObservations,self.clusterCenters);
-            
-            if size(distance,1) ~= ds.nObservations || size(distance,2) ~= size(self.clusterCenters,1)
-                error('prt:prtClusterKmeans:badDistanceMetric','Expected a matrix of size %s from the distance metric, but distance metric function output a matrix of size %s',mat2str([DataSet.nObservations, size(Obj.clusterCenters,1)]),mat2str(size(distance)));
-            end
+            X = ds.X;
+            distance = exp(-1/2/self.sigma*prtDistanceEuclidean(X,self.clusterCenters).^2);
             
             %The smallest distance is the expected class:
             [dontNeed,clusters] = min(distance,[],2);  %#ok<ASGLU>
