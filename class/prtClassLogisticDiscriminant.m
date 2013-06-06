@@ -1,4 +1,4 @@
-classdef prtClassLogisticDiscriminant < prtClass
+classdef prtClassLogisticDiscriminant < prtClass & prtClassBig
     % prtClassLogisticDiscriminant  Logistic Discriminant classifier
     %
     %    CLASSIFIER = prtClassLogisticDiscriminant returns a LogisticDiscriminant classifier
@@ -153,6 +153,12 @@ classdef prtClassLogisticDiscriminant < prtClass
         %   matrix.  Often regularizing is a losing battle.
         
         handleNonPosDefR = 'exit';  % The action taken when R is non-positive definite
+        
+        sgdPassesThroughTheData = 10;
+        sgdLearningRate = @(t)((sqrt(t) + 10).^(-0.9));
+        sgdRegularization = 0.1;
+        sgdWeightTolerance = 1e-6;
+        
     end
     
     methods
@@ -332,17 +338,85 @@ classdef prtClassLogisticDiscriminant < prtClass
                 end
                 nIter = nIter + 1;
             end
-
-            
         end
         
-        function ClassifierResults = runAction(Obj,DataSet)
-            %ClassifierResults = runAction(Obj,DataSet)
+        function self = trainActionBig(self,ds)
             
-            sigmaFn = @(x) 1./(1 + exp(-x));
-            x = cat(2,ones(DataSet.nObservations,1),DataSet.getX());
-            y = sigmaFn((x*Obj.w)')';
-            ClassifierResults = DataSet.setObservations(y);
+            nTriesForNonEmptyBlock = 1000;
+            useVariableLearningRate = isa(self.sgdLearningRate,'function_handle');
+            converged = false;
+            
+            nMaxIterations = self.sgdPassesThroughTheData*ds.getNumBlocks();
+            
+            for iter = 1:nMaxIterations
+                
+                % Try to load a block
+                for blockLoadTry = 1:nTriesForNonEmptyBlock
+                    cBlockDs = ds.getRandomBlock;
+                    if ~isempty(cBlockDs)
+                        break
+                    end
+                end
+                if blockLoadTry == nTriesForNonEmptyBlock
+                    warning('Exiting after %d empty blocks were consecutlivly found.', nTriesForNonEmptyBlock);
+                    break
+                end
+                
+                % cBlockDs is now our dataset
+                
+                if iter==1
+                    cW = zeros(cBlockDs.nFeatures+1,1);
+                    wOld = inf;
+                    
+                end
+                cX = cat(2,ones(cBlockDs.nObservations,1), cBlockDs.X);
+                
+                % Get Y as -1, 1
+                cY = cBlockDs.getTargetsAsBinaryMatrix;
+                cY = cY(:,end); % In case of m-ary data we also do the last one.
+                cY(cY == 0) = -1;
+                
+                %cW = cW + self.irlsStepSize*sum(bsxfun(@times,cY./(1 + exp(cY.*(cX*cW))),cX),1)';
+                
+                if useVariableLearningRate
+                    cLearningRate = self.sgdLearningRate(iter);
+                else
+                    cLearningRate = self.sgdLearningRate;
+                end
+                cStep = (self.sgdRegularization*cW - mean(bsxfun(@times,cY./(1 + exp(cY.*(cX*cW))),cX),1)');
+                cW = cW - cLearningRate*cStep;
+                
+                %cW = cW - cLearningRate*G^(-1/2)*cStep;
+                cChange = norm(cW - wOld)/norm(cW);
+                if cChange < self.sgdWeightTolerance
+                    converged = true;
+                    break
+                end
+                
+                wOld = cW;
+                
+                plotOnIter = 1;
+                if plotOnIter && ~mod(iter,plotOnIter)
+                    plot(cW)
+                    title(sprintf('iteration=%d - change=%0.3f',iter,cChange));
+                    drawnow;
+                end
+            end
+            
+            if ~converged
+                warning('prt:prtClassLogisticDiscriminant:notConverged','Convergence was not reached in the maximum number of allowed iterations.');
+            end
+            
+            self.w = cW;
+        end
+        
+        function ds = runAction(self,ds)
+            ds.X = runFast(self,ds.X);
+        end
+        
+        function y = runActionFast(self, x)
+            x = cat(2,ones(size(x,1),1),x);
+            y = 1./(1 + exp(-((x*self.w)')'));
         end
     end
 end

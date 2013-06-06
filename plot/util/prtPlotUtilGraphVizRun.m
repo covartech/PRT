@@ -65,7 +65,6 @@ end
 % Read file from graphviz
 FileInfo = prtPlotUtilGraphVizReadDot(tempLayoutFileName);
 
-keyboard
 % Clean up temporary files 
 delete(tempDotFileName);
 delete(tempLayoutFileName);

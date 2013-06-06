@@ -1,10 +1,6 @@
-classdef prtPreProcFn < prtAction
-    % prtPreProcFn
-    % 
-    %  Apply a generic function to each dataSet.X(i,:)
-    %
+classdef prtUtilClassAlgorithmWrapper < prtClass
 
-% Copyright (c) 2013 New Folder Consulting
+% Copyright (c) 2013 New Folder Consulting 
 %
 % Permission is hereby granted, free of charge, to any person obtaining a
 % copy of this software and associated documentation files (the
@@ -26,52 +22,43 @@ classdef prtPreProcFn < prtAction
 % USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-    properties (SetAccess = protected)
-        isSupervised = false;  % False
-        isCrossValidateValid = true; % True
-    end
+
     properties (SetAccess=private)
-        name = 'FN' % Principal Component Analysis
-        nameAbbreviation = 'FN'  % PCA
+        
+        name = 'AlgorithmWrapper'
+        nameAbbreviation = 'AlgoWrap'
+        isNativeMary = false; 
     end
     
-    properties
-        fnHandle
+    properties 
+        trainedAlgorithm
     end
     
     methods
-        function self = prtPreProcFn(varargin)     
+        
+        function self = prtUtilClassAlgorithmWrapper(varargin)
             self = prtUtilAssignStringValuePairs(self,varargin{:});
             self.isTrained = true;
         end
+        
+        function self = set.trainedAlgorithm(self,val)
+            self.trainedAlgorithm = val;
+            self.dataSet = val.dataSet;
+            self.dataSetSummary = val.dataSetSummary;
+            self.yieldsMaryOutput = val.actionCell{end}.yieldsMaryOutput;
+        end
     end
     
-    methods (Access = protected, Hidden = true)
-        function self = trainAction(self,~)
-            
+    methods (Access=protected, Hidden = true)
+        
+        function self = trainAction(self,dataSet)
+            self.trainedAlgorithm = self.trainedAlgorithm.train(dataSet);
         end
         
-        function dsOut = runAction(self,ds)
-            
-            x = ds.getX;
-            
-            xOut = self.fnHandle(x(1,:));
-            xOut = repmat(xOut,size(x,1),1);
-            for i = 2:size(x,1)
-                xOut(i,:) = self.fnHandle(x(i,:));
-            end
-            dsOut = ds;
-            dsOut = dsOut.setX(xOut);
+        function dataSet = runAction(self,dataSet)
+            dataSet = self.trainedAlgorithm.run(dataSet);
         end
         
-        function xOut = runActionFast(self,x)
-            
-            xOut = self.fnHandle(x(1,:));
-            xOut = repmat(xOut,size(x,1),1);
-            for i = 2:size(x,1)
-                xOut(i,:) = self.fnHandle(x(i,:));
-            end
-            
-        end
     end
+    
 end

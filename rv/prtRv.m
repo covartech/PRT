@@ -61,8 +61,7 @@ classdef prtRv < prtAction
 
 
     properties
-        %plotOptions  = prtRv.initializePlotOptions()
-        plotOptions  = [];
+        plotOptions  = prtRv.initializePlotOptions()
     end
     properties (Abstract = true, Hidden = true, Dependent = true)
         nDimensions % The number of dimensions

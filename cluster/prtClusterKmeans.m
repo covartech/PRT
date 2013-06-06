@@ -10,7 +10,7 @@ classdef prtClusterKmeans < prtCluster %prtClass %prtAction %should extent prtCl
     %    A prtClusterKmeans object inherits all properties from the abstract
     %    class prtCluster. In addition is has the following properties:
     %
-    %    nClusters                 - Number of cluster centers to learn 
+    %    nClusters                 - Number of cluster centers to learn
     %
     %    kmeansHandleEmptyClusters - Speficies operation when degerate clusters found
     %                                occur during training.  Allowed values are 'remove'
@@ -43,39 +43,39 @@ classdef prtClusterKmeans < prtCluster %prtClass %prtAction %should extent prtCl
     %   clusterAlgo.internalDecider = prtDecisionMap;
     %   clusterAlgo = clusterAlgo.train(ds); % Train the cluster algorithm
     %   plot(clusterAlgo);                   % Plot the results
-    %   
+    %
     %   See also prtCluster, prtClusterGmm
-
-% Copyright (c) 2013 New Folder Consulting
-%
-% Permission is hereby granted, free of charge, to any person obtaining a
-% copy of this software and associated documentation files (the
-% "Software"), to deal in the Software without restriction, including
-% without limitation the rights to use, copy, modify, merge, publish,
-% distribute, sublicense, and/or sell copies of the Software, and to permit
-% persons to whom the Software is furnished to do so, subject to the
-% following conditions:
-%
-% The above copyright notice and this permission notice shall be included
-% in all copies or substantial portions of the Software.
-%
-% THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-% OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-% MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-% NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-% DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-% OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-% USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-
-      properties (SetAccess=private)
+    
+    % Copyright (c) 2013 New Folder Consulting
+    %
+    % Permission is hereby granted, free of charge, to any person obtaining a
+    % copy of this software and associated documentation files (the
+    % "Software"), to deal in the Software without restriction, including
+    % without limitation the rights to use, copy, modify, merge, publish,
+    % distribute, sublicense, and/or sell copies of the Software, and to permit
+    % persons to whom the Software is furnished to do so, subject to the
+    % following conditions:
+    %
+    % The above copyright notice and this permission notice shall be included
+    % in all copies or substantial portions of the Software.
+    %
+    % THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+    % OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+    % MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+    % NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+    % DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+    % OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+    % USE OR OTHER DEALINGS IN THE SOFTWARE.
+    
+    
+    properties (SetAccess=private)
         name = 'K-Means Clustering' % K-Means Clustering
         nameAbbreviation = 'K-MeansCluster' % K-MeansCluster
     end
     
     properties
         nClusters = 3;  % The number of clusters to find
-        kmeansHandleEmptyClusters = 'remove';  % Action to take when an empty cluster occurs 
+        kmeansHandleEmptyClusters = 'remove';  % Action to take when an empty cluster occurs
         distanceMetricFn = @prtDistanceEuclidean;  % The distance metric; should be a function like D = prtDistanceEuclidean(dataSet1,dataSet2)
     end
     properties (SetAccess = protected)
@@ -105,7 +105,7 @@ classdef prtClusterKmeans < prtCluster %prtClass %prtAction %should extent prtCl
             if ~isa(value,'function_handle')
                 error('prt:prtClusterKmeans:distanceMetricFn','distanceMetricFn must be a function handle');
             elseif nargin(value) ~= 2
-                error('prt:prtClusterKmeans:distanceMetricFn','distanceMetricFn must be a function handle that takes two input arguments');            
+                error('prt:prtClusterKmeans:distanceMetricFn','distanceMetricFn must be a function handle that takes two input arguments');
             end
             Obj.distanceMetricFn = value;
         end

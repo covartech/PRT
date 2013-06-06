@@ -1,4 +1,4 @@
-classdef prtAlgorithm < prtAction
+classdef prtAlgorithm < prtAction & prtActionBig
     % prtAlgorithm  Combine prtActions 
     %
     %  ALG = prtAlgorithm creates an empty prtAlgorithm object. prtAction
@@ -136,7 +136,7 @@ classdef prtAlgorithm < prtAction
         function plot(Obj)
             % Plots a block diagram of the algorithm 
             % Requires graphviz
-            prtPlotUtilAlgorithmGui(Obj.connectivityMatrix, Obj.actionCell);
+            prtPlotUtilAlgorithmGui(Obj.connectivityMatrix, Obj.actionCell, Obj);
         end
         
         function in = inputNodes(Obj)
@@ -189,6 +189,7 @@ classdef prtAlgorithm < prtAction
                 
                 Obj1.isSupervised = any(cellfun(@(c)c.isSupervised,Obj1.actionCell));
                 Obj1.isCrossValidateValid = all(cellfun(@(c)c.isCrossValidateValid,Obj1.actionCell));
+                Obj1.isTrained = all(cellfun(@(c)c.isTrained,Obj1.actionCell));
             else
                 error('prt:prtAlgorithm:plus','prtAlgorithm.plus is only defined for second inputs of type prtAlgorithm or prtAction, but the second input is a %s',class(Obj2));
             end
@@ -314,6 +315,45 @@ classdef prtAlgorithm < prtAction
             end
         end
         
+        function Obj = trainActionBig(Obj,DataSet)
+            
+            topoOrder = prtUtilTopographicalSort(Obj.connectivityMatrix');
+            input = cell(size(Obj.connectivityMatrix,1),1);
+            input{1} = DataSet;
+            
+            for i = 2:length(topoOrder)-1
+                
+                %Note: added this to fix catFeatures problems with data
+                %sets that don't have catFeatures; they can still work in
+                %"flat" algorithms.  See bug report on github and in
+                %runAction
+                inDataSets = find(Obj.connectivityMatrix(topoOrder(i),:));
+                if length(inDataSets) == 1
+                    currentInput = input{inDataSets};
+                else
+                    error('Only serial prtAlgorithms can be trained using big data'); % This is the first line that is different than trainAction
+                    currentInput = catFeatures(input{Obj.connectivityMatrix(topoOrder(i),:)});
+                end
+                %keyboard
+                Obj.actionCell{topoOrder(i-1)}.verboseStorage = Obj.verboseStorage;
+                Obj.actionCell{topoOrder(i-1)} = trainBig(Obj.actionCell{topoOrder(i-1)},currentInput); % This is the second line that is different than trainAction
+                
+                %Don't run the action if there are no other prtActions
+                %(besides outputNodes) that rely on the output.
+                
+                outputDependentActions = find(Obj.connectivityMatrix(:,topoOrder(i)));
+                if ~all(ismember(outputDependentActions,find(outputNodes(Obj))))
+                    %fprintf('running %s\n',class(Obj.actionCell{topoOrder(i-1)}));
+                    input{topoOrder(i)} = runBig(Obj.actionCell{topoOrder(i-1)},currentInput); % This is the third line that is different than trainAction
+                else
+                    %fprintf('not running %s\n',class(Obj.actionCell{topoOrder(i-1)}));
+                end
+                
+            end
+        end
+        
+        
+        
         function [DataSet, input] = runAction(Obj,DataSet)
             
             topoOrder = prtUtilTopographicalSort(Obj.connectivityMatrix');
@@ -364,6 +404,42 @@ classdef prtAlgorithm < prtAction
     end
 
     methods (Hidden)
+        
+        function plotAsClassifier(self)
+            % plotAsClassifier(self)
+            %   Plot an algorithm as though it were a classifier - e.g.,
+            %   build the decision surface and visualize it.  Valid for
+            %   algorithms trained with data sets with 3 or fewer features,
+            %   and when the *very last* action is a prtClass.
+            %
+            % e.g.
+            %   ds = prtDataGenBimodal;
+            %   algoKmeans = prtPreProcKmeans('nClusters',4) + prtClassLogisticDiscriminant;
+            %   algoKmeans = train(algoKmeans,ds);
+            %   algoKmeans.plotAsClassifier;
+            
+            if isPlottableAsClassifier(self)
+                plot(prtUtilClassAlgorithmWrapper('trainedAlgorithm',self));
+            else
+                error('prt:prtAlgorithm:plotAsClassifier','This prtAlgorithm cannot be plotted as a classifier');
+            end
+        end
+        function tf = isPlottableAsClassifier(self)
+            
+            tf = false;
+            if self.dataSetSummary.nFeatures <= 3
+                if sum(self.outputNodes)==1
+                    lastNodes = self.connectivityMatrix(find(self.outputNodes,1,'first'),:);
+                    if sum(lastNodes)==1
+                        if isa(self.actionCell{find(lastNodes,1,'first')-1},'prtClass')
+                            tf = true;
+                        end
+                    end
+                end
+            end
+        end
+        
+        
         function [optimizedAlgorithm,performance] = optimize(Obj,DataSet,objFn,tag,parameterName,parameterValues)
             % OPTIMIZE Optimize action parameter by exhaustive function maximization. 
             %
