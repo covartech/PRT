@@ -26,8 +26,8 @@ function [U, S, V, AHat] = prtUtilSvdEm(A,k)
 
 
 nMaxIterations = 100;
-verbosePlot = true;
-verboseText = true;
+verbosePlot = false;
+verboseText = false;
 proportionChangeThreshold = 5e-5;
 
 hasVote = ~isnan(A);
@@ -47,7 +47,7 @@ for iter = 1:nMaxIterations
     
     [U,S,V] = svds(AHat,k);
     
-    AHat = AHat*V*V';
+    AHat = AHat*(V*V');
     
     trueDataError = sum((A(hasVote)-AHat(hasVote)).^2);
     
