@@ -36,6 +36,7 @@ hasVote = ~isnan(A);
 % Average of the row and col avergages
 % I have no idea how good this is. It is the first thing I thought of
 AHat = bsxfun(@plus,repmat(nanmean(A,2),1,size(A,2)),nanmean(A,1))/2;
+AHat(isnan(AHat)) = 0; % All nan rows or columns will still have nans. Set to 0?
 
 logLike = nan(nMaxIterations,1);
 for iter = 1:nMaxIterations
