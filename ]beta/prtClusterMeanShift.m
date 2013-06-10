@@ -182,7 +182,7 @@ classdef prtClusterMeanShift < prtCluster
             distance = exp(-1/2/self.sigma*prtDistanceEuclidean(X,self.clusterCenters).^2);
             
             %The smallest distance is the expected class:
-            [dontNeed,clusters] = min(distance,[],2);  %#ok<ASGLU>
+            [dontNeed,clusters] = max(distance,[],2);  %#ok<ASGLU>
             
             binaryMatrix = zeros(size(clusters,1),self.nClusters);
             for i = 1:self.nClusters
