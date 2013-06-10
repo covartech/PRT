@@ -60,7 +60,7 @@ classdef prtPreProcPca < prtPreProc
     properties
         nComponents = 3;   % The number of principle components
     end
-    properties (SetAccess=private)
+    properties (SetAccess=protected)
 
         means = [];           % A vector of the means
         pcaVectors = [];      % The PCA vectors.
