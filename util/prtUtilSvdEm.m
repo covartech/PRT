@@ -1,4 +1,4 @@
-function [U, S, V, AHat] = prtUtilSvdEm(A,k)
+function [U, S, V, AHat] = prtUtilSvdEm(A,k,varargin)
 % [U, S, V, AHat] = prtUtilSvdEm(A,k)
 % Preform SVD decomposition for a matrix with missing values
 % Missing values should be represented by NaN
@@ -24,11 +24,18 @@ function [U, S, V, AHat] = prtUtilSvdEm(A,k)
 % OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
 % USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+p = inputParser;
+p.addParamValue('nMaxIterations',100);
+p.addParamValue('verbosePlot', false);
+p.addParamValue('verboseText', false);
+p.addParamValue('proportionChangeThreshold', 5e-5);
 
-nMaxIterations = 100;
-verbosePlot = false;
-verboseText = false;
-proportionChangeThreshold = 5e-5;
+p.parse(varargin{:});
+
+nMaxIterations = p.Results.nMaxIterations;
+verbosePlot = p.Results.verbosePlot;
+verboseText = p.Results.verboseText;
+proportionChangeThreshold = p.Results.proportionChangeThreshold;
 
 hasVote = ~isnan(A);
 
