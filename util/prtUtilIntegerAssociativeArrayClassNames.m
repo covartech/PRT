@@ -66,9 +66,12 @@ classdef prtUtilIntegerAssociativeArrayClassNames < prtUtilIntegerAssociativeArr
             %                 end
             %             end
             %Don't return a cell in this case
-            if length(key) == 1
-                value = value{1};
-            end
+%             if length(key) == 1
+%                 value = value{1};
+%             end
+
+            % This has been changed 2013-06-12 because it is weird to do
+            % this.
         end
     end
 end
