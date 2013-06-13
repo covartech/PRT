@@ -2,21 +2,7 @@ classdef prtDataSetBigClass < prtDataSetBig & prtDataInterfaceCategoricalTargets
     % prtDataSetBigClass is a class for prtDataSetBig that are for
     % classification. It is currently a placeholder for future
     % classification specific helper methods.
-    
-    properties (Hidden) %for users:
-        %         nClasses
-        %         uniqueClasses
-        %         isMary
-        nFeatures
-        %nObservations
-        %nTargetDimensions
-    end
-    
-    properties (Hidden)
-        nClassesStaticHelper
-        uniqueClassesStaticHelper
-    end
-    
+        
     
     methods (Hidden)
             
@@ -48,7 +34,7 @@ classdef prtDataSetBigClass < prtDataSetBig & prtDataInterfaceCategoricalTargets
             self = prtUtilAssignStringValuePairs(self, varargin{:});
         end
         
-        function n = get.nFeatures(self)
+        function n = getNumFeatures(self)
             summary = self.summarize;
             n = summary.nFeatures;
         end
@@ -66,7 +52,7 @@ classdef prtDataSetBigClass < prtDataSetBig & prtDataInterfaceCategoricalTargets
         function summary = summarize(self)
             summary = self.summaryCache;
             if isempty(summary)
-                error('prtDataSetBig:summaryNotBuild','The data set big object does not have a valid summary; use ds = ds.summaryBuild to build and cache one');
+                summary = getDefaultSummaryStruct(self);
             end
         end
         
@@ -76,6 +62,18 @@ classdef prtDataSetBigClass < prtDataSetBig & prtDataInterfaceCategoricalTargets
             if nargout
                 varargout = {plotHandles};
             end
+        end
+    end
+    methods (Hidden)
+        function summary = getDefaultSummaryStruct(self)
+            
+            warning('prtDataSetBigClass:defaultSummary','prtDataSetBig* classes provide default values (nan) for many fields, since these take time to calculate; use ds = ds.summaryBuild to build the summary');
+            warning off prtDataSetBigClass:defaultSummary
+            
+            summary = struct('upperBounds',nan,'lowerBounds',nan,'nFeatures',nan,...
+                'nTargetDimensions',nan,'uniqueClasses',nan,'nClasses',nan,...
+                'isMary',nan,'nObservations',nan,'nBlocks',nan,'targetCache',nan,...
+                'isSummaryValid',false);
         end
     end
 end
