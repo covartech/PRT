@@ -1,8 +1,12 @@
-classdef prtDataSetBig < prtDataSetBase
+classdef prtDataSetBig %< prtDataSetBase
     
     properties
         dataHandler
         action
+
+        nFeatures
+        nObservations
+        nTargetDimensions
     end
     
     properties (Hidden)
@@ -89,16 +93,32 @@ classdef prtDataSetBig < prtDataSetBase
         end
     end
     methods % Abstract from prtDataSetBase (We actually don't want to use these)
+        
+        function n = get.nFeatures(self)
+            n = getNumFeatures(self);
+        end
+        function n = getNumFeatures(self)
+            error('prt:prtDataSetBig:doNotUse','This method cannot be used with objects of type prtDataSetBig.');
+        end
+        
+        function n = get.nObservations(self)
+            n = getNumObservations(self);
+        end
         function n = getNumObservations(self)
             error('prt:prtDataSetBig:doNotUse','This method cannot be used with objects of type prtDataSetBig.');
+        end
+        
+        function n = get.nTargetDimensions(self)
+            n = getNumTargetDimensions(self);
         end
         function nTargets = getNumTargetDimensions(self)
             error('prt:prtDataSetBig:doNotUse','This method cannot be used with objects of type prtDataSetBig.');
         end
-        function data = getData(self,indices)
+        
+        function targets = getTargets(self,indices)
             error('prt:prtDataSetBig:doNotUse','This method cannot be used with objects of type prtDataSetBig.');
         end
-        function targets = getTargets(self,indices)
+        function data = getData(self,indices)
             error('prt:prtDataSetBig:doNotUse','This method cannot be used with objects of type prtDataSetBig.');
         end
         function self = retainObservationData(self,indices)
@@ -107,5 +127,6 @@ classdef prtDataSetBig < prtDataSetBase
         function self = catObservationData(self,varargin)
             error('prt:prtDataSetBig:doNotUse','This method cannot be used with objects of type prtDataSetBig.');
         end
+        
     end
 end

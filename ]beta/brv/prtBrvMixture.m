@@ -284,7 +284,7 @@ classdef prtBrvMixture < prtBrv & prtBrvVbOnline & prtBrvMembershipModel & prtBr
                
            end
            
-           if self.vbVerboseText
+           if self.mcmcVerboseText
                fprintf('\nSampling Complete.\n\n')
            end
            
