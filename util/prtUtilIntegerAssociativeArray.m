@@ -37,43 +37,46 @@ classdef prtUtilIntegerAssociativeArray
             keys1 = self.integerKeys;
             keys1 = keys1(:);
             
-            vals1 = self.get(keys1);
-            vals1 = vals1(:);
-            
             keys2 = in2.integerKeys;
             keys2 = keys2(:);
             
-            vals2 = self.get(keys2);
-            vals2 = vals2(:);
-            
-            [unionKeys,ind1,ind2] = union(keys1,keys2);
-            commonKeys = intersect(keys1,keys2);
+            unionKeys = union(keys1,keys2);
             
             integerSwaps = [];
             newKey = max(unionKeys)+1;
             for i = 1:length(unionKeys)
                 theKey = unionKeys(i);
                 
+                val1 = self.get(theKey); val1 = val1{1};
+                val2 = in2.get(theKey); val2 = val2{1};
+                    
                 %Handle duplicate values with mis-matched indices
                 % Note, technically this is not correct for an
                 % integerAssocArray; this enforces that during combining,
                 % no duplicate keys exist... this belongs elsewhere...
                 % this works for the places we use it in the PRT... but is
                 % not food for assoc.arrays in general... boo.
-                if ~self.containsKey(theKey); %if we don't have the key, it's OK to add it
-                    self = self.put(theKey,in2.get(theKey));
-                else
-                    if ~isequal(self.get(theKey),in2.get(theKey)) && any(strcmpi(self.get(theKey),in2.cellValues))
-                        
-                        changeKey = in2.integerKeys(strcmpi(self.get(theKey),in2.cellValues));
-                        integerSwaps = cat(1,integerSwaps,[changeKey,theKey]);
-                        in2 = in2.remove(changeKey);
-                        
-                        %Handle new name
-                    elseif ~isequal(self.get(theKey),in2.get(theKey))
-                        in2.integerKeys(in2.integerKeys == theKey) = newKey;
-                        integerSwaps = cat(1,integerSwaps,[theKey,newKey]);
-                        newKey = newKey + 1;
+                if ~self.containsKey(theKey) %the first one doesn't have the key it's OK to add it
+                    self = self.put(theKey, val2);
+                else 
+                    if ~isequal(val1,val2)
+                        % The two values are not the same
+                        if any(strcmpi(val1,in2.cellValues))
+                            % The value is somewhere in the second one.
+                            % We have to find it and mark those keys to be changed
+                            
+                            changeKey = in2.integerKeys(strcmpi(val1,in2.cellValues));
+                            integerSwaps = cat(1,integerSwaps,[changeKey,theKey]);
+                            in2 = in2.remove(changeKey);
+                        else
+                            % The value is not in the second set but is in
+                            % the first
+                            in2.integerKeys(in2.integerKeys == theKey) = newKey;
+                            integerSwaps = cat(1,integerSwaps,[theKey,newKey]);
+                            newKey = newKey + 1;
+                        end
+                    else
+                        % Two values are the same. Don't do anything
                     end
                 end
             end
@@ -86,26 +89,19 @@ classdef prtUtilIntegerAssociativeArray
         
         function out = merge(self,in2)
             
-            
             keys1 = self.integerKeys;
             keys1 = keys1(:);
             
             vals1 = self.get(keys1);
-            if ~isa(vals1,'cell')
-                vals1 = {vals1};
-            end
             vals1 = vals1(:);
             
             keys2 = in2.integerKeys;
             keys2 = keys2(:);
             
             vals2 = in2.get(keys2);
-            if ~isa(vals2,'cell')
-                vals2 = {vals2};
-            end
             vals2 = vals2(:);
             
-            [unionKeys,ind1,ind2] = union(keys1,keys2);
+            [unionKeys,ind1,ind2] = union(keys1,keys2,'R2012a'); % Bug fix 2013-06-13
             commonKeys = intersect(keys1,keys2);
             
             if ~isequal(self.get(commonKeys),in2.get(commonKeys))

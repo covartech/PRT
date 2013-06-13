@@ -274,6 +274,7 @@ classdef prtRvHmm < prtRv
             pLogLikelihood = nan;
             self.learningResults.iterationLogLikelihood = [];
             for iteration = 1:self.nTrainingIterations
+                
                 %Update the components, A, pi
                 gammaMat = cat(2,gamma{:});
                 self = maximizeParameters(self,data,exp(gammaMat'));
@@ -290,10 +291,13 @@ classdef prtRvHmm < prtRv
                 for state = 1:length(self.components)
                     ll(:,state) = self.components(state).logPdf(double(data));
                 end
+                ll = bsxfun(@minus, ll, prtUtilSumExp(ll')');
                 membershipMat = exp(ll);
-                membershipMat = bsxfun(@rdivide,membershipMat,sum(membershipMat,2));
                 
-                %                 keyboard
+                % Don't do this!!!1 You must normalized before you exp.
+                %membershipMat = exp(ll); 
+                %membershipMat = bsxfun(@rdivide,membershipMat,sum(membershipMat,2));
+                
                 [self, membershipMat, componentRemoved] = removeComponents(self,data,membershipMat);
                 
                 %Get forward/backwards, this updates alpha, gamma, for next
