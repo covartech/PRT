@@ -1,4 +1,4 @@
-classdef prtBrvHmm < prtBrv & prtBrvIVb
+classdef prtBrvHmm < prtBrv & prtBrvVb
 
 % Copyright (c) 2013 New Folder Consulting
 %
@@ -41,9 +41,9 @@ classdef prtBrvHmm < prtBrv & prtBrvIVb
     end
     
     properties (Hidden, SetAccess='private', GetAccess='private');
-        internalTransitionProbabilities
-        internalInitialProbabilities
-        internalComponents
+        internalTransitionProbabilities = prtBrvDiscrete;
+        internalInitialProbabilities = prtBrvDiscrete;
+        internalComponents = prtBrvMvn;
     end
     
     properties (Hidden)
@@ -51,20 +51,73 @@ classdef prtBrvHmm < prtBrv & prtBrvIVb
     end
     
     methods
-        function obj = prtBrvHmm(varargin)
-            if nargin < 1
-                return
-            end
+        function self = prtBrvHmm(varargin)
+            self = prtUtilAssignStringValuePairs(self, varargin{:});
             
-            obj.components = varargin{1}(:);
-            obj.initialProbabilities = prtBrvDiscrete(obj.nComponents);
-            obj.transitionProbabilities = repmat(prtBrvDiscrete(obj.nComponents),obj.nComponents,1);
+            %obj.components = varargin{1}(:);
+            %obj.initialProbabilities = prtBrvDiscrete(obj.nComponents);
+            %obj.transitionProbabilities = repmat(prtBrvDiscrete(obj.nComponents),obj.nComponents,1);
             
         end
     end
+    
+    
+    methods
+        function self = conjugateUpdate(self, prior, x) %#ok<INUSL>
+            warning('prt:prtBrvMixture:conjugateUpdate','Model is not fully conjugate resorting to vb');
+            self = vb(self, x);
+        end
+        
+        function self = estimateParameters(self, x)
+            self = conjugateUpdate(self, self, x);
+        end
+        function y = predictivePdf(self, x)
+            y = exp(predictiveLogPdf(self, x));
+        end
+        function y = predictiveLogPdf(self, x)
+            y = conjugateVariationalAverageLogLikelihood(self,x);
+        end
+        
+        function val = getNumDimensions(self)
+            val = self.components(1).nDimensions;
+        end
+        
+        function self = initialize(self, x)
+            x = self.parseInputData(x);
+            if iscell(x)
+                x = x{1};
+            end
+            
+            for iComp = 1:self.nComponents
+                self.components(iComp) = self.components(iComp).initialize(x);
+            end
+        
+            self.initialProbabilities = self.initialProbabilities.initialize(zeros(1,self.nComponents));
+            self.transitionProbabilities = repmat(self.transitionProbabilities,self.nComponents,1);
+            for iComp = 1:self.nComponents
+                self.transitionProbabilities(iComp) = self.transitionProbabilities(iComp).initialize(zeros(1,self.nComponents));
+            end
+        end
+    end
+    
+    methods (Hidden)
+        function x = parseInputData(self,x) %#ok<MANU>
+            if isnumeric(x) || islogical(x)
+                x = {x};
+                return
+            elseif prtUtilIsSubClass(class(x),'prtDataSetBase')
+                x = x.getObservations();
+            elseif iscell(x)
+                
+            else 
+                error('prt:prtBrvMixture:parseInputData','prtBrvMixture requires a prtDataSet or a numeric 2-D matrix');
+            end
+        end
+    end    
+    
     methods
         function obj = set.components(obj,components)
-            assert( isa(components,'prtBrvObsModel'),'components must be a prtBrvObsModel')
+            assert( isa(components,'prtBrvMembershipModel'),'components must be a prtBrvObsModel')
             
             obj.internalComponents = components;
         end
@@ -73,7 +126,7 @@ classdef prtBrvHmm < prtBrv & prtBrvIVb
         end
         
         function obj = set.transitionProbabilities(obj,trans)
-            assert( isa(trans,'prtBrvDiscrete'),'transitionProbabilities must be an array of  prtBrvDiscrete''s')
+            %assert( isa(trans,'prtBrvDiscrete'),'transitionProbabilities must be an array of  prtBrvDiscrete''s')
             
             obj.internalTransitionProbabilities = trans;
         end
@@ -81,7 +134,7 @@ classdef prtBrvHmm < prtBrv & prtBrvIVb
             val = obj.internalTransitionProbabilities;
         end
         function obj = set.initialProbabilities(obj,init)
-            assert( isa(init,'prtBrvDiscrete'),'initialProbabilities must be a prtBrvDiscrete')
+            %assert( isa(init,'prtBrvDiscrete'),'initialProbabilities must be a prtBrvDiscrete')
             
             obj.internalInitialProbabilities = init;
         end
@@ -97,17 +150,24 @@ classdef prtBrvHmm < prtBrv & prtBrvIVb
     
     methods
         
+
+
         function val = nDimensions(obj)
             val = obj.components(1).nDimensions;
         end
                 
         function [obj, training] = vbBatch(obj, x)
             
+            x = parseInputData(obj,x);
+            
             % Initialize
             if obj.vbVerboseText
                 fprintf('\n\nVB inference for a hidden Markov model with %d components\n', obj.nComponents)
                 fprintf('\tInitializing VB HMM\n')
             end
+            
+            obj = obj.initialize(x);
+            
             [obj, priorObj, training, x] = vbInitialize(obj, x);
             
             if obj.vbVerboseText
@@ -136,7 +196,7 @@ classdef prtBrvHmm < prtBrv & prtBrvIVb
                 
                 % Check covergence
                 if iteration > 1
-                    [converged, err] = vbCheckConvergence(obj, priorObj, x, training);
+                    [converged, err] = vbIsConverged(obj, priorObj, x, training);
                 else
                     converged = false;
                     err = false;
@@ -178,13 +238,46 @@ classdef prtBrvHmm < prtBrv & prtBrvIVb
         
         function eLogLikelihood = conjugateVariationalAverageLogLikelihood(obj,x)
             
+            x = parseInputData(obj,x);
+            
+            if iscell(x)
+                if length(x) > 1
+                    lens = cellfun(@length,x);
+                    training.startSamples = cat(1,1,cumsum(lens(1:(end-1)))+1);
+                    x = cat(1,x{:});
+                else
+                    training.startSamples = 1;
+                    x = x{1};
+                end
+            else
+                training.startSamples = 1;
+            end
+            
             training.startTime = now;
             training.iterations.negativeFreeEnergy = [];
             training.iterations.eLogLikelihood = [];
             training.iterations.kld = [];
             
             [twiddle, training] = obj.vbE(obj, x, training); %#ok<ASGLU>
-            eLogLikelihood = sum(prtUtilSumExp(training.variationalLogLikelihoodBySample'));
+            
+            %eLogLikelihood = sum(prtUtilSumExp(training.variationalLogLikelihoodBySample'));
+            
+            eLogLikelihood = zeros(length(training.startSamples),1);
+            for iSeq = 1:length(eLogLikelihood)
+                if iSeq == length(training.startSamples)
+                    cEnd = size(x,1);
+                else
+                    cEnd = training.startSamples(iSeq+1)-1;
+                end
+                
+                cLogLikes = training.variationalLogLikelihoodBySample(training.startSamples(iSeq):cEnd,:);
+                eLogLikelihood(iSeq) = sum(prtUtilSumExp(cLogLikes'));
+            end
+            
+            %eLogLikelihood = training.variationalLogLikelihoodBySample(training.startSamples,:)
+            
+            
+            
         end
         
     end
@@ -196,16 +289,21 @@ classdef prtBrvHmm < prtBrv & prtBrvIVb
             training.randState = rand('seed'); %#ok<RAND>
             training.startTime = now;
             
-            if iscell(x)
-                lens = cellfun(@length,x);
-                training.startSamples = cat(1,1,cumsum(lens(1:(end-1)))+1);
-                x = cat(1,x{:});
+            if iscell(x) 
+                if length(x) > 1
+                    lens = cellfun(@length,x);
+                    training.startSamples = cat(1,1,cumsum(lens(1:(end-1)))+1);
+                    x = cat(1,x{:});
+                else
+                    training.startSamples = 1;
+                    x = x{1};
+                end
             else
                 training.startSamples = 1;
             end
             
             priorObj = obj;
-            [training.phiMat, priorObj.components] = mixtureInitialize(obj.components, obj.components, x);
+            [training.phiMat, priorObj.components] = collectionInitialize(obj.components, obj.components, x);
             
             % Make up a xiMat. (Probability of transition to each state
             % from each state at each time.)
@@ -387,15 +485,37 @@ classdef prtBrvHmm < prtBrv & prtBrvIVb
 
             % Components
             subplot(3,1,2)
-            plot(obj.components,colors);
+            plotCollection(obj.components,colors);
             %componentsToPlot = sortedClusterPi > obj.plotComponentProbabilityThreshold;
             %if sum(componentsToPlot) > 0
             %    plot(obj.components(componentsToPlot),colors(componentsToPlot,:));
             %end
             
+            randSelectPlot = true;
+            nSamplesThreshold = 1000;
+            
+            if randSelectPlot
+                cPlotInd = ceil(rand*length(training.startSamples));
+                cStartSample = training.startSamples(cPlotInd);
+                if cPlotInd == length(training.startSamples)
+                    cEndSample = size(training.phiMat,1);
+                else
+                    cEndSample = training.startSamples(cPlotInd+1)-1;
+                end
+                
+                cPhiMat = training.phiMat(cStartSample:cEndSample,sortingInds);
+                
+                
+                if size(cPhiMat,1) > nSamplesThreshold
+                    cPhiMat = imresize(cPhiMat,[nSamplesThreshold size(cPhiMat,2)]);
+                end
+            else
+                cPhiMat = training.phiMat;
+            end
+            
             % Memberships
             subplot(3,1,3)
-            area(training.phiMat(:,sortingInds),'edgecolor','none')
+            area(cPhiMat,'edgecolor','none')
             % colormap set above in bar.
             ylim([0 1]);
             title('Cluster Memberships');

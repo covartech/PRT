@@ -1,24 +1,24 @@
 classdef prtPreProcPca < prtPreProc
     % prtPreProcPca   Principle Component Analysis
     %
-    %   PCA = prtPreProcPca creates a Principle Component Analysis object.
+    %   PCA = prtPreProcPca creates a Principle Component Analysis selfect.
     %
     %   PCA = prtPreProcPca('nComponents',N) constructs a
-    %   prtPreProcPCP object PCA with nComponents set to the value N.
+    %   prtPreProcPCP selfect PCA with nComponents set to the value N.
     %
-    %   A prtPreProcPca object has the following properites:
+    %   A prtPreProcPca selfect has the following properites:
     % 
     %   nComponents    - The number of principle componenets
     %
-    %   A prtPreProcPca object also inherits all properties and functions from
+    %   A prtPreProcPca selfect also inherits all properties and functions from
     %   the prtAction class
     %
     %   Example:
     %
     %   dataSet = prtDataGenFeatureSelection;    % Load a data set
-    %   pca = prtPreProcPca;            % Create a prtPreProcPca object
+    %   pca = prtPreProcPca;            % Create a prtPreProcPca selfect
     %                        
-    %   pca = pca.train(dataSet);       % Train the prtPreProcPca object
+    %   pca = pca.train(dataSet);       % Train the prtPreProcPca selfect
     %   dataSetNew = pca.run(dataSet);  % Run
     % 
     %   % Plot
@@ -60,7 +60,7 @@ classdef prtPreProcPca < prtPreProc
     properties
         nComponents = 3;   % The number of principle components
     end
-    properties (SetAccess=private)
+    properties (SetAccess=protected)
 
         means = [];           % A vector of the means
         pcaVectors = [];      % The PCA vectors.
@@ -79,57 +79,57 @@ classdef prtPreProcPca < prtPreProc
     methods
         
           % Allow for string, value pairs
-        function Obj = prtPreProcPca(varargin)
-            Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
+        function self = prtPreProcPca(varargin)
+            self = prtUtilAssignStringValuePairs(self,varargin{:});
         end
     end
     
     methods
-        function Obj = set.nComponents(Obj,nComp)
+        function self = set.nComponents(self,nComp)
             if ~isnumeric(nComp) || ~isscalar(nComp) || nComp < 1 || round(nComp) ~= nComp
                 error('prt:prtPreProcPca','nComponents (%s) must be a positive scalar integer',mat2str(nComp));
             end
-            Obj.nComponents = nComp;
+            self.nComponents = nComp;
         end
 	end
     
 	methods (Hidden = true)
-        function featureNameModificationFunction = getFeatureNameModificationFunction(obj) %#ok<MANU>
+        function featureNameModificationFunction = getFeatureNameModificationFunction(self) %#ok<MANU>
 			featureNameModificationFunction = prtUtilFeatureNameModificationFunctionHandleCreator('PC Score #index#');
         end
 	end
 	
     methods (Access = protected, Hidden = true)
-        function Obj = trainAction(Obj,DataSet)
+        function self = trainAction(self,dataSet)
                        
-            Obj.means = prtUtilNanMean(DataSet.getObservations(),1);
-            x = bsxfun(@minus,DataSet.getObservations(),Obj.means);
+            self.means = prtUtilNanMean(dataSet.getObservations(),1);
+            x = bsxfun(@minus,dataSet.getObservations(),self.means);
             
             maxComponents = min(size(x));
             
-            if Obj.nComponents > maxComponents
-                warning('prt:prtPreProcPca','User specified # PCA components (%d) is > maximum number of PCA allowed (min(size(dataSet.data)) = %d)',Obj.nComponents,maxComponents);
-                Obj.nComponents = maxComponents;
+            if self.nComponents > maxComponents
+                warning('prt:prtPreProcPca','User specified # PCA components (%d) is > maximum number of PCA allowed (min(size(dataSet.data)) = %d)',self.nComponents,maxComponents);
+                self.nComponents = maxComponents;
             end
             
-            [s,u,v] = svds(x,Obj.nComponents); %#ok<ASGLU>
+            [s,u,v] = svds(x,self.nComponents); %#ok<ASGLU>
             
-            Obj.pcaVectors = v;
+            self.pcaVectors = v;
             
-            Obj.trainingTotalVariance = sum(var(x));
+            self.trainingTotalVariance = sum(var(x));
             pcaVariance = cumsum(var(x*v));
             
-            Obj.totalVarianceCumulative = pcaVariance;
-            Obj.totalVariance = Obj.totalVarianceCumulative(end);
-            Obj.totalPercentVarianceCumulative = Obj.totalVarianceCumulative./Obj.trainingTotalVariance;
+            self.totalVarianceCumulative = pcaVariance;
+            self.totalVariance = self.totalVarianceCumulative(end);
+            self.totalPercentVarianceCumulative = self.totalVarianceCumulative./self.trainingTotalVariance;
         end
         
-        function DataSet = runAction(Obj,DataSet)
-            DataSet = DataSet.setObservations(Obj.runActionFast(DataSet.getObservations));
+        function dataSet = runAction(self,dataSet)
+            dataSet = dataSet.setObservations(self.runActionFast(dataSet.getObservations));
         end
         
-        function xOut = runActionFast(Obj,xIn)
-            xOut = bsxfun(@minus,xIn,Obj.means)*Obj.pcaVectors;
+        function xOut = runActionFast(self,xIn)
+            xOut = bsxfun(@minus,xIn,self.means)*self.pcaVectors;
         end
         
     end

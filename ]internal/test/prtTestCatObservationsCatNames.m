@@ -65,7 +65,8 @@ catch ME
 end
 
 try
-    assert(isequal(dsCat.classNames,'Class Test'));
+    %assert(isequal(dsCat.classNames,'Class Test'));
+    assert(isequal(dsCat.classNames,{'Class Test'})); % Test changed 2013-06-12
 catch ME
     prtUtilTestErrorDisplay(ME);
     testPassed = false;

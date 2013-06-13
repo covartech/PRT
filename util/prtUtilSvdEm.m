@@ -1,4 +1,4 @@
-function [U, S, V, AHat] = prtUtilSvdEm(A,k)
+function [U, S, V, AHat] = prtUtilSvdEm(A,k,varargin)
 % [U, S, V, AHat] = prtUtilSvdEm(A,k)
 % Preform SVD decomposition for a matrix with missing values
 % Missing values should be represented by NaN
@@ -24,11 +24,18 @@ function [U, S, V, AHat] = prtUtilSvdEm(A,k)
 % OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
 % USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+p = inputParser;
+p.addParamValue('nMaxIterations',100);
+p.addParamValue('verbosePlot', false);
+p.addParamValue('verboseText', false);
+p.addParamValue('proportionChangeThreshold', 5e-5);
 
-nMaxIterations = 100;
-verbosePlot = true;
-verboseText = true;
-proportionChangeThreshold = 5e-5;
+p.parse(varargin{:});
+
+nMaxIterations = p.Results.nMaxIterations;
+verbosePlot = p.Results.verbosePlot;
+verboseText = p.Results.verboseText;
+proportionChangeThreshold = p.Results.proportionChangeThreshold;
 
 hasVote = ~isnan(A);
 
@@ -36,6 +43,7 @@ hasVote = ~isnan(A);
 % Average of the row and col avergages
 % I have no idea how good this is. It is the first thing I thought of
 AHat = bsxfun(@plus,repmat(nanmean(A,2),1,size(A,2)),nanmean(A,1))/2;
+AHat(isnan(AHat)) = 0; % All nan rows or columns will still have nans. Set to 0?
 
 logLike = nan(nMaxIterations,1);
 for iter = 1:nMaxIterations
@@ -46,7 +54,7 @@ for iter = 1:nMaxIterations
     
     [U,S,V] = svds(AHat,k);
     
-    AHat = AHat*V*V';
+    AHat = AHat*(V*V');
     
     trueDataError = sum((A(hasVote)-AHat(hasVote)).^2);
     
