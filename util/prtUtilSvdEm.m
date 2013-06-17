@@ -43,10 +43,8 @@ for iter = 1:nMaxIterations
     % Set the true data where it belongs
     AHat(hasVote) = A(hasVote);
     oldAHatNoVote = AHat(~hasVote);
-   
     
     [U,S,V] = svds(AHat,k);
-    
     AHat = AHat*(V*V');
     
     trueDataError = sum((A(hasVote)-AHat(hasVote)).^2);
