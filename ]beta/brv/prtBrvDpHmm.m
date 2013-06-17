@@ -21,24 +21,11 @@ classdef prtBrvDpHmm < prtBrvHmm
 % OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
 % USE OR OTHER DEALINGS IN THE SOFTWARE.
     methods
-
-        
-        function obj = prtBrvDpHmm(varargin)
-            if nargin < 1
-                return
-            end
+        function self = prtBrvDpHmm(varargin)
+            self.transitionProbabilities = prtBrvDiscreteStickBreaking;
+            self.initialProbabilities = prtBrvDiscreteStickBreaking;
             
-            obj.components = varargin{1}(:);
-            
-            obj.initialProbabilities = prtBrvDiscreteStickBreaking(obj.nComponents);
-            obj.initialProbabilities.model.useOptimalSorting = false;
-            obj.initialProbabilities.model.useGammaPriorOnScale = false;
-            
-            obj.transitionProbabilities = repmat(prtBrvDiscreteStickBreaking(obj.nComponents),obj.nComponents,1);
-            for s = 1:obj.nComponents
-                obj.transitionProbabilities(s).model.useOptimalSorting = false;
-                obj.transitionProbabilities(s).model.useGammaPriorOnScale = false;
-            end
+            self = prtUtilAssignStringValuePairs(self, varargin{:});
         end
     end
 end

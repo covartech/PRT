@@ -126,16 +126,38 @@ classdef prtUtilProgressBar
             Obj.isCanceledLocal = val;
         end
         function val = get.isCanceled(Obj)
+            
+            
             if ishandle(Obj.figureHandle)
+                myFig = Obj.figureHandle;
+                ud = get(myFig,'userdata');
+                
+                if ~isempty(ud) && isfield(ud,'prtUtilProgressBarIsCanceled')
+                    val = (Obj.allowStop && ud.prtUtilProgressBarIsCanceled) || Obj.isCanceledLocal;
+                else
+                    val = false;
+                end
+                
                 prtUtilProgressBarData = guidata(Obj.figureHandle);
                 if ~isempty(prtUtilProgressBarData)
-                    val = (Obj.allowStop && prtUtilProgressBarData.isCanceled) || Obj.isCanceledLocal;
+                    
                 else
                     val = false;
                 end
             else
                 val = false;
             end
+            
+%             if ishandle(Obj.figureHandle)
+%                 prtUtilProgressBarData = guidata(Obj.figureHandle);
+%                 if ~isempty(prtUtilProgressBarData)
+%                     val = (Obj.allowStop && prtUtilProgressBarData.isCanceled) || Obj.isCanceledLocal;
+%                 else
+%                     val = false;
+%                 end
+%             else
+%                 val = false;
+%             end
         end
         
         function Obj = prtUtilProgressBar(percentage,titleStr,varargin)
@@ -682,10 +704,15 @@ classdef prtUtilProgressBar
     methods (Static)
         function cancelCallBack(myHandle,evenData) %#ok<INUSD>
             set(myHandle,'String','Stopping...');
-            drawnow
-            prtUtilProgressBarData = guidata(get(myHandle,'parent'));
-            prtUtilProgressBarData.isCanceled = true;
-            guidata(get(myHandle,'parent'), prtUtilProgressBarData);
+            %prtUtilProgressBarData = guidata(get(myHandle,'parent'));
+            
+            myFig = get(myHandle,'parent');
+            ud = get(myFig,'userdata');
+            ud.prtUtilProgressBarIsCanceled = true;
+            set(myFig,'userData',ud);
+            %prtUtilProgressBarData.isCanceled = true;
+            %guidata(get(myHandle,'parent'), prtUtilProgressBarData);
+            drawnow;
         end
         function deleteBarHandles(barStruct)
             delete(barStruct.leftTextHandle);

@@ -49,7 +49,8 @@ classdef prtMapReduceSummarizeDataSetClass < prtMapReduce
             
             reduce = struct('upperBounds',upperBounds,'lowerBounds',lowerBounds,'nFeatures',nFeatures,...
                 'nTargetDimensions',nTargetDimensions,'uniqueClasses',uniqueClasses,'nClasses',nClasses,...
-                'isMary',isMary,'nObservations',nObservations,'nBlocks',nBlocks,'targetCache',targetCache);
+                'isMary',isMary,'nObservations',nObservations,'nBlocks',nBlocks,'targetCache',targetCache,...
+                'isSummaryValid',true);
         end
     end
     
