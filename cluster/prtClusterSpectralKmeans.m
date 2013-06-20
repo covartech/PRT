@@ -29,7 +29,7 @@ classdef prtClusterSpectralKmeans < prtCluster %prtClass %prtAction %should exte
     %    refer to the following URL:
     %
     %    http://en.wikipedia.org/wiki/Spectral_clustering
-    
+    %
     %    For information on the K-Means algorithm, please
     %    refer to the following URL:
     %
@@ -43,7 +43,7 @@ classdef prtClusterSpectralKmeans < prtCluster %prtClass %prtAction %should exte
     %    the input data by assigning each observation a label according to
     %    the cluster center it is closest to. The cluster centers are found
     %    during training.
-    
+    %
     %   Example:
     %
     %   dataSet = prtDataGenMoon;                           % Load a data set
@@ -149,8 +149,7 @@ classdef prtClusterSpectralKmeans < prtCluster %prtClass %prtAction %should exte
             
             k1=prtUtilRbfDist(Obj.dataSet.X,DataSet.X,'sigma',Obj.sigma);
             k2=prtUtilRbfDist(Obj.dataSet.X,Obj.dataSet.X,'sigma',Obj.sigma);
-            
-            
+
             y=sum(repmat(Obj.eigVectors,[1,1,size(k1,2)]).*permute(repmat(k1,[1,1,Obj.nEigs]),[1,3,2])./(sqrt(mean(k1,1)*(mean(k2,2)))));
             DataSet.X=permute(y,[3,2,1]);
             
