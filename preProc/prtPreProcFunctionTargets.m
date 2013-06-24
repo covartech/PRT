@@ -2,10 +2,10 @@ classdef prtPreProcFunctionTargets < prtPreProc & prtActionBig
     % prtPreProcFunctionTargets   Applies a function to targets
     %
     %   FUN = prtPreProcFunctionTargets creates a pre processing object that
-    %   applies a specified function to the observations.
+    %   applies a specified function to the targets.
     %
     %   The function is set as a function handle in the property
-    %   "transformationFunction" The default is @(x)(x), which does
+    %   "transformationFunction" The default is @(y)(y), which does
     %   nothing.
     %
     %   A prtPreProcFunctionTargets object also inherits all properties and
@@ -15,6 +15,7 @@ classdef prtPreProcFunctionTargets < prtPreProc & prtActionBig
     %
     %   dataSet = prtDataGenIris;       % Load a data set.
     %   dataSet = dataSet.retainFeatures(1:2);
+    %   % Randomize the labels:
     %   fun = prtPreProcFunctionTargets('transformationFunction',@(x)randn(size(x))>0);       
     %   fun = fun.train(dataSet);       % All prtAction's must be trained
     %   dataSetNew = fun.run(dataSet);  % Normalize the data

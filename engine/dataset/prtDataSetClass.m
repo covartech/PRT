@@ -975,7 +975,7 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
             if nargin < 2
                 handleOut = imagesc(x);
             else
-                handleOut = imagesc(x,cLims);
+                handleOut = imagesc(x,varargin{1});
             end
             
             legendStrings = getClassNamesInterp(dataSet);
@@ -999,7 +999,7 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
                 
                 textLocs = cat(1,textLocs,mean([found,prevFound]));
                 hold on;
-                lHandleOut(i) = plot([0,size(x,2)+1],[found,found],'k');
+                lHandleOut(i) = plot([0,size(x,2)+1],[found,found]-.5,'k');
                 set(lHandleOut(i),'linewidth',lineWidthSpec);
                 hold off;
                 prevFound = found;

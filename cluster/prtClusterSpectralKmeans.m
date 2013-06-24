@@ -1,10 +1,11 @@
 classdef prtClusterSpectralKmeans < prtCluster %prtClass %prtAction %should extent prtCluster
+    
     % prtClusterSpectralKmeans   Spectral Kmeans clustering object
     %
     %    CLUSTER = prtClusterSpectralKmeans returns a Spectral Kmeans clustering object.
     %
     %    CLUSTER = prtClusterSpectralKmeans(PROPERTY1, VALUE1, ...) constructs a
-    %    prtClusterSpectralKmeans object Clusterer with properties as specified by
+    %    prtClusterSpectralKmeans object CLASSIFIER with properties as specified by
     %    PROPERTY/VALUE pairs.
     %
     %    A prtClusterSpectralKmeans object inherits all properties from the abstract
@@ -29,7 +30,7 @@ classdef prtClusterSpectralKmeans < prtCluster %prtClass %prtAction %should exte
     %    refer to the following URL:
     %
     %    http://en.wikipedia.org/wiki/Spectral_clustering
-    %
+    
     %    For information on the K-Means algorithm, please
     %    refer to the following URL:
     %
@@ -43,7 +44,7 @@ classdef prtClusterSpectralKmeans < prtCluster %prtClass %prtAction %should exte
     %    the input data by assigning each observation a label according to
     %    the cluster center it is closest to. The cluster centers are found
     %    during training.
-    %
+    
     %   Example:
     %
     %   dataSet = prtDataGenMoon;                           % Load a data set
@@ -147,11 +148,7 @@ classdef prtClusterSpectralKmeans < prtCluster %prtClass %prtAction %should exte
         
         function DataSet = runAction(Obj,DataSet)
             
-            k1=prtUtilRbfDist(Obj.dataSet.X,DataSet.X,'sigma',Obj.sigma);
-            k2=prtUtilRbfDist(Obj.dataSet.X,Obj.dataSet.X,'sigma',Obj.sigma);
-
-            y=sum(repmat(Obj.eigVectors,[1,1,size(k1,2)]).*permute(repmat(k1,[1,1,Obj.nEigs]),[1,3,2])./(sqrt(mean(k1,1)*(mean(k2,2)))));
-            DataSet.X=permute(y,[3,2,1]);
+            DataSet.X=prtUtilSpectralOutOfSampleExtension(Obj.dataSet.X,DataSet.X,Obj.eigVectors,Obj.eigValues,Obj.sigma);
             
             %% Kmeans Test
             

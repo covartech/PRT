@@ -37,7 +37,7 @@ function DataSet = prtDataGenMoon
 
 moonFile = fullfile(prtRoot,'dataGen','dataStorage','moon','moonData.txt');
 if ~exist(moonFile,'file')
-    error('prtDataGenIris:MissingMoonFile','The file, moonData.txt, was not found in %s',irisFile);
+    error('prtDataGenIris:MissingMoonFile','The file, moonData.txt, was not found in %s',moonFile);
 end
 
 %[f1,f2,f3,f4,class] = textread(irisFile,'%f %f %f %f %s','commentstyle','shell');
