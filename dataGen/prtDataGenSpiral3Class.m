@@ -1,12 +1,15 @@
-function DataSet = prtDataGenMoon
-%   prtDataGenMoon Read in example moon data 
+function DataSet = prtDataGenSpiral3Class
+%   prtDataGenSpiral3Class Read in example 3 classes of spiral data 
 %
-%   DataSet = prtDataGenMoon reads in the data that represents interlocking
-%   crescent moons.
+%   DataSet = prtDataGenSpiral3Class reads in the data that represents 3
+%   spirals in 2 dimensions
+%
+%   Reference: Chang, H. and D.Y. Yeung, Robust path-based spectral clustering. 
+%   Pattern Recognition, 2008. 41(1): p. 191-203. 
 %
 %   Example:
 % 
-%   ds = prtDataGenMoon;
+%   ds = prtDataGenSpiral3Class;
 %   ds.plot;
 %    
 %   See also: prtDataSetClass, prtDataGenBiModal, prtDataGenIris,
@@ -35,15 +38,15 @@ function DataSet = prtDataGenMoon
 % USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-moonFile = fullfile(prtRoot,'dataGen','dataStorage','moon','moonData.txt');
-if ~exist(moonFile,'file')
-    error('prtDataGenIris:MissingMoonFile','The file, moonData.txt, was not found in %s',moonFile);
+spiral3ClassFile = fullfile(prtRoot,'dataGen','dataStorage','spiral3Class','spiral3Class.txt');
+if ~exist(spiral3ClassFile,'file')
+    error('prtDataGenSpiral3Class:MissingSpiral3ClassFile','The file, spiral3Class.txt, was not found in %s',spiral3ClassFile);
 end
 
 %[f1,f2,f3,f4,class] = textread(irisFile,'%f %f %f %f %s','commentstyle','shell');
-fid = fopen(moonFile,'r');
+fid = fopen(spiral3ClassFile,'r');
 C = textscan(fid,'%f %f %f','commentstyle','#');
 fclose(fid);
 
 DataSet = prtDataSetClass(cat(2,C{1},C{2}),C{3});
-DataSet.name = 'prtDataGenMoon';
+DataSet.name = 'prtDataGenSpiral3Class';

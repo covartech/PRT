@@ -127,7 +127,6 @@ classdef prtClassBinaryToMaryOneVsAll < prtClass & prtActionBig
 
         function Obj = trainActionBig(Obj,dataSetBig)
             % Repmat the Classifier objects to get one for each class
-            dataSetBig = cacheBuild(dataSetBig,true);
             
             Obj.nameAbbreviation = sprintf('OneVsAll_{%s}',Obj.baseClassifier(1).nameAbbreviation);
             Obj.baseClassifier = repmat(Obj.baseClassifier(:), (dataSetBig.nClasses - length(Obj.baseClassifier)+1),1);

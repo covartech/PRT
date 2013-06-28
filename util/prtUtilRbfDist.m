@@ -1,18 +1,22 @@
-function DataSet = prtDataGenMoon
-%   prtDataGenMoon Read in example moon data 
-%
-%   DataSet = prtDataGenMoon reads in the data that represents interlocking
-%   crescent moons.
-%
-%   Example:
-% 
-%   ds = prtDataGenMoon;
-%   ds.plot;
-%    
-%   See also: prtDataSetClass, prtDataGenBiModal, prtDataGenIris,
-%   prtDataGenMary, prtDataGenNoisySinc, prtDataGenOldFaithful,
-%   prtDataGenSpiral, prtDataGenUnimodal, prtDataGenUnimodal, prtDataGenXor
+function gram = prtUtilRbfDist(x,y,varargin)
 
+%   gram = rbfDistance(x,y,param1,value1,...)
+%   finds the Radial Basis Function distance between X and Y.
+%
+%   gram = prtUtilRbfDist(x,y,param1,value1,...)
+%   Enables inputs of parameter/value pairs as described below:
+%
+%   Parameters:
+%       
+%   sigma - Variance of the Radial Basis Function (RBF)
+%
+%   Example usage:
+%
+%   ds=prtDataGenUnimodal;
+%   gram=prtUtilRbfDist(ds.X,ds.X,'sigma',1);
+%   imagesc(gram)
+%   title('X vs. Y Gram Matrix');
+ 
 % Copyright (c) 2013 New Folder Consulting
 %
 % Permission is hereby granted, free of charge, to any person obtaining a
@@ -34,16 +38,27 @@ function DataSet = prtDataGenMoon
 % OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
 % USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+p = inputParser;
 
-moonFile = fullfile(prtRoot,'dataGen','dataStorage','moon','moonData.txt');
-if ~exist(moonFile,'file')
-    error('prtDataGenIris:MissingMoonFile','The file, moonData.txt, was not found in %s',moonFile);
+p.addParamValue('sigma',.2)
+
+p.parse(varargin{:});
+inputStruct = p.Results;
+sigma=inputStruct.sigma;
+
+[n1, d] = size(x);
+[n2, nin] = size(y);
+
+if d ~= nin
+    error('size(x,2) must equal size(y,2)');
 end
 
-%[f1,f2,f3,f4,class] = textread(irisFile,'%f %f %f %f %s','commentstyle','shell');
-fid = fopen(moonFile,'r');
-C = textscan(fid,'%f %f %f','commentstyle','#');
-fclose(fid);
+dist2 = repmat(sum((x.^2), 2), [1 n2]) + repmat(sum((y.^2),2), [1 n1]).' - 2*x*(y.');
 
-DataSet = prtDataSetClass(cat(2,C{1},C{2}),C{3});
-DataSet.name = 'prtDataGenMoon';
+if numel(sigma) == 1
+    gram = exp(-dist2/(sigma.^2));
+else
+    gram = exp(-bsxfun(@rdivide,dist2,(sigma.^2)'));
+end
+
+end

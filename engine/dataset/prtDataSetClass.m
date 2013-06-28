@@ -975,7 +975,7 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
             if nargin < 2
                 handleOut = imagesc(x);
             else
-                handleOut = imagesc(x,cLims);
+                handleOut = imagesc(x,varargin{1});
             end
             
             legendStrings = getClassNamesInterp(dataSet);
@@ -999,7 +999,7 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
                 
                 textLocs = cat(1,textLocs,mean([found,prevFound]));
                 hold on;
-                lHandleOut(i) = plot([0,size(x,2)+1],[found,found],'k');
+                lHandleOut(i) = plot([0,size(x,2)+1],[found,found]-.5,'k');
                 set(lHandleOut(i),'linewidth',lineWidthSpec);
                 hold off;
                 prevFound = found;
@@ -1241,6 +1241,27 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
         function self = acquireNonDataAttributesFrom(self, dataSet)
             self = acquireNonDataAttributesFrom@prtDataSetBase(self, dataSet);
             self = acquireCategoricalTargetsNonDataAttributes(self, dataSet);
+        end
+        
+        function dsBig = toPrtDataSetBigMat(self,step,fileDir)
+            % dsBig = toPrtDataSetBig(self,step,fileDir)
+            %  Convert a prtDataSetClass to a prtDataSetBig using a
+            %  prtDataHandlerMatFiles data handler.  
+            nBlocks = ceil(self.nObservations./step);
+            maxSize = self.nObservations;
+            for block = 1:nBlocks;
+                start = (block-1)*step+1;
+                stop = min([block*step, maxSize]);
+                ds = self.retainObservations(start:stop);
+                
+                file = fullfile(fileDir,sprintf('bigDataFile_%05d.mat',block));
+                if exist(file,'file')
+                    error('prt:prtDataSetClass:toPrtDataSetBig','File %s already exists; aborting',file);
+                end
+                save(file,'ds','-v7.3');
+            end
+            h = prtDataHandlerMatFiles('fileList',fileDir);
+            dsBig = prtDataSetBigClass('dataHandler',h);
         end
     end
 end
