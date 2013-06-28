@@ -90,7 +90,7 @@ classdef prtBrv < prtAction
         end
         
         function ds = runAction(self, ds)
-            ds = ds.setObservations(self.predictivePdf(ds.getObservations));
+            ds = ds.setObservations(self.predictiveLogPdf(ds.getObservations));
         end
     end
     

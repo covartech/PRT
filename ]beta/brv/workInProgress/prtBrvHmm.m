@@ -275,9 +275,6 @@ classdef prtBrvHmm < prtBrv & prtBrvVb
             end
             
             %eLogLikelihood = training.variationalLogLikelihoodBySample(training.startSamples,:)
-            
-            
-            
         end
         
     end
@@ -524,4 +521,20 @@ classdef prtBrvHmm < prtBrv & prtBrvVb
         end
     end
     
+    methods
+        function x = posteriorMeanDraw(self, n, varargin)
+            s = posteriorMeanStruct(self);
+            
+
+            
+        end
+        
+        function s = posteriorMeanStruct(self)
+            
+            error('Not Finished Yet');
+            
+            %self.transitionProbabilities(1).
+            
+        end
+    end
 end

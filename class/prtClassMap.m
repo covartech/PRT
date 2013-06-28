@@ -105,7 +105,7 @@ classdef prtClassMap < prtClass
             for iY = 1:length(Obj.rvs)
                 logLikelihoods(:,iY) = getObservations(run(Obj.rvs(iY), DataSet));
             end
-
+            
             % Change to posterior probabilities and package everything up in a
             % prtDataSet
             DataSet = prtDataSetClass(exp(bsxfun(@minus, logLikelihoods, prtUtilSumExp(logLikelihoods.').')));
