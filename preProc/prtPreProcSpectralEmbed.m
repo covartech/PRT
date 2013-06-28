@@ -1,11 +1,10 @@
 classdef prtPreProcSpectralEmbed < prtPreProc
     % prtPreProcSpectralEmbed  Spectral Embedding
     %
-    %   SpectralEmbed = prtPreProcSpectralEmbed creates a Spectral
-    %   Embedding object.
+    %   SpectralEmbed = prtPreProcSpectralEmbed creates a Spectral Embed object.
     %
     %   spectralEmbed = prtPreProcSpectralEmbed(PROPERTY1, VALUE1, ...) constructs a
-    %    prtPreProcSpectralEmbed object PreProc with properties as specified by
+    %    prtPreProcSpectralEmbed object CLASSIFIER with properties as specified by
     %    PROPERTY/VALUE pairs.
     %
     %    A prtpreProcSpectralEmbed object inherits all properties from the abstract
@@ -101,13 +100,8 @@ classdef prtPreProcSpectralEmbed < prtPreProc
         
         function DataSet = runAction(Obj,DataSet)
             
-            k1=prtUtilRbfDist(Obj.dataSet.X,DataSet.X,'sigma',Obj.sigma);
-            k2=prtUtilRbfDist(Obj.dataSet.X,Obj.dataSet.X,'sigma',Obj.sigma);
-            
-            
-            y=sum(repmat(Obj.eigVectors,[1,1,size(k1,2)]).*permute(repmat(k1,[1,1,Obj.nEigs]),[1,3,2])./(sqrt(mean(k1,1)*(mean(k2,2)))));
-            DataSet.X=permute(y,[3,2,1]);  
-            
+            DataSet.X=prtUtilSpectralOutOfSampleExtension(Obj.dataSet.X,DataSet.X,Obj.eigVectors,Obj.eigValues,Obj.sigma);
+    
         end
     end
 end
