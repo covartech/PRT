@@ -103,10 +103,7 @@ classdef prtClassMapLog < prtClass
         
         function DataSet = runAction(Obj,DataSet)
             
-            logLikelihoods = zeros(DataSet.nObservations, length(Obj.rvs));
-            for iY = 1:length(Obj.rvs)
-                logLikelihoods(:,iY) = getObservations(run(Obj.rvs(iY), DataSet));
-            end
+            logLikelihoods = runFast(Obj, DataSet.X);
 
             % Change to posterior probabilities and package everything up in a
             % prtDataSet
