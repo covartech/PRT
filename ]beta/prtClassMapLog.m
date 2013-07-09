@@ -108,10 +108,7 @@ classdef prtClassMapLog < prtClass
                 logLikelihoods(:,iY) = getObservations(run(Obj.rvs(iY), DataSet));
             end
 
-            % Change to posterior probabilities and package everything up in a
-            % prtDataSet
-            %DataSet = prtDataSetClass(exp(bsxfun(@minus, logLikelihoods, prtUtilSumExp(logLikelihoods.').')));
-            DataSet = DataSet.setObservations(logLikelihoods);
+            DataSet = prtDataSetClass(logLikelihoods);
         end
     
         function xOut = runActionFast(Obj,xIn,ds) %#ok<INUSD>
