@@ -31,7 +31,7 @@ classdef prtClassLibSvm < prtClass
     %         eEpsilon      - Termination tolerance
     %         shrinking     - Use shrinking heuristic?
     %         probabilityEstimates - Output probability estimates?
-    %         weight        - Parameter in C-SCM
+    %         weight        - Class-specific weight parameter in C-SCM
     %
     %   Default values are:
     %     svmType = 0;
@@ -46,7 +46,7 @@ classdef prtClassLibSvm < prtClass
     %     eEpsilon = 0.001;
     %     shrinking = 1;
     %     probabilityEstimates = 0;
-    %     weight = 1;
+    %     weight = [1 1];
     %
     %     userSpecKernel = [];  %only for kernelType = 4, see below
     %
@@ -147,7 +147,7 @@ classdef prtClassLibSvm < prtClass
         eEpsilon = 0.001;
         shrinking = 1;
         probabilityEstimates = 0;
-        weight = 1;
+        weight = [1 1];
         
         libSvmOptions = '';
         
@@ -220,7 +220,7 @@ classdef prtClassLibSvm < prtClass
             obj.probabilityEstimates = val;
         end
         function obj = set.weight(obj,val)
-            assert(isscalar(val) && val > 0,'weight must be a positive value; see the instructions at http://www.csie.ntu.edu.tw/~cjlin/libsvm/ for more information');
+            assert(numel(val)==2 && all(val > 0),'weight must be a positive 2-element vector; see the instructions at http://www.csie.ntu.edu.tw/~cjlin/libsvm/ for more information');
             obj.weight = val;
         end
         
@@ -232,7 +232,8 @@ classdef prtClassLibSvm < prtClass
     methods (Access=protected, Hidden = true)
         
         function self = trainAction(self,dataSet)
-            training_label_vector = dataSet.getTargets;
+            training_label_vector = dataSet.getTargetsAsBinaryMatrix;
+            training_label_vector = double(training_label_vector(:,end)); %zeros and ones
             training_instance_matrix = dataSet.getObservations;
             self.libSvmOptions = self.libSvmOptionString(dataSet);
             self.libSvmOptionsTest = self.libSvmOptionStringTest(dataSet);
@@ -258,8 +259,8 @@ classdef prtClassLibSvm < prtClass
                     training_instance_matrix = self.userSpecKernel(dataSet.X,dataSet.X);
                 end
                 training_instance_matrix = cat(2,(1:size(training_instance_matrix,1))',training_instance_matrix);
-            end
-            self.trainedSvm = prtExternal.libsvm.svmtrain(double(training_label_vector), training_instance_matrix, self.libSvmOptions);
+            end            
+            self.trainedSvm = prtExternal.libsvm.svmtrain(training_label_vector, training_instance_matrix, self.libSvmOptions);
             
             %Need to figure out whether to flip SVM outputs:
             yOut = runAction(self,dataSet);
@@ -310,7 +311,7 @@ classdef prtClassLibSvm < prtClass
                     gram = prtKernelRbf.kernelFn(f,x,sqrt(nFeats));
                     yOut = ((self.trainedSvm.sv_coef'*gram)-self.trainedSvm.rho)';
                 otherwise
-                    error('prtClassLibSvm','Unsupported kernel type for runActionFast');
+                    error('prt:prtClassLibSvm','Unsupported kernel type for runActionFast');
             end
             dataSetOut = yOut(:)*self.gain;
         end
@@ -324,9 +325,9 @@ classdef prtClassLibSvm < prtClass
                 obj.gamma = strrep(obj.gamma,'k',sprintf('%d',dataSet.nFeatures));
                 obj.gamma = eval(obj.gamma);
             end
-            optionString = sprintf('-s %d -t %d -d %d -g %f -r %f -c %f -n %f -p %f -m %f -e %f -h %d -b %d -wi %f',...
+            optionString = sprintf('-s %d -t %d -d %d -g %f -r %f -c %f -n %f -p %f -m %f -e %f -h %d -b %d -w0 %f -w+1 %f',...
                 obj.svmType,obj.kernelType,obj.degree,obj.gamma,obj.coef0,obj.cost,obj.nu,...
-                obj.pEpsilon,obj.cachesize,obj.eEpsilon,obj.shrinking,obj.probabilityEstimates,obj.weight);
+                obj.pEpsilon,obj.cachesize,obj.eEpsilon,obj.shrinking,obj.probabilityEstimates,obj.weight(1),obj.weight(2));
         end
         function optionString = libSvmOptionStringTest(obj,dataSet) %#ok<INUSD>
             optionString = sprintf('-b %d',obj.probabilityEstimates);
