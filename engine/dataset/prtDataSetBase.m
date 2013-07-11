@@ -361,13 +361,18 @@ classdef prtDataSetBase
     methods (Hidden = true)
         
 		function self = acquireNonDataAttributesFrom(self, dataSet)
-			if ~isempty(dataSet.targets) && isempty(self.targets)
-				self.targets = dataSet.targets;
-			end
-			
-			self.name = dataSet.name;
-			self.description = dataSet.description;
-            self.userData = dataSet.userData;
+            if ~isempty(dataSet.targets) && isempty(self.targets)
+                self.targets = dataSet.targets;
+            end
+            if ~isempty(dataSet.name) && isempty(self.name)
+                self.name = dataSet.name;
+            end
+            if ~isempty(dataSet.description) && isempty(self.description)
+                self.description = dataSet.description;
+            end
+            if ~isempty(dataSet.userData) && isempty(self.userData)
+                self.userData = dataSet.userData;
+            end
 		end
         
 		function self = modifyNonDataAttributesFrom(self, action) %#ok<INUSD>

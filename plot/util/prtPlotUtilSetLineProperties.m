@@ -197,10 +197,16 @@ end
 % Markers specified as Function Handle
 if any(find(options.styleOrder == 'm'))
     if isa(options.markers,'function_handle')
-        cY = labelInds(:,find(options.styleOrder == 'm',1));
-        uY = unique(cY);
-        nMarkers = length(uY);
-        options.markers = feval(options.markers, nMarkers);
+        mInd = find(options.styleOrder == 'm',1);
+        if mInd > size(labels,2)
+            nMarkers = 0;
+        else
+            
+            cY = labelInds(:,mInd);
+            uY = unique(cY);
+            nMarkers = length(uY);
+            options.markers = feval(options.markers, nMarkers);
+        end
     else
         nMarkers = length(options.markers);
     end
@@ -244,6 +250,9 @@ nSizes = length(options.markerSizes);
 legendOutput = cell(size(lineHandles));
 for iL = 1:numel(lineHandles)
     cH = lineHandles(iL);
+    if ~ishandle(cH)
+        continue
+    end
     
     for iStyle = 1:min(length(options.styleOrder),size(labels,2))
         cStyleType = options.styleOrder(iStyle);
