@@ -321,13 +321,16 @@ classdef prtClassLibSvm < prtClass
         function optionString = libSvmOptionString(obj,dataSet)
             if isnan(obj.gamma)
                 obj.gamma = 1./dataSet.nFeatures;
-            elseif ischar(obj.gamma)
-                obj.gamma = strrep(obj.gamma,'k',sprintf('%d',dataSet.nFeatures));
-                obj.gamma = eval(obj.gamma);
             end
-            optionString = sprintf('-s %d -t %d -d %d -g %f -r %f -c %f -n %f -p %f -m %f -e %f -h %d -b %d -w0 %f -w+1 %f',...
-                obj.svmType,obj.kernelType,obj.degree,obj.gamma,obj.coef0,obj.cost,obj.nu,...
-                obj.pEpsilon,obj.cachesize,obj.eEpsilon,obj.shrinking,obj.probabilityEstimates,obj.weight(1),obj.weight(2));
+            if ischar(obj.gamma)
+                optionString = sprintf('-s %d -t %d -d %d -g %s -r %f -c %f -n %f -p %f -m %f -e %f -h %d -b %d -w0 %f -w+1 %f',...
+                    obj.svmType,obj.kernelType,obj.degree,obj.gamma,obj.coef0,obj.cost,obj.nu,...
+                    obj.pEpsilon,obj.cachesize,obj.eEpsilon,obj.shrinking,obj.probabilityEstimates,obj.weight(1),obj.weight(2));
+            else
+                optionString = sprintf('-s %d -t %d -d %d -g %f -r %f -c %f -n %f -p %f -m %f -e %f -h %d -b %d -w0 %f -w+1 %f',...
+                    obj.svmType,obj.kernelType,obj.degree,obj.gamma,obj.coef0,obj.cost,obj.nu,...
+                    obj.pEpsilon,obj.cachesize,obj.eEpsilon,obj.shrinking,obj.probabilityEstimates,obj.weight(1),obj.weight(2));
+            end
         end
         function optionString = libSvmOptionStringTest(obj,dataSet) %#ok<INUSD>
             optionString = sprintf('-b %d',obj.probabilityEstimates);
