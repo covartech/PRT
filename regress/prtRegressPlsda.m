@@ -5,7 +5,7 @@ classdef prtRegressPlsda < prtRegress
     %    discriminant regressor
     %
     %    REGRESS = prtRegressPlsda(PROPERTY1, VALUE1, ...) constructs a
-    %    prtClassMAP object REGRESS with properties as specified by
+    %    prtRegressPlsda object REGRESS with properties as specified by
     %    PROPERTY/VALUE pairs.
     %
     %    A prtRegressPlsda object inherits all properties from the abstract
@@ -27,21 +27,14 @@ classdef prtRegressPlsda < prtRegress
     %
     %    Example:
     %
-    %   TestDataSet = prtDataGenUnimodal;      % Create some test and 
-    %   TrainingDataSet = prtDataGenUnimodal;  % training data
-    %   regress = prtRegressPlsda;           % Create a regressor
-    %   regress = regress.train(TrainingDataSet);    % Train
-    %   regressed = run(regress, TestDataSet);         % Test
-    %   subplot(2,1,1);
+    %   TestDataSet = prtDataGenNoisyLine;         % Create some test and 
+    %   TrainingDataSet = prtDataGenNoisyLine;     % training data
+    %   regress = prtRegressPlsda;                % Create a regressor
+    %   regress = regress.train(TrainingDataSet); % Train
+    %   regressed = run(regress, TestDataSet);    % Test
     %   regress.plot;
-    %   subplot(2,1,2);
-    %   [pf,pd] = prtScoreRoc(classified,TestDataSet);
-    %   h = plot(pf,pd,'linewidth',3);
-    %   title('ROC'); xlabel('Pf'); ylabel('Pd');
     %
-    %    See also prtClass, prtClassLogisticDiscriminant, prtClassBagging,
-    %    prtClassMap, prtClassCap, prtClassBinaryToMaryOneVsAll, prtClassDlrt,
-    %    prtClassKnn, prtClassFld, prtClassRvm, prtClassGlrt,  prtClass
+    %    See also prtRegress, prtRegressLslr, prtRegressRvm
 
 % Copyright (c) 2013 New Folder Consulting
 %
