@@ -34,6 +34,9 @@ classdef prtClassSvm < prtClass
     %    KFOLDS methods from prtAction. It also inherits the PLOT method
     %    from prtClass.
     %
+    %    Note: prtClassSvm is provided as a research and development tool;
+    %    it is coded entirely in M-code, and the SMO code is un-optimized.
+    %    For speed and performance, we receommend using prtClassLibSvm.
     %
     %    Example:
     %
