@@ -274,7 +274,7 @@ end
 function CR = combs_rep(N,K)
 % Subfunction multichoose:  combinations with replacement.
 % cr = @(N,K) prod((N):(N+K-1))/(prod(1:K)); Number of rows.
-
+keyboard
 M = double(N);  % Single will give us trouble on indexing.
 WV = ones(1,K,class(N));  % This is the working vector.
 mch = prod((M:(M+K-1)) ./ (1:K));  % Pre-allocation.

@@ -76,8 +76,16 @@ weightCellOut{end} = weightCellOut{end} + mean(dw)';
 %         end
 %     end
 % end
+
+inSize = size(input{1});
 deltaJ = bsxfun(@times,weightCell{2}(2:end)',deltaK).*fwdFnDeriv(net{2});
-for i = 1:size(input{1},2)
-    dw = stepSize*bsxfun(@times,deltaJ,input{1}(:,i));
-    weightCellOut{1}(i,:) = weightCellOut{1}(i,:) + mean(dw);
-end
+dw = stepSize*bsxfun(@times,deltaJ,reshape(input{1},[inSize(1),1,inSize(2)]));
+dw = squeeze(mean(dw));
+weightCellOut{1} = weightCellOut{1} + dw';
+
+% tic;
+% for i = 1:size(input{1},2)
+%     dw = stepSize*bsxfun(@times,deltaJ,input{1}(:,i));
+%     weightCellOut{1}(i,:) = weightCellOut{1}(i,:) + mean(dw);
+% end
+% toc

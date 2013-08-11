@@ -89,6 +89,14 @@ classdef prtUtilIntegerAssociativeArray
         
         function out = merge(self,in2)
             
+            persistent versionNum
+            if isempty(versionNum)
+                %Backwards compatible bug-fix; 2013.08.11
+                % Note: ver is slow, so use persistence
+                s = ver('matlab');
+                versionNum = str2double(s.Version);
+            end
+            
             keys1 = self.integerKeys;
             keys1 = keys1(:);
             
@@ -101,7 +109,11 @@ classdef prtUtilIntegerAssociativeArray
             vals2 = in2.get(keys2);
             vals2 = vals2(:);
             
-            [unionKeys,ind1,ind2] = union(keys1,keys2,'R2012a'); % Bug fix 2013-06-13
+            if versionNum >= 8
+                [unionKeys,ind1,ind2] = union(keys1,keys2,'R2012a'); % Bug fix 2013-06-13
+            else
+                [unionKeys,ind1,ind2] = union(keys1,keys2);
+            end
             commonKeys = intersect(keys1,keys2);
             
             if ~isequal(self.get(commonKeys),in2.get(commonKeys))

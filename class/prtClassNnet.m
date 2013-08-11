@@ -11,7 +11,7 @@ classdef prtClassNnet < prtClass
     %    A prtClassFld object inherits all properties from the abstract class
     %    prtClass. In addition is has the following properties:
     %
-    %    nHiddenUnits (10)  - Number of hidden units to use
+    %    nHiddenUnits (30)  - Number of hidden units to use
     %    minIters  (10000)  - Minimum number of iterations to run before
     %                         checking for convergence
     %    maxIters (100000)  - Maximum number of iterations to run
@@ -40,7 +40,11 @@ classdef prtClassNnet < prtClass
     %   Currently, prtClassNnet implements a simple back-propagation
     %   algorithm as described in Duda, Hart, Stork, "Pattern
     %   Classification", 2nd Ed., Pages 291-293.  More complicated
-    %   algorithms are also possible.
+    %   algorithms are also possible.  
+    %
+    %   To do: add stochastic backprop; fields: stochasticLearning (true),
+    %   nBoostrapSamples (100), and momentum; then for every iteration,
+    %   train on a bootstrap sample, and evaluate on the whole data set.
     %
     %   The current code is only suitable for binary classification
     %   problems. M-ary modifications are possible and on our to-do-list.
@@ -104,6 +108,7 @@ classdef prtClassNnet < prtClass
             converged = false;
             
             for iter = 1:self.maxIters;
+                
                 [wCell,out] = prtUtilNnetBackProp(dataSet,wCell,self.stepSize,self.fwdFn,self.fwdFnDeriv);
                 meanError(iter) = mean((out - dataSet.targets).^2);
                 
@@ -114,7 +119,6 @@ classdef prtClassNnet < prtClass
                     converged = percentChange < self.relativeErrorChangeThreshold;
                 end
                 if converged
-                    percentChange
                     break;
                 end
                 
@@ -137,6 +141,7 @@ classdef prtClassNnet < prtClass
                         plot(1:length(out),out,1:length(out),dataSet.targets);
                         subplot(2,1,1);
                         plot(log10(meanError));
+                        drawnow;
                     end
                 end
             end
