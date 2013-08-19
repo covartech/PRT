@@ -37,6 +37,7 @@ classdef prtUiDataSetStandardObservationInfoSelect < prtUiManagerPanel
         selectrStrDepHelper = 'true(size(S))';
         retainedObsDepHelper = [];
         retainedObsUpdateCallbackDepHelper = [];
+        editableArray = [];
     end
     properties (Dependent)
         retainedObs
@@ -144,6 +145,7 @@ classdef prtUiDataSetStandardObservationInfoSelect < prtUiManagerPanel
                     if isstruct(cVals) || (iscell(cVals) && ~iscellstr(cVals))
                         % If getObservationInfo() outputs a cell that isn't
                         % a cellstr then we can't use it.
+                        keyboard
                         badColumns(iField) = true;
                         continue
                     end
@@ -161,6 +163,11 @@ classdef prtUiDataSetStandardObservationInfoSelect < prtUiManagerPanel
                 self.dataCell = self.dataCell(:,~badColumns);
                 self.tableFieldNames = self.tableFieldNames(~badColumns);
                 
+                if isempty(self.editableArray)
+                    self.editableArray = false(1,size(self.dataCell));
+                end
+                self.editableArray = self.editableArray(~badColumns);
+                
                 if any(badColumns)
                     origFieldNames = fieldnames(self.prtDs.observationInfo);
                     badFieldNames = origFieldNames(badColumns);
@@ -173,7 +180,7 @@ classdef prtUiDataSetStandardObservationInfoSelect < prtUiManagerPanel
                 
                 set(self.handleStruct.table,'data',self.dataCell,...
                     'ColumnName',self.tableFieldNames,...
-                    'ColumnEditable',false(1,length(self.tableFieldNames)),...
+                    'ColumnEditable',self.editableArray,...
                     'ColumnWidth','auto','RearrangeableColumns','off',...
                     'RowStriping','off','RowName',cellstr(num2str((1:size(self.dataCell,1))')),...
                     'uicontextmenu',self.handleStruct.tableContextMenu);
