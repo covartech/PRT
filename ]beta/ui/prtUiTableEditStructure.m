@@ -2,6 +2,7 @@ classdef prtUiTableEditStructure < prtUiManagerPanel
 
     properties
         
+        enableRowDeletion = 'off';
         dataStructure
         dataCell = {};
         
@@ -21,7 +22,9 @@ classdef prtUiTableEditStructure < prtUiManagerPanel
             
             self = prtUtilAssignStringValuePairs(self,varargin{:});
             
-            if nargin~=0 && ~self.hgIsValid
+            if nargin == 0
+                self.create();
+            elseif nargin~=0 && ~self.hgIsValid
                self.create()
             end
             
@@ -55,18 +58,27 @@ classdef prtUiTableEditStructure < prtUiManagerPanel
                 'visible','on');
             drawnow;
             self.handleStruct.jScrollPane = findjobj(self.handleStruct.table);
-            self.handleStruct.jTable = self.handleStruct.jScrollPane.getViewport.getView;
-            set(self.handleStruct.table,'visible','off');
+            if ~isempty(self.handleStruct.jScrollPane)
+                self.handleStruct.jTable = self.handleStruct.jScrollPane(1).getViewport.getView;
+            end
+            set(self.handleStruct.table,'visible','on');
             
             self.handleStruct.tableContextMenu = uicontextmenu;
             self.handleStruct.tableContextMenuItemNewSelection = uimenu(self.handleStruct.tableContextMenu, 'Label', 'Sort By', 'Callback', @(myHandle,eventData)self.sortBy(myHandle,eventData));
             self.handleStruct.tableContextMenuItemAndSelection = uimenu(self.handleStruct.tableContextMenu, 'Label', 'Set Values', 'Callback', @(myHandle,eventData)self.setValues(myHandle,eventData));
             self.handleStruct.tableContextMenuItemOrSelection = uimenu(self.handleStruct.tableContextMenu, 'Label', 'String Search Sort', 'Callback', @(myHandle,eventData)self.sortByStringSearch(myHandle,eventData));
-            %             self.handleStruct.tableContextMenuItemNoSelection = uimenu(self.handleStruct.tableContextMenu, 'Label', 'Remove From Table', 'Callback', @(myHandle,eventData)self.uiMenuNoSelection(myHandle,eventData));
+            self.handleStruct.tableContextMenuItemOrSelection = uimenu(self.handleStruct.tableContextMenu, 'Label', 'Delete Selected Rows', 'Callback', @(myHandle,eventData)self.deleteSelectedRows(myHandle,eventData),'Enable','off');
             
+            %             self.handleStruct.tableContextMenuItemNoSelection = uimenu(self.handleStruct.tableContextMenu, 'Label', 'Remove From Table', 'Callback', @(myHandle,eventData)self.uiMenuNoSelection(myHandle,eventData));
+            self.updateDataStructure;
+        end
+        
+        function updateDataStructure(self,obsInfo)
+            if nargin > 1
+                self.dataStructure = obsInfo;
+            end
             if ~isempty(self.dataStructure)
                 self.tableFieldNames = fieldnames(self.dataStructure(:));
-                
                 self.dataCell = struct2cell(self.dataStructure(:))';
                 
                 if isempty(self.editableArray)
@@ -83,6 +95,21 @@ classdef prtUiTableEditStructure < prtUiManagerPanel
                     'CellEditCallback',@(src,event)error('Not implemented'));
                 
                 self.sortingInds = (1:size(self.dataCell,1))';
+                
+                set(self.managedHandle,'ResizeFcn',@self.resizeFunction);
+                resizeFunction(self);
+                set(self.handleStruct.table,'visible','on');
+            else
+                set(self.handleStruct.table,'data',[],...
+                    'ColumnName',self.tableFieldNames,...
+                    'ColumnEditable',self.editableArray,...
+                    'ColumnWidth','auto','RearrangeableColumns','off',...
+                    'RowStriping','off','RowName',cellstr(num2str((1:size(self.dataCell,1))')),...
+                    'uicontextmenu',self.handleStruct.tableContextMenu,...
+                    'CellSelectionCallback',@(src,evnt)set(src,'UserData',evnt.Indices),...
+                    'CellEditCallback',@(src,event)error('Not implemented'));
+                
+                self.sortingInds = [];
                 
                 set(self.managedHandle,'ResizeFcn',@self.resizeFunction);
                 resizeFunction(self);
@@ -137,6 +164,7 @@ classdef prtUiTableEditStructure < prtUiManagerPanel
                     self.dataStructure(relativeInds(i)).(strs{selectedColInd}) = answer;
                 end
             end
+            
             self.updateTableDisplay;
         end
         
@@ -175,6 +203,31 @@ classdef prtUiTableEditStructure < prtUiManagerPanel
             end
             [~,inds] = sort(sortVec);
             self.sort(inds);
+        end
+        
+        function deleteSelectedRows(self)
+            
+            ButtonName = questdlg('Remove selected rows from database?', ...
+                'Clear Current?', ...
+                'Yes, erase', 'No, go back','No, go back');
+            switch ButtonName
+                case 'No, go back'
+                    return;
+                otherwise
+                    
+                    selected = get(self.handleStruct.table,'UserData');
+                    if isempty(selected)
+                        warndlg('No rows selected');
+                        return;
+                    end
+                    selectedRows = selected(:,1);
+                    selectedBool = false(size(self.dataStructure));
+                    selectedBool(selectedRows) = true;
+                    obsInfo = self.dataStructure(~selectedBool);
+                    
+                    self.updateDataStructure(obsInfo);
+                    self.updateTableDisplay;
+            end
         end
         
         function sort(self,inds)
