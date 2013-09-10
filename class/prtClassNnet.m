@@ -130,17 +130,23 @@ classdef prtClassNnet < prtClass
                         self.isTrained = true;
                         self.weightCell = wCell;
                         plot(self);
-                        %                         set(gca,'clim',[0 1]);
+                        title('NNET Contour');
                         subplot(2,2,2);
-                        plot(1:length(out),out,1:length(out),dataSet.targets);
+                        h = plot(1:length(out),out,1:length(out),dataSet.targets);
+                        set(h,'linewidth',3);
+                        title('Targets (Green) and Target Estimates (Blue)');
                         subplot(2,1,2);
                         plot(log10(meanError));
+                        title(sprintf('Log-10 Average Error vs. Training Epoch'));
                         drawnow;
                     else
                         subplot(2,1,2);
-                        plot(1:length(out),out,1:length(out),dataSet.targets);
+                        h = plot(1:length(out),dataSet.targets,'g',1:length(out),out,'b');
+                        set(h(1),'linewidth',3);
+                        title('Targets (Green) and Target Estimates (Blue)');
                         subplot(2,1,1);
                         plot(log10(meanError));
+                        title(sprintf('Log-10 Average Error vs. Training Epoch'));
                         drawnow;
                     end
                 end
