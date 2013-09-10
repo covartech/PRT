@@ -1,4 +1,4 @@
-function List = prtUtilSubDir(directory,match,dirMatch)
+function List = prtUtilSubDir(directory,match,dirMatch,recurse)
 % xxx Need Help xxx
 % List = prtUtilSubDir(directory,match)
 
@@ -23,13 +23,16 @@ function List = prtUtilSubDir(directory,match,dirMatch)
 % OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
 % USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-
 if nargin < 2 || isempty(match)
     match = '*';
 end
 
 if nargin < 3 || isempty(dirMatch)
     dirMatch = '*';
+end
+
+if nargin < 4 || isempty(recurse)
+    recurse = true;
 end
 
 X = dir(fullfile(directory,dirMatch));
@@ -41,9 +44,11 @@ Xdir = Xdir(~cellfun(@(x)ismember(x,{'.';'..'}),{Xdir.name}));
 DC = dir(fullfile(directory,match));
 DC = DC(~cat(1,DC.isdir));
 List = {};
-for ind = 1:length(Xdir)
-    NewDir = fullfile(directory,Xdir(ind).name);
-    cList = prtUtilSubDir(NewDir,match,dirMatch);
-    List = [List;cList];
+if recurse
+    for ind = 1:length(Xdir)
+        NewDir = fullfile(directory,Xdir(ind).name);
+        cList = prtUtilSubDir(NewDir,match,dirMatch);
+        List = [List;cList];
+    end
 end
 List = [List;cellfun(@(x)fullfile(directory,x),{DC.name}','uniformoutput',false)];

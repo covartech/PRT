@@ -2,7 +2,8 @@ classdef prtUiTableEditStructure < prtUiManagerPanel
 
     properties
         
-        enableRowDeletion = 'off';
+        enableRowDeletion = 'on';
+        enableColumnCreation = 'on';
         dataStructure
         dataCell = {};
         
@@ -67,10 +68,36 @@ classdef prtUiTableEditStructure < prtUiManagerPanel
             self.handleStruct.tableContextMenuItemNewSelection = uimenu(self.handleStruct.tableContextMenu, 'Label', 'Sort By', 'Callback', @(myHandle,eventData)self.sortBy(myHandle,eventData));
             self.handleStruct.tableContextMenuItemAndSelection = uimenu(self.handleStruct.tableContextMenu, 'Label', 'Set Values', 'Callback', @(myHandle,eventData)self.setValues(myHandle,eventData));
             self.handleStruct.tableContextMenuItemOrSelection = uimenu(self.handleStruct.tableContextMenu, 'Label', 'String Search Sort', 'Callback', @(myHandle,eventData)self.sortByStringSearch(myHandle,eventData));
-            self.handleStruct.tableContextMenuItemOrSelection = uimenu(self.handleStruct.tableContextMenu, 'Label', 'Delete Selected Rows', 'Callback', @(myHandle,eventData)self.deleteSelectedRows(myHandle,eventData),'Enable','off');
+            self.handleStruct.tableContextMenuCreateColumn = uimenu(self.handleStruct.tableContextMenu, 'Label', 'Add Column', 'Callback', @(myHandle,eventData)self.createColumn(myHandle,eventData),'Enable',self.enableColumnCreation,'Separator','on');
+            self.handleStruct.tableContextMenuDeleteSelection = uimenu(self.handleStruct.tableContextMenu, 'Label', 'Delete Selected Rows', 'Callback', @(myHandle,eventData)self.deleteSelectedRows(myHandle,eventData),'Enable',self.enableRowDeletion);
+            
             
             %             self.handleStruct.tableContextMenuItemNoSelection = uimenu(self.handleStruct.tableContextMenu, 'Label', 'Remove From Table', 'Callback', @(myHandle,eventData)self.uiMenuNoSelection(myHandle,eventData));
             self.updateDataStructure;
+        end
+        
+        function updateDataStructureFromGui(self,h,e)
+            
+            cellData = get(self.handleStruct.table,'data');
+            
+            selected = get(self.handleStruct.table,'UserData');
+            if isempty(selected)
+                warndlg('No rows selected');
+                return;
+            end
+            selectedRow = selected(1);
+            selectedCol = selected(2);
+            
+            obsInfo = self.dataStructure;
+            obsInfo(self.sortingInds(selectedRow)).(self.tableFieldNames{selectedCol}) = cellData{selectedRow,selectedCol};
+            self.dataStructure = obsInfo;
+            
+            self.updateDataStructure(obsInfo);
+            self.updateTableDisplay;
+            
+            jUIScrollPane = findjobj(self.handleStruct.table);
+            jUITable = jUIScrollPane.getViewport.getView;
+            jUITable.changeSelection(selectedRow,selectedCol-1, false, false);
         end
         
         function updateDataStructure(self,obsInfo)
@@ -92,9 +119,12 @@ classdef prtUiTableEditStructure < prtUiManagerPanel
                     'RowStriping','off','RowName',cellstr(num2str((1:size(self.dataCell,1))')),...
                     'uicontextmenu',self.handleStruct.tableContextMenu,...
                     'CellSelectionCallback',@(src,evnt)set(src,'UserData',evnt.Indices),...
-                    'CellEditCallback',@(src,event)error('Not implemented'));
+                    'CellEditCallback',@(src,event)self.updateDataStructureFromGui(src,event));
                 
-                self.sortingInds = (1:size(self.dataCell,1))';
+                % I do not think we have to do this
+                if isempty(self.sortingInds)
+                    self.sortingInds = (1:size(self.dataCell,1))';
+                end
                 
                 set(self.managedHandle,'ResizeFcn',@self.resizeFunction);
                 resizeFunction(self);
@@ -205,12 +235,54 @@ classdef prtUiTableEditStructure < prtUiManagerPanel
             self.sort(inds);
         end
         
-        function deleteSelectedRows(self)
+        function createColumn(self,h,e)
             
-            ButtonName = questdlg('Remove selected rows from database?', ...
-                'Clear Current?', ...
-                'Yes, erase', 'No, go back','No, go back');
+            answer=inputdlg('Enter a name for the new column','New Column Name');
+            if isempty(answer)
+                return;
+            end
+            varName = genvarname(answer{1});
+            obsInfo = self.dataStructure;
+            if isfield(obsInfo,varName);
+                h = errordlg('%s is already a field of the database');
+                uiwait(h);
+                return
+            end
+            
+            ButtonName = questdlg('Add a numeric or character?', ...
+                'Numeric or Character', ...
+                'Numeric', 'Character','Numeric');
+            
             switch ButtonName
+                case 'Numeric'
+                    vals = repmat({nan},size(obsInfo));
+                otherwise
+                    vals = repmat({''},size(obsInfo));
+            end
+            for i = 1:length(obsInfo)
+                obsInfo(i).(varName) = vals{i};
+            end
+            
+            self.editableArray = [self.editableArray,true];
+            self.updateDataStructure(obsInfo);
+            self.updateTableDisplay;
+        end
+        
+        function deleteSelectedRows(self,h,e,force)
+            
+            if nargin < 4
+                force = false;
+            end
+            if ~force
+                ButtonName = questdlg('Remove selected rows from database?', ...
+                    'Clear Current?', ...
+                    'Yes, erase', 'No, go back','No, go back');
+            else
+                ButtonName = 'Yes, erase';
+            end
+            switch ButtonName
+                case '';
+                    return;
                 case 'No, go back'
                     return;
                 otherwise
@@ -220,10 +292,16 @@ classdef prtUiTableEditStructure < prtUiManagerPanel
                         warndlg('No rows selected');
                         return;
                     end
-                    selectedRows = selected(:,1);
+                    selectedRowsUnsorted = selected(:,1);
+                    selectedRows = self.sortingInds(selectedRowsUnsorted);
                     selectedBool = false(size(self.dataStructure));
                     selectedBool(selectedRows) = true;
+                    selectedBoolUnsorted = false(size(self.dataStructure));
+                    selectedBoolUnsorted(selectedRowsUnsorted) = true;
+                    
                     obsInfo = self.dataStructure(~selectedBool);
+                    [~,~,ic] = unique(self.sortingInds(~selectedBoolUnsorted));
+                    self.sortingInds = ic;
                     
                     self.updateDataStructure(obsInfo);
                     self.updateTableDisplay;
