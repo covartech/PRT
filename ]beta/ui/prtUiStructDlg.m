@@ -21,7 +21,9 @@ classdef prtUiStructDlg < prtUiManagerPanel
 % OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
 % USE OR OTHER DEALINGS IN THE SOFTWARE.
     properties
-
+        % Note: Most of these properties must be set during construction in
+        % order to work properly.
+        
         inputStruct
         outputStruct
         
@@ -31,8 +33,11 @@ classdef prtUiStructDlg < prtUiManagerPanel
         closeOnCancel = true;
         waitForOk = true;
         allowCancel = true;
-        additionalOkCallback = [];
-        additionalCancelCallback = [];
+        allowOk = true;
+        additionalOkCallback = []; %@()someFunction()
+        additionalCancelCallback = []; %@()someFunction()
+        
+        sharedControlCallback = []; %@(h,e)someFunction() , this sets the callback propety of uicontrols, it doesn't work for uicontrols without a callback proeprtu (like uitabl)
         
         titleStr = '';
         
@@ -177,8 +182,8 @@ classdef prtUiStructDlg < prtUiManagerPanel
                     'Style','text',...
                     'String',description,...
                     'HorizontalAlignment','left',...
-                    'FontSize',self.uiFontSize...
-                    );
+                    'FontSize',self.uiFontSize,...
+                    'BackgroundColor',get(self.managedHandle,'BackgroundColor'));
                 
                 self.figheight = self.figheight + self.uitextheight + self.dyunit/2;
                 
@@ -344,6 +349,13 @@ classdef prtUiStructDlg < prtUiManagerPanel
                         self.figheight  = self.figheight + currheight;
                 end
                 
+                if ~isempty(self.sharedControlCallback)
+                    try % some uicontrols don't have callbacks (like uitable)
+                        set(h,'callback',self.sharedControlCallback);
+                    catch
+                        set(h,'CellEditCallback',self.sharedControlCallback);
+                    end
+                end
                 self.figheight = self.figheight + self.dyunit;
                 
                 self.handles = [self.handles; {h hBtn currwidth currheight type fname}];
@@ -366,6 +378,10 @@ classdef prtUiStructDlg < prtUiManagerPanel
             
             if ~self.allowCancel
                 set(self.cancelButton,'visible','off')
+            end
+            
+            if ~self.allowOk
+                set(self.okButton,'visible','off')
             end
             
             self.figheight = self.figheight + self.dyunit + self.uibuttonheight;
@@ -569,42 +585,45 @@ classdef prtUiStructDlg < prtUiManagerPanel
         function okCallback(self, varargin)
         
             if isequal(self.dlgmode,'edit')
-                
-                for ni=1:size(self.handles,1)
-                    
-                    hh    = self.handles{ni,1};
-                    type  = self.handles{ni,5};
-                    fname = self.handles{ni,6};
-                    
-                    switch type
-                        
-                        case {'edit','multiedit'}
-                            self.outputStruct.(fname) = get(hh,'String');
-                        case 'checkbox'
-                            self.outputStruct.(fname) = logical(get(hh,'Value'));
-                        case 'popupmenu'
-                            contents = get(hh,'String');
-                            self.outputStruct.(fname) = cellstr(contents{get(hh,'Value')});
-                        case 'listbox'
-                            contents = get(hh,'String');
-                            self.outputStruct.(fname) = contents(get(hh,'Value'));
-                        case 'table'
-                            self.outputStruct.(fname) = get(hh,'Data');
-                        case 'file'
-                            self.outputStruct.(fname) = get(hh,'String');
-                        case 'struct'
-                            %do nothing
-                        otherwise
-                            %do nothing
-                    end
-                end
+                parseOutput(self)
             end
+            
             if ~isempty(self.additionalOkCallback)
                 feval(self.additionalOkCallback)
             end
             
             if self.closeOnOk
                 close(self)
+            end
+        end
+        function parseOutput(self)
+            for ni=1:size(self.handles,1)
+                
+                hh    = self.handles{ni,1};
+                type  = self.handles{ni,5};
+                fname = self.handles{ni,6};
+                
+                switch type
+                    
+                    case {'edit','multiedit'}
+                        self.outputStruct.(fname) = get(hh,'String');
+                    case 'checkbox'
+                        self.outputStruct.(fname) = logical(get(hh,'Value'));
+                    case 'popupmenu'
+                        contents = get(hh,'String');
+                        self.outputStruct.(fname) = cellstr(contents{get(hh,'Value')});
+                    case 'listbox'
+                        contents = get(hh,'String');
+                        self.outputStruct.(fname) = contents(get(hh,'Value'));
+                    case 'table'
+                        self.outputStruct.(fname) = get(hh,'Data');
+                    case 'file'
+                        self.outputStruct.(fname) = get(hh,'String');
+                    case 'struct'
+                        %do nothing
+                    otherwise
+                        %do nothing
+                end
             end
         end
         function close(self)
@@ -625,7 +644,7 @@ classdef prtUiStructDlg < prtUiManagerPanel
         function subStructOpenFcn(self, hObject, eventdata, fname)
             newInputStruct = self.inputStruct.(fname);
             
-            newObject = prtUiStructDlg('inputStruct',newInputStruct);
+            newObject = prtUiStructDlg('inputStruct',newInputStruct); % To be cherry you will also need to copy over all size properties. Unfinished at this time.
             
             self.outputStruct.(fname) = newObject.outputStruct;
         end

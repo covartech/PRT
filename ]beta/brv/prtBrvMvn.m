@@ -216,7 +216,7 @@ classdef prtBrvMvn < prtBrv & prtBrvVbOnline & prtBrvVbMembershipModel & prtBrvV
         function [self, training] = vbBatch(self,x)
             % Since we are purely conjugate we actually don't need vbBatch
             % However we must implement it.
-            self = conjugateUpdate(self,x);
+            self = conjugateUpdate(self,self, x);
             training = struct([]);
         end
     end

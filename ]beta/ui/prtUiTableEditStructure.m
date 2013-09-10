@@ -56,6 +56,7 @@ classdef prtUiTableEditStructure < prtUiManagerPanel
             drawnow;
             self.handleStruct.jScrollPane = findjobj(self.handleStruct.table);
             self.handleStruct.jTable = self.handleStruct.jScrollPane.getViewport.getView;
+            
             set(self.handleStruct.table,'visible','off');
             
             self.handleStruct.tableContextMenu = uicontextmenu;

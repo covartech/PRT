@@ -427,6 +427,10 @@ classdef prtAlgorithm < prtAction & prtActionBig
         function tf = isPlottableAsClassifier(self)
             
             tf = false;
+            if isempty(self.dataSetSummary)
+                return
+            end
+            
             if self.dataSetSummary.nFeatures <= 3
                 if sum(self.outputNodes)==1
                     lastNodes = self.connectivityMatrix(find(self.outputNodes,1,'first'),:);
