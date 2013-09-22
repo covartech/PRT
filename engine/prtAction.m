@@ -533,7 +533,6 @@ classdef prtAction
                 if self.isCrossValidateValid
                     dsOut = dsOut.acquireNonDataAttributesFrom(dsIn);
                 end
-                
                 % Allow actions to modify featureNames
                 dsOut = dsOut.modifyNonDataAttributesFrom(self);
             end

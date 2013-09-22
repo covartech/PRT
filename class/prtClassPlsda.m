@@ -118,8 +118,7 @@ classdef prtClassPlsda < prtClass
             X = bsxfun(@minus, X, xMeans);
             Y = bsxfun(@minus, Y, yMeans);
             
-            [Obj.Bpls, R, Obj.xFactors, Obj.yFactors, Obj.loadings, U] = prtUtilSimpls(X,Y,Obj.nComponents);  %#ok<ASGLU,NASGU>
-            
+            [Obj.Bpls, R, Obj.xFactors, Obj.yFactors, Obj.loadings, U] = prtUtilSimpls(X,Y,Obj.nComponents);  %#ok<ASGLU,NASGU>           
             Obj.yMeansFactor = yMeans - xMeans*Obj.Bpls;
             
         end
