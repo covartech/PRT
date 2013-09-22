@@ -1,4 +1,4 @@
-function colors = prtPlotUtilClassColors(nClasses)
+function [colors,names] = prtPlotUtilClassColors(nClasses)
 % Internal function, default color specs.
 % xxx Need Help xxx
 
@@ -50,3 +50,23 @@ colorMapInd = repmat((1:size(colors,1))',ceil(nClasses/size(colors,1)),1);
 colorMapInd = colorMapInd(1:nClasses);
 
 colors = colors(colorMapInd,:);
+
+if nargout > 1
+    
+names = {'Blue';
+         'Red';
+         'Green';
+         'Orange';
+         'Brown';
+         'Purple';
+         'Yellow';
+         'Pink';
+         'Teal';
+         'Salmon';
+         'Baby Blue';
+         'Peach';
+         'Sea Green';
+         'Light Purple';};
+
+names = names(colorMapInd);
+end
