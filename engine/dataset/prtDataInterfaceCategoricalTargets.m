@@ -578,7 +578,9 @@ classdef prtDataInterfaceCategoricalTargets
     methods (Hidden)
         function self = acquireCategoricalTargetsNonDataAttributes(self, dataSet)
             if isa(dataSet,'prtDataInterfaceCategoricalTargets') && dataSet.hasClassNames && ~self.hasClassNames
-                self = self.setClassNames(dataSet.getClassNames);
+                % self = self.setClassNames(dataSet.getClassNames);
+                % Fix 2013.09.23 - Deep copy of classNamesArray
+                self.classNamesArray = dataSet.classNamesArray;
             end
         end
         function has = hasClassNames(self)
