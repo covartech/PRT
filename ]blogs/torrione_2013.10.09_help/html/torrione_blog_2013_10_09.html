@@ -1,0 +1,135 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>torrione_blog_2013_10_09</title><meta name="generator" content="MATLAB 8.2"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2013-10-09"><meta name="DC.source" content="torrione_blog_2013_10_09.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Dude, Where's My Help?  (Or, MATLAB Freezing During Startup)</a></li><li><a href="#3">Patch Installation Instructions from Cesar</a></li></ul></div><h2>Dude, Where's My Help?  (Or, MATLAB Freezing During Startup)<a name="1"></a></h2><p>Depending on your setup, you may have recently had one of the following happen:</p><p>1) If you pulled the most recent version of the PRT since October 9, 2013, the PRT no longer shows up in the builtin MATLAB help-browser</p><p>or:</p><p>2) If you updated to MATLAB 2013B, MATLAB freezes during startup.</p><p>Here's the skinny - there's a bug in the new version of MATLAB (2013B) that, according to TMW:</p><pre class="codeinput"><span class="comment">%%%%%%%%%%%%%</span>
+<span class="comment">% This is a known issue with MATLAB 8.2 (R2013b) in the way that the</span>
+<span class="comment">% MATLAB startup handles the info.xml file. There is a deadlock between</span>
+<span class="comment">% the Help System initialization and the path changes (raised by the</span>
+<span class="comment">% startup.m) at the start of MATLAB.</span>
+<span class="comment">%%%%%%%%%%%%%</span>
+</pre><p>The result of this bug is that MATLAB seems to start up fine, but then just sits there, and never accepts inputs.  This is pretty much as bad a bug as can be (besides wrong answers), since it makes MATLAB completely unusable, and you can't even easily determine what is causing it since... MATLAB is unusable.</p><p>There is a patch to fix this bug, but if you don't have the patch already installed it's <b>very</b> difficult to figure out what is going wrong and it can be very frustrating.  Alternatively, removing (or moving) the XML files will let MATLAB startup, but the automatic help search, prtDoc, etc. will no longer work.  We thought that moving the XML files would cause the least amount of pain overall, so that's what we did.  Our XML files that used to live in prtRoot now live in fullfile(prtRoot,']xml') which is by default <b>not</b> on the prtPath, so should not cause you any issues.</p><p>If you still want to use the PRT documentation in the MATLAB help browser, simply install the patch by following the instructions below, then move the .xml files from fullfile(prtRoot,']xml') to prtRoot.  That should get everything running!</p><p>Sorry about any headaches anyone encountered, and a big "thank you" to Cesar from TMW who helped us get to the bottom of this quickly and professionally.</p><h2>Patch Installation Instructions from Cesar<a name="3"></a></h2><pre class="codeinput"><span class="comment">%%%%%%%%%%%%%</span>
+<span class="comment">% To work around this issue, unzip the attached patch (link) into your</span>
+<span class="comment">% MATLAB root directory (most likely C:\Program Files\MATLAB\R2013b).</span>
+<span class="comment">%%%%%%%%%%%%%</span>
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2013b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Dude, Where's My Help?  (Or, MATLAB Freezing During Startup)
+% Depending on your setup, you may have recently had one of the following
+% happen:
+%
+% 1) If you pulled the most recent version of the PRT since October 9,
+% 2013, the PRT no longer shows up in the builtin MATLAB help-browser 
+% 
+% or:
+%
+% 2) If you updated to MATLAB 2013B, MATLAB freezes during startup.
+%
+% Here's the skinny - there's a bug in the new version of MATLAB (2013B)
+% that, according to TMW:
+%
+%%%%%%%%%%%%%
+% This is a known issue with MATLAB 8.2 (R2013b) in the way that the
+% MATLAB startup handles the info.xml file. There is a deadlock between
+% the Help System initialization and the path changes (raised by the
+% startup.m) at the start of MATLAB. 
+%%%%%%%%%%%%%
+
+%%
+% The result of this bug is that MATLAB seems to start up fine, but then
+% just sits there, and never accepts inputs.  This is pretty much as bad a
+% bug as can be (besides wrong answers), since it makes MATLAB completely
+% unusable, and you can't even easily determine what is causing it since...
+% MATLAB is unusable.
+%
+% There is a patch to fix this bug, but if you don't have the patch
+% already installed it's *very* difficult to figure out what is going wrong
+% and it can be very frustrating.  Alternatively, removing (or moving) the
+% XML files will let MATLAB startup, but the automatic help search, prtDoc,
+% etc. will no longer work.  We thought that moving the XML files would
+% cause the least amount of pain overall, so that's what we did.  Our XML
+% files that used to live in prtRoot now live in fullfile(prtRoot,']xml')
+% which is by default *not* on the prtPath, so should not cause you any
+% issues.
+%
+% If you still want to use the PRT documentation in the MATLAB help
+% browser, simply install the patch by following the instructions below,
+% then move the .xml files from fullfile(prtRoot,']xml') to prtRoot.  That
+% should get everything running!
+%
+% Sorry about any headaches anyone encountered, and a big "thank you" to 
+% Cesar from TMW who helped us get to the bottom of this quickly and
+% professionally.
+
+%% Patch Installation Instructions from Cesar
+%
+%%%%%%%%%%%%%
+% To work around this issue, unzip the attached patch (link) into your
+% MATLAB root directory (most likely C:\Program Files\MATLAB\R2013b).
+%%%%%%%%%%%%%
+
+##### SOURCE END #####
+--></body></html>
