@@ -1,0 +1,43 @@
+<productinfo xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:noNamespaceSchemaLocation="optional">
+    <?xml-stylesheet type="text/xsl"href="optional"?>
+    <!-- info.xml file for the PRT  -->
+    <!-- Version 1.0 -->
+    <!-- Copyright (2013-02-26) (New Folder Consulting).-->
+    
+    <!-- Supply the following six elements in the order specified -->
+    <!-- (Required) element; matlabrelease content is not currently used -->
+    <matlabrelease>2008a</matlabrelease>
+    <!-- (Required) The name element appears in the Contents pane -->
+    <name>PRT: Pattern Recognition</name>
+    <!-- (Required) The type elementidentifies your package; pick one: -->
+    <!-- matlab, toolbox, simulink, blockset, links_targets  -->
+    <type>toolbox</type>
+    <!-- (Optional) icon file to display in the Start button -->
+    <icon>./doc/newFolder.gif</icon>
+    <!-- (Required if you supply help) relative path to help (HTML) folder -->
+    <help_location>./doc/</help_location>
+    <!-- (Required if you supply help) icon used in the Help browser TOC -->
+    
+    <!-- - - - - - - - - - - - -  Start menu - - - - - - - - - - - - - - - -->
+    <!-- Optional list of entries to display on Start Menu -->
+    <!-- Callback items are function calls or commands for toolbox -->
+    <!-- Refresh the Start button to see your entries -->
+    <!-- Remove this list if you do not want a Start button entry -->
+    <list>
+         <listitem>
+            <!-- The label provides the text for this menu item --> 
+            <label>Help</label>
+            <!-- This callback is a command to open your documentation -->
+            <callback>web(fullfile(prtRoot,'doc','prtDocLanding.html'),'-helpbrowser')</callback>
+              <!-- Menu item icon (a toolbox icon from the help browser ) -->
+              <icon>$toolbox/matlab/icons/book_mat.gif</icon>
+        </listitem>
+        <listitem>
+             <!-- Include call to open your Web site, if any -->
+           <label>Product Page (Web)</label>
+            <callback>web http://www.newfolderconsulting.com/prt/ -browser;</callback>
+            <icon>$docroot/techdoc/matlab_env/examples/webicon.gif</icon>
+        </listitem>
+    </list>
+</productinfo>
