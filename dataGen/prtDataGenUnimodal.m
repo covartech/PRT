@@ -37,8 +37,6 @@ function DataSet = prtDataGenUnimodal(N,mu0,mu1,sigma0,sigma1)
 % OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
 % USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-
-
 if nargin == 0
     nSamples = 200;
 else
