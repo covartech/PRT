@@ -56,6 +56,9 @@ classdef prtPreProcEnergyNormalizeRows < prtPreProc
             DataSet = DataSet.setObservations(theData);
         end
         
+        function xOut = runActionFast(Obj,xIn,ds) %#ok<INUSD>
+            xOut = bsxfun(@rdivide,xIn,self.energyOffset + sqrt(sum(xIn.^2,2)));
+        end
     end
     
 end
