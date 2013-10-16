@@ -121,6 +121,9 @@ classdef prtUiTableEditStructure < prtUiManagerPanel
                     'CellSelectionCallback',@(src,evnt)set(src,'UserData',evnt.Indices),...
                     'CellEditCallback',@(src,event)self.updateDataStructureFromGui(src,event));
                 
+                if length(self.sortingInds) ~= numel(self.dataCell)
+                    self.sortingInds = [];
+                end
                 % I do not think we have to do this
                 if isempty(self.sortingInds)
                     self.sortingInds = (1:size(self.dataCell,1))';

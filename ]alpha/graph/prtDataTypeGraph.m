@@ -456,7 +456,7 @@ classdef prtDataTypeGraph
                 for i = 1:nStrings;
                     theLoc = locs(inds(i),:);
                     h = text(theLoc(1),theLoc(2),self.nodeNames{inds(i)});
-                    set(h,'fontsize',15,'fontweight','bold');
+                    set(h,'fontsize',10,'fontweight','bold');
                     set(h,'hittest','off');
                 end
             end

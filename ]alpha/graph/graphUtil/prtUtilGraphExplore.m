@@ -94,7 +94,7 @@ hLines = [];
         [~,inds] = sort(cD,'descend');
         for i = 1:min([20,length(inds)]);
             hText(i) = text(cLocs(inds(i),1),cLocs(inds(i),2),cNames{inds(i)});
-            set(hText(i),'fontsize',15,'fontweight','bold');
+            set(hText(i),'fontsize',10,'fontweight','bold');
             set(hText,'hittest','off');
         end
     end
