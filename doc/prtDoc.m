@@ -7,10 +7,22 @@ function prtDoc(topic)
 % Example:
 %   prtDoc('prtDataSetClass')
 
+
+
+% if nargin < 1 || isempty(topic)
+%     web(fullfile(prtRoot,'doc','prtDocLanding.html'),'-helpbrowser');
+% else
+%     assert(ischar(topic) && isvector(topic),'prt:prtDoc','topic must be a string');
+%     
+%     web(fullfile(prtRoot,'doc','functionReference',cat(2,strrep(topic(:)','.',filesep),'.html')),'-helpbrowser');
+% end
+
+webRoot = 'http://newfolder.github.io/prtdoc/';
+
 if nargin < 1 || isempty(topic)
-    web(fullfile(prtRoot,'doc','prtDocLanding.html'),'-helpbrowser');
+    web(fullfile(webRoot,'prtDocLanding.html'),'-helpbrowser');
 else
     assert(ischar(topic) && isvector(topic),'prt:prtDoc','topic must be a string');
     
-    web(fullfile(prtRoot,'doc','functionReference',cat(2,strrep(topic(:)','.',filesep),'.html')),'-helpbrowser');
+    web(fullfile(webRoot,'functionReference',cat(2,strrep(topic(:)','.',filesep),'.html')),'-helpbrowser');
 end

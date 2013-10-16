@@ -24,6 +24,7 @@ classdef prtClassPlsdaOptimize < prtClassPlsda
 
         internalPlsda = prtClassPlsda;
         nComponentsRange = 3:40;
+        nFolds = 2;
     end
     methods
         
@@ -35,7 +36,7 @@ classdef prtClassPlsdaOptimize < prtClassPlsda
         
         function Obj = trainAction(Obj,DataSet)
             
-            Obj = optimize(Obj.internalPlsda, DataSet, @(C,DS)prtEvalPercentCorrect(C,DS,2), 'nComponents', Obj.nComponentsRange);
+            Obj = optimize(Obj.internalPlsda, DataSet, @(C,DS)prtEvalPercentCorrect(C,DS,Obj.nFolds), 'nComponents', Obj.nComponentsRange);
             fprintf('optimal # components: %d\n',Obj.nComponents);
             Obj = trainAction@prtClassPlsda(Obj, DataSet);
             %Note: this outputs an object of class prtClassPlsda; this can
