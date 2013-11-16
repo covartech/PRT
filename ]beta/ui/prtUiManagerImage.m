@@ -98,33 +98,44 @@ classdef prtUiManagerImage < prtUiManagerAxes
         end
         
         function shapePoly = getRoiPoly(self)
+            % Output either a struct or an empty array
             self.checkValid;
             
             axes(self.managedHandle); %#ok<MAXES> %Because roipoly doesn't let you specify axes
             [~,xi,yi] = roipoly;
-            shapePoly = struct('type','poly','xi',xi,'yi',yi);
+            shapePoly = [];
+            if ~isempty(xi)
+                shapePoly = struct('type','poly','xi',xi,'yi',yi);
+            end
         end
         
         function shapeLine = getRoiLine(self)
+            % Output either a struct or an empty array
             self.checkValid;
             
             axes(self.managedHandle); %#ok<MAXES> %Because roipoly doesn't let you specify axes
             [~,xi,yi] = roipoly;
-            if length(xi) > 1
+            shapeLine = [];
+            if ~isempty(xi)
                 xi = xi(1:end-1);
                 yi = yi(1:end-1);
+                shapeLine = struct('type','line','xi',xi,'yi',yi);
             end
-            shapeLine = struct('type','line','xi',xi,'yi',yi);
         end
         
         function shapeRect = getRoiRect(self)
+            % Output either a struct or an empty array
             self.checkValid;
             
             axes(self.managedHandle); %#ok<MAXES>  %Because imcrop doesn't let you specify axes
             [~,rect] = imcrop;
-            xi = [rect(1);rect(1);rect(1)+rect(3);rect(1)+rect(3);rect(1)];
-            yi = [rect(2);rect(2)+rect(4);rect(2)+rect(4);rect(2);rect(2)];
-            shapeRect = struct('type','rect','xi',xi,'yi',yi);
+            shapeRect = [];
+            if ~isempty(rect)
+                xi = [rect(1);rect(1);rect(1)+rect(3);rect(1)+rect(3);rect(1)];
+                yi = [rect(2);rect(2)+rect(4);rect(2)+rect(4);rect(2);rect(2)];
+                shapeRect = struct('type','rect','xi',xi,'yi',yi);
+            end
+            
         end
         
         function is = checkValid(self)

@@ -100,8 +100,17 @@ classdef prtUiTableEditStructure < prtUiManagerPanel
             jUITable.changeSelection(selectedRow,selectedCol-1, false, false);
         end
         
+        function appendDataStructure(self,obsInfo)
+            if ~isempty(self.dataStructure)
+                self.updateDataStructure(cat(1,obsInfo(:),self.dataStructure(:)));
+            else
+                self.updateDataStructure(obsInfo(:));
+            end
+        end
+        
         function updateDataStructure(self,obsInfo)
             if nargin > 1
+                obsInfo = obsInfo(:);
                 self.dataStructure = obsInfo;
             end
             if ~isempty(self.dataStructure)
