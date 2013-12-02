@@ -169,6 +169,9 @@ classdef prtRegressRvm < prtRegress
             for iteration = 1:Obj.learningMaxIterations
                 % Given currenet relevant stuff find the weight mean and
                 % covariance
+                if ~any(relevantIndices)
+                    break;
+                end
                 cPhi = gram(:,relevantIndices);
                 A = diag(alpha(relevantIndices));
                 
@@ -248,7 +251,7 @@ classdef prtRegressRvm < prtRegress
         function DataSetOut = runAction(Obj,DataSet)
             
             if isempty(Obj.sparseBeta)
-                DataSetOut = DataSet.setObservations(nan(DataSet.nObservations,DataSet.nFeatures));
+                DataSetOut = DataSet.setObservations(zeros(DataSet.nObservations,Obj.dataSetSummary.nTargetDimensions));
                 return
             end
             
