@@ -100,8 +100,17 @@ classdef prtUiTableEditStructure < prtUiManagerPanel
             jUITable.changeSelection(selectedRow,selectedCol-1, false, false);
         end
         
+        function appendDataStructure(self,obsInfo)
+            if ~isempty(self.dataStructure)
+                self.updateDataStructure(cat(1,obsInfo(:),self.dataStructure(:)));
+            else
+                self.updateDataStructure(obsInfo(:));
+            end
+        end
+        
         function updateDataStructure(self,obsInfo)
             if nargin > 1
+                obsInfo = obsInfo(:);
                 self.dataStructure = obsInfo;
             end
             if ~isempty(self.dataStructure)
@@ -121,6 +130,9 @@ classdef prtUiTableEditStructure < prtUiManagerPanel
                     'CellSelectionCallback',@(src,evnt)set(src,'UserData',evnt.Indices),...
                     'CellEditCallback',@(src,event)self.updateDataStructureFromGui(src,event));
                 
+                if length(self.sortingInds) ~= numel(self.dataCell)
+                    self.sortingInds = [];
+                end
                 % I do not think we have to do this
                 if isempty(self.sortingInds)
                     self.sortingInds = (1:size(self.dataCell,1))';

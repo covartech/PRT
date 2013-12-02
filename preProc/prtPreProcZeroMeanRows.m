@@ -76,6 +76,9 @@ classdef prtPreProcZeroMeanRows < prtPreProc
             DataSet = DataSet.setObservations(bsxfun(@minus,DataSet.getObservations,mean(DataSet.getObservations,2)));
         end
         
+        function xOut = runActionFast(Obj,xIn,ds) %#ok<INUSD>
+            xOut = bsxfun(@minus,xIn,mean(xIn,2));
+        end
     end
     
 end

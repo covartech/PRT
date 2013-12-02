@@ -1,4 +1,4 @@
-function List = prtUtilSubDir(directory,match,dirMatch,recurse)
+function List = prtUtilSubDir(directory,match,dirMatch,recurse, ignoreDotFiles)
 % xxx Need Help xxx
 % List = prtUtilSubDir(directory,match)
 
@@ -35,6 +35,11 @@ if nargin < 4 || isempty(recurse)
     recurse = true;
 end
 
+if nargin < 5 || isempty(ignoreDotFiles)
+    ignoreDotFiles = false;
+end
+
+
 X = dir(fullfile(directory,dirMatch));
 
 Xdir = X(cat(1,X.isdir));
@@ -43,6 +48,11 @@ Xdir = Xdir(~cellfun(@(x)ismember(x,{'.';'..'}),{Xdir.name}));
 
 DC = dir(fullfile(directory,match));
 DC = DC(~cat(1,DC.isdir));
+
+if ignoreDotFiles
+    DC = DC(cellfun(@(c)c(1)~='.',{DC.name}));
+end
+
 List = {};
 if recurse
     for ind = 1:length(Xdir)
