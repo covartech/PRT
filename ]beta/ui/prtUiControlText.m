@@ -40,7 +40,16 @@ classdef prtUiControlText < hgsetget
         position
     end
     methods
-        function self = prtUiControlText(parent, pixelPos, varargin)
+        function self = prtUiControlText(parent, varargin)
+            
+            if mod(length(varargin),2)
+                % Odd number of inputs
+                pixelPos = varargin{1};
+                varargin = varargin(2:end); % varargin is string value pairs
+            else
+                pixelPos = getpixelposition(parent);
+            end
+            
             %jLabel = javaObjectEDT('javax.swing.JLabel','');
             %[self.javaHandle, self.handle]  = javacomponent(jLabel,pixelPos, parent);
             [self.javaHandle, self.handle]  = javacomponent('javax.swing.JLabel',pixelPos, parent);
