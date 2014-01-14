@@ -202,7 +202,8 @@ classdef prtUiStructDlg < prtUiManagerPanel
                         hBtn = [];
                         
                         %uitableheight = min(18*(self.uitablemaxrow)+22,18*(size(fvalue,1))+22);
-                        uitableheight = (self.uiFontSize*2+2)*min(self.uitablemaxrow,size(fvalue,1))+22;
+                        %uitableheight = (self.uiFontSize*2+2)*min(self.uitablemaxrow,size(fvalue,1))+22;
+                        uitableheight = (self.uiFontSize*2)*min(self.uitablemaxrow,size(fvalue,1))+5;
                         
                         currwidth  = uiwidth;
                         currheight = uitableheight;
@@ -420,10 +421,27 @@ classdef prtUiStructDlg < prtUiManagerPanel
             %ResizeControls();
             self.resizeFunction();
             set(self.managedHandle,'resizeFcn',@self.resizeFunction);
-            managedPos = getpixelposition(self.managedHandle);
             
-            set(self.scrollable,'Units','pixels','ScrollArea',[1 1-managedPos(4) self.figwidth self.figheight])
-            set(self.scrollable,'Units','normalized');
+            
+            possibleTables = self.handles(2:2:end,:);
+            
+            for i=1:size(possibleTables,1)
+                
+                type   = possibleTables{i,5};
+                
+                switch type
+                    
+                    case 'table'
+                        h = possibleTables{i,1};
+                        
+                        drawnow;
+                        cJavaH = findjobj(h);
+                        cJavaH.setColumnHeader([]);
+                        cJavaH.setRowHeader([]);
+                        cJavaH.setBorder([]);
+                        cJavaH.repaint();
+                end
+            end
             
             %set(self.managedHandle,'Visible','on');
             
@@ -503,6 +521,8 @@ classdef prtUiStructDlg < prtUiManagerPanel
             newScrollArea = [1 1 self.figwidth self.figheight];
             newScrollArea(1) = 1-(-(initScrollArea(1)-1)/initScrollArea(3)*self.figwidth);
             newScrollArea(2) = 1-(-(initScrollArea(2)-1)/initScrollArea(4)*self.figheight);
+            %newScrollArea(1) = self.figwidth-initScrollArea(3);
+            %newScrollArea(2) = self.figheight-initScrollArea(4);
             
             set(self.scrollable,'Units','pixels','ScrollArea',newScrollArea)
             set(self.scrollable,'Units','normalized');
