@@ -76,7 +76,7 @@ classdef prtPreProcPca < prtPreProc
         totalPercentVarianceCumulative = []; %The perceont of the total training variance explained in totalVarianceCumulative
     end
     properties (Hidden)
-        useMean = true;
+        removeMean = true;
     end
     
     methods
@@ -105,7 +105,7 @@ classdef prtPreProcPca < prtPreProc
     methods (Access = protected, Hidden = true)
         function self = trainAction(self,dataSet)
                  
-            if self.useMean
+            if self.removeMean
                 self.means = prtUtilNanMean(dataSet.getObservations(),1);
             else
                 self.means = zeros(1,dataSet.nFeatures);
@@ -136,7 +136,11 @@ classdef prtPreProcPca < prtPreProc
         end
         
         function xOut = runActionFast(self,xIn)
-            xOut = bsxfun(@minus,xIn,self.means)*self.pcaVectors;
+            if self.removeMean
+                xOut = bsxfun(@minus,xIn,self.means)*self.pcaVectors;
+            else
+                xOut = xIn*self.pcaVectors;
+            end
         end
         
     end
