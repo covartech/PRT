@@ -86,5 +86,13 @@ classdef prtDataSetImage < prtDataSetInMem & prtDataInterfaceCategoricalTargets
             end
             self = self.update;
         end
-    end 
+        
+        function Summary = summarize(self,Summary) 
+            if nargin==1
+                Summary = struct;
+            end
+            Summary = summarize@prtDataInterfaceCategoricalTargets(self,Summary);
+            Summary = summarize@prtDataSetInMem(self,Summary);
+        end
+    end
 end
