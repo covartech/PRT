@@ -518,7 +518,7 @@ classdef prtRvHmm < prtRv
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % These Methods are private helper functions for mle
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    methods (Access = 'private')
+    methods (Access = 'protected')
         
         function [self, initMembershipMat] = initialComponentMembership(self,X)
             [self.components, initMembershipMat] = initializeMixtureMembership(self.components,X);
