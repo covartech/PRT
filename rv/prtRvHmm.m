@@ -127,7 +127,6 @@ classdef prtRvHmm < prtRv
     properties (Hidden = true)
         postMaximizationFunction = []; %@(self)self; 
         
-        learningMinimumComponentMembership = 0;
         learningAutoInitialize = true;
         learningResults
         learningMaxIterations = 1000;
@@ -298,11 +297,17 @@ classdef prtRvHmm < prtRv
                 gammaMat = cat(2,gamma{:});
                 gammaMatExp = exp(gammaMat)';
                 
-                [self, gammaMatExp, componentRemoved] = removeComponents(self,data,gammaMatExp);
-                
+                [self, gammaMatExp, componentRemoved,xi, piDataSet] = removeComponents(self,data,gammaMatExp,xi,piDataSet);
+
                 self = maximizeParameters(self,data,gammaMatExp);
                 
+                % These are not done inside of maximize parameters for
+                % speed purposes. 
                 piLoop = mean(piDataSet,1);
+                piLoop = piLoop ./ sum(piLoop,2);
+                if any(isnan(piLoop))
+                    piLoop = ones(1,size(gammaMatExp,2))./size(gammaMatExp,2);
+                end
                 
                 A = sum(exp(cat(3,xi{:})),3);
                 A = bsxfun(@rdivide,A,sum(A,2));
@@ -316,7 +321,7 @@ classdef prtRvHmm < prtRv
                 %Estimate state p(x|state)
                 ll = nan(size(data,1),length(self.components));
                 for state = 1:length(self.components)
-                    ll(:,state) = self.components(state).logPdf(double(data));
+                    ll(:,state) = self.components(state).logPdf(data);
                 end
                 
                 %Get forward/backwards, this updates alpha, gamma, for next
@@ -582,10 +587,10 @@ classdef prtRvHmm < prtRv
             self.components = temp;
         end
         
-        function [self, membershipMat, componentRemoved] = removeComponents(self, X, membershipMat)
+        function [self, membershipMat, componentRemoved, xi, piDataSet] = removeComponents(self, X, membershipMat,xi,piDataSet)
             
             nSamplesPerComponent = sum(membershipMat,1);
-            componentsToRemove = nSamplesPerComponent < self.learningMinimumComponentMembership;
+            componentsToRemove = nSamplesPerComponent < self.minimumComponentMembership;
             
             %Never remove ALL the components; if we try to do that, just
             %remove one
@@ -597,15 +602,18 @@ classdef prtRvHmm < prtRv
             end
             componentRemoved = any(componentsToRemove);
             
-            membershipMat = bsxfun(@rdivide,membershipMat,sum(membershipMat,2));
             if componentRemoved
                 retain = ~componentsToRemove;
+                membershipMat = membershipMat(:,retain);
+                membershipMat = bsxfun(@rdivide,membershipMat,sum(membershipMat,2));
+            
                 self.components = self.components(retain);
-                if ~isempty(self.pi)
-                    self.pi = self.pi(retain)./sum(self.pi(retain));
-                    temp = self.transitionMatrix(retain,retain);
-                    self.transitionMatrix = bsxfun(@rdivide,temp,sum(temp,2));
+                
+                for iObs = 1:length(xi)
+                    xi{iObs} = xi{iObs}(retain, retain,:);
                 end
+                piDataSet = piDataSet(:,retain);
+               
             end
         end
         
