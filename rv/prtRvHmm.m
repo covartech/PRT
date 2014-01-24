@@ -249,13 +249,14 @@ classdef prtRvHmm < prtRv
                 for state = 1:length(self.components)
                     ll(:,state) = self.components(state).logPdf(double(data));
                 end
-                membershipMat = exp(bsxfun(@minus, ll, prtUtilSumExp(ll')'));
-                
+                %membershipMat = exp(bsxfun(@minus, ll, prtUtilSumExp(ll')'));
                 
             else % Initialize membership matrices yourself
                 
                 [self, membershipMat] = initialComponentMembership(self,data);
                 [self, membershipMat] = removeComponents(self,data,membershipMat);
+                
+                ll = membershipMat;
                 
                 if isempty(self.components)
                     error('prtRvHmm:noComponents','You must set rv.components to an nStates x 1 vector of prtRvs prior to calling MLE');
@@ -279,8 +280,8 @@ classdef prtRvHmm < prtRv
             piDataSet = zeros(size(xCell,1), length(self.components));
             for cellInd = 1:length(xCell)
                 stop = start + size(xCell{cellInd},1) - 1;
-                cMembership = membershipMat(start:stop,:);
-                [alpha{cellInd},~,gamma{cellInd},xi{cellInd}] = prtRvUtilLogForwardsBackwards(log(self.pi(:)'),log(self.transitionMatrix),log(cMembership)');
+                cLogLike = ll(start:stop,:);
+                [alpha{cellInd},~,gamma{cellInd},xi{cellInd}] = prtRvUtilLogForwardsBackwards(log(self.pi(:)'),log(self.transitionMatrix),cLogLike');
                 
                 piDataSet(cellInd, :) = exp(gamma{cellInd}(:,1) - prtUtilSumExp(gamma{cellInd}(:,1)));
                 start = stop + 1;
