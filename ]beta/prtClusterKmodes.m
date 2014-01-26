@@ -22,6 +22,8 @@ classdef prtClusterKmodes < prtCluster %prtClass %prtAction %should extent prtCl
     properties
         nClusters = 3;  % The number of clusters to find
         
+        kdeRv = prtRvKde;
+        
         handleEmptyClusters = 'remove';  % Action to take when an empty cluster occurs
         distanceMetricFn = @prtDistanceEuclidean;  % The distance metric; should be a function like D = prtDistanceEuclidean(dataSet1,dataSet2)
         initialClusterCenters = 'plusplus';
@@ -133,12 +135,13 @@ classdef prtClusterKmodes < prtCluster %prtClass %prtAction %should extent prtCl
                     for iDim = 1:nDimensions
                         % newClusters(clusterInd,iDim) = % mode(cData(:,iDim)); % would work for discrete data only
                         
-                        cRv = mle(prtRvKde,cData(:,iDim));
+                        cRv = mle(self.kdeRv,cData(:,iDim));
                         
                         cXSamples = sort(cat(1,linspace(min(cData(:,iDim)), max(cData(:,iDim)),nSamplesForCdf)',cData(:,iDim)),'ascend');
                         cCdf = cRv.cdf(cXSamples);
                         
-                        cModeInd = find(cCdf >= 0.5,1,'first');
+                        %cModeInd = find(cCdf >= 0.5,1,'first');
+                        [~,cModeInd] = max(cCdf);
                         if isempty(cModeInd) 
                             % Something went horribly wrong
                             cMode = mean(cData(:,iDim));
