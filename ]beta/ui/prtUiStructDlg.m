@@ -122,7 +122,7 @@ classdef prtUiStructDlg < prtUiManagerPanel
                 'toolbar','none',...
                 'numberTitle','off',...
                 'Name',self.titleStr,...
-                'tag','hciMessage',...
+                'tag',cat(2,'prtUiStructDlg',datestr(now,'yyyymmddHHMMSS')),...
                 'Interruptible','off',...
                 'BusyAction','cancel',...
                 'DockControls','off');
@@ -422,6 +422,15 @@ classdef prtUiStructDlg < prtUiManagerPanel
             self.resizeFunction();
             set(self.managedHandle,'resizeFcn',@self.resizeFunction);
             
+            %set(self.scrollable,'Units','pixels','ScrollArea',[1 self.figheight-self.windowSize(2) self.figwidth self.figheight])
+            %set(self.scrollable,'Units','normalized');
+            
+            mPos = get(self.scrollable.hViewportPanel, 'Position');
+            sPos = get(self.scrollable.hScrollingPanel,'Position');
+            
+            set(self.scrollable.hScrollingPanel, 'Position',[sPos(1) -(sPos(4)-mPos(4)) sPos(3:4)]);
+            
+            
             
             possibleTables = self.handles(2:2:end,:);
             
@@ -442,6 +451,7 @@ classdef prtUiStructDlg < prtUiManagerPanel
                         cJavaH.repaint();
                 end
             end
+            
             
             %set(self.managedHandle,'Visible','on');
             
@@ -515,6 +525,7 @@ classdef prtUiStructDlg < prtUiManagerPanel
             
             set(self.okButton,'Position',[self.uilefttmargin+usableWidth/2-self.dxunit-self.uibuttonwidth y-self.dyunit/2-self.uibuttonheight self.uibuttonwidth self.uibuttonheight]);
             set(self.cancelButton,'Position',[self.uilefttmargin+usableWidth/2+self.dxunit y-self.dyunit/2-self.uibuttonheight self.uibuttonwidth self.uibuttonheight]);
+            
             
             %set(self.scrollable,'Units','pixels',
             %initScrollArea
