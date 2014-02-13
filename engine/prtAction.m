@@ -844,7 +844,20 @@ classdef prtAction
 	methods (Hidden = true)
         function str = textSummary(self) %#ok<MANU>
             % str = textSummary(self)
-            %   Give a short textual summary of the object
+            %   Give a short textual summary of the object in the output
+            %   str.  The summary shows what a call to "display" would call
+            %   using only public fields, and ignoring a lot of
+            %   general-purpose fields.  We can specify this in more detail
+            %   if people like it.  Also, different actions can sub-class this to
+            %   do whatever they want.
+            %
+            %   Works on actions:
+            %       pca = train(prtPreProcPca('nComponents',2),prtDataGenBimodal);
+            %       textSummary(pca)
+            %
+            %   And algorithms:
+            %       algo = train(prtPreProcPls('nComponents',2) + prtClassLibSvm,prtDataGenBimodal);
+            %       algo.textSummary
             
             warning off; %#ok<WNOFF>
             s = struct(self);
