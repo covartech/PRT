@@ -842,6 +842,28 @@ classdef prtAction
 	end
 	
 	methods (Hidden = true)
+        function str = textSummary(self) %#ok<MANU>
+            % str = textSummary(self)
+            %   Give a short textual summary of the object
+            
+            warning off; %#ok<WNOFF>
+            s = struct(self);
+            warning on; %#ok<WNON>
+            rmFieldNames = {'nameAbbreviation','isNativeMary','plotBasis','plotProjections','twoClassParadigm','internalDecider','isSupervised','isCrossValidateValid','verboseStorage','showProgressBar','isTrained','dataSetSummary','dataSet','userData'};
+            publicFieldNames = properties(self);
+            totalFieldNames = fieldnames(s);
+            
+            rmFieldNames = union(rmFieldNames,setdiff(totalFieldNames,publicFieldNames));
+            rmFieldNames = intersect(rmFieldNames,totalFieldNames);
+            s = rmfield(s,rmFieldNames); %#ok<NASGU>
+            
+            str = sprintf('%s: \n',class(self));
+            str2 = evalc('disp(s)');
+            str2 = deblank(str2);
+            str2 = sprintf('%s\n\n',str2);
+            str = sprintf('%s%s',str,str2);
+        end
+        
 		function fun = getFeatureNameModificationFunction(self) %#ok<MANU>
 			fun = []; % Default we output empty which means don't change anything...
 			

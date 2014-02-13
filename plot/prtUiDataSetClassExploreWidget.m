@@ -118,7 +118,6 @@ classdef prtUiDataSetClassExploreWidget < prtUiManagerPanel
                 'visible','off',...
                 'handlevisibility','on');
             
-            
         end
         
         function init(self)

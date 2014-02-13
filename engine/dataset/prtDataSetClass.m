@@ -195,6 +195,34 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
     
     methods %Plotting methods
         
+        function handles = boxplot(self,varargin)
+            %handles = boxplot(dataSet)
+            % Draw a box plot for each feature in the data set. (Only
+            % really usable for data sets with fewer than 25 features).
+            %   
+            
+            nFeatures = self.nFeatures;
+            if nFeatures > 25;
+                error('prtDataSetClass:boxPlot','boxplot is only appropriate for data sets with fewer than 25 features');
+            end
+            [ii,jj] = prtUtilGetSubplotDimensions(nFeatures);
+            handles = cell(nFeatures,1);
+            for i = 1:nFeatures
+                if nFeatures > 1
+                    subplot(ii,jj,i);
+                    %otherwise, if we only have to make one, just use
+                    %whatever existing AXES were provided
+                    % That means 
+                    %    subplot(2,1,1); boxplot(ds); 
+                    % Does what is expected for a ds with one feature.
+                    %
+                end
+                handles{i} = boxplot(self.X(:,i),self.Y,varargin{:});
+                title(self.getFeatureNames(i));
+            end
+           
+        end
+        
         function varargout = plotStarIndividual(obj,featureIndices)
             % plotStarIndividual   Create a star plot
             %
@@ -921,7 +949,9 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
             if nargin < 2
                 AdditionalOptions = [];
             end
-            
+            if isa(AdditionalOptions,'function_handle');
+                AdditionalOptions = struct('additionalOnClickFunction',AdditionalOptions);
+            end
             try
                 prtPlotUtilDataSetExploreGuiWithNavigation(obj,AdditionalOptions);
             catch %#ok<CTCH>

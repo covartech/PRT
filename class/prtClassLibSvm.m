@@ -318,6 +318,12 @@ classdef prtClassLibSvm < prtClass
         
     end
     methods (Hidden = true)
+        
+        function str = textSummary(self)
+            str = sprintf('%s: \n',class(self));
+            str2 = evalc('disp(self.trainedSvm)');
+            str = sprintf('%s%s',str,str2);
+        end
         function optionString = libSvmOptionString(obj,dataSet)
             if isnan(obj.gamma)
                 obj.gamma = 1./dataSet.nFeatures;

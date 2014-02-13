@@ -1,5 +1,6 @@
 classdef prtUiTableEditStructure < prtUiManagerPanel
-
+    % prtUiTableEditStructure
+    %   
     properties
         
         enableRowDeletion = 'on';
@@ -36,7 +37,9 @@ classdef prtUiTableEditStructure < prtUiManagerPanel
             % Overload the default prtUiManagerPanel
             % This will "create" a bigger figure and turn off toolbars and
             % stuff.
+            
             self.handleStruct.figure = gcf;
+            
             set(self.handleStruct.figure,...
                 'Toolbar','none',...
                 'MenuBar','none',...
@@ -45,9 +48,15 @@ classdef prtUiTableEditStructure < prtUiManagerPanel
                 'WindowStyle','Normal',...
                 'DockControls','off');
             
-            self.managedHandle = uipanel(self.handleStruct.figure,...
-                'BackgroundColor',get(0,'DefaultFigureColor'),...
-                'BorderType','none');
+            if isempty(self.parent)
+                self.managedHandle = uipanel(self.handleStruct.figure,...
+                    'BackgroundColor',get(0,'DefaultFigureColor'),...
+                    'BorderType','none');
+            else
+                self.managedHandle = uipanel('Parent',self.parent,...
+                    'BackgroundColor',get(0,'DefaultFigureColor'),...
+                    'BorderType','none');
+            end
         end
         function init(self)
             
@@ -69,7 +78,7 @@ classdef prtUiTableEditStructure < prtUiManagerPanel
             self.handleStruct.tableContextMenuItemAndSelection = uimenu(self.handleStruct.tableContextMenu, 'Label', 'Set Values', 'Callback', @(myHandle,eventData)self.setValues(myHandle,eventData));
             self.handleStruct.tableContextMenuItemOrSelection = uimenu(self.handleStruct.tableContextMenu, 'Label', 'String Search Sort', 'Callback', @(myHandle,eventData)self.sortByStringSearch(myHandle,eventData));
             self.handleStruct.tableContextMenuCreateColumn = uimenu(self.handleStruct.tableContextMenu, 'Label', 'Add Column', 'Callback', @(myHandle,eventData)self.createColumn(myHandle,eventData),'Enable',self.enableColumnCreation,'Separator','on');
-            self.handleStruct.tableContextMenuDeleteSelection = uimenu(self.handleStruct.tableContextMenu, 'Label', 'Delete Selected Rows', 'Callback', @(myHandle,eventData)self.deleteSelectedRows(myHandle,eventData),'Enable',self.enableRowDeletion);
+            self.handleStruct.tableContextMenuDeleteSelection = uimenu(self.handleStruct.tableContextMenu, 'Label', 'Delete Current Rows', 'Callback', @(myHandle,eventData)self.deleteSelectedRows(myHandle,eventData),'Enable',self.enableRowDeletion);
             
             
             %             self.handleStruct.tableContextMenuItemNoSelection = uimenu(self.handleStruct.tableContextMenu, 'Label', 'Remove From Table', 'Callback', @(myHandle,eventData)self.uiMenuNoSelection(myHandle,eventData));
@@ -130,7 +139,7 @@ classdef prtUiTableEditStructure < prtUiManagerPanel
                     'CellSelectionCallback',@(src,evnt)set(src,'UserData',evnt.Indices),...
                     'CellEditCallback',@(src,event)self.updateDataStructureFromGui(src,event));
                 
-                if length(self.sortingInds) ~= numel(self.dataCell)
+                if length(self.sortingInds) ~= numel(self.dataStructure)
                     self.sortingInds = [];
                 end
                 % I do not think we have to do this

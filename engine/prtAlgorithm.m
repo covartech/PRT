@@ -107,6 +107,13 @@ classdef prtAlgorithm < prtAction & prtActionBig
     
     methods (Hidden = true)
 		
+        function str = textSummary(self)
+            str = '';
+            for i = 1:length(self.actionCell)
+                str = cat(2,str,self.actionCell{i}.textSummary);
+            end
+            str = strtrim(str);
+        end
         function Obj = setVerboseStorage(Obj,val)
             assert(numel(val)==1 && (islogical(val) || (isnumeric(val) && (val==0 || val==1))),'prtAction:invalidVerboseStorage','verboseStorage must be a logical');
             Obj.verboseStorageInternal = logical(val);
