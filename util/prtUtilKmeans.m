@@ -11,12 +11,17 @@ function [classMeans,clusterIndex,maxIterReached] = prtUtilKmeans(data,nClusters
 %
 %   Parameters:
 %       initialMeans - string or double matrix of size nClusters x
-%       nFeatures.  If initialMeans is a string, it should be 'random'
-%       which uses random samples from the data to initialize the
-%       classMeans.  If initialMeans is a double matrix, the rows of the
+%       nFeatures.  If initialMeans is a string, it can be 'random' or
+%       'plusplus'. random  which uses random samples from the data to
+%       initialize the classMeans. plusplus uses the kMeans++ algorithm
+%           Arthur, D. and Vassilvitskii, S. (2007). 
+%               k-means++: The advantages of careful seeding.
+%               Proceedings of the eighteenth annual ACM-SIAM
+%               symposium on Discrete algorithms. 1027?1035.
+%       If initialMeans is a double matrix, the rows of the
 %       matrix represetnt the initial class means, and nClusters is
-%       ignored.  Default is 'random'.
-%
+%       ignored.  Default is 'plusplus'.
+%   
 %       distanceMetricFn - prtDistance* function specifying the distance
 %       metric to use.  distanceMetricFn(x,x) must return 0.  Default value
 %       is @(data,centers)prtDistanceEuclidean(data,centers));
@@ -89,6 +94,22 @@ for iter = 1:inputStructure.maxIterations
                 case 'random'
                     randInds = max(1,ceil(rand(1,nClusters)*nSamples));
                     classMeans = data(randInds,:);
+                case 'plusplus'
+                    
+                    classMeans = nan(nClusters, size(data,2));
+                    classMeans(1,:) = data(max(1,ceil(rand*nSamples)),:);
+                    initDistanceMat = nan(nSamples,nClusters);
+                    for iCluster = 2:nClusters
+                        initDistanceMat(:,iCluster-1) = sum(bsxfun(@minus,data,classMeans(iCluster-1,:)).^2,2); % KMeans++ uses a squared euclidean distance.
+                        
+                        minDistances = min(initDistanceMat,[],2);
+                        drawProbabilities = minDistances./sum(minDistances);
+                        
+                        newClusterMeanIndex = prtRvUtilRandomSample(drawProbabilities, 1);
+                        
+                        classMeans(iCluster,:) = data(newClusterMeanIndex,:);
+                    end
+                    
                 otherwise
                     error('invalid');
             end

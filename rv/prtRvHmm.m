@@ -125,8 +125,9 @@ classdef prtRvHmm < prtRv
     end
     
     properties (Hidden = true)
-        postMaximizationFunction = @(self)self;
+        postMaximizationFunction = []; %@(self)self; 
         
+        learningAutoInitialize = true;
         learningResults
         learningMaxIterations = 1000;
         learningConvergenceThreshold = 1e-6;
@@ -241,80 +242,107 @@ classdef prtRvHmm < prtRv
             xCell = dataInputParse(self,inputData);
             data = cat(1,xCell{:});
             
-            [self, membershipMat] = initialComponentMembership(self,data);
-            [self,membershipMat] = removeComponents(self,data,membershipMat);
+            if ~self.learningAutoInitialize && self.isValid
+                % A valid HMM came in and we wanted to use that to
+                % initialize.
+                ll = nan(size(data,1),length(self.components));
+                for state = 1:length(self.components)
+                    ll(:,state) = self.components(state).logPdf(double(data));
+                end
+                %membershipMat = exp(bsxfun(@minus, ll, prtUtilSumExp(ll')'));
+                
+            else % Initialize membership matrices yourself
+                
+                [self, membershipMat] = initialComponentMembership(self,data);
+                [self, membershipMat] = removeComponents(self,data,membershipMat);
+                
+                ll = membershipMat;
+                
+                if isempty(self.components)
+                    error('prtRvHmm:noComponents','You must set rv.components to an nStates x 1 vector of prtRvs prior to calling MLE');
+                end
+                if isempty(self.pi)
+                    self.pi = ones(1,self.nComponents)./self.nComponents;
+                end
+                if isempty(self.transitionMatrix)
+                    temp = eye(length(self.components));
+                    temp = temp + rand(size(temp));
+                    temp = bsxfun(@rdivide,temp,sum(temp,2));
+                    self.transitionMatrix = temp;
+                end
+            end
             
             alpha = cell(size(xCell));
             gamma = cell(size(xCell));
             xi = cell(size(xCell));
             
-            if isempty(self.components)
-                error('prtRvHmm:noComponents','You must set rv.components to an nStates x 1 vector of prtRvs prior to calling MLE');
-            end
-            if isempty(self.pi)
-                self.pi = ones(1,self.nComponents)./self.nComponents;
-            end
-            if isempty(self.transitionMatrix)
-                temp = eye(length(self.components));
-                temp = temp + rand(size(temp));
-                temp = bsxfun(@rdivide,temp,sum(temp,2));
-                self.transitionMatrix = temp;
-            end
-            
-            tempPi = 0;
             start = 1;
+            piDataSet = zeros(size(xCell,1), length(self.components));
             for cellInd = 1:length(xCell)
                 stop = start + size(xCell{cellInd},1) - 1;
-                cMembership = membershipMat(start:stop,:);
-                [alpha{cellInd},~,gamma{cellInd},xi{cellInd}] = prtRvUtilLogForwardsBackwards(log(self.pi(:)'),log(self.transitionMatrix),log(cMembership)');
-                tempPi = tempPi + exp(alpha{cellInd}(:,1))./sum(exp(alpha{cellInd}(:,1)));
+                cLogLike = ll(start:stop,:);
+                [alpha{cellInd},~,gamma{cellInd},xi{cellInd}] = prtRvUtilLogForwardsBackwards(log(self.pi(:)'),log(self.transitionMatrix),cLogLike');
+                
+                piDataSet(cellInd, :) = exp(gamma{cellInd}(:,1) - prtUtilSumExp(gamma{cellInd}(:,1)));
                 start = stop + 1;
             end
             
             pLogLikelihood = nan;
             self.learningResults.iterationLogLikelihood = [];
+            
+            piLoop = mean(piDataSet,1);
+            
             for iteration = 1:self.nTrainingIterations
                 
                 %Update the components, A, pi
                 gammaMat = cat(2,gamma{:});
-                self = maximizeParameters(self,data,exp(gammaMat'));
-                self.pi = tempPi(:)'./length(xCell);
+                gammaMatExp = exp(gammaMat)';
+                
+                [self, gammaMatExp, componentRemoved,xi, piDataSet] = removeComponents(self,data,gammaMatExp,xi,piDataSet);
+
+                self = maximizeParameters(self,data,gammaMatExp);
+                
+                % These are not done inside of maximize parameters for
+                % speed purposes. 
+                piLoop = mean(piDataSet,1);
+                piLoop = piLoop ./ sum(piLoop,2);
+                if any(isnan(piLoop))
+                    piLoop = ones(1,size(gammaMatExp,2))./size(gammaMatExp,2);
+                end
                 
                 A = sum(exp(cat(3,xi{:})),3);
                 A = bsxfun(@rdivide,A,sum(A,2));
-                self.transitionProbabilities = A;
                 
-                self = self.postMaximizationFunction(self);
+                if ~isempty(self.postMaximizationFunction)
+                    self.pi = piLoop;
+                    self.transitionProbabilities = A;
+                    self = self.postMaximizationFunction(self);
+                end
                 
-                %Estimate state p(state|x)
+                %Estimate state p(x|state)
                 ll = nan(size(data,1),length(self.components));
                 for state = 1:length(self.components)
-                    ll(:,state) = self.components(state).logPdf(double(data));
+                    ll(:,state) = self.components(state).logPdf(data);
                 end
-                ll = bsxfun(@minus, ll, prtUtilSumExp(ll')');
-                membershipMat = exp(ll);
-                
-                % Don't do this!!!1 You must normalized before you exp.
-                %membershipMat = exp(ll); 
-                %membershipMat = bsxfun(@rdivide,membershipMat,sum(membershipMat,2));
-                
-                [self, membershipMat, componentRemoved] = removeComponents(self,data,membershipMat);
                 
                 %Get forward/backwards, this updates alpha, gamma, for next
                 %step
-                tempPi = 0;
+                piDataSet = zeros(size(xCell,1), length(self.components));
                 start = 1;
-                logPi = log(self.pi(:)');
-                logA = log(self.transitionMatrix);
+                logPi = log(piLoop(:)');
+                logA = log(A);
                 for cellInd = 1:length(xCell)
                     stop = start + size(xCell{cellInd},1) - 1;
-                    cMembership = membershipMat(start:stop,:);
-                    [alpha{cellInd},~,gamma{cellInd},xi{cellInd}] = prtRvUtilLogForwardsBackwards(logPi,logA,log(cMembership)');
-                    tempPi = tempPi + exp(alpha{cellInd}(:,1))./sum(exp(alpha{cellInd}(:,1)));
+                    cLl = ll(start:stop,:);
+                    [alpha{cellInd},~,gamma{cellInd},xi{cellInd}] = prtRvUtilLogForwardsBackwards(logPi,logA,cLl');
+                    
+                    piDataSet(cellInd, :) = exp(gamma{cellInd}(:,1) - prtUtilSumExp(gamma{cellInd}(:,1)));
                     start = stop + 1;
                 end
                 
-                cLogLikelihood = sum(logPdf(self,inputData));
+                cLogLikelihood = sum(cellfun(@(c)prtUtilSumExp(c(:,end)),alpha));
+                % or could have used % cLogLikelihood = sum(logPdf(self,inputData));
+                
                 self.learningResults.iterationLogLikelihood(end+1) = cLogLikelihood;
                 
                 if ~componentRemoved
@@ -332,7 +360,15 @@ classdef prtRvHmm < prtRv
                 
             end
             self.learningResults.nIterations = iteration;
-            %             self.learningResults.logLikelihood = cLogLikelihood;
+            
+            % Pack up parameters into self, these would otherwise be slower
+            % than necessary
+            if isempty(self.postMaximizationFunction)
+                self.pi = piLoop;
+                self.transitionProbabilities = A;
+            end
+            
+            
             
         end
         
@@ -469,8 +505,16 @@ classdef prtRvHmm < prtRv
             else
                 unsetComps = isempty(self.components);
                 invalidComps = ~all(isValid(self.components));
-                badProbs = ~self.initialStateProbabilities.isValid;
-                badTrans = ~all(isValid(self.transitionProbabilities));
+                try
+                    badProbs = ~self.initialStateProbabilities.isValid;
+                catch
+                    badProbs = true;
+                end
+                try
+                    badTrans = ~all(isValid(self.transitionProbabilities));
+                catch
+                    badTrans = true;
+                end
                 
                 if unsetComps && ~badProbs
                     reasonStr = 'because components has not been set';
@@ -518,7 +562,7 @@ classdef prtRvHmm < prtRv
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     % These Methods are private helper functions for mle
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    methods (Access = 'private')
+    methods (Access = 'protected')
         
         function [self, initMembershipMat] = initialComponentMembership(self,X)
             [self.components, initMembershipMat] = initializeMixtureMembership(self.components,X);
@@ -542,28 +586,38 @@ classdef prtRvHmm < prtRv
                 end
             end
             self.components = temp;
+        end
+        
+        function [self, membershipMat, componentRemoved, xi, piDataSet] = removeComponents(self, X, membershipMat,xi,piDataSet)
             
-            try
-                self.initialStateProbabilities = mle(prtRvMultinomial,membershipMat);
-            catch  %#ok<CTCH>
-                error('prt:prtRvMixture:maximizeParameters','An error was encountered while maximizing the parameters of the mixture. Perhaps the number of components is too high.')
+            nSamplesPerComponent = sum(membershipMat,1);
+            componentsToRemove = nSamplesPerComponent < self.minimumComponentMembership;
+            
+            %Never remove ALL the components; if we try to do that, just
+            %remove one
+            if all(componentsToRemove) && isscalar(componentsToRemove)
+                error('Attempt to remove the last remaining component.');
+            end
+            if all(componentsToRemove)
+                componentsToRemove(nSamplesPerComponent > min(nSamplesPerComponent)) = false;
+            end
+            componentRemoved = any(componentsToRemove);
+            
+            if componentRemoved
+                retain = ~componentsToRemove;
+                membershipMat = membershipMat(:,retain);
+                membershipMat = bsxfun(@rdivide,membershipMat,sum(membershipMat,2));
+            
+                self.components = self.components(retain);
+                
+                for iObs = 1:length(xi)
+                    xi{iObs} = xi{iObs}(retain, retain,:);
+                end
+                piDataSet = piDataSet(:,retain);
+               
             end
         end
         
-        function [self, membershipMat, componentRemoved] = removeComponents(self,X,membershipMat)
-            
-            [~,membershipMat,componentRemoved,componentsToRemove] = removeComponents(self.toMixture,X,membershipMat);
-            membershipMat = bsxfun(@rdivide,membershipMat,sum(membershipMat,2));
-            if componentRemoved
-                retain = ~componentsToRemove;
-                self.components = self.components(retain);
-                if ~isempty(self.pi)
-                    self.pi = self.pi(retain)./sum(self.pi(retain));
-                    temp = self.transitionMatrix(retain,retain);
-                    self.transitionMatrix = bsxfun(@rdivide,temp,sum(temp,2));
-                end
-            end
-        end
     end
     
     methods (Access = 'protected', Hidden = true)
