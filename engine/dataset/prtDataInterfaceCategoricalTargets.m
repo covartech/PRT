@@ -463,7 +463,8 @@ classdef prtDataInterfaceCategoricalTargets
             classInds = classInds(~isnan(classInds));
             classInds = allClassInds(classInds);
             retain = ismember(obj.getTargetsClassInd,classInds);
-            obj = obj.retainObservations(ismember(obj.getTargetsClassInd,classInds));
+            
+            obj = obj.retainObservations(retain);
         end
         
         function obj = removeClassesByInd(obj,classInds)
@@ -486,7 +487,14 @@ classdef prtDataInterfaceCategoricalTargets
                 classInds = setdiff(1:obj.nClasses,classInds);
             end
             
-            obj = obj.retainClassesByInd(classInds);
+            % We used to call retainClassesByInd here but instead we have
+            % to do somethign different because of unlabeled data
+            %obj = obj.retainClassesByInd(classInds);
+            
+            classIndsByObs = obj.getTargetsClassInd;
+            retain = ismember(classIndsByObs,classInds) | isnan(obj.targets);
+            obj = obj.retainObservations(retain);
+            
         end
         
         function classInds = getTargetsClassInd(obj,varargin)
@@ -504,6 +512,11 @@ classdef prtDataInterfaceCategoricalTargets
             % but requires storing an nObs by nUniqueTargets matrix
             % it's a logical matrix though so I don't think that matters
             % too much.
+
+            % Must make sure nans do not pass the max index of 1 along
+            if obj.hasUnlabeled
+                classInds(isnan(obj.targets)) = nan;
+            end
         end
         
         function d = getObservationsUnlabeled(obj,varargin)
