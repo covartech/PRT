@@ -129,6 +129,12 @@ classdef prtDataSetClassMultipleInstance < prtDataSetInMem & prtDataInterfaceCat
         function bigTargets = getExpandedTargets(self)
             nObsPerBag = self.nObservationsPerBag;
             littleTargets = self.targets;
+            
+            if isempty(littleTargets)
+                bigTargets = [];
+                return
+            end
+            
             bigTargets = zeros(self.nTotalObservations,size(littleTargets,2));
             cEnd = 0;
             for iBag = 1:length(nObsPerBag)

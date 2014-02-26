@@ -159,11 +159,15 @@ classdef prtDataInterfaceCategoricalTargets
     
     methods
         
-        function d = getDataUnlabeled(obj,varargin)
+        function [d, isNans] = getDataUnlabeled(obj,varargin)
             if ~obj.isLabeled
                 d = obj.getData(:,varargin{:});
+                if nargout > 1
+                    isNans = true(size(d,1),1);
+                end
             else
-                d = obj.getData(isnan(obj.getTargets(:)),varargin{:});
+                isNans = isnan(obj.getTargets(:));
+                d = obj.getData(isNans,varargin{:});
             end
         end
         
@@ -182,18 +186,22 @@ classdef prtDataInterfaceCategoricalTargets
             d = getDataByClassInd(obj, utInd, varargin{:});
         end
         
-        function d = getDataByClassInd(obj, classInd, varargin)
+        function [d,isThisClass] = getDataByClassInd(obj, classInd, varargin)
             
             if ~obj.isLabeled
                 varargin = {':',varargin{1}};
                 if classInd == 1
                     d = obj.getData(varargin{:});
+                    if nargin > 1
+                        isThisClass = true(size(d,1),1);
+                    end
                 else
                     error('prt:prtDataSetClass:getDataByClassInd','This dataSet is unlabeled and therefore contains only one class.');
                 end
             else
                 assert(classInd <= obj.nClasses & classInd > 0,'prt:prtDataSetClass:getDataByClassInd','This requested class index (%d) exceeds the number of classes in this dataSet (%d).',classInd,obj.nClasses);
-                d = obj.getData(obj.getTargets == obj.uniqueClasses(classInd),varargin{:});
+                isThisClass = obj.getTargets == obj.uniqueClasses(classInd);
+                d = obj.getData(isThisClass,varargin{:});
             end
         end
         
