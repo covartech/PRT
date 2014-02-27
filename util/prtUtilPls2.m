@@ -55,7 +55,7 @@ Y = bsxfun(@minus,Y,yMeans);
 
 W = nan(size(X,2),nVectors);
 T = nan(size(X,1),nVectors);
-Q = nan(size(X,2),nVectors);
+Q = nan(size(Y,2),nVectors);
 U = nan(size(X,1),nVectors);
 P = nan(size(X,2),nVectors);
 B = zeros(nVectors,nVectors);

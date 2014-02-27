@@ -455,7 +455,7 @@ classdef prtDataInterfaceCategoricalTargets
             classInds = classInds(~isnan(classInds));
             classInds = allClassInds(classInds);
             retain = ismember(obj.getTargetsClassInd,classInds);
-            obj = obj.retainObservations(ismember(obj.getTargetsClassInd,classInds));
+            obj = obj.retainObservations(retain);
         end
         
         function obj = removeClassesByInd(obj,classInds)

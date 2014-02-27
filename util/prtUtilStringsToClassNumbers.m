@@ -28,7 +28,7 @@ function [classes,uStrings] = prtUtilStringsToClassNumbers(stringCell,uStrings)
 if nargin < 2
     uStrings = unique(stringCell);
 end
-classes = zeros(length(stringCell),1);
+classes = nan(length(stringCell),1);
 for i = 1:length(uStrings);
     classes(strcmpi(uStrings{i},stringCell)) = i;
 end
