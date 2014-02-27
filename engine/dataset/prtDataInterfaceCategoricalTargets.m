@@ -159,11 +159,15 @@ classdef prtDataInterfaceCategoricalTargets
     
     methods
         
-        function d = getDataUnlabeled(obj,varargin)
+        function [d, isNans] = getDataUnlabeled(obj,varargin)
             if ~obj.isLabeled
                 d = obj.getData(:,varargin{:});
+                if nargout > 1
+                    isNans = true(size(d,1),1);
+                end
             else
-                d = obj.getData(isnan(obj.getTargets(:)),varargin{:});
+                isNans = isnan(obj.getTargets(:));
+                d = obj.getData(isNans,varargin{:});
             end
         end
         
@@ -182,18 +186,22 @@ classdef prtDataInterfaceCategoricalTargets
             d = getDataByClassInd(obj, utInd, varargin{:});
         end
         
-        function d = getDataByClassInd(obj, classInd, varargin)
+        function [d,isThisClass] = getDataByClassInd(obj, classInd, varargin)
             
             if ~obj.isLabeled
                 varargin = {':',varargin{1}};
                 if classInd == 1
                     d = obj.getData(varargin{:});
+                    if nargin > 1
+                        isThisClass = true(size(d,1),1);
+                    end
                 else
                     error('prt:prtDataSetClass:getDataByClassInd','This dataSet is unlabeled and therefore contains only one class.');
                 end
             else
                 assert(classInd <= obj.nClasses & classInd > 0,'prt:prtDataSetClass:getDataByClassInd','This requested class index (%d) exceeds the number of classes in this dataSet (%d).',classInd,obj.nClasses);
-                d = obj.getData(obj.getTargets == obj.uniqueClasses(classInd),varargin{:});
+                isThisClass = obj.getTargets == obj.uniqueClasses(classInd);
+                d = obj.getData(isThisClass,varargin{:});
             end
         end
         
@@ -455,6 +463,7 @@ classdef prtDataInterfaceCategoricalTargets
             classInds = classInds(~isnan(classInds));
             classInds = allClassInds(classInds);
             retain = ismember(obj.getTargetsClassInd,classInds);
+            
             obj = obj.retainObservations(retain);
         end
         
@@ -478,7 +487,14 @@ classdef prtDataInterfaceCategoricalTargets
                 classInds = setdiff(1:obj.nClasses,classInds);
             end
             
-            obj = obj.retainClassesByInd(classInds);
+            % We used to call retainClassesByInd here but instead we have
+            % to do somethign different because of unlabeled data
+            %obj = obj.retainClassesByInd(classInds);
+            
+            classIndsByObs = obj.getTargetsClassInd;
+            retain = ismember(classIndsByObs,classInds) | isnan(obj.targets);
+            obj = obj.retainObservations(retain);
+            
         end
         
         function classInds = getTargetsClassInd(obj,varargin)
@@ -496,6 +512,11 @@ classdef prtDataInterfaceCategoricalTargets
             % but requires storing an nObs by nUniqueTargets matrix
             % it's a logical matrix though so I don't think that matters
             % too much.
+
+            % Must make sure nans do not pass the max index of 1 along
+            if obj.hasUnlabeled
+                classInds(isnan(obj.targets)) = nan;
+            end
         end
         
         function d = getObservationsUnlabeled(obj,varargin)

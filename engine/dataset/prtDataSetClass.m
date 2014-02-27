@@ -1151,6 +1151,107 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
                 varargout = {handleArray,legendStrings};
             end
         end
+        function varargout = plotSortedFeature(obj, featureIndex)
+            % PlotSortedFeature   Plots a feature of a prtDataSetClass
+            % object sorted 
+            %
+            %   dataSet.plotSortedFeature(1)
+            
+            if nargin < 2 || isempty(featureIndex)
+                featureIndex = 1:obj.nFeatures;
+            end
+            if islogical(featureIndex)
+                featureIndex = find(featureIndex);
+            end
+            
+            nPlotDimensions = length(featureIndex);
+            if nPlotDimensions < 1
+                warning('prt:plotSortedFeature:NoPlotDimensionality','No featureIndex requested.');
+                varargout = {[]};
+                return
+            elseif nPlotDimensions > 1
+                %Too many dimensions; default to explore()
+                warning('prt:plotSortedFeature:TooManyPlotDimensionality','featureIndex must be a single feature.');
+                varargout = {[]};
+                return;
+            end
+            
+            obj = obj.retainFeatures(featureIndex);
+            
+            nClasses = obj.nClasses;
+            if nClasses == 0 && ~obj.hasUnlabeled
+                obj.Y = zeros(obj.nObservations,1);
+                nClasses = obj.nClasses;
+            end
+            
+            % Sort by the feature
+            [~, sortingInds] = sort(obj.X,'descend');
+            obj = obj.retainObservations(sortingInds);
+            
+            classColors = obj.plotOptions.colorsFunction(obj.nClasses);
+            classSymbols = obj.plotOptions.symbolsFunction(obj.nClasses);
+            lineWidth = obj.plotOptions.symbolLineWidth;
+            markerSize = obj.plotOptions.symbolSize;
+            
+            handleArray = zeros(nClasses,1);
+            
+            holdState = get(gca,'nextPlot');
+            % This call to gca will create a figure if it doesn't already
+            % exist
+            
+            if obj.hasUnlabeled
+                % There are unlabeled observations so we should plot those
+                % first That way they appear underneath of the labeled
+                % observations
+                
+                [cX, isNans] = obj.getDataUnlabeled();
+                xInd = find(isNans);
+            
+                classEdgeColor = prtPlotUtilClassColorUnlabeled; % FIX: Move to plotOptions?
+                classColor = prtPlotUtilClassColorUnlabeled; % FIX: Move to plotOptions?
+                classSymbol = prtPlotUtilClassSymbolsUnlabeled; % FIX: Move to plotOptions
+                unlabaledLegenedName = prtPlotUtilUnlabeledLegendString; % FIX: Move to plotOptions
+                
+                unlabeledHandle = stem(xInd, cX, classSymbol,'Color',classColor,'MarkerFaceColor',classColor,'MarkerEdgeColor',classEdgeColor,'linewidth',lineWidth,'MarkerSize',markerSize);
+                
+                hold on;
+            end
+            
+            % Loop through classes and plot
+            for i = 1:nClasses
+                [cX,isThisClass] = obj.getDataByClassInd(i);
+                xInd = find(isThisClass);
+    
+                classEdgeColor = obj.plotOptions.symbolEdgeModificationFunction(classColors(i,:));
+                
+                handleArray(i) = stem(xInd, cX, classSymbols(i),'Color',classColors(i,:), 'MarkerFaceColor',classColors(i,:),'MarkerEdgeColor',classEdgeColor,'linewidth',lineWidth,'MarkerSize',markerSize);
+                
+                hold on;
+            end
+            set(gca,'nextPlot',holdState);
+            % Set title
+            title(obj.name);
+            
+            if obj.hasUnlabeled
+                handleArray = cat(1, handleArray(:), unlabeledHandle);
+            end
+            
+            % Create legend
+            legendStrings = [];
+            if obj.isLabeled
+                legendStrings = getClassNamesInterp(obj);
+                if obj.hasUnlabeled
+                    legendStrings = cat(1,legendStrings,{unlabaledLegenedName});
+                end
+                legend(handleArray,legendStrings,'Location','SouthEast');
+            end
+            
+            % Handle Outputs
+            varargout = {};
+            if nargout > 0
+                varargout = {handleArray,legendStrings};
+            end
+        end
     end
     methods (Hidden)
         %PLOTBW:
