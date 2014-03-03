@@ -68,6 +68,7 @@ classdef prtDataInterfaceCategoricalTargets
         isMary                 % True if the number of classes > 2
         isZeroOne              % True if the uniqueClasses are 0 and
         hasUnlabeled           % True if any of the labels are nan
+        nUnlabeled
     end
     
     properties (Hidden)
@@ -88,6 +89,9 @@ classdef prtDataInterfaceCategoricalTargets
     methods
         function hasUnlab = get.hasUnlabeled(obj)
             hasUnlab = obj.targetCache.hasNans;
+        end
+        function val = get.nUnlabeled(obj)
+            val = obj.targetCache.nNans;
         end
         
         function isBin = get.isBinary(obj)
