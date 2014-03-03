@@ -312,6 +312,7 @@ classdef prtAction
             % Check for isCrossValidateValid removed - 2012-11-08
             % This now handled by allowing the dataset to check the fold
             % results.
+            
 
             if ~isvector(validationKeys) || (numel(validationKeys) ~= dsIn.nObservations)
                 error('prt:prtAction:crossValidate','validationKeys must be a vector with a length equal to the number of observations in the data set');
@@ -324,12 +325,13 @@ classdef prtAction
             actuallyShowProgressBar = self.showProgressBar && (length(uKeys) > 1);
             if actuallyShowProgressBar
                 waitBarself = prtUtilProgressBar(0,sprintf('Crossvalidating - %s',self.name),'autoClose',true);
-                
+                cleanupObj = onCleanup(@()cleanUpHandles(waitBarself));
+
 				%cleanupself = onCleanup(@()close(waitBarself));
 				% The above would close the waitBar upon completion but
 				% it doesn't play nice when there are many bars in the
 				% same window
-            end
+            end            
             
 			testingIndiciesCell = cell(length(uKeys),1);
 			outputDataSetCell = cell(length(uKeys),1);
@@ -379,14 +381,16 @@ classdef prtAction
 						trainedActions(uInd) = trainedAction;
 					end
 				end
-			end
-			if actuallyShowProgressBar
-				waitBarself.update(1);
-			end
+            end
+            
 			
 			dsOut = crossValidateCombineFoldResults(outputDataSetCell{1}, outputDataSetCell, testingIndiciesCell);
 			
 			dsOut = dsOut.acquireNonDataAttributesFrom(dsIn);
+            
+            function cleanUpHandles(wbHandle)
+                wbHandle.update(1);
+            end
         end
         
         function varargout = kfolds(self, ds , k)
