@@ -273,6 +273,7 @@ set(navFigH,'visible','on');
             cString = sprintf('Closest Observation:\n\t Name: %s',obsName{1});
         else
             className = ds.getClassNamesByClassInd(cClassInd);
+            
             if ~iscell(className)
                 className = {className};
             end

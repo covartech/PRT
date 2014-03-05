@@ -250,8 +250,8 @@ classdef prtDataInterfaceCategoricalTargets
             if nargin == 1
                 indices = 1:length(self.uniqueClasses);
             end
-            
-            trueClass = self.uniqueClasses(indices);
+            trueClass(isnan(indices)) = nan;
+            trueClass(~isnan(indices)) = self.uniqueClasses(indices(~isnan(indices)));
             cn = self.classNamesArray.get(trueClass);
         end
         
@@ -518,8 +518,8 @@ classdef prtDataInterfaceCategoricalTargets
             % too much.
 
             % Must make sure nans do not pass the max index of 1 along
-            if obj.hasUnlabeled
-                classInds(isnan(obj.targets)) = nan;
+            if obj.hasUnlabeled 
+                classInds(isnan(targets)) = nan;
             end
         end
         
