@@ -140,8 +140,13 @@ classdef prtUiDataSetClassExploreWidget < prtUiManagerPanel
             if ~isempty(cDeleteFcn)
                 warning('prtUiDataSetClassExploreWidget removed an existing axes DeleteFcn. This is a bug that will be removed in a future release');
             end
-            set(self.plotManager.handles.axes,'DeleteFcn',@(~,~)close(self.handles.figure))
+            set(self.plotManager.handles.axes,'DeleteFcn',@(~,~)self.onPlotAxesDelete())
             
+        end
+        function onPlotAxesDelete(self)
+            try  %#ok<TRYNC>
+                close(self.handles.figure);
+            end
         end
     end
 end
