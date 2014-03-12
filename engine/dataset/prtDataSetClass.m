@@ -1384,6 +1384,10 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
     end
     
     methods (Hidden)
+        function exploreObjectOriented(ds)
+            p = prtUiDataSetClassPlot(ds);
+            p.controls();
+        end
         function dsFoldOut = crossValidateCheckFoldResults(dsIn, dsTrain, dsTest, dsFoldOut)
             dsFoldOut = crossValidateCheckFoldResults@prtDataSetBase(dsIn, dsTrain, dsTest, dsFoldOut);
             dsFoldOut = crossValidateCheckFoldResultsWarnNumberOfClassesBad(dsIn, dsTrain, dsTest, dsFoldOut);
