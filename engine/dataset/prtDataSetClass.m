@@ -181,6 +181,25 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
             self = self.update;
         end
         
+        
+        % Overload this from prtDataSetBase to also check for all nan
+        % targets, we would like to overload this in
+        % prtDataInterfaceCategoricalTargets but we can't because of
+        % multiple inheritance
+        %
+        % Furthermore you cant do this because there are many places in the
+        % existing codebase where we assume that isLabled checks if targets
+        % exists.
+        %
+        % Instead in prtDataInterfaceCategoricalTargets we decided to add
+        % isFullUnlabeled as a Dependent property. Incases where you want
+        % to check if labels exist and are all non-NaN you need to use
+        % ~self.isLabeled || self.isFullyUnlabeled
+        %
+        %function b = getIsLabeled(self)
+        %    b = ~(isempty(self.targets) || (self.hasUnlabeled && (self.nUnlabeled == self.nObservations)));
+        %end
+        
         function Summary = summarize(self)
             % Summarize   Summarize the prtDataSetStandard object
             %

@@ -130,7 +130,7 @@ classdef prtDataSetBase
         end
         
         function isLabeled = get.isLabeled(self)
-            isLabeled = ~isempty(self.getTargets);
+            isLabeled = getIsLabeled(self);
         end
     end
     
@@ -165,6 +165,9 @@ classdef prtDataSetBase
         % Rename of method from getObservations to getData
         function x = getObservations(self,varargin)
             x = self.getData(varargin{:});
+        end
+        function b = getIsLabeled(self)
+            b = ~isempty(self.targets);
         end
     end
     

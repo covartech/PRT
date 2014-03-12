@@ -69,6 +69,7 @@ classdef prtDataInterfaceCategoricalTargets
         isZeroOne              % True if the uniqueClasses are 0 and
         hasUnlabeled           % True if any of the labels are nan
         nUnlabeled
+        isFullyUnlabeled
     end
     
     properties (Hidden)
@@ -89,6 +90,9 @@ classdef prtDataInterfaceCategoricalTargets
     methods
         function hasUnlab = get.hasUnlabeled(obj)
             hasUnlab = obj.targetCache.hasNans;
+        end
+        function val = get.isFullyUnlabeled(obj)
+            val = obj.nObservations == obj.nUnlabeled;
         end
         function val = get.nUnlabeled(obj)
             val = obj.targetCache.nNans;
@@ -462,12 +466,14 @@ classdef prtDataInterfaceCategoricalTargets
             % Allows for logical indexing into classInds
             % Also performance error checking
             %             classInds = prtDataSetBase.parseIndices(obj.nClasses, classInds);
-            
-            allClassInds = 1:obj.nClasses;
-            classInds = classInds(~isnan(classInds));
-            classInds = allClassInds(classInds);
-            retain = ismember(obj.getTargetsClassInd,classInds);
-            
+            if ~obj.isLabeled || obj.isFullyUnlabeled
+                retain = false(obj.nObservations,1);
+            else
+                allClassInds = 1:obj.nClasses;
+                classInds = classInds(~isnan(classInds));
+                classInds = allClassInds(classInds);
+                retain = ismember(obj.getTargetsClassInd,classInds);
+            end
             obj = obj.retainObservations(retain);
         end
         
