@@ -1,4 +1,4 @@
-function prtPlotUtilDataSetExploreGuiSimple(theObject)
+function prtPlotUtilDataSetExploreGuiSimple(theObject,parent)
 % Internal function, 
 % xxx Need Help xxx - see prtDataSetClass.explore
 
@@ -23,31 +23,35 @@ function prtPlotUtilDataSetExploreGuiSimple(theObject)
 % OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
 % USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-
-windowSize = [754 600];
-pos = prtPlotUtilCenterFigure(windowSize);
-
-% Create the figure an UIControls
-figH = figure('Number','Off','Name','PRT Data Set Explorer','Menu','none','toolbar','figure','units','pixels','position',pos,'DockControls','off');
-
-% Trim the toolbar down to just the zooming controls
-Toolbar.handle = findall(figH,'Type','uitoolbar');
-Toolbar.Children = findall(figH,'Parent',Toolbar.handle,'HandleVisibility','off');
-
-
-% Delete a bunch of things we dont need
-delete(findobj(Toolbar.Children,'TooltipString','New Figure',...
-    '-or','TooltipString','Open File','-or','TooltipString','Save Figure',...
-    '-or','TooltipString','Print Figure','-or','TooltipString','Edit Plot',...
-    '-or','TooltipString','Data Cursor','-or','TooltipString','Brush/Select Data',...
-    '-or','TooltipString','Link Plot','-or','TooltipString','Insert Colorbar',...
-    '-or','TooltipString','Insert Legend','-or','TooltipString','Show Plot Tools and Dock Figure',...
-    '-or','TooltipString','Hide Plot Tools'))
+if nargin == 1
+    windowSize = [754 600];
+    pos = prtPlotUtilCenterFigure(windowSize);
+    
+    % Create the figure an UIControls
+    figH = figure('Number','Off','Name','PRT Data Set Explorer','Menu','none','toolbar','figure','units','pixels','position',pos,'DockControls','off');
+    
+    % Trim the toolbar down to just the zooming controls
+    Toolbar.handle = findall(figH,'Type','uitoolbar');
+    Toolbar.Children = findall(figH,'Parent',Toolbar.handle,'HandleVisibility','off');
+    
+    
+    % Delete a bunch of things we dont need
+    delete(findobj(Toolbar.Children,'TooltipString','New Figure',...
+        '-or','TooltipString','Open File','-or','TooltipString','Save Figure',...
+        '-or','TooltipString','Print Figure','-or','TooltipString','Edit Plot',...
+        '-or','TooltipString','Data Cursor','-or','TooltipString','Brush/Select Data',...
+        '-or','TooltipString','Link Plot','-or','TooltipString','Insert Colorbar',...
+        '-or','TooltipString','Insert Legend','-or','TooltipString','Show Plot Tools and Dock Figure',...
+        '-or','TooltipString','Hide Plot Tools'))
+    bgc = get(figH,'Color');
+else
+    bgc = get(gcf,'Color');
+    figH = parent;
+end
 
 popUpStrs = theObject.getFeatureNames;
 popUpStrs = popUpStrs(:);
 
-bgc = get(figH,'Color');
 popX = uicontrol(figH,'Style','popup','units','normalized','FontUnits','Normalized','FontSize',0.6,'position',[0.15 0.01 0.19 0.04],'string',popUpStrs,'callback',{@plotSelectPopupCallback 1});
 popXHead = uicontrol(figH,'Style','text','units','normalized','FontUnits','Normalized','FontSize',0.75,'position',[0.05 0.01 0.09 0.04],'string','X-Axis:','BackgroundColor',bgc,'HorizontalAlignment','Right'); %#ok
 

@@ -959,13 +959,13 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
             end
         end
         
-        function exploreSimple(obj)
+        function exploreSimple(obj,varargin)
             % exploreSimple Explore the prtDataSetObject using basic
             % controls
             %
             %   dataSet.exploreSimple() opens the prtDataSetObject
             %   explorer for visualizing high dimensional data sets.
-            prtPlotUtilDataSetExploreGuiSimple(obj)
+            prtPlotUtilDataSetExploreGuiSimple(obj,varargin{:})
         end
         
         function varargout = imagesc(dataSet,varargin)
