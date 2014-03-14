@@ -237,7 +237,7 @@ classdef prtClassLibSvm < prtClass
             training_instance_matrix = dataSet.getObservations;
             self.libSvmOptions = self.libSvmOptionString(dataSet);
             self.libSvmOptionsTest = self.libSvmOptionStringTest(dataSet);
-  
+            
             % Its ok to have 1 class if its a 1 class classifier
             if dataSet.nClasses ~= 2 && self.svmType ~=2
                 error('prt:prtClassLibSvm:UnaryData','prtClassLibSvm requires binary data for training');
