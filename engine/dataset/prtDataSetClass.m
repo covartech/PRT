@@ -1084,13 +1084,13 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
             nPlotDimensions = length(featureIndices);
             if nPlotDimensions < 1
                 warning('prt:plot:NoPlotDimensionality','No plot dimensions requested.');
-                varargout = {[]};
+                varargout = {};
                 return
             elseif nPlotDimensions > 3
                 %Too many dimensions; default to explore()
                 explore(obj);
-                varargout = {[]};
-                return;
+                varargout = {};
+                return
             end
             nClasses = obj.nClasses;
             if nClasses == 0 && ~obj.hasUnlabeled

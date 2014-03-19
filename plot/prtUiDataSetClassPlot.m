@@ -100,10 +100,19 @@ classdef prtUiDataSetClassPlot < hgsetget
                 error('prt:prtDataSetClassPlot:noDataSet','dataSet must be defined');
             end
             
+            initDefaultParametersFromDataSet(self);
+            
             initContainerGraphics(self);
             
             self.setDataSetDependentProperties();
             self.plot();
+        end
+        function initDefaultParametersFromDataSet(self)
+            self.defaultColorFunction = self.dataSet.plotOptions.colorsFunction;
+            self.defaultEdgeColorFunction = @(n)self.dataSet.plotOptions.symbolEdgeModificationFunction(self.dataSet.plotOptions.colorsFunction(n)); 
+            self.defaultMarkerFunction = self.dataSet.plotOptions.symbolsFunction;
+            self.defaultMarkerLineWidth = self.dataSet.plotOptions.symbolLineWidth;
+            self.defaultMarkerSize = self.dataSet.plotOptions.symbolSize;
         end
         function initContainerGraphics(self)
             

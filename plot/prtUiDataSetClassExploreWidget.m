@@ -77,8 +77,6 @@ classdef prtUiDataSetClassExploreWidget < prtUiManagerPanel
             plotAxesOuterPos = get(self.plotManager.handles.axes,'outerposition');
             set(self.plotManager.handles.axes,'units',oldUnits);
             
-            
-            
             navFigPosTop = plotAxesFigPos(2)+plotAxesOuterPos(2)-1+plotAxesOuterPos(4) + navFigPad(2);
             navFigPosLeft = plotAxesFigPos(1)+plotAxesOuterPos(1)-1+plotAxesOuterPos(3) + navFigPad(1);
             
@@ -87,9 +85,7 @@ classdef prtUiDataSetClassExploreWidget < prtUiManagerPanel
             navFigPosTop = min([navFigPosTop, screenSize(4)-50]);
             navFigPosLeft = min([navFigPosLeft, screenSize(3)-navFigSize(2)-60]);
             
-            
             navFigPos = cat(2,navFigPosLeft, navFigPosTop-navFigSize(2), navFigSize(1), navFigSize(2));
-
 
             self.handles.figure = figure('units','pixels',...
                 'position', navFigPos,...
@@ -109,7 +105,6 @@ classdef prtUiDataSetClassExploreWidget < prtUiManagerPanel
             
             self.madeThisWindow = true;
             
-            
             % Just in case anyone tries to plot in this window we will plot that inside
             % an invisible axes
             self.handles.invisibleAxes = axes('parent',self.handles.figure,...
@@ -117,6 +112,7 @@ classdef prtUiDataSetClassExploreWidget < prtUiManagerPanel
                 'position',[0 0  1 1],...
                 'visible','off',...
                 'handlevisibility','on');
+            
             
         end
         

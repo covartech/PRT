@@ -81,7 +81,7 @@ classdef prtRvGmmApproxDp < prtRv
     end    
     
     properties
-        meanShiftMembershipDistance = 1;
+        meanShiftSigma = 1;
         minimumStandardDeviation = eps;
     end
     properties (Dependent = true)
@@ -113,10 +113,6 @@ classdef prtRvGmmApproxDp < prtRv
     end
     
     methods
-        function R = set.meanShiftMembershipDistance(R,val)
-            assert(prtUtilIsPositiveScalar(val),'meanShiftMembershipDistance must be a positive integer')
-            R.meanShiftMembershipDistance = val;
-        end
         function R = set.minimumStandardDeviation(R,val)
             assert(prtUtilIsPositiveScalar(val),'minimumStandardDeviation must be a positive integer')
             R.minimumStandardDeviation = val;
@@ -179,7 +175,8 @@ classdef prtRvGmmApproxDp < prtRv
             
             dsX = prtDataSetClass(X);
             
-            meanShiftAlgo = train(prtClusterMeanShift('nClusters',R.nMaxComponents,'membershipDistance',R.meanShiftMembershipDistance) + prtDecisionMap, dsX);
+            meanShiftAlgo = train(prtClusterMeanShift('nClusters',R.nMaxComponents,'sigma',R.meanShiftSigma) + prtDecisionMap, dsX);
+            %meanShiftAlgo = train(prtClusterMeanShift('nClusters',R.nMaxComponents) + prtDecisionMap, dsX);
             clusteringDataSet = run(meanShiftAlgo, dsX);
             clusteringY = clusteringDataSet.getObservations;
             
@@ -192,7 +189,7 @@ classdef prtRvGmmApproxDp < prtRv
                 cX = X(clusteringY==iMean,:);
                 
                 R.mixtureRv.components(iMean).mu = mean(cX,1);
-                if size(cX,1) > (size(cX,2)+5) % 5 is rather arbitrary but it is motivated by comm Bayesian Wishart priors
+                if size(cX,1) > (size(cX,2)+5) % 5 is rather arbitrary but it is motivated by Bayesian Wishart priors
                     cSigma = cov(cX);
                     cSigmaDiag = diag(cSigma);
                     badDiag = cSigmaDiag< R.minimumStandardDeviation;
@@ -203,7 +200,7 @@ classdef prtRvGmmApproxDp < prtRv
                     R.mixtureRv.components(iMean).sigma = cSigma;
                     
                 else
-                    R.mixtureRv.components(iMean).sigma = eye(size(cX,2))*R.meanShiftMembershipDistance;
+                    R.mixtureRv.components(iMean).sigma = eye(size(cX,2));
                 end
             end
             
