@@ -1272,67 +1272,6 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
             end
         end
     end
-    methods (Hidden)
-        %PLOTBW:
-        function varargout = plotbw(obj, featureIndices)
-            % plotbw   Plots the prtDataSetClass object
-            %
-            %   dataSet.plotbw() Plots the prtDataSetClass object in a
-            %   manner that will display well when converted to black and
-            %   white.
-            
-            if nargin < 2 || isempty(featureIndices)
-                featureIndices = 1:obj.nFeatures;
-            end
-            if islogical(featureIndices)
-                featureIndices = find(featureIndices);
-            end
-            
-            nPlotDimensions = length(featureIndices);
-            if nPlotDimensions < 1
-                warning('prt:plot:NoPlotDimensionality','No plot dimensions requested.');
-                return
-            end
-            nClasses = obj.nClasses;
-            classColors = obj.plotOptions.colorsFunctionBw(obj.nClasses);
-            classSymbols = obj.plotOptions.symbolsFunctionBw(obj.nClasses);
-            
-            lineWidth = obj.plotOptions.symbolLineWidth;
-            markerSize = obj.plotOptions.symbolSize;
-            
-            handleArray = zeros(nClasses,1);
-            
-            holdState = get(gca,'nextPlot');
-            % Loop through classes and plot
-            for i = 1:nClasses
-                %Use "i" here because it's by uniquetargetIND
-                cX = obj.getObservationsByClassInd(i, featureIndices);
-                classEdgeColor = classColors(i,:);
-                
-                handleArray(i) = prtPlotUtilScatter(cX,obj.getFeatureNames(featureIndices),classSymbols(i),classColors(i,:),classEdgeColor,lineWidth, markerSize);
-                
-                if i == 1
-                    hold on;
-                end
-            end
-            set(gca,'nextPlot',holdState);
-            % Set title
-            title(obj.name);
-            grid on
-            
-            % Create legend
-            if obj.isLabeled
-                legendStrings = getClassNamesInterp(obj);
-                legend(handleArray,legendStrings,'Location','SouthEast');
-            end
-            
-            % Handle Outputs
-            varargout = {};
-            if nargout > 0
-                varargout = {handleArray};
-            end
-        end
-    end
     
     methods (Static)
         function obj = loadobj(obj)
