@@ -285,6 +285,22 @@ classdef prtDataSetStandard < prtDataSetInMem
 				featureIndices = 1:obj.nFeatures;
 			else
 				featureIndices = varargin{1};
+                if isa(featureIndices,'char')
+                    featureIndices = {featureIndices};
+                end
+                if isa(featureIndices,'cell')
+                    featureNames = obj.featureNames;
+                    for i = 1:length(featureIndices)
+                        cName = featureIndices{i};
+                        featureIndices{i} = find(strcmpi(featureNames,cName));
+                        if isempty(featureIndices{i})
+                            error('prt:getFeatures:invalidFeature','The feature name provided: %s, does not match any of the available feature names',cName);
+                        elseif ~isscalar(featureIndices{i})
+                            warning('prt:getFeatures:duplicateFeature','The feature name provided: %s, matches more than one feature in the data set',cName);
+                        end
+                    end
+                    featureIndices = cell2mat(featureIndices);
+                end
 			end
 			try
 				data = obj.data(:,featureIndices);
