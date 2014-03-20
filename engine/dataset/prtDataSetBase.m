@@ -76,6 +76,7 @@ classdef prtDataSetBase
         nObservations         % The number of observations
         nTargetDimensions     % The number of target dimensions
         isLabeled             % Whether or not the data has target labels
+        isEmpty
     end
     
     properties (Dependent, Hidden)
@@ -131,6 +132,9 @@ classdef prtDataSetBase
         
         function isLabeled = get.isLabeled(self)
             isLabeled = getIsLabeled(self);
+        end
+        function val = get.isEmpty(self)
+            val = self.nObservations == 0;
         end
     end
     

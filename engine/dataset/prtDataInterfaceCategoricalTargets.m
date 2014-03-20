@@ -92,7 +92,7 @@ classdef prtDataInterfaceCategoricalTargets
             hasUnlab = obj.targetCache.hasNans;
         end
         function val = get.isFullyUnlabeled(obj)
-            val = obj.nObservations == obj.nUnlabeled;
+            val = (obj.nObservations > 0) & (obj.nObservations == obj.nUnlabeled);
         end
         function val = get.nUnlabeled(obj)
             val = obj.targetCache.nNans;

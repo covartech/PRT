@@ -27,13 +27,12 @@ classdef prtUiDataSetClassExploreWidget < prtUiManagerPanel
 % USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-    
     properties
         plotManager
         
         titleStr = 'prtDataSetClass Explorer Widget';
         
-        tabObjectConstructors = {@prtUiDataSetClassExploreWidgetTabSelectAxes @prtUiDataSetClassExploreWidgetTabPlotOptions};
+        tabObjectConstructors = {@prtUiDataSetClassExploreWidgetTabSelectAxes @prtUiDataSetClassExploreWidgetTabPlotOptions @prtUiDataSetClassExploreWidgetTabClickDisplay};
         
         handles
         tabs
