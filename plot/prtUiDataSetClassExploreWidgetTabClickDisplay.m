@@ -75,7 +75,7 @@ classdef prtUiDataSetClassExploreWidgetTabClickDisplay < prtUiDataSetClassExplor
                 cString = sprintf('Closest Observation:\n\t Name: %s',obsName{1});
             end
             
-            if length(ds.observationInfo) > clickedInd
+            if length(ds.observationInfo) >= clickedInd
                 % observationInfo is present
                 set(self.handles.infoToWorkspaceButton,'enable','on');
                 
