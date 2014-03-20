@@ -67,7 +67,6 @@ classdef prtUiDataSetClassPlot < hgsetget
         legendStrings = {};
         featureNames = {};
         
-        
         colorUnlabeled = prtPlotUtilClassColorUnlabeled;
         edgeColorUnlabeled = prtPlotUtilClassColorUnlabeled;
         markerUnlabeled = prtPlotUtilClassSymbolsUnlabeled;
@@ -78,6 +77,11 @@ classdef prtUiDataSetClassPlot < hgsetget
         legendStringUnlabeled = prtPlotUtilUnlabeledLegendString;
         
         madeThisWindow = false;
+        
+        onClickCallback
+    end
+    properties (SetAccess = 'protected', SetObservable)
+        clickedIndex
     end
     
     methods
@@ -172,9 +176,9 @@ classdef prtUiDataSetClassPlot < hgsetget
                 % I decided to just remake the axes
                 initContainerGraphics(self);
             end
+            
             % make our axes the current axes;
             axes(self.handles.axes);
-            
             
             isRealFeature = self.featureIndices>0;
             
@@ -234,6 +238,11 @@ classdef prtUiDataSetClassPlot < hgsetget
             
             self.setAllClassAttributes();
             
+            % Turn on the click callback and turn off the line hittests
+            set(self.handles.axes,'ButtonDownFcn',@self.axesOnClickCallback);
+            set(self.handles.lines,'HitTest','off')
+            set(self.handles.lineUnlabeled,'HitTest','off')
+            
             % Set title
             title(self.dataSet.name);
             
@@ -241,7 +250,7 @@ classdef prtUiDataSetClassPlot < hgsetget
             if self.dataSet.isLabeled
                 if self.dataSet.hasUnlabeled
                     strs = cat(1,self.legendStrings,{self.legendStringUnlabeled});
-                    hands = cat(1,self.handles.lines(:), self.handles.lineHandleUnlabeled);
+                    hands = cat(1,self.handles.lines(:), self.handles.lineUnlabeled);
                 else
                     strs = self.legendStrings;
                     hands = self.handles.lines(:);
@@ -412,7 +421,6 @@ classdef prtUiDataSetClassPlot < hgsetget
             self.setDataSetDependentProperties();
         end
         
-        
         function controller = controls(self)
             controller = prtUiDataSetClassExploreWidget('plotManager',self);
         end
@@ -444,5 +452,118 @@ classdef prtUiDataSetClassPlot < hgsetget
                 set(self.handles.legend,'String',legendStruct.String);
             end
         end
+        
+        function axesOnClickCallback(self, myHandle,eventData)  %#ok<INUSD>
+            
+            cData = self.dataSet.retainFeatures(self.featureIndices);
+            
+            obsIsVisible = ismember(self.dataSet.targets, self.dataSet.uniqueClasses(logical(self.isVisible)));
+            if self.isVisibleUnlabeled
+                obsIsVisible = obsIsVisible | isnan(self.dataSet.targets);
+            end
+            cData = cData.retainObservations(obsIsVisible);
+            cX = cData.X;
+            
+            [rP,rD] = rotateDataAndClick(self,cX);
+            
+            dist = prtDistanceEuclidean(rP,rD);
+            [minDist,justClickedIndex] = min(dist);  %#ok<ASGLU>
+            
+            if ~all(obsIsVisible)
+                visibleObsInds = find(obsIsVisible);
+                justClickedIndex = visibleObsInds(justClickedIndex);
+            end
+            
+            self.clickedIndex = justClickedIndex;
+            
+            clickUpdateEvent(self)
+        end
+    
+        function clickUpdateEvent(self)
+            if ~isempty(self.onClickCallback)
+                self.onClickCallback(self); 
+            end    
+        end
+        function [rotatedData,rotatedClick] = rotateDataAndClick(self,data)
+            % Used internally; from Click3dPoint from matlab central;
+            % See prtExternal.ClickA3DPoint.()
+            %
+            % It has been modified slightly to fit into this framework.
+            %
+            % The copyright info from the original file is below.
+            %
+            % Copyright (c) 2009, Babak Taati All rights reserved.
+            %
+            % Redistribution and use in source and binary forms, with or
+            % without modification, are permitted provided that the following
+            % conditions are met:
+            %
+            %     * Redistributions of source code must retain the above
+            %     copyright
+            %       notice, this list of conditions and the following
+            %       disclaimer.
+            %     * Redistributions in binary form must reproduce the above
+            %     copyright
+            %       notice, this list of conditions and the following
+            %       disclaimer in the documentation and/or other materials
+            %       provided with the distribution
+            %
+            % THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+            % CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+            % INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+            % MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+            % DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS
+            % BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+            % EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+            % TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+            % DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+            % ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+            % OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+            % OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+            % POSSIBILITY OF SUCH DAMAGE.
+            
+            plotAxes = self.handles.axes;
+            point = get(plotAxes, 'CurrentPoint'); % mouse click position
+            camPos = get(plotAxes, 'CameraPosition'); % camera position
+            camTgt = get(plotAxes, 'CameraTarget'); % where the camera is pointing to
+            
+            camDir = camPos - camTgt; % camera direction
+            camUpVect = get(plotAxes, 'CameraUpVector'); % camera 'up' vector
+            
+            % build an orthonormal frame based on the viewing direction and the
+            % up vector (the "view frame")
+            zAxis = camDir/norm(camDir);
+            upAxis = camUpVect/norm(camUpVect);
+            xAxis = cross(upAxis, zAxis);
+            yAxis = cross(zAxis, xAxis);
+            
+            rot = [xAxis; yAxis; zAxis]; % view rotation
+            
+            % the clicked point represented in the view frame
+            rotatedClick = rot * point' ;
+            rotatedClick = rotatedClick(1:2,1)';
+            
+            if size(data,2) < 3
+                if size(data,2) < 2
+                    rot = rot(1);
+                else
+                    rot = rot(1:2,1:2);
+                end
+            end
+            
+            % the point cloud represented in the view frame
+            rotatedData = (rot * data')';
+            
+            if size(rotatedData,2) > 2
+                rotatedData = rotatedData(:,1:2);
+            end
+            
+            if size(data,2) < 2
+                rotatedClick = rotatedClick(1);
+            end
+        end
+    
+        
+        
     end
 end
