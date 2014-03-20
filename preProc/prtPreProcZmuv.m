@@ -118,4 +118,14 @@ classdef prtPreProcZmuv < prtPreProc & prtActionBig
            xOut = bsxfun(@rdivide,bsxfun(@minus,xIn,self.means),self.stds);
         end
     end
+    
+    methods (Hidden)
+        
+        function str = exportSimpleText(self) %#ok<MANU>
+            titleText = sprintf('%% prtPreProcZmuv\n');
+            zmuvMeansText = prtUtilMatrixToText(self.means,'varName','means');
+            zmuvVarsText = prtUtilMatrixToText(self.stds,'varName','std');
+            str = sprintf('%s%s%s',titleText,zmuvMeansText,zmuvVarsText);
+        end
+    end
 end

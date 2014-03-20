@@ -72,4 +72,12 @@ classdef prtDecisionBinary < prtDecision
         end
     end
     
+    
+    methods (Hidden)
+        function str = exportSimpleText(self) %#ok<MANU>
+            titleText = sprintf('%% prtDecisionBinaryMinPe\n');
+            decisionThresholdText = prtUtilMatrixToText(self.threshold,'varName','minPeDecisionThreshold');
+            str = sprintf('%s%s%s',titleText,decisionThresholdText);
+        end
+    end
 end

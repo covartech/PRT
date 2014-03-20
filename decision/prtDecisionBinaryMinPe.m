@@ -107,4 +107,5 @@ classdef prtDecisionBinaryMinPe < prtDecisionBinary
             uniqueClasses = Obj.uniqueClasses;
         end
     end
+    
 end

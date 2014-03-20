@@ -759,6 +759,17 @@ classdef prtAction
                     fid = fopen(fullfile(filePath,fileWithMExt),'w');
                     fprintf(fid,'%s\n',exportString{:});
                     fclose(fid);
+                    
+                case 'simpletext'
+
+                    varargout{1} = obj.exportSimpleText;
+                    
+                    if nargin == 3
+                        file = varargin{1};
+                        fid = fopen(file,'w');
+                        fprintf(fid,'%s\n',varargout{1});
+                        fclose(fid);
+                    end
     
                 otherwise
                     error('prt:prtAction:export','Invalid file formal specified');
@@ -846,6 +857,9 @@ classdef prtAction
 	end
 	
 	methods (Hidden = true)
+        function str = exportSimpleText(self) %#ok<MANU>
+            error('exportSimpleText must be overloaded in sub-classes');
+        end
         function str = textSummary(self) %#ok<MANU>
             % str = textSummary(self)
             %   Give a short textual summary of the object in the output

@@ -152,4 +152,13 @@ classdef prtClassPlsda < prtClass
             xOut = bsxfun(@plus,xIn*self.Bpls, self.yMeansFactor);
         end
     end
+    
+    methods (Hidden)
+        function str = exportSimpleText(self) %#ok<MANU>
+            titleText = sprintf('%% prtClassPlsda\n');
+            plsdBText = prtUtilMatrixToText(full(self.Bpls),'varName','plsdaWeights');
+            plsdYText = prtUtilMatrixToText(full(self.yMeansFactor),'varName','yMeansFactor');
+            str = sprintf('%s%s%s',titleText,plsdBText,plsdYText);
+        end
+    end
 end
