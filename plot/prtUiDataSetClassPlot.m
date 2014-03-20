@@ -455,14 +455,27 @@ classdef prtUiDataSetClassPlot < hgsetget
         
         function axesOnClickCallback(self, myHandle,eventData)  %#ok<INUSD>
             
-            cData = self.dataSet.retainFeatures(self.featureIndices);
-            
+            cData = self.dataSet;
             obsIsVisible = ismember(self.dataSet.targets, self.dataSet.uniqueClasses(logical(self.isVisible)));
             if self.isVisibleUnlabeled
                 obsIsVisible = obsIsVisible | isnan(self.dataSet.targets);
             end
             cData = cData.retainObservations(obsIsVisible);
+
             cX = cData.X;
+            
+            isRealFeature = self.featureIndices>0;
+            isTruthFeature = ~isRealFeature;
+            selFeatsNoZeros = self.featureIndices(isRealFeature);
+            
+            cRealX = cX(:,selFeatsNoZeros);
+            if any(isTruthFeature)
+                cX = nan(size(cRealX,1), length(self.featureIndices));
+                cX(:, isRealFeature) = cRealX;
+                cX(:, isTruthFeature) = cData.targets;
+            else
+                cX = cRealX;
+            end
             
             [rP,rD] = rotateDataAndClick(self,cX);
             

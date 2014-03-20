@@ -79,13 +79,12 @@ classdef prtUiDataSetClassExploreWidgetTabClickDisplay < prtUiDataSetClassExplor
                 % observationInfo is present
                 set(self.handles.infoToWorkspaceButton,'enable','on');
                 
-                if ~isdeployed % can't use evalc if deployed
-                    s = ds.observationInfo(clickedInd);
-                    infoStr = evalc('display(s)');
-                    infoStr = infoStr(6:end); % 6 here is for the 's =   '
-                    
-                    cString = cat(2, cString, sprintf('\n\nObservation Info:\n'),infoStr);
-                end
+                s = ds.observationInfo(clickedInd);
+                infoStr = evalc('display(s)');
+                infoStr = infoStr(6:end); % 6 here is for the 's =   '
+                
+                cString = cat(2, cString, sprintf('\n\nObservation Info:\n'),infoStr);
+                
             end
             
             set(self.handles.text,'string',cString);
