@@ -1,6 +1,12 @@
 classdef prtClusterDpMeans < prtCluster 
+    % prtClusterDpMeans
+    %   lambda - Maximum squared euclidean distance to a mean
+    %
+    % http://www.cs.berkeley.edu/~jordan/papers/kulis-jordan-icml12.pdf
+    %   Algorithm 1
+    %
     %   ds = prtDataGenMary                  % Load a prtDataSet
-    %   clusterAlgo = prtClusterKmeans;      % Create a prtClusterKmeans object
+    %   clusterAlgo = prtClusterDpMeans;      % Create a prtClusterKmeans object
     %   clusterAlgo.nClusters = 3;           % Set the number of desired clusters
     %
     %   % Set the internal decision rule to be MAP. Not required for
