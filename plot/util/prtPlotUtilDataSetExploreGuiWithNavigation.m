@@ -273,6 +273,7 @@ set(navFigH,'visible','on');
             cString = sprintf('Closest Observation:\n\t Name: %s',obsName{1});
         else
             className = ds.getClassNamesByClassInd(cClassInd);
+            
             if ~iscell(className)
                 className = {className};
             end
@@ -287,7 +288,7 @@ set(navFigH,'visible','on');
                 infoStr = evalc('display(s)');
                 infoStr = infoStr(6:end); % 6 here is for the 's =   '
                 
-                cString = sprintf(cat(2, cString, '\n\nObservation Info:\n',infoStr));
+                cString = cat(2, cString, sprintf('\n\nObservation Info:'),infoStr);
             end
         else
             set(tabGroupH.infoButton,'enable','off');
@@ -489,7 +490,8 @@ set(navFigH,'visible','on');
         set(H.uitable,'units','normalized')
         
         
-        H.infoText = uicontrol('style','text',...
+        H.infoText = uicontrol('style','edit',...
+                                'Max',200,'enable','inactive',...
                                'parent',H.navPanel(3),...
                                'units','normalized',...
                                'position',[0.025 0.125 0.95 0.85],...

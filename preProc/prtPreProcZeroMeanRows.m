@@ -81,4 +81,11 @@ classdef prtPreProcZeroMeanRows < prtPreProc
         end
     end
     
+    
+    methods (Hidden)
+        function str = exportSimpleText(self)
+            titleText = sprintf('%% prtPreProcZeroMeanRows (No Parameters)\n');
+            str = sprintf('%s',titleText); % No parameters 
+        end
+    end
 end

@@ -33,10 +33,10 @@ import prtExternal.yaml.*;
 packagePath = fullfile(prtRoot,'+prtExternal','+yaml','YAMLMatlab','external-packages','snakeyaml');
 jarPath = fullfile(packagePath,'snakeyaml-1.8.jar');
 
-if isempty(strfind(javaclasspath,packagePath))
+v = strfind(javaclasspath,packagePath);
+if isempty(v) || isempty(v{1})
     javaaddpath(jarPath)
 end
-    
 import('org.yaml.snakeyaml.Yaml');
 
 yamlreader = Yaml();

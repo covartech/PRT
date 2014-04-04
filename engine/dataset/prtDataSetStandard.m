@@ -198,17 +198,20 @@ classdef prtDataSetStandard < prtDataSetInMem
 			% Make feature names appear correctly by evaluating
 			% modification function
             for iFeat = 1:length(indices)
-                if iscell(obj.featureNameModificationFunction)
-                    for iCell = 1:length(obj.featureNameModificationFunction)
-						if ~isempty(obj.featureNameModificationFunction{iCell}) && obj.featureNameModificationMask{iCell}(iFeat)
-							%featNames{iFeat} = obj.featureNameModificationFunction{iCell}(featNames{iFeat}, indices(iFeat));
-							featNames{iFeat} = obj.featureNameModificationFunction{iCell}(featNames{iFeat}, sum(obj.featureNameModificationMask{iCell}(1:iFeat)));
-						end
+                try
+                    if iscell(obj.featureNameModificationFunction)
+                        for iCell = 1:length(obj.featureNameModificationFunction)
+                            if ~isempty(obj.featureNameModificationFunction{iCell}) && obj.featureNameModificationMask{iCell}(iFeat)
+                                %featNames{iFeat} = obj.featureNameModificationFunction{iCell}(featNames{iFeat}, indices(iFeat));
+                                featNames{iFeat} = obj.featureNameModificationFunction{iCell}(featNames{iFeat}, sum(obj.featureNameModificationMask{iCell}(1:iFeat)));
+                            end
+                        end
+                    else
+                        if ~isempty(obj.featureNameModificationFunction) && obj.featureNameModificationMask(iFeat)
+                            featNames{iFeat} = obj.featureNameModificationFunction(featNames{iFeat}, indices(iFeat));
+                        end
                     end
-				else
-					if ~isempty(obj.featureNameModificationFunction) && obj.featureNameModificationMask(iFeat)
-						featNames{iFeat} = obj.featureNameModificationFunction(featNames{iFeat}, indices(iFeat));
-					end
+                catch ME
                 end
             end
 		end
@@ -282,6 +285,22 @@ classdef prtDataSetStandard < prtDataSetInMem
 				featureIndices = 1:obj.nFeatures;
 			else
 				featureIndices = varargin{1};
+                if isa(featureIndices,'char')
+                    featureIndices = {featureIndices};
+                end
+                if isa(featureIndices,'cell')
+                    featureNames = obj.featureNames;
+                    for i = 1:length(featureIndices)
+                        cName = featureIndices{i};
+                        featureIndices{i} = find(strcmpi(featureNames,cName));
+                        if isempty(featureIndices{i})
+                            error('prt:getFeatures:invalidFeature','The feature name provided: %s, does not match any of the available feature names',cName);
+                        elseif ~isscalar(featureIndices{i})
+                            warning('prt:getFeatures:duplicateFeature','The feature name provided: %s, matches more than one feature in the data set',cName);
+                        end
+                    end
+                    featureIndices = cell2mat(featureIndices);
+                end
 			end
 			try
 				data = obj.data(:,featureIndices);
@@ -436,17 +455,21 @@ classdef prtDataSetStandard < prtDataSetInMem
 			keys = 1:length(retainFeatureInds);
 			names = self.featureNameIntegerAssocArray.get(retainFeatureInds);
 			self.featureNameIntegerAssocArray = prtUtilIntegerAssociativeArray(keys,names);
-			if iscell(self.featureNameModificationFunction)
-				for iCell = 1:length(self.featureNameModificationMask)
-					if ~isempty(self.featureNameModificationMask{iCell})
-						self.featureNameModificationMask{iCell} = self.featureNameModificationMask{iCell}(retainFeatureInds);
-					end
-				end
-			else
-				if ~isempty(self.featureNameModificationFunction)
-					self.featureNameModificationMask = self.featureNameModificationMask(retainFeatureInds);
-				end
-			end
+            try
+                if iscell(self.featureNameModificationFunction)
+                    for iCell = 1:length(self.featureNameModificationMask)
+                        if ~isempty(self.featureNameModificationMask{iCell})
+                            self.featureNameModificationMask{iCell} = self.featureNameModificationMask{iCell}(retainFeatureInds);
+                        end
+                    end
+                else
+                    if ~isempty(self.featureNameModificationFunction)
+                        self.featureNameModificationMask = self.featureNameModificationMask(retainFeatureInds);
+                    end
+                end
+            catch ME
+                % ME
+            end
 			% This could leave featureNameModificationFunctions that are
 			% applied to no features. Is it worthwhile checking for this?
 		end

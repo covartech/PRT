@@ -47,13 +47,17 @@ classdef prtUtilIntegerAssociativeArrayClassNames < prtUtilIntegerAssociativeArr
             %this should be significantly faster for large vectors of keys,
             %which, btw, you should use instead of iterating over individual keys
             for uKeyInd = 1:length(uKeys)
-                keyInds = find(key == uKeys(uKeyInd));
-                refInds = find(uKeys(uKeyInd) == obj.integerKeys,1);
-                
-                if isempty(refInds)
-                    value(keyInds) = {sprintf('Class %d',uKeys(uKeyInd))};
+                if isnan(uKeys(uKeyInd))
+                    value(isnan(key)) = {'unlabeled'};
                 else
-                    value(keyInds) = {obj.cellValues{refInds}};
+                    keyInds = find(key == uKeys(uKeyInd));
+                    refInds = find(uKeys(uKeyInd) == obj.integerKeys,1);
+                    
+                    if isempty(refInds)
+                        value(keyInds) = {sprintf('Class %d',uKeys(uKeyInd))};
+                    else
+                        value(keyInds) = {obj.cellValues{refInds}};
+                    end
                 end
             end
             

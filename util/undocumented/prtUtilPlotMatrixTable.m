@@ -78,10 +78,10 @@ end
 
 [nRows, nCols] = size(X);
 
-%imageAxes = axes;
+imageAxes = gca;
 imagesc(X,cLim);
 colormap(cMap);
-fontSize = max(getBestFontSize(gca),1);
+fontSize = max(getBestFontSize(imageAxes),1);
 textHandles = nan(size(X));
 verticleLineHandles = zeros(nRows,1);
 horizontalLineHandles = zeros(nCols,1);
@@ -125,19 +125,19 @@ for iRow = 1:nRows
 end
 hold off;
 
-set(gca,'YTick',1:nRows,'XTick',1:nCols,...
+set(imageAxes,'YTick',1:nRows,'XTick',1:nCols,...
     'XTickLabel',num2str((1:nCols)'),'YTickLabel',num2str((1:nRows)'),...
     'Xlim',[0.5 nCols+0.5],'Ylim',[0.5 nRows+0.5],...
     'TickLength',[0 0]);
 
 varargout = {};
 if nargout > 0 
-    varargout = {gca, textHandles, verticleLineHandles, horizontalLineHandles};
+    varargout = {imageAxes, textHandles, verticleLineHandles, horizontalLineHandles};
 end
 
-f = ancestor(gca,'figure');
-set(f,'ResizeFcn',@(src,evt)setBestFontSize(gca,textHandles));
-setBestFontSize(gca,textHandles);
+f = ancestor(imageAxes,'figure');
+set(f,'ResizeFcn',@(src,evt)setBestFontSize(imageAxes,textHandles));
+setBestFontSize(imageAxes,textHandles);
 
 function setBestFontSize(imAxes,textHandles)
 
