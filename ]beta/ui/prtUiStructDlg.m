@@ -437,18 +437,19 @@ classdef prtUiStructDlg < prtUiManagerPanel
             for i=1:size(possibleTables,1)
                 
                 type   = possibleTables{i,5};
-                
-                switch type
-                    
-                    case 'table'
-                        h = possibleTables{i,1};
+                try
+                    switch type
                         
-                        drawnow;
-                        cJavaH = findjobj(h);
-                        cJavaH.setColumnHeader([]);
-                        cJavaH.setRowHeader([]);
-                        cJavaH.setBorder([]);
-                        cJavaH.repaint();
+                        case 'table'
+                            h = possibleTables{i,1};
+                            
+                            drawnow;
+                            cJavaH = findjobj(h);
+                            cJavaH.setColumnHeader([]);
+                            cJavaH.setRowHeader([]);
+                            cJavaH.setBorder([]);
+                            cJavaH.repaint();
+                    end
                 end
             end
             
