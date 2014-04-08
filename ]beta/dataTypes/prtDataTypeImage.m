@@ -261,7 +261,10 @@ classdef prtDataTypeImage < prtUtilActionDataAccess
             if isempty(self.internalGrayData)
                 switch lower(self.imageType)
                     case 'mat'
-                        self.internalGrayData = mat2gray(self.imageData);
+                        % Added 2013.04.07 to handle 3-D gray 
+                        x = self.imageData;
+                        x = mean(x,3);
+                        self.internalGrayData = mat2gray(x);
                         
                     case 'gray'
                         self.internalGrayData = self.imageData;
@@ -394,5 +397,15 @@ classdef prtDataTypeImage < prtUtilActionDataAccess
             points = corner(self.gray,varargin{:});
         end
         
+        function self = greyWorldNormalize(self)
+            
+            theData = double(self.rgb);
+            for ch = 1:3;
+                c = theData(:,:,ch);
+                theData(:,:,ch) = c./mean(c(:));
+            end
+            self = prtDataTypeImage('imageData',theData,'imageType','mat');
+        end
+            
     end
 end
