@@ -103,13 +103,15 @@ classdef prtPreProcPca < prtPreProc
             %  Generate the PCA basis approximation using the scores in dataSetScores
             %
             xOut = repmat(self.means,dataSetScores.nObservations,1);
-            xOut = xOut + (dataSetScores.X*self.pcaVectors');
+            if self.nComponents > 0
+                xOut = xOut + (dataSetScores.X*self.pcaVectors');
+            end
             dataSet = dataSetScores;
             dataSet.X = xOut; 
         end
         
         function self = set.nComponents(self,nComp)
-            if ~isnumeric(nComp) || ~isscalar(nComp) || nComp < 1 || round(nComp) ~= nComp
+            if ~isnumeric(nComp) || ~isscalar(nComp) || nComp < 0 || round(nComp) ~= nComp
                 error('prt:prtPreProcPca','nComponents (%s) must be a positive scalar integer',mat2str(nComp));
             end
             self.nComponents = nComp;
@@ -130,6 +132,10 @@ classdef prtPreProcPca < prtPreProc
                 self.means = prtUtilNanMean(dataSet.getObservations(),1);
             else
                 self.means = zeros(1,dataSet.nFeatures);
+            end
+            
+            if self.nComponents == 0
+                return
             end
             x = bsxfun(@minus,dataSet.getObservations(),self.means);
             
@@ -158,7 +164,10 @@ classdef prtPreProcPca < prtPreProc
         
         function xOut = runActionFast(self,xIn)
             if self.removeMean
-                xOut = bsxfun(@minus,xIn,self.means)*self.pcaVectors;
+                xOut = bsxfun(@minus,xIn,self.means);
+                if self.nComponents > 0
+                    xOut = xOut*self.pcaVectors;
+                end
             else
                 xOut = xIn*self.pcaVectors;
             end
