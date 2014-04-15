@@ -63,6 +63,9 @@ elseif nPlots <= 50
 elseif nPlots <= 100
     MM = 10;
     JJ = 10;
+elseif nPlots <= 200
+    MM = 10;
+    JJ = 20;
 else 
     warning('Nplots too large');
     MM = inf;
