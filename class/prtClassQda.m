@@ -7,11 +7,11 @@ classdef prtClassQda < prtClass
  %      And: http://en.wikipedia.org/wiki/Quadratic_classifier
  %
  % Example:
- %    ds1 = prtDataGenUnimodal;       % Create some test and
- %    ds2 = prtDataGenUnimodal;   % training data
- %    classifier = prtClassQda;           % Create a classifier
- %    classifier = classifier.train(ds1);    % Train
- %    classified = run(classifier, ds2);         % Test
+ %    ds1 = prtDataGenUnimodal;             % Create some test and
+ %    ds2 = prtDataGenUnimodal;             % training data
+ %    classifier = prtClassQda;             % Create a classifier
+ %    classifier = classifier.train(ds1);   % Train
+ %    classified = run(classifier, ds2);    % Test
  %    subplot(2,1,1);
  %    classifier.plot;
  %    subplot(2,1,2);
@@ -96,7 +96,8 @@ classdef prtClassQda < prtClass
             
             x0 = bsxfun(@minus,dataSet.X,self.mean0);
             x1 = bsxfun(@minus,dataSet.X,self.mean1);
-            xOut = x0*self.cov0^-1*x0' - x1*self.cov1^-1*x1' + log(det(self.cov0)) - log(det(self.cov1));
+            
+            xOut = prtUtilCalcDiagXcInvXT(x0,self.cov0) - prtUtilCalcDiagXcInvXT(x1,self.cov1) + log(det(self.cov0)) - log(det(self.cov1));
             dataSet.X = xOut;
         end
         
