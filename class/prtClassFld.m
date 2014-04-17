@@ -28,15 +28,15 @@ classdef prtClassFld < prtClass
  %
  %    Example:
  %
- %    TestDataSet = prtDataGenUniModal;       % Create some test and
- %    TrainingDataSet = prtDataGenUniModal;   % training data
+ %    ds1 = prtDataGenUnimodal;       % Create some test and
+ %    ds2 = prtDataGenUnimodal;   % training data
  %    classifier = prtClassFld;           % Create a classifier
- %    classifier = classifier.train(TrainingDataSet);    % Train
- %    classified = run(classifier, TestDataSet);         % Test
+ %    classifier = classifier.train(ds1);    % Train
+ %    classified = run(classifier, ds2);         % Test
  %    subplot(2,1,1);
  %    classifier.plot;
  %    subplot(2,1,2);
- %    [pf,pd] = prtScoreRoc(classified,TestDataSet);
+ %    [pf,pd] = prtScoreRoc(classified);
  %    h = plot(pf,pd,'linewidth',3);
  %    title('ROC'); xlabel('Pf'); ylabel('Pd');
  %  
@@ -121,16 +121,14 @@ classdef prtClassFld < prtClass
             dataH0 = dataSet.getObservationsByClassInd(1);
             dataH1 = dataSet.getObservationsByClassInd(2);
             
-            M0 = mean(dataH0,1);
-            M1 = mean(dataH1,1);
+            mean0 = mean(dataH0,1);
+            mean1 = mean(dataH1,1);
             
-            s0 = cov(dataH0);
-            s1 = cov(dataH1);
+            cov0 = cov(dataH0);
+            cov1 = cov(dataH1);
+            covW = cov1 + cov0;
             
-            Sw = s1 + s0;
-            
-            self.w = Sw\(M1-M0)'; %w = Sw^-1 * (M1-M0)'; % But better
-            
+            self.w = covW\(mean1-mean0)'; %w = covW^-1 * (mean1-mean0)'; But better
             self.w = self.w./norm(self.w);
             
         end
