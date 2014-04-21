@@ -80,7 +80,6 @@ classdef prtClassQda < prtClass
                 error('prtClassFld:nonBinaryTraining','Input dataSet for prtClassFld.train must be binary');
             end
             
-            
             dataH0 = dataSet.getObservationsByClassInd(1);
             dataH1 = dataSet.getObservationsByClassInd(2);
             
