@@ -181,6 +181,25 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
             self = self.update;
         end
         
+        
+        % Overload this from prtDataSetBase to also check for all nan
+        % targets, we would like to overload this in
+        % prtDataInterfaceCategoricalTargets but we can't because of
+        % multiple inheritance
+        %
+        % Furthermore you cant do this because there are many places in the
+        % existing codebase where we assume that isLabled checks if targets
+        % exists.
+        %
+        % Instead in prtDataInterfaceCategoricalTargets we decided to add
+        % isFullUnlabeled as a Dependent property. Incases where you want
+        % to check if labels exist and are all non-NaN you need to use
+        % ~self.isLabeled || self.isFullyUnlabeled
+        %
+        %function b = getIsLabeled(self)
+        %    b = ~(isempty(self.targets) || (self.hasUnlabeled && (self.nUnlabeled == self.nObservations)));
+        %end
+        
         function Summary = summarize(self)
             % Summarize   Summarize the prtDataSetStandard object
             %
@@ -194,6 +213,34 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
     end
     
     methods %Plotting methods
+        
+        function handles = boxplot(self,varargin)
+            %handles = boxplot(dataSet)
+            % Draw a box plot for each feature in the data set. (Only
+            % really usable for data sets with fewer than 25 features).
+            %   
+            
+            nFeatures = self.nFeatures;
+            if nFeatures > 25;
+                error('prtDataSetClass:boxPlot','boxplot is only appropriate for data sets with fewer than 25 features');
+            end
+            [ii,jj] = prtUtilGetSubplotDimensions(nFeatures);
+            handles = cell(nFeatures,1);
+            for i = 1:nFeatures
+                if nFeatures > 1
+                    subplot(ii,jj,i);
+                    %otherwise, if we only have to make one, just use
+                    %whatever existing AXES were provided
+                    % That means 
+                    %    subplot(2,1,1); boxplot(ds); 
+                    % Does what is expected for a ds with one feature.
+                    %
+                end
+                handles{i} = boxplot(self.X(:,i),self.Y,varargin{:});
+                title(self.getFeatureNames(i));
+            end
+           
+        end
         
         function varargout = plotStarIndividual(obj,featureIndices)
             % plotStarIndividual   Create a star plot
@@ -921,7 +968,9 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
             if nargin < 2
                 AdditionalOptions = [];
             end
-            
+            if isa(AdditionalOptions,'function_handle');
+                AdditionalOptions = struct('additionalOnClickFunction',AdditionalOptions);
+            end
             try
                 prtPlotUtilDataSetExploreGuiWithNavigation(obj,AdditionalOptions);
             catch %#ok<CTCH>
@@ -929,13 +978,13 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
             end
         end
         
-        function exploreSimple(obj)
+        function exploreSimple(obj,varargin)
             % exploreSimple Explore the prtDataSetObject using basic
             % controls
             %
             %   dataSet.exploreSimple() opens the prtDataSetObject
             %   explorer for visualizing high dimensional data sets.
-            prtPlotUtilDataSetExploreGuiSimple(obj)
+            prtPlotUtilDataSetExploreGuiSimple(obj,varargin{:})
         end
         
         function varargout = imagesc(dataSet,varargin)
@@ -1035,13 +1084,13 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
             nPlotDimensions = length(featureIndices);
             if nPlotDimensions < 1
                 warning('prt:plot:NoPlotDimensionality','No plot dimensions requested.');
-                varargout = {[]};
+                varargout = {};
                 return
             elseif nPlotDimensions > 3
                 %Too many dimensions; default to explore()
                 explore(obj);
-                varargout = {[]};
-                return;
+                varargout = {};
+                return
             end
             nClasses = obj.nClasses;
             if nClasses == 0 && ~obj.hasUnlabeled
@@ -1121,65 +1170,105 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
                 varargout = {handleArray,legendStrings};
             end
         end
-    end
-    methods (Hidden)
-        %PLOTBW:
-        function varargout = plotbw(obj, featureIndices)
-            % plotbw   Plots the prtDataSetClass object
+        function varargout = plotSortedFeature(obj, featureIndex)
+            % PlotSortedFeature   Plots a feature of a prtDataSetClass
+            % object sorted 
             %
-            %   dataSet.plotbw() Plots the prtDataSetClass object in a
-            %   manner that will display well when converted to black and
-            %   white.
+            %   dataSet.plotSortedFeature(1)
             
-            if nargin < 2 || isempty(featureIndices)
-                featureIndices = 1:obj.nFeatures;
+            if nargin < 2 || isempty(featureIndex)
+                featureIndex = 1:obj.nFeatures;
             end
-            if islogical(featureIndices)
-                featureIndices = find(featureIndices);
+            if islogical(featureIndex)
+                featureIndex = find(featureIndex);
             end
             
-            nPlotDimensions = length(featureIndices);
+            nPlotDimensions = length(featureIndex);
             if nPlotDimensions < 1
-                warning('prt:plot:NoPlotDimensionality','No plot dimensions requested.');
+                warning('prt:plotSortedFeature:NoPlotDimensionality','No featureIndex requested.');
+                varargout = {[]};
                 return
+            elseif nPlotDimensions > 1
+                %Too many dimensions; default to explore()
+                warning('prt:plotSortedFeature:TooManyPlotDimensionality','featureIndex must be a single feature.');
+                varargout = {[]};
+                return;
             end
-            nClasses = obj.nClasses;
-            classColors = obj.plotOptions.colorsFunctionBw(obj.nClasses);
-            classSymbols = obj.plotOptions.symbolsFunctionBw(obj.nClasses);
             
+            obj = obj.retainFeatures(featureIndex);
+            
+            nClasses = obj.nClasses;
+            if nClasses == 0 && ~obj.hasUnlabeled
+                obj.Y = zeros(obj.nObservations,1);
+                nClasses = obj.nClasses;
+            end
+            
+            % Sort by the feature
+            [~, sortingInds] = sort(obj.X,'descend');
+            obj = obj.retainObservations(sortingInds);
+            
+            classColors = obj.plotOptions.colorsFunction(obj.nClasses);
+            classSymbols = obj.plotOptions.symbolsFunction(obj.nClasses);
             lineWidth = obj.plotOptions.symbolLineWidth;
             markerSize = obj.plotOptions.symbolSize;
             
             handleArray = zeros(nClasses,1);
             
             holdState = get(gca,'nextPlot');
+            % This call to gca will create a figure if it doesn't already
+            % exist
+            
+            if obj.hasUnlabeled
+                % There are unlabeled observations so we should plot those
+                % first That way they appear underneath of the labeled
+                % observations
+                
+                [cX, isNans] = obj.getDataUnlabeled();
+                xInd = find(isNans);
+            
+                classEdgeColor = prtPlotUtilClassColorUnlabeled; % FIX: Move to plotOptions?
+                classColor = prtPlotUtilClassColorUnlabeled; % FIX: Move to plotOptions?
+                classSymbol = prtPlotUtilClassSymbolsUnlabeled; % FIX: Move to plotOptions
+                unlabaledLegenedName = prtPlotUtilUnlabeledLegendString; % FIX: Move to plotOptions
+                
+                unlabeledHandle = stem(xInd, cX, classSymbol,'Color',classColor,'MarkerFaceColor',classColor,'MarkerEdgeColor',classEdgeColor,'linewidth',lineWidth,'MarkerSize',markerSize);
+                
+                hold on;
+            end
+            
             % Loop through classes and plot
             for i = 1:nClasses
-                %Use "i" here because it's by uniquetargetIND
-                cX = obj.getObservationsByClassInd(i, featureIndices);
-                classEdgeColor = classColors(i,:);
+                [cX,isThisClass] = obj.getDataByClassInd(i);
+                xInd = find(isThisClass);
+    
+                classEdgeColor = obj.plotOptions.symbolEdgeModificationFunction(classColors(i,:));
                 
-                handleArray(i) = prtPlotUtilScatter(cX,obj.getFeatureNames(featureIndices),classSymbols(i),classColors(i,:),classEdgeColor,lineWidth, markerSize);
+                handleArray(i) = stem(xInd, cX, classSymbols(i),'Color',classColors(i,:), 'MarkerFaceColor',classColors(i,:),'MarkerEdgeColor',classEdgeColor,'linewidth',lineWidth,'MarkerSize',markerSize);
                 
-                if i == 1
-                    hold on;
-                end
+                hold on;
             end
             set(gca,'nextPlot',holdState);
             % Set title
             title(obj.name);
-            grid on
+            
+            if obj.hasUnlabeled
+                handleArray = cat(1, handleArray(:), unlabeledHandle);
+            end
             
             % Create legend
+            legendStrings = [];
             if obj.isLabeled
                 legendStrings = getClassNamesInterp(obj);
+                if obj.hasUnlabeled
+                    legendStrings = cat(1,legendStrings,{unlabaledLegenedName});
+                end
                 legend(handleArray,legendStrings,'Location','SouthEast');
             end
             
             % Handle Outputs
             varargout = {};
             if nargout > 0
-                varargout = {handleArray};
+                varargout = {handleArray,legendStrings};
             end
         end
     end
@@ -1234,6 +1323,10 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
     end
     
     methods (Hidden)
+        function exploreObjectOriented(ds)
+            p = prtUiDataSetClassPlot(ds);
+            p.controls();
+        end
         function dsFoldOut = crossValidateCheckFoldResults(dsIn, dsTrain, dsTest, dsFoldOut)
             dsFoldOut = crossValidateCheckFoldResults@prtDataSetBase(dsIn, dsTrain, dsTest, dsFoldOut);
             dsFoldOut = crossValidateCheckFoldResultsWarnNumberOfClassesBad(dsIn, dsTrain, dsTest, dsFoldOut);

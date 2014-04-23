@@ -81,7 +81,7 @@ classdef ScrollPanel < hgsetget
 %   Comments:
 %
 
-    properties (Hidden = true, Access = private)
+    properties (Hidden=true) %(Hidden = true, Access = private) % Edited for the PRT
         hBorderPanel            % A panel to manage the borders that won't clipped.
         hViewportPanel          % The main panel
         hScrollingPanel         % The container for the ScrollingArea
@@ -449,6 +449,8 @@ classdef ScrollPanel < hgsetget
         end
         function set.BackgroundColor(obj, color)
             set(obj.hScrollingPanel, 'BackgroundColor', color);
+            %set(obj.hBorderPanel, 'BackgroundColor', color); %Editted for PRT
+            set(obj.hViewportPanel, 'BackgroundColor', color); %Editted for PRT
         end
         function color = get.BackgroundColor(obj)
             color = set(obj.hScrollingPanel, 'BackgroundColor');

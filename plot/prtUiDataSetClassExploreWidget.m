@@ -27,13 +27,12 @@ classdef prtUiDataSetClassExploreWidget < prtUiManagerPanel
 % USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-    
     properties
         plotManager
         
         titleStr = 'prtDataSetClass Explorer Widget';
         
-        tabObjectConstructors = {@prtUiDataSetClassExploreWidgetTabSelectAxes @prtUiDataSetClassExploreWidgetTabPlotOptions};
+        tabObjectConstructors = {@prtUiDataSetClassExploreWidgetTabSelectAxes @prtUiDataSetClassExploreWidgetTabPlotOptions @prtUiDataSetClassExploreWidgetTabClickDisplay};
         
         handles
         tabs
@@ -77,8 +76,6 @@ classdef prtUiDataSetClassExploreWidget < prtUiManagerPanel
             plotAxesOuterPos = get(self.plotManager.handles.axes,'outerposition');
             set(self.plotManager.handles.axes,'units',oldUnits);
             
-            
-            
             navFigPosTop = plotAxesFigPos(2)+plotAxesOuterPos(2)-1+plotAxesOuterPos(4) + navFigPad(2);
             navFigPosLeft = plotAxesFigPos(1)+plotAxesOuterPos(1)-1+plotAxesOuterPos(3) + navFigPad(1);
             
@@ -87,9 +84,7 @@ classdef prtUiDataSetClassExploreWidget < prtUiManagerPanel
             navFigPosTop = min([navFigPosTop, screenSize(4)-50]);
             navFigPosLeft = min([navFigPosLeft, screenSize(3)-navFigSize(2)-60]);
             
-            
             navFigPos = cat(2,navFigPosLeft, navFigPosTop-navFigSize(2), navFigSize(1), navFigSize(2));
-
 
             self.handles.figure = figure('units','pixels',...
                 'position', navFigPos,...
@@ -108,7 +103,6 @@ classdef prtUiDataSetClassExploreWidget < prtUiManagerPanel
                 'Position',[0 0 1 1]);
             
             self.madeThisWindow = true;
-            
             
             % Just in case anyone tries to plot in this window we will plot that inside
             % an invisible axes
@@ -136,8 +130,18 @@ classdef prtUiDataSetClassExploreWidget < prtUiManagerPanel
                 
             end
             
+            %self.handles.listenerClose = addlistener(self.plotManager.handles.axes,'BeingDeleted',@(~,~)close(self.handles.figure));
+            cDeleteFcn = get(self.plotManager.handles.axes,'DeleteFcn');
+            if ~isempty(cDeleteFcn)
+                warning('prtUiDataSetClassExploreWidget removed an existing axes DeleteFcn. This is a bug that will be removed in a future release');
+            end
+            set(self.plotManager.handles.axes,'DeleteFcn',@(~,~)self.onPlotAxesDelete())
             
-            
+        end
+        function onPlotAxesDelete(self)
+            try  %#ok<TRYNC>
+                close(self.handles.figure);
+            end
         end
     end
 end

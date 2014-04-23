@@ -107,6 +107,13 @@ classdef prtAlgorithm < prtAction & prtActionBig
     
     methods (Hidden = true)
 		
+        function str = textSummary(self)
+            str = '';
+            for i = 1:length(self.actionCell)
+                str = cat(2,str,self.actionCell{i}.textSummary);
+            end
+            str = strtrim(str);
+        end
         function Obj = setVerboseStorage(Obj,val)
             assert(numel(val)==1 && (islogical(val) || (isnumeric(val) && (val==0 || val==1))),'prtAction:invalidVerboseStorage','verboseStorage must be a logical');
             Obj.verboseStorageInternal = logical(val);
@@ -405,6 +412,12 @@ classdef prtAlgorithm < prtAction & prtActionBig
 
     methods (Hidden)
         
+        function str = exportSimpleText(self) %#ok<MANU>
+            str = '';
+            for i = 1:length(self.actionCell)
+                str = sprintf('%s\n%s',str,self.actionCell{i}.exportSimpleText);
+            end
+        end
         function plotAsClassifier(self)
             % plotAsClassifier(self)
             %   Plot an algorithm as though it were a classifier - e.g.,
@@ -540,5 +553,5 @@ classdef prtAlgorithm < prtAction & prtActionBig
             optimizedAlgorithm = train(Obj,DataSet);
             
         end
-    end        
+    end   
 end

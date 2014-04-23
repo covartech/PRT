@@ -61,4 +61,13 @@ classdef prtPreProcEnergyNormalizeRows < prtPreProc
         end
     end
     
+    
+    methods (Hidden)
+        function str = exportSimpleText(self)
+            titleText = sprintf('%% prtPreProcEnergyNormalizeRows\n');
+            energyOffsetText = prtUtilMatrixToText(full(self.energyOffset),'varName','energyOffset');
+            str = sprintf('%s%s',titleText,energyOffsetText); % No parameters 
+        end
+    end
+    
 end

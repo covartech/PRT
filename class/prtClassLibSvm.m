@@ -232,19 +232,23 @@ classdef prtClassLibSvm < prtClass
     methods (Access=protected, Hidden = true)
         
         function self = trainAction(self,dataSet)
-            training_label_vector = dataSet.getTargetsAsBinaryMatrix;
-            training_label_vector = double(training_label_vector(:,end)); %zeros and ones
-            training_instance_matrix = dataSet.getObservations;
-            self.libSvmOptions = self.libSvmOptionString(dataSet);
-            self.libSvmOptionsTest = self.libSvmOptionStringTest(dataSet);
-  
+            
             % Its ok to have 1 class if its a 1 class classifier
             if dataSet.nClasses ~= 2 && self.svmType ~=2
                 error('prt:prtClassLibSvm:UnaryData','prtClassLibSvm requires binary data for training');
             end
             if dataSet.nClasses ~= 1 && self.svmType ==2
-                error('prt:prtClassLibSvm:UnaryData','prtClassLibSvm requires unary data for training when svmType = 2');
+                % You can avoid this warning using
+                % prtOutlierRemovalFnTargets in your algorithm spec. 
+                warning('prt:prtClassLibSvm:UnaryData','prtClassLibSvm requires unary data for training when svmType = 2; using max(dataSet.uniqueClasses) as the default single class.');
+                dataSet = dataSet.retainClasses(max(dataSet.uniqueClasses));
             end
+            
+            training_label_vector = dataSet.getTargetsAsBinaryMatrix;
+            training_label_vector = double(training_label_vector(:,end)); %zeros and ones
+            training_instance_matrix = dataSet.getObservations;
+            self.libSvmOptions = self.libSvmOptionString(dataSet);
+            self.libSvmOptionsTest = self.libSvmOptionStringTest(dataSet);
             
             if self.kernelType == 4
                 %self.userSpecKernel = prtKernelRbfNdimensionScale;
@@ -264,7 +268,7 @@ classdef prtClassLibSvm < prtClass
             
             %Need to figure out whether to flip SVM outputs:
             yOut = runAction(self,dataSet);
-            auc = prtScoreAuc(yOut.getObservations,dataSet.getTargets);
+            auc = prtScoreAuc(yOut.retainLabeled);
             
             %libSVM has some weird rules about target names.  the first target type it finds is called H1...
             % We can fix this either above, or here
@@ -318,6 +322,12 @@ classdef prtClassLibSvm < prtClass
         
     end
     methods (Hidden = true)
+        
+        function str = textSummary(self)
+            str = sprintf('%s: \n',class(self));
+            str2 = evalc('disp(self.trainedSvm)');
+            str = sprintf('%s%s',str,str2);
+        end
         function optionString = libSvmOptionString(obj,dataSet)
             if isnan(obj.gamma)
                 obj.gamma = 1./dataSet.nFeatures;
@@ -336,4 +346,16 @@ classdef prtClassLibSvm < prtClass
             optionString = sprintf('-b %d',obj.probabilityEstimates);
         end
     end
+        
+    methods (Hidden)
+        function str = exportSimpleText(self) %#ok<MANU>
+            titleText = sprintf('%% prtClassLibSvm\n');
+            svmSvText = prtUtilMatrixToText(full(self.trainedSvm.SVs),'varName','supportVectors');
+            svmSvCoeffText = prtUtilMatrixToText(full(self.trainedSvm.sv_coef),'varName','svCoefficients');
+            svmSigmaText = prtUtilMatrixToText(sqrt(size(self.trainedSvm.SVs,2)),'varName','sigma');
+            svmRhoText = prtUtilMatrixToText(self.trainedSvm.rho,'varName','rho');
+            str = sprintf('%s%s%s%s%s',titleText,svmSvText,svmSvCoeffText,svmSigmaText,svmRhoText);
+        end
+    end
 end
+

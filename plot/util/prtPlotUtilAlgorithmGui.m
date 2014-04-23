@@ -83,7 +83,7 @@ for iEdge = 1:length(GraphLayoutInfo.Edges)
     %Layout.edges(iEdge) = prtPlotUtilPlotArrow(cat(1,startLoc(1),stopLoc(1)),cat(1,startLoc(2),stopLoc(2)),[20 4]);
     %set(Layout.edges(iEdge),'facecolor',[0 0 0],'edgecolor',[0 0 0])
     
-    Layout.edges(iEdge) = prtPlotUtilPlotArrow(cat(1,startLoc(1),stopLoc(1)),cat(1,startLoc(2),stopLoc(2)));
+    Layout.edges(iEdge) = prtPlotUtilPlotArrow(cat(1,startLoc(1),stopLoc(1)),cat(1,startLoc(2),stopLoc(2)),[],'headWidth',0.01,'realHeadLength',0.01);
     
     
 end

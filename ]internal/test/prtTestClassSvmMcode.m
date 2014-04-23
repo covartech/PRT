@@ -1,4 +1,4 @@
-function result = prtTestClassSvm
+function result = prtTestClassSvmMcode
 
 % Copyright (c) 2013 New Folder Consulting
 %
@@ -32,7 +32,7 @@ result = true;
 %     TestDataSet = prtDataGenUnimodal;
 %     TrainingDataSet = prtDataGenUnimodal;
 % 
-%     classifier = prtClassSvm;
+%     classifier = prtTestClassSvmMcode;
 %     classifier = classifier.train(TrainingDataSet);
 %     classified = run(classifier, TestDataSet);
 %     classes  = classified.getX > .5;
@@ -47,7 +47,7 @@ baselinePercentCorr =  0.9400;
 TestDataSet = prtDataGenUnimodal;
 TrainingDataSet = prtDataGenUnimodal;
 
-classifier = prtClassSvm;
+classifier = prtTestClassSvmMcode;
 %classifier.verboseStorage = false;
 classifier = classifier.train(TrainingDataSet);
 classified = run(classifier, TestDataSet);
@@ -72,7 +72,7 @@ end
 %% Check that cross-val and k-folds work
 
 TestDataSet = prtDataGenUnimodal;
-classifier = prtClassSvm;
+classifier = prtTestClassSvmMcode;
 
 % cross-val
 keys = mod(1:400,2);
@@ -98,7 +98,7 @@ result = result & (percentCorr > baselinePercentCorr);
 noerror = true;
 
 try
-    classifier = prtClassSvm('kernels', prtKernelRbf);
+    classifier = prtTestClassSvmMcode('kernels', prtKernelRbf);
 catch
     noerror = false;
 end

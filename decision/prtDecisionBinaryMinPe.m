@@ -70,9 +70,9 @@ classdef prtDecisionBinaryMinPe < prtDecisionBinary
     properties (SetAccess = private)
         name = 'MinPe'   % MinPe
         nameAbbreviation = 'min(Pe)';  % MINPE
+        threshold
     end
     properties (Hidden = true)
-        threshold
         uniqueClasses
     end
     methods
@@ -107,4 +107,5 @@ classdef prtDecisionBinaryMinPe < prtDecisionBinary
             uniqueClasses = Obj.uniqueClasses;
         end
     end
+    
 end

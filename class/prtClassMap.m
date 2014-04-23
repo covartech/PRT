@@ -18,7 +18,7 @@ classdef prtClassMap < prtClass
  %
  %    Example:
  %
- %    TestDataSet = prtDataGenUnimodal;       % Create some test and
+ %    Test` = prtDataGenUnimodal;       % Create some test and
  %    TrainingDataSet = prtDataGenUnimodal;   % training data
  %    classifier = prtClassMap;               % Create a classifier
  %    classifier = classifier.train(TrainingDataSet);    % Train
@@ -65,60 +65,79 @@ classdef prtClassMap < prtClass
     properties
         rvs = prtRvMvn; % Random variable object containing mean and variance
     end
+    properties (Hidden)
+        runLogLikelihoods = false
+    end
     
     methods
         % Constructor
-        function Obj = prtClassMap(varargin)
+        function self = prtClassMap(varargin)
             
-            Obj.classTrain = 'prtDataInterfaceCategoricalTargets';
-            Obj.classRun = 'prtDataSetBase';
-            Obj.classRunRetained = false;
+            self.classTrain = 'prtDataInterfaceCategoricalTargets';
+            self.classRun = 'prtDataSetBase';
+            self.classRunRetained = false;
             
-            Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
+            self = prtUtilAssignStringValuePairs(self,varargin{:});
         end
         % Set function
-        function Obj = set.rvs(Obj,val)
+        function self = set.rvs(self,val)
             if ~(isa(val, 'prtRv') || isa(val, 'prtBrv')) 
                 error('prtClassMAP:rvs','Rvs parameter must be of class prtRv');
             else
-                Obj.rvs = val;
+                self.rvs = val;
             end
         end
     end
     
     methods (Access = protected, Hidden = true)
         
-        function Obj = trainAction(Obj,DataSet)
+        function self = trainAction(self,ds)
+            
             % Repmat the rv objects to get one for each class
-            Obj.rvs = repmat(Obj.rvs(:), (DataSet.nClasses - length(Obj.rvs)+1),1);
-            Obj.rvs = Obj.rvs(1:DataSet.nClasses);
+            % The pattern of supplied RVs repeats, if 2 rvs are suplied for
+            % a three class problem, the third class gets the same as class
+            % 1, if there were a fourth class if would be the same as class
+            % 2.
+            self.rvs = repmat(self.rvs(:), (ds.nClasses - length(self.rvs)+1),1);
+            self.rvs = self.rvs(1:ds.nClasses);
 
             % Get the ML estimates of the RV parameters for each class
-            for iY = 1:DataSet.nClasses
-                Obj.rvs(iY) = train(Obj.rvs(iY), DataSet.retainClassesByInd(iY));
+            for iY = 1:ds.nClasses
+                self.rvs(iY) = train(self.rvs(iY), ds.retainClassesByInd(iY));
             end
         end
         
-        function DataSet = runAction(Obj,DataSet)
+        function ds = runAction(self,ds)
             
-            logLikelihoods = zeros(DataSet.nObservations, length(Obj.rvs));
-            for iY = 1:length(Obj.rvs)
-                logLikelihoods(:,iY) = getObservations(run(Obj.rvs(iY), DataSet));
+            % We call run for each RV
+            % Typically this is the loglikelihood, but it might not be.
+            logLikelihoods = zeros(ds.nObservations, length(self.rvs));
+            for iY = 1:length(self.rvs)
+                logLikelihoods(:,iY) = getObservations(run(self.rvs(iY), ds));
             end
             
-            % Change to posterior probabilities and package everything up in a
-            % prtDataSet
-            DataSet = prtDataSetClass(exp(bsxfun(@minus, logLikelihoods, prtUtilSumExp(logLikelihoods.').')));
+            if ~self.runLogLikelihoods
+                % If we don't want loglikelihoods transform them to
+                % probabilities
+                logLikelihoods = exp(bsxfun(@minus, logLikelihoods, prtUtilSumExp(logLikelihoods.').'));
+            end
+            ds.X = logLikelihoods;
         end
     
-        function xOut = runActionFast(Obj,xIn,ds) %#ok<INUSD>
+        function xOut = runActionFast(self,xIn,ds) %#ok<INUSD>
             
-            logLikelihoods = zeros(size(xIn,1),length(Obj.rvs));
-            for iY = 1:length(Obj.rvs)
-                logLikelihoods(:,iY) = runFast(Obj.rvs(iY), xIn);
+            logLikelihoods = zeros(size(xIn,1),length(self.rvs));
+            for iY = 1:length(self.rvs)
+                logLikelihoods(:,iY) = runFast(self.rvs(iY), xIn);
             end
             
-            xOut = exp(bsxfun(@minus, logLikelihoods, prtUtilSumExp(logLikelihoods.').'));
+            if ~self.runLogLikelihoods
+                % If we don't want loglikelihoods transform them to
+                % probabilities
+                xOut = exp(bsxfun(@minus, logLikelihoods, prtUtilSumExp(logLikelihoods.').'));
+            else
+                xOut = logLikelihoods;
+            end
         end
     end
     

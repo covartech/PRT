@@ -312,6 +312,7 @@ classdef prtAction
             % Check for isCrossValidateValid removed - 2012-11-08
             % This now handled by allowing the dataset to check the fold
             % results.
+            
 
             if ~isvector(validationKeys) || (numel(validationKeys) ~= dsIn.nObservations)
                 error('prt:prtAction:crossValidate','validationKeys must be a vector with a length equal to the number of observations in the data set');
@@ -324,12 +325,13 @@ classdef prtAction
             actuallyShowProgressBar = self.showProgressBar && (length(uKeys) > 1);
             if actuallyShowProgressBar
                 waitBarself = prtUtilProgressBar(0,sprintf('Crossvalidating - %s',self.name),'autoClose',true);
-                
+                cleanupObj = onCleanup(@()cleanUpHandles(waitBarself));
+
 				%cleanupself = onCleanup(@()close(waitBarself));
 				% The above would close the waitBar upon completion but
 				% it doesn't play nice when there are many bars in the
 				% same window
-            end
+            end            
             
 			testingIndiciesCell = cell(length(uKeys),1);
 			outputDataSetCell = cell(length(uKeys),1);
@@ -379,14 +381,16 @@ classdef prtAction
 						trainedActions(uInd) = trainedAction;
 					end
 				end
-			end
-			if actuallyShowProgressBar
-				waitBarself.update(1);
-			end
+            end
+            
 			
 			dsOut = crossValidateCombineFoldResults(outputDataSetCell{1}, outputDataSetCell, testingIndiciesCell);
 			
 			dsOut = dsOut.acquireNonDataAttributesFrom(dsIn);
+            
+            function cleanUpHandles(wbHandle)
+                wbHandle.update(1);
+            end
         end
         
         function varargout = kfolds(self, ds , k)
@@ -755,6 +759,17 @@ classdef prtAction
                     fid = fopen(fullfile(filePath,fileWithMExt),'w');
                     fprintf(fid,'%s\n',exportString{:});
                     fclose(fid);
+                    
+                case 'simpletext'
+
+                    varargout{1} = obj.exportSimpleText;
+                    
+                    if nargin == 3
+                        file = varargin{1};
+                        fid = fopen(file,'w');
+                        fprintf(fid,'%s\n',varargout{1});
+                        fclose(fid);
+                    end
     
                 otherwise
                     error('prt:prtAction:export','Invalid file formal specified');
@@ -842,6 +857,44 @@ classdef prtAction
 	end
 	
 	methods (Hidden = true)
+        function str = exportSimpleText(self) %#ok<MANU>
+            error('exportSimpleText must be overloaded in sub-classes');
+        end
+        function str = textSummary(self) %#ok<MANU>
+            % str = textSummary(self)
+            %   Give a short textual summary of the object in the output
+            %   str.  The summary shows what a call to "display" would call
+            %   using only public fields, and ignoring a lot of
+            %   general-purpose fields.  We can specify this in more detail
+            %   if people like it.  Also, different actions can sub-class this to
+            %   do whatever they want.
+            %
+            %   Works on actions:
+            %       pca = train(prtPreProcPca('nComponents',2),prtDataGenBimodal);
+            %       textSummary(pca)
+            %
+            %   And algorithms:
+            %       algo = train(prtPreProcPls('nComponents',2) + prtClassLibSvm,prtDataGenBimodal);
+            %       algo.textSummary
+            
+            warning off; %#ok<WNOFF>
+            s = struct(self);
+            warning on; %#ok<WNON>
+            rmFieldNames = {'nameAbbreviation','isNativeMary','plotBasis','plotProjections','twoClassParadigm','internalDecider','isSupervised','isCrossValidateValid','verboseStorage','showProgressBar','isTrained','dataSetSummary','dataSet','userData'};
+            publicFieldNames = properties(self);
+            totalFieldNames = fieldnames(s);
+            
+            rmFieldNames = union(rmFieldNames,setdiff(totalFieldNames,publicFieldNames));
+            rmFieldNames = intersect(rmFieldNames,totalFieldNames);
+            s = rmfield(s,rmFieldNames); %#ok<NASGU>
+            
+            str = sprintf('%s: \n',class(self));
+            str2 = evalc('disp(s)');
+            str2 = deblank(str2);
+            str2 = sprintf('%s\n\n',str2);
+            str = sprintf('%s%s',str,str2);
+        end
+        
 		function fun = getFeatureNameModificationFunction(self) %#ok<MANU>
 			fun = []; % Default we output empty which means don't change anything...
 			

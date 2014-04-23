@@ -36,6 +36,7 @@ classdef prtUiManagerPanel < prtUiManager
                self.create()
            end
         end
+        
         function create(self)
             self.managedHandle = uipanel('BackgroundColor',get(0,'DefaultFigureColor'),...
                 'BorderType','none');

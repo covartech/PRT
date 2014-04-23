@@ -77,6 +77,7 @@ classdef prtClusterKmeans < prtCluster %prtClass %prtAction %should extent prtCl
         nClusters = 3;  % The number of clusters to find
         kmeansHandleEmptyClusters = 'remove';  % Action to take when an empty cluster occurs
         distanceMetricFn = @prtDistanceEuclidean;  % The distance metric; should be a function like D = prtDistanceEuclidean(dataSet1,dataSet2)
+        initialMeans = 'plusplus';
     end
     properties (SetAccess = protected)
         clusterCenters = [];   % The cluster centers
@@ -100,6 +101,17 @@ classdef prtClusterKmeans < prtCluster %prtClass %prtAction %should extent prtCl
             end
             Obj.kmeansHandleEmptyClusters = value;
         end
+        function Obj = set.initialMeans(Obj,value)
+            if isa(value,'char')
+                if ~any(strcmpi(value,{'random','plusplus'}))
+                    error('prt:prtClusterKmeans:kmeansInitialMeans','If specified as a string initialMeans must be one of ''random'', or ''plusplus''');
+                end
+            else
+                % initialMeans were specified as a matrix. Assume
+                % everything will be ok and let prtUtilKMeans catch errors
+            end
+            Obj.initialMeans = value;
+        end
         
         function Obj = set.distanceMetricFn(Obj,value)
             if ~isa(value,'function_handle')
@@ -118,7 +130,7 @@ classdef prtClusterKmeans < prtCluster %prtClass %prtAction %should extent prtCl
     methods (Access=protected, Hidden = true)
         
         function Obj = trainAction(Obj,DataSet)
-            Obj.clusterCenters = prtUtilKmeans(DataSet.getObservations,Obj.nClusters,'distanceMetricFn',Obj.distanceMetricFn,'handleEmptyClusters',Obj.kmeansHandleEmptyClusters);
+            Obj.clusterCenters = prtUtilKmeans(DataSet.getObservations,Obj.nClusters,'distanceMetricFn',Obj.distanceMetricFn,'handleEmptyClusters',Obj.kmeansHandleEmptyClusters,'initialMeans',Obj.initialMeans);
         end
         
         function DataSet = runAction(Obj,DataSet)

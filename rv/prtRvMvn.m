@@ -125,8 +125,20 @@ classdef prtRvMvn < prtRv & prtRvMemebershipModel
 
             X = R.dataInputParse(X); % Basic error checking etc
             
-            R.mu = mean(X);
-            R.sigma = cov(X);
+            R.mu = mean(X,1);
+            if size(X,1) == 1 
+                % A single observation
+                % This is bad..
+                % You can't call cov for this case 
+                % Since we always want to output sum( (x_i - u)'*(x_i - u))
+                % We will output a matrix of zeros of the correct size.
+                % Error checking for a propert covariance will happen later
+                % after the bias has been applied.
+                R.sigma = zeros(size(X,2));
+            else
+                R.sigma = cov(X);
+            end
+            
         end
         
         function vals = pdf(R,X)
@@ -267,7 +279,7 @@ classdef prtRvMvn < prtRv & prtRvMemebershipModel
             weights = weights(:);
             
             Nbar = sum(weights);
-            R.mu = 1/Nbar*sum(bsxfun(@times,X,weights));
+            R.mu = 1/Nbar*sum(bsxfun(@times,X,weights),1);
             X = bsxfun(@times,bsxfun(@minus,X,R.mu),sqrt(weights));
             R.sigma = 1/Nbar*(X'*X);
         end

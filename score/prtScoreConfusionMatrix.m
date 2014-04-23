@@ -73,6 +73,7 @@ else
     % in possibleGuessValues this will result in confusion matrices that do not
     % sum to 100% accross the rows.
     
+    %uClassesTruth = intersect(possibleTruthValues,uClassesTruth);
     uClassesTruth = possibleTruthValues;
     uClassesGuess = possibleTruthValues;
 end

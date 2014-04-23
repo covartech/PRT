@@ -1,4 +1,4 @@
-function DataSet = prtDataGenNoisySinc
+function DataSet = prtDataGenNoisySinc(nSamples)
 % prtDataGenNoisySinc Generates noisy sinc example data
 %
 %   DATASET = prtDataGenNoisySinc returns a prtDataSetRegress with 100
@@ -36,9 +36,9 @@ function DataSet = prtDataGenNoisySinc
 % USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-
-
-nSamples = 100;
+if nargin < 1 || isempty(nSamples)
+    nSamples = 100;
+end
 noiseVar = 0.1;
 
 t = linspace(-10,10,1000);
