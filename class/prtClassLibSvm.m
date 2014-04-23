@@ -268,7 +268,7 @@ classdef prtClassLibSvm < prtClass
             
             %Need to figure out whether to flip SVM outputs:
             yOut = runAction(self,dataSet);
-            auc = prtScoreAuc(yOut.getObservations,dataSet.getTargets);
+            auc = prtScoreAuc(yOut.retainLabeled);
             
             %libSVM has some weird rules about target names.  the first target type it finds is called H1...
             % We can fix this either above, or here
