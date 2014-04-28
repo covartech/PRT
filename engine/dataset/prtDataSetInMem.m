@@ -158,10 +158,10 @@ classdef prtDataSetInMem < prtDataSetBase
             if ~isvector(val)
                 error('observationInfo must be a structure array');
             end
-            if length(val) ~= self.nObservations && self.nObservations ~= 0
+            if numel(val) ~= self.nObservations && self.nObservations ~= 0
                 error('observationInfo is length %d; should be a structure array of length %d',length(val),self.nObservations);
             end
-            self.observationInfoInternal = val;
+            self.observationInfoInternal = val(:);
         end
         
     end
