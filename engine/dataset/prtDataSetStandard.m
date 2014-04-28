@@ -452,6 +452,9 @@ classdef prtDataSetStandard < prtDataSetInMem
 	methods (Access = protected)
 		
 		function self = retainFeatureNames(self,retainFeatureInds)
+            if islogical(retainFeatureInds)
+                retainFeatureInds = find(retainFeatureInds);
+            end
 			keys = 1:length(retainFeatureInds);
 			names = self.featureNameIntegerAssocArray.get(retainFeatureInds);
 			self.featureNameIntegerAssocArray = prtUtilIntegerAssociativeArray(keys,names);
