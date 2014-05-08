@@ -1,6 +1,18 @@
-function List = prtUtilSubDir(directory,match,dirMatch,recurse, ignoreDotFiles)
-% xxx Need Help xxx
-% List = prtUtilSubDir(directory,match)
+function [outputList,outputStruct] = prtUtilSubDir(directory,fileMatch,varargin)
+% list = prtUtilSubDir(directory,match)
+%   Return all the files in directory (and all sub-directories) matching
+%   the file-specification "match".
+%
+%   list = prtUtilSubDir(matlabroot,'*.txt');
+%
+% list = prtUtilSubDir(directory,match,varargin)
+%   Enables specification of additional parameters:
+%       dirMatch (*)
+%       recurse (true)
+%       includeDirectoriesInOutput (true)
+%
+% [outputList,outputStruct] = prtUtilSubDir(...) Also output the structure
+%   (as from DIR) for each file found.
 
 % Copyright (c) 2013 New Folder Consulting
 %
@@ -23,42 +35,41 @@ function List = prtUtilSubDir(directory,match,dirMatch,recurse, ignoreDotFiles)
 % OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
 % USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-if nargin < 2 || isempty(match)
-    match = '*';
+p = inputParser;
+p.addParameter('dirMatch','*');
+p.addParameter('recurse',true);
+p.addParameter('includeDirectoriesInOutput',true);
+
+p.parse(varargin{:});
+inputStruct = p.Results;
+
+dirMatch = inputStruct.dirMatch;
+recurse = inputStruct.recurse;
+% 
+subDirectoryList = dir(fullfile(directory,dirMatch));
+% Remove . and ..
+subDirectoryList = subDirectoryList(~arrayfun(@(x)ismember(x.name,{'.';'..'}),subDirectoryList));
+
+%Why remove directories?!
+fileList = dir(fullfile(directory,fileMatch));
+fileList = fileList(~arrayfun(@(x)ismember(x.name,{'.';'..'}),fileList));
+if isa(inputStruct.includeDirectoriesInOutput,'char') && strcmpi(inputStruct.includeDirectoriesInOutput,'only')
+    fileList = fileList([fileList.isdir]);
+elseif isa(inputStruct.includeDirectoriesInOutput,'char') 
+    error('prtUtilSubDir:invalidOutputSpec','Character includeDirectoriesInOutput must be ''only''');
+elseif ~inputStruct.includeDirectoriesInOutput
+    fileList = fileList(~[fileList.isdir]);
 end
 
-if nargin < 3 || isempty(dirMatch)
-    dirMatch = '*';
-end
-
-if nargin < 4 || isempty(recurse)
-    recurse = true;
-end
-
-if nargin < 5 || isempty(ignoreDotFiles)
-    ignoreDotFiles = false;
-end
-
-
-X = dir(fullfile(directory,dirMatch));
-
-Xdir = X(cat(1,X.isdir));
-
-Xdir = Xdir(~cellfun(@(x)ismember(x,{'.';'..'}),{Xdir.name}));
-
-DC = dir(fullfile(directory,match));
-DC = DC(~cat(1,DC.isdir));
-
-if ignoreDotFiles
-    DC = DC(cellfun(@(c)c(1)~='.',{DC.name}));
-end
-
-List = {};
+outputList = {};
+outputStruct = [];
 if recurse
-    for ind = 1:length(Xdir)
-        NewDir = fullfile(directory,Xdir(ind).name);
-        cList = prtUtilSubDir(NewDir,match,dirMatch);
-        List = [List;cList];
+    for ind = 1:length(subDirectoryList)
+        newDir = fullfile(directory,subDirectoryList(ind).name);
+        [cList,cStruct] = prtUtilSubDir(newDir,fileMatch,varargin{:});
+        outputList = cat(1,outputList,cList);
+        outputStruct = cat(1,outputStruct,cStruct);
     end
 end
-List = [List;cellfun(@(x)fullfile(directory,x),{DC.name}','uniformoutput',false)];
+outputList = [outputList;cellfun(@(x)fullfile(directory,x),{fileList.name}','uniformoutput',false)];
+outputStruct = fileList(:);
