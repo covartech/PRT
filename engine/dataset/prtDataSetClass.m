@@ -1016,7 +1016,7 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
             %   ds = prtDataGenMary;
             %   ds.imagesc;
             %
-            %   ds.imagesc([-1 1]); %ds.imagesc('cLim',[-1 1]); %equivalent
+            %   ds.imagesc([-1 1]); % ds.imagesc('cLim',[-1 1]); %equivalent
             %
             %
             if nargin == 2
@@ -1067,6 +1067,10 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
                 prevFound = inputs.y(1);
                 lastFound = inputs.y(end);
             end
+            xLims = [0, size(x,2)+1];
+            if ~isempty(inputs.x);
+                xLims = [inputs.x(1),inputs.x(end)];
+            end
             textLocs = [];
             lHandleOut = nan(length(uTargets)-1);
             for i = 2:length(uTargets)
@@ -1082,7 +1086,7 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
                 end
                 textLocs = cat(1,textLocs,mean([found,prevFound]));
                 hold on;
-                lHandleOut(i) = plot([0,size(x,2)+1],[found,found]-.5,'k');
+                lHandleOut(i) = plot(xLims,[found,found]-.5,'k');
                 set(lHandleOut(i),'linewidth',lineWidthSpec);
                 hold off;
                 prevFound = found;
