@@ -1114,12 +1114,13 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
                 % first That way they appear underneath of the labeled
                 % observations
                 
+                featureNames = obj.getFeatureNames(featureIndices);
                 cX = obj.getDataUnlabeled(featureIndices);
                 classEdgeColor = prtPlotUtilClassColorUnlabeled; % FIX: Move to plotOptions?
                 classColor = prtPlotUtilClassColorUnlabeled; % FIX: Move to plotOptions?
                 classSymbol = prtPlotUtilClassSymbolsUnlabeled; % FIX: Move to plotOptions
                 unlabaledLegenedName = prtPlotUtilUnlabeledLegendString; % FIX: Move to plotOptions
-                unlabeledHandle = prtPlotUtilScatter(cX,cell(size(cX,2),1),classSymbol,classColor,classEdgeColor,lineWidth, markerSize);
+                unlabeledHandle = prtPlotUtilScatter(cX,featureNames,classSymbol,classColor,classEdgeColor,lineWidth, markerSize);
                 
                 hold on;
             end

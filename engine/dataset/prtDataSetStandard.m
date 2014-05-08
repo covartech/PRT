@@ -363,6 +363,19 @@ classdef prtDataSetStandard < prtDataSetInMem
 			% dsOut = retainFeatures(dataSet,retainFeatureInds)
 			%  Return a data set formed by retaining the specified features.
 			
+            if isa(retainFeatureInds,'char')
+                retainFeatureInds = {retainFeatureInds};
+            end
+            
+            if isa(retainFeatureInds,'cell')
+                origFeatureNames = retainFeatureInds;
+                [isActuallyAClass, retainFeatureInds] = ismember(origFeatureNames,obj.getFeatureNames); %#ok<ASGLU>
+                if any(~isActuallyAClass)
+                    invalid = find(~isActuallyAClass);
+                    error('prtDataSetStandard:retainFeatures:invalidString','The string %s did not match any feature names of the data set',origFeatureNames{invalid(1)});
+                end
+            end
+            
 % 			try
 				obj = obj.retainFeatureNames(retainFeatureInds);
 				obj.data = obj.data(:,retainFeatureInds);
