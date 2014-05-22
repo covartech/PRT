@@ -179,7 +179,7 @@ classdef prtDataSetBase
     methods
         function self = set.name(self, newName)
             if ~isa(newName,'char');
-                error('prt:prtDataSetBase:dataSetNameNonString','name must but name must be a character array');
+                error('prt:prtDataSetBase:dataSetNameNonString','name must be a character array');
             end
             self.name = newName;
         end

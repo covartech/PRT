@@ -102,6 +102,7 @@ classdef prtPreProcPca < prtPreProc
             % dataSetApp = reconstruct(pca,dataSetScores)
             %  Generate the PCA basis approximation using the scores in dataSetScores
             %
+            
             xOut = repmat(self.means,dataSetScores.nObservations,1);
             if self.nComponents > 0
                 xOut = xOut + (dataSetScores.X*self.pcaVectors');
@@ -159,10 +160,15 @@ classdef prtPreProcPca < prtPreProc
         end
         
         function dataSet = runAction(self,dataSet)
-            dataSet = dataSet.setObservations(self.runActionFast(dataSet.getObservations));
+            dataSet.X = self.runActionFast(dataSet.getObservations);
         end
         
         function xOut = runActionFast(self,xIn)
+            
+            if self.nComponents == 0
+                xOut = nan(size(xIn,1),1);
+                return;
+            end
             if self.removeMean
                 xOut = bsxfun(@minus,xIn,self.means);
                 if self.nComponents > 0

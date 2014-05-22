@@ -998,16 +998,42 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
             %   the same class index are contiguous and class indices are
             %   monotonically increasing.
             %
-            % imagesc(dataSet,cLims) specify the limits of
+            % imagesc(dataSet,cLim) specify the limits of
             %   the colormap for visualization.  See imagesc for more
             %   information.
             %
             % [imHandle,lineHandle] = prtUtilDataSetImagesc(...) output a
             %   handle to the image and lines used in the visualization.
             %
-            % ds = prtDataGenMary;
-            % ds.imagesc;
+            % [imHandle,lineHandle] = prtUtilDataSetImagesc(...,param,val)
+            %   enables specification of addition input arguments as
+            %   parameter/value pairs.  Valid parameters are:
+            %       x - the x input to imagesc.
+            %       y - the y input to imagesc
+            %       cLim - the imagesc color limits; see above
             %
+            % Example usage:
+            %   ds = prtDataGenMary;
+            %   ds.imagesc;
+            %
+            %   ds.imagesc([-1 1]); % ds.imagesc('cLim',[-1 1]); %equivalent
+            %
+            %
+            if nargin == 2
+                varargin{2} = varargin{1};
+                varargin{1} = 'cLim';
+            end
+            if nargin > 2 && isa(varargin{1},'double')
+                varargin(end+1:end+2) = {'cLim',varargin{1}};
+                varargin = varargin(2:end);
+            end
+            
+            p = inputParser;
+            p.addParameter('x',[]);
+            p.addParameter('y',[]);
+            p.addParameter('cLim',[]);
+            p.parse(varargin{:});
+            inputs = p.Results;
             
             lineWidthSpec = 3;
             
@@ -1026,10 +1052,10 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
                 x = x(inds,:);
             end
             
-            if nargin < 2
-                handleOut = imagesc(x);
+            if isempty(inputs.cLim)
+                handleOut = imagesc(inputs.x,inputs.y,x);
             else
-                handleOut = imagesc(x,varargin{1});
+                handleOut = imagesc(inputs.x,inputs.y,x,inputs.cLim);
             end
             
             legendStrings = getClassNamesInterp(dataSet);
@@ -1040,6 +1066,15 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
             
             % Find the places to draw the lines, and the places to make the ticks
             prevFound = 0;
+            lastFound = size(x,1);
+            if ~isempty(inputs.y);
+                prevFound = inputs.y(1);
+                lastFound = inputs.y(end);
+            end
+            xLims = [0, size(x,2)+1];
+            if ~isempty(inputs.x);
+                xLims = [inputs.x(1),inputs.x(end)];
+            end
             textLocs = [];
             lHandleOut = nan(length(uTargets)-1);
             for i = 2:length(uTargets)
@@ -1050,14 +1085,17 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
                 end
                 found = found(1);
                 
+                if ~isempty(inputs.y)
+                    found = found/length(sortedTargets)*(inputs.y(end)-inputs.y(1)) + inputs.y(1);
+                end
                 textLocs = cat(1,textLocs,mean([found,prevFound]));
                 hold on;
-                lHandleOut(i) = plot([0,size(x,2)+1],[found,found]-.5,'k');
+                lHandleOut(i) = plot(xLims,[found,found]-.5,'k');
                 set(lHandleOut(i),'linewidth',lineWidthSpec);
                 hold off;
                 prevFound = found;
             end
-            textLocs = cat(1,textLocs,mean([prevFound,size(x,1)]));
+            textLocs = cat(1,textLocs,mean([prevFound,lastFound]));
             
             % Make the ticks
             xlabel('Features');
@@ -1118,12 +1156,13 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
                 % first That way they appear underneath of the labeled
                 % observations
                 
+                featureNames = obj.getFeatureNames(featureIndices);
                 cX = obj.getDataUnlabeled(featureIndices);
                 classEdgeColor = prtPlotUtilClassColorUnlabeled; % FIX: Move to plotOptions?
                 classColor = prtPlotUtilClassColorUnlabeled; % FIX: Move to plotOptions?
                 classSymbol = prtPlotUtilClassSymbolsUnlabeled; % FIX: Move to plotOptions
                 unlabaledLegenedName = prtPlotUtilUnlabeledLegendString; % FIX: Move to plotOptions
-                unlabeledHandle = prtPlotUtilScatter(cX,cell(size(cX,2),1),classSymbol,classColor,classEdgeColor,lineWidth, markerSize);
+                unlabeledHandle = prtPlotUtilScatter(cX,featureNames,classSymbol,classColor,classEdgeColor,lineWidth, markerSize);
                 
                 hold on;
             end
