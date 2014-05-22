@@ -359,10 +359,33 @@ classdef prtDataSetStandard < prtDataSetInMem
 			obj = obj.update;
 		end
 		
-		function [obj,retainFeatureInds] = retainFeatures(obj,retainFeatureInds)
+		function [obj,retainFeatureInds] = retainFeatures(obj,varargin)
 			% dsOut = retainFeatures(dataSet,retainFeatureInds)
 			%  Return a data set formed by retaining the specified features.
 			
+            if nargin == 1
+				retainFeatureInds = 1:obj.nFeatures;
+			else
+				retainFeatureInds = varargin{1};
+                if isa(retainFeatureInds,'char')
+                    retainFeatureInds = {retainFeatureInds};
+                end
+                if isa(retainFeatureInds,'cell')
+                    featureNames = obj.featureNames;
+                    for i = 1:length(retainFeatureInds)
+                        cName = retainFeatureInds{i};
+                        retainFeatureInds{i} = find(strcmpi(featureNames,cName));
+                        if isempty(retainFeatureInds{i})
+                            error('prt:retainFeatures:invalidFeature','The feature name provided: %s, does not match any of the available feature names',cName);
+                        elseif ~isscalar(retainFeatureInds{i})
+                            warning('prt:retainFeatures:duplicateFeature','The feature name provided: %s, matches more than one feature in the data set',cName);
+                        end
+                    end
+                    retainFeatureInds = cell2mat(retainFeatureInds);
+                end
+            end
+            
+            
 % 			try
 				obj = obj.retainFeatureNames(retainFeatureInds);
 				obj.data = obj.data(:,retainFeatureInds);

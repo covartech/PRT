@@ -291,7 +291,9 @@ classdef prtRvKde < prtRv
                 for iDim = 1:nDims
                     cDist = cDist + (bsxfun(@minus,X(cInds,iDim),R.trainingData(:,iDim)').^2) / (R.bandwidths(iDim));
                 end
-                vals(cInds) = prtUtilSumExp(((-cDist.^2)/2 - 0.5*log(2*pi) - 0.5*sum(log(R.bandwidths)))')' - log(nTrainingPoints);
+                
+                %vals(cInds) = prtUtilSumExp(((-cDist.^2)/2 - 0.5*log(2*pi) - 0.5*sum(log(R.bandwidths)))')' - log(nTrainingPoints);
+                vals(cInds) = prtUtilSumExp(((-cDist)/2 - 0.5*log(2*pi) - 0.5*sum(log(R.bandwidths)))')' - log(nTrainingPoints);
                 
             end
         end

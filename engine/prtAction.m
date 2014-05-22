@@ -804,7 +804,7 @@ classdef prtAction
                     cVal = cProp;
                 else
                     for icProp = 1:length(cProp) % Allow for arrays of objects
-                        cOut = prtUtilFintPrtActionsAndConvertToStructures(cProp(icProp));
+                        cOut = prtUtilFindPrtActionsAndConvertToStructures(cProp(icProp));
                         
                         if icProp == 1
                             cVal = repmat(cOut,size(cProp));

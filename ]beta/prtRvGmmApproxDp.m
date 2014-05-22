@@ -81,12 +81,11 @@ classdef prtRvGmmApproxDp < prtRv
     end    
     
     properties
-        meanShiftSigma = 1;
+        dpMeansLambda = 1;
         minimumStandardDeviation = eps;
     end
     properties (Dependent = true)
         nComponents            % The number of components contained in the mixture
-        nMaxComponents         % The maximum number of components
         covarianceStructure    % The covariance structure
         components             % The mixture components
         mixingProportions      % The mixing proportions
@@ -127,7 +126,7 @@ classdef prtRvGmmApproxDp < prtRv
         function val = get.mixingProportions(R)
             val = R.mixtureRv.mixingProportions;
         end
-        function R = set.nComponents(R,val) %#ok<MANU,INUSD>
+        function R = set.nComponents(R,val) %#ok<INUSD>
             error('nComponents cannot be set');
         end
         function val = get.nComponents(R)
@@ -135,12 +134,6 @@ classdef prtRvGmmApproxDp < prtRv
         end
         function val = get.nComponentsDepHelp(R)
             val = R.mixtureRv.nComponents;
-        end
-        function R = set.nMaxComponents(R,val)
-            R.nMaxComponentsDepHelp = val;
-        end
-        function val = get.nMaxComponents(R)
-            val = R.nMaxComponentsDepHelp;
         end
         function val = get.covarianceStructure(R)
             val = R.covarianceStructureDepHelp;
@@ -169,18 +162,30 @@ classdef prtRvGmmApproxDp < prtRv
         function R = mle(R,X)
             X = R.dataInputParse(X);
             
-            if isempty(R.nMaxComponents)
-                R.nMaxComponents = size(X,1);
-            end
-            
             dsX = prtDataSetClass(X);
             
-            meanShiftAlgo = train(prtClusterMeanShift('nClusters',R.nMaxComponents,'sigma',R.meanShiftSigma) + prtDecisionMap, dsX);
+            dpMeans = train(prtClusterDpMeans('lambda',R.dpMeansLambda) + prtDecisionMap, dsX);
+            
+            %meanShiftAlgo = train(prtClusterMeanShift('nClusters',R.nMaxComponents,'sigma',R.meanShiftSigma) + prtDecisionMap, dsX);
             %meanShiftAlgo = train(prtClusterMeanShift('nClusters',R.nMaxComponents) + prtDecisionMap, dsX);
-            clusteringDataSet = run(meanShiftAlgo, dsX);
+            
+            clusteringDataSet = run(dpMeans, dsX);
             clusteringY = clusteringDataSet.getObservations;
             
-            means = meanShiftAlgo.actionCell{1}.clusterCenters;
+            means = dpMeans.actionCell{1}.clusterCenters;
+            nClusters = size(means,1);
+            clusterCounts = histc(clusteringY,1:nClusters)';
+            
+            removeMe = clusterCounts<(dsX.nFeatures+5); % Remove low population clusters
+            % 5 is rather arbitrary but it is motivated by Bayesian Wishart priors
+            
+            dpMeans.actionCell{1}.clusterCenters = dpMeans.actionCell{1}.clusterCenters(~removeMe,:);
+            dpMeans.actionCell{1}.nClusters = sum(~removeMe);
+            
+            clusteringDataSet = run(dpMeans, dsX);
+            clusteringY = clusteringDataSet.getObservations;
+            
+            means = dpMeans.actionCell{1}.clusterCenters;
             nClusters = size(means,1);
             clusterCounts = histc(clusteringY,1:nClusters)';
             
@@ -189,22 +194,16 @@ classdef prtRvGmmApproxDp < prtRv
                 cX = X(clusteringY==iMean,:);
                 
                 R.mixtureRv.components(iMean).mu = mean(cX,1);
-                if size(cX,1) > (size(cX,2)+5) % 5 is rather arbitrary but it is motivated by Bayesian Wishart priors
-                    cSigma = cov(cX);
-                    cSigmaDiag = diag(cSigma);
-                    badDiag = cSigmaDiag< R.minimumStandardDeviation;
-                    if any(badDiag)
-                        cSigmaDiag(badDiag) = R.minimumStandardDeviation;
-                        cSigma(logical(eye(size(cSigma)))) = cSigmaDiag;
-                    end
-                    R.mixtureRv.components(iMean).sigma = cSigma;
-                    
-                else
-                    R.mixtureRv.components(iMean).sigma = eye(size(cX,2));
+                
+                cSigma = cov(cX);
+                cSigmaDiag = diag(cSigma);
+                badDiag = cSigmaDiag< R.minimumStandardDeviation;
+                if any(badDiag)
+                    cSigmaDiag(badDiag) = R.minimumStandardDeviation;
+                    cSigma(logical(eye(size(cSigma)))) = cSigmaDiag;
                 end
+                R.mixtureRv.components(iMean).sigma = cSigma;
             end
-            
-            
         end
         
         function [y, componentPdf] = pdf(R,X)

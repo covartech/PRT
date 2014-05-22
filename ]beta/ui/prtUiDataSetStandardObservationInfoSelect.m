@@ -164,9 +164,10 @@ classdef prtUiDataSetStandardObservationInfoSelect < prtUiManagerPanel
                 self.tableFieldNames = self.tableFieldNames(~badColumns);
                 
                 if isempty(self.editableArray)
-                    self.editableArray = false(1,size(self.dataCell));
+                    self.editableArray = false(1,size(self.dataCell,2));
+                else
+                    self.editableArray = self.editableArray(~badColumns);
                 end
-                self.editableArray = self.editableArray(~badColumns);
                 
                 if any(badColumns)
                     origFieldNames = fieldnames(self.prtDs.observationInfo);

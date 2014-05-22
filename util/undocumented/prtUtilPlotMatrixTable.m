@@ -194,9 +194,9 @@ magicNumber = 80;
 if ncols < magicNumber && nrows < magicNumber
     ratio = min(ratioNum./[nrows,ncols]);
 elseif ncols < magicNumber
-    ratio = ratioNum(4)/ncols;
+    ratio = ratioNum(2)/ncols;
 elseif nrows < magicNumber
-    ratio = ratioNum(3)/nrows;
+    ratio = ratioNum(1)/nrows;
 else
     ratio = 1;
 end
