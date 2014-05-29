@@ -1039,13 +1039,18 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
             
             % Handle sorting, make image, and figure out class names:
             x = dataSet.X;
+            hasTargets = dataSet.isLabeled;
+            
+            % Resort the data relative to the targets
             [sortedTargets,inds] = sort(dataSet.targets);
             uTargets = unique(sortedTargets);
             if any(isnan(uTargets))
                 uTargets = uTargets(~isnan(uTargets));
                 uTargets(end+1) = nan;
             end
-            x = x(inds,:);
+            if hasTargets
+                x = x(inds,:);
+            end
             
             if isempty(inputs.cLim)
                 handleOut = imagesc(inputs.x,inputs.y,x);
@@ -1058,7 +1063,6 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
                 unlabledLegenedName = prtPlotUtilUnlabeledLegendString;
                 legendStrings = cat(1,legendStrings,{unlabledLegenedName});
             end
-            
             
             % Find the places to draw the lines, and the places to make the ticks
             prevFound = 0;

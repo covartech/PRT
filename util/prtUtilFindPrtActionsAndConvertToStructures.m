@@ -1,4 +1,4 @@
-function cVal = prtUtilFintPrtActionsAndConvertToStructures(cVal)
+function cVal = prtUtilFindPrtActionsAndConvertToStructures(cVal)
 
 % Copyright (c) 2013 New Folder Consulting
 %
@@ -27,11 +27,11 @@ if isa(cVal,'prtAction')
 elseif iscell(cVal)
     % Current element is a cell that may contain prtActions
     for iCell = 1:numel(cVal)
-        cVal{iCell} = prtUtilFintPrtActionsAndConvertToStructures(cVal{iCell});
+        cVal{iCell} = prtUtilFindPrtActionsAndConvertToStructures(cVal{iCell});
     end
 elseif isstruct(cVal)
     subFieldNames = fieldnames(cVal);
     for iField = 1:length(subFieldNames)
-        cVal.(subFieldNames{iField}) =  prtUtilFintPrtActionsAndConvertToStructures(cVal.(subFieldNames{iField}));
+        cVal.(subFieldNames{iField}) =  prtUtilFindPrtActionsAndConvertToStructures(cVal.(subFieldNames{iField}));
     end
 end

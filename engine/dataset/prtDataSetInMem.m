@@ -605,7 +605,9 @@ classdef prtDataSetInMem < prtDataSetBase
             
             self.internalSizeConsitencyCheck = false;
             try
-                self.data = self.data(indices,:);
+                if self.nFeatures > 0 % No data?
+                    self.data = self.data(indices,:);
+                end
                 if self.isLabeled
                     self.targets = self.targets(indices,:);
                 end

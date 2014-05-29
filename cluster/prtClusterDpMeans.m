@@ -7,7 +7,6 @@ classdef prtClusterDpMeans < prtCluster
     %
     %   ds = prtDataGenMary                  % Load a prtDataSet
     %   clusterAlgo = prtClusterDpMeans;      % Create a prtClusterKmeans object
-    %   clusterAlgo.nClusters = 3;           % Set the number of desired clusters
     %
     %   % Set the internal decision rule to be MAP. Not required for
     %   % clustering, but necessary to plot the results.
@@ -53,6 +52,23 @@ classdef prtClusterDpMeans < prtCluster
                 binaryMatrix(i == clusters,i) = 1;
             end
             ds = ds.setObservations(binaryMatrix);
+        end
+    end
+    methods (Hidden = true)
+        function self = pruneSmallClusters(self, requiredMinObservations, ds)
+            
+            if nargin < 3 || isempty(ds)
+                ds = self.dataSet;
+            end
+            clustered = run(self,ds);
+            
+            clusterCounts = histc(clustered.X,1:self.nClusters);
+            
+            prunedClusters = clusterCounts < requiredMinObservations;
+            
+            self.clusterCenters = self.clusterCenters(~prunedClusters,:);
+            self.nClusters  = size(self.clusterCenters,1);
+            
         end
     end
 end

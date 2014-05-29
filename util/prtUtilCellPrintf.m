@@ -23,5 +23,9 @@ function stringCell = prtUtilCellPrintf(sprintfString,cellVals)
 % OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
 % USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+if isnumeric(cellVals)
+    cellVals = num2cell(cellVals);
+end
+   
 
 stringCell = cellfun(@(s)sprintf(sprintfString,s),cellVals,'UniformOutput',false);
