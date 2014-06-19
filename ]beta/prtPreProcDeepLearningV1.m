@@ -1,5 +1,11 @@
 classdef prtPreProcDeepLearningV1 < prtPreProc
     % prtPreProcDeepLearningV1
+    % See:
+    %
+    %  http://ai.stanford.edu/~ang/papers/nips07-sparsedeepbeliefnetworkv2.pdf
+    % Lee, H., Ekanadham, C., & Ng, A. Y. (2008). Sparse deep belief
+    % network model for visual area V2. Advances in Neural Information
+    % Processing Systems
     %
     properties (SetAccess=private)
         name = 'DeepLearningV1' % Fisher Linear Discriminant
