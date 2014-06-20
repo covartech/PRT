@@ -100,7 +100,7 @@ classdef prtClassMap < prtClass
             % 2.
             self.rvs = repmat(self.rvs(:), (ds.nClasses - length(self.rvs)+1),1);
             self.rvs = self.rvs(1:ds.nClasses);
-
+            
             % Get the ML estimates of the RV parameters for each class
             for iY = 1:ds.nClasses
                 self.rvs(iY) = train(self.rvs(iY), ds.retainClassesByInd(iY));

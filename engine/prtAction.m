@@ -391,8 +391,121 @@ classdef prtAction
             function cleanUpHandles(wbHandle)
                 wbHandle.update(1);
             end
-        end
+		end
         
+		function [dsOut, trainedActions] = crossValidate2dKeys(self, dsIn, validationKeys)
+            % CROSSVALIDATE  Cross validate prtAction using prtDataSet and cross validation keys.
+            %
+            %  OUTPUTDATASET = OBJ.crossValidate(DATASET, KEYS) cross-
+            %  validates the prtAction object OBJ using the prtDataSet
+            %  DATASET and the KEYS. DATASET must be a labeled prtDataSet.
+			%
+            %  KEYS may be a vector of integers or a cell array of strings
+			%  with the same number of elements as DATASET has observations
+			%  or it may be an N-by-D array of integers where N is the
+			%  number of observations.
+            %
+            %  The KEYS are are used to partition the input DATASET into
+            %  test and training data sets. For each unique key (or set of 
+			%  D keys), a test set will be created out of the corresponding
+			%  observations of the prtDataSet. The observations sharing
+			%  none of those keys will be used as training data.
+            %
+            %  [OUTPUTDATASET, TRAINEDACTIONS] = OBJ.crossValidate(DATASET,
+            %  KEYS) outputs the trained prtAction objects TRAINEDACTIONS.
+            %  TRAINEDACTIONS will have a length equal to the number of
+            %  unique KEYS.
+            
+            
+            % Check for isCrossValidateValid removed - 2012-11-08
+            % This now handled by allowing the dataset to check the fold
+            % results.
+            
+
+            if (size(validationKeys,1) ~= dsIn.nObservations) && (~isvector(validationKeys) || (numel(validationKeys) ~= dsIn.nObservations))
+                error('prt:prtAction:crossValidate','validationKeys must have length equal to the number of observations in the data set');
+			end
+            
+			if isvector(validationKeys)
+				validationKeys = validationKeys(:);
+			end
+			
+            uKeys = unique(validationKeys,'rows');
+            
+            actuallyShowProgressBar = self.showProgressBar && (length(uKeys) > 1);
+            if actuallyShowProgressBar
+                waitBarself = prtUtilProgressBar(0,sprintf('Crossvalidating - %s',self.name),'autoClose',true);
+                cleanupObj = onCleanup(@()cleanUpHandles(waitBarself));
+
+				%cleanupself = onCleanup(@()close(waitBarself));
+				% The above would close the waitBar upon completion but
+				% it doesn't play nice when there are many bars in the
+				% same window
+            end            
+            
+			testingIndiciesCell = cell(length(uKeys),1);
+			outputDataSetCell = cell(length(uKeys),1);
+			for uInd = 1:size(uKeys,1);
+				
+				if actuallyShowProgressBar
+					waitBarself.update((uInd-1)/length(uKeys));
+				end
+				
+				% Get the testing indices
+				if isa(uKeys(uInd),'cell')
+					cTestLogical = strcmp(uKeys(uInd),validationKeys);
+					cTrainLogical = ~cTestLogical;
+				else
+					cmp = bsxfun(@eq,uKeys(uInd,:),validationKeys);
+					cTestLogical = all(cmp,2);
+					cTrainLogical = ~any(cmp,2);
+				end
+				
+				% Store the indicies for resorting later
+				testingIndiciesCell{uInd} = find(cTestLogical);
+				testDs = dsIn.retainObservations(cTestLogical);
+				
+				% Get the training dataset
+				if length(uKeys) == 1  %1-fold, incestuous train and test
+					trainDs = testDs;
+				else
+					trainDs = dsIn.retainObservations(cTrainLogical);
+				end
+				
+				% Train the action using the training dataset
+				trainedAction = self.train(trainDs);
+				
+				% Run the trained action on the test dataset
+				outputDataSetCell{uInd} = trainedAction.run(testDs);
+                
+				% Ask the input dataset to assess the quality of the fold
+				% and the results.
+				% This check allows prtDataSetClass to check to make sure
+				% that all classes are represented in each fold.
+				outputDataSetCell{uInd} = crossValidateCheckFoldResults(dsIn, trainDs, testDs, outputDataSetCell{uInd});
+				
+				% Only do this if the output is requested; otherwise this
+				% cell of actions can get large if verboseStorage is true
+				if nargout >= 2
+					if uInd == 1
+						% First iteration pre-allocate
+						trainedActions = repmat(trainedAction,length(uKeys),1);
+					else
+						trainedActions(uInd) = trainedAction;
+					end
+				end
+            end
+            
+			
+			dsOut = crossValidateCombineFoldResults(outputDataSetCell{1}, outputDataSetCell, testingIndiciesCell);
+			
+			dsOut = dsOut.acquireNonDataAttributesFrom(dsIn);
+            
+            function cleanUpHandles(wbHandle)
+                wbHandle.update(1);
+            end
+        end
+		
         function varargout = kfolds(self, ds , k)
             % KFOLDS  Perform K-folds cross-validation of prtAction
             % 

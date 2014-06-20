@@ -41,6 +41,9 @@ void mexFunction(
     int xNDims, *xSize, *zSize;
     double *maxLogs;
     
+    if (nrhs != 1){
+        mexErrMsgTxt("sumexp() requires exactly 1 argument.");
+    }
     xNDims = mxGetNumberOfDimensions(prhs[0]);
     xSize = (int *) mxGetDimensions(prhs[0]);
     x = mxGetPr(prhs[0]);

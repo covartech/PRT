@@ -101,6 +101,7 @@ xlabel('Response'); ylabel('Truth');
 set(imageAxes,'Yticklabel',classLabels2);
 set(imageAxes,'Xticklabel',classLabels);
 
+
 sideTextHandles = zeros(nClass,1);
 
 if exist('occurances','var');
