@@ -308,7 +308,7 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
                 set(h,'color',cColor);
                 hold on;
             end
-            handleArray = zeros(obj.nClasses + obj.hasUnlabeled,1);
+            handleArray = prtUtilPreAllocateHandles(obj.nClasses + obj.hasUnlabeled,1);
             for iClass = 1:obj.nClasses
                 handleArray(iClass) = plot(nan,nan,'color',classColors(iClass,:));
             end
@@ -424,7 +424,7 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
             end
             axis([-1 1 -1 1]*(axesLength + 0.4));
             
-            handleArray = zeros(obj.nClasses + obj.hasUnlabeled,1);
+            handleArray = prtUtilPreAllocateHandles(obj.nClasses + obj.hasUnlabeled,1);
             for iClass = 1:obj.nClasses
                 handleArray(iClass) = plot(nan,nan,'color',classColors(iClass,:));
             end
@@ -499,7 +499,7 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
             axesStartsV = fliplr(borderV:(sizeV+interBorderV*2):(1-borderV));
             
             hs = cell(N);
-            axesHandles = zeros(N,N);
+            axesHandles = prtUtilPreAllocateHandles(N,N);
             for iFeature = 1:N
                 for jFeature = 1:N
                     axesHandles(iFeature,jFeature) = axes('Parent',containingHandle,'Position',[axesStartsH(iFeature) axesStartsV(jFeature) sizeH sizeV]);
@@ -710,7 +710,7 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
                 nClasses = 1;
             end
             
-            patchH = zeros(Summary.nFeatures,nClasses + ds.hasUnlabeled);
+            patchH = prtUtilPreAllocateHandles(Summary.nFeatures,nClasses + ds.hasUnlabeled);
             colors = cat(1,ds.plotOptions.colorsFunction(nClasses), prtPlotUtilClassColorUnlabeled); % FIX me. Use plotOptions
             holdState = get(gca,'NextPlot');
             
@@ -888,7 +888,7 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
             classColors = obj.plotOptions.colorsFunction(obj.nClasses);
             lineWidth = obj.plotOptions.symbolLineWidth;
             
-            handleArray = zeros(nClasses,1);
+            handleArray = prtUtilPreAllocateHandles(nClasses,1);
             allHandles = cell(nClasses,1);
             
             holdState = get(gca,'nextPlot');
@@ -1145,7 +1145,7 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
             lineWidth = obj.plotOptions.symbolLineWidth;
             markerSize = obj.plotOptions.symbolSize;
             
-            handleArray = zeros(nClasses,1);
+            handleArray = prtUtilPreAllocateHandles(nClasses,1);
             
             holdState = get(gca,'nextPlot');
             % This call to gca will create a figure if it doesn't already
@@ -1255,7 +1255,7 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
             lineWidth = obj.plotOptions.symbolLineWidth;
             markerSize = obj.plotOptions.symbolSize;
             
-            handleArray = zeros(nClasses,1);
+            handleArray = prtUtilPreAllocateHandles(nClasses,1);
             
             holdState = get(gca,'nextPlot');
             % This call to gca will create a figure if it doesn't already
