@@ -62,7 +62,12 @@ classdef prtClusterDpMeans < prtCluster
             end
             clustered = run(self,ds);
             
-            clusterCounts = histc(clustered.X,1:self.nClusters);
+            if size(clustered.X) > 1
+                [~,X] = max(clustered.X,[],2);
+            else
+                X = clustered.X;
+            end
+            clusterCounts = histc(X,1:self.nClusters);
             
             prunedClusters = clusterCounts < requiredMinObservations;
             

@@ -35,6 +35,10 @@ function [outputList,outputStruct] = prtUtilSubDir(directory,fileMatch,varargin)
 % OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
 % USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+if nargin < 2
+    fileMatch = '*';
+end
+
 p = inputParser;
 p.addParameter('dirMatch','*');
 p.addParameter('recurse',true);
@@ -45,10 +49,11 @@ inputStruct = p.Results;
 
 dirMatch = inputStruct.dirMatch;
 recurse = inputStruct.recurse;
-% 
+
 subDirectoryList = dir(fullfile(directory,dirMatch));
 % Remove . and ..
 subDirectoryList = subDirectoryList(~arrayfun(@(x)ismember(x.name,{'.';'..'}),subDirectoryList));
+subDirectoryList = subDirectoryList(arrayfun(@(x)x.isdir,subDirectoryList));
 
 %Why remove directories?!
 fileList = dir(fullfile(directory,fileMatch));

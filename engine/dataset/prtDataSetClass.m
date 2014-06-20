@@ -641,7 +641,12 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
             for iLine = 1:length(hs)
                 set(hs(iLine),'color',colors(iLine,:));
             end
-            xlim([Summary.lowerBounds, Summary.upperBounds]);
+            
+            try
+                % Sometimes lowerBounds = upperBounds
+                xlim([Summary.lowerBounds, Summary.upperBounds]);
+            end
+            
             
             grid on;
             xlabel(obj.getFeatureNames{1});

@@ -89,7 +89,7 @@ function prtUtilDpMeansPlotVisualization(data,classMeans,clusterIndex,inputStruc
 
 [nSamples,nDimensions] = size(data); %#ok<ASGLU>
 if iter == 1
-    distanceMat =  inputStructure.distanceMetricFn(data,classMeans);
+    distanceMat =  prtDistanceEuclidean(data,classMeans).^2;
     [twiddle,clusterIndex] = min(distanceMat,[],2); %#ok<ASGLU>
 end
 if nDimensions > 3
