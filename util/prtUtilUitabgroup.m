@@ -22,15 +22,16 @@ function h = prtUtilUitabgroup(varargin)
 % USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
+if verLessThan('matlab','8.4')
+    error(javachk('swing'));
+    warning('off','MATLAB:uitabgroup:OldVersion');
 
-error(javachk('swing'));
-
-warning('off','MATLAB:uitabgroup:OldVersion');
-
-h = uitools.uitabgroup(varargin{:});
-h = double(h); 
-
-
+    h = uitools.uitabgroup(varargin{:});
+    h = double(h); 
+else
+    h = uitabgroup(varargin{:});
+end
+    
 
 % out = cell(nargout,1);
 % 
