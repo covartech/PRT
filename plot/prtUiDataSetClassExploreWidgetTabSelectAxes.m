@@ -41,9 +41,7 @@ classdef prtUiDataSetClassExploreWidgetTabSelectAxes < prtUiDataSetClassExploreW
                self.create()
             end
             
-            disp('making a button');
-            uicontrol(self.managedHandle,'style','pushbutton','string','hi');
-            %init(self);
+            init(self);
         end
         
         function init(self)

@@ -32,8 +32,7 @@ classdef prtUiDataSetClassExploreWidget < prtUiManagerPanel
         
         titleStr = 'prtDataSetClass Explorer Widget';
         
-        %tabObjectConstructors = {@prtUiDataSetClassExploreWidgetTabSelectAxes @prtUiDataSetClassExploreWidgetTabPlotOptions @prtUiDataSetClassExploreWidgetTabClickDisplay};
-        tabObjectConstructors = {@prtUiDataSetClassExploreWidgetTabSelectAxes};
+        tabObjectConstructors = {@prtUiDataSetClassExploreWidgetTabSelectAxes @prtUiDataSetClassExploreWidgetTabPlotOptions @prtUiDataSetClassExploreWidgetTabClickDisplay};
         
         handles
         tabs
@@ -124,7 +123,7 @@ classdef prtUiDataSetClassExploreWidget < prtUiManagerPanel
                 %uicontrol(self.handles.tabPanels(iTab),'style','pushbutton','string','hi');
                 
                 self.tabs{iTab} = self.tabObjectConstructors{iTab}('managedHandle',self.handles.tabPanels(iTab),'widget',self);
-                %set(self.handles.tabs(iTab), 'title', self.tabs{iTab}.titleStr);
+                set(self.handles.tabs(iTab), 'title', self.tabs{iTab}.titleStr);
             end
             
             %self.handles.listenerClose = addlistener(self.plotManager.handles.axes,'BeingDeleted',@(~,~)close(self.handles.figure));
