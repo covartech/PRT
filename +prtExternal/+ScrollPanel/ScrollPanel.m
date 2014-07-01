@@ -263,7 +263,11 @@ classdef ScrollPanel < hgsetget
             addlistener(obj.hHScrollBar, 'ContinuousValueChange', @obj.scroll);
             % Setup the main viewport's size listener.  Lot's of stuff
             % needs to happen when that viewport changes.
-            addlistener(obj.hViewportPanel, 'SizeChange', @obj.resize);
+            if verLessThan('matlab','8.4')
+                addlistener(obj.hViewportPanel, 'SizeChange', @obj.resize);
+            else
+                obj.hViewportPanel.SizeChangedFcn = @obj.resize;
+            end
             
             % The ScrollingPanel is the exposed handle so that objects can
             % be children of it.
@@ -558,6 +562,7 @@ classdef ScrollPanel < hgsetget
             % We are doing similiar position calculations for horizontal
             % and verticle scrollbars.  The following just sets up the
             % appropriate variables.
+            
             if strcmp(scrollbar, 'verticle') || strcmp(scrollbar, 'both')
                 hScrollBar = obj.hVScrollBar;
                 otherhScrollBar = obj.hHScrollBar;
@@ -607,7 +612,8 @@ classdef ScrollPanel < hgsetget
             
             %Stepsize determines the thumb size.
             step = get(hScrollBar, 'SliderStep');
-            step(2) = max(0, mPos(length_i)/(sPos(length_i) - mPos(length_i)));
+            step(2) = min(max(step(1)*2, mPos(length_i)/(sPos(length_i) - mPos(length_i))),0.5);
+            
             set(hScrollBar, 'SliderStep', step);
             
             if mPos(origin_i) == sPos(origin_i)

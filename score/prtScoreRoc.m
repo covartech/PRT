@@ -61,6 +61,7 @@ if (nargin == 1 || isempty(y)) && isa(ds,'prtDataSetClass')
 	y = ds;
 end
 
+dsOrig = ds;
 [ds,y] = prtUtilScoreParseFirstTwoInputs(ds,y,mfilename);
 
 %Handle multi-dimensional input DS (numeric or prtDataSetClass)
@@ -80,7 +81,12 @@ if size(ds,2) > 1
 		ylabel('P_D');
 		grid on;
 		set(gca,'nextPlot',holdState);
-		varargout = {};
+		
+        if ~isempty(dsOrig.getFeatureNames) && (length(dsOrig.getFeatureNames) == length(lineHandles))
+            legend(lineHandles, dsOrig.getFeatureNames,'Location','SouthEast')
+        end
+        varargout = {};
+        
 	else
 		varargout = {pf, pd, thresholds, auc};
 	end

@@ -242,6 +242,26 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
            
         end
         
+        function varargout = plotBox(self)
+            
+            X = self.X';
+            targetIndicator = kron(self.Y,ones(self.nFeatures,1));
+            featureIndicator = repmat((1:self.nFeatures)',self.nObservations,1);
+            h = boxplot(X(:),cat(2,featureIndicator, targetIndicator),...
+                'factorseparator',1,...
+                'fullfactors','on',...
+                'colorgroup',targetIndicator,...
+                'colors',prtPlotUtilClassColors(self.nClasses),...
+                'symbol','.',...
+                'outliersize',2,...
+                'plotstyle','compact',...
+                'labelverbosity','majorminor');
+            
+            if nargout 
+                varargout = {h};
+            end
+        end
+        
         function varargout = plotStarIndividual(obj,featureIndices)
             % plotStarIndividual   Create a star plot
             %
@@ -1371,9 +1391,14 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
     end
     
     methods (Hidden)
-        function exploreObjectOriented(ds)
+        function varargout = exploreObjectOriented(ds)
             p = prtUiDataSetClassPlot(ds);
-            p.controls();
+            c = p.controls();
+            if nargout
+                varargout = {p, c};
+            else
+                varargout = {};
+            end
         end
         function dsFoldOut = crossValidateCheckFoldResults(dsIn, dsTrain, dsTest, dsFoldOut)
             dsFoldOut = crossValidateCheckFoldResults@prtDataSetBase(dsIn, dsTrain, dsTest, dsFoldOut);

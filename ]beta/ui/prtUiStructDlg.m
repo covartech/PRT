@@ -533,6 +533,7 @@ classdef prtUiStructDlg < prtUiManagerPanel
             newScrollArea = [1 1 self.figwidth self.figheight];
             newScrollArea(1) = 1-(-(initScrollArea(1)-1)/initScrollArea(3)*self.figwidth);
             newScrollArea(2) = 1-(-(initScrollArea(2)-1)/initScrollArea(4)*self.figheight);
+            
             %newScrollArea(1) = self.figwidth-initScrollArea(3);
             %newScrollArea(2) = self.figheight-initScrollArea(4);
             
