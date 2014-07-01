@@ -8,3 +8,4 @@ Machine learning and pattern recognition are everywhere. MATLAB is a high level 
 * Blog and info: <http://newfolder.github.io/>
 * Installation Guide: <http://newfolder.github.io/prtdoc/prtDocInstallation.html>
 * Documentation: <http://newfolder.github.io/prtdoc>
+* User Guide: http://newfolder.github.io/prtdoc/prtDocUsersGuide.html

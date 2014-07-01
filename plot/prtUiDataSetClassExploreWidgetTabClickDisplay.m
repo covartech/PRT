@@ -50,7 +50,7 @@ classdef prtUiDataSetClassExploreWidgetTabClickDisplay < prtUiDataSetClassExplor
                                'HorizontalAlignment','Left',...
                                'string','Click in the axes to inspect observations.');
             
-            self.handles.listener = addlistener(self.widget.plotManager, 'clickedIndex', 'PostSet', @self.display);
+            self.handles.listener = addlistener(self.widget.plotManager, 'clickedIndex', 'PostSet', @self.displayClick);
             
             self.handles.infoToWorkspaceButton = uicontrol('parent',self.managedHandle,...
                                  'string','View Obs. Info',...
@@ -60,7 +60,7 @@ classdef prtUiDataSetClassExploreWidgetTabClickDisplay < prtUiDataSetClassExplor
                                  'enable','off');
             
         end
-        function display(self,varargin)
+        function displayClick(self,varargin)
             
             
             clickedInd = self.widget.plotManager.clickedIndex;

@@ -67,7 +67,6 @@ classdef prtUiDataSetClassExploreWidget < prtUiManagerPanel
             
             navFigSize = [300 250];
             navFigPad = [18 54];
-
             
             plotAxesFigPos = get(self.plotManager.handles.figure,'position');
             
@@ -111,23 +110,20 @@ classdef prtUiDataSetClassExploreWidget < prtUiManagerPanel
                 'position',[0 0  1 1],...
                 'visible','off',...
                 'handlevisibility','on');
-            
-            
         end
         
         function init(self)
             self.handles.tabGroup = prtUtilUitabgroup('parent',self.managedHandle);
             nTabs = length(self.tabObjectConstructors);
-            self.handles.tabs = zeros(nTabs,1);
-            self.handles.tabPanels = zeros(nTabs,1);
+            self.handles.tabs = prtUtilPreAllocateHandles(nTabs,1);
+            self.handles.tabPanels = prtUtilPreAllocateHandles(nTabs,1);
             for iTab = 1:nTabs
                 self.handles.tabs(iTab) = prtUtilUitab(self.handles.tabGroup, 'title', 'Temp');
-                self.handles.tabPanels(iTab) = uipanel(self.handles.tabs(iTab));
+                self.handles.tabPanels(iTab) = uipanel('parent',self.handles.tabs(iTab));
+                %uicontrol(self.handles.tabPanels(iTab),'style','pushbutton','string','hi');
                 
                 self.tabs{iTab} = self.tabObjectConstructors{iTab}('managedHandle',self.handles.tabPanels(iTab),'widget',self);
-                
                 set(self.handles.tabs(iTab), 'title', self.tabs{iTab}.titleStr);
-                
             end
             
             %self.handles.listenerClose = addlistener(self.plotManager.handles.axes,'BeingDeleted',@(~,~)close(self.handles.figure));

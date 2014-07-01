@@ -28,7 +28,14 @@ if nargin == 1
     pos = prtPlotUtilCenterFigure(windowSize);
     
     % Create the figure an UIControls
-    figH = figure('Number','Off','Name','PRT Data Set Explorer','Menu','none','toolbar','figure','units','pixels','position',pos,'DockControls','off');
+    figH = figure('Name','PRT Data Set Explorer','Menu','none','toolbar','figure','units','pixels','position',pos,'DockControls','off');
+    try
+        set(figH,'Number','Off');
+    catch
+        try
+            set(figH,'NumberTitle','off');
+        end
+    end
     
     % Trim the toolbar down to just the zooming controls
     Toolbar.handle = findall(figH,'Type','uitoolbar');

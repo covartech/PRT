@@ -47,8 +47,8 @@ classdef prtUiDataSetClassExploreWidgetTabPlotOptions < prtUiDataSetClassExplore
             self.handles.table = uitable('parent',self.managedHandle,...
                 'units','normalized','position',[0 0 1 1]); % Dummy position
             
-            self.handles.jScrollPane = findjobj(self.handles.table);
-            self.handles.jTable = self.handles.jScrollPane.getViewport.getView;
+            %self.handles.jScrollPane = findjobj(self.handles.table);
+            %self.handles.jTable = self.handles.jScrollPane.getViewport.getView;
             
             % uY, visible, legend string, shape, color, edgeColor, markerSize, edgeSize
             

@@ -21,13 +21,16 @@ function h = prtUtilUitab(varargin)
 % OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
 % USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+if verLessThan('matlab','8.4')
+    error(javachk('swing'));
+
+    h = uitools.uitab(varargin{:});
+    h = double(h); 
+else
+    h = uitab(varargin{:});
+end
 
 
-
-error(javachk('swing'));
-
-h = uitools.uitab(varargin{:});
-h = double(h); 
 %%
 % out = cell(nargout,1);
 % if verLessThan('matlab', '7.11')

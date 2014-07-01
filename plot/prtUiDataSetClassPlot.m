@@ -215,7 +215,7 @@ classdef prtUiDataSetClassPlot < hgsetget
             end
             
             uClasses = self.dataSet.uniqueClasses;
-            self.handles.lines = zeros(1,self.dataSet.nClasses);
+            self.handles.lines = prtUtilPreAllocateHandles(1,self.dataSet.nClasses);
             for iClass = 1:nClasses
                 
                 
