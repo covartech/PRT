@@ -499,7 +499,7 @@ set(gcf,'NextPlot','new')
         MainFigure.units = 'pixels';
         MainFigure.position = pos;
         MainFigure.name = 'PRT Algorithm';
-        MainFigure.Number = 'Off';
+        MainFigure.NumberTitle = 'Off';
         MainFigure.Menu = 'none';
         MainFigure.toolbar = 'none';
         MainFigure.DockControls = 'off';

@@ -366,7 +366,14 @@ classdef prtClass < prtAction
             % enforce twoClassParadigm
             
             if ~isempty(ClassObj.internalDecider)
-                xOut = ClassObj.internalDecider.run(xOut);
+                try
+                    xOut = ClassObj.internalDecider.run(xOut);
+                catch ME
+                    warning('postRunProcessingFast:internalDecider','postRunProcessingFast - Attempt to run internal decider "fast" failed; trying usual calling syntax');
+                    disp(ME)
+                    xOut = ClassObj.internalDecider.run(prtDataSetClass(xOut));
+                    xOut = xOut.getX;
+                end
             end
             
             if ~isempty(ClassObj.yieldsMaryOutput) && ~isnan(ClassObj.yieldsMaryOutput)

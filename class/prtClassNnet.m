@@ -8,7 +8,7 @@ classdef prtClassNnet < prtClass
     %    prtClassNnet object with properties as specified by
     %    PROPERTY/VALUE pairs.
     %
-    %    A prtClassFld object inherits all properties from the abstract class
+    %    A prtClassNnet object inherits all properties from the abstract class
     %    prtClass. In addition is has the following properties:
     %
     %    nHiddenUnits (30)  - Number of hidden units to use
