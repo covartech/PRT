@@ -1,10 +1,6 @@
-function output = WriteYaml(yaml_file,matlab_struct)
-% This function writers struct into Yaml file
-% Example
-% >> yaml_file_old = 'EnaspolMain.yaml';
-% >> yaml_file_new = 'EnaspolMain.yaml';
-% >> YamlStruct = ReadYaml(yaml_file_old)
-% >> WriteYaml(yaml_file_new,YamlStruct)
+function output = WriteYamlToString(matlab_struct)
+% This function writers struct into str
+
 
 %======================================================================
 %{
@@ -51,17 +47,8 @@ yaml = Yaml();
 
 Data = Struct2Hashmap(matlab_struct);
 
-output = yaml.dump(Data);
-fid = fopen(yaml_file,'w');
+output = char(yaml.dump(Data));
 
-onCleanup(@()localCleanupFunction);
-fprintf(fid,'%s',char(output));
-
-    function localCleanupFunction()
-        try %#ok<TRYNC>
-            fclose(fid);
-        end
-    end
 end % end of function
 
 

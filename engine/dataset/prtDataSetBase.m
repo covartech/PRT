@@ -314,6 +314,13 @@ classdef prtDataSetBase
     end
     
     methods
+        %         function ds1 = plus(ds1,ds2)
+        %             % ds1 = ds1 + ds2;
+        %             %   ds1 = catObservations(ds1,ds2);
+        %
+        %             ds1 = ds1.catObservations(ds2);
+        %         end
+        
         function [self, sampleIndices] = bootstrap(self,nSamples,p)
             % dsBoot = bootstrap(dataSet,nSamples)
             %   Bootstrap (sample with replacement) nSamples from the data
