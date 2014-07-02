@@ -1,4 +1,4 @@
-function P = prtPath(varargin)
+function output = prtPath(varargin)
 % prtPath Adds necessary directories for the PRT to your path.
 %
 
@@ -67,6 +67,9 @@ for iArg = 1:length(varargin)
     if ~isempty(removePath)
         rmpath(removePath);
     end
+end
+if nargout > 0
+    output = P;
 end
 
 function checkPrtInStartup
