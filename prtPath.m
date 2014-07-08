@@ -31,45 +31,19 @@ if startupCheck
     checkPrtInStartup;
 end
 
-P = genpath(prtRoot);
-addpath(P);
-
-%Remove some paths we don't need (we remove all directories that start with
-% a . or a ]
-
-removePath = [];
-[string,remString] = strtok(P,pathsep);
-while ~isempty(string);
-    if ~isempty(strfind(string,[filesep '.'])) || ~isempty(strfind(string,[filesep ']']))
-        removePath = cat(2,removePath,pathsep,string);
-    end
-    [string,remString] = strtok(remString,pathsep); %#ok
-end
-if ~isempty(removePath)
-    rmpath(removePath);
-end
+origPath = prtUtilGenCleanPath(prtRoot);
+addpath(origPath);
 
 for iArg = 1:length(varargin)
     cArg = varargin{iArg};
     cDir = fullfile(prtRoot,cat(2,']',cArg));
     assert(logical(exist(cDir,'file')),']%s is not a directory in %s',cArg,prtRoot);
-    P = genpath(cDir);
+    P = prtUtilGenCleanPath(cDir,'removeDirStart',{'.'});
     addpath(P);
-    
-    removePath = [];
-    [string,remString] = strtok(P,pathsep);
-    while ~isempty(string);
-        if ~isempty(strfind(string,[filesep '.']))
-            removePath = cat(2,removePath,pathsep,string);
-        end
-        [string,remString] = strtok(remString,pathsep); %#ok
-    end
-    if ~isempty(removePath)
-        rmpath(removePath);
-    end
+    origPath = cat(2,origPath,P);
 end
 if nargout > 0
-    output = P;
+    output = origPath;
 end
 
 function checkPrtInStartup
