@@ -31,6 +31,7 @@ if startupCheck
     checkPrtInStartup;
 end
 
+addpath(fullfile(prtRoot,'util'));
 origPath = prtUtilGenCleanPath(prtRoot);
 addpath(origPath);
 
