@@ -14,11 +14,11 @@ function [optionsOut, inputParserObj] = prtUtilSimpleInputParser(options, vararg
 inputParserObj = inputParser;
 
 inputParserObj.CaseSensitive = false;
-inputParserObj.KeepUnmatched = true;
+inputParserObj.KeepUnmatched = false;
 
 fields = fieldnames(options);
 for iField = 1:length(fields)
-    addOptional(inputParserObj,fields{iField},options.(fields{iField}));
+    addParameter(inputParserObj,fields{iField},options.(fields{iField}));
 end
 
 parse(inputParserObj, vararginCell{:})

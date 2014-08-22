@@ -82,10 +82,14 @@ classdef prtClassPlsda < prtClass
     
     properties (SetAccess=protected)
         Bpls     % The prediction weights
-        loadings % T
-        xFactors % P
-        yFactors % Q
+        xScores % T
+        yScores % U
+        xVectors% P
+        yVectors% Q
+        
         yMeansFactor % Factor to be added into regression output (accounts for X means and yMeans);
+        vipXY   % VIP scores including variations in X
+        vipY    % VIP scores including only variations in Y
     end
     
     properties (Hidden)
@@ -133,14 +137,31 @@ classdef prtClassPlsda < prtClass
             Y = bsxfun(@minus, Y, yMeans);
             switch self.trainingTechnique
                 case 'simpls'
-                    [self.Bpls, R, self.xFactors, self.yFactors, self.loadings, U] = prtUtilSimpls(X,Y,self.nComponents);  %#ok<ASGLU,NASGU>
+                    [self.Bpls, R, self.xVectors, self.yVectors, self.xScores, self.yScores] = prtUtilSimpls(X,Y,self.nComponents);
+                    
+                    
                 case 'pls2'
-                    [self.Bpls] = prtUtilPls2(X,Y,self.nComponents);
+                    [self.Bpls, W, P, Q, T, U, B] = prtUtilPls2(X,Y,self.nComponents);
+                    
+                    self.yVectors = Q;
+                    self.xVectors = P;
+                    self.yScores = T*B;
+                    self.xScores = T;
+                    
                 otherwise
                     error('prtClassPlsda:trainingTechnique','Invalid trainingTechnique specified');
             end
             self.yMeansFactor = yMeans - xMeans*self.Bpls;
             
+            ssT = diag(self.xScores'*self.yScores);
+            ssT = ssT./sum(ssT(:));
+            
+            self.vipXY = sqrt(size(X,2)) * sum(bsxfun(@times, bsxfun(@rdivide,self.xVectors,sqrt(sum(self.xVectors.^2,2))).^2, ssT'),2);
+            
+            ssT = diag(self.yScores'*self.yScores);
+            ssT = ssT./sum(ssT(:));
+            
+            self.vipY = sqrt(size(X,2)) * sum(bsxfun(@times, bsxfun(@rdivide,self.xVectors,sqrt(sum(self.xVectors.^2,2))).^2, ssT'),2);
         end
         
         function DataSet = runAction(self,DataSet)

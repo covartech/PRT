@@ -94,6 +94,7 @@ classdef prtPreProcPls < prtPreProc
     methods (Access=protected,Hidden=true)
         
         function Obj = trainAction(Obj,DataSet)
+            DataSet = DataSet.retainLabeled;
             
             X = DataSet.getObservations;
 %             if DataSet.nClasses > 2
@@ -102,8 +103,9 @@ classdef prtPreProcPls < prtPreProc
 %                 Y = DataSet.getTargetsAsBinaryMatrix;
 %                 Y = Y(:,2); %0's and 1's for H1
 %             end
-%             
-Y = DataSet.getY;
+            %           
+
+            Y = DataSet.getY;
             maxComps = min(size(X));
             if Obj.nComponents > maxComps;
                 warning('prt:prtPreProcPls','nComponents (%d) > maximum components for the data set (%d); setting nComponents = %d',Obj.nComponents,maxComps,maxComps);

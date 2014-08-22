@@ -1,4 +1,4 @@
-function [Bpls, R, P, Q, T, U, xMeans, yMeans] = prtUtilPls2(X,Y,nComponents)
+function [Bpls, W, P, Q, T, U, B, xMeans, yMeans] = prtUtilPls2(X,Y,nComponents)
 %[Bpls, R, P, Q, T, U, xMeans, yMeans] = prtUtilPls2(X,Y,nComponents)
 % 
 %   An alternative to SIMPLS, PLS2 as developed in:
@@ -28,10 +28,6 @@ function [Bpls, R, P, Q, T, U, xMeans, yMeans] = prtUtilPls2(X,Y,nComponents)
 % OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
 % USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-
-xOrig = X;
-yOrig = Y;
-
 [nSamples, nDimensions] = size(X);
 
 if nargin < 3
@@ -41,13 +37,6 @@ else
 end
 
 % Initializations
-R = zeros(nDimensions,nVectors);
-P = R;
-V = P;
-Q = zeros(size(Y,2),nVectors);
-T = zeros(nSamples,nVectors);
-U = T;
-
 xMeans = mean(X);
 yMeans = mean(Y);
 X = bsxfun(@minus,X,xMeans);

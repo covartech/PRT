@@ -1,4 +1,4 @@
-function [Bpls, R, P, Q, T, U] = prtUtilSimpls(X,Y,nComponents)
+function [Bpls, R, P, Q, T, U, V] = prtUtilSimpls(X,Y,nComponents)
 % PRTUTILSIMPLS performs partial least squares regression using the SIMPLS
 % algorithm.
 %
