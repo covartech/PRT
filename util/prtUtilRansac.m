@@ -55,7 +55,9 @@ bestNFit = 0;
 
 for iter = 1:inputStructure.nIterations
 	% bootstrap
-	[dataIn,indices] = data.bootstrap(inputStructure.nBootstrapSamples);
+	indices = randperm(data.nObservations);
+	indices = indices(1:inputStructure.nBootstrapSamples);
+	dataIn = data.retainObservations(indices);
 	dataOut = data.removeObservations(indices);
 	
 	% train on bootstrapped samples
@@ -65,7 +67,7 @@ for iter = 1:inputStructure.nIterations
 	guessOut = algoTrained.run(dataOut);
 	
 	% find how many left-out samples fit model well
-	error = evalFn(guessOut.X,dataOut.Y);
+	error = evalFn(guessOut.X,dataOut.Y); % dataOut.Y?
 	nFit = sum(error<inputStructure.fitErrorThreshold);
 	
 	% keep the best model
@@ -77,6 +79,6 @@ end
 
 %% find all inliers and retrain model
 guess = bestAlgo.run(data);
-error = abs(guess.X-data.Y);
+error = evalFn(guess.X,data.Y); % data.Y?
 inliers = find(error<inputStructure.fitErrorThreshold);
 bestAlgo = algo.train(data.retainObservations(inliers));
