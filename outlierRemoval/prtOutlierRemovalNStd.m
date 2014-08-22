@@ -90,7 +90,7 @@ classdef prtOutlierRemovalNStd < prtOutlierRemoval
             Obj.nStd = value;
         end
     end
-    
+        
     methods (Access = protected, Hidden = true)
         
         function Obj = trainAction(Obj,DataSet)

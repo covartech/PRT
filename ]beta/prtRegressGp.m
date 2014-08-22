@@ -105,12 +105,12 @@ classdef prtRegressGp < prtRegress
             Obj.weights = Obj.CN\DataSet.getTargets();
         end
         
-        function DataSet = runAction(Obj,DataSet)
+        function [DataSet,variance] = runAction(Obj,DataSet)
             k = feval(Obj.covarianceFunction, Obj.dataSet.getObservations(), DataSet.getObservations());
             c = diag(feval(Obj.covarianceFunction, DataSet.getObservations(), DataSet.getObservations())) + Obj.noiseVariance;
             
             DataSet = prtDataSetRegress(k'*Obj.weights);
-            % variance = c - prtUtilCalcDiagXcInvXT(k', Obj.CN);
+            variance = c - prtUtilCalcDiagXcInvXT(k', Obj.CN);
         end
         
     end

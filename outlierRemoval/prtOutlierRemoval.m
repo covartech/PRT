@@ -110,6 +110,9 @@ classdef prtOutlierRemoval < prtAction
     end
     
     methods
+        function indices = getOutlierIndices(Obj,DataSet)
+            indices = Obj.calculateOutlierIndices(DataSet);
+        end
         function obj = prtOutlierRemoval()
             % As an action subclass we must set the properties to reflect
             % our dataset requirements
