@@ -43,7 +43,7 @@ function DataSet = prtDataGenSwissRoll
 % The 2-D manifold locations are in ds.getTargets, and the 3-dimensional 
 % embedding is in ds.getObservations.
 
-swissRollFile = fullfile(prtRoot,'data','swissRoll','swiss_roll_data.mat');
+swissRollFile = fullfile(prtRoot,']beta','dataGen','swissRoll','swiss_roll_data.mat');
 swiss = load(swissRollFile);
 X = swiss.X_data';
 Y = swiss.Y_data';
