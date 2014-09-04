@@ -5,7 +5,7 @@ function thePath = prtUtilGenCleanPath(baseDir,varargin)
 %
 
 p = inputParser;
-p.addParameter('removeDirStart',{'.',']'});
+p.addParameter('removeDirStart',{'.',']','+'});
 p.parse(varargin{:});
 inputs = p.Results;
 
