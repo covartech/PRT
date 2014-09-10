@@ -26,7 +26,8 @@ function [classes,uStrings] = prtUtilStringsToClassNumbers(stringCell,uStrings)
 
 
 if nargin < 2
-    uStrings = unique(stringCell);
+    [uStrings,~,classes] = unique(stringCell);
+    return;
 end
 classes = nan(length(stringCell),1);
 for i = 1:length(uStrings);

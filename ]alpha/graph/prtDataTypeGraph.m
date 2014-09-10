@@ -225,105 +225,115 @@ classdef prtDataTypeGraph
             
         end
         
-        function self = optimizePlotLocationsCoulomb(self)
-        
-            
-            graph = self.graph;
-            graph = graph - diag(diag(graph)); %graph has zero diagonal
-            locs = randn(size(graph,1),2)/3;
-            vel = zeros(size(locs));
-            
-            optimalDistance = 1./graph;
-            optimalDistance(~isfinite(optimalDistance)) = 1;
-            
-            deltaT = 10/(size(graph,1));
-            deltaT = .01;
-            damping = .99;
-            
-            for iter = 1:3000;
-                if ~mod(iter,100)
-                    locs = locs + randn(size(locs))*std(locs(:))/iter;
-                end
-                d = prtDistanceEuclidean(locs,locs);
-                d(d == 0) = inf;
-                dx = bsxfun(@minus,locs(:,1),locs(:,1)');
-                dy = bsxfun(@minus,locs(:,2),locs(:,2)');
-
-                coulombX = dx./d.^2;
-                coulombY = dy./d.^2;
-                
-                
-                hookForce = abs(d-optimalDistance);
-                hookForce = hookForce - diag(diag(hookForce));
-                hookForce(~isfinite(hookForce)) = 0;
-                
-                hookX = -hookForce.*dx./d.^2;
-                hookY = -hookForce.*dy./d.^2;
-                
-                hookX = hookX.*graph;
-                hookY = hookY.*graph;
-                
-                hookX(isnan(hookX)) = 0;
-                hookY(isnan(hookY)) = 0;
-                
-                coulombX(isnan(coulombX)) = 0;
-                coulombY(isnan(coulombY)) = 0;
-                
-                vel(:,1) = (vel(:,1) + deltaT*(sum(coulombX,2) + sum(hookX,2)))*damping;
-                vel(:,2) = (vel(:,2) + deltaT*(sum(coulombY,2) + sum(hookY,2)))*damping;
-                
-                %                 if ~mod(iter,100)
-                %                     keyboard
-                %                 end
-                locs = locs + vel.*deltaT;
-                plot(locs(:,1),locs(:,2),'b.');
-                drawnow;
-                
+        function self = jigglePlotLocations(self,stdev)
+            if isempty(self.internalPlotLocations)
+                self.internalPlotLocations = randn(size(graph,1),2);
+                return;
             end
-            self.plotLocations = locs;
+            if nargin == 1
+                stdev = std(self.internalPlotLocations)./5;
+            end
+            self.internalPlotLocations = self.internalPlotLocations + bsxfun(@times,randn(size(self.graph,1),2),stdev);
+        end
+            
+        function self = optimizePlotLocationsTsne(self,varargin)
+            ds = prtDataSetClass(full(self.graph));
+            tsne = prtPreProcTsne;
+            tsne = tsne.train(ds);
+            dsOut = tsne.run(ds);
+            self.plotLocations = dsOut.X;
         end
         
-        function self = optimizePlotLocationsHooke(self)
+        function self = optimizePlotLocationsHooke(self,varargin)
+            
+            p = inputParser;
+            p.addParameter('optimalDistanceFn',@(g)1./g);
+            p.addParameter('defaultDistance',1);
+            p.addParameter('logicalGraph',false);
+            p.addParameter('maxIters',10000);
+            p.addParameter('plotOnIter',100);
+            p.addParameter('velocityDecay',.99);
+            p.addParameter('ka',1);
+            p.addParameter('kr',1);
+            p.addParameter('repelConnectedNodes',true);
+            
+            p.parse(varargin{:});
+            res = p.Results;
             
             graph = self.graph;
             graph = graph - diag(diag(graph));
-            locs = randn(size(graph,1),2)/3;
+            if isempty(self.internalPlotLocations)
+                locs = randn(size(graph,1),2)/3;
+            else
+                locs = self.internalPlotLocations;
+            end
+                
             
             degree = sum(graph,2);
+            if any(degree == 0);
+                error('Invalid graph');
+            end
+            % graph = graph > 0;
             
             v = zeros(size(locs));
-            deltaT = 0.1;
+            deltaT = 0.01;
             
-            optimalDistance = 1./graph;
-            optimalDistance(~isfinite(optimalDistance)) = 1;
-            optimalDistance = optimalDistance./3;
-            optimalDistance = double(logical(optimalDistance));
+            optimalDistance = res.optimalDistanceFn(graph);
+            optimalDistance(~isfinite(optimalDistance)) = res.defaultDistance;
+            optimalDistance = double(optimalDistance);
             
-            for i = 1:1000;
-                
+            for i = 1:res.maxIters;
                 d = prtDistanceEuclidean(locs,locs);
                 dx = bsxfun(@minus,locs(:,1),locs(:,1)');
                 dy = bsxfun(@minus,locs(:,2),locs(:,2)');
+                theta = atan2(dy,dx);
                 
                 f = -(d-optimalDistance);
+                %                 f = -res.ka*log(d);
                 f = f - diag(diag(f));
                 f(~isfinite(f)) = 0;
                 
-                fx = f.*cos(atan(dy./dx)).*graph.*sign(dx);
+                %all connections "pull" with the same force, but goal
+                %distances (optimalDistance) is proportional to
+                %1/connection degree
+                fx = f.*cos(theta).*(graph > 0); 
                 fx(~isfinite(fx)) = 0;
-                fy = f.*abs(sin(atan(dy./dx))).*graph.*sign(dy);
+                fy = f.*sin(theta).*(graph > 0);
                 fy(~isfinite(fy)) = 0;
                 
+                %natural repelling for un-connected
+                fRepel = res.kr*bsxfun(@times,degree,degree')./d.^2;
+                if ~res.repelConnectedNodes
+                    fRepel = fRepel.*(~graph);
+                end
+                fRepel(~isfinite(fRepel)) = 0;
+                fRepel = fRepel - diag(diag(fRepel));
+                
+                fRx = fRepel.*cos(theta);
+                fRy = fRepel.*sin(theta);
+                
+                fx = fx + fRx;
+                fy = fy + fRy;
+                
+                %                 keyboard
+                %                 fx(fx > 100) = 100;
+                %                 fy(fy > 100) = 100;
+                %                 keyboard
+                %
                 ax = sum(fx,2)./degree; %F = ma; a = F/m
                 ay = sum(fy,2)./degree; 
                 v(:,1) = v(:,1) + ax.*deltaT;
                 v(:,2) = v(:,2) + ay.*deltaT;
-                v = v.*.99;
+                v = v.*res.velocityDecay;
                 
                 locs = locs + v*deltaT;
                 
-                plot(locs(:,1),locs(:,2),'b.');
-                drawnow;
+                if ~mod(i,res.plotOnIter) || i == 1
+                    plot(locs(:,1),locs(:,2),'b.');
+                    title(i);
+                    drawnow;
+                end
+                    
             end
             
             
