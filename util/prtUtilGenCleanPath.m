@@ -5,7 +5,7 @@ function thePath = prtUtilGenCleanPath(baseDir,varargin)
 %
 
 p = inputParser;
-p.addParameter('removeDirStart',{'.',']','+'});
+p.addParamValue('removeDirStart',{'.',']','+'}); % In newer MATLAB addParameter is prefered but we need a little backwards compatibility
 p.parse(varargin{:});
 inputs = p.Results;
 
