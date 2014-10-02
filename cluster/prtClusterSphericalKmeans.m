@@ -99,7 +99,6 @@ classdef prtClusterSphericalKmeans < prtCluster
             boolMat(matInd) = true;
             inner(~boolMat) = 0;
             
-            
             for i = 1:self.nIters
                 clusters = clusters + X'*inner;
                 

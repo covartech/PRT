@@ -122,7 +122,6 @@ classdef prtPreProcPca < prtPreProc
     
     methods (Hidden = true)
         function featureNameModificationFunction = getFeatureNameModificationFunction(self) %#ok<MANU>
-            keyboard
             featureNameModificationFunction = prtUtilFeatureNameModificationFunctionHandleCreator('PC Score #index#');
         end
     end
