@@ -68,7 +68,7 @@ classdef prtDataTypeImage < prtUtilActionDataAccess
     end
     
     %use these to get the data in different formats
-    properties (Dependent)  
+    properties (Hidden, Dependent)  
         gray
         rgb
         hsv
