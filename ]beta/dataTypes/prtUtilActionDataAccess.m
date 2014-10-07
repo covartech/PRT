@@ -31,6 +31,7 @@ classdef prtUtilActionDataAccess
 
         actionData
     end
+    
     methods
         function self = setActionData(self,type,name,val)
             if strcmpi(name,'all')

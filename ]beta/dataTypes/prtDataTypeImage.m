@@ -407,5 +407,14 @@ classdef prtDataTypeImage < prtUtilActionDataAccess
             self = prtDataTypeImage('imageData',theData,'imageType','mat');
         end
             
+        
+        function out = copy(self)
+            out = prtDataTypeImage;
+            out.patchExtractionMode = self.patchExtractionMode;
+            out.imageData = self.imageData;
+            out.imageType = self.imageType;
+            out.actionData = self.actionData;
+            out.keypoints = self.keypoints;
+        end
     end
 end
