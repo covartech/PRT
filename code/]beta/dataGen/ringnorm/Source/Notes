@@ -1,0 +1,14 @@
+This is an implementation of Leo Breiman's
+ringnorm example[1]. It is a 20 dimensional, 2
+class classification example. Each class is drawn
+from a multivariate normal distribution. Class 1
+has mean zero and covariance 4 times the
+identity. Class 2 has mean (a,a,..a) and unit
+covariance. a = 2/sqrt(20). Breiman reports the
+theoretical expected misclassification rate as
+1.3%.
+
+(1) Breiman L.  Bias, variance and arcing
+classifiers. Tec. Report 460, Statistics
+department. University of california. April
+1996. 
