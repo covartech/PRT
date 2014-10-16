@@ -1,5 +1,5 @@
-function prtUtilApplyLicense(fileName,doIt)
-% prtUtilApplyLicense(fileName)
+function prtUtilRemoveOldLicense(fileName,doIt)
+% prtUtilRemoveOldLicense(fileName)
 %   Used internaly to update license information in the PRT
 %
 %  Uses prtUtilLicense to get the right license string.
@@ -13,9 +13,7 @@ function prtUtilApplyLicense(fileName,doIt)
 %   This functionality is too dangerous to DOC.  Just edit the M-file and
 %   poke around.
 
-% To make it do something, make doIt true...
-
-% Copyright (c) 2013 New Folder Consulting
+% Copyright (c) 2014 CoVar Applied Technologies
 %
 % Permission is hereby granted, free of charge, to any person obtaining a
 % copy of this software and associated documentation files (the
@@ -37,6 +35,8 @@ function prtUtilApplyLicense(fileName,doIt)
 % USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
+% To make it do something, make doIt true...
+
 % g = subDir(prtRoot,'*.m');
 % for i = 1:length(g); prtUtilApplyLicense(g{i}); end
 
@@ -55,55 +55,18 @@ if ~isempty(strfind(lower(fileName),'prtdoc'))
     return;
 end 
 
-licenseStr = prtUtilLicense;
-firstLine = strtok(licenseStr,sprintf('\n'));
-
 fid = fopen(fileName);
 s = fscanf(fid,'%c');
 fclose(fid);
 
-if ~isempty(strfind(s,firstLine))
-    fprintf('NFC Copyright already in: %s (Ignoring)\n',f);
-    return;
+oldLicense = {prtUtilLicense(1)};
+for i = 1:length(oldLicense)
+    s = strrep(s,oldLicense{i},''); % remove any old license
 end
-if ~isempty(strfind(lower(s),'copyright'))
-    [p,f] = fileparts(fileName);
-    fprintf('Copyright found in: %s (OK if it doesn''t conflict with ours)\n',f);
-    %     edit(fileName);
-end
-
-fid = fopen(fileName);
-cLine = fgetl(fid);
-newStr = cLine; %always start with the first string, now:
-
-startFound = false;
-while ~startFound & ~feof(fid);
-    cLine = fgetl(fid);
-    cLineDeblank = strtrim(cLine);
-    
-    if length(cLineDeblank) > 0 && cLineDeblank(1) == '%';
-        startFound = false;
-        newStr = sprintf('%s\n%s',newStr,cLine);
-    else
-        startFound = true;
-        if length(cLineDeblank) == 0
-            cLine = '';
-        end
-    end
-end
-
-newStr = sprintf('%s\n\n%s\n%s\n',newStr,licenseStr,cLine);
-
-while ~feof(fid)
-    cLine = fgetl(fid);
-    newStr = sprintf('%s\n%s',newStr,cLine);
-end
-newStr = sprintf('%s\n',newStr);
-fclose(fid);
-
+keyboard
 if doIt
     fOut = fopen(fileName,'w');
-    fprintf(fOut,'%s',newStr);
+    fprintf(fOut,'%s',s);
     fclose(fOut);
 else
     disp('Not doing anything; see the help');
