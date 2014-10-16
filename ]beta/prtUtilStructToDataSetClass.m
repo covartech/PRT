@@ -8,7 +8,7 @@ function ds = prtUtilStructToDataSetClass(S)
 %   S must be a vector structure array.
 %   Each field of S specified as a datafField must be a scalar numeric value.
 
-% Copyright (c) 2013 New Folder Consulting
+% Copyright (c) 2014 CoVar Applied Technologies
 %
 % Permission is hereby granted, free of charge, to any person obtaining a
 % copy of this software and associated documentation files (the
@@ -28,6 +28,9 @@ function ds = prtUtilStructToDataSetClass(S)
 % DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 % OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
 % USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+
+
 
 
 assert(isstruct(S) && isvector(S),'S must be a structure vector array');

@@ -8,7 +8,7 @@ classdef prtPreProcClass < prtPreProc
     %   prtPreProcZeroMeanRows, prtPreProcLogDisc, prtPreProcZmuv,
     %   prtPreProcMinMaxRows
 
-% Copyright (c) 2013 New Folder Consulting
+% Copyright (c) 2014 CoVar Applied Technologies
 %
 % Permission is hereby granted, free of charge, to any person obtaining a
 % copy of this software and associated documentation files (the
@@ -28,6 +28,9 @@ classdef prtPreProcClass < prtPreProc
 % DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 % OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
 % USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+
+
     methods
 
         function obj = prtPreProcClass()

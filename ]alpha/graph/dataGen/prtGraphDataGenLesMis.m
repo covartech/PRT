@@ -12,7 +12,7 @@ function graph = prtGraphDataGenLesMis
 % coappearances were taken from D. E. Knuth, The Stanford GraphBase: A
 % Platform for Combinatorial Computing, Addison-Wesley, Reading, MA (1993).
 
-% Copyright (c) 2013 New Folder Consulting
+% Copyright (c) 2014 CoVar Applied Technologies
 %
 % Permission is hereby granted, free of charge, to any person obtaining a
 % copy of this software and associated documentation files (the
@@ -32,6 +32,9 @@ function graph = prtGraphDataGenLesMis
 % DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 % OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
 % USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+
+
 
 
 

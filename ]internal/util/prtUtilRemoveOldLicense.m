@@ -63,7 +63,7 @@ oldLicense = {prtUtilLicense(1)};
 for i = 1:length(oldLicense)
     s = strrep(s,oldLicense{i},''); % remove any old license
 end
-keyboard
+
 if doIt
     fOut = fopen(fileName,'w');
     fprintf(fOut,'%s',s);

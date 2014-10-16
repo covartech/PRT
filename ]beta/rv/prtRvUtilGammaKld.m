@@ -19,7 +19,7 @@ function KLD = prtRvUtilGammaKld(bQ,cQ,bP,cP)
 % Outputs:
 %   KLD - The KLD for the gamma distributions
 
-% Copyright (c) 2013 New Folder Consulting
+% Copyright (c) 2014 CoVar Applied Technologies
 %
 % Permission is hereby granted, free of charge, to any person obtaining a
 % copy of this software and associated documentation files (the
@@ -39,6 +39,9 @@ function KLD = prtRvUtilGammaKld(bQ,cQ,bP,cP)
 % DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 % OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
 % USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+
+
 
 
 KLD = gammaln(bP)-gammaln(bQ) + bP*log(cQ) - bP*log(cP) + (bQ-bP)*psi(bQ) + bQ*(cP-cQ)/cQ;

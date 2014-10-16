@@ -4,7 +4,7 @@ function s = prtUtilSimpleStruct(varargin)
 %s = prtUtilSimpleStruct('asdf',randn(100,1),'fff',randn(100,1),'asfsadf',prtUtilCellPrintf('%s',num2cell(1:100)'))
 %s = prtUtilSimpleStruct(origStruct,...)
 
-% Copyright (c) 2013 New Folder Consulting
+% Copyright (c) 2014 CoVar Applied Technologies
 %
 % Permission is hereby granted, free of charge, to any person obtaining a
 % copy of this software and associated documentation files (the
@@ -24,6 +24,9 @@ function s = prtUtilSimpleStruct(varargin)
 % DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 % OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
 % USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+
+
 
 
 % fields = varargin(1:2:end);

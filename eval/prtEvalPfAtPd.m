@@ -26,7 +26,7 @@ function pf = prtEvalPfAtPd(classifier,dataSet,pdDesired,nFolds)
 %   See Also: prtEvalAuc, prtEvalPfAtPd, prtEvalPercentCorrect,
 %   prtEvalMinCost
 
-% Copyright (c) 2013 New Folder Consulting
+% Copyright (c) 2014 CoVar Applied Technologies
 %
 % Permission is hereby granted, free of charge, to any person obtaining a
 % copy of this software and associated documentation files (the
@@ -46,6 +46,9 @@ function pf = prtEvalPfAtPd(classifier,dataSet,pdDesired,nFolds)
 % DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 % OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
 % USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+
+
 
 
 assert(nargin >= 2,'prt:prtEvalPfAtPd:BadInputs','prtEvalPfAtPd requires two input arguments');

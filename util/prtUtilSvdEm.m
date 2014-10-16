@@ -3,7 +3,7 @@ function [U, S, V, AHat] = prtUtilSvdEm(A,k,varargin)
 % Preform SVD decomposition for a matrix with missing values
 % Missing values should be represented by NaN
 
-% Copyright (c) 2013 New Folder Consulting
+% Copyright (c) 2014 CoVar Applied Technologies
 %
 % Permission is hereby granted, free of charge, to any person obtaining a
 % copy of this software and associated documentation files (the
@@ -23,6 +23,9 @@ function [U, S, V, AHat] = prtUtilSvdEm(A,k,varargin)
 % DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 % OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
 % USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+
+
 
 p = inputParser;
 p.addParamValue('nMaxIterations',100);

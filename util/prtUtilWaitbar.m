@@ -4,33 +4,33 @@
 %
 %Synopsis:
 %
-%  f=statusbar
+%  f=prtUtilWaitbar
 %     Get all status/progress bar handles.
 %
-%  f=statusbar(title)
+%  f=prtUtilWaitbar(title)
 %     Create a new status/progress bar. If title is an empty
 %     string, the default 'Progress ...' will be used.
 %
-%  f=statusbar(title,f)
+%  f=prtUtilWaitbar(title,f)
 %     Reset an existing status/progress bar or create a new
 %     if the handle became invalid.
 %
-%  f=statusbar(done,f)
+%  f=prtUtilWaitbar(done,f)
 %     For 0 < done < 1, update the progress bar and the elap-
 %     sed time. Estimate the remaining time until completion.
 %     On user abort, return an empty handle.
 %
-%  v=statusbar('on')
-%  v=statusbar('off')
+%  v=prtUtilWaitbar('on')
+%  v=prtUtilWaitbar('off')
 %     Set default visibility for new statusbars and return
 %     the previous setting.
 %
-%  v=statusbar('on',f)
-%  v=statusbar('off',f)
-%     Show or hide an existing statusbar and return the last
+%  v=prtUtilWaitbar('on',f)
+%  v=prtUtilWaitbar('off',f)
+%     Show or hide an existing prtUtilWaitbar and return the last
 %     visibility setting.
 %
-%  delete(statusbar)
+%  delete(prtUtilWaitbar)
 %     Remove all status/progress bars.
 %
 %  drawnow
@@ -38,10 +38,10 @@
 %
 %Example:
 %
-%     f=statusbar('Wait some seconds ...');
+%     f=prtUtilWaitbar('Wait some seconds ...');
 %     for p=0:0.01:1
 %        pause(0.2);
-%        if isempty(statusbar(p,f))
+%        if isempty(prtUtilWaitbar(p,f))
 %           break;
 %        end
 %     end
@@ -49,7 +49,7 @@
 %        delete(f);
 %     end
 
-% Copyright (c) 2013 New Folder Consulting
+% Copyright (c) 2014 CoVar Applied Technologies
 %
 % Permission is hereby granted, free of charge, to any person obtaining a
 % copy of this software and associated documentation files (the
@@ -71,6 +71,9 @@
 % USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
+
+
+
 %        Marcel Leutenegger © January 2007
 %
 function f = prtUtilWaitbar(p,f)
@@ -79,7 +82,7 @@ if nargin < nargout           % get handles
    o='ShowHiddenHandles';
    t=get(0,o);
    set(0,o,'on');
-   f=findobj(get(0,'Children'),'flat','Tag','StatusBar');
+   f=findobj(get(0,'Children'),'flat','Tag','prtUtilWaitbar');
    set(0,o,t);
    return;
 end
@@ -168,7 +171,7 @@ end
 %Check if a given handle is a progress bar.
 %
 function f=check(f)
-if f & ishandle(f(1)) & isequal(get(f(1),'Tag'),'StatusBar')
+if f & ishandle(f(1)) & isequal(get(f(1),'Tag'),'prtUtilWaitbar')
    f=f(1);
 else
    f=[];
@@ -183,7 +186,7 @@ if ~nargin | isempty(visible)
 end
 s=[256 80];
 t=get(0,'ScreenSize');
-f=figure('DoubleBuffer','on','HandleVisibility','off','MenuBar','none','Name','Progress ...','IntegerHandle','off','NumberTitle','off','Resize','off','Position',[floor((t(3:4)-s)/2) s],'Tag','StatusBar','ToolBar','none','Visible',visible);
+f=figure('DoubleBuffer','on','HandleVisibility','off','MenuBar','none','Name','Progress ...','IntegerHandle','off','NumberTitle','off','Resize','off','Position',[floor((t(3:4)-s)/2) s],'Tag','prtUtilWaitbar','ToolBar','none','Visible',visible);
 a.Parent=axes('Parent',f,'Position',[0 0 1 1],'Visible','off','XLim',[0 256],'YLim',[0 80]);
 %
 %Horizontal bar

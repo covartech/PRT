@@ -13,9 +13,7 @@ function prtUtilApplyLicense(fileName,doIt)
 %   This functionality is too dangerous to DOC.  Just edit the M-file and
 %   poke around.
 
-% To make it do something, make doIt true...
-
-% Copyright (c) 2013 New Folder Consulting
+% Copyright (c) 2014 CoVar Applied Technologies
 %
 % Permission is hereby granted, free of charge, to any person obtaining a
 % copy of this software and associated documentation files (the
@@ -35,6 +33,11 @@ function prtUtilApplyLicense(fileName,doIt)
 % DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 % OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
 % USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+
+% To make it do something, make doIt true...
+
+
 
 
 % g = subDir(prtRoot,'*.m');
@@ -63,7 +66,7 @@ s = fscanf(fid,'%c');
 fclose(fid);
 
 if ~isempty(strfind(s,firstLine))
-    fprintf('NFC Copyright already in: %s (Ignoring)\n',f);
+    fprintf('NFC Copyright already in: %s (Ignoring)\n',fileName);
     return;
 end
 if ~isempty(strfind(lower(s),'copyright'))

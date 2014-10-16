@@ -30,7 +30,7 @@ function h = prtUtilSuicontrol(S)
 % Author: Kenneth D. Morton Jr.
 % Date Created: 05-Aug-2008
 
-% Copyright (c) 2013 New Folder Consulting
+% Copyright (c) 2014 CoVar Applied Technologies
 %
 % Permission is hereby granted, free of charge, to any person obtaining a
 % copy of this software and associated documentation files (the
@@ -50,6 +50,9 @@ function h = prtUtilSuicontrol(S)
 % DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 % OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
 % USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+
+
 
 
 assert(isfield(S,'style'),'The structure must specifiy the style of uicontrol.');
