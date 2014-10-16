@@ -3,7 +3,7 @@ function y = prtRvUtilNormPdf(X,mu,sigma)
 %Y = prtRvUtilNormPdf(X)
 %Y = prtRvUtilNormPdf(X,mu)
 
-% Copyright (c) 2013 New Folder Consulting
+% Copyright (c) 2014 CoVar Applied Technologies
 %
 % Permission is hereby granted, free of charge, to any person obtaining a
 % copy of this software and associated documentation files (the
@@ -23,6 +23,9 @@ function y = prtRvUtilNormPdf(X,mu,sigma)
 % DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 % OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
 % USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+
+
 
 
 % Test Drop in replacement of normpdf from stats toolbox

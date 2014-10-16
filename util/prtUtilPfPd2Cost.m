@@ -6,7 +6,7 @@ function cost = prtUtilPfPd2Cost(pf,pd,costMatrix,priorH0,priorH1)
 %   Cost matrix = [0, 1; 1 0];
 % xxx Need Help xxx
 
-% Copyright (c) 2013 New Folder Consulting
+% Copyright (c) 2014 CoVar Applied Technologies
 %
 % Permission is hereby granted, free of charge, to any person obtaining a
 % copy of this software and associated documentation files (the
@@ -26,6 +26,9 @@ function cost = prtUtilPfPd2Cost(pf,pd,costMatrix,priorH0,priorH1)
 % DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 % OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
 % USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+
+
 
 
 if nargin < 3

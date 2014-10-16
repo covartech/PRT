@@ -1,23 +1,6 @@
 function gram = prtUtilRbfDist(x,y,varargin)
 
-%   gram = rbfDistance(x,y,param1,value1,...)
-%   finds the Radial Basis Function distance between X and Y.
-%
-%   gram = prtUtilRbfDist(x,y,param1,value1,...)
-%   Enables inputs of parameter/value pairs as described below:
-%
-%   Parameters:
-%       
-%   sigma - Variance of the Radial Basis Function (RBF)
-%
-%   Example usage:
-%
-%   ds=prtDataGenUnimodal;
-%   gram=prtUtilRbfDist(ds.X,ds.X,'sigma',1);
-%   imagesc(gram)
-%   title('X vs. Y Gram Matrix');
- 
-% Copyright (c) 2013 New Folder Consulting
+% Copyright (c) 2014 CoVar Applied Technologies
 %
 % Permission is hereby granted, free of charge, to any person obtaining a
 % copy of this software and associated documentation files (the
@@ -37,6 +20,26 @@ function gram = prtUtilRbfDist(x,y,varargin)
 % DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 % OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
 % USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+
+%   gram = rbfDistance(x,y,param1,value1,...)
+%   finds the Radial Basis Function distance between X and Y.
+%
+%   gram = prtUtilRbfDist(x,y,param1,value1,...)
+%   Enables inputs of parameter/value pairs as described below:
+%
+%   Parameters:
+%       
+%   sigma - Variance of the Radial Basis Function (RBF)
+%
+%   Example usage:
+%
+%   ds=prtDataGenUnimodal;
+%   gram=prtUtilRbfDist(ds.X,ds.X,'sigma',1);
+%   imagesc(gram)
+%   title('X vs. Y Gram Matrix');
+ 
+
 
 p = inputParser;
 

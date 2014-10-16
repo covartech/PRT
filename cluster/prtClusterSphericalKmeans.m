@@ -27,7 +27,7 @@ classdef prtClusterSphericalKmeans < prtCluster
     %    See the entry in ]blogs\torrione_2013.03.15_CoatesNg_Kmeans for
     %    example usage
 
-% Copyright (c) 2013 New Folder Consulting
+% Copyright (c) 2014 CoVar Applied Technologies
 %
 % Permission is hereby granted, free of charge, to any person obtaining a
 % copy of this software and associated documentation files (the
@@ -47,6 +47,9 @@ classdef prtClusterSphericalKmeans < prtCluster
 % DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 % OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
 % USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+
+
 
 
     

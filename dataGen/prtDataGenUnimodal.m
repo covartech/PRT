@@ -16,7 +16,7 @@ function DataSet = prtDataGenUnimodal(N,mu0,mu1,sigma0,sigma1)
 %   prtDataGenMary, prtDataGenNoisySinc, prtDataGenOldFaithful,
 %   prtDataGenSpiral, prtDataGenUnimodal, prtDataGenUnimodal, prtDataGenXor
 
-% Copyright (c) 2013 New Folder Consulting
+% Copyright (c) 2014 CoVar Applied Technologies
 %
 % Permission is hereby granted, free of charge, to any person obtaining a
 % copy of this software and associated documentation files (the
@@ -36,6 +36,9 @@ function DataSet = prtDataGenUnimodal(N,mu0,mu1,sigma0,sigma1)
 % DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 % OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
 % USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+
+
 
 if nargin == 0
     nSamples = 200;

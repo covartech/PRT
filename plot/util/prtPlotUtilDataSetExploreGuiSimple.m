@@ -2,7 +2,7 @@ function prtPlotUtilDataSetExploreGuiSimple(theObject,parent)
 % Internal function, 
 % xxx Need Help xxx - see prtDataSetClass.explore
 
-% Copyright (c) 2013 New Folder Consulting
+% Copyright (c) 2014 CoVar Applied Technologies
 %
 % Permission is hereby granted, free of charge, to any person obtaining a
 % copy of this software and associated documentation files (the
@@ -22,6 +22,9 @@ function prtPlotUtilDataSetExploreGuiSimple(theObject,parent)
 % DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 % OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
 % USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+
+
 
 if nargin == 1
     windowSize = [754 600];

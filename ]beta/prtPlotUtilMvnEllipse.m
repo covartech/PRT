@@ -6,7 +6,7 @@ function varargout = prtPlotUtilMvnEllipse(mu,Sigma,nStds,n)
 % Adapted From: http://www.mathworks.com/matlabcentral/fileexchange/8793
 % Then re-adpated from Beals Mixture of Factor Analyzes Code
 
-% Copyright (c) 2013 New Folder Consulting
+% Copyright (c) 2014 CoVar Applied Technologies
 %
 % Permission is hereby granted, free of charge, to any person obtaining a
 % copy of this software and associated documentation files (the
@@ -26,6 +26,9 @@ function varargout = prtPlotUtilMvnEllipse(mu,Sigma,nStds,n)
 % DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 % OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
 % USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+
+
 
 
 assert(ismember(numel(mu),[2 3]),'plotMvnEllipse only works in 2 or 3 /lr   Bv  5,plot(sigmaEigVectors(1,iVec)*[-1 1]*sigmaEigValues(iVec,iVec)*nStd + cMean(1),sigmaEigVectors(2,iVec)*[-1 1]*sigmaEigValues(iVec,iVec)*nStd + cMean(2),'color',cmap(max(ceil(cPi*size(cmap,1)),1),:));dimensions.');

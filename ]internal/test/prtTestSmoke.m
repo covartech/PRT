@@ -3,7 +3,7 @@ function prtTestSmoke
 % to wait for all of the tests to run but want to make sure you haven't
 % broken the entire product
 
-% Copyright (c) 2013 New Folder Consulting
+% Copyright (c) 2014 CoVar Applied Technologies
 %
 % Permission is hereby granted, free of charge, to any person obtaining a
 % copy of this software and associated documentation files (the
@@ -23,6 +23,9 @@ function prtTestSmoke
 % DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 % OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
 % USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+
+
 
 
 functionNames = {'prtTestDistance','prtTestClass', 'prtTestFeatSelExhaustive', 'prtTestClassFLD',' prtTestFeatSelSfs', 'prtTestClassKnn','prtTestKernelRbf','prtTestPreProcZmuv','prtTestScoreAuc','prtTestDataSetClass','prtTestDataSetRegress','prtTestDataSetStandard', 'prtTestRvMvn'};
