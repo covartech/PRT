@@ -19,7 +19,7 @@ classdef prtDataSetRegress < prtDataSetStandard
     % 
     %   See also: prtDataSetStandard, prtDataSetClass, prtDataSetBase
 
-% Copyright (c) 2014 CoVar Applied Technologies
+% Copyright (c) 2013 New Folder Consulting
 %
 % Permission is hereby granted, free of charge, to any person obtaining a
 % copy of this software and associated documentation files (the
@@ -39,9 +39,6 @@ classdef prtDataSetRegress < prtDataSetStandard
 % DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 % OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
 % USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-
-
 
 
     properties (Hidden = true)
@@ -92,16 +89,18 @@ classdef prtDataSetRegress < prtDataSetStandard
             
             holdState = get(gca,'nextPlot');
             
-            classColors = obj.plotOptions.colorsFunction(1);
+            classColors = obj.plotOptions.colorsFunction(obj.nTargetDimensions);
             markerSize = obj.plotOptions.symbolSize;
             lineWidth = obj.plotOptions.symbolLineWidth;
-            classSymbols = obj.plotOptions.symbolsFunction(1);
+            classSymbols = obj.plotOptions.symbolsFunction(obj.nTargetDimensions);
             
-            iPlot = 1;
-            classEdgeColor = obj.plotOptions.symbolEdgeModificationFunction(classColors(iPlot,:));
-            
-            h = plot(obj.getObservations(:,featureIndices),obj.getTargets, classSymbols(iPlot), 'MarkerFaceColor', classColors(iPlot,:), 'MarkerEdgeColor', classEdgeColor,'linewidth',lineWidth,'MarkerSize',markerSize);
-            
+            for iPlot = 1:obj.nTargetDimensions
+				classEdgeColor = obj.plotOptions.symbolEdgeModificationFunction(classColors(iPlot,:));
+
+				h(iPlot) = plot(obj.getObservations(:,featureIndices),obj.getTargets(:,iPlot), classSymbols(iPlot), 'MarkerFaceColor', classColors(iPlot,:), 'MarkerEdgeColor', classEdgeColor,'linewidth',lineWidth,'MarkerSize',markerSize);
+				hold on
+			end
+			
             set(gca,'nextPlot',holdState);
             
             % Set title

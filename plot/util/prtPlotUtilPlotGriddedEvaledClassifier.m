@@ -2,7 +2,7 @@ function imageHandle = prtPlotUtilPlotGriddedEvaledClassifier(DS, linGrid, gridS
 % Internal function
 % xxx Need Help xxx
 
-% Copyright (c) 2014 CoVar Applied Technologies
+% Copyright (c) 2013 New Folder Consulting
 %
 % Permission is hereby granted, free of charge, to any person obtaining a
 % copy of this software and associated documentation files (the
@@ -22,9 +22,6 @@ function imageHandle = prtPlotUtilPlotGriddedEvaledClassifier(DS, linGrid, gridS
 % DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 % OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
 % USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-
-
 
 
 % Check to see if we are plotting a decision
@@ -53,9 +50,20 @@ switch nDims
         set(gca,'YTickLabel',[])
         colormap(cMap)
     case 2
+		% find decision boundary, center colormap around it
+		results = prtActor.run(prtActor.dataSet);
+		decider = prtDecisionBinaryMinPe; % can't use prtActor.internalDecider
+		decider = decider.train(results);
+		threshold = decider.threshold;
+		crange = threshold + min(max(results.X)-threshold,threshold-min(results.X))*[-1,1];
+		
         xx = reshape(linGrid(:,1),gridSize);
         yy = reshape(linGrid(:,2),gridSize);
-        imageHandle = imagesc(xx(1,:),yy(:,1),reshape(DS,gridSize));
+		if all(isfinite(crange))
+			imageHandle = imagesc(xx(1,:),yy(:,1),reshape(DS,gridSize),crange);
+		else
+			imageHandle = imagesc(xx(1,:),yy(:,1),reshape(DS,gridSize));
+		end
         colormap(cMap)
     case 3
         xx = reshape(linGrid(:,1),gridSize);
