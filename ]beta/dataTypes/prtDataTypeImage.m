@@ -400,6 +400,10 @@ classdef prtDataTypeImage < prtUtilActionDataAccess
             points = corner(self.gray,varargin{:});
         end
         
+        function self = histeq(self,varargin)
+            self = prtDataTypeImage('imageData',histeq(self.gray,varargin{:}),'imageType','gray');
+        end
+        
         function self = greyWorldNormalize(self)
             
             theData = double(self.rgb);
