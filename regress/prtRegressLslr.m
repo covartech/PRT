@@ -95,9 +95,12 @@ classdef prtRegressLslr < prtRegress
         % standardizedResiduals are standardized residuals (see Hastie...)
         
         standardizedResiduals = []; % Standardized residuals
-        
+                
     end
-    
+    properties (Hidden)
+        includeDcOffset = true;
+    end
+
     methods
         
           % Allow for string, value pairs
@@ -118,11 +121,14 @@ classdef prtRegressLslr < prtRegress
             yCentered = bsxfun(@minus,y,mean(y,1));
             
             Obj.beta = (xCentered'*xCentered)^(-1) * xCentered'*yCentered;
-            Obj.beta = [mean(y,1) - mean(x,1)*Obj.beta;Obj.beta];
+            if Obj.includeDcOffset
+                Obj.beta = [mean(y,1) - mean(x,1)*Obj.beta;Obj.beta];       
+                z = cat(2,ones(size(xCentered,1),1),xCentered);
+            else
+                z = xCentered;
+            end
             
-            z = cat(2,ones(size(xCentered,1),1),xCentered);
-            
-            yHat = cat(2,ones(size(x,1),1),x)*Obj.beta;
+            yHat = z*Obj.beta;
             e = yHat - y;
             Obj.rss = sum(e(:).^2);
             sigmaHat = sqrt(Obj.rss./(size(x,1) - size(x,2) - 1));
@@ -136,15 +142,15 @@ classdef prtRegressLslr < prtRegress
             end
             
             Obj.t = bsxfun(@rdivide,Obj.beta,sigmaHat*sqrt(diag((z'*z)^(-1))));
-            
             Obj.standardizedResiduals = Obj.standardizedResiduals;
-
         end
         
         function RegressionResults = runAction(Obj,DataSet)
             x = DataSet.getObservations;
             [N,p] = size(x);
-            x = cat(2,ones(N,1),x);
+            if Obj.includeDcOffset
+                x = cat(2,ones(N,1),x);
+            end
             RegressionResults = DataSet.setObservations(x*Obj.beta);
         end
         
