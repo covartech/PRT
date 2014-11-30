@@ -50,7 +50,7 @@ classdef prtDataTypeGraph
 
 
 
-    properties (Access=private)
+    properties (Hidden)
         internalPlotLocations = [];
         internalGraph = [];
         internalNodeNames = {};
@@ -58,6 +58,8 @@ classdef prtDataTypeGraph
     end
     properties (Hidden)
         explorePlotFunction = [];
+        anchorPlotLocations = [];
+        plotMaxNumStrings = 100;
     end
     %use these to get the data in different formats
     properties (Dependent)
@@ -268,7 +270,8 @@ classdef prtDataTypeGraph
             if isempty(self.internalPlotLocations)
                 locs = randn(size(graph,1),2)/3;
             else
-                locs = self.internalPlotLocations;
+                locs = randn(size(graph,1),2)/3;
+                locs(1:size(self.internalPlotLocations,1),:) = self.internalPlotLocations;
             end
                 
             
@@ -284,6 +287,11 @@ classdef prtDataTypeGraph
             optimalDistance = res.optimalDistanceFn(graph);
             optimalDistance(~isfinite(optimalDistance)) = res.defaultDistance;
             optimalDistance = double(optimalDistance);
+            
+            isAnchored = false(size(locs,1),1);
+            if ~isempty(self.anchorPlotLocations)
+                isAnchored(self.anchorPlotLocations) = true;
+            end
             
             for i = 1:res.maxIters;
                 d = prtDistanceEuclidean(locs,locs);
@@ -329,9 +337,9 @@ classdef prtDataTypeGraph
                 v(:,2) = v(:,2) + ay.*deltaT;
                 v = v.*res.velocityDecay;
                 
-                locs = locs + v*deltaT;
+                locs(~isAnchored,:) = locs(~isAnchored,:) + v(~isAnchored,:)*deltaT;
                 
-                if ~mod(i,res.plotOnIter) || i == 1
+                if ~mod(i,res.plotOnIter)
                     plot(locs(:,1),locs(:,2),'b.');
                     title(i);
                     drawnow;
@@ -429,10 +437,11 @@ classdef prtDataTypeGraph
             
             c = jet(nBins);
             % plot points
+            handles = gobjects(size(graph,1),1);
             for i = 1:length(centers);
                 current = locs(minInd == i,:);
                 h = plot(current(:,1),current(:,2),'b.');
-                
+                handles(minInd == i) = h;
                 set(h,'color',c(i,:));
                 set(h,'markersize',30);
                 set(h,'hittest','off');
@@ -461,16 +470,21 @@ classdef prtDataTypeGraph
             set(hLines,'hittest','off');
             hold off;
             
-            nStrings = min([100 size(graph,1)]);
+            
+            nStrings = min([self.plotMaxNumStrings size(graph,1)]);
             nodality = sum(graph,2);
             [~,inds] = sort(nodality,'descend');
             inds = randperm(length(inds)); %random names
+            V = axis;
+            deltaX = V(2)-V(1);
+            deltaY = V(4)-V(3);
             if ~isempty(self.nodeNames)
                 for i = 1:nStrings;
                     theLoc = locs(inds(i),:);
-                    h = text(theLoc(1),theLoc(2),self.nodeNames{inds(i)});
+                    h = text(theLoc(1),theLoc(2)-deltaY/100,self.nodeNames{inds(i)});
                     set(h,'fontsize',10,'fontweight','bold');
                     set(h,'hittest','off');
+                    set(h,'HorizontalAlignment','Center');
                 end
             end
         end
