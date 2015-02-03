@@ -169,8 +169,9 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
             %   exactly match the output of cat(1,dataSet1,dataSet2)
             %
             
-            self = catObservations@prtDataSetStandard(self,varargin{:});
-            self = catClasses(self,varargin{:});
+            % vararginModified has empty elements removed (!)
+            [self,vararginModified] = catObservations@prtDataSetStandard(self,varargin{:});
+            self = catClasses(self,vararginModified{:});
             self = self.update;
         end
         

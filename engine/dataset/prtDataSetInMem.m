@@ -219,17 +219,22 @@ classdef prtDataSetInMem < prtDataSetBase
             self = self.update;
         end
         
-        function self = catObservations(self,varargin)
+        function [self,varargin] = catObservations(self,varargin)
             % dsOut = catObservations(dataSet1,dataSet2)
             %   Return a data set, dsOut, created by concatenating the
             %   data and observationInfo in dataSet1 and dataSet2.  The
             %   output data set, dsOut, will have nObservations =
             %   dataSet1.nObservations + dataSet2.nObservations.
             %
+            
+            % Enable empty data sets:
+            varargin = varargin(cellfun(@(x)~isempty(x),varargin));
+            
             if nargin == 1 && length(self) > 1
                 varargin = num2cell(self(2:end));
                 self = self(1);
             end
+            
             self = self.catObservationInfo(varargin{:});
             self = self.catObservationData(varargin{:});
             self = self.update;
