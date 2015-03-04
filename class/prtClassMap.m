@@ -124,6 +124,10 @@ classdef prtClassMap < prtClass
                 % probabilities
                 logLikelihoods = exp(bsxfun(@minus, logLikelihoods, prtUtilSumExp(logLikelihoods.').'));
             end
+            
+            if ~isa(ds,'prtDataSetClass')
+                ds = ds.toPrtDataSetClassNoData();
+            end
             ds.X = logLikelihoods;
         end
     
