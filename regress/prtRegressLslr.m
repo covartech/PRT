@@ -73,13 +73,15 @@ classdef prtRegressLslr < prtRegress
         nameAbbreviation = 'LSLR'                % LSLR
     end
     
-    properties (SetAccess = 'protected')
-        
+    properties
         % beta is a DataSet.nDimensions + 1 x 1 vector of regression
         % weights estimated via least-squares linear regression.  The first
         % element of beta corresponds to the DC bias weight.
         
         beta = [];  % Regression weights estimated via least squares linear regression
+    end
+    
+    properties (SetAccess = 'protected')
         
         % t is a measure of the importance of each of the
         % DataSet.nDimensions + 1 (DC bias) weights.  The first element of
@@ -154,6 +156,14 @@ classdef prtRegressLslr < prtRegress
             RegressionResults = DataSet.setObservations(x*Obj.beta);
         end
         
+        function RegressionResults = runActionFast(Obj,x)
+           	
+            [N,p] = size(x);
+            if Obj.includeDcOffset
+                x = cat(2,ones(N,1),x);
+            end
+            RegressionResults = x*Obj.beta;
+        end
     end
     
 end
