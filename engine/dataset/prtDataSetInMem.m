@@ -37,29 +37,6 @@ classdef prtDataSetInMem < prtDataSetBase
 % OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
 % USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-
-    % Copyright (c) 2013 New Folder Consulting
-    %
-    % Permission is hereby granted, free of charge, to any person obtaining a
-    % copy of this software and associated documentation files (the
-    % "Software"), to deal in the Software without restriction, including
-    % without limitation the rights to use, copy, modify, merge, publish,
-    % distribute, sublicense, and/or sell copies of the Software, and to permit
-    % persons to whom the Software is furnished to do so, subject to the
-    % following conditions:
-    %
-    % The above copyright notice and this permission notice shall be included
-    % in all copies or substantial portions of the Software.
-    %
-    % THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-    % OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-    % MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-    % NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-    % DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-    % OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-    % USE OR OTHER DEALINGS IN THE SOFTWARE.
-    
-    
     properties (SetAccess = protected,GetAccess = protected)
         internalData
         internalTargets
@@ -219,17 +196,22 @@ classdef prtDataSetInMem < prtDataSetBase
             self = self.update;
         end
         
-        function self = catObservations(self,varargin)
+        function [self,varargin] = catObservations(self,varargin)
             % dsOut = catObservations(dataSet1,dataSet2)
             %   Return a data set, dsOut, created by concatenating the
             %   data and observationInfo in dataSet1 and dataSet2.  The
             %   output data set, dsOut, will have nObservations =
             %   dataSet1.nObservations + dataSet2.nObservations.
             %
+            
+            % Enable empty data sets:
+            varargin = varargin(cellfun(@(x)~isempty(x),varargin));
+            
             if nargin == 1 && length(self) > 1
                 varargin = num2cell(self(2:end));
                 self = self(1);
             end
+            
             self = self.catObservationInfo(varargin{:});
             self = self.catObservationData(varargin{:});
             self = self.update;
@@ -627,7 +609,7 @@ classdef prtDataSetInMem < prtDataSetBase
             
             self.internalSizeConsitencyCheck = false;
             try
-                if self.nFeatures > 0 % No data?
+                if ~self.isEmpty
                     self.data = self.data(indices,:);
                 end
                 if self.isLabeled
