@@ -148,6 +148,10 @@ classdef prtClassPlsda < prtClass
             
             Y = DataSet.getTargetsAsBinaryMatrix;
             
+            if DataSet.nClasses < 2
+                warning('prt:prtClassPlda:unaryOrUnlabeled','Training dataset for PLSDA has %d classes. This may cause issues.',DataSet.nClasses)
+            end
+            
             maxComps = min(size(X));
             if self.nComponents > maxComps;
                 self.nComponents = maxComps;
