@@ -71,7 +71,7 @@ classdef prtUtilIntegerAssociativeArray
                             changeKey = in2.integerKeys(strcmpi(val1,in2.cellValues));
                             integerSwaps = cat(1,integerSwaps,[changeKey,theKey]);
                             in2 = in2.remove(changeKey);
-                        else
+						elseif any(in2.integerKeys == theKey)
                             % The value is not in the second set but is in
                             % the first
                             in2.integerKeys(in2.integerKeys == theKey) = newKey;

@@ -25,9 +25,6 @@ classdef prtDataSetTimeSeries < prtDataSetCellArray
 % USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-
-
-
 	properties (Dependent)
         expandedData 
     end
@@ -61,7 +58,7 @@ classdef prtDataSetTimeSeries < prtDataSetCellArray
             
 			%from prtDataInterfaceCategoricalTargets
 			Summary = summarize@prtDataInterfaceCategoricalTargets(self,Summary);
-		end
+        end
 	end
 	
 	methods %Plotting methods

@@ -164,7 +164,8 @@ classdef prtClassBinaryToMaryOneVsAll < prtClass & prtActionBig
         end
         
         function DataSetOut = runAction(Obj,dataSet)
-            DataSetOut = prtDataSetClass(zeros(dataSet.nObservations, length(Obj.baseClassifier)));
+            DataSetOut = dataSet;
+            DataSetOut.X = nan(DataSetOut.nObservations,1);
             
             for iY = 1:length(Obj.baseClassifier)
                 cOutput = run(Obj.baseClassifier(iY), dataSet);

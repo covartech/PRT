@@ -28,9 +28,6 @@ classdef prtDataSetCellArray < prtDataSetInMem & prtDataInterfaceCategoricalTarg
 % USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-
-
-
 	properties (Hidden = true)
 		plotOptions = prtDataSetClass.initializePlotOptions();
 	end
@@ -124,7 +121,18 @@ classdef prtDataSetCellArray < prtDataSetInMem & prtDataInterfaceCategoricalTarg
 			Summary = summarize@prtDataSetInMem(self);
 			%from prtDataInterfaceCategoricalTargets
 			Summary = summarize@prtDataInterfaceCategoricalTargets(self,Summary);
-		end
+        end
+        
+        function ds = toPrtDataSetClassNoData(self)
+            %toPrtDataSetClassNoData Create a prtDataSetClass with a matrix
+            % of nan as the data
+            % This is useful for classifiers that are able to take in
+            % prtDataSetCellArray (or prtDataSetTimeSeries) and wish to
+            % output a prtDataSetClass.
+            
+            ds = prtDataSetClass(nan(self.nObservations,1),self.Y);
+            ds = acquireNonDataAttributesFrom(ds, self);
+        end
 	end
 	
 	methods %Plotting methods
