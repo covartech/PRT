@@ -9,7 +9,7 @@ function [outputList,outputStruct] = prtUtilSubDir(directory,fileMatch,varargin)
 %   Enables specification of additional parameters:
 %       dirMatch (*)
 %       recurse (true)
-%       includeDirectoriesInOutput (true)
+%       includeDirectoriesInOutput (true) - true, false, or 'only'
 %
 % [outputList,outputStruct] = prtUtilSubDir(...) Also output the structure
 %   (as from DIR) for each file found.

@@ -41,6 +41,10 @@ import('org.yaml.snakeyaml.Yaml');
 
 yamlreader = Yaml();
 yml = fileread(yaml_file);
+if isempty(yml)
+    YamlStruct = repmat(struct,0,0);
+    return;
+end
 jymlobj = yamlreader.load(yml);
 
 Data = Hash2Struct(jymlobj);
