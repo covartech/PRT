@@ -206,7 +206,6 @@ classdef prtDataSetInMem < prtDataSetBase
             
             % Enable empty data sets:
             varargin = varargin(cellfun(@(x)~isempty(x),varargin));
-            
             if nargin == 1 && length(self) > 1
                 varargin = num2cell(self(2:end));
                 self = self(1);
