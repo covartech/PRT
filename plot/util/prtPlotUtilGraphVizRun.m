@@ -31,8 +31,6 @@ function FileStruct = prtPlotUtilGraphVizRun(connectivity)
 
 
 
-
-
 % Write file for graphviz
 tempDotFileName = fullfile(tempdir,'_tempPrtGraphVizGraph.dot');
 prtPlotUtilGraphVizWriteDot(connectivity, tempDotFileName);
@@ -50,17 +48,24 @@ prtPlotUtilGraphVizWriteDot(connectivity, tempDotFileName);
 %commandStr = 'neato -Tdot -Gminlen=2 -Gnormalize=true  -Gmaxiter=25000 -Gmode=hier -Glevelsgap=10 -Grankdir="LR" -y';
 %commandStr = 'sfdp -Tdot -Gnormalize=true -Gratio="expand" -Gmaxiter=25000 -Gquadtree=true -Glevels=6 -y';
 
-%commandStr = 'dot -Tdot -Grankdir="LR" -Gmaxiter=2500 -Gpack=true';
-commandStr = 'dot -Tplain';
+exName = 'mwdot';
+if ispc
+    exName = cat(2,exName,'.exe');
+end
+mwdot = fullfile(matlabroot,'bin',lower(computer('arch')),exName);
 
-%commandStr = cat(2,commandStr,' -o "',tempLayoutFileName,'" "',tempDotFileName,'"');
+if ispc
+    commandStr = cat(2,'"',mwdot,'"', ' -Tplain');
+else
+    commandStr = cat(2, mwdot, ' -Tplain');
+end
 commandStr = cat(2,commandStr,' "',tempDotFileName,'"');
 
 % Call graphviz
 [systemStatus, systemResult] = system(commandStr); %#ok<NASGU>
 %%
 if systemStatus
-    error('prtPlotUtilGraphVizRun:graphvizIssue','Problem running Graphviz. Graphviz must be installed and on the system path to enable prtAlgorithm plotting. Go to http://www.graphviz.org/ and follow the installation instructions for your operating system.')
+    error('prtPlotUtilGraphVizRun:graphvizIssue','Problem running mwdot. The MATLAB install of mwdot was not succesfully run. Please report this issue to the developers.')
     % Do you have it installed and on the system path? Try >>system(''dot -V'') to see.
     % You may need to restart.
 end

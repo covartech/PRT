@@ -24,9 +24,6 @@ function prtPlotUtilAlgorithmGui(connectivityMatrix, actionCell, algo)
 % USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-
-
-
 % Given the algorithms action cell extract the names of each of the blocks
 % Also add in Input and Output blocks
 algoStr = cellfun(@(c)c.nameAbbreviation,actionCell,'uniformoutput',false);
