@@ -54,7 +54,11 @@ if ispc
 end
 mwdot = fullfile(matlabroot,'bin',lower(computer('arch')),exName);
 
-commandStr = cat(2,mwdot, ' -Tplain');
+if ispc
+    commandStr = cat(2,'"',mwdot,'"', ' -Tplain');
+else
+    commandStr = cat(2, mwdot, ' -Tplain');
+end
 commandStr = cat(2,commandStr,' "',tempDotFileName,'"');
 
 % Call graphviz
