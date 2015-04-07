@@ -1,4 +1,4 @@
-function varargout = prtScoreRocNfa(ds,y)
+function varargout = prtScoreRocNfa(ds,varargin)
 % prtScoreRocNfa   Generate a operator characteristic curve and output the number of false alarms
 %
 %    prtScoreRocNfa(DECSTATS,LABELS) plots the receiver operator
@@ -21,6 +21,9 @@ function varargout = prtScoreRocNfa(ds,y)
 %    % Find the number of false alarms at the corresponding PD.
 %    [nf, pd ]= prtScoreRocNfa(classified.getX, TestDataSet.getY);
 %
+%   Additional parameter/value pairs:
+%       See prtScoreRoc.
+% 
 %   See also prtScoreConfusionMatrix, prtScoreRmse,
 %   prtScoreRocBayesianBootstrap, prtScoreRocBayesianBootstrapNfa,
 %   prtScorePercentCorrect
@@ -46,32 +49,18 @@ function varargout = prtScoreRocNfa(ds,y)
 % OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
 % USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+p = inputParser;
+p.addOptional('y',[]);
+p.addParameter('outputStructure',false); %this gets handled in this M-file, at the end
+p.addParameter('uniquelabels',[]);       %this gets passed through to ROC
+p.parse(varargin{:});
+inputs = p.Results;
 
-
-
-
-
-
-% rocNFA - Generate a PD vs. # FA pseudo-ROC curve.
-%
-%   Syntax: [NF,PD] = rocNfa(...)
-%
-%   Inputs:
-%       See roc.m
-%
-%   Outputs:
-%       NF - double Vec - Similar to Pf (see roc.m) but taking discrete integer values
-%       corresponding to 1, 2, 3, ... N false alarms.
-%       
-%       PD - double Vec - Probability of detection
-%
-
-
-if nargin < 2
-    [nf,pd,thresholds,auc] = prtScoreRoc(ds);
+if isempty(inputs.y);
+    [nf,pd,thresholds,auc] = prtScoreRoc(ds,'uniquelabels',inputs.uniquelabels);
     y = ds.getTargets;
 else
-    [nf,pd,thresholds,auc] = prtScoreRoc(ds,y);
+    [nf,pd,thresholds,auc] = prtScoreRoc(ds,inputs.y,'uniquelabels',inputs.uniquelabels);
 end
 
 nMiss = length(find(y == 0));
@@ -91,4 +80,7 @@ if nargout == 0
     varargout = {};
 else
     varargout = {nf,pd,thresholds,auc};
+    if inputs.outputStructure
+        varargout{1} = struct('nfa',nf,'pd',pd,'tau',thresholds,'auc',auc);
+    end
 end
