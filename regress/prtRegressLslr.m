@@ -118,16 +118,17 @@ classdef prtRegressLslr < prtRegress
             
             x = DataSet.getObservations;
             y = DataSet.getTargets;
-            
-            xCentered = bsxfun(@minus,x,mean(x,1));
-            yCentered = bsxfun(@minus,y,mean(y,1));
-            
-            Obj.beta = (xCentered'*xCentered)^(-1) * xCentered'*yCentered;
-            z = cat(2,ones(size(xCentered,1),1),xCentered);
-            Obj.beta = [mean(y,1) - mean(x,1)*Obj.beta;Obj.beta];
             if ~Obj.includeDcOffset
-                Obj.beta(1) = 0;
+                betaTemp = DataSet.X\DataSet.Y;
+                Obj.beta = cat(1,0,betaTemp);
+            else
+                xCentered = bsxfun(@minus,x,mean(x,1));
+                yCentered = bsxfun(@minus,y,mean(y,1));
+                
+                Obj.beta = (xCentered'*xCentered)^(-1) * xCentered'*yCentered;
+                Obj.beta = [mean(y,1) - mean(x,1)*Obj.beta;Obj.beta];
             end
+            z = cat(2,ones(size(x,1),1),x);
             
             yHat = z*Obj.beta;
             e = yHat - y;
@@ -143,7 +144,6 @@ classdef prtRegressLslr < prtRegress
             end
             
             Obj.t = bsxfun(@rdivide,Obj.beta,sigmaHat*sqrt(diag((z'*z)^(-1))));
-            Obj.standardizedResiduals = Obj.standardizedResiduals;
         end
         
         function RegressionResults = runAction(Obj,DataSet)
