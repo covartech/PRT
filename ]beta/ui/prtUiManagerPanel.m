@@ -24,20 +24,13 @@ classdef prtUiManagerPanel < prtUiManager
 
 
     properties (Dependent)
-
         title
         fontSize
     end
     
     methods
         function self = prtUiManagerPanel(varargin)
-           if nargin
-                self = prtUtilAssignStringValuePairs(self, varargin{:});
-           end
-            
-           if nargin~=0 && ~self.hgIsValid
-               self.create()
-           end
+           self = self@prtUiManager(varargin{:});
         end
         
         function create(self)

@@ -32,12 +32,7 @@ classdef prtUiDataSetClassExploreWidgetTabClickDisplay < prtUiDataSetClassExplor
     
     methods
         function self = prtUiDataSetClassExploreWidgetTabClickDisplay(varargin)
-            
-            self = prtUtilAssignStringValuePairs(self,varargin{:});
-            
-            if nargin~=0 && ~self.hgIsValid
-               self.create()
-            end
+            self = self@prtUiDataSetClassExploreWidgetTab(varargin{:});
             
             init(self);
         end

@@ -37,12 +37,7 @@ classdef prtUiDataSetClassExploreWidgetTabSelectAxes < prtUiDataSetClassExploreW
     
     methods
         function self = prtUiDataSetClassExploreWidgetTabSelectAxes(varargin)
-            
-            self = prtUtilAssignStringValuePairs(self,varargin{:});
-            
-            if nargin~=0 && ~self.hgIsValid
-               self.create()
-            end
+            self = self@prtUiDataSetClassExploreWidgetTab(varargin{:});
             
             init(self);
         end

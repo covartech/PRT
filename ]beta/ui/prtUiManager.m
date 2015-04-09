@@ -37,7 +37,12 @@ classdef prtUiManager < hgsetget
         create(self)
     end
     methods
-        
+        function self = prtUiManager(varargin)
+            self = prtUtilAssignStringValuePairs(self, varargin{:});
+            if ~self.hgIsValid
+                self.create();
+            end
+        end
         function set.managedHandle(self, val)
             self.managedHandleDepHelper = val;
         end

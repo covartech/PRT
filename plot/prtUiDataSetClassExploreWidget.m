@@ -46,21 +46,13 @@ classdef prtUiDataSetClassExploreWidget < prtUiManagerPanel
     methods
         function self = prtUiDataSetClassExploreWidget(varargin)
             
-            if nargin == 1
-                self.plotManager = varargin{1};
-            elseif ~mod(nargin,2)
-                self = prtUtilAssignStringValuePairs(self,varargin{:});
-            else
-                self.plotManager = varargin{1};
-                self = prtUtilAssignStringValuePairs(self,varargin{2:end});
+            if mod(nargin,2)
+                varargin = cat(2,{'plotManager'},varargin);
             end
+            self = self@prtUiManagerPanel(varargin{:});
             
             if isempty(self.plotManager)
                 error('prt:prtUiDataSetClassExploreWidget:noInput','plotManager must be specified');
-            end
-            
-            if nargin~=0 && ~self.hgIsValid
-                self.create()
             end
             
             init(self);
