@@ -37,6 +37,9 @@ classdef prtOptionsDataSetRegressPlot
         
         symbolLineWidth = 0.1;
         symbolSize = 4;
+        
+        nHistogramBins = 10;
+        plotAsClassColorsFunction = @(n)summer(n);
     end
     
     methods

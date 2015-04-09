@@ -83,8 +83,19 @@ classdef prtDataSetRegress < prtDataSetStandard
             if nPlotDimensions < 1
                 warning('prt:plot:NoPlotDimensionality','No plot dimensions requested.');
                 return
-            elseif nPlotDimensions >= 2
-                error('prt:plot:NoPlotDimensionality','Regression plots are currently only valid for 1 dimensional data, but the requested plot has %d dimensions',nPlotDimensions);
+            elseif nPlotDimensions == 3
+                [~,binCenters] = hist(obj.targets,obj.plotOptions.nHistogramBins);
+                dist = prtDistanceEuclidean(obj.targets,binCenters(:));
+                [val,ind] = min(dist,[],2);
+                uniqueClasses = unique(ind);
+                dsTest = prtDataSetClass(obj.data,ind);
+                dsTest.classNames = prtUtilCellPrintf('%.2f',binCenters(uniqueClasses));
+                dsTest.plotOptions = obj.plotOptions;
+                dsTest.plotOptions.colorsFunction = dsTest.plotOptions.plotAsClassColorsFunction;
+                plot(dsTest);
+                return;
+            elseif nPlotDimensions ~= 1 & nPlotDimensions~= 2
+                error('prt:plot:NoPlotDimensionality','Regression plots are currently only valid for 1-3 dimensional data, but the requested plot has %d dimensions',nPlotDimensions);
             end
             
             holdState = get(gca,'nextPlot');
@@ -96,8 +107,11 @@ classdef prtDataSetRegress < prtDataSetStandard
             
             for iPlot = 1:obj.nTargetDimensions
 				classEdgeColor = obj.plotOptions.symbolEdgeModificationFunction(classColors(iPlot,:));
-
-				h(iPlot) = plot(obj.getObservations(:,featureIndices),obj.getTargets(:,iPlot), classSymbols(iPlot), 'MarkerFaceColor', classColors(iPlot,:), 'MarkerEdgeColor', classEdgeColor,'linewidth',lineWidth,'MarkerSize',markerSize);
+                if length(featureIndices) == 1
+    				h(iPlot) = plot(obj.getObservations(:,featureIndices),obj.getTargets(:,iPlot), classSymbols(iPlot), 'MarkerFaceColor', classColors(iPlot,:), 'MarkerEdgeColor', classEdgeColor,'linewidth',lineWidth,'MarkerSize',markerSize);
+                else
+                    h(iPlot) = plot3(obj.getObservations(:,featureIndices(1)),obj.getObservations(:,featureIndices(2)),obj.getTargets(:,iPlot), classSymbols(iPlot), 'MarkerFaceColor', classColors(iPlot,:), 'MarkerEdgeColor', classEdgeColor,'linewidth',lineWidth,'MarkerSize',markerSize);
+                end
 				hold on
 			end
 			
@@ -107,6 +121,9 @@ classdef prtDataSetRegress < prtDataSetStandard
             title(obj.name);
             switch nPlotDimensions
                 case 1
+                    xlabel(obj.getFeatureNames(featureIndices));
+                    ylabel(obj.getTargetNames(1));
+                case 2
                     xlabel(obj.getFeatureNames(featureIndices));
                     ylabel(obj.getTargetNames(1));
                 otherwise

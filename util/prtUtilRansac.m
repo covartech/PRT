@@ -74,7 +74,7 @@ inputStructure = p.Results;
 
 %% iterate
 bestNFit = 0;
-
+bestAlgo = [];
 for iter = 1:inputStructure.nIterations
 	% bootstrap
 	indices = randperm(data.nObservations);
@@ -93,7 +93,7 @@ for iter = 1:inputStructure.nIterations
 	nFit = sum(error<inputStructure.fitErrorThreshold);
 	
 	% keep the best model
-	if nFit>bestNFit
+	if nFit > bestNFit
 		bestNFit = nFit;
 		bestAlgo = algoTrained;
 	end
