@@ -31,7 +31,7 @@ function varargout = prtPlotUtilMvnEllipse(mu,Sigma,nStds,n)
 
 
 
-assert(ismember(numel(mu),[2 3]),'plotMvnEllipse only works in 2 or 3 /lr   Bv  5,plot(sigmaEigVectors(1,iVec)*[-1 1]*sigmaEigValues(iVec,iVec)*nStd + cMean(1),sigmaEigVectors(2,iVec)*[-1 1]*sigmaEigValues(iVec,iVec)*nStd + cMean(2),'color',cmap(max(ceil(cPi*size(cmap,1)),1),:));dimensions.');
+%assert(ismember(numel(mu),[2 3]),'plotMvnEllipse only works in 2 or 3 /lr   Bv  5,plot(sigmaEigVectors(1,iVec)*[-1 1]*sigmaEigValues(iVec,iVec)*nStd + cMean(1),sigmaEigVectors(2,iVec)*[-1 1]*sigmaEigValues(iVec,iVec)*nStd + cMean(2),'color',cmap(max(ceil(cPi*size(cmap,1)),1),:));dimensions.');
 
 if nargin < 3 || isempty(nStds)
     nStds = 1;
