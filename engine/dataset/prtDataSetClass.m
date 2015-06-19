@@ -988,6 +988,103 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
             end
         end
         
+        
+        function varargout = plotTimeSeriesDensity(obj,featureIndices,xData,varargin)
+            opts.linewidth = 3;
+            opts.faceAlpha = 0.2;
+            opts.quantileValue = 0.1;
+            opts = prtUtilAssignStringValuePairs(opts,varargin{:});
+            % plotAsTimeSeries  Plot the data set as time series data
+            %
+            % dataSet.plotAsTimeSeries() plots the data contained in
+            % dataSet as if it were a time series.
+            
+            if ~obj.isLabeled
+                obj = obj.setTargets(zeros(obj.nObservations,1));
+                obj = obj.setClassNames({'Unlabeled'});
+            end
+            
+            if nargin < 2 || isempty(featureIndices)
+                featureIndices = 1:obj.nFeatures;
+            end
+            
+            nClasses = obj.nClasses;
+            classColors = obj.plotOptions.colorsFunction(obj.nClasses);
+            lineWidth = opts.linewidth;
+            faceAlpha = opts.faceAlpha;
+            quantileValue = opts.quantileValue;
+            
+            handleArray = prtUtilPreAllocateHandles(nClasses,1);
+            allHandles = cell(nClasses,1);
+            
+            holdState = get(gca,'nextPlot');
+            
+            if obj.hasUnlabeled
+                % There are unlabeled observations so we should plot those
+                % first That way they appear underneath of the labeled
+                % observations
+                
+                cX = obj.getDataUnlabeled(featureIndices);
+                classColor = prtPlotUtilClassColorUnlabeled; % FIX: Move to plotOptions?
+                
+                if nargin < 3 || isempty(xData)
+                    xInd = 1:size(cX,2);
+                else
+                    xInd = xData;
+                end
+                
+                unlabeledHandles = prtPlotUtilLineDensities(xInd,cX,classColor,lineWidth,faceAlpha,quantileValue);
+                unlabeledHandle = unlabeledHandles(1);
+                hold on;
+            end
+            
+            
+            % Loop through classes and plot
+            for i = 1:nClasses
+                %Use "i" here because it's by uniquetargetIND
+                cX = obj.getObservationsByClassInd(i, featureIndices);
+                
+                if nargin < 3 || isempty(xData)
+                    xInd = 1:size(cX,2);
+                else
+                    xInd = xData;
+                end
+                
+                h = prtPlotUtilLineDensities(xInd,cX,classColors(i,:),lineWidth,faceAlpha,quantileValue);
+                handleArray(i) = h(1);
+                allHandles{i} = h(:);
+                
+                if i == 1
+                    hold on;
+                end
+            end
+            set(gca,'nextPlot',holdState);
+            % Set title
+            title(obj.name);
+            
+            if obj.hasUnlabeled
+                handleArray = cat(1,handleArray(:),unlabeledHandle);
+                allHandles = cat(1, allHandles(:), {unlabeledHandles});
+            end
+            
+            
+            % Create legend
+            if obj.isLabeled
+                legendStrings = getClassNamesInterp(obj);
+                if obj.hasUnlabeled
+                    legendStrings = cat(1,legendStrings,{prtPlotUtilUnlabeledLegendString});
+                end
+                legend(handleArray,legendStrings,'Location','SouthEast');
+            end
+            
+            
+            % Handle Outputs
+            varargout = {};
+            if nargout > 0
+                varargout = {handleArray, legendStrings, allHandles};
+            end
+        end
+        
         function explore(obj, AdditionalOptions)
             % explore  Explore the prtDataSetObject
             %

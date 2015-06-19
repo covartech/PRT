@@ -168,6 +168,7 @@ classdef prtRvGmmApproxDp < prtRv
             dsX = prtDataSetClass(X);
             
             dpMeans = train(prtClusterDpMeans('lambda',R.dpMeansLambda) + prtDecisionMap, dsX);
+            %dpMeans = train(prtClusterDpMeans('lambda',R.dpMeansLambda), dsX);
             
             %meanShiftAlgo = train(prtClusterMeanShift('nClusters',R.nMaxComponents,'sigma',R.meanShiftSigma) + prtDecisionMap, dsX);
             %meanShiftAlgo = train(prtClusterMeanShift('nClusters',R.nMaxComponents) + prtDecisionMap, dsX);

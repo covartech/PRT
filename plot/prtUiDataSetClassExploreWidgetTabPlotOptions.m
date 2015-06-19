@@ -35,12 +35,7 @@ classdef prtUiDataSetClassExploreWidgetTabPlotOptions < prtUiDataSetClassExplore
     
     methods
         function self = prtUiDataSetClassExploreWidgetTabPlotOptions(varargin)
-            
-            self = prtUtilAssignStringValuePairs(self,varargin{:});
-            
-            if nargin~=0 && ~self.hgIsValid
-                self.create()
-            end
+            self = self@prtUiDataSetClassExploreWidgetTab(varargin{:});
             
             init(self);
         end
