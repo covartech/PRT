@@ -78,6 +78,7 @@ classdef prtRegressLslr < prtRegress
         % weights estimated via least-squares linear regression.  The first
         % element of beta corresponds to the DC bias weight.
         
+        betaPriorAlpha = 0;
         beta = [];  % Regression weights estimated via least squares linear regression
     end
     
@@ -119,13 +120,15 @@ classdef prtRegressLslr < prtRegress
             x = DataSet.getObservations;
             y = DataSet.getTargets;
             if ~Obj.includeDcOffset
-                betaTemp = DataSet.X\DataSet.Y;
+                %                 betaTemp = x\y;
+                %                 Obj.beta = cat(1,0,betaTemp);
+                betaTemp = (Obj.betaPriorAlpha*eye(size(x,2)) + x'*x)^-1*x'*y;
                 Obj.beta = cat(1,0,betaTemp);
             else
                 xCentered = bsxfun(@minus,x,mean(x,1));
                 yCentered = bsxfun(@minus,y,mean(y,1));
                 
-                Obj.beta = (xCentered'*xCentered)^(-1) * xCentered'*yCentered;
+                Obj.beta = (Obj.betaPriorAlpha*eye(size(x,2)) + xCentered'*xCentered)^(-1) * xCentered'*yCentered;
                 Obj.beta = [mean(y,1) - mean(x,1)*Obj.beta;Obj.beta];
             end
             z = cat(2,ones(size(x,1),1),x);
