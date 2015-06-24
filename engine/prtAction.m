@@ -127,6 +127,13 @@ classdef prtAction
         %   prtAction.run() as a structure in prtAction.userData()
     end
     
+    methods
+        function self = set.isTrained(self,isTrained_)
+            self.isTrained = isTrained_;            
+        end
+    end
+        
+    
     methods (Abstract, Access = protected, Hidden = true)
         % prtAction.trainAction() - Primary method for training a prtAction
         %   self = prtAction.trainAction(self,DataSet)

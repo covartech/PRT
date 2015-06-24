@@ -71,7 +71,7 @@ classdef prtClassLda < prtClass
         isNativeMary = false; 
     end
     
-    properties (SetAccess = protected)
+    properties 
         % w is a dataSet.nDimensions x 1 vector of projection weights
         % learned during Fld.train(dataSet)
         
@@ -79,6 +79,13 @@ classdef prtClassLda < prtClass
         
     end
     
+    methods 
+        function self = set.w(self,w_)
+            self.w = w_;    
+            self.isTrained = true;
+        end
+        
+    end
     methods
      
                % Allow for string, value pairs
