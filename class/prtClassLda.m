@@ -65,7 +65,6 @@ classdef prtClassLda < prtClass
  
 
     properties (SetAccess=private)
-        
         name = 'LDA'  
         nameAbbreviation = 'LDA'         
         isNativeMary = false; 
