@@ -202,11 +202,11 @@ pD(nanSpots & ~~sortedY) = 0; % NaNs are not counted as detections
 pFa(nanSpots & ~sortedY) = 0; % or false alarms
 
 pD = cumsum(pD)/nH1;
-nFa = pFa;
 pFa = cumsum(pFa)/nH0;
 
 pD = cat(1,0,pD);
 pFa = cat(1,0,pFa);
+nFa = pFa*nH0;
 
 if nargout > 3 || inputs.outputStructure || nargout == 1
 	%this is faster than prtScoreRoc if we've already calculated pd and pf,
