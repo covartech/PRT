@@ -18,22 +18,45 @@ classdef prtMetricRoc
             self = prtUtilAssignStringValuePairs(self,varargin{:});
         end
         
-        function plot(self)
+        function varargout = plot(self)
             
+            holdState = ishold;
+            
+            h = gobjects(length(self),1);
             for i = 1:length(self)
-                plot(self(i).pf,self(i).pd)
+                h(i) = plot(self(i).pf,self(i).pd);
                 hold on;
             end
-            hold off;
+            if ~holdState
+                hold off
+            end
+            
+            if nargout
+                varargout = {h};
+            else
+                varargout = {};
+            end
         end
         
-        function plotRocFar(self)
+        function varargout = plotRocFar(self)
             
+            holdState = ishold;
+            
+            h = gobjects(length(self),1);
             for i = 1:length(self)
-                plot(self(i).nfa./self(i).farDenominator,self(i).pd)
+                h(i) = plot(self(i).nfa./self(i).farDenominator,self(i).pd);
                 hold on;
             end
-            hold off;
+            if ~holdState
+                hold off
+            end
+            
+            if nargout
+                varargout = {h};
+            else
+                varargout = {};
+            end
+            
         end
         
     end

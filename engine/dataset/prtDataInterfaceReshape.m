@@ -36,5 +36,26 @@ classdef prtDataInterfaceReshape
                 error('prt:prtDataInterfaceReshape:getObservationsAsCell','Invalid indexing for dataSet size and observationSize. Check dimensionalities.');
             end
         end
+        function self = retainFeaturesByDimension(self, dim, in)
+
+            mask = zeros(self.observationSize);
+            maskInputs = cell(length(self.observationSize),1);
+            if dim > length(maskInputs)
+                error('invalid dimension specified')
+            end
+            for iIn = 1:length(maskInputs)
+                maskInputs{iIn} = ':';
+            end
+            maskInputs{dim} = in;
+            mask(maskInputs{:}) = 1;
+
+            self = self.retainFeatures(logical(mask(:)'));
+
+            % Reset size
+            maskSum = sum(mask,dim);
+            self.observationSize(dim) = max(maskSum(:));
+
+        end
+        
     end
 end
