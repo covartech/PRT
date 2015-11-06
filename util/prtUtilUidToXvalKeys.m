@@ -1,7 +1,13 @@
-function keys = prtUtilUidToXvalKeys(ids,nKeys)
-%keys = prtUtilUidToXvalKeys(uids,[nKeys])
-%   For vector of scalars of cell-vector of strings IDS, return a scalar
-%   array of crossvaliation keys KEYS
+function keys = prtUtilUidToXvalKeys(ids,varargin)
+%keys = prtUtilUidToXvalKeys(uids,[labels],[nKeys])
+%   For a vector of scalars OR cell-vector of strings, return a scalar
+%   array of crossvaliation keys
+%
+% Example:
+% ids = {'a','b','c','b','a','c','d','d'};
+% labels = [0,0,0,1,1,1,1,1];
+% nKeys = 3;
+% prtUtilUidToXvalKeys(ids,labels,nKeys)
 
 % Copyright (c) 2015 CoVar Applied Technologies
 %
@@ -24,45 +30,82 @@ function keys = prtUtilUidToXvalKeys(ids,nKeys)
 % OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
 % USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+nObservations = length(ids);
+
+% If nKeys is not provided, choose as many folds as possible
+%  = # unique uids.
+% If labels are not provided, assume everything is H1.
 if nargin<2
-	% nKeys not provided. Choose as many folds as possible
-	%  = # unique uids
+	% neither labels nor nKeys provided
+	labels = ones(nObservations,1);
 	nKeys = length(unique(ids));
-elseif nKeys>length(unique(ids))
-	nKeys = length(unique(ids));
-	warning('The requested number of keys is greater than the number of unique ids. Using nKeys=%d.',nKeys)
+elseif nargin==2
+	if isscalar(varargin{1})
+		% only nKeys provided
+		labels = ones(nObservations,1);
+		nKeys = varargin{1};
+	elseif isvector(varargin{1})
+		% only labels provided
+		labels = varargin{1};
+		nKeys = length(unique(ids));
+	end
+elseif nargin==3
+	% both labels and nKeys provided
+	labels = varargin{1};
+	nKeys = varargin{2};
 end
 
-% ids may be a vector of scalars, a cell-vector of strings, or a matrix of
-% scalars. In the last case, the rows are treated as identifiers.
-if isvector(ids)
-	[uids,~,ic] = unique(ids);
-else
-	[uids,~,ic] = unique(ids,'rows');
+assert(length(labels)==nObservations,'The number of ids and labels should be the same.');
+
+% extract the number and indices of each id in each class
+ulabels = unique(labels);
+nClasses = length(ulabels);
+uids = cell(nClasses,1);
+ic = cell(nClasses,1);
+nUids = nan(nClasses,1);
+for iClass = 1:nClasses % for each class
+	[uids{iClass},~,ic{iClass}] = unique(ids(labels==ulabels(iClass)));
+	nUids(iClass) = length(uids{iClass});
 end
-nUids = length(uids);
 
-% Option 1: sort unique ids into bins such that they end up with
-%   approximately equal numbers of uids.
-ukeys = ceil(randperm(nUids)'/nUids*nKeys);
+% sort by increasing number of ids per class
+[nUids,classOrder] = sort(nUids);
+ic = ic(classOrder);
+ulabels = ulabels(classOrder);
 
-% Option 2: sort unique ids into bins such that they end up with
-%   approximately equal numbers of observations.
-% % ids = categorical(ids);
-% % counts = countcats(ids);
-% % [counts,freqOrder] = sort(counts,'descend');
-% % iKey = 1;
-% % cIds = 0;
-% % nIds = sum(counts);
-% % for iUid=1:nUids
-% % 	ukeys(freqOrder(iUid)) = iKey; % assign key
-% % 	cIds = cIds+counts(iUid); % add to id total
-% % 	if cIds/nIds>=1/(nKeys-iKey+1)
-% % 		iKey = iKey+1; % advance the key
-% % 		nIds = nIds-cIds; % after this, assign the remainder evenly - this might could be recursive
-% % 		cIds = 0;
-% % 	end
+% are too many keys requested? fix it.
+if nKeys>min(nUids)
+	[minNUids,iClass] = min(nUids);
+	warning('The requested number of keys (%d) is greater than the number of unique ids in class %d (%d). Using nKeys=%d.',...
+		nKeys,ulabels(iClass),minNUids,minNUids)
+	nKeys = minNUids;
+end
+
+% Assign keys to unique ids such that each key ends up with approximately
+% equal numbers of uids.
+ukeys = cell(nClasses,1);
+% Assign keys uniformly across the ids found in all classes.
+ukeys{1} = ceil(randperm(min(nUids))'/min(nUids)*nKeys);
+% What follows was written assuming that nClasses==2, though it may not be
+% readily apparent. DO NOT expect it to work for nClasses>2.
+if nClasses>2
+	warning('This is not yet implemented for >2 classes. The results may not be what you want.')
+end
+% Assign keys uniformly across the remaining ids
+% but backwards, to help keep the assignments uniform.
+for iClass = 2:nClasses
+	ukeys{iClass} = cat(1,ceil(randperm(min(nUids))'/min(nUids)*nKeys),...
+		nKeys+1-ceil(randperm((max(nUids)-min(nUids)))'/(max(nUids)-min(nUids))*nKeys));
+end
+% Assign the keys to the observations.
+keys = nan(nObservations,1);
+for iClass = 1:nClasses
+	keys(labels==ulabels(iClass)) = ukeys{iClass}(ic{iClass});
+end
+
+% TESTING
+% The following should display only empty matrices:
+% % keyPairs = nchoosek(1:nKeys,2);
+% % for iPair = 1:size(keyPairs,1)
+% % 	intersect(unique(ids(keys==keyPairs(iPair,1))),unique(ids(keys==keyPairs(iPair,2))))
 % % end
-% THIS METHOD IS DETERMINISTIC! - this may be a more-or-less unavoidable consequence of enforcing similar-sized folds
-
-keys = ukeys(ic);
