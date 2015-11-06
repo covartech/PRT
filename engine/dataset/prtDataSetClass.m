@@ -643,7 +643,6 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
             nClasses = max(obj.nClasses,1);
             colors = cat(1,obj.plotOptions.colorsFunction(nClasses), prtPlotUtilClassColorUnlabeled); % FIX me. Use plotOptions
             
-            
             xLoc = linspace(Summary.lowerBounds, Summary.upperBounds, nKSDsamples);
             
             F = zeros([nKSDsamples, nClasses+obj.hasUnlabeled]);
