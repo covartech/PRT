@@ -102,6 +102,7 @@ classdef prtRegressLslr < prtRegress
     end
     properties (Hidden)
         includeDcOffset = true;
+        useRobustFitStats = false;
     end
 
     methods
@@ -119,17 +120,24 @@ classdef prtRegressLslr < prtRegress
             
             x = DataSet.getObservations;
             y = DataSet.getTargets;
-            if ~Obj.includeDcOffset
-                %                 betaTemp = x\y;
-                %                 Obj.beta = cat(1,0,betaTemp);
-                betaTemp = (Obj.betaPriorAlpha*eye(size(x,2)) + x'*x)^-1*x'*y;
-                Obj.beta = cat(1,0,betaTemp);
+            if isscalar(Obj.betaPriorAlpha)
+                Obj.betaPriorAlpha = Obj.betaPriorAlpha*eye(size(x,2));
+            end
+            if Obj.useRobustFitStats
+                Obj.beta = robustfit(x,y);
             else
-                xCentered = bsxfun(@minus,x,mean(x,1));
-                yCentered = bsxfun(@minus,y,mean(y,1));
-                
-                Obj.beta = (Obj.betaPriorAlpha*eye(size(x,2)) + xCentered'*xCentered)^(-1) * xCentered'*yCentered;
-                Obj.beta = [mean(y,1) - mean(x,1)*Obj.beta;Obj.beta];
+                if ~Obj.includeDcOffset
+                    %                 betaTemp = x\y;
+                    %                 Obj.beta = cat(1,0,betaTemp);
+                    betaTemp = (Obj.betaPriorAlpha + x'*x)^-1*x'*y;
+                    Obj.beta = cat(1,0,betaTemp);
+                else
+                    xCentered = bsxfun(@minus,x,mean(x,1));
+                    yCentered = bsxfun(@minus,y,mean(y,1));
+                    
+                    Obj.beta = (Obj.betaPriorAlpha + xCentered'*xCentered)^(-1) * xCentered'*yCentered;
+                    Obj.beta = [mean(y,1) - mean(x,1)*Obj.beta;Obj.beta];
+                end
             end
             z = cat(2,ones(size(x,1),1),x);
             
