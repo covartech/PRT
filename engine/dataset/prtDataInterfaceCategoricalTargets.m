@@ -40,9 +40,6 @@ classdef prtDataInterfaceCategoricalTargets
 % USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-
-
-
     properties (Hidden)
         classNamesArray = prtUtilIntegerAssociativeArrayClassNames;
         internalUniqueClasses = [];

@@ -61,6 +61,7 @@ if isempty(inputs.y);
     y = ds.getTargets;
 else
     [nf,pd,thresholds,auc] = prtScoreRoc(ds,inputs.y,'uniquelabels',inputs.uniquelabels);
+    y = inputs.y;
 end
 
 nMiss = length(find(y == 0));

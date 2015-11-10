@@ -643,7 +643,6 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
             nClasses = max(obj.nClasses,1);
             colors = cat(1,obj.plotOptions.colorsFunction(nClasses), prtPlotUtilClassColorUnlabeled); % FIX me. Use plotOptions
             
-            
             xLoc = linspace(Summary.lowerBounds, Summary.upperBounds, nKSDsamples);
             
             F = zeros([nKSDsamples, nClasses+obj.hasUnlabeled]);
@@ -1085,7 +1084,7 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
             end
         end
         
-        function explore(obj, AdditionalOptions)
+        function varargout = explore(obj, AdditionalOptions)
             % explore  Explore the prtDataSetObject
             %
             %   dataSet.explore() opens the prtDataSetObject explorer for
@@ -1097,8 +1096,24 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
             if isa(AdditionalOptions,'function_handle');
                 AdditionalOptions = struct('additionalOnClickFunction',AdditionalOptions);
             end
+            
             try
-                prtPlotUtilDataSetExploreGuiWithNavigation(obj,AdditionalOptions);
+                %prtPlotUtilDataSetExploreGuiWithNavigation(obj,AdditionalOptions);
+                plotHandler = prtUiDataSetClassPlot(obj);
+                controlsHandler = plotHandler.controls();
+                if ~isempty(AdditionalOptions) && isfield(AdditionalOptions,'additionalOnClickFunction')
+                    if nargin(AdditionalOptions.additionalOnClickFunction) ~= 1
+                        error('prt:prtDataSetClassExplore','The new version of prtDataSet.explore() with an onclick function should take only a single input.')
+                    end
+                    plotHandler.onClickCallback = AdditionalOptions.additionalOnClickFunction;
+                end
+                if nargout
+                    varargout = {plotHandler, controlsHandler};
+                else
+                    varargout = {};
+                end
+                
+                    
             catch %#ok<CTCH>
                 error('prt:prtDataSetClassExplore','An unexpected error was encountered with explore(). If this error persists you may want to try using exploreSimple().')
             end

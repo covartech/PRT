@@ -90,9 +90,17 @@ end
 
 %Handle multi-dimensional input DS (numeric or prtDataSetClass)
 if size(ds,2) > 1
-	for iRoc = 1:size(ds,2)
-		[pf{iRoc},pd{iRoc},thresholds{iRoc},auc{iRoc}] = prtScoreRoc(ds(:,iRoc),y,varargin{:}); %#ok<AGROW>
-	end
+    for iRoc = 1:size(ds,2)
+        if nargout == 1
+            varargout{1}(iRoc) = prtScoreRoc(ds(:,iRoc),y,varargin{:});
+        else
+            [pf{iRoc},pd{iRoc},thresholds{iRoc},auc{iRoc}] = prtScoreRoc(ds(:,iRoc),y,varargin{:}); %#ok<AGROW>
+        end
+        
+    end
+    if nargout == 1
+        return
+    end
 	if nargout == 0
 		colors = prtPlotUtilClassColors(size(ds,2));
 		holdState = get(gca,'nextPlot');
@@ -198,8 +206,9 @@ pFa = cumsum(pFa)/nH0;
 
 pD = cat(1,0,pD);
 pFa = cat(1,0,pFa);
+nFa = pFa*nH0;
 
-if nargout > 3 || inputs.outputStructure
+if nargout > 3 || inputs.outputStructure || nargout == 1
 	%this is faster than prtScoreRoc if we've already calculated pd and pf,
 	%which we have:
 	auc = trapz(pFa,pD);
@@ -216,6 +225,9 @@ if nargout == 0
 else
     thresholds = cat(1,inf,sortedDS(:));
     varargout = {pFa,pD,thresholds,auc};
+    if nargout == 1
+        varargout{1} = prtMetricRoc('pf',pFa,'pd',pD,'nfa',nFa,'tau',thresholds,'auc',auc);
+    end
     if inputs.outputStructure
         varargout{1} = struct('pf',pFa,'pd',pD,'tau',thresholds,'auc',auc);
     end

@@ -17,7 +17,7 @@ function prtDoc(topic)
 %     web(fullfile(prtRoot,'doc','functionReference',cat(2,strrep(topic(:)','.',filesep),'.html')),'-helpbrowser');
 % end
 
-webRoot = 'http://newfolder.github.io/prtdoc/';
+webRoot = 'http://covartech.github.io/prtdoc/';
 
 if nargin < 1 || isempty(topic)
     web(fullfile(webRoot,'prtDocLanding.html'),'-helpbrowser');
