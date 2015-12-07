@@ -6,16 +6,23 @@ classdef prtMetricRoc
         pd
         pf
         nfa
-        farDenominator
+        farDenominator = nan;
         tau
         auc
         
         thresholds = [];
     end
+    properties (Dependent)
+        far
+    end
     
     methods
         function self = prtMetricRoc(varargin)
             self = prtUtilAssignStringValuePairs(self,varargin{:});
+        end
+        
+        function val = get.far(self)
+            val = self.nfa./self.farDenominator;
         end
         
         function varargout = plot(self)
@@ -44,7 +51,7 @@ classdef prtMetricRoc
             
             h = gobjects(length(self),1);
             for i = 1:length(self)
-                h(i) = plot(self(i).nfa./self(i).farDenominator,self(i).pd);
+                h(i) = plot(self(i).far,self(i).pd);
                 hold on;
             end
             if ~holdState

@@ -63,6 +63,7 @@ else
     [nf,pd,thresholds,auc] = prtScoreRoc(ds,inputs.y,'uniquelabels',inputs.uniquelabels);
     y = inputs.y;
 end
+pf = nf;
 
 nMiss = length(find(y == 0));
 if iscell(nf)
@@ -74,14 +75,17 @@ else
 end
 
 if nargout == 0
-    plot(nf,pd);
-    xlabel('#FA');
-    ylabel('Pd');
-    
-    varargout = {};
+	plot(pFa,pD);
+	xlabel('Pf');
+	ylabel('Pd');
+	
+	varargout = {};
 else
     varargout = {nf,pd,thresholds,auc};
+    if nargout == 1
+        varargout{1} = prtMetricRoc('pf',pf,'pd',pd,'nfa',nf,'tau',thresholds,'auc',auc);
+    end
     if inputs.outputStructure
-        varargout{1} = struct('nfa',nf,'pd',pd,'tau',thresholds,'auc',auc);
+        varargout{1} = struct('pf',pf,'pd',pd,'nfa',nf,'tau',thresholds,'auc',auc);
     end
 end
