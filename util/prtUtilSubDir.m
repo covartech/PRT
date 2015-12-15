@@ -45,6 +45,7 @@ end
 p = inputParser;
 p.addParameter('dirMatch','*');
 p.addParameter('recurse',true);
+p.addParameter('waitbar',false);
 p.addParameter('includeDirectoriesInOutput',true);
 
 p.parse(varargin{:});
@@ -72,11 +73,22 @@ end
 outputList = {};
 outputStruct = [];
 if recurse
+    if inputStruct.waitbar
+        cDir = strrep(directory(max(end-40,1):end),filesep,'-');
+        waitHandle = prtUtilProgressBar(0,sprintf('Searcing directory: %s',cDir));
+    end
     for ind = 1:length(subDirectoryList)
+        if inputStruct.waitbar
+            waitHandle.update(ind./length(subDirectoryList));
+        end
         newDir = fullfile(directory,subDirectoryList(ind).name);
         [cList,cStruct] = prtUtilSubDir(newDir,fileMatch,varargin{:});
         outputList = cat(1,outputList,cList);
         outputStruct = cat(1,outputStruct,cStruct);
+    end
+    
+    if inputStruct.waitbar
+        waitHandle.update(1);
     end
 end
 outputList = [outputList;cellfun(@(x)fullfile(directory,x),{fileList.name}','uniformoutput',false)];

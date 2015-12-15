@@ -226,8 +226,7 @@ classdef prtDataSetStandard < prtDataSetInMem
 			if nargin == 1
 				d = self.data;
 				return;
-			end
-			
+            end
 			try
 				%default to 2-D for getObservations; we can make this
 				if length(varargin) == 1;

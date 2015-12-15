@@ -18,10 +18,11 @@ classdef prtMetricRoc
             self = prtUtilAssignStringValuePairs(self,varargin{:});
         end
         
-        function plot(self)
+        function h = plot(self)
             
-            for i = 1:length(self)
-                plot(self(i).pf,self(i).pd)
+            h = gobjects(size(self));
+            for i = 1:numel(self)
+                h(i) = plot(self(i).pf,self(i).pd);
                 hold on;
             end
             hold off;

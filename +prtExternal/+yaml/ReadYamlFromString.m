@@ -27,6 +27,10 @@ function YamlStruct = ReadYamlFromString(inputString)
 %}
 %======================================================================
 
+if isempty(inputString)
+    YamlStruct = repmat(struct,0,0);
+    return;
+end
 import prtExternal.yaml.*;
 
 %InitYaml();
