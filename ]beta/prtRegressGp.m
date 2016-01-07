@@ -88,9 +88,11 @@ classdef prtRegressGp < prtRegress
         end
         function Obj = set.noiseVariance(Obj,value)
             assert(isscalar(value) && value > 0,'Invalid noiseVariance specified; noise variance must be scalar and greater than 0, but specified value is %s',mat2str(value));
+            Obj.noiseVariance = value;
         end
         function Obj = set.covarianceFunction(Obj,value)
             assert(isa(value,'function_handle'),'Invalid covarianceFunction specified; noise variance must be a function_handle, but specified value is a %s',class(value));
+            Obj.covarianceFunction = value;
         end
         function Obj = setVerboseStorage(Obj,value)
             assert(prtUtilIsLogicalScalar(value),'verboseStorage must be a scalar logical');

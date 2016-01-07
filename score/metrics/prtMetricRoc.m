@@ -40,7 +40,7 @@ classdef prtMetricRoc
             holdState = ishold;
             
             h = gobjects(length(self),1);
-            for i = 1:length(self)
+            for i = 1:numel(self)
                 h(i) = plot(self(i).pf,self(i).pd);
                 hold on;
             end

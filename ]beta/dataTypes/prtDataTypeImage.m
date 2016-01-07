@@ -388,7 +388,7 @@ classdef prtDataTypeImage < prtUtilActionDataAccess
             %             patchSize = fliplr(patchSize);
             for keyIndex = 1:size(theKeypoints,1)
                 cropRect = [theKeypoints(keyIndex,:)-ceil(patchSize/2),patchSize-1];
-                patches{keyIndex} = imcrop(theData,cropRect);
+                patches{keyIndex} = imcropfast(theData,cropRect);
             end
             fullPatch = cellfun(@(x) isequal(size(x),[fliplr(patchSize),patch3]), patches);
         end
