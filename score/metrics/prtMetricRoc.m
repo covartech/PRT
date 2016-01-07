@@ -25,6 +25,16 @@ classdef prtMetricRoc
             val = self.nfa./self.farDenominator;
         end
         
+        function self = atThreshold(self,threshold)
+            
+            index = find(self.tau > threshold,1,'last');
+            self.pd = self.pd(index);
+            self.nfa = self.nfa(index);
+            self.pf = self.pf(index);
+            self.tau = self.tau(index);
+            self.auc = nan;
+        end
+        
         function varargout = plot(self)
             
             holdState = ishold;
