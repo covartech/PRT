@@ -35,13 +35,13 @@ classdef prtMetricRoc
             self.auc = nan;
         end
         
-        function varargout = plot(self)
+        function varargout = plot(self,varargin)
             
             holdState = ishold;
             
             h = gobjects(length(self),1);
             for i = 1:numel(self)
-                h(i) = plot(self(i).pf,self(i).pd);
+                h(i) = plot(self(i).pf,self(i).pd,varargin{:});
                 hold on;
             end
             if ~holdState
@@ -55,13 +55,13 @@ classdef prtMetricRoc
             end
         end
         
-        function varargout = plotRocFar(self)
+        function varargout = plotRocFar(self,varargin)
             
             holdState = ishold;
             
             h = gobjects(length(self),1);
             for i = 1:length(self)
-                h(i) = plot(self(i).far,self(i).pd);
+                h(i) = plot(self(i).far,self(i).pd,varargin{:});
                 hold on;
             end
             if ~holdState
