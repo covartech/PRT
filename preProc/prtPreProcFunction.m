@@ -103,4 +103,13 @@ classdef prtPreProcFunction < prtPreProc
             self.transformationFunction = val;
         end
     end
+    
+    
+    methods (Hidden = true)
+        
+        function yOut = runStream(self,vector)
+            % yOut = runStream(self,vector)
+            yOut = self.transformationFunction(vector);
+        end
+    end
 end

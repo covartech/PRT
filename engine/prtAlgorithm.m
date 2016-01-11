@@ -285,6 +285,31 @@ classdef prtAlgorithm < prtAction & prtActionBig
                 Obj.isSupervised = varargin{1}.isSupervised;
             end
         end
+        
+        
+        function xOut = runStream(Obj,DataSet) %#ok<INUSD>
+            
+            topoOrder = prtUtilTopographicalSort(Obj.connectivityMatrix');
+            input = cell(size(Obj.connectivityMatrix,1),1);
+            input{1} = DataSet;
+            
+            for i = 2:length(topoOrder)-1
+                %Note: added this to fix catFeatures problems with data
+                %sets that don't have catFeatures; they can still work in
+                %"flat" algorithms.  See bug report on github, and in
+                %trainAction
+                inDataSets = find(Obj.connectivityMatrix(topoOrder(i),:));
+                if length(inDataSets) == 1
+                    currentInput = input{inDataSets};
+                else
+                    currentInput = catFeatures(input{Obj.connectivityMatrix(topoOrder(i),:)});
+                end
+                input{topoOrder(i)} = runStream(Obj.actionCell{topoOrder(i-1)},currentInput);
+            end
+            finalNodes = any(Obj.connectivityMatrix(Obj.outputNodes,:),1);
+            xOut = cat(2,input{finalNodes});
+        end
+        
     end
     
     methods (Access=protected,Hidden=true)
@@ -361,7 +386,6 @@ classdef prtAlgorithm < prtAction & prtActionBig
                 
             end
         end
-        
         
         
         function [DataSet, input] = runAction(Obj,DataSet)
