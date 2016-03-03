@@ -70,6 +70,9 @@ classdef prtPreProcTsne < prtPreProc
         end
         
         function dataSet = runAction(self,dataSet)
+           if self.initialDims > dataSet.nFeatures
+               self.initialDims = dataSet.nFeatures;
+           end
            dataSet.X = tsne(dataSet.X, [], self.nDimensions, self.initialDims, self.perplexity);
         end
     end
