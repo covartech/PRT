@@ -236,7 +236,7 @@ classdef prtMetricRoc
                 vy = vy./vn;
                 
                 if isempty(quiverArgs)
-                    quiverArgs = 0.1; % arrow relative size
+                    quiverArgs = {0.1}; % arrow relative size
                 end
                 
                 h(i,2) = quiver(uPdFar(pInd),uPd(pInd),vx(pInd),vy(pInd),quiverArgs{:});
