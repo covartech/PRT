@@ -66,7 +66,14 @@ classdef prtMetricRoc
             if nargin < 3 || isempty(fieldName)
                 fieldName = 'pf';
             end
-            assert(ismember(fieldName, {'pd','pf','nfa'}),'prt:prtMetricRoc:assignValue','Invalid input. fieldName must be one of {''pd'',''pf'',''nfa''}');
+            assert(ismember(fieldName, {'pd','pf','nfa','far'}),'prt:prtMetricRoc:assignValue','Invalid input. fieldName must be one of {''pd'',''pf'',''nfa''}');
+            
+            useFar = false;
+            if strcmpi(fieldName,'far')
+                fieldName = 'nfa';
+                useFar = true;
+            end
+            
             
             newX = nan([ds.nObservations length(self)]);
             for iRoc = 1:length(self)
@@ -74,12 +81,36 @@ classdef prtMetricRoc
                 cX = ds.X(:,iRoc);
                 
                 flippedTau = flipud(self(iRoc).tau);
-                [~, binInd] = histc(cX,flippedTau);
+                
+                binInd = zeros(size(cX,1),1);
+                for iObs = 1:size(cX,1)
+                    cVal = cX(iObs);
+                    if isnan(cVal)
+                        cBin = nan;
+                    elseif ~isfinite(cVal)
+                        % +/-Inf
+                        if cVal > 0
+                            cBin = size(cX,1);
+                        else
+                            cBin = 1;
+                        end
+                    else
+                        cBin = find(cVal >= flippedTau,1,'last');
+                    end
+                    binInd(iObs) = cBin;
+                end
+                
+                %[~, binInd] = histc(cX,flippedTau);
                 
                 flippedField = flipud(self(iRoc).(fieldName));
                 
-                newX(:,iRoc) = flippedField(binInd); 
+                nonNans = ~isnan(binInd);
                 
+                newX(nonNans,iRoc) = flippedField(binInd(nonNans)); 
+            end
+            
+            if useFar
+                newX = newX ./ self.farDenominator;
             end
             
             ds.X = newX;

@@ -134,5 +134,10 @@ classdef prtUiDataSetClassExploreWidget < prtUiManagerPanel
                 close(self.handles.figure);
             end
         end
+        function close(self)
+            try  %#ok<TRYNC>
+                close(self.handles.figure);
+            end
+        end
     end
 end
