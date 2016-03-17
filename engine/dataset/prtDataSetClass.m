@@ -296,7 +296,7 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
             theta = theta(1:end-1);
             cT = cos(theta);
             sT = sin(theta);
-            maxVal = max(abs(obj.getObservations(:,featureIndices)));
+            maxVal = max(abs(obj.X(:,featureIndices)));
             
             nFeats = length(featureIndices);
             classColors = obj.plotOptions.colorsFunction(max(obj.nClasses,1));
@@ -386,7 +386,7 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
             theta = theta(1:end-1);
             cT = cos(theta);
             sT = sin(theta);
-            maxVal = max(abs(obj.getObservations(:,featureIndices)));
+            maxVal = max(abs(obj.X(:,featureIndices)));
             
             nFeats = length(featureIndices);
             classColors = obj.plotOptions.colorsFunction(max(obj.nClasses,1));

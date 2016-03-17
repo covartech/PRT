@@ -66,6 +66,10 @@ classdef prtAlgorithm < prtAction & prtActionBig
         actionCell        
     end
     
+    properties (Hidden, SetAccess = protected)
+        actionTags = {};
+    end
+    
     methods
         function Obj = set.actionCell(Obj,aCell)
            
@@ -94,6 +98,21 @@ classdef prtAlgorithm < prtAction & prtActionBig
             
             %Set the internal action cell correctly
             Obj.internalActionCell = aCell;
+            
+            %Set tags for future reference
+            Obj = Obj.setActionTags();
+        end
+        function self = setActionTags(self)
+            
+            tags = cell(length(self.actionCell),1);
+            for iAct = 1:length(self.actionCell)
+                cAct = self.actionCell{iAct};
+                tags{iAct} = cAct.nameAbbreviation;
+            end
+            tags = matlab.lang.makeValidName(tags);
+            tags = matlab.lang.makeUniqueStrings(tags);
+            
+            self.actionTags = tags;
         end
         
         function actionCell = get.actionCell(Obj)
@@ -145,7 +164,6 @@ classdef prtAlgorithm < prtAction & prtActionBig
         
         function plot(Obj)
             % Plots a block diagram of the algorithm 
-            % Requires graphviz
             prtPlotUtilAlgorithmGui(Obj.connectivityMatrix, Obj.actionCell, Obj);
         end
         

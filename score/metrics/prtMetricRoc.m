@@ -125,7 +125,7 @@ classdef prtMetricRoc
             tmpPd = self.pd;
             tmpPd(end+1) = Inf;
             
-            indOut = arrayfun(@(s)find(tmpPd>=s,1),pdPoints);
+            indOut = arrayfun(@(s)find(tmpPd>=s,1,'first'),pdPoints);
             %ind = find(self.far > farPoints,1,'first');
             farOut = tmpFar(indOut);
         end
@@ -334,6 +334,140 @@ classdef prtMetricRoc
             end
             
         end
+        
+        function varargout = plotRocFarChanceNan(self,varargin)
+            % plotH = plotRocFarChanceNan(self)
+            
+            if ~isempty(varargin) && isnumeric(varargin{1})
+                farCutOff = varargin{1};
+                varargin(1) = [];
+            else
+                farCutOff = 10;
+            end
+            
+            plotArgs = varargin;
+            
+            holdState = ishold;
+            
+            h = gobjects(length(self),2);
+            for i = 1:length(self)
+                s = self(i);
+                
+                nTarget = numel(s.targetAreas);
+                uPd = linspace(0,1,nTarget+1);
+                uPdFar = s.farAtPdValues(uPd);
+                
+                uPd = uPd(:);
+                uPdFar = uPdFar(:);
+                
+                totalTargetArea = sum(s.targetAreas);
+                remainingTargetArea = totalTargetArea - cat(1,0,cumsum(s.targetAreas));
+                
+                deltaPd = 1/nTarget;
+        
+                if isempty(s.laneArea)
+                    lArea = s.farDenominator;
+                else
+                    lArea = s.laneArea;
+                end
+                
+                %deltaPdVec = cat(1,1,diff(uPd(:)));
+                %deltaFarVec = cat(1,0,diff(uPdFar(:)));
+                %localRocAngle = atan2(deltaPdVec, deltaFarVec);
+                
+                vx = 1/lArea; % every time FAR increases by this (+1 alarm)
+                vy = deltaPd*remainingTargetArea/lArea; % Pd increases by this in expectation (probability of hit)
+                
+                vy = cat(1, vy(1),vy(1:end-1));
+                
+                vn = sqrt(vx.^2 + vy.^2);
+                vx = vx./vn;
+                vy = vy./vn;
+                
+                localRocChanceAngle = atan2(vy,vx);
+                
+                localDeltaFar = deltaPd./tan(localRocChanceAngle);
+                
+                uPdFarChance = zeros(length(uPdFar),length(uPd));
+                for iPd = 1:length(uPd)
+                    if iPd == 1
+                        uPdFarChance(1:end,iPd) = cumsum(localDeltaFar);
+                    else
+                        uPdFarChance(1:(iPd-1),iPd) = uPdFar(1:(iPd-1));
+                        uPdFarChance(iPd:end,iPd) = cumsum(localDeltaFar(iPd:end)) + uPdFar(iPd-1);
+                    end
+                end
+                    
+                %                 %%
+                %                 plot(uPdFar, uPd(:),'k','lineWidth',3)
+                %                 hold on, h = plot(uPdFarChance,uPd(:));
+                %                 hold off
+                %                 cmap = parula(length(h))*0.8;
+                %                 for iLine = 1:length(h)
+                %                     set(h(iLine),'color',cmap(iLine,:));
+                %                 end
+                %                 xlabel('FAR (#/m^2)');
+                %                 ylabel('PD');
+                %                 grid on
+                %                 cvrS2('randomChancePRocs');
+                %                 axis([0 1 0 1])
+                %                 cvrS2('randomChancePRocsZoom');
+                %                 %%
+               
+                % If we are not going out to high FAR we must truncate each curve at the appropriate level
+                uPdFarChanceCut = uPdFarChance;
+                uPdChanceCut = repmat(uPd,[1 length(uPd)]);
+                for iPd = 1:length(uPd)
+                    cutInd = find(uPdFarChance(:,iPd) > farCutOff,1,'first');
+                    if ~isempty(cutInd)
+                        uPdFarChanceCut(cutInd:end,iPd) = farCutOff;
+                        uPdChanceCut(cutInd:end,iPd) = uPdChanceCut(cutInd-1,iPd);
+                    end
+                end
+                
+                curveAreas = zeros(length(uPd),1);
+                for iPd = 1:length(uPd)
+                    cX = uPdFarChanceCut(:,iPd);
+                    cY = uPdChanceCut(:,iPd);
+                    if max(cX) < farCutOff
+                        cX = cat(1,cX,farCutOff);
+                        cY = cat(1,cY, cY(end));
+                    end
+                    
+                    curveAreas(iPd) = trapz(cX,cY);
+                end
+                
+                [~, stopInd] = max(curveAreas);
+               
+                uPdFarThresh = uPdFar;
+                uPdThresh = uPd;
+                stopInd = max(min(stopInd,length(uPd)),1);
+                if ~isempty(stopInd)
+                    uPdFarThresh(stopInd:end) = nan;
+                    uPdThresh(stopInd:end) = nan;
+                end
+                
+                %plot(uPdFar(1:end-1),curveAreas(2:end)/farCutOff*100), ylabel('% pAUC'), xlabel('FAR of Switching to Random (#/m^2)'), grid on, cvrS2('areaVsSwitchPoint')
+                
+                h(i,1) = plot(uPdFar(:),uPd(:),plotArgs{:},'LineWidth',1);
+                
+                if i==1, hold on, end
+                
+                h(i,2) = plot(uPdFarThresh(:),uPdThresh(:),plotArgs{:},'LineWidth',3);
+                
+            end
+            if ~holdState
+                hold off
+            end
+            
+            if nargout
+                varargout = {h};
+            else
+                varargout = {};
+            end
+            
+        end
+        
         
         function ds = assignValue(self, ds, fieldName)
             % Find the closest tau and use the corresponding field name as the updated X confidence
