@@ -1,6 +1,6 @@
 function [PCSCORE, COEFF, eigenvalues] = prtUtilPcaHd(X,nFeaturesOut)
 %[PCSCORE, COEFF] = prtUtilPcaHd(X,nFeaturesOut)
-% xxx Need Help xxx
+% Performs PCA along the columns and converts to PCA along the rows. Good for short, fat matrices
 
 % Copyright (c) 2014 CoVar Applied Technologies
 %

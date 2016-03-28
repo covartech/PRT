@@ -1,8 +1,6 @@
 function [pcScores, P] = prtUtilPcaEm(X,nComponents,convergenceThreshold,nMaxIterations)
 % [pcScores, P] = prtUtilPcaEm(X,nComponents,convergenceThreshold,nMaxIterations)
-%
-% Source: Wikipedia (how amature)
-% xxx Need Help xxx
+
 
 % Copyright (c) 2014 CoVar Applied Technologies
 %

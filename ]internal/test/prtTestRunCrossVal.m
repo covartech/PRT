@@ -44,7 +44,7 @@ for i = 1:length(files)
     
      class = files{i};
     class(end-1:end) = [];  % delete the .m
-    if ~isAbstract(class)
+    if ~prtUtilClassIsAbstract(class)
         classifier = eval(class);
         %         TestDataSet = prtDataGenUnimodal;
         %         TrainingDataSet = prtDataGenUnimodal;

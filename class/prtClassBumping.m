@@ -140,11 +140,11 @@ classdef prtClassBumping < prtClass
             else
                 titleString = sprintf('Building %d %s models...',Obj.nBags,Obj.baseClassifier.name);
             end
-            waitHandle = prtUtilWaitbarWithCancel(titleString);
+            waitHandle = prtUtilProgressBar(0,titleString);
             Obj.baggedPerformance = nan(Obj.nBags+1,1);
             Classifiers = repmat(Obj.baseClassifier,Obj.nBags+1,1);
             for i = 1:Obj.nBags+1
-                waitHandle = prtUtilWaitbarWithCancel(i./Obj.nBags,waitHandle);
+                waitHandle.update(i./Obj.nBags);
                 
                 if i == Obj.nBags + 1 && Obj.includeOriginalDataClassifier
                     %the full model; see "The Elements of Statistical Learning"
@@ -154,14 +154,8 @@ classdef prtClassBumping < prtClass
                     Classifiers(i) = train(Obj.baseClassifier,DataSet.bootstrap(DataSet.nObservations));
                     Obj.baggedPerformance(i) = prtScorePercentCorrect(Classifiers(i).run(DataSet),DataSet);
                 end
-                if ~ishandle(waitHandle)
-                    break;
-                end
             end
             
-            if ishandle(waitHandle)
-                delete(waitHandle);
-            end
             [bestPerf,bestClassifier] = max(Obj.baggedPerformance); %#ok<ASGLU>
             bestClassifier = bestClassifier(1);
             Obj.Classifier = Classifiers(bestClassifier);

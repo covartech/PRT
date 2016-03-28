@@ -1,5 +1,5 @@
 function [mu, U, w, likelihood] = prtUtilPenalizedIrls(y,cPhi,mu,A)
-% xxx Need Help xxx
+%% [mu, U, w, likelihood] = prtUtilPenalizedIrls(y,cPhi,mu,A)
 
 % Copyright (c) 2014 CoVar Applied Technologies
 %
@@ -21,7 +21,6 @@ function [mu, U, w, likelihood] = prtUtilPenalizedIrls(y,cPhi,mu,A)
 % DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 % OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
 % USE OR OTHER DEALINGS IN THE SOFTWARE.
-
 
 
 

@@ -2,7 +2,6 @@ function pE = prtUtilPfPd2Pe(pf,pd,priorH0,priorH1)
 %pE = prtUtilPfPd2Pe(pf,pd)
 %   Translate pf and pd (as from the output of prtScoreRoc) to probability
 %   of error.
-% xxx Need Help xxx
 
 % Copyright (c) 2014 CoVar Applied Technologies
 %
