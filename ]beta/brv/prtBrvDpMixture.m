@@ -1,4 +1,12 @@
 classdef prtBrvDpMixture < prtBrvMixture
+    % ds = prtDataGenOldFaithful; x = ds.getX;
+    %
+    % mm = prtBrvDpMixture('components',repmat(prtBrvMvn,25,1));
+    % mm.vbConvergenceThreshold = 1e-6;
+    % mm.vbVerboseText = true;
+    % mm.vbVerbosePlot = true;
+    % mm.vbVerboseMovie = true;
+    % [mmLearned, training] = mm.vb(x);
 
 % Copyright (c) 2014 CoVar Applied Technologies
 %

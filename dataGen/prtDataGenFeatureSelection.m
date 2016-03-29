@@ -1,18 +1,28 @@
-function DataSet = prtDataGenFeatureSelection(nSamples,nFeatures,goodFeatures)
-%prtDataGenFeatureSelection   Generates high dimensional data with a few useful features
+function DataSet = prtDataGenFeatureSelection(N, nExtraDims)
+%prtDataGenFeatureSelection   Generates some unimodal example data for the prt.
+%  DataSet = prtDataGenFeatureSelection
+%  The data is distributed:
+%       H0: N([0 0 0 0 0 0 0 0 0 0],eye(10))
+%       H1: N([0 2 0 1 0 2 0 1 0 2],eye(10))
 %
-%   DATASET = prtDataGenFeatureSelection returns a prtDataSetClass with randomly
-%   generated data according to the following distribution.
+% Syntax: [X, Y] = prtDataGenFeatureSelection(N)
 %
-%       H0: N(-1,1)
-%       H1: N(1,1)  (for features 1,3,7)
-%       H1: N(-1,1) (for features 2,4,5,6,8)
+% Inputs: 
+%       N ~ number of samples per class (200)
 %
-%   % Example
+% Outputs:
+%   X - 2Nx2 Unimodal data
+%   Y - 2Nx1 Class labels
 %
-%   ds = prtDataGenFeatureSelection;
-%   plot(ds)
-%   
+% Example:
+%   DataSet = prtDataGenFeatureSelection;
+%   explore(DataSet)
+%
+% Other m-files required: none
+% Subfunctions: none
+% MAT-files required: none
+%
+% See also: prtDataGenUnimodal
 
 % Copyright (c) 2014 CoVar Applied Technologies
 %
@@ -40,33 +50,31 @@ function DataSet = prtDataGenFeatureSelection(nSamples,nFeatures,goodFeatures)
 
 
 
-% Internal Help:
-%   DATASET = prtDataGenFeatureSelection(nSamples) specifies the number of
-%   samples from each hypothesis to generate.  Defailt is 300.
-%
-%   DATASET = prtDataGenFeatureSelection(nSamples,nFeatures,goodFeatures)
-%   With nFeatures a scalar integer, and goodFeatures a vector of feature
-%   indices with all entries <= nFeatures generates data with nFeatures
-%   columns where goodFeatures have different distributions under H1 and
-%   H0.
-%
-
-if nargin < 1
-    nSamples = 300;
+if nargin < 1 || isempty(N);
+    nSamples = 200;
+else
+    nSamples = N;
 end
-if nargin < 3
-    nFeatures = 8;
-    goodFeatures = [1,3,7];
+
+if nargin < 2 || isempty(nExtraDims)
+    nExtraDims = 0;
 end
-nGoodFeatures = length(goodFeatures);
 
-mu0 = -1;
-sigma0 = 1;
-mu1 = 1;
-sigma1 = 1;
+mu0 = [0 0 0 0 0 0 0 0 0 0];
+mu1 = [0 1 0 .5 0 1 0 .5 0 1]*2;
 
-X = randn(nSamples*2,nFeatures)*sigma0 + mu0;
-X(nSamples+1:end,goodFeatures) = randn(nSamples,nGoodFeatures)*sigma1 + mu1;
+sigma0 = eye(length(mu0));
+sigma1 = eye(length(mu1));
+rv(1) = prtRvMvn('mu',mu0,'sigma',sigma0);
+rv(2) = prtRvMvn('mu',mu1,'sigma',sigma1);
+
+X = cat(1,draw(rv(1),nSamples),draw(rv(2),nSamples));
+
+if nExtraDims > 0
+    rvNoise = prtRvMvn('mu',zeros(1,nExtraDims),'sigma',eye(nExtraDims));
+    
+    X = cat(2, X, rvNoise.draw(nSamples*2));
+end
 
 Y = prtUtilY(nSamples,nSamples);
 

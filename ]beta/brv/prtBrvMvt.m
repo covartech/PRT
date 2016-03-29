@@ -153,7 +153,7 @@ classdef prtBrvMvt < prtBrv & prtBrvVbMembershipModel
                 
             elseif nDimensions == 2
                 for s = 1:nComponents
-                    ellipseHandle = prtPlotUtilMvnEllipse(meanMat(:,s)',squeeze(covMat(:,:,s)));
+                    ellipseHandle = prtRvUtilPlotMvnEllipse(meanMat(:,s)',squeeze(covMat(:,:,s)));
                     set(ellipseHandle,'Color',colors(s,:));
                     hold on
                     plot(meanMat(1,s),meanMat(2,s),'x','color',colors(s,:),'markerSize',8);
