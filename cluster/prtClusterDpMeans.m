@@ -1,12 +1,13 @@
 classdef prtClusterDpMeans < prtCluster 
     % prtClusterDpMeans
-    %   lambda - Maximum squared euclidean distance to a mean
+    %   lambda - Maximum squared euclidean distance to a mean (Hidden)
+    %   maximumClusterRadius - Maximum (sqrt) Euclidean distance to a mean (dependent, derives it's value from lambda)
     %
     % http://www.cs.berkeley.edu/~jordan/papers/kulis-jordan-icml12.pdf
     %   Algorithm 1
     %
     %   ds = prtDataGenMary                  % Load a prtDataSet
-    %   clusterAlgo = prtClusterDpMeans;      % Create a prtClusterKmeans object
+    %   clusterAlgo = prtClusterDpMeans;      % Create a prtClusterDpMeans object
     %
     %   % Set the internal decision rule to be MAP. Not required for
     %   % clustering, but necessary to plot the results.
@@ -40,9 +41,15 @@ classdef prtClusterDpMeans < prtCluster
         name = 'DP-Means Clustering';
         nameAbbreviation = 'DPMeans';
     end
+
+    properties (Dependent)
+        maximumClusterRadius % In distance units, lambda is used in the algorithm, this property sets lambda
+    end
     
+    properties (Hidden)
+        lambda = 1; % Is in squared distance units
+    end
     properties
-        lambda = 10;
         clusterCenters = [];
     end
     
@@ -53,6 +60,12 @@ classdef prtClusterDpMeans < prtCluster
     methods
         function self = prtClusterDpMeans(varargin)
             self = prtUtilAssignStringValuePairs(self,varargin{:});
+        end
+        function val = get.maximumClusterRadius(self)
+            val = sqrt(self.lambda);
+        end
+        function self = set.maximumClusterRadius(self, val)
+            self.lambda = val.^2;
         end
     end
     

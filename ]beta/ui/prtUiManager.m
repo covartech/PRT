@@ -39,6 +39,10 @@ classdef prtUiManager < hgsetget
     methods
         function self = prtUiManager(varargin)
             self = prtUtilAssignStringValuePairs(self, varargin{:});
+            
+            if nargin == 0 && ~strcmpi(class(self),'prtUiManager')
+                return
+            end
             if ~self.hgIsValid
                 self.create();
             end

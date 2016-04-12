@@ -1,18 +1,6 @@
-classdef prtPreProcTsne < prtPreProc
-    %prtPreProcTsne - t-Distributed Stochastic Neighbor Embedding
-    %   A non-linear dimension reduction technique.
-    %
-    %   The t-SNE implementation relies upon the algorithm and code
-    %   provided here: 
-    %       http://homepage.tudelft.nl/19j49/t-SNE.html
-    %
-    %   This code is only licensed for non-commercial applications, so it
-    %   is not distributed with the PRT.  If you want to use the t-SNE
-    %   code, or this object, download the software from the above link,
-    %   then run:
-    %       addpath(genpath(<path-to-tsne>))
-    %
-    %
+classdef prtPreProcTrainingObservationSelection < prtPreProc
+    % prtPreProcEnergyNormalizeRows Normalize the rows of the data to have unit
+    % energy
     %
 
 % Copyright (c) 2014 CoVar Applied Technologies
@@ -37,43 +25,44 @@ classdef prtPreProcTsne < prtPreProc
 % USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-    
+
+
+
     properties (SetAccess=private)
-        name = 't-Distributed Stochastic Neighbor Embedding'
-        nameAbbreviation = 'tSNE' 
-    end
-    
-    properties (SetAccess = protected)
         
+        name = 'Observation Selection'  %  MinMax Rows
+        nameAbbreviation = 'OSel'  % MMR
     end
     
     properties
-        nDimensions = 2;
-        initialDims = 30;
-        perplexity = 30;
+        selectionFunction = @(s)true
     end
     
     methods
-     
-               % Allow for string, value pairs
-        function self = prtPreProcTsne(varargin)
+        
+        function self = prtPreProcTrainingObservationSelection(varargin)
             self = prtUtilAssignStringValuePairs(self,varargin{:});
         end
     end
     
-    methods (Access=protected, Hidden = true)
+    methods (Access = protected, Hidden = true)
         
-        function self = trainAction(self,dataSet)
-            %
-            
-            % Do nothing
+        function self = trainAction(self,~)
+            return
         end
         
-        function dataSet = runAction(self,dataSet)
-           if self.initialDims > dataSet.nFeatures
-               self.initialDims = dataSet.nFeatures;
-           end
-           dataSet.X = tsne(dataSet.X, [], self.nDimensions, self.initialDims, self.perplexity);
+        function xIn = runActionFast(~,xIn,~)
+            return
+        end
+        
+        
+        function DataSet = runAction(~,DataSet)
+            return
+        end
+        
+        function DataSet = runActionOnTrainingData(self,DataSet)
+            DataSet = DataSet.select(self.selectionFunction);
         end
     end
+    
 end

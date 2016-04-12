@@ -148,7 +148,6 @@ classdef prtUiDataSetStandardObservationInfoSelect < prtUiManagerPanel
                     if isstruct(cVals) || (iscell(cVals) && ~iscellstr(cVals))
                         % If getObservationInfo() outputs a cell that isn't
                         % a cellstr then we can't use it.
-                        keyboard
                         badColumns(iField) = true;
                         continue
                     end
