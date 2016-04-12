@@ -108,9 +108,9 @@ classdef prtDataSetRegress < prtDataSetStandard
             for iPlot = 1:obj.nTargetDimensions
 				classEdgeColor = obj.plotOptions.symbolEdgeModificationFunction(classColors(iPlot,:));
                 if length(featureIndices) == 1
-    				h(iPlot) = plot(obj.getObservations(:,featureIndices),obj.getTargets(:,iPlot), classSymbols(iPlot), 'MarkerFaceColor', classColors(iPlot,:), 'MarkerEdgeColor', classEdgeColor,'linewidth',lineWidth,'MarkerSize',markerSize);
+    				h(iPlot) = plot(obj.X(:,featureIndices),obj.Y(:,iPlot), classSymbols(iPlot), 'MarkerFaceColor', classColors(iPlot,:), 'MarkerEdgeColor', classEdgeColor,'linewidth',lineWidth,'MarkerSize',markerSize);
                 else
-                    h(iPlot) = plot3(obj.getObservations(:,featureIndices(1)),obj.getObservations(:,featureIndices(2)),obj.getTargets(:,iPlot), classSymbols(iPlot), 'MarkerFaceColor', classColors(iPlot,:), 'MarkerEdgeColor', classEdgeColor,'linewidth',lineWidth,'MarkerSize',markerSize);
+                    h(iPlot) = plot3(obj.X(:,featureIndices(1)),obj.X(:,featureIndices(2)),obj.Y(:,iPlot), classSymbols(iPlot), 'MarkerFaceColor', classColors(iPlot,:), 'MarkerEdgeColor', classEdgeColor,'linewidth',lineWidth,'MarkerSize',markerSize);
                 end
 				hold on
 			end

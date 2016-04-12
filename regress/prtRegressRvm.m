@@ -264,7 +264,7 @@ classdef prtRegressRvm < prtRegress
             DataSetOut = prtDataSetRegress(zeros(n,1));
             for i = 1:memChunkSize:n;
                 cI = i:min(i+memChunkSize,n);
-                cDataSet = prtDataSetRegress(DataSet.getObservations(cI,:));
+                cDataSet = prtDataSetRegress(DataSet.X(cI,:));
                 gram = Obj.sparseKernels.run_OutputDoubleArray(cDataSet);
                 
                 DataSetOut = DataSetOut.setObservations(gram*Obj.sparseBeta, cI);

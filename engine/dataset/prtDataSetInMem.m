@@ -523,7 +523,7 @@ classdef prtDataSetInMem < prtDataSetBase
             %
             %   dsSmallobservationInfoSelect = ds.select(@(ObsInfo)ObsInfo.asdf > 0.5);
             %
-            %   dsSmallObservationSelect = ds.select(@(inputDs)inputDs.getObservations(:,1)>6);
+            %   dsSmallObservationSelect = ds.select(@(inputDs)inputDs.X(:,1)>6);
             
             assert(isa(selectFunction, 'function_handle'),'selectFunction must be a function handle.');
             assert(nargin(selectFunction)==1,'selectFunction must be a function handle that take a single input.');

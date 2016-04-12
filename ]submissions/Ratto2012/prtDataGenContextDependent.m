@@ -33,7 +33,7 @@ yOut = kmeans.run(contextDataSet);
 
 labels = yOut.getObservations;
 for i = 1:size(labels,2)
-    currDataInd = find(yOut.getObservations(:,i));
+    currDataInd = find(yOut.X(:,i));
     
     i1 = randn < 0;
     if i1 == 0

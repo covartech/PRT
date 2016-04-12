@@ -296,7 +296,7 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
             theta = theta(1:end-1);
             cT = cos(theta);
             sT = sin(theta);
-            maxVal = max(abs(obj.getObservations(:,featureIndices)));
+            maxVal = max(abs(obj.X(:,featureIndices)));
             
             nFeats = length(featureIndices);
             classColors = obj.plotOptions.colorsFunction(max(obj.nClasses,1));
@@ -386,7 +386,7 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
             theta = theta(1:end-1);
             cT = cos(theta);
             sT = sin(theta);
-            maxVal = max(abs(obj.getObservations(:,featureIndices)));
+            maxVal = max(abs(obj.X(:,featureIndices)));
             
             nFeats = length(featureIndices);
             classColors = obj.plotOptions.colorsFunction(max(obj.nClasses,1));
@@ -759,7 +759,7 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
                 high = high + range/10;
                 
                 xLoc = linspace(low, high, Options.nDensitySamples);
-                xLoc = sort(cat(1,xLoc(:),ds.getObservations(:,iFeature)),'ascend');
+                xLoc = sort(cat(1,xLoc(:),ds.X(:,iFeature)),'ascend');
                 
                 F = zeros([length(xLoc), nClasses+ ds.hasUnlabeled]);
                 for cY = 1:nClasses
@@ -863,7 +863,7 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
             % Estimate each features density and plot
             F = nan([Summary.nObservations, Summary.nFeatures]);
             for iFeature = 1:Summary.nFeatures
-                F(:,iFeature) = pdf(mle(prtRvKde('minimumBandwidth',Options.minimumKernelBandwidth),ds.getObservations(:,iFeature)),ds.getObservations(:,iFeature));
+                F(:,iFeature) = pdf(mle(prtRvKde('minimumBandwidth',Options.minimumKernelBandwidth),ds.X(:,iFeature)),ds.X(:,iFeature));
             end
             F = bsxfun(@rdivide,F,max(F))/4;
             FLeft = F;

@@ -14,7 +14,7 @@ classdef prtClusterKmodes < prtCluster %prtClass %prtAction %should extent prtCl
     %
     %   See also prtCluster, prtClusterKMeans, prtClusterGmm
 
-% Copyright (c) 2014 CoVar Applied Technologies
+% Copyright (c) 2014 CoVar Applied Technologieshnb
 %
 % Permission is hereby granted, free of charge, to any person obtaining a
 % copy of this software and associated documentation files (the
