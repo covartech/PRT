@@ -62,7 +62,7 @@ for i = 1:length(files)
         idx = find( strcmp(classNames,class));
         
         if isempty(idx)
-            disp(['no baseline found for', class]);
+            disp(['no baseline found for ', class]);
             result = false;
         end
         

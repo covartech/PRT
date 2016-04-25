@@ -134,7 +134,7 @@ classdef prtPreProcPca < prtPreProc
         end
         
         function self = set.nComponents(self,nComp)
-            if ~isnumeric(nComp) || ~isscalar(nComp) || nComp < 0 || round(nComp) ~= nComp
+            if ~isnumeric(nComp) || ~isscalar(nComp) || nComp <= 0 || round(nComp) ~= nComp
                 error('prt:prtPreProcPca','nComponents (%s) must be a positive scalar integer',mat2str(nComp));
             end
             self.nComponents = nComp;

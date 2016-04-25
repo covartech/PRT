@@ -50,7 +50,7 @@ baselinePercentCorr =  0.9400;
 TestDataSet = prtDataGenUnimodal;
 TrainingDataSet = prtDataGenUnimodal;
 
-classifier = prtTestClassSvmMcode;
+classifier = prtClassSvmMcode;
 %classifier.verboseStorage = false;
 classifier = classifier.train(TrainingDataSet);
 classified = run(classifier, TestDataSet);
@@ -75,7 +75,7 @@ end
 %% Check that cross-val and k-folds work
 
 TestDataSet = prtDataGenUnimodal;
-classifier = prtTestClassSvmMcode;
+classifier = prtClassSvmMcode;
 
 % cross-val
 keys = mod(1:400,2);
@@ -101,7 +101,7 @@ result = result & (percentCorr > baselinePercentCorr);
 noerror = true;
 
 try
-    classifier = prtTestClassSvmMcode('kernels', prtKernelRbf);
+    classifier = prtClassSvmMcode('kernels', prtKernelRbf);
 catch
     noerror = false;
 end

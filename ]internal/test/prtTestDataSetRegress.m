@@ -61,13 +61,13 @@ end
 
 % check that plotting works and errors properly
 try
-    % this should fail
+    % this should not fail
     dataSet.plot()
-     disp('prtDataSetRegress plot should error on higher dim data')
-    result = false;
     close;
 catch
-    % no-op
+    result = false;
+    close;
+    disp('prtDataSetRegress fail')
 end
 
 dataSet = prtDataGenNoisySinc;
@@ -76,7 +76,7 @@ try
     close;
 catch
     result = false; 
-    close
+    close;
     disp('prtDataSetRegress fail')
 end
     

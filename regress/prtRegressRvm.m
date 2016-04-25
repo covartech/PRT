@@ -151,7 +151,7 @@ classdef prtRegressRvm < prtRegress
                 error('prt:prtRegressRvm:tooManyTargets','prtRegressRvm can only operate on single target data.');
             end
             
-            y = DataSet.getTargets(:,1);
+            y = DataSet.getTargets(1:DataSet.nObservations,1);
             
             localKernels = Obj.kernels.train(DataSet);
             gram = localKernels.run_OutputDoubleArray(DataSet);

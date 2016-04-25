@@ -126,8 +126,9 @@ classdef prtDataSetRegress < prtDataSetStandard
                     xlabel(obj.getFeatureNames(featureIndices));
                     ylabel(obj.getTargetNames(1));
                 case 2
-                    xlabel(obj.getFeatureNames(featureIndices));
-                    ylabel(obj.getTargetNames(1));
+                    xlabel(obj.getFeatureNames(1));
+                    ylabel(obj.getFeatureNames(2));
+                    zlabel(obj.getTargetNames(1));
                 otherwise
                     error('prt:plot:NoPlotDimensionality','Regression plots are currently only valid for 1 dimensional data, but DataSet has %d dimensions',obj.nFeatures);
             end

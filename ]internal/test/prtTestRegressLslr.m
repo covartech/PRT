@@ -74,10 +74,9 @@ end
 % Check param-val constuctor
 try
     reg = prtRegressLslr('beta',2);
+catch
     disp('prtTestRegressLslr param-val constructor fail')
     result = false;
-catch
-    % no-op
 end
 %
 % make sure k-folds works(kfolds will implicity test cross-val)

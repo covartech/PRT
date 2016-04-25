@@ -39,14 +39,16 @@ catch
 end
 
 % % make sure none of these error out
-try
-    RV.plotPdf                           % Plot the pdf
-    close
-catch
-    disp('prtRVUniformImproper plot pdf fail')
-    result = false;
-    close
-end
+
+%%% This cannot plot because its bounds are -inf:inf
+% try
+%     RV.plotPdf                           % Plot the pdf
+%     close
+% catch
+%     disp('prtRVUniformImproper plot pdf fail')
+%     result = false;
+%     close
+% end
 
 RVspec = prtRvUniformImproper;
 % % Check that I can specify the number of dimensions

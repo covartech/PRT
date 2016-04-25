@@ -126,7 +126,7 @@ end
 
 % Ensure basic operation doesn't fail
 try
-    [nfa] = prtScoreRocNfa(classified.getX(), TrainingDataSet.getY());
+    [nfa,~,~,~] = prtScoreRocNfa(classified.getX(), TrainingDataSet.getY());
     
 catch
     result = false;

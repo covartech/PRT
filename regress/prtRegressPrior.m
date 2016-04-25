@@ -1,4 +1,4 @@
-classdef prtRegressPrior < prtClass
+classdef prtRegressPrior < prtRegress
 
 % Copyright (c) 2014 CoVar Applied Technologies
 %
@@ -42,7 +42,7 @@ classdef prtRegressPrior < prtClass
     methods
         
           % Allow for string, value pairs
-        function self = prtRegressLslr(varargin)
+        function self = prtRegressPrior(varargin)
             self = prtUtilAssignStringValuePairs(self,varargin{:});
         end
     end
