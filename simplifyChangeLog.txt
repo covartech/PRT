@@ -1,7 +1,0 @@
-Deleted method prtDataSetClass.plotBw - Unused
-
-
-To do:
-Change license information.
-Switch explore to object oriented system.
-Change options system.

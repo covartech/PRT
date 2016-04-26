@@ -57,26 +57,7 @@ classdef prtClassBumping < prtClass
     %    prtClassPlsda, prtClassFld, prtClassRvm, prtClassGlrt,  prtClassSvm,
     %    prtClassTreeBaggingCap, prtClassKmsd, prtClassKnn
 
-% Copyright (c) 2014 CoVar Applied Technologies
-%
-% Permission is hereby granted, free of charge, to any person obtaining a
-% copy of this software and associated documentation files (the
-% "Software"), to deal in the Software without restriction, including
-% without limitation the rights to use, copy, modify, merge, publish,
-% distribute, sublicense, and/or sell copies of the Software, and to permit
-% persons to whom the Software is furnished to do so, subject to the
-% following conditions:
-%
-% The above copyright notice and this permission notice shall be included
-% in all copies or substantial portions of the Software.
-%
-% THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-% OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-% MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-% NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-% DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-% OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-% USE OR OTHER DEALINGS IN THE SOFTWARE.
+
 
 
 
@@ -140,11 +121,11 @@ classdef prtClassBumping < prtClass
             else
                 titleString = sprintf('Building %d %s models...',Obj.nBags,Obj.baseClassifier.name);
             end
-            waitHandle = prtUtilWaitbarWithCancel(titleString);
+            waitHandle = prtUtilProgressBar(0,titleString);
             Obj.baggedPerformance = nan(Obj.nBags+1,1);
             Classifiers = repmat(Obj.baseClassifier,Obj.nBags+1,1);
             for i = 1:Obj.nBags+1
-                waitHandle = prtUtilWaitbarWithCancel(i./Obj.nBags,waitHandle);
+                waitHandle.update(i./Obj.nBags);
                 
                 if i == Obj.nBags + 1 && Obj.includeOriginalDataClassifier
                     %the full model; see "The Elements of Statistical Learning"
@@ -154,14 +135,8 @@ classdef prtClassBumping < prtClass
                     Classifiers(i) = train(Obj.baseClassifier,DataSet.bootstrap(DataSet.nObservations));
                     Obj.baggedPerformance(i) = prtScorePercentCorrect(Classifiers(i).run(DataSet),DataSet);
                 end
-                if ~ishandle(waitHandle)
-                    break;
-                end
             end
             
-            if ishandle(waitHandle)
-                delete(waitHandle);
-            end
             [bestPerf,bestClassifier] = max(Obj.baggedPerformance); %#ok<ASGLU>
             bestClassifier = bestClassifier(1);
             Obj.Classifier = Classifiers(bestClassifier);

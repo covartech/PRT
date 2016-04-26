@@ -1,0 +1,24 @@
+function graph = prtGraphDataGenAdjNoun
+% graph = prtGraphDataGenAdjNoun
+%   Read from adjnoun.gml.
+%
+% From the README:
+%
+%The file adjnoun.gml contains the network of common adjective and noun
+% adjacencies for the novel "David Copperfield" by Charles Dickens, as
+% described by M. Newman.  Nodes represent the most commonly occurring
+% adjectives and nouns in the book.  Node values are 0 for adjectives and 1
+% for nouns.  Edges connect any pair of words that occur in adjacent
+% position in the text of the book.  Please cite M. E. J. Newman, Finding
+% community structure in networks using the eigenvectors of matrices,
+% Preprint physics/0605087 (2006).
+
+
+
+
+
+
+
+[baseDir] = prtGraphDataDir;
+gmlFile = fullfile(baseDir,'adjnoun.gml');
+graph = prtDataTypeGraph(gmlFile);
