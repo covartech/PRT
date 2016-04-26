@@ -114,7 +114,7 @@ classdef prtPreProcHistEq < prtPreProc
                 
                 %Find everywhere where any column is greater than binEdges
                 %(centers)?
-                [ii,jj] = find(bsxfun(@le,DataSet.getObservations(index,:),Obj.binEdges));
+                [ii,jj] = find(bsxfun(@le,DataSet.X(index,:),Obj.binEdges));
                 %keyboard
                 %The indices of gthe unique jj's are the first time the
                 %gt test passed; these are the places we care about

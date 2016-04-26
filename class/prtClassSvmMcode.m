@@ -162,7 +162,7 @@ classdef prtClassSvmMcode < prtClass
             DataSetOut = prtDataSetClass(zeros(n,1));
             for i = 1:memChunkSize:n;
                 cI = i:min(i+memChunkSize,n);
-                cDataSet = prtDataSetClass(DataSet.getObservations(cI,:));
+                cDataSet = prtDataSetClass(DataSet.X(cI,:));
                 gram = Obj.sparseKernels.run_OutputDoubleArray(cDataSet);
                 %gram = prtKernelGrammMatrix(cDataSet,Obj.trainedKernels);
                 

@@ -221,7 +221,7 @@ classdef prtClassSvmPegasos < prtClass
             out = zeros(n,1);
             for i = 1:memChunkSize:n;
                 cI = i:min(i+memChunkSize,n);
-                cDs = prtDataSetClass(ds.getObservations(cI,:));
+                cDs = prtDataSetClass(ds.X(cI,:));
                 
                 gram = self.sparseKernels.run(cDs);
                 

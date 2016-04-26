@@ -213,14 +213,14 @@ classdef prtClassFld < prtClass
                 switch nDims
                     case 2
                         for i = 1:double(self.plotProjections):self.dataSet.nObservations
-                            cX = self.dataSet.getObservations(i,:);
-                            cYout = OutputDataSet.getObservations(i,:);
+                            cX = self.dataSet.X(i,:);
+                            cYout = OutputDataSet.X(i,:);
                             plot([cX(1),cYout*W(1)],[cX(2),cYout*W(2)],'k');
                         end
                     case 3
                         for i = 1:double(self.plotProjections):self.dataSet.nObservations
-                            cX = self.dataSet.getObservations(i,:);
-                            cYout = OutputDataSet.getObservations(i,:);
+                            cX = self.dataSet.X(i,:);
+                            cYout = OutputDataSet.X(i,:);
                             plot3([cX(1),cYout*W(1)],[cX(2),cYout*W(2)],[cX(3),cYout*W(3)],'k');
                         end
                 end

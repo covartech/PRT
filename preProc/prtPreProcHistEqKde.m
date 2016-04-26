@@ -82,14 +82,14 @@ classdef prtPreProcHistEqKde < prtPreProc
         
         function Obj = trainAction(Obj,DataSet)
             for iDim = 1:DataSet.nFeatures
-                Obj.prtRvKdePerDim{iDim} = Obj.prtRvKdeObj.mle(DataSet.getObservations(:,iDim));
+                Obj.prtRvKdePerDim{iDim} = Obj.prtRvKdeObj.mle(DataSet.X(:,iDim));
             end
         end
         
         function DataSet = runAction(Obj,DataSet)
             X = nan(DataSet.nObservations,DataSet.nFeatures);
             for iDim = 1:DataSet.nFeatures
-                X(:,iDim) = Obj.prtRvKdePerDim{iDim}.cdf(DataSet.getObservations(:,iDim));
+                X(:,iDim) = Obj.prtRvKdePerDim{iDim}.cdf(DataSet.X(:,iDim));
             end
             if any(~isfinite(DataSet.getObservations()))
                 X(DataSet.getObservations() > 0 & isinf(DataSet.getObservations())) = 1;

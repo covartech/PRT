@@ -58,10 +58,10 @@ classdef prtRvKde < prtRv
     %   % ksdensity() is only for 1D data
     %   ds = prtDataGenUnimodal;
     %   subplot(2,1,1)
-    %   plotPdf(mle(prtRvKde,ds.getObservations(:,1)))
+    %   plotPdf(mle(prtRvKde,ds.X(:,1)))
     %   xlim([-5 5]), ylim([0 0.2])
     %   subplot(2,1,2)
-    %   ksdensity(ds.getObservations(:,1))
+    %   ksdensity(ds.X(:,1))
     %   xlim([-5 5]), ylim([0 0.2])
     % 
     %   % Classification comparison on multi-modal data

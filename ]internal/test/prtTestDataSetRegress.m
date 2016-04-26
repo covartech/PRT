@@ -1,4 +1,4 @@
-function [contextDataSet,classificationDataSet] = prtDataGenContextDependent
+function result = prtTestDataSetRegress
 
 % Copyright (c) 2014 CoVar Applied Technologies
 %
@@ -25,32 +25,58 @@ function [contextDataSet,classificationDataSet] = prtDataGenContextDependent
 
 
 
-contextDataSet = prtDataGenBimodal(400);
-kmeans = prtClusterKmeans('nClusters',4);
-kmeans = train(kmeans,contextDataSet);
+result = true;
 
-yOut = kmeans.run(contextDataSet);
-
-labels = yOut.getObservations;
-for i = 1:size(labels,2)
-    currDataInd = find(yOut.X(:,i));
-    
-    i1 = randn < 0;
-    if i1 == 0
-        i1 = -1;
-    end
-    
-    mu1 = [1 1] * i1;
-    mu0 = -mu1;
-    
-    rvH1 = prtRvMvn('mu',mu1,'sigma',eye(2));
-    rvH0 = prtRvMvn('mu',mu0,'sigma',eye(2));
-    nSamples1 = floor(length(currDataInd)/2);
-    nSamples0 = ceil(length(currDataInd)/2);
-    
-    x(currDataInd,:) = cat(1,rvH0.draw(nSamples0),rvH1.draw(nSamples1));
-    y(currDataInd,1) = prtUtilY(nSamples0,nSamples1);
+% Test basic object instantiation
+try
+    dataSet = prtDataSetRegress;
+    dataSet = dataSet.setObservationsAndTargets([ 1 2; 3 4], [0 1]');
+catch
+    disp('Instantiation of prtDataSetRegress fail')
+    result = false;
 end
-classificationDataSet = prtDataSetClass(x,y);
 
+% Check the results of above
+if(dataSet.nFeatures ~= 2)
+    disp('prtDataSetRegress nFeatures fail')
+    result = false;
 end
+
+if(dataSet.isLabeled ~=1)
+    disp('prtDataSetRegress isLabeled fail')
+    result = false;
+end
+
+try
+    out = dataSet.summarize;
+catch
+    disp('prtDataSetRegress summarize fail')
+    result = false;
+end
+
+if ~isequal(out.upperBounds, [3 4]) || ~isequal(out.lowerBounds,[1 2])
+    disp('prtDataSetRegress summarize fail')
+    result = false;
+end
+
+% check that plotting works and errors properly
+try
+    % this should not fail
+    dataSet.plot()
+    close;
+catch
+    result = false;
+    close;
+    disp('prtDataSetRegress fail')
+end
+
+dataSet = prtDataGenNoisySinc;
+try
+    dataSet.plot()
+    close;
+catch
+    result = false; 
+    close;
+    disp('prtDataSetRegress fail')
+end
+    

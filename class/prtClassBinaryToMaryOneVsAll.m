@@ -113,7 +113,7 @@ classdef prtClassBinaryToMaryOneVsAll < prtClass & prtActionBig
                 end
                 
                 % Replace the targets with binary targets for this class
-                cDataSet = dataSet.setTargets(dataSet.getTargetsAsBinaryMatrix(:,iY));
+                cDataSet = dataSet.setTargets(dataSet.getTargetsAsBinaryMatrix(1:dataSet.nObservations,iY));
                 % We need the classifier to act like a binary and we dont 
                 % want a bunch of DataSets lying around
                 Obj.baseClassifier(iY).verboseStorage = false;
@@ -170,7 +170,7 @@ classdef prtClassBinaryToMaryOneVsAll < prtClass & prtActionBig
             for iY = 1:length(Obj.baseClassifier)
                 cOutput = run(Obj.baseClassifier(iY), dataSet);
                 
-                DataSetOut = DataSetOut.setObservations(cOutput.getObservations(),:,iY);
+                DataSetOut = DataSetOut.setObservations(cOutput.getObservations(),1:DataSetOut.nObservations,iY);
             end
         end
         
