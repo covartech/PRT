@@ -155,7 +155,7 @@ classdef prtDataInterfaceCategoricalTargets
                     isNans = true(size(d,1),1);
                 end
             else
-                isNans = isnan(obj.getTargets(:));
+                isNans = isnan(obj.targets(:));
                 d = obj.getData(isNans,varargin{:});
             end
         end
