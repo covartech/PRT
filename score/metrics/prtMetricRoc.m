@@ -3,6 +3,8 @@ classdef prtMetricRoc
     %   Undocumented single-output object for prtScoreRoc
     % 
     properties
+        nTargets
+        nNonTargets
         pd
         pf
         nfa
@@ -460,6 +462,116 @@ classdef prtMetricRoc
                 hold off
             end
             
+            colors = prtPlotUtilClassColors(size(h,1));
+            for iCol = 1:size(h,1)
+                set(h(iCol,:),'Color',colors(iCol,:));
+            end
+            
+            
+            if nargout
+                varargout = {h};
+            else
+                varargout = {};
+            end
+            
+        end
+        
+        function varargout = plotRocChanceNan(self,varargin)
+            % plotH = plotRocFarChanceNan(self)
+            
+            plotArgs = varargin;
+            
+            holdState = ishold;
+            
+            h = gobjects(length(self),2);
+            for i = 1:length(self)
+                s = self(i);
+                
+                nTarget = s.nTargets;
+                uPd = linspace(0,1,nTarget+1);
+                uPdPf = s.pfAtPdValues(uPd);
+                
+                uPd = uPd(:);
+                uPdPf = uPdPf(:);
+                uPdPf(isinf(uPdPf)) = 1;
+                
+                xyDiff = bsxfun(@minus,[1 1],[uPdPf, uPd]);
+                xyDiff = bsxfun(@rdivide,xyDiff,sqrt(sum(xyDiff.^2,2)));
+                localRocChanceAngle = atan2(xyDiff(:,2),xyDiff(:,1));
+                localRocChanceAngle(isnan(localRocChanceAngle)) = 0;
+
+                % Find the equation of the chance line at each uPd point
+                % y = m x + b -> b = y-mx for slopes and uPd uPf points
+                % x = pf, y = pd;
+                localChanceSlope = tan(localRocChanceAngle);
+                localChanceYIntercepts = uPd - uPdPf.*localChanceSlope;
+                
+                uPdPfChance = repmat(uPdPf(:),[1 length(uPd)]);
+                for iPd = 1:length(uPd)
+                    % y = mx + b
+                    % x = (y-b)/m
+                    if localChanceSlope(iPd) == 0
+                        uPdPfChance(iPd:end,iPd) = uPdPfChance(iPd-1,iPd);
+                    else
+                        uPdPfChance(iPd:end,iPd) = (uPd(iPd:end) - localChanceYIntercepts(iPd))/localChanceSlope(iPd);
+                    end
+                end
+                %                 
+                %                 plot(uPdFar, uPd(:),'k','lineWidth',3)
+                %                 hold on, h = plot(uPdPfChance,uPd(:));
+                %                 hold off
+                %                 cmap = parula(length(h))*0.8;
+                %                 for iLine = 1:length(h)
+                %                     set(h(iLine),'color',cmap(iLine,:));
+                %                 end
+                %                 xlabel('FAR (#/m^2)');
+                %                 ylabel('PD');
+                %                 grid on
+                %                 cvrS2('randomChancePRocs');
+                %                 axis([0 1 0 1])
+                %                 cvrS2('randomChancePRocsZoom');
+                %                 %%
+
+                curveAreas = zeros(length(uPd),1);
+                for iPd = 1:length(uPd)
+                    cX = uPdPfChance(:,iPd);
+                    cY = uPd;
+%                     if max(cX) < farCutOff
+%                         cX = cat(1,cX,farCutOff);
+%                         cY = cat(1,cY, cY(end));
+%                     end
+                    
+                    curveAreas(iPd) = trapz(cX,cY);
+                end
+                
+                [~, stopInd] = max(curveAreas);
+               
+                uPdFarThresh = uPdPf;
+                uPdThresh = uPd;
+                stopInd = max(min(stopInd,length(uPd)),1);
+                if ~isempty(stopInd)
+                    uPdFarThresh(stopInd:end) = nan;
+                    uPdThresh(stopInd:end) = nan;
+                end
+                
+                %plot(uPdFar(1:end-1),curveAreas(2:end)/farCutOff*100), ylabel('% pAUC'), xlabel('FAR of Switching to Random (#/m^2)'), grid on, cvrS2('areaVsSwitchPoint')
+                
+                h(i,1) = plot(uPdPf(:),uPd(:),plotArgs{:},'LineWidth',1);
+                
+                if i==1, hold on, end
+                
+                h(i,2) = plot(uPdFarThresh(:),uPdThresh(:),plotArgs{:},'LineWidth',3);
+                
+            end
+            if ~holdState
+                hold off
+            end
+            
+            colors = prtPlotUtilClassColors(size(h,1));
+            for iCol = 1:size(h,1)
+                set(h(iCol,:),'Color',colors(iCol,:));
+            end
+            
             if nargout
                 varargout = {h};
             else
@@ -524,6 +636,34 @@ classdef prtMetricRoc
             end
             
             ds.X = newX;
+        end
+        function pauc = aucFar(self, maxFar)
+            
+            if nargin < 2 || isempty(maxFar)
+                maxFar = -inf; % This will be ignored
+            end
+            
+            pauc = zeros(size(self));
+            for iRoc = 1:numel(self)
+                
+                nTarget = self(iRoc).nTargets;
+                uPd = linspace(0,1,nTarget+1);
+                uPdFar = self(iRoc).farAtPdValues(uPd);
+                
+                cX = uPdFar(:);
+                cY = uPd(:);
+                
+                if max(cX) < maxFar
+                    cX = cat(1,cX,maxFar);
+                    cY = cat(1,cY, cY(end));
+                end
+                
+                keep = cX <= maxFar;
+                cX = cX(keep);
+                cY = cY(keep);
+                
+                pauc(iRoc) = trapz(cX,cY);
+            end
         end
     end
 end
