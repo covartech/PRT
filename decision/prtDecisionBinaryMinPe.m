@@ -9,6 +9,10 @@ classdef prtDecisionBinaryMinPe < prtDecisionBinary
     % prtDecision objects are intended to be used either as members of
     % prtAlgorithm or prtClass objects.
     %
+    % Properties:
+    %       priors = 'equal'; % Either one of the strings 'equal',
+    %          'empirical', or a 1x2 array of doubles, [pH0,pH1]
+    %
     % Example 1:
     %
     % ds = prtDataGenBimodal;              % Load a data set
@@ -59,6 +63,9 @@ classdef prtDecisionBinaryMinPe < prtDecisionBinary
     properties (Hidden = true)
         uniqueClasses
     end
+    properties
+        priors = 'equal'; % 'equal', 'empirical' (estimated from data), or [pH0, pH1]
+    end
     methods
         
         function obj = prtDecisionBinaryMinPe(varargin)
@@ -75,8 +82,29 @@ classdef prtDecisionBinaryMinPe < prtDecisionBinary
                 error('prt:prtDecisionBinaryMinPe:nonBinaryData','prtDecisionBinaryMinPe expects input data to have 2 classes, but dataSet.nClasses = %d',dataSet.nClasses);
             end
             
+            
             [pf,pd,thresh] = prtScoreRoc(dataSet.getObservations,dataSet.getTargets);
-            pe = prtUtilPfPd2Pe(pf,pd);
+            if isa(self.priors,'char')
+                switch lower(self.priors);
+                    case 'equal'
+                        pH0 = 0.5;
+                        pH1 = 0.5;
+                    case 'empirical'
+                        nH0 = sum(dataSet.targets == 0);
+                        nH1 = sum(dataSet.targets == 1);
+                        pH0 = nH0./dataSet.nObservations;
+                        pH1 = nH1./dataSet.nObservations;
+                    otherwise
+                        error('Invalid string: %s',self.priors);
+                end
+            elseif isnumeric(self.priors)
+                pH0 = self.priors(1);
+                pH1 = self.priors(2);
+            else
+                error('Invalid prior type: %s',class(self.priors));
+            end
+            pe = prtUtilPfPd2Pe(pf,pd,pH0,pH1);
+            
             [v,minPeIndex] = min(pe); %#ok<ASGLU>
             Obj.threshold = thresh(minPeIndex);
             Obj.classList = dataSet.uniqueClasses;
