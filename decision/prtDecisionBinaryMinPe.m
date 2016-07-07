@@ -68,12 +68,12 @@ classdef prtDecisionBinaryMinPe < prtDecisionBinary
     end
     methods
         
-        function obj = prtDecisionBinaryMinPe(varargin)
-            obj = prtUtilAssignStringValuePairs(obj,varargin{:});
+        function self = prtDecisionBinaryMinPe(varargin)
+            self = prtUtilAssignStringValuePairs(self,varargin{:});
         end
     end
     methods (Access=protected,Hidden=true)
-        function Obj = trainAction(Obj,dataSet)
+        function self = trainAction(self,dataSet)
             
             if dataSet.nFeatures > 1
                 error('prt:prtDecisionBinaryMinPe','prtDecisionBinaryMinPe can not be used on algorithms that output multi-column results; consider using prtDecisionMap instead');
@@ -106,17 +106,17 @@ classdef prtDecisionBinaryMinPe < prtDecisionBinary
             pe = prtUtilPfPd2Pe(pf,pd,pH0,pH1);
             
             [v,minPeIndex] = min(pe); %#ok<ASGLU>
-            Obj.threshold = thresh(minPeIndex);
-            Obj.classList = dataSet.uniqueClasses;
+            self.threshold = thresh(minPeIndex);
+            self.classList = dataSet.uniqueClasses;
         end
     end
     methods
-        function threshold = getThreshold(Obj)
+        function threshold = getThreshold(self)
              % THRESH = getThreshold returns the objects threshold
-            threshold = Obj.threshold;
+            threshold = self.threshold;
         end
-        function uniqueClasses = getUniqueClasses(Obj)
-            uniqueClasses = Obj.uniqueClasses;
+        function uniqueClasses = getUniqueClasses(self)
+            uniqueClasses = self.uniqueClasses;
         end
     end
     
