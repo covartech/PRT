@@ -652,15 +652,19 @@ classdef prtMetricRoc
                 
                 cX = uPdFar(:);
                 cY = uPd(:);
-                
-                if max(cX) < maxFar
-                    cX = cat(1,cX,maxFar);
-                    cY = cat(1,cY, cY(end));
-                end
-                
+                                
                 keep = cX <= maxFar;
                 cX = cX(keep);
                 cY = cY(keep);
+                
+                % Append a last point @ maxFar to ensure we get the final
+                % rectangle up to the requested FAR - note: Can optionally
+                % include the trapezoidal extension... but that's not
+                % actually the PD you would get based on the data we've
+                % seen.  It's a conundrum and the extension is complicated,
+                % and adds no real benefit.
+                cX = cat(1,cX,maxFar);
+                cY = cat(1,cY, cY(end));
                 
                 pauc(iRoc) = trapz(cX,cY);
             end
