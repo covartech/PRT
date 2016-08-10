@@ -143,6 +143,57 @@ classdef prtAlgorithm < prtAction & prtActionBig
     
     methods
         
+        function varargout = getActionFieldByClass(self,objectClass,propertyName)
+            % value = getActionFieldByClass(self,objectClass,propertyName)
+            %   Return the value of the property specified by propertyName
+            %   from any objects with class objectClass in the algorithm.
+            %
+            %   c = prtPreProcZmuv + prtClassLda;
+            %   w = c.getActionFieldByClass('prtClassLda','w'); % Empty
+            %
+            nFound = 0;
+            varargout = {};
+            for i = 1:length(self.actionCell)
+                if strcmpi(class(self.actionCell{i}),objectClass)
+                    if nargin > 2
+                        varargout{end+1} = self.actionCell{i}.(propertyName);
+                    else
+                        varargout{end+1} = self.actionCell{i};
+                    end
+                    nFound = nFound + 1;
+                end
+            end
+            if nFound == 0
+                warning('No objects of type %s were found in the algorithm',objectClass);
+            end
+        end
+        function self = setActionFieldByClass(self,objectClass,propertyName,value)
+            % algo = getActionFieldByClass(algo,objectClass,propertyName,value)
+            %   Set the value of the property specified by propertyName to
+            %   the value specified by "value" for any objects with class
+            %   objectClass in the algorithm.
+            %
+            %   c = prtPreProcZmuv + prtClassLda;
+            %   c = c.setActionFieldByClass('prtClassLda','w',3); % c.actionCell{2}.w = 2;
+            %
+            if nargout == 0
+                error('Attempt to call "setActionFieldByClass" on a prtAlgorithm with no output arguments; prtAlgorithms are not handles, so the correct calling syntax is always algo = algo.set(class,name,value)');
+            end
+            nFound = 0;
+            for i = 1:length(self.actionCell)
+                if strcmpi(class(self.actionCell{i}),objectClass)
+                    self.actionCell{i}.(propertyName) = value;
+                    nFound = nFound + 1;
+                end
+            end
+            if nFound > 1
+                warning('Multiple objects of type %s were found; setting fields of all %d objects',objectClass,nFound);
+            end
+            if nFound == 0
+                warning('No objects of type %s were found in the algorithm',objectClass);
+            end
+        end
+        
         function plot(Obj)
             % Plots a block diagram of the algorithm 
             prtPlotUtilAlgorithmGui(Obj.connectivityMatrix, Obj.actionCell, Obj);
@@ -437,6 +488,7 @@ classdef prtAlgorithm < prtAction & prtActionBig
     end
 
     methods (Hidden)
+        
         
         function str = exportSimpleText(self) %#ok<MANU>
             str = '';
