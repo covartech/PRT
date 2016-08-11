@@ -171,7 +171,7 @@ classdef prtAlgorithm < prtAction & prtActionBig
             % algo = getActionFieldByClass(algo,objectClass,propertyName,value)
             %   Set the value of the property specified by propertyName to
             %   the value specified by "value" for any objects with class
-            %   objectClass in the algorithm.
+            %   objectClass in the algorithm.       
             %
             %   c = prtPreProcZmuv + prtClassLda;
             %   c = c.setActionFieldByClass('prtClassLda','w',3); % c.actionCell{2}.w = 2;
