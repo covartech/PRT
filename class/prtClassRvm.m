@@ -298,10 +298,10 @@ classdef prtClassRvm < prtClass
             
         end
         
-        function DataSetOut = runAction(Obj,DataSet)
+        function DataSet = runAction(Obj,DataSet)
             
             if isempty(Obj.sparseBeta)
-                DataSetOut = DataSet.setObservations(nan(DataSet.nObservations,DataSet.nFeatures));
+                DataSet = DataSet.setObservations(nan(DataSet.nObservations,DataSet.nFeatures));
                 return
             end
             
@@ -312,7 +312,7 @@ classdef prtClassRvm < prtClass
             memChunkSize = max(floor(largestMatrixSize/length(Obj.sparseBeta)),1);
             
             OutputMat = zeros(n,1);
-            for i = 1:memChunkSize:n;
+            for i = 1:memChunkSize:n
                 cI = i:min(i+memChunkSize,n);
                 cDataSet = prtDataSetClass(DataSet.X(cI,:));
                 
@@ -321,7 +321,7 @@ classdef prtClassRvm < prtClass
                 OutputMat(cI) = prtRvUtilNormCdf(gram.getObservations*Obj.sparseBeta);
             end
             
-            DataSetOut = prtDataSetClass(OutputMat);
+            DataSet.X = OutputMat;
         end
     end
 
