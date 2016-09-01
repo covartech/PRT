@@ -1,0 +1,63 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../../helpwin.css">
+      <title>MATLAB File Help: prtClassCap/prtClassCap</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtClassCap/prtClassCap</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtClassCap/prtClassCap</div>
+      <div class="helptext"><pre><!--helptext -->  <span class="helptopic">prtClassCap</span>  Central Axis projection classifier
+ 
+     CLASSIFIER = <span class="helptopic">prtClassCap</span> returns a Cap classifier
+ 
+     CLASSIFIER = <span class="helptopic">prtClassCap</span>(PROPERTY1, VALUE1, ...) constructs a
+     <span class="helptopic">prtClassCap</span> object CLASSIFIER with properties as specified by
+     PROPERTY/VALUE pairs.
+ 
+     A <span class="helptopic">prtClassCap</span> object inherits all properties from the abstract class
+     prtClass. In addition is has the following properties:
+ 
+     w                 -  Central axis projection weights, set during
+                          training
+     threshold         -  Decision threshold, set during training
+ 
+     Cap classifiers are a prototypical "weak" classification algorithm
+     that find application in multiple meta-algorithms.  A good
+     explanation of Cap classifiers can be found in:
+ 
+     Breiman, Leo (2001). "Random Forests". Machine Learning 45 (1): 
+     5&#x96;32.
+ 
+     Note that the output of the run method of a <span class="helptopic">prtClassCap</span> classifier
+     includes the process of applying the learned threshold to the
+     linear projection, so the outputs are discrete valued.
+ 
+     A <span class="helptopic">prtClassCap</span> object inherits the TRAIN, RUN, CROSSVALIDATE and 
+     KFOLDS methods from prtAction. It also inherits the PLOT method 
+     from prtClass.
+ 
+     Example:
+ 
+      TestDataSet = prtDataGenUniModal;       % Create some test and
+      TrainingDataSet = prtDataGenUniModal;   % training data
+      classifier = <span class="helptopic">prtClassCap</span>;              % Create a classifier
+      classifier = classifier.train(TrainingDataSet);    % Train
+      classified = run(classifier, TestDataSet);         % Test
+      percentCorr = prtScorePercentCorrect(classified,TestDataSet);
+      subplot(2,1,1);
+      classifier.plot;
+      subplot(2,1,2);
+      [pf,pd] = prtScoreRoc(classified,TestDataSet);
+      h = plot(pf,pd,'linewidth',3);
+      title('ROC'); xlabel('Pf'); ylabel('Pd');</pre></div><!--after help -->
+   </body>
+</html>

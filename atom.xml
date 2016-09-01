@@ -1,0 +1,2131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[PRT Blog]]></title>
+  <link href="http://newfolder.github.io/atom.xml" rel="self"/>
+  <link href="http://newfolder.github.io/"/>
+  <updated>2013-10-09T21:16:57-04:00</updated>
+  <id>http://newfolder.github.io/</id>
+  <author>
+    <name><![CDATA[Kenneth Morton and Peter Torrione]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Dude Where's My Help?]]></title>
+    <link href="http://newfolder.github.io/blog/2013/10/09/dude-wheres-my-help/"/>
+    <updated>2013-10-09T20:46:00-04:00</updated>
+    <id>http://newfolder.github.io/blog/2013/10/09/dude-wheres-my-help</id>
+    <content type="html"><![CDATA[<p>Depending on your setup, you may have recently had one of the following happen:</p>
+
+<ol>
+<li>If you pulled the most recent version of the PRT since October 9, 2013, the PRT no longer shows up in the builtin MATLAB help-browser or</li>
+<li>If you updated to MATLAB 2013B, MATLAB freezes during startup.</p><p>Here&rsquo;s the skinny &ndash; there&rsquo;s a bug in the new version of MATLAB (2013B) that, according to TMW:</li>
+</ol>
+
+
+<blockquote><p>This is a known issue with MATLAB 8.2 (R2013b) in the way that the MATLAB startup handles the info.xml file. There is a deadlock between the Help System initialization and the path changes (raised by the startup.m) at the start of MATLAB.</p></blockquote>
+
+<p>The result of this bug is that MATLAB seems to start up fine, but then just sits there, and never accepts inputs. This is pretty much as bad a bug as can be (besides wrong answers), since it makes MATLAB completely unusable, and you can&rsquo;t even easily determine what is causing it since&hellip; MATLAB is unusable.</p>
+
+<p>There is a patch to fix this bug, but if you don&rsquo;t have the patch already installed it&rsquo;s <strong>very</strong> difficult to figure out what is going wrong and it can be very frustrating.  Alternatively, removing (or moving) the XML files will let MATLAB startup, but the automatic help search, prtDoc, etc. will no longer work.  We thought that moving the XML files would cause the least amount of pain overall, so that&rsquo;s what we did.  Our XML files that used to live in prtRoot now live in fullfile(prtRoot,&lsquo;]xml&rsquo;) which is by default <strong>not</strong> on the prtPath, so should not cause you any issues.</p>
+
+<p>If you still want to use the PRT documentation in the MATLAB help browser, simply install the patch by following the instructions below, then move the .xml files from fullfile(prtRoot,&lsquo;]xml&rsquo;) to prtRoot. That should get everything running!</p>
+
+<p>Alternatively just use prtDoc instead of doc to open up the help in your browser (or the MATLAB web browser, depending on your version of MATLAB). For example:</p>
+
+<pre class="codeinput">prtDoc <span class="string">prtClassRvm</span>
+</pre>
+
+
+<p>Sorry about any headaches anyone encountered, and a big &ldquo;thank you&rdquo; to Cesar from TMW who helped us get to the bottom of this quickly and professionally. Here are the patch installation instructions from Cesar:</p>
+
+<blockquote><p>To work around this issue, unzip the patch into your MATLAB root directory (most likely C:\Program Files\MATLAB\R2013b)</p></blockquote>
+
+<p><a href="http://newfolder.github.io/misc/attachment_968648_13b_2013-09-20.zip">Patch Download</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[verboseStorage and a little prtAlgorithm plotting]]></title>
+    <link href="http://newfolder.github.io/blog/2013/09/04/verbosestorage-and-a-little-prtalgorithm-plotting/"/>
+    <updated>2013-09-04T10:12:00-04:00</updated>
+    <id>http://newfolder.github.io/blog/2013/09/04/verbosestorage-and-a-little-prtalgorithm-plotting</id>
+    <content type="html"><![CDATA[<h2>What is verboseStorage?<a name="1"></a></h2>
+
+
+<p>verboseStorage is a logical flag of prtAction that specifies whether the training dataset should be stored within the action. The default value is true. Let&#8217;s see an example</p>
+
+
+<p>First let&#8217;s get a toy dataset and plot it to see what we are talking about.</p>
+
+
+<pre class="codeinput">ds = prtDataGenUnimodal;
+
+plot(ds);
+</pre>
+
+
+<p><img vspace="5" hspace="5" src="http://newfolder.github.io/images/morton_blog_20130904_verboseStorage_01.png" alt=""> <p>Let&rsquo;s train a prtClassMap and plot the resulting decision contours.</p></p>
+
+<pre class="codeinput">c = train(prtClassMap, ds);
+
+plot(c)
+title(<span class="string">'Classifier Decision Contrours with Training Data Set'</span>,<span class="string">'FontSize'</span>,16);
+</pre>
+
+
+<p><img vspace="5" hspace="5" src="http://newfolder.github.io/images/morton_blog_20130904_verboseStorage_02.png" alt=""> <p>You can see that even though we only plotted the trained classifier, the dataset appears in the plot. The training dataset is stored in the read-only property dataSet</p></p>
+
+<pre class="codeinput">c.dataSet
+</pre>
+
+
+
+
+<pre class="codeoutput">ans = 
+  prtDataSetClass with properties:
+
+               nFeatures: 2
+             featureInfo: []
+                    data: [400x2 double]
+                 targets: [400x1 double]
+         observationInfo: []
+           nObservations: 400
+       nTargetDimensions: 1
+               isLabeled: 1
+                    name: 'prtDataGenUnimodal'
+             description: ''
+                userData: [1x1 struct]
+                nClasses: 2
+           uniqueClasses: [2x1 double]
+    nObservationsByClass: [2x1 double]
+              classNames: {2x1 cell}
+                 isUnary: 0
+                isBinary: 1
+                  isMary: 0
+               isZeroOne: 1
+            hasUnlabeled: 0
+</pre>
+
+
+
+
+<p>Let&#8217;s try this again, this time setting verboseStorage to false.</p>
+
+
+
+
+<pre class="codeinput">cVerboseStorageFalse = train(prtClassMap(<span class="string">'verboseStorage'</span>,false), ds);
+
+plot(cVerboseStorageFalse)
+title(<span class="string">'Classifier Decision Contrours without Training Data Set'</span>,<span class="string">'FontSize'</span>,16);
+</pre>
+
+
+<p><img vspace="5" hspace="5" src="http://newfolder.github.io/images/morton_blog_20130904_verboseStorage_03.png" alt=""> <p>Plotting the classifier contours without a data set is sometimes useful for examples. Now you can see that the classifiers dataSet property is empty.</p><pre class="codeinput">cVerboseStorageFalse.dataSet
+</pre></p>
+
+<pre class="codeoutput">ans =
+     []
+</pre>
+
+
+
+
+<h2>Data Set Summaries<a name="7"></a></h2>
+
+
+<p>A long time ago, earlier versions of the PRT had no verboseStorage property and the dataSet was always saved. You can see how this might create problems when dataSets get large. We originally used the dataSet to determine plot limits and other things for the classifier plot as well. Now we use the dataSetSummary field to create plots. All prtDataSets must have a summarize() method that yields a structure that can be used by other actions when plotting. You can see that for the above examples the value of verbose storage does not change the dataSetSummary. This is how prtClass.plot() knows what image bounds to use for plotting.</p>
+
+
+<pre class="codeinput">c.dataSetSummary
+
+cVerboseStorageFalse.dataSetSummary
+</pre>
+
+
+<pre class="codeoutput">ans = 
+          upperBounds: [4.7304 4.7950]
+          lowerBounds: [-4.0730 -3.5644]
+            nFeatures: 2
+    nTargetDimensions: 1
+        nObservations: 400
+        uniqueClasses: [2x1 double]
+             nClasses: 2
+               isMary: 0
+ans = 
+          upperBounds: [4.7304 4.7950]
+          lowerBounds: [-4.0730 -3.5644]
+            nFeatures: 2
+    nTargetDimensions: 1
+        nObservations: 400
+        uniqueClasses: [2x1 double]
+             nClasses: 2
+               isMary: 0
+</pre>
+
+
+<h2>prtAlgorithm<a name="8"></a></h2>
+
+
+<p>Since verboseStorgae is a property of prtAction it is also a property of prtAlgorithm. When you set the verboseStorage property for an algorithm you are actually setting the verboseStorgae property for all actions within the algorithm. If verboseStorgae is true for a prtAlgorithm you can use prtAlgorithm.plot() to explore what the data coming into any stage of the algorithm (the training data) looks like. Here is a quick example. Note: plotting prtAlgorithms requires graphviz. There may be issues with the current version of graphviz and the PRT. Please file an issue on github.</p>
+
+
+<pre class="codeinput">algo = prtPreProcZmuv + prtClassRvm/prtClassPlsda + prtClassLogisticDiscriminant;
+algo.verboseStorage = true; <span class="comment">% Just for clarity, this is the default</span>
+
+trainedAlgo = train(algo, ds);
+
+plot(trainedAlgo);
+</pre>
+
+
+<p><img vspace="5" hspace="5" src="http://newfolder.github.io/images/morton_blog_20130904_verboseStorage_04.png" alt=""> <p>Boxes with bold outlines are clickable. Double clicking those will open another figure and call plot on the action. For example double clicking on the RVM plots the resulting decision contours (and the dataSet after it has been preprocessed using ZMUV (notice the X and Y labels).</p><img vspace="5" hspace="5" src="http://newfolder.github.io/images/morton_blog_20130904_verboseStorage_rvm.png" alt=""></p>
+
+<p>Similarly you can plot the PLSDA decision contour (also with the preprocessed ZMUV data).</p>
+
+
+<p><img vspace="5" hspace="5" src="http://newfolder.github.io/images/morton_blog_20130904_verboseStorage_plsda.png" alt=""></p>
+
+<p>The fusion of the two classifiers is shown be clicking on the prtClassLogisticDiscriminant.</p>
+
+
+<p><img vspace="5" hspace="5" src="http://newfolder.github.io/images/morton_blog_20130904_verboseStorage_Fusion.png" alt=""></p>
+
+<p>The total confidence provided by the output of the algorithm is shown as a function of the input dataSet by clicking on the output block. Notice here that the features are the original input features and the contours show the contours of the entire algorithm.</p>
+
+
+<p><img vspace="5" hspace="5" src="http://newfolder.github.io/images/morton_blog_20130904_verboseStorage_Total.png" alt=""></p>
+
+<p>If we repeat the whole process with verboseStorgae false you will see that the resulting plots do not have the dataSet just like before.</p>
+
+
+
+
+<pre class="codeinput">algo = prtPreProcZmuv + prtClassRvm/prtClassPlsda + prtClassLogisticDiscriminant;
+algo.verboseStorage = false; <span class="comment">% This will feed through to all actions</span>
+
+trainedAlgo = train(algo, ds);
+
+plot(trainedAlgo);
+</pre>
+
+
+
+
+<p>As an example here is just the final output contours of the algorithm.</p>
+
+
+<p><img vspace="5" hspace="5" src="http://newfolder.github.io/images/morton_blog_20130904_verboseStorage_total_noData.png" alt=""></p>
+
+<h2>Conclusions<a name="14"></a></h2>
+
+
+<p>Well that&#8217;s verboseStorage. If you have a big dataset you probably want to turn it off but if you don&#8217;t it can be useful to fully explore an algorithm. Let us know what you think.</p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Introducing prtClassNNET]]></title>
+    <link href="http://newfolder.github.io/blog/2013/08/20/introducing-prtclassnnet/"/>
+    <updated>2013-08-20T12:18:00-04:00</updated>
+    <id>http://newfolder.github.io/blog/2013/08/20/introducing-prtclassnnet</id>
+    <content type="html"><![CDATA[<p>People are often asking us why we don&#8217;t have a neural-network (NNET) implemented in the PRT.  Formerly, we never focused on making a home-grown NNET object, since the MathWorks already has a (<a href="http://www.mathworks.com/help/nnet/">neural network toolbox</a>), and often we&#8217;ve found that NNET results aren&#8217;t significantly better than other classifiers, and they can be difficult to train. That said, neural network classifiers can provide good results, some recent advances in deep-learning have brought NNET classifiers back into vogue, and they&#8217;re often fun to play with.  As a result, we&#8217;ve finally rolled our own NNET classifier in the PRT that doesn&#8217;t require any additional toolboxes. One thing to note: If you have the MATLAB NNET toolbox, you can incorporate it in the PRT using prtClassMatlabNnet.</p>
+
+
+
+
+<!--/introduction-->
+
+
+<h2>Contents</h2>
+
+
+<div><ul><li><a href="#1">Current Restrictions:</a></li><li><a href="#2">Using prtClassNnet - Basic parameters</a></li><li><a href="#3">Using prtClassNnet - Advanced Parameters</a></li><li><a href="#4">Visualizing</a></li><li><a href="#5">Example Processing</a></li><li><a href="#6">Concluding</a></li></ul></div>
+
+
+
+
+<h2>Current Restrictions:<a name="1"></a></h2>
+
+
+<p>Our classifier only currently allows standard batch-propagation learning. It should be relatively easy to include new training approaches, but we haven&#8217;t done so yet. The current prtClassNnet only allows for three-layer (one hidden-layer) networks.  Depending on who you ask, this is either very important, or not important at all. In either case, we hope to expand the capabilities here eventually. The current formulation only works for binary classification problems. Extensions to enable multi-class classification are also in progress.</p>
+
+
+
+
+<h2>Using prtClassNnet - Basic parameters<a name="2"></a></h2>
+
+
+<p>prtClassNnet acts pretty much the same as any other classifier.  As you might expect, we can set the number of neurons in the hidden layer, and set the min ans max number of training epochs, and the tolerance to check for convergence:</p>
+
+
+
+
+<pre class="codeinput">nnet = prtClassNnet;
+nnet.nHiddenUnits = 10;
+nnet.minIters = 10000;
+nnet.relativeErrorChangeThreshold = 1.0000e-04; <span class="comment">% check for convergence if nIters &gt; minIters</span>
+nnet.maxIters = 100000;                         <span class="comment">% kick out after this many, no matter what</span>
+</pre>
+
+
+
+
+<h2>Using prtClassNnet - Advanced Parameters<a name="3"></a></h2>
+
+
+<p>The activation functions are an important part of neural network design. The prtClassNnet object allows you to manually specify the activation function, but you need to set both the &#8220;forward function&#8221; and the first derivative of the forward function.  These can be specified using function handles in the fields fwdFn and fwdFnDeriv. The &#8220;classic&#8221; formulation of a neural network uses a sigmoid activation function, so the parameters can be set like so:</p>
+
+
+
+
+<pre class="codeinput">sigmoidFn = @(x) 1./(1 + exp(-x));
+nnet.fwdFn = sigmoidFn;
+nnet.fwdFnDeriv = @(x) sigmoidFn(x).*(1-sigmoidFn(x));
+</pre>
+
+
+
+
+<h2>Visualizing<a name="4"></a></h2>
+
+
+<p>prtClassNnet enables automatic visualization of the algorithm progress as learning proceeds.  You can set how often (or whether) this visualization occurs by setting nnet.plotOnIter to a scalar; the scalar represents how often to update the plots.  Use 0 to use no visualization.</p>
+
+
+<h2>Example Processing<a name="5"></a></h2>
+
+
+<p>So, what does the resulting process look like?  Let&#8217;s give it a whirl with a stadnard X-OR data set:</p>
+
+
+<pre class="codeinput">dsTrain = prtDataGenXor;
+dsTest = prtDataGenXor;
+nnet = prtClassNnet(<span class="string">'nHiddenUnits'</span>,10,<span class="string">'plotOnIter'</span>,1000,<span class="string">'relativeErrorChangeThreshold'</span>,1e-4);
+nnet = nnet.train(dsTrain);
+yOut = nnet.run(dsTest);
+</pre>
+
+
+<p><img vspace="5" hspace="5" src="http://newfolder.github.io/images/torrione_blog_2013_08_20_01.png" alt=""> <h2>Concluding<a name="6"></a></h2><p>We hope that using prtClassNnet enables you to do some new, neat things. If you like it, please help us re-write the code to overcome our current restrictions!</p><p>Happy coding.</p></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Supervised Learning: An Introduction for Scientists and Engineers]]></title>
+    <link href="http://newfolder.github.io/blog/2013/07/29/supervised-learning/"/>
+    <updated>2013-07-29T09:28:00-04:00</updated>
+    <id>http://newfolder.github.io/blog/2013/07/29/supervised-learning</id>
+    <content type="html"><![CDATA[<p>We recently posted <a href="http://newfolder.github.io/blog/2013/07/24/using-svms/">a quick introduction to SVMs for Scientists and Engineers</a>, and this led to a <a href="http://www.reddit.com/r/MachineLearning/comments/1izuqf/a_quick_guide_to_svms_for_scientists_engineers/">question</a> on Reddit. The user asked a more fundamental question than the one we were trying to answer. They asked (basically):</p>
+
+<blockquote><p>All this is well and good, but how do I know whether my problem is appropriate for use with an SVM?  I&rsquo;m doing object tracking &ndash; is that an SVM-like problem?&#8221;</p></blockquote>
+
+<p>This question is extremely deep and subtle, and it comes up <em>a lot</em>. Let&rsquo;s break it down into some related sub-questions:</p>
+
+<ol>
+<li>What do we mean when we talk about &ldquo;SVMs&rdquo; or RVMs, or random forests, neural networks, or other &lsquo;supervised learning&rsquo; approaches?  And what types of problems are these intended to solve?</li>
+<li>Is my problem one of those problems?  (or, &ldquo;What kind of problem is my problem?&rdquo;)</li>
+<li>Is that all &ldquo;machine learning&rdquo; is?  What other kinds of problems are there?</li>
+</ol>
+
+
+<p>As we mentioned, these questions may only admit rather theoretical-sounding answers, but we&rsquo;ll try and give a quick overview in easy-to-understand language.</p>
+
+<h1>Supervised Learning &ndash; The Framework</h1>
+
+<p>So, what are we talking about when we talk about &lsquo;machine learning&rsquo;?  90% of the time, when someone is talking about machine learning, or pattern recognition, or statistical inference they&rsquo;re really referring to a set of problems that can be boiled down to a label-prediction problem.</p>
+
+<p>Assume we have a number of objects, and a number of different measurements we collect for each object.  Let&rsquo;s use i to index the objects (1 through N) and j to index the measurements, (1 through P). Then the j&#8217;th measurement for object i is just x{i,j}.</p>
+
+<p>Let&rsquo;s use a simple example to cement ideas (this example is stolen from <a href="http://www.amazon.com/Pattern-Classification-Pt-1-Richard-Duda/dp/0471056693">Duda, Hart, and Stork</a>).  Pretend that we&rsquo;re running a fish-processing plant, and we want to automatically distinguish between salmon and tuna as they come down our conveyor belt. I don&rsquo;t know anything about fish, but we might consider measuring something about each fish, like it&rsquo;s size, weight, and color, as it comes doen the belt, and we&rsquo;d like to make an automatic decision based on that information.  In that case, x{3,2} might represent, say, the weight (in lbs.) of the 3rd fish. Similarly x{4,2} is the weight of the fourth fish, and x{1,1} is the size of the first fish.  We can use x{i} to represent all the measurements of the i&#8217;th fish.</p>
+
+<p>Note that if we assume each x{i} is a 1xP vector, we can form a matrix, X, out of all N of the x{i}&rsquo;s.  X will be size N x P.</p>
+
+<p>So, for each fish, we have x{i}, and in addition to that information, we&rsquo;ve also collected a bunch of &lsquo;labeled examples&rsquo; where we also have y{i}.  Each y{i} provides the label of the corresponding x{i}, e.g., y{i} is either &lsquo;tuna&rsquo;, or &lsquo;salmon&rsquo; if x{i} was measured from a tuna or a salmon &ndash; y{i} is the value we&rsquo;re trying to decipher from x{i}. Usually we can use different integers to mean different classes &ndash; so y{i} = 0 might indicate tuna, while y{i} = 1 means salmon.  Note that we can form a vector, Y, of all N y{i}&rsquo;s.  Y will be size N x 1.</p>
+
+<p>Now, if we&rsquo;re clever, we&rsquo;re going to have a lot of labeled examples to get started &ndash; this set is called our training set &ndash; {X,Y} = { x{i},y{i} } for i = 1&hellip;N.</p>
+
+<p>The goal of supervised learning is to develop techniques for predicting y&rsquo;s based on x&rsquo;s.  E.g., given then training set, {X,Y}, we&rsquo;d like to develop a function, f:</p>
+
+<pre><code>(guess) y{i} = f(x{i})
+</code></pre>
+
+<p>That&rsquo;s it.  That&rsquo;s supervised learning.  Maybe this problem sounds super simple the way we&rsquo;ve described it here.  I assure you, the general problem is quite complicated, subtle, and interesting. But the basic outline is always the same &ndash; you have a training set of data and labels: {X,Y} and want to learn how to guess y&rsquo;s given x&rsquo;s.</p>
+
+<h1>A Little Nomenclature</h1>
+
+<ul>
+<li>Number of Observations &ndash; the number of unique objects (fish) measured (N)</li>
+<li>Dimensionality &ndash; the number of measurements taken for each object (P)</li>
+<li>Feature &ndash; any column of X, e.g., all the &lsquo;weight&rsquo; measurements.</li>
+<li>Label &ndash; the value of Y, and the value we want to infer from X</li>
+<li>Observation &ndash; any row of X, e.g., all the measurements for object i</li>
+</ul>
+
+
+<h2>Supervised Learning: Special Cases</h2>
+
+<p>Supervised learning is very well studied, and we can divide it up into a number of special cases.</p>
+
+<h2>Classification</h2>
+
+<p>If the set of Y&rsquo;s you want to guess form a discrete set, e.g., {Tuna, Salmon}, or {Sick, Healthy}, or {Titanium, Aluminum, Tungsten}, you have what&rsquo;s called a classification problem, and your y{i} values are usually some subset of the integers. <a href="http://en.wikipedia.org/wiki/Statistical_classification">More on wikipedia.</a>.</p>
+
+<h2>Regression</h2>
+
+<p>If the set of Y&rsquo;s you want to guess form a continuous set, e.g., you have x{i} values and y{i} correspond to some other object measurement &ndash; say, height, or weight, you have what&rsquo;s called a regression problem, and your y{i} values are usually some subset of the reals. <a href="http://en.wikipedia.org/wiki/Regression_analysis">More on wikipedia.</a></p>
+
+<h2>Multi-Task Learning</h2>
+
+<p>If you have a number of sets of data {X,Y}{k}, where each classification problem is similar, but not the same, (say in a nearby plant, you want to tell swordfish from hallibut) and you want to leverage things you learned in Plant 1 to help in plant K, you may have a multi-task learning problem. <a href="https://en.wikipedia.org/wiki/Multi-task_learning">More on wikipedia.</a></p>
+
+<h2>Multiple-Instance Learning</h2>
+
+<p>If you only have labels for sets of observations (and not for individual observations), you probably have a multiple-instance problem. <a href="http://en.wikipedia.org/wiki/Multiple-instance_learning">More on wikipedia.</a></p>
+
+<h1>Different Kinds of X data</h1>
+
+<p>Above we made the explicit assumption that each of the observations you made could be sorted into meaningful vectors of length P, and concatenated to form X, where each column of X corresponds to a unique measurement.  That&rsquo;s not always the case.  For example, you might have
+measured:</p>
+
+<ul>
+<li>Time-series</li>
+<li>Written text</li>
+<li>Tweets</li>
+<li>&lsquo;Likes&rsquo;</li>
+<li>Images</li>
+<li>Radar data</li>
+<li>MRI data</li>
+<li>Etc.</li>
+</ul>
+
+
+<p>Under these scenarios, you need to perform specialized application-specific processing to extract the features that make supervised learning tractable. <a href="http://en.wikipedia.org/wiki/Feature_extraction">More on wikipedia.</a></p>
+
+<h1>Why the PRT?</h1>
+
+<p>Now that you know a little about supervised learning, some of the design decisions in the PRT might make a little more sense.  For example, in prtDataSetStandard we always use a matrix to store your data, X.  That&rsquo;s because in standard supervised learning problems, X can always be stored as a matrix!  Similarly, your labels, Y, is a vector of size Nx1, as should be clear from the discussion above.</p>
+
+<p>Also, prtDataSetClass, and prtDataSetRegress make a separation between the classification and regression problems outlined above.</p>
+
+<p>Furthermore, the PRT makes it easy to swap in and out any techniques that fall under the rubrik of supervised learning &ndash; since algorithms that are appropriate for one task may be completely inadequate for another.</p>
+
+<h1>Is my problem a &lsquo;supervised learning problem&rsquo;?</h1>
+
+<p>It depends.  Maybe?  That&rsquo;s kind of up to you.  A whole lot of problems are close to supervised learning problems.  Even if your specific problem isn&rsquo;t exactly supervised learning, most really interesting statistical problems use supervised learning somewhere inside them, so learning some supervised learning is pretty much always a good idea. If you&rsquo;re not sure if your problem is &lsquo;supervised learning&rsquo;, maybe an explicit list of other kinds of problems might help&hellip;</p>
+
+<h1>What other kinds of problems are there?</h1>
+
+<p>There are lots and lots of problems out there.  Your problem might be much closer to one of them than it is to classic supervised learning.  If so, you should explore the literature in that specific sub-field, and see what techniques you can leverage there.  But if your problem is far removed from supervised learning, the PRT may not be the right tool for the job &ndash; in fact, your problem may require it&rsquo;s own set of tools and techniques, and maybe it&rsquo;s time for you to write a new toolbox!</p>
+
+<p>Here are a few examples of problems that don&rsquo;t fit cleanly into classic supervised learning although they may make use of supervised learning.</p>
+
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Control_theory">System Control</a></li>
+<li><a href="http://en.wikipedia.org/wiki/Reinforcement_learning">Reinforcement Learning</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Natural_language_processing">Natural language processing</a></li>
+<li><a href="http://en.wikipedia.org/wiki/Matrix_completion">Network prediction / Matrix completion</a></li>
+<li><a href="http://en.wikipedia.org/wiki/Computer_vision">Computer vision</a></li>
+<li><a href="http://en.wikipedia.org/wiki/Video_tracking">Video Tracking</a></li>
+</ul>
+
+
+<p>And here&rsquo;s a great paper, from 2007, that&rsquo;s still quite relevant: <a href="http://homes.cs.washington.edu/~pedrod/papers/ilp07.pdf">Structured Machine Learning: 10 Problems for the Next 10 Years.</a></p>
+
+<h1>Conclusion</h1>
+
+<p>We hope this makes at least some of what we mean by &ldquo;supervised learning&rdquo; make a little more sense &ndash; when it&rsquo;s appropriate, when it&rsquo;s not, and whether your problem fits into it.</p>
+
+<p>If your problem is a supervised learning problem, we hope you&rsquo;ll consider the PRT!</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Using SVMs for Scientists and Engineers]]></title>
+    <link href="http://newfolder.github.io/blog/2013/07/24/using-svms/"/>
+    <updated>2013-07-24T13:40:00-04:00</updated>
+    <id>http://newfolder.github.io/blog/2013/07/24/using-svms</id>
+    <content type="html"><![CDATA[<p>In the mid-90&#8217;s, support-vector machines became extremely popular machine learning algorithms due to a number of very nice properties, and because they can also acheive state-of-the-art performance on a number of data sets. Although the statistical underpinnings of why SVMs work rely on somewhat <a href="https://en.wikipedia.org/wiki/Vapnik%E2%80%93Chervonenkis_theory">abstract statistical theory</a>, modern statistical packages (like libSVM, and the PRT) make training and using SVM&#8217;s almost trivial for the average engineer That said, getting good performance out of an SVM is often not as easy as simply running pre-existing code on your data, and for some data-sets, SVM classification may not be appropriate.</p>
+
+
+
+
+<p>This blog entry will serve two purposes - 1) to provide an introduction to practical issues you (as an engineer or scientist) may encounter when using an SVM on your data, and 2) to be the first in a series of similar &#8220;for Engineers &amp; Scientists&#8221; posts dedicated to helping engineers understand the tradeoffs and assumptions, and practical details of using various machine learning approaches on their data.</p>
+
+
+<!--/introduction-->
+
+
+
+
+<h2>Contents</h2>
+
+
+<div><ul><li><a href="#1">Quick Notes</a></li><li><a href="#2">SVM Formulation</a></li><li><a href="#3">Appropriate Data Sets</a></li><li><a href="#4">SVM Parameters &amp; Notes</a></li><li><a href="#5">Parameter: Cost (Scalar)</a></li><li><a href="#6">Parameter: Relative Class Error Weights</a></li><li><a href="#7">Parameter: Kernel Choice &amp; Associated Parameters</a></li><li><a href="#8">SVM Pre-Prccessing</a></li><li><a href="#10">Optimizing Parameters</a></li><li><a href="#11">Some Rules-Of-Thumb</a></li><li><a href="#12">Concluding</a></li></ul></div>
+
+
+
+
+<h2>Quick Notes<a name="1"></a></h2>
+
+
+<p>Thoughtout this post, we&#8217;ll be using prtClassLibSvm, which is built directly on top of the fantastic LibSVM library, available here:</p>
+
+
+<p><a href="http://www.csie.ntu.edu.tw/~cjlin/libsvm/">http://www.csie.ntu.edu.tw/~cjlin/libsvm/</a></p>
+
+
+<p>The parameter nomenclature we&#8217;re using matches theirs pretty closely, so feel free to leverage their documentation as well.</p>
+
+
+<h2>SVM Formulation<a name="2"></a></h2>
+
+
+<p>Typical SVM formulations assume that you have a set of n-dimensional real training vectors, {x_i} for i = 1&#8230;N, and corresponding labels {y_i}, y_i \in {-1,1}.  Let x_ik represent the k&#8217;th element of the vector x_i.</p>
+
+
+<p>Also assume that you have a relevant kernel function (https://en.wikipedia.org/wiki/Kernel_methods), P, which takes two input arguments, both n-dimensional real vectors, and outputs a scalar metric - P(x_i,x_j) = z_ij.  The most common choice of P is a radial basis function (<a href="http://en.wikipedia.org/wiki/Radial_basis_function">http://en.wikipedia.org/wiki/Radial_basis_function</a>):   P(x_i,x_j) = exp(- (\sum_{k} (x_ik-x_jk)^2 )/s^2 )</p>
+
+
+<p>SVMs perform prediction of new labels by calculating:</p>
+
+
+<pre>f(x) = \hat{y} = ( \sum_{i} (w_i*P(x_i,x) - b) ) &gt; 0</pre>
+
+
+<p>e.g., the SVM learns a representation for the labels (y) based on the data (x) with a linear combination (w) of a set of functions of the training data (x_i) and the test data (x).</p>
+
+
+<h2>Appropriate Data Sets<a name="3"></a></h2>
+
+
+<p>Binary/M-Ary: Typically, SVMs are appropriate for binary classification problems - multi-class problems require some extensions of SVMs, although in the PRT, SVMs can be used in prtClassBinaryToMaryOneVsAll to emulate multi-class classification.</p>
+
+
+<p>Data: SVM formulations often assume vector-valued training data, however as long as a suitable kernel-function can be constructed, SVMs can be used on arbitrary data (e.g., string-match distances can be usned as a kernel for calculating the distances between character strings).  Note, however, that SVMs do assume that the kernel used is a Mercer kernel, so some functions are not appropriate as SVM kernels - <a href="http://en.wikipedia.org/wiki/Mercer's_theorem">http://en.wikipedia.org/wiki/Mercer&#8217;s_theorem</a>.</p>
+
+
+<p>Computational Considerations: Depending on the kernel, and particular algorithm under consideration, training an SVM can be very time-consuming for very large data sets.  Proper selection of SVM parameters can significantly improve training time.  At run-time, SVMs are typically very fast, with computational complexity that grows approximately linearly with the size of the training data set.</p>
+
+
+<h2>SVM Parameters &amp; Notes<a name="4"></a></h2>
+
+
+<p>As you might imagine, several SVM parameters will have significant effect on overall classification performance.  Good performance requires careful selection of each of these; though some general rules-of-thumb can help provide reasonable performance with a minimum of headaches.</p>
+
+
+<h2>Parameter: Cost (Scalar)<a name="5"></a></h2>
+
+
+<p>Internally, the SVM is going to try and ignore a whole bunch of your training data, by setting their corresponding w_i to zero.  This might sound counter-intuitive, but it&#8217;s very important, because it makes for fast run-time, and also (it turns out) that setting a bunch of w&#8217;s to zero is fundamental to why the SVM performs so well in general (see any number of articles on V-C Theory for more information).</p>
+
+
+<p>Unfortunately, this presents a dillema - how much should the SVM try and make w&#8217;s zero vs. how mhuch should it try and classify your data absolutely perfectly?  More zero-w&#8217;s might improve performance on the training set, but reduce the performance of the SVM on an unseen testing set!</p>
+
+
+<p>The &#8220;Cost&#8221; parameter in the SVM enables you to control this trade off. Higher cost leads to more non-zero w&#8217; vectors, and more correctly classified training points, while lower costs tend to generate w vectors with lots of zeros, and slightly worse performance on training data (though performance on testing data may be better).</p>
+
+
+<p>We usually run a number of experiments for different cost values across a range of, say 0.01 to 100, though if performance is plateauing it might make sense to extend this range.  The following figures show how the SVM decision boundaries change with varying costs in the PRT.</p>
+
+
+<pre class="codeinput">close <span class="string">all</span>;
+ds = prtDataGenUnimodal;
+c = prtClassLibSvm;
+count = 1;
+<span class="keyword">for</span> w = logspace(-2,2,4);
+    c.cost = w;
+    c = c.train(ds);
+    subplot(2,2,count);
+    plot(c);
+    legend <span class="string">off</span>;
+    title(sprintf(<span class="string">'Cost: %.2f'</span>,c.cost));
+    count = count + 1;
+<span class="keyword">end</span>
+</pre>
+
+
+<p><img vspace="5" hspace="5" src="http://newfolder.github.io/images/torrione_blog_2013_07_23_01.png" alt=""> <h2>Parameter: Relative Class Error Weights<a name="6"></a></h2><p>In typical discussions of &ldquo;cost&rdquo;, errors in both classes are treated equally &ndash; e.g., it&rsquo;s equally bad to call a &ldquo;-1&rdquo; a &ldquo;1&rdquo; and vice-versa.  In realistic operations, that may not be the case &ndash; for example, failing to detect a landmine, is significantly worse than calling a coke-can a landmine.</p><p>Luckily, SVMs enable us to specify class-specific error costs, so if class 1 has error cost of 1, and class -1 has an error cost of 100, it&rsquo;s 100x as bad to mistake a &ldquo;-1&rdquo; for a &ldquo;1&rdquo; as the opposite.</p><p>LibSVM implements these class-specific weights using parameters called &ldquo;w-1&rdquo;, &ldquo;w1&rdquo;, etc.  In the PRT, these are implemented as a vector, weights.  The following example shows how the effects of changing the error weight on class 1 affects the overall SVM contours.  Clearly, as the cost on class 1 increases, the SVM spends more effort to correctly classify red elements.</p><pre class="codeinput">close <span class="string">all</span>;
+c = prtClassLibSvm;
+count = 1;
+<span class="keyword">for</span> w = logspace(-1,1,4);
+  c.weight = [1 w];   <span class="comment">%Class0: 1, Class1: w</span>
+  c = c.train(ds);
+  subplot(2,2,count);
+  c.plot();
+  legend <span class="string">off</span>;
+  title(sprintf(<span class="string">&lsquo;Weight: [%.2f,%.2f]&rsquo;</span>,c.weight(1),c.weight(2)));
+  count = count + 1;
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="http://newfolder.github.io/images/torrione_blog_2013_07_23_02.png" alt=""> <h2>Parameter: Kernel Choice &amp; Associated Parameters<a name="7"></a></h2><p>The proper choice of kernel makes a huge difference in the resulting performance of your classifier.  We tend to stick with RBF and linear kernels (kernelType = 0 or 2 in prtClassLibSvm), but several other options (including hand-made kernels) are also possible.  The linear kernel doesn&rsquo;t have any parameters to set, but the RBF has a parameter that can significantly impact performance.  In most formulations, the parameter is referred to as sigma, but in LibSVM, the parameter is gamma, and it&rsquo;s equivalent to 1/sigma.  For the RBF, you can set it to any positive value.  You can also use the special character &lsquo;k&rsquo;, and specify a coefficient as a string.  &lsquo;k&rsquo; will evaluate to the number of features in the data set &ndash; e.g., &lsquo;5k&rsquo; evaluates to 10 for a 2-dimensional data set.</p><p>In general, we find that for normalized data (see below), the default gamma value of &lsquo;k&rsquo; (the number of dimensions) works well.</p><p>The following example code generates 4 example images for SVM decision boundaries for varying gamma parameters.</p><pre class="codeinput">close <span class="string">all</span>;
+c = prtClassLibSvm;
+count = 1;
+d = prtDataGenUnimodal;
+<span class="keyword">for</span> kk = logspace(-1,.5,4);
+  c.gamma = sprintf(<span class="string">&lsquo;%.2fk&rsquo;</span>,kk);
+  c = c.train(d);
+  subplot(2,2,count);
+  c.plot();
+  title(sprintf(<span class="string">&lsquo;\gamma = %s&rsquo;</span>,c.gamma));
+  legend <span class="string">off</span>;
+  count = count + 1;
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="http://newfolder.github.io/images/torrione_blog_2013_07_23_03.png" alt=""> <h2>SVM Pre-Prccessing<a name="8"></a></h2><p>Note that for many kernel choices (e.g., RBF, and many others, see <a href="http://en.wikipedia.org/wiki/Kernel_methods#Popular_kernels"><a href="http://en.wikipedia.org/wiki/Kernel_methods#Popular_kernels">http://en.wikipedia.org/wiki/Kernel_methods#Popular_kernels</a></a>), the kernel output (P(x_i,x_j) depends strongly and non-linearly on the magnitudes of the data vectors.  E.g., exp(-1000) is not equal to 1000*exp(-1).  In fact, if you refer to the RBF equation above, you&rsquo;ll notice that if two elements of your vector have a difference approaching 1000, P(x1,x2) will be dominated by a term like exp(-1000), which by any reasonable metric (and certainly in floating point precision) is exactly 0.  This is a bad thing &trade;.</p><p>In general, non-linear kernel functions should only be applied to data that is guaranteed to be in a reasonable range (e.g., -10 to 10), or data that has been pre-processed to remove outliers or control for data magnitude.  The PRT pamkes several such techniques available &ndash; compare and contrast the performance in the following example:</p></p>
+
+<pre class="codeinput">close <span class="string">all</span>;
+ds = prtDataGenBimodal;
+ds.X = 100*ds.X; <span class="comment">%scale the data</span>
+
+yOutNaive = kfolds(prtClassLibSvm,ds,3);
+yOutNorm = kfolds(prtPreProcZmuv + prtClassLibSvm,ds,3);
+
+[pfNaive,pdNaive] = prtScoreRoc(yOutNaive);
+[pfNorm,pdNorm] = prtScoreRoc(yOutNorm);
+h = plot(pfNaive,pdNaive,pfNorm,pdNorm);
+set(h,<span class="string">'linewidth'</span>,3);
+legend(h,{<span class="string">'Naive'</span>,<span class="string">'Pre-Proc'</span>});
+title(<span class="string">'ROC Curves for Naive and Pre-Processed Application of SVM to Bimodal Data'</span>);
+</pre>
+
+
+<p><img vspace="5" hspace="5" src="http://newfolder.github.io/images/torrione_blog_2013_07_23_04.png" alt=""> <p>Clearly, performance on un-normalized data is attrocious, but simple re-scaling acheives good results.</p><h2>Optimizing Parameters<a name="10"></a></h2><p>The general procedure in developing an SVM is to optimize both the C and gamma parameters for your particular data set.  You can do this using two for-loops and the PRT:</p></p>
+
+<pre class="codeinput">close <span class="string">all</span>;
+gammaVec = logspace(-2,1,10);
+costVec = logspace(-2,1,10);
+ds = prtDataGenUnimodal;
+
+auc = nan(length(gammaVec),length(costVec));
+kfoldsInds = ds.getKFoldKeys(3);
+<span class="keyword">for</span> gammaInd = 1:length(gammaVec);
+    <span class="keyword">for</span> costInd = 1:length(costVec);
+    c = prtClassLibSvm;
+    c.cost = costVec(costInd);
+    c.gamma = gammaVec(gammaInd);
+    yOut = crossValidate(c,ds,kfoldsInds);
+    auc(gammaInd,costInd) = prtScoreAuc(yOut);
+
+    imagesc(auc,[.95 1]);
+    colorbar
+    drawnow;
+  <span class="keyword">end</span>
+<span class="keyword">end</span>
+title(<span class="string">'AUC vs. Gamma Index (Vertical) and Cost Index (Horizontal)'</span>);
+</pre>
+
+
+<p><img vspace="5" hspace="5" src="http://newfolder.github.io/images/torrione_blog_2013_07_23_05.png" alt=""> <h2>Some Rules-Of-Thumb<a name="11"></a></h2><p>In general, you may not have time or simply want to optimize over your SVM parameters.  In this case, you can usually get by using ZMUV pre-processing, and the default SVM parameters (RBF kernel, Cost = 1, gamma = &lsquo;k&rsquo;)</p><pre class="codeinput">algo = prtPreProcZmuv + prtClassLibSvm;
+</pre><h2>Concluding<a name="12"></a></h2><p>We hope this entry helps you make sense of how to use an SVM in real-world scenarios, and how to optimize the SVM parameters for your particular data set.  As always, proper cross-validation is fundamental to good generalizability.</p><p>Happy coding.</p></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Observation Info]]></title>
+    <link href="http://newfolder.github.io/blog/2013/07/15/observation-info/"/>
+    <updated>2013-07-15T14:56:00-04:00</updated>
+    <id>http://newfolder.github.io/blog/2013/07/15/observation-info</id>
+    <content type="html"><![CDATA[<p>One of the hidden gems of the PRT is the observationInfo property. Let&#8217;s talk about a few ways you can use it to simplify your workflow.</p>
+
+
+<!--/introduction-->
+
+
+<h2>Contents</h2>
+
+
+<div><ul><li><a href="#1">What is observationInfo?</a></li><li><a href="#4">Retain Observations</a></li><li><a href="#5">Select</a></li><li><a href="#6">Graphically</a></li><li><a href="#8">Conclusions</a></li></ul></div>
+
+
+<h2>What is observationInfo?<a name="1"></a></h2>
+
+
+<p>Simply put, observationInfo is a structure array stored in a prtDataSetStandard that has a number of entries equal to the number of observations in the dataSet. This structure array has user defined fields that store side information. When observations are removed from a dataset the observationInfo structure is also properly indexed. Here is a quick example.</p>
+
+
+<p>First let&#8217;s make a simple dataset with only 4 observations</p>
+
+
+<pre class="codeinput">X = cat(1,prtRvUtilMvnDraw([0 0],eye(2),2),prtRvUtilMvnDraw([2 2],eye(2),2));
+Y = [0; 0; 1; 1;];
+
+ds = prtDataSetClass(X,Y);
+
+plot(ds);
+</pre>
+
+
+<p><img vspace="5" hspace="5" src="http://newfolder.github.io/images/morton_blog_20130708_observationInfo_01.png" alt=""> <p>Now let&rsquo;s create a structure of observationInfo and set it.</p><pre class="codeinput">obsInfo = struct(<span class="string">&lsquo;fileIndex&rsquo;</span>,{1,2,3,4}&lsquo;,<span class="string">'timeOfDay&rsquo;</span>,{<span class="string">&lsquo;day&rsquo;</span>,<span class="string">&lsquo;night&rsquo;</span>,<span class="string">&lsquo;day&rsquo;</span>,<span class="string">&lsquo;night&rsquo;</span>}&lsquo;);</p>
+
+<p>ds.observationInfo = obsInfo;
+</pre></p>
+
+<h2>Retain Observations<a name="4"></a></h2>
+
+
+<p>If we retain (or remove) observations from this dataSet, the observation info is properly indexed.</p>
+
+
+<pre class="codeinput">dsSub = ds.retainObservations([1; 4]);
+dsSub.observationInfo.fileIndex
+</pre>
+
+
+<pre class="codeoutput">ans =
+  1
+ans =
+  4
+</pre>
+
+
+<h2>Select<a name="5"></a></h2>
+
+
+<p>A hidden method of prtDataSetClass allows us to &#8220;select&#8221; observations from a dataSet by evaluating a function on the observationInfo. select() takes a function handle that is evaluated for each entry in the dataSet and returns a logical index. A dataSet containing only the observations for which the function was true is returned.</p>
+
+
+<pre class="codeinput">dsDayOnly = ds.select(@(s)strcmpi(s.timeOfDay,<span class="string">'day'</span>));
+{dsDayOnly.observationInfo.timeOfDay}
+</pre>
+
+
+<pre class="codeoutput">ans = 
+  'day'    'day'
+</pre>
+
+
+<h2>Graphically<a name="6"></a></h2>
+
+
+<p>Sometimes with complex dataSets with lots of observationInfo sorting through the data can be difficult. A graphical way to view observationInfo and create a function handle for select. This functionality is currently in Beta so make sure you <a href="http://newfolder.github.io/blog/2013/03/06/using-prtpath/">include those directories in your path.</a></p>
+
+
+<pre class="codeinput">prtUiDataSetStandardObservationInfoSelect(ds);
+</pre>
+
+
+<p><img vspace="5" hspace="5" src="http://newfolder.github.io/images/morton_blog_20130708_observationInfo_02.png" alt=""></p>
+
+<p>Right clicking (ctrl+click in OSX) in the table allows you to graphically select observations that will be returned by select.</p>
+
+
+<p><img vspace="5" hspace="5" src="http://newfolder.github.io/images/morton_blog_20130708_observationInfo_03.png" alt="">
+<img vspace="5" hspace="5" src="http://newfolder.github.io/images/morton_blog_20130708_observationInfo_04.png" alt=""></p>
+
+<h2>Conclusions<a name="8"></a></h2>
+
+
+<p>This is a simple example of what observation info is and how it can be used. We use it all of the time to manage all of our side information. Because all calls to retainObservation correctly index the observationInfo the side information is available within actions even during cross-validation. Making use of observation info is a quick way to fake a custom type of dataSet that contains other side information. Let us know how you use observationInfo and if you have any ideas to improve it.</p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[twoClassParadigm]]></title>
+    <link href="http://newfolder.github.io/blog/2013/07/08/twoclassparadigm/"/>
+    <updated>2013-07-08T20:57:00-04:00</updated>
+    <id>http://newfolder.github.io/blog/2013/07/08/twoclassparadigm</id>
+    <content type="html"><![CDATA[<p>When using an M-ary classifier on a binary classification problem, sometimes you want multiple dimensional output and sometimes you don&#8217;t. In the PRT the default is to supply only a single output but this can be specified by setting the twoClassParadigm property of classifiers.</p>
+
+
+<!--/introduction-->
+
+
+<h2>Contents</h2>
+
+
+<div><ul><li><a href="#1">A Quick Example</a></li><li><a href="#5">twoClassParadigm</a></li><li><a href="#7">Why did you do that?</a></li><li><a href="#10">Conclusion</a></li></ul></div>
+
+
+<h2>A Quick Example<a name="1"></a></h2>
+
+
+<p>Consider a binary classification problem with an m-ary classifer (prtClassMap).</p>
+
+
+
+
+<pre class="codeinput">dsTrain = prtDataGenUnimodal;
+dsTest = prtDataGenUnimodal;
+
+classifier = prtClassMap;
+trainedClassifier = train(classifier, dsTrain);
+
+plot(trainedClassifier);
+title(<span class="string">'Binary Classification with MAP'</span>,<span class="string">'FontSize'</span>,16);
+
+output = run(trainedClassifier, dsTest);
+
+output.nFeatures
+</pre>
+
+
+<pre class="codeoutput">
+ans =
+ 1
+</pre>
+
+
+<p><img vspace="5" hspace="5" src="http://newfolder.github.io/images/morton_blog_20130708_twoClassParadigm_01.png" alt=""> <p>As you can see the output only has one feature. But consider the same M-ary classifier with a 3-class problem.</p></p>
+
+<pre class="codeinput">dsTrainMary = prtDataGenMary;
+dsTestMary = prtDataGenMary;
+
+trainedClassifierMary = train(classifier, dsTrainMary);
+
+plot(trainedClassifierMary);
+title(<span class="string">'M-ary Classification with MAP'</span>,<span class="string">'FontSize'</span>,16);
+
+outputMary = run(trainedClassifierMary, dsTestMary);
+
+outputMary.nFeatures
+</pre>
+
+
+<pre class="codeoutput">
+ans =
+ 3
+</pre>
+
+
+<p><img vspace="5" hspace="5" src="http://newfolder.github.io/images/morton_blog_20130708_twoClassParadigm_02.png" alt=""> <p>Now the output has 3 feautres. The trend continues with more classes, because prtClassMap declares itself as an Mary classififer</p></p>
+
+<pre class="codeinput">classifier.isNativeMary
+</pre>
+
+
+<pre class="codeoutput">
+ans =
+ 1
+</pre>
+
+
+<p>the output is (as it should) have a column corresponding to the confidence of each class. Binary classification is an exception.</p>
+
+
+<h2>twoClassParadigm<a name="5"></a></h2>
+
+
+<p>By default the PRT checks when M-ary classifiers are run on binary data to see if it should output a single confidence or binary confidences. The mode of operation is stored in twoClassParadigm which by default is set to the string M-ary.</p>
+
+
+<pre class="codeinput">classifier.twoClassParadigm
+</pre>
+
+
+<pre class="codeoutput">
+ans =
+binary
+</pre>
+
+
+<p>If we return to the binary classification problem and set twoClassParadigm to mary we can see that we get the two outputs that we expect.</p>
+
+
+
+
+<pre class="codeinput">classifier.twoClassParadigm = <span class="string">'mary'</span>;
+trainedClassifierBinaryActingAsMary = train(classifier, dsTrain);
+
+outputBinaryActingAsMary = run(trainedClassifierBinaryActingAsMary, dsTest);
+
+outputBinaryActingAsMary.nFeatures
+</pre>
+
+
+<pre class="codeoutput">
+ans =
+ 2
+</pre>
+
+
+
+
+<h2>Why did you do that?<a name="7"></a></h2>
+
+
+<p>We debated, but ultimately we decided that it was less confusing this way. It is more rare to want both outputs for a binary classification problem than it is to expect a single. Most users expected this to run out of the box.</p>
+
+
+
+
+<pre class="codeinput">classifier = prtClassMap;
+trainedClassifier = train(classifier, dsTrain);
+output = run(trainedClassifier, dsTest);
+
+prtScoreRoc(output);
+title(<span class="string">'Binary Classification with an M-ary Classifier'</span>,<span class="string">'FontSize'</span>,16);
+</pre>
+
+
+<p><img vspace="5" hspace="5" src="http://newfolder.github.io/images/morton_blog_20130708_twoClassParadigm_03.png" alt=""> <p>If you change the classifier to non-m-ary classification (prtClassGlrt for example) you expect the same code to work only by changing the classifier declaration.</p></p>
+
+<pre class="codeinput">classifier = prtClassGlrt;
+trainedClassifier = train(classifier, dsTrain);
+output = run(trainedClassifier, dsTest);
+
+prtScoreRoc(output);
+title(<span class="string">'Binary Classification with a Binary Classifier'</span>,<span class="string">'FontSize'</span>,16);
+</pre>
+
+
+<p><img vspace="5" hspace="5" src="http://newfolder.github.io/images/morton_blog_20130708_twoClassParadigm_04.png" alt=""> <p>Without the twoClassParadigm system it wouldn&rsquo;t be as easy to switch classifiers for binary problems as an extra step would be required to manually select which column of the output should be used to calculate the ROC.</p><h2>Conclusion<a name="10"></a></h2><p>Well that&rsquo;s twoClassParadigm. It&rsquo;s a convenient feature of the PRT that not many people know about because they don&rsquo;t have to. In the rare cases when you want the confidence assigned to each class, you now know how to get them.</p></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Spectral Clustering]]></title>
+    <link href="http://newfolder.github.io/blog/2013/06/24/spectral-clustering/"/>
+    <updated>2013-06-24T13:33:00-04:00</updated>
+    <id>http://newfolder.github.io/blog/2013/06/24/spectral-clustering</id>
+    <content type="html"><![CDATA[<p>Hi everyone,</p>
+
+
+<p>A few weeks ago we talked about clustering with K-Means, and using K-Means distances as a pre-processing step.  K-Means is great when euclidean distance in your input feature-space is meaningful, but what if your data instead lies on a high-dimensional manifold?</p>
+
+
+<p>We recently introduced some new clustering and distance-metric approaches suitable for these cases - spectral clustering.  The theory behind spectral clustering is beyond the scope of this entry, but as usual, the wikipedia page has a good summary - <a href="http://en.wikipedia.org/wiki/Spectral_clustering">http://en.wikipedia.org/wiki/Spectral_clustering</a>.</p>
+
+
+<!--/introduction-->
+
+
+
+
+<p>Although I&#8217;m writing the blog entry, all of the code in this demo was written by one of our graduate students @ Duke University - Dmitry Kalika, who&#8217;s a new convert to the PRT!  Welcome Dima!</p>
+
+
+
+
+<h2>Contents</h2>
+
+
+<div><ul><li><a href="#1">References</a></li><li><a href="#2">prtPreProcSpectralEmbed</a></li><li><a href="#3">prtClusterSpectralKmeans</a></li><li><a href="#4">Wrapping Up</a></li></ul></div>
+
+
+<h2>References<a name="1"></a></h2>
+
+
+<p>Throughout the following and the code for spectral clustering in the PRT, we make use of the excellent Bengio, 2003 paper - Out-of-Sample Extensions for LLE, Isomap, MDS, Eigenmaps, and Spectral Clustering <a href="http://www.iro.umontreal.ca/~lisa/pointeurs/tr1238.pdf">http://www.iro.umontreal.ca/~lisa/pointeurs/tr1238.pdf</a></p>
+
+
+<p>In particular, we use that extention for performing cluster approximation for out-of-sample embedding estimation.</p>
+
+
+<h2>prtPreProcSpectralEmbed<a name="2"></a></h2>
+
+
+<p>Spectral clustering typically relies upon what&#8217;s referred to as a spectral embedding; this is a low-dimensional representation of a high-dimensional proximity graph.</p>
+
+
+<p>We can use features derived from spectral embeddings like so:</p>
+
+
+
+
+<pre class="codeinput">ds = prtDataGenBimodal;
+dsTest = prtDataGenBimodal(10);
+algo = prtPreProcSpectralEmbed;
+algo = algo.train(ds);
+yOut = algo.run(ds);
+plot(yOut);
+</pre>
+
+
+<p><img vspace="5" hspace="5" src="http://newfolder.github.io/images/torrione_blog_2013_06_17_01.png" alt=""> <h2>prtClusterSpectralKmeans<a name="3"></a></h2><p>While spectral embedding provides a feature space for additional processing, we can also use prtClusterSpectralKmeans to perform direct clustering in the spectral space.</p><p>For example, the Moon data set (see prtDataGenMoon) creates two crescent moon-shapes that are not well-separated by euclidean distance metrics, but can be easily separated in spectral-cluster space.</p><pre class="codeinput">ds = prtDataGenMoon;
+preProc = prtPreProcZmuv;
+preProc = preProc.train(ds);
+dsNorm = preProc.run(ds);
+kmeans = prtClusterKmeans(<span class="string">&lsquo;nClusters&rsquo;</span>,2);
+kmeansSpect = prtClusterSpectralKmeans(<span class="string">&lsquo;nClusters&rsquo;</span>,2);
+kmeans = kmeans.train(dsNorm);
+kmeansSpect = kmeansSpect.train(dsNorm);
+subplot(1,2,1);
+plot(kmeans);
+title(<span class="string">&lsquo;K-Means Clusters&rsquo;</span>);
+subplot(1,2,2);
+plot(kmeansSpect)
+title(<span class="string">&lsquo;Spect-K-Means Clusters&rsquo;</span>);
+</pre>
+<img vspace="5" hspace="5" src="http://newfolder.github.io/images/torrione_blog_2013_06_17_02.png" alt=""> <h2>Wrapping Up<a name="4"></a></h2><p>Spectral clustering provides a very useful technique for non-linear and non-euclidean clustering.  Right now our spectral clustering approaches are constrained  to using RBF kernels, though there&rsquo;s nothing that prevents you from using alternate kernels in future versions.</p><p>As always, let us know if you have questions or comments.</p></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[prtClusterMeanShift]]></title>
+    <link href="http://newfolder.github.io/blog/2013/06/13/prtclustermeanshift/"/>
+    <updated>2013-06-13T14:13:00-04:00</updated>
+    <id>http://newfolder.github.io/blog/2013/06/13/prtclustermeanshift</id>
+    <content type="html"><![CDATA[<p>Hi everyone, Today we&#8217;ll talk about a new clustering algorithm in the PRT - Mean-Shift clustering.  Mean shift clustering is widely used in image processing, and has a few nice properties - for example, it&#8217;s not necessary to specify ahead of time how many clusters you need.  Instead you specify a clustering bandwidth.  We&#8217;ll show some examples below.  If you want a good introduction to mean-shift clustering, see <a href="http://en.wikipedia.org/wiki/Mean-shift"> the wiki page</a>.</p>
+
+
+<p>Note, unlike most of our other objects, prtClusterMeanShift requires the bio-informatics toolbox,</p>
+
+
+<!--/introduction-->
+
+
+
+
+<h2>Contents</h2>
+
+
+<div><ul><li><a href="#1">prtClusterMeanShift</a></li><li><a href="#3">Bandwidth</a></li><li><a href="#5">Application to Images</a></li><li><a href="#6">Determining Stopping</a></li><li><a href="#7">Conclusion</a></li></ul></div>
+
+
+<h2>prtClusterMeanShift<a name="1"></a></h2>
+
+
+<p>As you might expect, we start by generating some data, and a prtClusterMeanShift object:</p>
+
+
+<pre class="codeinput">ds = prtDataGenUnimodal;
+ms = prtClusterMeanShift;
+</pre>
+
+
+<p>We can train, run, and plot the mean-shift algorithm just like anything else</p>
+
+
+<pre class="codeinput">ms = ms.train(ds);
+plot(ms);
+</pre>
+
+
+<p><img vspace="5" hspace="5" src="http://newfolder.github.io/images/torrione_blog_meanShift_2013_06_13_01.png" alt=""> <h2>Bandwidth<a name="3"></a></h2><p>In the above figure, the mean-shift algorithm correctly identified two clusters.  We can mess with the Gaussian bandwidth parameter (sigma) to see how this affects how many clusters mean-shift finds:</p><pre class="codeinput">sigmaVec = [.1 .3 .6 1 2 5];
+<span class="keyword">for</span> ind = 1:length(sigmaVec)</p>
+
+<pre><code>ms = prtClusterMeanShift;
+ms.sigma = sigmaVec(ind);
+ms = ms.train(ds);
+
+subplot(2,3,ind);
+plot(ms);
+prtPlotUtilFreezeColors
+title(sprintf(&lt;span class="string"&gt;'sigma = %.2d'&lt;/span&gt;,sigmaVec(ind)));
+</code></pre>
+
+<p><span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="http://newfolder.github.io/images/torrione_blog_meanShift_2013_06_13_02.png" alt=""> <p>Note how changing the sigma value can drastically alter the number of clusters that mean-shift finds.  Careful tuning of that parameter may be necessary for your particular application.</p><h2>Application to Images<a name="5"></a></h2><p>We mentioned before that you can use mean shift in image processing &ndash; here&rsquo;s a quick and dirty example applying mean shift to the famous &ldquo;cameraman&rdquo; photo:</p><pre class="codeinput">I = imread(<span class="string">&lsquo;cameraman.tif&rsquo;</span>);
+I = imresize(I,0.25);
+I = double(I);
+[II,JJ] = meshgrid(1:size(I,2),1:size(I,1));</p>
+
+<p>ij = bsxfun(@minus,cat(2,II(:),JJ(:)),size(I));</p>
+
+<p>ds = prtDataSetClass(cat(2,I(:)-128,ij));
+ms = train(prtClusterMeanShift(<span class="string">&lsquo;sigma&rsquo;</span>,200),ds);
+out = run(ms, ds);
+[~,out] = max(out.X,[],2);</p>
+
+<p>figure(<span class="string">&lsquo;position&rsquo;</span>,[479 447 1033 366]);
+subplot(1,2,1)
+imagesc(I)
+colormap(gray(256))
+prtPlotUtilFreezeColors;
+title(<span class="string">&lsquo;Cameraman.tif&rsquo;</span>,<span class="string">&lsquo;FontSize&rsquo;</span>,16);</p>
+
+<p>subplot(1,2,2);
+imagesc(reshape(out,size(I)));
+colormap(prtPlotUtilClassColors(ms.nClusters))
+prtPlotUtilFreezeColors;
+title(<span class="string">&lsquo;Cameraman.tif &ndash; Mean Shift&rsquo;</span>,<span class="string">&lsquo;FontSize&rsquo;</span>,16);
+</pre><img vspace="5" hspace="5" src="http://newfolder.github.io/images/torrione_blog_meanShift_2013_06_13_03.png" alt=""> <h2>Determining Stopping<a name="6"></a></h2><p>Determining convergence in a mean shift scenario can actually be pretty subtle, the code we provide is based on</p><p><a href="http://dl.acm.org/citation.cfm?id=1143864"><a href="http://dl.acm.org/citation.cfm?id=1143864">http://dl.acm.org/citation.cfm?id=1143864</a></a>   Fast Nonparametric Clustering with Gaussian Blurring Mean-Shift       Miguel A. Carreira-Perpinan ICML 2006</p><h2>Conclusion<a name="7"></a></h2><p>That&rsquo;s all for now.  If you have the bio-informatics toolbox, have fun with prtClusterMeanShift.  If you don&rsquo;t, we need to find or write a replacement for graphconncomp to de-couple MeanShift from bioinformatics. One day, hopefully.</p></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Using K-Means As a Feature Extractor]]></title>
+    <link href="http://newfolder.github.io/blog/2013/06/03/using-k-means-as-a-feature-extractor/"/>
+    <updated>2013-06-03T11:48:00-04:00</updated>
+    <id>http://newfolder.github.io/blog/2013/06/03/using-k-means-as-a-feature-extractor</id>
+    <content type="html"><![CDATA[<p>Hi everyone,</p>
+
+
+<p>Today we&#8217;d like to talk about using K-Means as a non-linear feature extraction algorithm.  This is becoming a pretty popular way to deal with a number of classification tasks, since K-means followed by linear classification is relatively easy to paralellize and works well on very large data sets.</p>
+
+
+<p>We&#8217;ll leave the large data set processing to another time, and for now, just look at a new prtPreProc object - prtPreProcKmeans</p>
+
+
+
+
+<!--/introduction-->
+
+
+<h2>Contents</h2>
+
+
+<div><ul><li><a href="#1">prtPreProcKmeans</a></li><li><a href="#2">Combining with Linear Classification</a></li><li><a href="#3">Visualizing</a></li><li><a href="#4">Wrapping Up</a></li></ul></div>
+
+
+<h2>prtPreProcKmeans<a name="1"></a></h2>
+
+
+<p>You may be used to using prtClusterKmeans previously, and wonder why we need prtPreProcKmeans - the answer is a little subtle.  prtCluster* objects are expected to output the max a-posteriori cluster assignments. But for feature extraction, we actually want to output the distances from each observation to each cluster center (vs. the class outputs).  You can see the difference in the following:</p>
+
+
+<pre class="codeinput">ds = prtDataGenBimodal;
+cluster = prtClusterKmeans(<span class="string">'nClusters'</span>,4);
+preProc = prtPreProcKmeans(<span class="string">'nClusters'</span>,4);
+
+cluster = cluster.train(ds);
+preProc = preProc.train(ds);
+dsCluster = cluster.run(ds);
+dsPreProc = preProc.run(ds);
+
+subplot(1,2,1);
+imagesc(dsCluster);
+title(<span class="string">'Cluster Assignments'</span>);
+subplot(1,2,2);
+imagesc(dsPreProc);
+title(<span class="string">'Cluster Distances'</span>);
+</pre>
+
+
+<p><img vspace="5" hspace="5" src="http://newfolder.github.io/images/torrione_blog_2013_06_03_01.png" alt=""> <h2>Combining with Linear Classification<a name="2"></a></h2><p>We can combine prtPreProcKmeans with any classifier &ndash; let&rsquo;s try with a logistic discriminant, and see how well we can do:</p><pre class="codeinput">algoSimple = prtClassLogisticDiscriminant;
+algoKmeans = prtPreProcKmeans(<span class="string">&lsquo;nClusters&rsquo;</span>,4) + prtClassLogisticDiscriminant;</p>
+
+<p>yOutSimple = kfolds(algoSimple,ds,5);
+yOutKmeans = kfolds(algoKmeans,ds,5);</p>
+
+<p>yOutAll = catFeatures(yOutSimple,yOutKmeans);
+[pf,pd] = prtScoreRoc(yOutAll);
+subplot(1,1,1);
+h = prtUtilCellPlot(pf,pd);
+set(h,<span class="string">&lsquo;linewidth&rsquo;</span>,3);
+legend(h,{<span class="string">&lsquo;Log Disc&rsquo;</span>,<span class="string">&lsquo;K-Means + Log-Disc&rsquo;</span>});
+xlabel(<span class="string">&lsquo;Pfa&rsquo;</span>);
+ylabel(<span class="string">&lsquo;Pd&rsquo;</span>);
+</pre><img vspace="5" hspace="5" src="http://newfolder.github.io/images/torrione_blog_2013_06_03_02.png" alt=""> <h2>Visualizing<a name="3"></a></h2><p>We can visualize the resulting decision boundary using a hidden (and undocumented method) of prtAlgorithm, that lets us plot algorithms as though they were classifiers as long as certain conditions are met.</p><p>Here&rsquo;s an example:</p><pre class="codeinput">algoKmeans = algoKmeans.train(ds);
+algoKmeans.plotAsClassifier;
+title(<span class="string">&lsquo;K-Means + Logistic Discriminant&rsquo;</span>);
+</pre><img vspace="5" hspace="5" src="http://newfolder.github.io/images/torrione_blog_2013_06_03_03.png" alt=""> <h2>Wrapping Up<a name="4"></a></h2><p>K-Means pre-processing is a potentially powerful way to combine simple clustering and simple classification algorithms to form powerful non-linear classifiers.</p><p>We&rsquo;re working on some big additions to the PRT in the next few weeks&hellip; especially dealing with very large data sets.  Stay tuned.</p></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[New Visualization with IMAGESC]]></title>
+    <link href="http://newfolder.github.io/blog/2013/05/21/new-visualization-with-imagesc/"/>
+    <updated>2013-05-21T08:42:00-04:00</updated>
+    <id>http://newfolder.github.io/blog/2013/05/21/new-visualization-with-imagesc</id>
+    <content type="html"><![CDATA[<p>In the last entry, we introduced a data set - the Cylinder-Bell-Funnel data set, prtDataGenCylinderBellFunnel.  To visualize it easily, we used the MATLAB function imagesc, which makes an image out of the data, with automatically determined colormap settings.  Today we&#8217;ll expand on that, and make the process a lot easier.
+    
+</p>
+
+
+<!--/introduction-->
+
+
+<h2>Contents</h2>
+
+
+<div><ul><li><a href="#1">Example</a></li><li><a href="#2">Other Data Sets</a></li><li><a href="#3">Wrapping Up</a></li></ul></div>
+
+
+<h2>Example<a name="1"></a></h2>
+
+
+<p>For a lot of high-dimensional data sets, it turns out creating an observations x features image of the data is a great way to visualize and understand your data.  This week we made that process a little easier and cleaner by introducing a method of prtDataSetClass - imagesc.</p>
+
+
+<p>The method takes care of a number of things that were a little tricky to do previously - first, it makes sure the observations are sorted by class index, next it creates an image of all the data with black bars denoting the class boundaries, and finally, it makes the y-tick-marks contain the relevant class names.</p>
+
+
+<p>It&#8217;s now easy to generate clean visualizations like so:</p>
+
+
+<pre class="codeinput">ds = prtDataGenCylinderBellFunnel;
+ds.imagesc;
+</pre>
+
+
+<p><img vspace="5" hspace="5" src="http://newfolder.github.io/images/torrione_blog_imagesc_2013_05_21_01.png" alt=""> <h2>Other Data Sets<a name="2"></a></h2><p>Of course, you can do the same thing with other data sets, too.  Look at how easy it is to see which features are important in prtDataGenFeatureSelection:</p><pre class="codeinput">ds = prtDataGenFeatureSelection;
+ds.imagesc;
+</pre><img vspace="5" hspace="5" src="http://newfolder.github.io/images/torrione_blog_imagesc_2013_05_21_02.png" alt=""> <h2>Wrapping Up<a name="3"></a></h2><p>That&rsquo;s it for this week.  We use imagesc-based visualization all the time, and hopefully you&rsquo;ll find it interesting and useful, too.</p></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[prtDataGenSandP500 and prtDataGenCylinderBellFunnel]]></title>
+    <link href="http://newfolder.github.io/blog/2013/05/15/prtdatagensandp500-and-prtdatagencylinderbellfunnel/"/>
+    <updated>2013-05-15T07:50:00-04:00</updated>
+    <id>http://newfolder.github.io/blog/2013/05/15/prtdatagensandp500-and-prtdatagencylinderbellfunnel</id>
+    <content type="html"><![CDATA[<p>Hi everyone, a quick update this time &ndash; we added two new prtDataGen*
+functions to the PRT that people might find useful &ndash; prtDataGenSandP500,
+and prtDataGenCylinderBellFunnel.</p>
+
+<!--/introduction-->
+
+
+<h2>Contents</h2>
+
+
+<div><ul><li><a href="#1">prtDataGenSandP500</a></li><li><a href="#3">Cylinder-Bell-Funnel</a></li><li><a href="#4">Conclusion</a></li></ul></div>
+
+
+<h2>prtDataGenSandP500<a name="1"></a></h2>
+
+
+<p>prtDataGenSandP500 generates data containing stock-price information from the S&amp;P 500.  The information dates back to January 3, 1950, and includes the index&#8217;s open, close, volume, and other features.</p>
+
+
+<p>Check it out:</p>
+
+
+<pre class="codeinput">ds = prtDataGenSandP500;
+ds.featureNames
+spClose = ds.retainFeatures(5);
+plot(spClose.X,<span class="string">'linewidth'</span>,2);
+title(<span class="string">'S&amp;P 500 Closing Value vs. Days since 1/3/1950'</span>);
+</pre>
+
+
+<pre class="codeoutput">
+ans = 
+
+    'Date'    'Open'    'High'    'Low'    'Close'    'Volume'    'AdjClose'
+
+</pre>
+
+
+<p><img vspace="5" hspace="5" src="http://newfolder.github.io/images/torrione_blog_dataGen_2013_05_14_01.png" alt=""> <p>If you can do decent prediction on that data&hellip; you might be able to make some money :)</p><h2>Cylinder-Bell-Funnel<a name="3"></a></h2><p>prtDataGenCylinderBellFunnel is a tool for generating a synthetic data set which contains a number of time-series, each of which has either a flat plateau (cylinder), a rising (bell) or a falling (funnel) slope.</p><p>You can find the specification we used to generate the data here: <a href="http://www.cse.unsw.edu.au/~waleed/phd/html/node119.html"><a href="http://www.cse.unsw.edu.au/~waleed/phd/html/node119.html">http://www.cse.unsw.edu.au/~waleed/phd/html/node119.html</a></a></p><p>And the data was used in an important paper in the data-mining community &ndash; Keogh and Lin, Clustering of Time Series Subsequences is Meaningless: Implications for Previous and Future Research. <a href="http://www.cs.ucr.edu/~eamonn/meaningless.pdf"><a href="http://www.cs.ucr.edu/~eamonn/meaningless.pdf">http://www.cs.ucr.edu/~eamonn/meaningless.pdf</a></a></p><pre class="codeinput">ds = prtDataGenCylinderBellFunnel;
+imagesc(ds.X);
+title(<span class="string">&lsquo;Cylinders (1:266), Bells (267:532), and Funnels (533:798)&rsquo;</span>);
+</pre><img vspace="5" hspace="5" src="http://newfolder.github.io/images/torrione_blog_dataGen_2013_05_14_02.png" alt=""> <h2>Conclusion<a name="4"></a></h2><p>That&rsquo;s all for now.  Hope you enjoy these new data sets, we&rsquo;re always adding new data to the PRT; let us know what you&rsquo;d like to see!</p></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[prtKernel]]></title>
+    <link href="http://newfolder.github.io/blog/2013/04/22/prtkernel/"/>
+    <updated>2013-04-22T15:37:00-04:00</updated>
+    <id>http://newfolder.github.io/blog/2013/04/22/prtkernel</id>
+    <content type="html"><![CDATA[<p>One of the commonly overlooked &#8220;actions&#8221; in the PRT is prtKernel. They are used internally in several places (RVM, SVM) but they can also be used by themselves. Let&#8217;s talk about em.</p>
+
+
+
+
+<h2>Contents</h2>
+
+
+<div><ul><li><a href="#1">Just Another Action</a></li><li><a href="#3">Let&#8217;s see what some other kernel transformations look like.</a></li><li><a href="#5">Kernel Sets</a></li><li><a href="#7">Inside the RVM</a></li><li><a href="#9">Outside of the RVM</a></li><li><a href="#10">Conclusions</a></li></ul></div>
+
+
+<h2>Just Another Action<a name="1"></a></h2>
+
+
+<p>Kernels have very precise meanings in certain contexts (Mercer kernels for example) so it is important that we really define what we mean by prtKernel. A prtKernel is a standard prtAction. That means that it supports the train operation, that takes a dataset and outputs a prtKernel with modified parameters, and the run operation, that takes a dataset and outputs modified dataset. What makes prtKernel different than other prtActions is that they typically transform a dataset into a different dimensionality. The new features are usually the distance to a collection of training examples and most kernels differ in their selection of the distance function. The most widely used kernel is the <a href="http://en.wikipedia.org/wiki/Radial_basis_function">radial basis function</a>.</p>
+
+
+<p>Let&#8217;s look at using prtKernelRbf.</p>
+
+
+<pre class="codeinput">ds = prtDataGenBimodal;
+kernel = prtKernelRbf(<span class="string">'sigma'</span>,2); <span class="comment">% Set the kernel Parameter</span>
+trainedKernel = kernel.train(ds); <span class="comment">% Train the kernel using the input data</span>
+kernelTransformedData = trainedKernel.run(ds);
+
+subplot(2,1,1)
+plot(ds);
+subplot(2,1,2)
+imagesc(kernelTransformedData.X);
+colormap(hot)
+title(<span class="string">'Kernel Transformation'</span>);
+ylabel(<span class="string">'observation'</span>);
+xlabel(<span class="string">'feature'</span>)
+</pre>
+
+
+<p><img vspace="5" hspace="5" src="http://newfolder.github.io/images/morton_blog_20130421_01.png" alt=""> <p>You can see in the image space that there is a checkerboard pattern highlighting the multi-modal nature of the data.</p><h2>Let&rsquo;s see what some other kernel transformations look like.<a name="3"></a></h2><pre class="codeinput">kernelRbf = prtKernelRbf(<span class="string">&lsquo;sigma&rsquo;</span>,2);
+trainedKernelRbf = kernelRbf.train(ds);
+kernelTransformedDataRbf = trainedKernelRbf.run(ds);</p>
+
+<p>subplot(2,2,1)
+imagesc(kernelTransformedDataRbf.X);
+title(<span class="string">&lsquo;RBF Kernel Transformation&rsquo;</span>);
+ylabel(<span class="string">&lsquo;observation&rsquo;</span>);
+xlabel(<span class="string">&lsquo;feature&rsquo;</span>)</p>
+
+<p>kernelHyp = prtKernelHyperbolicTangent;
+trainedKernelHyp = kernelHyp.train(ds);
+kernelTransformedDataHyp = trainedKernelHyp.run(ds);</p>
+
+<p>subplot(2,2,2)
+imagesc(kernelTransformedDataHyp.X);
+title(<span class="string">&lsquo;Hyperbolic Tangent Kernel Transformation&rsquo;</span>);
+ylabel(<span class="string">&lsquo;observation&rsquo;</span>);
+xlabel(<span class="string">&lsquo;feature&rsquo;</span>)</p>
+
+<p>kernelPoly = prtKernelPolynomial;
+trainedKernelPoly = kernelPoly.train(ds);
+kernelTransformedDataPoly = trainedKernelPoly.run(ds);</p>
+
+<p>subplot(2,2,3)
+imagesc(kernelTransformedDataPoly.X);
+title(<span class="string">&lsquo;Polynomial Kernel Transformation&rsquo;</span>);
+ylabel(<span class="string">&lsquo;observation&rsquo;</span>);
+xlabel(<span class="string">&lsquo;feature&rsquo;</span>)</p>
+
+<p>kernelDirect  = prtKernelDirect;
+trainedKernelDirect = kernelDirect.train(ds);
+kernelTransformedDataDirect = trainedKernelDirect.run(ds);</p>
+
+<p>subplot(2,2,4)
+imagesc(kernelTransformedDataDirect.X);
+title(<span class="string">&lsquo;Direct Kernel Transformation&rsquo;</span>);
+ylabel(<span class="string">&lsquo;observation&rsquo;</span>);
+xlabel(<span class="string">&lsquo;feature&rsquo;</span>)
+</pre><img vspace="5" hspace="5" src="http://newfolder.github.io/images/morton_blog_20130421_02.png" alt=""> <p>You can see how the choice of the kernel (and kernel parameters) can really effect the outcoming feature space. It is also interesting to notice that the direct kernel is not actually a kernel at all. It just uses the data as the output featurespace (essentially doing nothing). This is useful for combining the original feature space with kernel transformed data using kernel sets.</p><h2>Kernel Sets<a name="5"></a></h2><p>Kernels can be combined using the &amp; operator to great prtKernelSets. These perform collumn wise concatonation of several kernels. This allows one to create a single kernel transformation out of several prtKernels. In theory one could use / to make a parallel prtAlgorithm to accomplish the same task but there are several reasons to use &amp; that allow them to work within the prtClassRvm and prtClassSvm to remain efficient at run-time.</p><pre class="codeinput">clf; <span class="comment">% Clear those subplots from earlier</span>
+kernel = prtKernelDc &amp; prtKernelRbf(<span class="string">&lsquo;sigma&rsquo;</span>,1) &amp; prtKernelHyperbolicTangent;
+trainedKernel = kernel.train(ds); <span class="comment">% Train the kernel using the input data</span>
+kernelTransformedData = trainedKernel.run(ds);
+imagesc(kernelTransformedData.X);
+title(<span class="string">&lsquo;A Kernel Set Transformation&rsquo;</span>);
+ylabel(<span class="string">&lsquo;observation&rsquo;</span>);
+xlabel(<span class="string">&lsquo;feature&rsquo;</span>)
+</pre><img vspace="5" hspace="5" src="http://newfolder.github.io/images/morton_blog_20130421_03.png" alt=""> <p>You can see that the different transformed feature spaces are concatenated together.</p><h2>Inside the RVM<a name="7"></a></h2><p>In prtClassRvm the &ldquo;kernels&rdquo; property can be set to the prtKernel of our choosing. The RVM is essentially a sparse (it tries to have most coefficients be zero) linear classifier that opperates on kernel transformed data. Let&rsquo;s look at some classification results of prtDataGenBimodal using several different choices for the kernel.</p><pre class="codeinput">subplot(2,2,1)
+plot(train(prtClassRvm(<span class="string">&lsquo;kernels&rsquo;</span>,prtKernelRbf(<span class="string">&lsquo;sigma&rsquo;</span>,2)),ds))
+title(<span class="string">&lsquo;RBF Kernel RVM&rsquo;</span>);</p>
+
+<p>subplot(2,2,2)
+plot(train(prtClassRvm(<span class="string">&lsquo;kernels&rsquo;</span>,prtKernelHyperbolicTangent),ds))
+title(<span class="string">&lsquo;Hyperbolic Tangent Kernel RVM&rsquo;</span>);</p>
+
+<p>subplot(2,2,3)
+plot(train(prtClassRvm(<span class="string">&lsquo;kernels&rsquo;</span>,prtKernelPolynomial),ds))
+title(<span class="string">&lsquo;Polynomial Kernel RVM&rsquo;</span>);</p>
+
+<p>subplot(2,2,4)
+plot(train(prtClassRvm(<span class="string">&lsquo;kernels&rsquo;</span>,prtKernelDirect),ds))
+title(<span class="string">&lsquo;Direct Kernel RVM&rsquo;</span>);
+</pre><img vspace="5" hspace="5" src="http://newfolder.github.io/images/morton_blog_20130421_04.png" alt=""> <p>As you can see the correct choice for the kernel is very important for robust classifcation. The RBF kenerl is a common choice but even it has the sigma parameter which can grealy impact performance. One interesting variant of the RBF kernel is call prtKernelRbfNeighborhoodScaled. This kernel sets the sigma parameter differently for each data point depending on the local neighborhood of the training point.</p><pre class="codeinput">clf; <span class="comment">% Clear those subplots from earlier</span>
+plot(train(prtClassRvm(<span class="string">&lsquo;kernels&rsquo;</span>,prtKernelRbfNeighborhoodScaled),ds))
+title(<span class="string">&lsquo;Locally Scaled RBF Kernel RVM&rsquo;</span>);
+</pre><img vspace="5" hspace="5" src="http://newfolder.github.io/images/morton_blog_20130421_05.png" alt=""> <h2>Outside of the RVM<a name="9"></a></h2><p>In the forum the other day someone asked if we could do non-linear regression with multi-dimensional output. Sadly, the answer is &ldquo;not directly&rdquo; but using kernels you can. By transforming the data to kernel space and then using a linear regression technique you can perform non-linear regression. I wont copy the content over here but check out the answer from the forum. <a href="http://www.newfolderconsulting.com/node/412"><a href="http://www.newfolderconsulting.com/node/412">http://www.newfolderconsulting.com/node/412</a></a></p><h2>Conclusions<a name="10"></a></h2><p>This was a pretty quick overview of things you can do with kernels in the PRT. We don&rsquo;t have every kernel but we have quite a few. If there is something you think we should add let us know.</p></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Principal Component Analysis - prtPreProcPca]]></title>
+    <link href="http://newfolder.github.io/blog/2013/04/16/principal-component-analysis/"/>
+    <updated>2013-04-16T19:56:00-04:00</updated>
+    <id>http://newfolder.github.io/blog/2013/04/16/principal-component-analysis</id>
+    <content type="html"><![CDATA[<p>Today I&#8217;d like to give a quick tour of how to use PCA in the PRT to easily reduce the dimensionality of your data set in a meaningful, principled way.
+
+</p>
+
+
+<!--/introduction-->
+
+
+<h2>Contents</h2>
+
+
+<div><ul><li><a href="#1">Introduction &amp; Theory</a></li><li><a href="#2">In the PRT</a></li><li><a href="#7">How Many Components?</a></li><li><a href="#8">Normalization</a></li><li><a href="#10">Conclusion</a></li></ul></div>
+
+
+<h2>Introduction &amp; Theory<a name="1"></a></h2>
+
+
+<p>Principal component analysis (PCA) is a widely used technique in the statistics and signal processing literature.  Even if you haven&#8217;t heard of PCA, if you know some linear algebra, you may have heard of the singular value decomposition (SVD), or, if you come from the signal processing literature, you&#8217;ve probably heard of the  Karhunen&#8211;Loeve transformation (KLT).  Both of these are identical in form to PCA.  Turns out a lot of different groups have re-created the same algorithm in a lot of different fields!</p>
+
+
+
+
+<p>We won&#8217;t have time to delve into the nitty gritty about PCA here.  For our purposes it&#8217;s enough to say that given a (zero-mean) data set X of nObservations x nFeatures, we often want to find a linear transformation of X, S = X*Z, for a matrix Z of size nPca x nFeatures where:</p>
+
+
+<pre>1) nPca &lt; nFeatures
+2) The resulting data, S, contains "most of the information from" X.</pre>
+
+
+<p>As you can imagine, the phrase &#8220;most of the information&#8221; is vague, and subject to interpretation&#8230; Mathematically, PCA considers &#8220;most of the information in X&#8221; to be equivalent to &#8220;explains most of the variance in X.  It turns out that this statement of the problem has some very nice mathematical solutions - e.g., the columns of S can be viewed as the dominant eigenvectors in the covariance of X!</p>
+
+
+<p>You can find our more about PCA on the fabulous wikipedia article: https://en.wikipedia.org/wiki/Principal_component_analysis.</p>
+
+
+<h2>In the PRT<a name="2"></a></h2>
+
+
+<p>PCA is implemented in the PRT using prtPreProcPca.  Older versions of prtPreProcPca used to make use of different algorithms for different sized data sets (there are a lot of ways to do PCA quickly depending on matrix dimensions).  Since 2012, we found that the MATLAB function SVDS was beating all of our approaches in terms of speed and accuracy, so have switched over to using SVDS to solve for the principal component vectors.</p>
+
+
+<p>Let&#8217;s take a quick look at some PCA projections.  First, we&#8217;ll need some data:</p>
+
+
+<pre class="codeinput">ds = prtDataGenUnimodal;
+</pre>
+
+
+<p>We also need to make a prtPreProcPca object, and we&#8217;ll use 2 components in the PCA projection:</p>
+
+
+<pre class="codeinput">pca = prtPreProcPca(<span class="string">'nComponents'</span>,2);
+</pre>
+
+
+<p>prtPreProc* objects can be trained and run just like any other objects:</p>
+
+
+<pre class="codeinput">pca = pca.train(ds);
+</pre>
+
+
+<p>Let&#8217;s visualize the results, first we&#8217;ll look at the original data, and the vectors from the PCA analysis:</p>
+
+
+<pre class="codeinput">plot(ds);
+hold <span class="string">on</span>;
+h1 = plot([0 pca.pcaVectors(1,1)],[0,pca.pcaVectors(2,1)],<span class="string">'k'</span>);
+h2 = plot([0 pca.pcaVectors(1,2)],[0,pca.pcaVectors(2,2)],<span class="string">'k--'</span>);
+set([h1,h2],<span class="string">'linewidth'</span>,3);
+hold <span class="string">off</span>;
+axis <span class="string">equal</span>;
+title(<span class="string">'Original Data &amp; Two PCA Vectors'</span>);
+</pre>
+
+
+<p><img vspace="5" hspace="5" src="http://newfolder.github.io/images/torrione_blog_2013_04_16_01.png" alt=""> <p>From this plot, we can see that the PCA vectors are oriented first along the dimension of largest variance in the data (diagonal wiht a positive slope), and the second PCA is oriented orthogonal to the first PCA.</p><p>We can project our data onto this space using the RUN method:</p><pre class="codeinput">dsPca = pca.run(ds);
+plot(dsPca);
+title(<span class="string">&lsquo;PCA-Projected Data&rsquo;</span>);
+</pre><img vspace="5" hspace="5" src="http://newfolder.github.io/images/torrione_blog_2013_04_16_02.png" alt=""> <h2>How Many Components?<a name="7"></a></h2><p>In general, it might be somewhat complicated to determine how many PCA components are necessary to explain most of the variance in a particular data set.  Above we used 2, but for higher dimensional data sets, how many should we use in general?</p><p>We can measure how much variance each PC explains during training by exploring the vector pca.totalPercentVarianceCumulative which is set during training.  This vector contains the percent of the total variance of the data set explained by 1:N PCA components.  For example, totalPercentVarianceCumulative(3) contains the percent variance explained by components 1 through 3.  When this metric plateaus, that&rsquo;s a pretty good sign that we have enough components.</p><p>For example:</p><pre class="codeinput">ds = prtDataGenProstate;
+pca = prtPreProcPca(<span class="string">&lsquo;nComponents&rsquo;</span>,ds.nFeatures);
+pca = pca.train(ds);</p>
+
+<p>stem(pca.totalPercentVarianceCumulative,<span class="string">&lsquo;linewidth&rsquo;</span>,3);
+xlabel(<span class="string">&lsquo;#Components&rsquo;</span>);
+ylabel(<span class="string">&lsquo;Percent Variance Explained&rsquo;</span>);
+title(<span class="string">&lsquo;Prostate Data &ndash; PCA Percent Variance Explained&rsquo;</span>);
+</pre><img vspace="5" hspace="5" src="http://newfolder.github.io/images/torrione_blog_2013_04_16_03.png" alt=""> <h2>Normalization<a name="8"></a></h2><p>For PCA to be meaningful, the data used has to have zero-mean columns, and prtPreProcPca takes care of that for you (so you don&rsquo;t have to zero mean the columns yourself).  However, different authors disagree about whether or not the columns provided to PCA should all have the same variance before PCA analysis.  Depending on normalization, you can get very different PCA projections.  To leave the option open, the PRT does <b>not</b> automatically normalize the columns of the input data to have uniform variance.  You can manually enforce this before your PCA processing with prtPreProcZmuv.</p><p>Here&rsquo;s a simplified example, where we do the two processes separately to show the differences.</p><pre class="codeinput">ds = prtDataGenProstate;
+dsNorm = rt(prtPreProcZmuv,ds);
+pca = prtPreProcPca(<span class="string">&lsquo;nComponents&rsquo;</span>,ds.nFeatures);
+pca = pca.train(ds);
+pcaNorm = pca.train(dsNorm);</p>
+
+<p>subplot(2,1,1);
+stem(pca.totalPercentVarianceCumulative,<span class="string">&lsquo;linewidth&rsquo;</span>,3);
+xlabel(<span class="string">&lsquo;#Components&rsquo;</span>);
+ylabel(<span class="string">&lsquo;Percent Variance Explained&rsquo;</span>);
+title(<span class="string">&lsquo;Prostate Data &ndash; PCA Percent Variance Explained&rsquo;</span>);</p>
+
+<p>subplot(2,1,2);
+stem(pcaNorm.totalPercentVarianceCumulative,<span class="string">&lsquo;linewidth&rsquo;</span>,3);
+xlabel(<span class="string">&lsquo;#Components&rsquo;</span>);
+ylabel(<span class="string">&lsquo;Percent Variance Explained&rsquo;</span>);
+title(<span class="string">&lsquo;Prostate Data &ndash; PCA Percent Variance Explained (Normalized Data)&rsquo;</span>);
+</pre><img vspace="5" hspace="5" src="http://newfolder.github.io/images/torrione_blog_2013_04_16_04.png" alt=""> <p>As you can see, processing normalized and un-normalized data results in quite different assessments of how many PCA components are required to summarize the data.</p><p>Our recommendation is that if your data comes from different sources, with different sensor ranges or variances (as in the prostate data), it&rsquo;s imperative that you perform standard-deviation normalization prior to PCA processing.</p><p>Otherwise, it&rsquo;s worthwhile to try both with and without ZMUV pre-processing and see what gives better performance.</p><h2>Conclusion<a name="10"></a></h2><p>That&rsquo;s about it for PCA processing.  Of course, you can use PCA as a pre-processor for any algorithm you&rsquo;re developing, to reduce the dimensionality of your data, for example:</p><pre>algo = prtPreProcPca + prtClassLibSvm;</pre><p>Let us know if you have questions or comments about using prtPreProcPca.</p></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[rt()]]></title>
+    <link href="http://newfolder.github.io/blog/2013/04/08/rt/"/>
+    <updated>2013-04-08T13:04:00-04:00</updated>
+    <id>http://newfolder.github.io/blog/2013/04/08/rt</id>
+    <content type="html"><![CDATA[<p>In the PRT we have a a few hidden features that we don&#8217;t really advertise but at times they make life easier. This quick post is to reveal one of those quick features, <tt>prtAction.rt()</tt></p>
+
+
+<p><tt>rt()</tt> stands run, train. You can use it to perform a &#8220;run on train&#8221; operation and you only the output dataset. In other words, it&#8217;s a quick and dirty method for when you would otherwise need to call <tt>run(train(action, dataset), dataset)</tt>.  To see how one might use <tt>rt()</tt>, let&#8217;s calculated the first two principal components of Fisher&#8217;s Iris dataset.</p>
+
+
+<pre class="codeinput">ds = prtDataGenIris;
+pca = train(prtPreProcPca(<span class="string">'nComponents'</span>,2), ds);
+dsPca = run(pca, ds);
+</pre>
+
+
+<p>If we didn&#8217;t really care about keeping the (trained) PCA object around we could have done this all in one line.</p>
+
+
+<pre class="codeinput">dsPca = run(train(prtPreProcPca(<span class="string">'nComponents'</span>,2), ds),ds);
+</pre>
+
+
+<p>That string at the end <tt>ds),ds)</tt> is odd looking and this is when <tt>rt()</tt> comes to the rescue.</p>
+
+
+<pre class="codeinput">dsPca = rt(prtPreProcPca(<span class="string">'nComponents'</span>,2), ds);
+</pre>
+
+
+<p>That&#8217;s how you can use <tt>rt()</tt> in a nutshell. It&#8217;s a nice method to keep in your back pocket when you are just beginning to explore a dataset and cross-validation isn&#8217;t yet on your mind. Remember <tt>rt()</tt> is a (hidden) method of <tt>prtAction</tt> and therefore can be used with all classifiers, pre-processors etc. Let us know if you find any use for it. We do.</p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Determining Gender from Handwriting - A Kaggle Competition!]]></title>
+    <link href="http://newfolder.github.io/blog/2013/04/02/determining-gender-from-handwriting/"/>
+    <updated>2013-04-02T18:21:00-04:00</updated>
+    <id>http://newfolder.github.io/blog/2013/04/02/determining-gender-from-handwriting</id>
+    <content type="html"><![CDATA[<p>Hi everyone, today I wanted to introduce a new data set and some preliminary processing that helps us perform better than a random forest (gasp!).</p>
+
+
+<p>The data we&#8217;re going to use is from a Kaggle competition that&#8217;s going on from now (March 28, 2013) until April 15, 2013.  Kaggle is a company that specializes in connecting data analysts with interesting data - it&#8217;s pretty great for hobbyists and individuals to get started with some data, and potentially win some money!  And they just generally have a lot of cool data from a lot of interesting problems.</p>
+
+
+<p>The data we&#8217;re going to use is based on identifying an author&#8217;s gender from samples of their handwriting.  Here&#8217;s the URL for the competition home page, which gives some details on the data:</p>
+
+
+<pre class="language-matlab"><a href="http://www.kaggle.com/c/icdar2013-gender-prediction-from-handwriting">http://www.kaggle.com/c/icdar2013-gender-prediction-from-handwriting</a>
+    
+</pre>
+
+
+<p>The competition includes several sets of images,as well as some pre-extracted features.  The image files can be gigantic, so we&#8217;re only going to use the pre-extracted features for today.  Go ahead and download train.csv, train_answers.csv, and test.csv, from the link above, and put them in</p>
+
+
+<pre class="codeinput">fullfile(prtRoot,<span class="string">'dataGen'</span>,<span class="string">'dataStorage'</span>,<span class="string">'kaggleTextGender_2013'</span>);
+</pre>
+
+
+<p>Once the files are in the correct location, you should be able to use:</p>
+
+
+<pre class="codeinput">[dsTrain,dsTest] = prtDataGenTextGender;</pre>
+
+
+<p>to load in the data.</p>
+
+
+<!--/introduction-->
+
+
+<h2>Contents</h2>
+
+
+<div><ul><li><a href="#1">M-Files You Need</a></li><li><a href="#4">Naive Random Forest</a></li><li><a href="#6">Remove Meaningless features</a></li><li><a href="#8">Slight improvement</a></li><li><a href="#10">Aggregating Over Writers</a></li><li><a href="#13">PLSDA</a></li><li><a href="#14">Plotting Results</a></li><li><a href="#16">Submit it!</a></li><li><a href="#19">Results</a></li><li><a href="#21">Feature Selection</a></li><li><a href="#23">Adding in some post-processing</a></li><li><a href="#25">Our New Submission</a></li><li><a href="#29">Final Results</a></li></ul></div>
+
+
+<h2>M-Files You Need<a name="1"></a></h2>
+
+
+<p>Obviously, prtDataGenTextGender.m is new, as are a number of other files we&#8217;re going to use throughout this example.  These include prtEvalLogLoss.m, prtScoreLogLoss.m, prtUtilAccumArrayLike.m, and prtUtilAccumDataSetLike.m.  You&#8217;ll need to update your PRT to the newest version (as of March, 2013, anyway) to get access to these files.  You can always get the PRT here: <a href="http://github.com/newfolder/PRT">http://github.com/newfolder/PRT</a></p>
+
+
+<p>Once you&#8217;ve done all that, go ahead and try the following:</p>
+
+
+<pre class="codeinput">
+[dsTrain,dsTest] = prtDataGenTextGender;
+</pre>
+
+
+
+
+<p>That should load in the data.  As always, we can visualize the data using someting simple, like PCA:</p>
+
+
+<pre class="codeinput">pca = prtPreProcPca;
+pca = pca.train(dsTrain);
+dsPca = pca.run(dsTrain);
+plot(dsPca);
+title(<span class="string">'Kaggle Handwriting/Gender ICDAR 2013 Data'</span>);
+</pre>
+
+
+<p><img vspace="5" hspace="5" src="http://newfolder.github.io/images/torrione_blog_Kaggle_TextGender_01.png" alt=""> <h2>Naive Random Forest<a name="4"></a></h2><p>Kaggle competitions will often provide a baseline performance metric for some standard classification algorithms.  In this example they told us that the baseline random forest performamce they&rsquo;ve observed obtains a log-loss of about 0.65.  We can confirm this using our random forest, 3-fold cross-validation, and our new function prtScoreLogLoss:</p><pre class="codeinput">yOut = kfolds(prtClassTreeBaggingCap,dsTrain,3);
+logLossInitialRf = prtScoreLogLoss(yOut);
+fprintf(<span class="string">&lsquo;Random Forest LogLoss: %.2f\n&rsquo;</span>,logLossInitialRf);
+</pre><pre class="codeoutput">Random Forest LogLoss: 0.64
+</pre><p>About 0.65, so we&rsquo;re right in the ball-park.  Can we do better?</p><h2>Remove Meaningless features<a name="6"></a></h2><p>That performance wasn&rsquo;t that great.  And the leaderboard shows us that some clever people have already done significantly better than the basic random forest.</p><p>Let&rsquo;s investigate the data a little and see what&rsquo;s going on.  First, what is the standard deviation of the features?</p><pre class="codeinput">stem(log(std(dsTrain.X)));
+xlabel(<span class="string">&lsquo;Feature Number&rsquo;</span>);
+ylabel(<span class="string">&lsquo;Log-\sigma&rsquo;</span>);
+title(<span class="string">&lsquo;Log(\sigma) vs. Feature Number&rsquo;</span>);
+</pre><img vspace="5" hspace="5" src="http://newfolder.github.io/images/torrione_blog_Kaggle_TextGender_02.png" alt=""> <p>Wow, there are a lot of features with a standard deviation of zero!  That means that we can&rsquo;t learn anything from these features, since they always take the exact same value in the training set.  Let&rsquo;s go ahead and remove these features.</p><pre class="codeinput">fprintf(<span class="string">&lsquo;There are %d features that only take one value&hellip; \n&rsquo;</span>,length(find(std(dsTrain.X)==0)));
+removeFeats = std(dsTrain.X) == 0;
+dsTrainRemove = dsTrain.removeFeatures(removeFeats);
+dsTestRemove = dsTest.removeFeatures(removeFeats);
+</pre><pre class="codeoutput">There are 2414 features that only take one value&hellip;
+</pre><h2>Slight improvement<a name="8"></a></h2><p>What happens if we re-run the random forest on this data with the new features removed?  The random forest is pretty robust to meaningless features, but not totally impervious&hellip; let&rsquo;s try it:</p><pre class="codeinput">yOutRf = kfolds(prtClassTreeBaggingCap,dsTrainRemove,3);
+logLossRfFeatsRemoved = prtScoreLogLoss(yOutRf);
+fprintf(<span class="string">&lsquo;Random Forest LogLoss with meaningless features removed: %.2f\n&rsquo;</span>,logLossRfFeatsRemoved);
+</pre><pre class="codeoutput">Random Forest LogLoss with meaningless features removed: 0.61
+</pre><p>Hey!  That did marginally better &ndash; our log-loss went from about 0.65 to 0.61 or so.  Nothing to write home about, but a slight improvement.  What else can we do?</p><h2>Aggregating Over Writers<a name="10"></a></h2><p>If you pay attention to the data set, you&rsquo;ll notice something interesting &ndash; we have a lot of writing samples (4) from each writer.  And our real goal is to identify the gender of each writer &ndash; so we should be able to average our classifications over each writer and get better performance.</p><p>This blog entry introduces a new function called &ldquo;prtUtilAccumDataSetLike&rdquo;, which acts a lot like &ldquo;accumarray&rdquo; in base MATLAB.  Basically, prtUtilAccumDataSetLike takes a set of keys of size dataSet.nObservations x 1, and for each observation corresponding to each unique key, aggregates the data in X and Y and outputs a new data set.</p><p>It&rsquo;s a little complicated to explain &ndash; take a look at the help entry for accumarray, and then take a look at this example:</p><pre class="codeinput">writerIds = [dsTrainRemove.observationInfo.writerId]&lsquo;;
+yOutAccum = prtUtilAccumDataSetLike(writerIds,yOutRf,@(x)mean(x));
+</pre><p>The code above outputs a new data set generated by averaging the confidences in yOutRf across sets of writerIds.</p><p>Does this help performance?</p><pre class="codeinput">logLossAccum = prtScoreLogLoss(yOutAccum);
+fprintf(<span class="string">'Writer ID Accumulated Random Forest LogLoss: %.2f\n&rsquo;</span>,logLossAccum);
+</pre><pre class="codeoutput">Writer ID Accumulated Random Forest LogLoss: 0.59
+</pre><p>That&rsquo;s marginally better still!  What else can we try&hellip;</p><h2>PLSDA<a name="13"></a></h2><p>When a random forest seems to be doing somewhat poorly, often it&rsquo;s a good idea to take a step back and run a linear classifier in lieu of a nice fancy random forest.  I&rsquo;m partial to PLSDA as a classifier (see the help entry for prtClassPlsda for more information).</p><p>PLSDA has one parameter &ndash; the number of components to use, that we should optimize over.  Since each kfolds-run is random, we&rsquo;ll run 10 experiments of 3-Fold Cross-validation for each of 1 &ndash; 30 components in PLSDA&hellip; This might take a little while depending on your computer&hellip;</p><p>We&rsquo;re also going to do something a little tricky here &ndash; PLSDA is a linear classifier, and won&rsquo;t output values between zero and one by default.  But the outputs from PLSDA should be linearly correlated with confidence that the author of a particular text was a male.  We can translate from PLSDA outputs to values with probabilistic interpretations by attaching a logistic-discriminant function to the end of our PLSDA classifier. That&rsquo;s easy to do in the PRT like so:</p><pre>classifier = prtClassPlsda(&lsquo;nComponents&rsquo;,nComp) + prtClassLogisticDiscriminant;</pre><pre class="codeinput">nIter = 10;
+maxComp = 30;
+logLossPlsda = nan(maxComp,nIter);
+logLossPlsdaAccum = nan(maxComp,nIter);
+<span class="keyword">for</span> nComp = 1:maxComp;</p>
+
+<pre><code>classifier = prtClassPlsda(&lt;span class="string"&gt;'nComponents'&lt;/span&gt;,nComp) + prtClassLogisticDiscriminant;
+classifier.showProgressBar = false;
+&lt;span class="keyword"&gt;for&lt;/span&gt; iter = 1:nIter
+    yOutPlsda = kfolds(classifier,dsTrainRemove,3);
+    logLossPlsda(nComp,iter) = prtScoreLogLoss(yOutPlsda);
+
+    yOutAccum = prtUtilAccumDataSetLike(writerIds,yOutPlsda,@(x)mean(x));
+    logLossPlsdaAccum(nComp,iter) = prtScoreLogLoss(yOutAccum);
+&lt;span class="keyword"&gt;end&lt;/span&gt;
+fprintf(&lt;span class="string"&gt;'%d '&lt;/span&gt;,nComp);
+</code></pre>
+
+<p><span class="keyword">end</span>
+fprintf(<span class="string">&lsquo;\n&rsquo;</span>);
+</pre><pre class="codeoutput">1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30
+</pre><h2>Plotting Results<a name="14"></a></h2><p>Let&rsquo;s take a look at the PLSDA classifier performance as a function of the number of components we used.  The following code generates box-plots (recall, we ran 3-fold cross-validation 10 times for each # of components between 1 and 30&hellip;</p><pre class="codeinput">boxplot(logLossPlsdaAccum')
+hold <span class="string">on</span>;
+h2 = plot(1:maxComp,repmat(logLossInitialRf,1,maxComp),<span class="string">&lsquo;k:&rsquo;</span>,1:maxComp,repmat(logLossRfFeatsRemoved,1,maxComp),<span class="string">&lsquo;b:&rsquo;</span>,1:maxComp,repmat(logLossAccum,1,maxComp),<span class="string">&lsquo;g:&rsquo;</span>);
+hold <span class="string">off</span>;
+legend(h2,{<span class="string">&lsquo;Random Forest Log-Loss&rsquo;</span>,<span class="string">&lsquo;Random Forest &ndash; Removed Features&rsquo;</span>,<span class="string">&lsquo;Random Forest &ndash; Removed Features &ndash; Accum&rsquo;</span>});
+h = findobj(gca,<span class="string">&lsquo;type&rsquo;</span>,<span class="string">&lsquo;line&rsquo;</span>);
+set(h,<span class="string">&lsquo;linewidth&rsquo;</span>,2);
+xlabel(<span class="string">&lsquo;#PLSDA Components&rsquo;</span>);
+ylabel(<span class="string">&lsquo;Log-Loss&rsquo;</span>);
+title(<span class="string">&lsquo;Log-Loss For PLSDA With Accumumation (vs. # Components) and Random Forest&rsquo;</span>)
+</pre><img vspace="5" hspace="5" src="http://newfolder.github.io/images/torrione_blog_Kaggle_TextGender_03.png" alt=""> <p>Wow!  The dotted lines here represent the random forest performance we&rsquo;ve seen, and the boxes represent the performance we get with PLSDA &ndash; PLSDA is significantly outperforming our RF classifier on this data!</p><p>PLSDA performance seems to plateau around 17 components, so we&rsquo;ll use 17 from now on.</p><h2>Submit it!<a name="16"></a></h2><p>I think we might have something here &ndash; our code gets Log-Losses around 0.46 many times.  Let&rsquo;s actually submit an experiment to Kaggle.</p><p>First we&rsquo;ll train our classifier and test it:</p><pre class="codeinput">classifier = prtClassPlsda(<span class="string">&lsquo;nComponents&rsquo;</span>,17) + prtClassLogisticDiscriminant;
+classifier = classifier.train(dsTrainRemove);
+yOutTest = classifier.run(dsTestRemove);</p>
+
+<p>writerIdsTest = [dsTestRemove.observationInfo.writerId]&lsquo;;
+</pre><p>Don&rsquo;t forget to accumulate:</p><pre class="codeinput">[yOutPlsdaTestAccum,uKeys] = prtUtilAccumDataSetLike(writerIdsTest,yOutTest,@(x)mean(x));
+matrixOut = cat(2,uKeys,yOutPlsdaTestAccum.X);
+</pre><p>And write the output the way Kaggle wants us to.</p><pre class="codeinput">csvwrite(<span class="string">'outputPlsda.csv&rsquo;</span>,matrixOut);
+</pre><h2>Results<a name="19"></a></h2><p>I made a screen-cap of the results from the output above &ndash; here it is:</p><pre class="codeinput">imshow(<span class="string">&lsquo;leaderBoard_2013_03_20.PNG&rsquo;</span>);
+</pre><img vspace="5" hspace="5" src="http://newfolder.github.io/images/torrione_blog_Kaggle_TextGender_04.PNG" alt=""> <p>That&rsquo;s me in the middle there &ndash; #38 out of about 100.  And way better than the naive random forest implementation &ndash; not too bad!</p><p>Can we do better?</p><h2>Feature Selection<a name="21"></a></h2><p>One way we can reduce variation and improve performance is to not include all 4652 features left in our data set.  We can use feature selection to pick the ones we want!</p><p>I&rsquo;m going to go ahead and warn you &ndash; don&rsquo;t run this code unless you want to leave it running overnight.  It takes forever&hellip;  but it gets the job done:</p></p>
+
+<pre class="codeinput">
+warning <span class="string">off</span>;
+c = prtClassPlsda(<span class="string">'nComponents' </span>,17,<span class="string"> 'showProgressBar'</span>,false);
+sfs = prtFeatSelSfs(<span class="string">'nFeatures'</span>,100,<span class="string"> 'evaluationMetric'</span>,@(ds)-1*prtEvalLogLoss(c,ds,2));
+sfs = sfs.train(dsTrainRemove);
+</pre>
+
+
+<p>Instead, we already ran that code, and saved the results in sfs.mat, which you can down-load at the end of this post.</p>
+
+
+<p>For now, let&#8217;s look at how performance is affected by the number of features retained:</p>
+
+
+<pre class="codeinput">load <span class="string">sfs.mat</span> <span class="string">sfs</span>
+set(gcf,<span class="string">'position'</span>,[403   246   560   420]); <span class="comment">%fix from IMSHOW</span>
+plot(-sfs.performance)
+xlabel(<span class="string">'# Features'</span>);
+ylabel(<span class="string">'Log-Loss'</span>);
+title(<span class="string">'Log-Loss vs. # Features Retained'</span>);
+</pre>
+
+
+<p><img vspace="5" hspace="5" src="http://newfolder.github.io/images/torrione_blog_Kaggle_TextGender_05.png" alt=""> <p>It looks like performance is bottoming out around 60 or so features, and anything past that isn&rsquo;t adding performance (though maybe if we selected 1000 or 2000 we could do better!)</p><p>We can confirm this with the following code, which also takes quite a while to run a bunch of experiments on all the sub-sets SFS found for us:</p><pre class="codeinput">logLossClassifierFeatSel = nan(100,10);
+<span class="keyword">for</span> nFeats = 1:100;</p>
+
+<pre><code>&lt;span class="keyword"&gt;for&lt;/span&gt; iter = 1:10
+    dsTrainRemoveFeatSel = dsTrainRemove.retainFeatures(sfs.selectedFeatures(1:nFeats));
+    yOutPlsdaFeatSel = classifier.kfolds(dsTrainRemoveFeatSel,3);
+
+    xOutAccum = prtUtilAccumArrayLike(writerIds,yOutPlsdaFeatSel.X,[],@(x)mean(x));
+    yOutAccum = prtUtilAccumArrayLike(writerIds,yOutPlsdaFeatSel.Y,[],@(x)unique(x));
+    yOutAccumFeatSel = prtDataSetClass(xOutAccum,yOutAccum);
+    logLossClassifierFeatSel(nFeats,iter) = prtScoreLogLoss(yOutAccumFeatSel);
+&lt;span class="keyword"&gt;end&lt;/span&gt;
+</code></pre>
+
+<p><span class="keyword">end</span></p>
+
+<p>boxplot(logLossClassifierFeatSel&#8217;)
+drawnow;</p>
+
+<p>ylabel(<span class="string">&lsquo;Log-Loss&rsquo;</span>);
+xlabel(<span class="string">&lsquo;# Features&rsquo;</span>)
+title(<span class="string">&lsquo;Log-Loss vs. # Features&rsquo;</span>)
+</pre><img vspace="5" hspace="5" src="http://newfolder.github.io/images/torrione_blog_Kaggle_TextGender_06.png" alt=""> <h2>Adding in some post-processing<a name="23"></a></h2><p>In a minute we&rsquo;ll down-select the number of features we want to use &ndash; but first let&rsquo;s do one more thing.  Recall that we added a logistic discriminant at the end of our PLSDA classifier.  That was clever, but after that, we accumulted a bunch of data together.  We might be able to run <b>another</b> logistic discriminant after the accumultion to do even better!</p><p>Let&rsquo;s see what that code looks like:</p><pre class="codeinput">classifier = prtClassPlsda(<span class="string">&lsquo;nComponents&rsquo;</span>,17) + prtClassLogisticDiscriminant;
+classifier = classifier.train(dsTrainRemove);
+yOutPlsdaKfolds = classifier.kfolds(dsTrainRemove,3);</p>
+
+<p>yOutAccum = prtUtilAccumDataSetLike(writerIds,yOutPlsdaKfolds,@(x)mean(x));
+yOutAccumLogDisc = kfolds(prtClassLogisticDiscriminant,yOutAccum,3);</p>
+
+<p>logLossPlsdaAccum = prtScoreLogLoss(yOutAccum);
+logLossPlsdaAccumLogDisc = prtScoreLogLoss(yOutAccumLogDisc);
+fprintf(<span class="string">&lsquo;Without post-Log-Disc: %.3f; With: %.3f\n&rsquo;</span>,logLossPlsdaAccum,logLossPlsdaAccumLogDisc);
+</pre><pre class="codeoutput">Without post-Log-Disc: 0.479; With: 0.461
+</pre><p>That&rsquo;s a slight improvement, too!</p><h2>Our New Submission<a name="25"></a></h2><p>Let&rsquo;s put everything together, and see what happens:</p><p>First, pick the right # of features based on our big experiment above:</p><pre class="codeinput">[minVal,nFeatures] = min(mean(logLossClassifierFeatSel'));
+dsTrainTemp = dsTrainRemove.retainFeatures(sfs.selectedFeatures(1:nFeatures));
+dsTestTemp = dsTestRemove.retainFeatures(sfs.selectedFeatures(1:nFeatures));
+</pre><p>Now, train a classifier, and a logistic discriminant:</p><pre class="codeinput">classifier = prtClassPlsda(<span class="string">&lsquo;nComponents&rsquo;</span>,17) + prtClassLogisticDiscriminant;
+classifier = classifier.train(dsTrainRemove);
+yOutPlsdaKfolds = classifier.kfolds(dsTrainRemove,3);</p>
+
+<p>yOutAccum = prtUtilAccumDataSetLike(writerIds,yOutPlsdaKfolds,@(x)mean(x));
+yOutPostLogDisc = kfolds(prtClassLogisticDiscriminant,yOutAccum,3);
+postLogDisc = train(prtClassLogisticDiscriminant,yOutAccum);
+logLossPlsdaEstimate = prtScoreLogLoss(yOutPostLogDisc);
+</pre><p>And run the same classifier, followed by the post-processing logistic discriminant:</p><pre class="codeinput">yOut = classifier.run(dsTestRemove);
+[xOutAccumSplit,uLike] = prtUtilAccumDataSetLike(writerIdsTest,yOut,@(x)mean(x));
+dsTestPost = prtDataSetClass(xOutAccumSplit);
+yOutPost = postLogDisc.run(dsTestPost);</p>
+
+<p>matrixOut = cat(2,uLike,yOutPost.X);
+csvwrite(<span class="string">&lsquo;outputPlsda_FeatSelPostProc.csv&rsquo;</span>,matrixOut);
+</pre><h2>Final Results<a name="29"></a></h2><p>We submitted this version to Kaggle also.  The results are shown below:</p><pre class="codeinput">imshow(<span class="string">&lsquo;leaderBoard_2013_03_21.PNG&rsquo;</span>);
+</pre><img vspace="5" hspace="5" src="http://newfolder.github.io/images/torrione_blog_Kaggle_TextGender_07.PNG" alt=""> <p>That bumped us up by just a little bit in terms of overall log-loss, but quite a bit in the leader-list!</p><p>A lot of people are still doing way better than this blog entry (and have gotten better since a week ago, when we did this analysis!), but that&rsquo;s not bad performance for what turns out to be about 20 lines of code, don&rsquo;t you think?</p><p>If you have any success with the text/gender analysis data using the PRT, let us know &ndash; either post on the Kaggle boards, or here, or drop us an e-mail.</p></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[RVs Part 2 - Mixture Models]]></title>
+    <link href="http://newfolder.github.io/blog/2013/03/24/rvs-part-2/"/>
+    <updated>2013-03-24T11:03:00-04:00</updated>
+    <id>http://newfolder.github.io/blog/2013/03/24/rvs-part-2</id>
+    <content type="html"><![CDATA[<p>In <a href="http://newfolder.github.io/blog/2013/01/31/random-variables-part-1/">part 1</a> we talked about how use RVs to change the statistical model used by prtClassMap so that we can flexibly model the data. If you recall we can set the &#8220;rvs&#8221; property to correspond to prtRvMvn to model the data using multi-variate normal distributions or we can set it some other value to change the resulting model and thus the classifier. Now, we are going to talk about how we can make probabilistic mixtures in much the same way.</p>
+
+
+<!--/introduction-->
+
+
+<h2>Contents</h2>
+
+
+<div><ul><li><a href="#1">Mixture Models</a></li><li><a href="#2">prtRvMixture</a></li><li><a href="#6">Using prtRvMixtures for Classification</a></li><li><a href="#8">prtRvGmm</a></li><li><a href="#10">Using prtRvGmm for classification</a></li><li><a href="#13">Conclusions</a></li></ul></div>
+
+
+<h2>Mixture Models<a name="1"></a></h2>
+
+
+<p>In general, the term &#8220;mixture model&#8221; implies that each observation of data has an associated hidden variable and that observation is drawn from a distribution that is dependent on that hidden variable. In general statistics, a mixture model can have either continuous or discrete hidden variables. In the PRT, our prtRvMixture only considers discrete mixtures. That is, there are fixed number of &#8220;components&#8221; each with a mixing proportion and each component is itself a parameterized distribution, like a Gaussian.</p>
+
+
+<p>The most common mixture is the Gaussian mixture model (GMM). A guassian mixture model with K components has a K dimensional discrite distrubtion for the mixing variable and has K individual Gaussian components. Today&#8217;s post will focus on using working with Gaussian mixture models.</p>
+
+
+<h2>prtRvMixture<a name="2"></a></h2>
+
+
+<p>prtRvMixture has two main properties that are of interest &#8220;components&#8221; and &#8220;mixingProportions&#8221;.</p>
+
+
+<p>components should be an array of prtRvs that also inherit from prtRvMembershipModel. Without getting too indepth a prtRvMembershipModel is a special attribute of some prtRvs that specifies that this RV knows how to work inside of a mixture model. As we mentioned before, we are focusing on mixture of prtRvMvn objects to make a Gaussian mixture model. Luckily prtRvMvn inherits from prtRvMembershipModel and therefore it knows how to work in a mixture.</p>
+
+
+<p>mixingProportions is the discrite mixing density for the mixture model. It should be a vector that sums to one with the same length as the &#8220;components&#8221; array.</p>
+
+
+<p>To get started let&#8217;s make an array of 2D MVN RV objects with different means and a non-diagonal covariance matrix.</p>
+
+
+<pre class="codeinput">gaussianSet1 = repmat(prtRvMvn(<span class="string">'sigma'</span>,[1 -0.5; -0.5 2;]),2,1);
+gaussianSet1(1).mu = [-2 -2];
+gaussianSet1(2).mu = [2 2];
+</pre>
+
+
+<p>Then we will can make a mixture by specifying some mixingProportions</p>
+
+
+<pre class="codeinput">mixture1 = prtRvMixture(<span class="string">'components'</span>,gaussianSet1,<span class="string">'mixingProportions'</span>,[0.5 0.5]);
+</pre>
+
+
+<p>Because prtRvMixtures are prtRvs we get all of the nice plotting that comes along with things. Let&#8217;s take  a look at the density of our prtRv</p>
+
+
+<pre class="codeinput">plotPdf(mixture1);
+</pre>
+
+
+<p><img vspace="5" hspace="5" src="http://newfolder.github.io/images/morton_blog_20130227_01.png" alt=""> <p>To show how we can do classification with these mixtures, let&rsquo;s make another mixture with different parameters. Then we will draw some data from both mixtures and plot our classification dataset.</p><pre class="codeinput">gaussianSet2 = repmat(prtRvMvn(<span class="string">&lsquo;sigma&rsquo;</span>,[1 0.5; 0.5 3;]),2,1);
+gaussianSet2(1).mu = [2 -2];
+gaussianSet2(2).mu = [-2 2];</p>
+
+<p>mixture2 = prtRvMixture(<span class="string">&lsquo;components&rsquo;</span>,gaussianSet2,<span class="string">&lsquo;mixingProportions&rsquo;</span>,[0.5 0.5]);</p>
+
+<p>ds = prtDataSetClass( cat(1,mixture1.draw(500),mixture2.draw(500)), prtUtilY(500,500)); <span class="comment">% Draw 500 samples from each mixture</span>
+plot(ds)
+</pre><img vspace="5" hspace="5" src="http://newfolder.github.io/images/morton_blog_20130227_02.png" alt=""> <h2>Using prtRvMixtures for Classification<a name="6"></a></h2><p>Like we showed in part 1 of this series we can set the &ldquo;rvs&rdquo; property of prtClassMap to any prtRv object and use that rv for classification. Let&rsquo;s for prtClassMap to use a mixture of prtRvMvn objects.</p><pre class="codeinput">emptyMixture = prtRvMixture(<span class="string">&lsquo;components&rsquo;</span>,repmat(prtRvMvn,2,1)); <span class="comment">% 2 component mixture</span></p>
+
+<p>classifier = prtClassMap(<span class="string">&lsquo;rvs&rsquo;</span>,emptyMixture);</p>
+
+<p>trainedClassifier = train(classifier, ds);</p>
+
+<p>plot(trainedClassifier);
+</pre><img vspace="5" hspace="5" src="http://newfolder.github.io/images/morton_blog_20130227_03.png" alt=""> <p>As you can see it looks like this classifier would perform quite well. We can see that the learned means of the class 0 data (blue) closely match the means that we specified above for guassianSet1. So things appear to be working well.</p><pre class="codeinput">cat(1,trainedClassifier.rvs(1).components.mu)
+</pre><pre class="codeoutput">ans =
+   -1.9712   -2.0488</p>
+
+<pre><code>2.0139    1.9548
+</code></pre>
+
+<p></pre><h2>prtRvGmm<a name="8"></a></h2><p>Since Guassian mixture models are the most common type of mixture a number of techniques have been established that help them perform better when working with limited and/or high dimensional data. To help facilitate some of those tweak there is prtRvGmm. It works much the same way as prtRvMixture only the components must be prtRvMvns.</p><pre class="codeinput">mixture1Gmm = prtRvGmm(<span class="string">&lsquo;components&rsquo;</span>,gaussianSet1,<span class="string">&lsquo;mixingProportions&rsquo;</span>,[0.5 0.5]);</p>
+
+<p>plotPdf(mixture1Gmm);
+</pre><img vspace="5" hspace="5" src="http://newfolder.github.io/images/morton_blog_20130227_04.png" alt=""> <p>One of the available tweaks is that the covarianceStructure of all components is controled by a single parameter, &ldquo;covarianceStructure&#8217;. See the documentation prtRvMvn to know how this works. Let&rsquo;s see how changing the covarianceStructure of all of our components changes the appears of our density.</p><pre class="codeinput">mixture1GmmMod = mixture1Gmm;
+mixture1GmmMod.covarianceStructure = <span class="string">&lsquo;spherical&rsquo;</span>; <span class="comment">% Force independence with a shared variance.</span></p>
+
+<p>plotPdf(mixture1GmmMod);
+</pre><img vspace="5" hspace="5" src="http://newfolder.github.io/images/morton_blog_20130227_05.png" alt=""> <h2>Using prtRvGmm for classification<a name="10"></a></h2><p>Using prtRvGmm for classification is a little easier than prtRvMixture because we only need to specify the number of components. We don&rsquo;t have to built the array of components ourselves.</p><p>Let&rsquo;s redo the same problem as before.</p><pre class="codeinput">classifier = prtClassMap(<span class="string">&lsquo;rvs&rsquo;</span>,prtRvGmm(<span class="string">&lsquo;nComponents&rsquo;</span>,2));
+trainedClassifier = train(classifier,ds);
+plot(trainedClassifier);
+</pre><img vspace="5" hspace="5" src="http://newfolder.github.io/images/morton_blog_20130227_06.png" alt=""> <p>As you can see, things look nearly identical (as they should). Now, let&rsquo;s make use of a few of the extra tweak offered by prtRvGmm and see how they change our decision contours.</p><pre class="codeinput">classifier = prtClassMap(<span class="string">&lsquo;rvs&rsquo;</span>,prtRvGmm(<span class="string">&lsquo;nComponents&rsquo;</span>,2,<span class="string">&lsquo;covarianceStructure&rsquo;</span>,<span class="string">&lsquo;spherical&rsquo;</span>,<span class="string">&lsquo;covariancePool&rsquo;</span>,true));
+trainedClassifier = train(classifier,ds);
+plot(trainedClassifier);
+</pre><img vspace="5" hspace="5" src="http://newfolder.github.io/images/morton_blog_20130227_07.png" alt=""> <p>You can see that the decision contours are more regular now. This may help classificaiton performance in the precense of limited and/or high dimensional data.</p><h2>Conclusions<a name="13"></a></h2><p>We hope this post showed how you can use mixture models just like any other prtRv object when doing classificaiton using prtClassMap.</p><p>Chances are that you want to use prtRvGmm for your mixture modeling needs but you might be able to guess that prtRvMixture is much more general allowing you to make mixture models out of general prtRvs. However, at this time the only prtRv that is able to be used is prtRvMvn. We are interested in making more prtRvs compatible but we want to know what people want to use. Let us know if you need something specific.</p><p>In the next part of this series we will look at prtRvHmm and how it can be used for time-series classification.</p></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Feature Selection - prtFeatSelSfs]]></title>
+    <link href="http://newfolder.github.io/blog/2013/03/19/feature-selection/"/>
+    <updated>2013-03-19T21:58:00-04:00</updated>
+    <id>http://newfolder.github.io/blog/2013/03/19/feature-selection</id>
+    <content type="html"><![CDATA[<p>Today I&#8217;d like to take a look at using a particular approach to feature selection in the PRT, and how that can be used to perform dimension reduction.  The approach we&#8217;ll use is called &#8220;sequential forward search&#8221;, and is implemented in prtFeatSelSfs.</p>
+
+
+<!--/introduction-->
+
+
+<h2>Contents</h2>
+
+
+<div><ul><li><a href="#1">Some Data</a></li><li><a href="#3">Feature Selection</a></li><li><a href="#4">Defining &#8220;Informative&#8221;</a></li><li><a href="#7">Conclusions</a></li></ul></div>
+
+
+<h2>Some Data<a name="1"></a></h2>
+
+
+<p>The PRT comes with a utility function to generate data that has about 10 features, and for which only 5 of the features are actually informative. The function is prtDataGenFeatureSelection, I&#8217;ll let the help entry explain how it works:</p>
+
+
+<pre class="codeinput">help <span class="string">prtDataGenFeatureSelection</span>
+</pre>
+
+
+<pre class="codeoutput"> prtDataGenFeatureSelection   Generates some unimodal example data for the prt.
+   DataSet = prtDataGenFeatureSelection
+   The data is distributed:
+        H0: N([0 0 0 0 0 0 0 0 0 0],eye(10))
+        H1: N([0 2 0 1 0 2 0 1 0 2],eye(10))
+ 
+  Syntax: [X, Y] = prtDataGenFeatureSelection(N)
+ 
+  Inputs: 
+        N ~ number of samples per class (200)
+ 
+  Outputs:
+    X - 2Nx2 Unimodal data
+    Y - 2Nx1 Class labels
+ 
+  Example:
+    DataSet = prtDataGenFeatureSelection;
+    explore(DataSet)
+ 
+  Other m-files required: none
+  Subfunctions: none
+  MAT-files required: none
+ 
+  See also: prtDataGenUnimodal
+
+</pre>
+
+
+<p>As you can see from the help, only dimensions 2, 4, 6, 8, and 10 are actually informative in this data set.  And we can use feature selection to help us pick out what features are actually useful.</p>
+
+
+<h2>Feature Selection<a name="3"></a></h2>
+
+
+<p>Feature selection objects are prefaced in the prt with prtFeatSel*, and they act just like any other prtAction objects.  During training a feature selection action will typically perform some iterative search over the feature space, and determine which features are most informative.  At run-time, the same object will return a prtDataSet containing onlt the features the algorithm considered &#8220;informative&#8221;.</p>
+
+
+<p>For example:</p>
+
+
+<pre class="codeinput">ds = prtDataGenFeatureSelection;
+featSel = prtFeatSelSfs;
+featSel = featSel.train(ds);
+dsFeatSel = featSel.run(ds);
+
+plot(dsFeatSel);
+title(<span class="string">'Three Most Informative Features'</span>);
+</pre>
+
+
+<p><img vspace="5" hspace="5" src="http://newfolder.github.io/images/torrione_ExampleFeatureSelection_01.png" alt=""> <h2>Defining &ldquo;Informative&rdquo;<a name="4"></a></h2><p>How does the feature selection algorithm determine what features are informative?  For many (but not necessarily all) feature selection objects, the interesting field is &ldquo;evaluationMetric&rdquo;.</p><p>Let&rsquo;s take a look:</p><pre class="codeinput">featSel.evaluationMetric
+</pre><pre class="codeoutput">
+ans =</p>
+
+<pre><code>@(DS)prtEvalAuc(prtClassFld,DS)
+</code></pre>
+
+<p></pre><p>Obviously, evaluationMetric is a function handle &ndash; in particular it represents a call to a prtEval<em> method.  prtEval</em> methods typically take 2 or 3 input arguments &ndash; a classifier to train and run, a data set to train and run on, and (optionally) a number of folds (or fold specification) to use for cross-validation.</p><p>Feature selection objects iteratively search through the features available &ndash; in this case, all 10 of them, and apply the prtEval* method to the sub-sets of data formed by retaining a sub-set of the available features.  The exact order in which the features are retained and removed depends on the feature selection approach &ndash; in SFS, the algorithm first iteratively searches through the features &ndash; 1,2,3&hellip;,10.  Then it remembers which single feature provided the best performance &ndash; say it was feature 2.  Next, the SFS algorithm iteratively searches through all 9 combinations of other features with feature 2:    { {1,2},{3,2},{4,2},&hellip;,{10,2}} And remembers which of <b>those</b> performed best.  This process is iterated, and features continually added to the set being evaluated until nFeatures are selected.</p><p>The resulting performance is then stored in &ldquo;performance&rdquo;, and the features selected are stored in &ldquo;selectedFeatures&rdquo;.  Let&rsquo;s force the SFS approach to look for 10 features (so it will eventually select all of them).</p><pre class="codeinput">ds = prtDataGenFeatureSelection;
+featSel = prtFeatSelSfs;
+featSel.nFeatures = ds.nFeatures;
+featSel.evaluationMetric = @(DS)prtEvalAuc(prtClassFld,DS,3);
+featSel = featSel.train(ds);</p>
+
+<p>h = plot(1:ds.nFeatures,featSel.performance);
+set(h,<span class="string">&lsquo;linewidth&rsquo;</span>,3);
+set(gca,<span class="string">&lsquo;xtick&rsquo;</span>,1:ds.nFeatures);
+set(gca,<span class="string">&lsquo;xticklabel&rsquo;</span>,featSel.selectedFeatures);
+xlabel(<span class="string">&lsquo;Features Selected&rsquo;</span>);
+title(<span class="string">&lsquo;AUC vs. Features Selected&rsquo;</span>);
+</pre><img vspace="5" hspace="5" src="http://newfolder.github.io/images/torrione_ExampleFeatureSelection_02.png" alt=""> <p>The features that get selected tend to favor features 2,6, and 10, then features 4 and 8, which makes sense as these are the 3 most informative followed by the two moderately-informative features!</p><h2>Conclusions<a name="7"></a></h2><p>There are a number of prtFeatSel<em> actions available, but not as many as we&rsquo;d like.  We&rsquo;re constantly on the look-out for new ones, and we&rsquo;d like to one day include &ldquo;K-forward, L-Backward&rdquo; searches, but just haven&rsquo;t had the time recently.</p><p>Also, this example only used prtEvalAuc as the performance metric, but there are a number of prtEval</em> functions you can use, or, of course &ndash; feel free to write your own!</p><p>Take a look at prtEvalAuc to see how they work and how to create your own!</p><p>Enjoy!</p></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Max-Pooling Feature Representations in MSRCORID]]></title>
+    <link href="http://newfolder.github.io/blog/2013/03/10/max-pooling/"/>
+    <updated>2013-03-10T18:13:00-04:00</updated>
+    <id>http://newfolder.github.io/blog/2013/03/10/max-pooling</id>
+    <content type="html"><![CDATA[<p>A few weeks ago we took a look at a paper by Coates and Ng that dealt with learning feature representations for image processing and classification.  (See: <a href="http://newfolder.github.io/blog/2013/02/27/learning-feature-representations/">this</a>). Today I want to take a second look at that paper, and especially what they mean by max-pooling over regions of the image.</p>
+
+
+<!--/introduction-->
+
+
+
+
+<h2>Contents</h2>
+
+
+<div><ul><li><a href="#1">The MSRCORID Database</a></li><li><a href="#2">Max-Pooling</a></li><li><a href="#5">Multiple Classes</a></li><li><a href="#7">Conclusions</a></li><li><a href="#8">Bibliography</a></li></ul></div>
+
+
+<h2>The MSRCORID Database<a name="1"></a></h2>
+
+
+<p>If you have already read through <a href="http://newfolder.github.io/blog/2013/02/27/learning-feature-representations/">our previous post</a>, you know how to get the Microsoft Research Cambridge Object Recognition Image Database (MSRCORID), which is really a fantastic resource for image processing and classification.</p>
+
+
+<p>Once you&#8217;ve downloaded, we can run the following code which was for the most-prt ripped right out of the previous blog post:</p>
+
+
+<pre class="codeinput">ds = prtDataGenMsrcorid;
+
+patchSize = [8 8];
+col = [];
+<span class="keyword">for</span> imgInd = 1:ds.nObservations;
+    img = ds.X{imgInd};
+    img = rgb2gray(img);
+    img = imresize(img,.5);
+    col = cat(1,col,im2col(img,patchSize,<span class="string">'distinct'</span>)');
+<span class="keyword">end</span>
+dsCol = prtDataSetClass(double(col));
+
+preProc = prtPreProcZeroMeanRows + prtPreProcStdNormalizeRows(<span class="string">'varianceOffset'</span>,10) + prtPreProcZca;
+preProc = preProc.train(dsCol);
+dsNorm = preProc.run(dsCol);
+
+skm = prtClusterSphericalKmeans(<span class="string">'nClusters'</span>,50);
+skm = skm.train(dsNorm);
+</pre>
+
+
+<h2>Max-Pooling<a name="2"></a></h2>
+
+
+<p>Last time, we used a simple bag-of-words model to do classification based on the feature vectors in each image.  That&#8217;s definitely an interesting way to proceed, but most image-processing techniques make use of something called &#8220;max-pooling&#8221; to aggregate feature vectors over small regions of an image.</p>
+
+
+<p>The process can be accomplished in MATLAB using blockproc.m, which is in the Image-processing toolbox.  (If you don&#8217;t have image processing, it&#8217;s not too hard to write a replacement for blockproc.)</p>
+
+
+<p>The goal of max-pooling is to aggregate feature vectors over local regions of an image.  For example, we can take the MAX of the cluster memberships over each 8x8 region in an image using something like:</p>
+
+
+<p>featsBp = blockproc(feats,[8 8],@(x)max(max(x.data,[],1),[],2));</p>
+
+
+<p>Where we&#8217;ve assumed that feats is size nx x ny x nFeats.</p>
+
+
+<p>Max pooling is nice because it reduces the dependency of the feature vectors on their exact placement in an image (each element of each 8x8 block gets treated about the same), and it also maintains a lot of the information that was in each of the feature vectors, especially when the feature vectors are expected to be sparse (e.g., have a lot of zeros; see http//www.ece.duke.edu/~lcarin/Bo12.3.2010.ppt).</p>
+
+
+<p>There&#8217;s a lot more to max-pooling than we have time to get into here, for example, you can max-pool, and then re-cluster, and then re-max-pool! This is actually a super clever technique to reduce the amount of spatial variation in your image, and also capture information about the relative placements of various objects.</p>
+
+
+<pre class="codeinput">featVec = nan(ds.nObservations,skm.nClusters*20);
+clusters = skm.run(dsNorm);
+
+<span class="keyword">for</span> imgInd = 1:ds.nObservations;
+    img = ds.X{imgInd};
+    img = rgb2gray(img);
+    imgSize = size(img);
+
+    <span class="comment">% Extract the sub-patches</span>
+    col = im2col(img,patchSize,<span class="string">'distinct'</span>);
+    col = double(col);
+    dsCol = prtDataSetClass(col');
+    dsCol = run(preProc,dsCol);
+    dsFeat = skm.run(dsCol);
+    dsFeat.X = max(dsFeat.X,.05);
+
+    <span class="comment">% Max Pool!</span>
+    <span class="comment">%   Feats will be size 30 x 40 x nClusters</span>
+    <span class="comment">%   featsBp will be size [4 x 5] x nClusters (because of the way</span>
+    <span class="comment">%   blockproc handles edsges)</span>
+    feats = reshape(dsFeat.X,imgSize(1)/8,imgSize(2)/8,[]);
+    featsBp = blockproc(feats,[8 8],@(x)max(max(x.data,[],1),[],2));
+
+    <span class="comment">% We'll cheat a little here, and use the whole max-pooled feature set</span>
+    <span class="comment">% as our feature vector.  Instead, we might want to re-cluster, and</span>
+    <span class="comment">% re-max-pool, and repeat this process a few times.  For now, we'll</span>
+    <span class="comment">% keep it simple:</span>
+    featVec(imgInd,:) = featsBp(:);
+<span class="keyword">end</span>
+</pre>
+
+
+<p>Now that we&#8217;ve max-pooled, we can use our extracted features for classification - we&#8217;ll use a simple PLSDA + MAP classifier and decision algorithm here:</p>
+
+
+<pre class="codeinput">dsFeat = prtDataSetClass(featVec,ds.targets);
+dsFeat.classNames = ds.classNames;
+
+yOut = kfolds(prtClassPlsda + prtDecisionMap,dsFeat,3);
+
+close <span class="string">all</span>;
+prtScoreConfusionMatrix(yOut)
+</pre>
+
+
+<p><img vspace="5" hspace="5" src="http://newfolder.github.io/images/torrione_ExampleCoatesNg_Kmeans_Mscorid_2_01.png" alt=""> <p>Almost 99% correct!  We&rsquo;ve improved performance over our previous work with bag-of-words models, and an SVM, by just (1) max-pooling, and (2) replacing the SVM with a PLSDA classifier.</p><h2>Multiple Classes<a name="5"></a></h2><p>Until now we&rsquo;ve focused on just two classes in MSRCORID.  But there are a lot of types of objects in the MSRCORID database.  In the following, we just repeat a bunch of the code from above, and run it on a data set containing images of benches, buildings, cars, chimneys, clouds and doors:</p><pre class="codeinput">ds = prtDataGenMsrcorid({<span class="string">&lsquo;benches_and_chairs&rsquo;</span>,<span class="string">&lsquo;buildings&rsquo;</span>,<span class="string">&lsquo;cars\front view&rsquo;</span>,<span class="string">&lsquo;cars\rear view&rsquo;</span>,<span class="string">&lsquo;cars\side view&rsquo;</span>,<span class="string">&lsquo;chimneys&rsquo;</span>,<span class="string">&lsquo;clouds&rsquo;</span>,<span class="string">&lsquo;doors&rsquo;</span>});</p>
+
+<p>patchSize = [8 8];
+col = [];
+<span class="keyword">for</span> imgInd = 1:ds.nObservations;</p>
+
+<pre><code>img = ds.X{imgInd};
+img = rgb2gray(img);
+img = imresize(img,.5);
+col = cat(1,col,im2col(img,patchSize,&lt;span class="string"&gt;'distinct'&lt;/span&gt;)');
+</code></pre>
+
+<p><span class="keyword">end</span>
+dsCol = prtDataSetClass(double(col));</p>
+
+<p>preProc = prtPreProcZeroMeanRows + prtPreProcStdNormalizeRows(<span class="string">&lsquo;varianceOffset&rsquo;</span>,10) + prtPreProcZca;
+preProc = preProc.train(dsCol);
+dsNorm = preProc.run(dsCol);</p>
+
+<p>skm = prtClusterSphericalKmeans(<span class="string">&lsquo;nClusters&rsquo;</span>,50);
+skm = skm.train(dsNorm);</p>
+
+<p>featVec = nan(ds.nObservations,skm.nClusters*20);
+clusters = skm.run(dsNorm);</p>
+
+<p><span class="keyword">for</span> imgInd = 1:ds.nObservations;</p>
+
+<pre><code>img = ds.X{imgInd};
+img = rgb2gray(img);
+imgSize = size(img);
+
+&lt;span class="comment"&gt;% Extract the sub-patches&lt;/span&gt;
+col = im2col(img,patchSize,&lt;span class="string"&gt;'distinct'&lt;/span&gt;);
+col = double(col);
+dsCol = prtDataSetClass(col');
+dsCol = run(preProc,dsCol);
+dsFeat = skm.run(dsCol);
+dsFeat.X = max(dsFeat.X,.05);
+
+&lt;span class="comment"&gt;% Max Pool!&lt;/span&gt;
+&lt;span class="comment"&gt;%   Feats will be size 30 x 40 x nClusters&lt;/span&gt;
+&lt;span class="comment"&gt;%   featsBp will be size [4 x 5] x nClusters (because of the way&lt;/span&gt;
+&lt;span class="comment"&gt;%   blockproc handles edsges)&lt;/span&gt;
+feats = reshape(dsFeat.X,imgSize(1)/8,imgSize(2)/8,[]);
+featsBp = blockproc(feats,[8 8],@(x)max(max(x.data,[],1),[],2));
+
+&lt;span class="comment"&gt;% We'll cheat a little here, and use the whole max-pooled feature set&lt;/span&gt;
+&lt;span class="comment"&gt;% as our feature vector.  Instead, we might want to re-cluster, and&lt;/span&gt;
+&lt;span class="comment"&gt;% re-max-pool, and repeat this process a few times.  For now, we'll&lt;/span&gt;
+&lt;span class="comment"&gt;% keep it simple:&lt;/span&gt;
+featVec(imgInd,:) = featsBp(:);
+</code></pre>
+
+<p><span class="keyword">end</span></p>
+
+<p>dsFeat = prtDataSetClass(featVec,ds.targets);
+dsFeat.classNames = ds.classNames;</p>
+
+<p>yOut = kfolds(prtClassPlsda(<span class="string">&lsquo;nComponents&rsquo;</span>,10) + prtDecisionMap,dsFeat,3);
+yOut.classNames = cellfun(@(s)s(1:min([length(s),10])),yOut.classNames,<span class="string">&lsquo;uniformoutput&rsquo;</span>,false);
+close <span class="string">all</span>;
+prtScoreConfusionMatrix(yOut);
+set(gcf,<span class="string">&lsquo;position&rsquo;</span>,[426   125   777   558]);
+</pre><img vspace="5" hspace="5" src="http://newfolder.github.io/images/torrione_ExampleCoatesNg_Kmeans_Mscorid_2_02.png" alt=""> <p>Now we&rsquo;re doing some image processing!  Overall we got about 90% correct, and that includes a lot of confusions between cars\front and cars\rear. That makes sense since the front and backs of cars look pretty similar, and there are only 23 car front examples in the whole data set.</p><h2>Conclusions<a name="7"></a></h2><p>The code in a lot of this blog entry is pretty gross &ndash; for example we have to constantly be taking data out of, and putting it back into the appropriate image sizes.</p><p>At some point in the future, we&rsquo;d like to introduce a good prtDataSet that will handle cell-arrays containing images properly.  We&rsquo;re not there yet, but when we are, we&rsquo;ll let you know on this blog!</p><p>Happy coding!</p><h2>Bibliography<a name="8"></a></h2><p>Adam Coates and Andrew Y. Ng, Learning Feature Representations with K-means, G. Montavon, G. B. Orr, K.-R. Muller (Eds.), Neural Networks: Tricks of the Trade, 2nd edn, Springer LNCS 7700, 2012</p></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Using prtPath]]></title>
+    <link href="http://newfolder.github.io/blog/2013/03/06/using-prtpath/"/>
+    <updated>2013-03-06T13:24:00-05:00</updated>
+    <id>http://newfolder.github.io/blog/2013/03/06/using-prtpath</id>
+    <content type="html"><![CDATA[<p>We recommend as part of installation that you edit (or create) your startup.m file to include a call to prtPath. This is adds the PRT to your MATLAB search path automatically each time you start MATLAB. There are alternatives to path management (such as the pathtool() or addpath() and savepath()) but we recommend using a startup.m file. Hopefully this post will explain one reason we recommend that.</p>
+
+
+
+
+<p>One of the reasons that we like to use prtPath in a startup file is that prtPath does more than just add the PRT and all of it&#8217;s subfolders to your path.</p>
+
+
+<!--/introduction-->
+
+
+<h2>Contents</h2>
+
+
+<div><ul><li><a href="#1">prtPath and ] directories</a></li><li><a href="#3">Why &#8220;]&#8221;?</a></li><li><a href="#4">Conclusions</a></li></ul></div>
+
+
+<h2>prtPath and ] directories<a name="1"></a></h2>
+
+
+<p>prtPath is actually very basic. It calls the function prtRoot and uses the MATLAB function genpath() to get a list of all of the subdirectories in the prtFolder. It then eventually calls addpath() to add that list of directories to the MATLAB path (it does not save the path for future sessions of MATLAB).</p>
+
+
+<p>Before prtPath() calls addpath() though, it selectively removes some directories from the subdirectory list.</p>
+
+
+<p>First it removes any directory that starts with a &#8220;.&#8221;. This was added to prevent any hidden folders (like those from source control systems) from showing up in the MATLAB path.</p>
+
+
+<p>More importantly though, it removes any folders from the list that start with a &#8220;]&#8221;. This is something special that we put in to add some extra functionality to the PRT.</p>
+
+
+<p>Most of our users want to stick to code that is well tested and is known to behave nicely. But as we go about our jobs and use the PRT we need to add some new functionality. We typically add things like: new classifiers, new datatypes or new pre processing techniques.</p>
+
+
+<p>Some of our users want access to this newest code so it gets added to the PRT in the &#8220;]alpha&#8221; and eventually the &#8220;]beta&#8221; folder. By default prtPath will not include these folders in the path. Instead you have to tell prtPath that you are willing to accept the responsibilities of the bleeding edge. You do this by giving prtPath a list of &#8220;]&#8221; folders that you want to include. (Or rather not exclude).</p>
+
+
+<p>For example:</p>
+
+
+<pre class="codeinput">prtPath(<span class="string">'alpha'</span>, <span class="string">'beta'</span>);
+</pre>
+
+
+<p>will add both the &#8220;]alpha&#8221; and &#8220;]beta&#8221; folders (and their subfolders) to the path.</p>
+
+
+<p>Currently in the PRT we have one other &#8220;]&#8221; folder, &#8220;]internal&#8221;. In the internal folder you will find some code on unit testing and documentation building. You probably wont be interested in much that&#8217;s in there so I probably wouldn&#8217;t clutter my path with it.</p>
+
+
+<h2>Why &#8220;]&#8221;?<a name="3"></a></h2>
+
+
+<p>We were searching for a character that is a valid path (folder) name character on all major operating systems and is at the same time a character that most people wouldn&#8217;t start a directory name with. MATLAB already uses &#8220;@&#8221; for (old style) class definitions and &#8220;+&#8221; for packages. We thought &#8220;]&#8221; fit all of these criteria.</p>
+
+
+<h2>Conclusions<a name="4"></a></h2>
+
+
+<p>We hope that cleared up a little of why we recommend prtPath over pathtool(), at least for the PRT. In general just call prtPath() by itself but if you want to see what might lie ahead for the PRT checkout the ]alpha and ]beta folders. In some future posts we will talk about some things in these folders that might be of interest to you. Maybe that will entice you to explore the ].</p>
+
+]]></content>
+  </entry>
+  
+</feed>

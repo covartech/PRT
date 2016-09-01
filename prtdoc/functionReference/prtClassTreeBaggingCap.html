@@ -1,0 +1,267 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../helpwin.css">
+      <title>MATLAB File Help: prtClassTreeBaggingCap</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtClassTreeBaggingCap</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtClassTreeBaggingCap</div>
+      <div class="helptext"><pre><!--helptext -->  <span class="helptopic">prtClassTreeBaggingCap</span>  Tree bagging central axis projection classifier
+ 
+     CLASSIFIER = <span class="helptopic">prtClassTreeBaggingCap</span> Tree bagging central axis
+     projection classifier.  This classifier is based on the "Random
+     Forest" classifier described in 
+ 
+     Breiman, Leo (2001). "Random Forests". Machine Learning 45
+ 
+     CLASSIFIER = <span class="helptopic">prtClassTreeBaggingCap</span>(PROPERTY1, VALUE1, ...) constructs a
+     <span class="helptopic">prtClassTreeBaggingCap</span> object CLASSIFIER with properties as specified by
+     PROPERTY/VALUE pairs.
+ 
+     A <span class="helptopic">prtClassTreeBaggingCap</span> object inherits all properties from the abstract class
+     prtClass. In addition is has the following properties:
+ 
+     nTrees                       - The number of trees
+     nFeatures                    - The number of features
+ 
+     featureSelectWithReplacement - Flag indicating whether or not to
+                                    do feature selection with 
+                                    replacement
+ 
+     bootStrapDataAtRoots         - Flag indicating whether or not
+                                    to bootstrap at roots
+ 
+     useMex                       - Flag indicating wheter or not to
+                                    use the Mex file for speedup.
+ 
+     fastTraining                 - Flag indicating whether to use
+                                    "fast" training.  Fast training
+                                    does not necessarily choose the
+                                    optimal operating point at each
+                                    node, but is much faster, and often
+                                    has competetive (or even superior)
+                                    cross-validation performance, at
+                                    the expense of increased
+                                    tree-length.
+ 
+     computePercIncrMisclassRate  - Flag indicating whether or not to
+                                    compute percent increase in
+                                    misclassification rate
+     
+ 
+   For more information on random tree classifiers, see:
+    <a href="http://en.wikipedia.org/wiki/Random_forest">http://en.wikipedia.org/wiki/Random_forest</a>
+    <a href="http://www.stat.berkeley.edu/~breiman/RandomForests/cc_home.htm">http://www.stat.berkeley.edu/~breiman/RandomForests/cc_home.htm</a>
+ 
+     A <span class="helptopic">prtClassTreeBaggingCap</span>  object inherits the TRAIN, RUN, 
+     CROSSVALIDATE and KFOLDS methods from prtAction. It also inherits 
+     the PLOT method from prtClass.
+ 
+     Example:
+ 
+      TestDataSet = prtDataGenUniModal;      % Create some test and
+      TrainingDataSet = prtDataGenUniModal;  % training data
+      classifier = classifier.train(TrainingDataSet);    % Train
+      classified = run(classifier, TestDataSet);         % Test
+      classifier.plot;</pre></div><!--after help --><!--seeAlso--><div class="footerlinktitle">See also</div><div class="footerlink"> <a href="./prtClass.html">prtClass</a>, <a href="./prtClassLogisticDiscriminant.html">prtClassLogisticDiscriminant</a>, <a href="./prtClassBagging.html">prtClassBagging</a>,
+     <a href="./prtClassMap.html">prtClassMap</a>, <a href="./prtClassCap.html">prtClassCap</a>, <a href="./prtClassBinaryToMaryOneVsAll.html">prtClassBinaryToMaryOneVsAll</a>, <a href="./prtClassDlrt.html">prtClassDlrt</a>,
+     <a href="./prtClassPlsda.html">prtClassPlsda</a>, <a href="./prtClassFld.html">prtClassFld</a>, <a href="./prtClassRvm.html">prtClassRvm</a>, <a href="./prtClassGlrt.html">prtClassGlrt</a>,  <a href="./prtClass.html">prtClass</a>
+</div>
+      <!--Class-->
+      <div class="sectiontitle">Class Details</div>
+      <table class="class-details">
+         <tr>
+            <td class="class-detail-label">Superclasses</td>
+            <td><a href="./prtClass.html">prtClass</a></td>
+         </tr>
+         <tr>
+            <td class="class-detail-label">Sealed</td>
+            <td>false</td>
+         </tr>
+         <tr>
+            <td class="class-detail-label">Construct on load</td>
+            <td>false</td>
+         </tr>
+      </table>
+      <!--Constructors-->
+      <div class="sectiontitle"><a name="constructors"></a>Constructor Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassTreeBaggingCap/prtClassTreeBaggingCap.html">prtClassTreeBaggingCap</a></td>
+            <td class="m-help">Tree bagging central axis projection classifier&nbsp;</td>
+         </tr>
+      </table>
+      <!--Properties-->
+      <div class="sectiontitle"><a name="properties"></a>Property Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassTreeBaggingCap/bootStrapDataAtRoots.html">bootStrapDataAtRoots</a></td>
+            <td class="m-help">Flag indicating whether or not to boostrap at roots&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassTreeBaggingCap/computePercIncrMisclassRate.html">computePercIncrMisclassRate</a></td>
+            <td class="m-help">Flag indicating whether or not to compute percent increase in misclassification rate&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassTreeBaggingCap/dataSet.html">dataSet</a></td>
+            <td class="m-help">The training prtDataSet, only stored if verboseStorage is true. &nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassTreeBaggingCap/dataSetSummary.html">dataSetSummary</a></td>
+            <td class="m-help">Structure that summarizes prtDataSet.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassTreeBaggingCap/fastTraining.html">fastTraining</a></td>
+            <td class="m-help">Whether to truly optimize operating points at each branch (false), or take a rough guess (true)&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassTreeBaggingCap/featureSelectWithReplacement.html">featureSelectWithReplacement</a></td>
+            <td class="m-help">Flag indicating whether or not to do feature selection with replacement&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassTreeBaggingCap/internalDecider.html">internalDecider</a></td>
+            <td class="m-help">Optional prtDecider object for making decisions&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassTreeBaggingCap/isCrossValidateValid.html">isCrossValidateValid</a></td>
+            <td class="m-help">True&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassTreeBaggingCap/isNativeMary.html">isNativeMary</a></td>
+            <td class="m-help">False&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassTreeBaggingCap/isSupervised.html">isSupervised</a></td>
+            <td class="m-help">True&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassTreeBaggingCap/isTrained.html">isTrained</a></td>
+            <td class="m-help">Indicates if prtAction object has been trained.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassTreeBaggingCap/nFeatures.html">nFeatures</a></td>
+            <td class="m-help">The number of features at each node&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassTreeBaggingCap/nTrees.html">nTrees</a></td>
+            <td class="m-help">The number of trees&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassTreeBaggingCap/name.html">name</a></td>
+            <td class="m-help">Tree Bagging Central Axis Projection&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassTreeBaggingCap/nameAbbreviation.html">nameAbbreviation</a></td>
+            <td class="m-help">TBCAP&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassTreeBaggingCap/percIncrMisclassRate.html">percIncrMisclassRate</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassTreeBaggingCap/root.html">root</a></td>
+            <td class="m-help">Array of Central Axis Projection Trees&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassTreeBaggingCap/showProgressBar.html">showProgressBar</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassTreeBaggingCap/twoClassParadigm.html">twoClassParadigm</a></td>
+            <td class="m-help">Whether the classifier retures one output (binary) or two outputs (m-ary) when there are only two unique class labels&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassTreeBaggingCap/useMex.html">useMex</a></td>
+            <td class="m-help">Flag indicating whether or not to use the Mex file&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassTreeBaggingCap/userData.html">userData</a></td>
+            <td class="m-help">User specified data&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassTreeBaggingCap/verboseStorage.html">verboseStorage</a></td>
+            <td class="m-help">Specifies whether or not to store the training prtDataset.&nbsp;</td>
+         </tr>
+      </table>
+      <!--Methods-->
+      <div class="sectiontitle"><a name="methods"></a>Method Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClassTreeBaggingCap/crossValidate.html">crossValidate</a></td>
+            <td class="m-help">Cross validate prtAction using prtDataSet and cross validation keys.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClassTreeBaggingCap/get.html">get</a></td>
+            <td class="m-help">get the object properties&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClassTreeBaggingCap/kfolds.html">kfolds</a></td>
+            <td class="m-help">Perform K-folds cross-validation of prtAction&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClassTreeBaggingCap/optimize.html">optimize</a></td>
+            <td class="m-help">Optimize action parameter by exhaustive function maximization.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClassTreeBaggingCap/plot.html">plot</a></td>
+            <td class="m-help">Plot the output confidence of a prtClass object&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClassTreeBaggingCap/run.html">run</a></td>
+            <td class="m-help">Run a prtAction object on a prtDataSet object.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClassTreeBaggingCap/set.html">set</a></td>
+            <td class="m-help">set the object properties&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClassTreeBaggingCap/train.html">train</a></td>
+            <td class="m-help">Train a prtAction object using training a prtDataSet object.&nbsp;</td>
+         </tr>
+      </table>
+   </body>
+</html>

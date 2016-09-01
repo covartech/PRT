@@ -1,0 +1,55 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../../helpwin.css">
+      <title>MATLAB File Help: prtRegressGp/prtRegressGp</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtRegressGp/prtRegressGp</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtRegressGp/prtRegressGp</div>
+      <div class="helptext"><pre><!--helptext -->  prtRegresGP  Gaussian Process regression object
+ 
+    REGRESS = prtRegressGP returns a prtRegressGP object
+ 
+     REGRESS = prtRegressGP(PROPERTY1, VALUE1, ...) constructs a
+     prtRegressGP object REGRESS with properties as specified by
+     PROPERTY/VALUE pairs.
+  
+     A prtRegressGP object inherits all properties from the prtRegress
+     class. In addition, it has the following properties:
+ 
+    covarianceFunction = @(x1,x2)prtUtillQuadExpCovariance(x1,x2, 1, 4, 0, 0);
+    noiseVariance = 0.01;
+    CN ?
+    weights?
+ 
+    Need reference 
+  
+    A prtRegressionGP object inherits the PLOT method from the
+    prtRegress object, and the TRAIN, RUN, CROSSVALIDATE and KFOLDS
+    methods from the prtAction object.
+ 
+    Example:
+    
+    dataSet = prtDataGenNoisySinc;           % Load a prtDataRegress
+    dataSet.plot;                    % Display data
+    reg = prtRegressGP;             % Create a prtRegressRvm object
+    reg = reg.train(dataSet);        % Train the prtRegressRvm object
+    reg.plot();                      % Plot the resulting curve
+    dataSetOut = reg.run(dataSet);   % Run the regressor on the data
+    hold on;
+    plot(dataSet.getX,dataSetOut.getX,'c.') % Plot, overlaying the
+                                            % fitted points with the 
+                                            % curve and original data
+  legend('Regression curve','Original Points','Fitted points',0)</pre></div><!--after help --><!--seeAlso--><div class="footerlinktitle">See also</div><div class="footerlink"> <a href="./../prtRegress.html">prtRegress</a>, <a href="./../prtRegressRvm.html">prtRegressRvm</a>, <a href="./../prtRegressLslr.html">prtRegressLslr</a>
+</div>
+   </body>
+</html>

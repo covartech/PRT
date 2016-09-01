@@ -1,0 +1,105 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../../helpwin.css">
+      <title>MATLAB File Help: prtClassRvm/prtClassRvm</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtClassRvm/prtClassRvm</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtClassRvm/prtClassRvm</div>
+      <div class="helptext"><pre><!--helptext -->  <span class="helptopic">prtClassRvm</span>  Relevance vector machine classifier
+ 
+    CLASSIFIER = <span class="helptopic">prtClassRvm</span> returns a relevance vector machine classifier
+ 
+    CLASSIFIER = <span class="helptopic">prtClassRvm</span>(PROPERTY1, VALUE1, ...) constructs a
+    <span class="helptopic">prtClassRvm</span> object CLASSIFIER with properties as specified by
+    PROPERTY/VALUE pairs.
+ 
+    A <span class="helptopic">prtClassRvm</span> object inherits all properties from the abstract class
+    prtClass. In addition is has the following properties:
+ 
+    kernels                - A cell array of prtKernel objects specifying
+                             the kernels to use
+    verbosePlot            - Flag indicating whether or not to plot during
+                             training
+    verboseText            - Flag indicating whether or not to output
+                             verbose updates during training
+    learningMaxIterations  - The maximum number of iterations
+ 
+    A <span class="helptopic">prtClassRvm</span> also has the following read-only properties:
+ 
+    learningConverged  - Flag indicating if the training converged
+    beta               - The regression weights, estimated during training
+    sparseBeta         - The sparse regression weights, estimated during
+                         training
+    sparseKernels      - The sparse regression kernels, estimated during
+                         training
+ 
+    For information on relevance vector machines, please
+    refer to the following URL:
+ 
+    <a href="http://en.wikipedia.org/wiki/Relevance_vector_machine">http://en.wikipedia.org/wiki/Relevance_vector_machine</a>
+ 
+    By default, <span class="helptopic">prtClassRvm</span> uses the Laplacian approximation as found
+    in the paper:
+ 
+    Michael E. Tipping. 2001. Sparse bayesian learning and the
+    relevance vector machine. J. Mach. Learn. Res. 1 (September 2001),
+ 
+    The code is based on the algorithm in: 
+ 
+    Herbrich, Learning Kernel Classifiers, The MIT Press, 2002
+    <a href="http://www.learning-kernel-classifiers.org/">http://www.learning-kernel-classifiers.org/</a>
+ 
+    A <span class="helptopic">prtClassRvm</span> object inherits the TRAIN, RUN, CROSSVALIDATE and
+    KFOLDS methods from prtAction. It also inherits the PLOT method
+    from prtClass.
+ 
+    Example:
+ 
+    TestDataSet = prtDataGenUnimodal;      % Create some test and
+    TrainingDataSet = prtDataGenUnimodal;  % training data
+    classifier = <span class="helptopic">prtClassRvm</span>;              % Create a classifier
+    classifier = classifier.train(TrainingDataSet);    % Train
+    classified = run(classifier, TestDataSet);         % Test
+    % Plot the results
+    subplot(2,1,1);
+    classifier.plot;
+    subplot(2,1,2);
+    [pf,pd] = prtScoreRoc(classified,TestDataSet);
+    h = plot(pf,pd,'linewidth',3);
+    title('ROC'); xlabel('Pf'); ylabel('Pd');
+ 
+    % Example 2, using a different kernel 
+ 
+    TestDataSet = prtDataGenUnimodal;      % Create some test and
+    TrainingDataSet = prtDataGenUnimodal;  % training data
+    classifier = <span class="helptopic">prtClassRvm</span>;              % Create a classifier
+  
+    % Create a prtKernelSet object with a different pair of
+    % prtKernels and assign them to the classifier
+    kernSet = prtKernelDirect &amp; prtKernelRbf;
+    classifier.kernels = kernSet;
+ 
+    classifier = classifier.train(TrainingDataSet);    % Train
+    classified = run(classifier, TestDataSet);         % Test
+    % Plot
+    subplot(2,1,1);
+    classifier.plot;
+    subplot(2,1,2);
+    [pf,pd] = prtScoreRoc(classified,TestDataSet);
+    h = plot(pf,pd,'linewidth',3);
+    title('ROC'); xlabel('Pf'); ylabel('Pd');</pre></div><!--after help --><!--seeAlso--><div class="footerlinktitle">See also</div><div class="footerlink"> <a href="./../prtClass.html">prtClass</a>, <a href="./../prtClassLogisticDiscriminant.html">prtClassLogisticDiscriminant</a>, <a href="./../prtClassBagging.html">prtClassBagging</a>,
+    <a href="./../prtClassMap.html">prtClassMap</a>, <a href="./../prtClassCap.html">prtClassCap</a>, <a href="./../prtClassBinaryToMaryOneVsAll.html">prtClassBinaryToMaryOneVsAll</a>, <a href="./../prtClassDlrt.html">prtClassDlrt</a>,
+    <a href="./../prtClassPlsda.html">prtClassPlsda</a>, <a href="./../prtClassFld.html">prtClassFld</a>, <a href="./../prtClassRvmFigueiredo.html">prtClassRvmFigueiredo</a>, <a href="./../prtClassRvmSequential.html">prtClassRvmSequential</a>, <a href="./../prtClassGlrt.html">prtClassGlrt</a>,  <a href="./../prtClass.html">prtClass</a>
+</div>
+   </body>
+</html>

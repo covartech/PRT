@@ -1,0 +1,55 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../../helpwin.css">
+      <title>MATLAB File Help: prtDataSetBase/select</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtDataSetBase/select</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtDataSetBase/select</div>
+      <div class="helptext"><pre><!--helptext -->  Select observations to retain by specifying a function
+    The specified function is evaluated on each obesrvation.
+ 
+  selectedDs = ds.select(selectFunction);
+ 
+  There are two ways to define selectionFunction
+    One input, One logical vector output
+        selectFunction recieves the input data set and must
+        output a nObservations by 1 logical vector.
+    One input, One logical scalar output
+        selectFunction recieves the ObservatioinInfo structure
+        of a single observation.
+ 
+  Examples:
+    ds = prtDataGenIris;
+    ds = ds.setObservationInfo(struct('asdf',num2cell(randn(ds.nObservations,1))));
+ 
+    dsSmallobservationInfoSelect = ds.select(@(ObsInfo)ObsInfo.asdf &gt; 0.5);
+ 
+    dsSmallObservationSelect = ds.select(@(inputDs)inputDs.getObservations(:,1)&gt;6);</pre></div><!--after help -->
+      <!--Method-->
+      <div class="sectiontitle">Method Details</div>
+      <table class="class-details">
+         <tr>
+            <td class="class-detail-label">Access</td>
+            <td>public</td>
+         </tr>
+         <tr>
+            <td class="class-detail-label">Sealed</td>
+            <td>false</td>
+         </tr>
+         <tr>
+            <td class="class-detail-label">Static</td>
+            <td>false</td>
+         </tr>
+      </table>
+   </body>
+</html>

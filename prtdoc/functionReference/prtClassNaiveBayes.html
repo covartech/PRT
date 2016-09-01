@@ -1,0 +1,218 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../helpwin.css">
+      <title>MATLAB File Help: prtClassNaiveBayes</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtClassNaiveBayes</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtClassNaiveBayes</div>
+      <div class="helptext"><pre><!--helptext --> <span class="helptopic">prtClassNaiveBayes</span> Naive Bayes Classifier
+  
+     CLASSIFIER = <span class="helptopic">prtClassNaiveBayes</span> returns a Naive Bayes Classifier.
+ 
+     CLASSIFIER = prtClassFld(PROPERTY1, VALUE1, ...) constructs a
+     <span class="helptopic">prtClassNaiveBayes</span> object CLASSIFIER with properties as specified by
+     PROPERTY/VALUE pairs.
+ 
+     A <span class="helptopic">prtClassNaiveBayes</span> object inherits all properties from the abstract class
+     prtClass. In addition is has the following properties:
+ 
+     baseRv             - The base type of random variable to be used in
+                          training the model; baseRv is of type prtRv.
+                          By default baseRv is a prtRvMvn.
+ 
+     A naive Bayes classification algorithm learns a distribution for the
+     data under each hypothesis and assumes independence between the data
+     features (columns) to simplify inference.  
+ 
+     A <span class="helptopic">prtClassNaiveBayes</span> object inherits the TRAIN, RUN, CROSSVALIDATE and
+     KFOLDS methods from prtAction. It also inherits the PLOT method from
+     prtClass.
+ 
+     Example:
+ 
+     TestDataSet = prtDataGenUniModal;       % Create some test and
+     TrainingDataSet = prtDataGenUniModal;   % training data
+     classifier = <span class="helptopic">prtClassNaiveBayes</span>;           % Create a classifier
+     classifier = classifier.train(TrainingDataSet);    % Train
+     classified = run(classifier, TestDataSet);         % Test
+     subplot(2,1,1);
+     classifier.plot;
+     subplot(2,1,2);
+     [pf,pd] = prtScoreRoc(classified,TestDataSet);
+     h = plot(pf,pd,'linewidth',3);
+     title('ROC'); xlabel('Pf'); ylabel('Pd');</pre></div><!--after help --><!--seeAlso--><div class="footerlinktitle">See also</div><div class="footerlink"> <a href="./prtClass.html">prtClass</a>, <a href="./prtClassLogisticDiscriminant.html">prtClassLogisticDiscriminant</a>, <a href="./prtClassBagging.html">prtClassBagging</a>,
+    <a href="./prtClassMap.html">prtClassMap</a>, <a href="./prtClassCap.html">prtClassCap</a>, <a href="./prtClassBinaryToMaryOneVsAll.html">prtClassBinaryToMaryOneVsAll</a>, <a href="./prtClassDlrt.html">prtClassDlrt</a>,
+    <a href="./prtClassPlsda.html">prtClassPlsda</a>, <a href="./prtClassKnn.html">prtClassKnn</a>, <a href="./prtClassRvm.html">prtClassRvm</a>, <a href="./prtClassGlrt.html">prtClassGlrt</a>,  <a href="./prtClassSvm.html">prtClassSvm</a>,
+    <a href="./prtClassTreeBaggingCap.html">prtClassTreeBaggingCap</a>, <a href="./prtClassKmsd.html">prtClassKmsd</a>, <a href="./prtClassKnn.html">prtClassKnn</a>
+</div>
+      <!--Class-->
+      <div class="sectiontitle">Class Details</div>
+      <table class="class-details">
+         <tr>
+            <td class="class-detail-label">Superclasses</td>
+            <td><a href="./prtClass.html">prtClass</a></td>
+         </tr>
+         <tr>
+            <td class="class-detail-label">Sealed</td>
+            <td>false</td>
+         </tr>
+         <tr>
+            <td class="class-detail-label">Construct on load</td>
+            <td>false</td>
+         </tr>
+      </table>
+      <!--Constructors-->
+      <div class="sectiontitle"><a name="constructors"></a>Constructor Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassNaiveBayes/prtClassNaiveBayes.html">prtClassNaiveBayes</a></td>
+            <td class="m-help">Naive Bayes Classifier&nbsp;</td>
+         </tr>
+      </table>
+      <!--Properties-->
+      <div class="sectiontitle"><a name="properties"></a>Property Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassNaiveBayes/baseRv.html">baseRv</a></td>
+            <td class="m-help">The base randon variable&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassNaiveBayes/dataSet.html">dataSet</a></td>
+            <td class="m-help">The training prtDataSet, only stored if verboseStorage is true. &nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassNaiveBayes/dataSetSummary.html">dataSetSummary</a></td>
+            <td class="m-help">Structure that summarizes prtDataSet.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassNaiveBayes/internalDecider.html">internalDecider</a></td>
+            <td class="m-help">Optional prtDecider object for making decisions&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassNaiveBayes/isCrossValidateValid.html">isCrossValidateValid</a></td>
+            <td class="m-help">True&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassNaiveBayes/isNativeMary.html">isNativeMary</a></td>
+            <td class="m-help">true&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassNaiveBayes/isSupervised.html">isSupervised</a></td>
+            <td class="m-help">True&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassNaiveBayes/isTrained.html">isTrained</a></td>
+            <td class="m-help">Indicates if prtAction object has been trained.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassNaiveBayes/naiveRv.html">naiveRv</a></td>
+            <td class="m-help">The naive random variable&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassNaiveBayes/name.html">name</a></td>
+            <td class="m-help">Naive Bayes Classifier&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassNaiveBayes/nameAbbreviation.html">nameAbbreviation</a></td>
+            <td class="m-help">NBC&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassNaiveBayes/showProgressBar.html">showProgressBar</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassNaiveBayes/twoClassParadigm.html">twoClassParadigm</a></td>
+            <td class="m-help">Whether the classifier retures one output (binary) or two outputs (m-ary) when there are only two unique class labels&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassNaiveBayes/userData.html">userData</a></td>
+            <td class="m-help">User specified data&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassNaiveBayes/verboseStorage.html">verboseStorage</a></td>
+            <td class="m-help">Specifies whether or not to store the training prtDataset.&nbsp;</td>
+         </tr>
+      </table>
+      <!--Methods-->
+      <div class="sectiontitle"><a name="methods"></a>Method Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClassNaiveBayes/crossValidate.html">crossValidate</a></td>
+            <td class="m-help">Cross validate prtAction using prtDataSet and cross validation keys.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClassNaiveBayes/get.html">get</a></td>
+            <td class="m-help">get the object properties&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClassNaiveBayes/kfolds.html">kfolds</a></td>
+            <td class="m-help">Perform K-folds cross-validation of prtAction&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClassNaiveBayes/optimize.html">optimize</a></td>
+            <td class="m-help">Optimize action parameter by exhaustive function maximization.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClassNaiveBayes/plot.html">plot</a></td>
+            <td class="m-help">Plot the output confidence of a prtClass object&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClassNaiveBayes/run.html">run</a></td>
+            <td class="m-help">Run a prtAction object on a prtDataSet object.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClassNaiveBayes/set.html">set</a></td>
+            <td class="m-help">set the object properties&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClassNaiveBayes/train.html">train</a></td>
+            <td class="m-help">Train a prtAction object using training a prtDataSet object.&nbsp;</td>
+         </tr>
+      </table>
+   </body>
+</html>

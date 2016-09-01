@@ -1,0 +1,61 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../../helpwin.css">
+      <title>MATLAB File Help: prtDataSetClass/plotFeatureDensity</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtDataSetClass/plotFeatureDensity</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtDataSetClass/plotFeatureDensity</div>
+      <div class="helptext"><pre><!--helptext -->  <span class="helptopic">plotFeatureDensity</span> - Plot the densities of a single feature
+  as a function of class. With one input the supplied dataset
+  must have only a single feature. Otherwise, the second input
+  specifies which feature to plot.
+ 
+  plotHandles = <span class="helptopic">plotFeatureDensity</span>(prtDataSetClassObj)
+  plotHandles = <span class="helptopic">plotFeatureDensity</span>(prtDataSetClassObj, featureInd)
+  [...] = <span class="helptopic">plotFeatureDensity</span>(prtDataSetClassObj, featureInd, 'PARMNAME', PARAMVALUE,...)
+ 
+    Additional parameters:
+        nDensitySamples        - Number of linearly spaced
+                                 samples used to construct the
+                                 density estimate. Default 500.
+        minimumKernelBandwidth - minimumBandwidth parameter of
+                                 prtRvKde that is used to
+                                 estimate each density. default
+                                 []. See prtRvKde.
+ 
+  Example:
+     ds = prtDataGenMary;
+     plotDensity(ds,2)
+ 
+     ds = prtDataGenIris;
+     <span class="helptopic">plotFeatureDensity</span>(ds,1,'minimumKernelBandwidth',5e-3);
+ 
+     <span class="helptopic">plotFeatureDensity</span>(ds.retainFeatures(2),'nDensitySamples',20);</pre></div><!--after help -->
+      <!--Method-->
+      <div class="sectiontitle">Method Details</div>
+      <table class="class-details">
+         <tr>
+            <td class="class-detail-label">Access</td>
+            <td>public</td>
+         </tr>
+         <tr>
+            <td class="class-detail-label">Sealed</td>
+            <td>false</td>
+         </tr>
+         <tr>
+            <td class="class-detail-label">Static</td>
+            <td>false</td>
+         </tr>
+      </table>
+   </body>
+</html>

@@ -1,0 +1,80 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../../helpwin.css">
+      <title>MATLAB File Help: prtClassTreeBaggingCap/prtClassTreeBaggingCap</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtClassTreeBaggingCap/prtClassTreeBaggingCap</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtClassTreeBaggingCap/prtClassTreeBaggingCap</div>
+      <div class="helptext"><pre><!--helptext -->  <span class="helptopic">prtClassTreeBaggingCap</span>  Tree bagging central axis projection classifier
+ 
+     CLASSIFIER = <span class="helptopic">prtClassTreeBaggingCap</span> Tree bagging central axis
+     projection classifier.  This classifier is based on the "Random
+     Forest" classifier described in 
+ 
+     Breiman, Leo (2001). "Random Forests". Machine Learning 45
+ 
+     CLASSIFIER = <span class="helptopic">prtClassTreeBaggingCap</span>(PROPERTY1, VALUE1, ...) constructs a
+     <span class="helptopic">prtClassTreeBaggingCap</span> object CLASSIFIER with properties as specified by
+     PROPERTY/VALUE pairs.
+ 
+     A <span class="helptopic">prtClassTreeBaggingCap</span> object inherits all properties from the abstract class
+     prtClass. In addition is has the following properties:
+ 
+     nTrees                       - The number of trees
+     nFeatures                    - The number of features
+ 
+     featureSelectWithReplacement - Flag indicating whether or not to
+                                    do feature selection with 
+                                    replacement
+ 
+     bootStrapDataAtRoots         - Flag indicating whether or not
+                                    to bootstrap at roots
+ 
+     useMex                       - Flag indicating wheter or not to
+                                    use the Mex file for speedup.
+ 
+     fastTraining                 - Flag indicating whether to use
+                                    "fast" training.  Fast training
+                                    does not necessarily choose the
+                                    optimal operating point at each
+                                    node, but is much faster, and often
+                                    has competetive (or even superior)
+                                    cross-validation performance, at
+                                    the expense of increased
+                                    tree-length.
+ 
+     computePercIncrMisclassRate  - Flag indicating whether or not to
+                                    compute percent increase in
+                                    misclassification rate
+     
+ 
+   For more information on random tree classifiers, see:
+    <a href="http://en.wikipedia.org/wiki/Random_forest">http://en.wikipedia.org/wiki/Random_forest</a>
+    <a href="http://www.stat.berkeley.edu/~breiman/RandomForests/cc_home.htm">http://www.stat.berkeley.edu/~breiman/RandomForests/cc_home.htm</a>
+ 
+     A <span class="helptopic">prtClassTreeBaggingCap</span>  object inherits the TRAIN, RUN, 
+     CROSSVALIDATE and KFOLDS methods from prtAction. It also inherits 
+     the PLOT method from prtClass.
+ 
+     Example:
+ 
+      TestDataSet = prtDataGenUniModal;      % Create some test and
+      TrainingDataSet = prtDataGenUniModal;  % training data
+      classifier = classifier.train(TrainingDataSet);    % Train
+      classified = run(classifier, TestDataSet);         % Test
+      classifier.plot;</pre></div><!--after help --><!--seeAlso--><div class="footerlinktitle">See also</div><div class="footerlink"> <a href="./../prtClass.html">prtClass</a>, <a href="./../prtClassLogisticDiscriminant.html">prtClassLogisticDiscriminant</a>, <a href="./../prtClassBagging.html">prtClassBagging</a>,
+     <a href="./../prtClassMap.html">prtClassMap</a>, <a href="./../prtClassCap.html">prtClassCap</a>, <a href="./../prtClassBinaryToMaryOneVsAll.html">prtClassBinaryToMaryOneVsAll</a>, <a href="./../prtClassDlrt.html">prtClassDlrt</a>,
+     <a href="./../prtClassPlsda.html">prtClassPlsda</a>, <a href="./../prtClassFld.html">prtClassFld</a>, <a href="./../prtClassRvm.html">prtClassRvm</a>, <a href="./../prtClassGlrt.html">prtClassGlrt</a>,  <a href="./../prtClass.html">prtClass</a>
+</div>
+   </body>
+</html>

@@ -1,0 +1,246 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../helpwin.css">
+      <title>MATLAB File Help: prtClassBumping</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtClassBumping</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtClassBumping</div>
+      <div class="helptext"><pre><!--helptext --> <span class="helptopic">prtClassBumping</span> Bumping (Bootstrap Selection) Classifier
+ 
+     CLASSIFIER = <span class="helptopic">prtClassBumping</span> returns a Bumping classifier
+ 
+     CLASSIFIER = <span class="helptopic">prtClassBumping</span>(PROPERTY1, VALUE1, ...) constructs a
+     <span class="helptopic">prtClassBumping</span> object CLASSIFIER with properties as specified by
+     PROPERTY/VALUE pairs.
+ 
+  A <span class="helptopic">prtClassBumping</span> object inherits all properties from the abstract class
+  prtClass. In addition is has the following properties:
+ 
+       baseClassifier    - The base classifier to be re-trained with bootstrap
+                           samples
+       nBags             - The number of bagging samples to use
+ 
+       includeOriginalDataClassifier - Boolean value specifying whether to
+                                       include a classifier trained with
+                                       all the available data (not a
+                                       bootstrap sample) in comparison.
+                                       Defaults to "false" since training
+                                       with all the available data can
+                                       result in over-training.
+ 
+  After training, a Bump classifier contains a field "Classifier" with the
+  best trained classification algorithm, and a vector baggedPerformance
+  with the percent correct found for each bagging sample.
+ 
+  A Bumping classifier is a meta-classifier that chooses one of several
+  classifiers trained on a bootstrap sampled version of the input training
+  data.  In this case, the classifier chosen is the classifier trained on
+  the bootstrap sample that results in the smallest percent error when
+  tested on the original data set.  Bumping classifiers can be useful when
+  the data set under consideration has a small number of significant
+  outliers; some of the bagging samples will be free of at least some of
+  the outliers and may provide better generalization performance.
+ 
+  For more information on Bumping classifiers, see:
+   Hastie, Tibshirani, and Friedman, The Elements of Statistical Learning
+   Theory.
+ 
+  % Example:
+  ds = prtDataGenUnimodal;
+  % add a significant outlier to the data:
+  ds = ds.setXY(cat(1,ds.getObservations,[-30 -10]),cat(1,ds.getTargets,1));
+  fld = prtClassFld('internalDecider',prtDecisionBinaryMinPe);
+  fld = fld.train(ds);
+ 
+  bumpingFld = <span class="helptopic">prtClassBumping</span>('baseClassifier',fld);
+  bumpingFld = bumpingFld.train(ds);
+ 
+  subplot(2,1,1); plot(fld);
+  subplot(2,1,2); plot(bumpingFld);</pre></div><!--after help --><!--seeAlso--><div class="footerlinktitle">See also</div><div class="footerlink"> <a href="./prtClass.html">prtClass</a>, <a href="./prtClassLogisticDiscriminant.html">prtClassLogisticDiscriminant</a>, <a href="./prtClassBagging.html">prtClassBagging</a>,
+     <a href="./prtClassMap.html">prtClassMap</a>, <a href="./prtClassFld.html">prtClassFld</a>, <a href="./prtClassBinaryToMaryOneVsAll.html">prtClassBinaryToMaryOneVsAll</a>, <a href="./prtClassDlrt.html">prtClassDlrt</a>,
+     <a href="./prtClassPlsda.html">prtClassPlsda</a>, <a href="./prtClassFld.html">prtClassFld</a>, <a href="./prtClassRvm.html">prtClassRvm</a>, <a href="./prtClassGlrt.html">prtClassGlrt</a>,  <a href="./prtClassSvm.html">prtClassSvm</a>,
+     <a href="./prtClassTreeBaggingCap.html">prtClassTreeBaggingCap</a>, <a href="./prtClassKmsd.html">prtClassKmsd</a>, <a href="./prtClassKnn.html">prtClassKnn</a>
+</div>
+      <!--Class-->
+      <div class="sectiontitle">Class Details</div>
+      <table class="class-details">
+         <tr>
+            <td class="class-detail-label">Superclasses</td>
+            <td><a href="./prtClass.html">prtClass</a></td>
+         </tr>
+         <tr>
+            <td class="class-detail-label">Sealed</td>
+            <td>false</td>
+         </tr>
+         <tr>
+            <td class="class-detail-label">Construct on load</td>
+            <td>false</td>
+         </tr>
+      </table>
+      <!--Constructors-->
+      <div class="sectiontitle"><a name="constructors"></a>Constructor Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassBumping/prtClassBumping.html">prtClassBumping</a></td>
+            <td class="m-help">Bumping (Bootstrap Selection) Classifier&nbsp;</td>
+         </tr>
+      </table>
+      <!--Properties-->
+      <div class="sectiontitle"><a name="properties"></a>Property Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassBumping/Classifier.html">Classifier</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassBumping/baggedPerformance.html">baggedPerformance</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassBumping/baseClassifier.html">baseClassifier</a></td>
+            <td class="m-help">The classifier to be bagged&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassBumping/dataSet.html">dataSet</a></td>
+            <td class="m-help">The training prtDataSet, only stored if verboseStorage is true. &nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassBumping/dataSetSummary.html">dataSetSummary</a></td>
+            <td class="m-help">Structure that summarizes prtDataSet.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassBumping/includeOriginalDataClassifier.html">includeOriginalDataClassifier</a></td>
+            <td class="m-help">Whether or not to run one additional classifier with the original data.  &nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassBumping/internalDecider.html">internalDecider</a></td>
+            <td class="m-help">Optional prtDecider object for making decisions&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassBumping/isCrossValidateValid.html">isCrossValidateValid</a></td>
+            <td class="m-help">True&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassBumping/isNativeMary.html">isNativeMary</a></td>
+            <td class="m-help">False&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassBumping/isSupervised.html">isSupervised</a></td>
+            <td class="m-help">True&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassBumping/isTrained.html">isTrained</a></td>
+            <td class="m-help">Indicates if prtAction object has been trained.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassBumping/nBags.html">nBags</a></td>
+            <td class="m-help">The number of bags&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassBumping/name.html">name</a></td>
+            <td class="m-help">Bumping&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassBumping/nameAbbreviation.html">nameAbbreviation</a></td>
+            <td class="m-help">Bumping&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassBumping/showProgressBar.html">showProgressBar</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassBumping/twoClassParadigm.html">twoClassParadigm</a></td>
+            <td class="m-help">Whether the classifier retures one output (binary) or two outputs (m-ary) when there are only two unique class labels&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassBumping/userData.html">userData</a></td>
+            <td class="m-help">User specified data&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassBumping/verboseStorage.html">verboseStorage</a></td>
+            <td class="m-help">Specifies whether or not to store the training prtDataset.&nbsp;</td>
+         </tr>
+      </table>
+      <!--Methods-->
+      <div class="sectiontitle"><a name="methods"></a>Method Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClassBumping/crossValidate.html">crossValidate</a></td>
+            <td class="m-help">Cross validate prtAction using prtDataSet and cross validation keys.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClassBumping/get.html">get</a></td>
+            <td class="m-help">get the object properties&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClassBumping/kfolds.html">kfolds</a></td>
+            <td class="m-help">Perform K-folds cross-validation of prtAction&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClassBumping/optimize.html">optimize</a></td>
+            <td class="m-help">Optimize action parameter by exhaustive function maximization.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClassBumping/plot.html">plot</a></td>
+            <td class="m-help">Plot the output confidence of a prtClass object&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClassBumping/run.html">run</a></td>
+            <td class="m-help">Run a prtAction object on a prtDataSet object.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClassBumping/set.html">set</a></td>
+            <td class="m-help">set the object properties&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClassBumping/train.html">train</a></td>
+            <td class="m-help">Train a prtAction object using training a prtDataSet object.&nbsp;</td>
+         </tr>
+      </table>
+   </body>
+</html>

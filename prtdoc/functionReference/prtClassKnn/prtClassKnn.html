@@ -1,0 +1,57 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../../helpwin.css">
+      <title>MATLAB File Help: prtClassKnn/prtClassKnn</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtClassKnn/prtClassKnn</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtClassKnn/prtClassKnn</div>
+      <div class="helptext"><pre><!--helptext -->  <span class="helptopic">prtClassKnn</span>  K-nearest neighbors classifier
+ 
+     CLASSIFIER = <span class="helptopic">prtClassKnn</span> returns a K-nearest neighbors classifier
+ 
+     CLASSIFIER = <span class="helptopic">prtClassKnn</span>(PROPERTY1, VALUE1, ...) constructs a
+     <span class="helptopic">prtClassKnn</span> object CLASSIFIER with properties as specified by
+     PROPERTY/VALUE pairs.
+ 
+     A <span class="helptopic">prtClassKnn</span> object inherits all properties from the abstract class
+     prtClass. In addition is has the following properties:
+ 
+     k                  - The number of neigbors to be considered
+     distanceFunction   - The function to be used to compute the
+                          distance from samples to cluster centers. 
+                          It must be a function handle of the form:
+                          @(x1,x2)distFun(x1,x2). Most prtDistance*
+                          functions will work.
+ 
+     For information on the  K-nearest neighbors classifier algorithm, please
+     refer to the following URL:
+ 
+     <a href="http://en.wikipedia.org/wiki/K-nearest_neighbor_algorithm">http://en.wikipedia.org/wiki/K-nearest_neighbor_algorithm</a>    
+ 
+     A <span class="helptopic">prtClassKnn</span> object inherits the TRAIN, RUN, CROSSVALIDATE and
+     KFOLDS methods from prtAction. It also inherits the PLOT method
+     from prtClass.
+ 
+     Example:
+ 
+      TestDataSet = prtDataGenUnimodal;      % Create some test and 
+      TrainingDataSet = prtDataGenUnimodal;  % training data
+      classifier = <span class="helptopic">prtClassKnn</span>;           % Create a classifier
+      classifier = classifier.train(TrainingDataSet);    % Train
+      classified = run(classifier, TestDataSet);         % Test
+      classifier.plot;</pre></div><!--after help --><!--seeAlso--><div class="footerlinktitle">See also</div><div class="footerlink"> <a href="./../prtClass.html">prtClass</a>, <a href="./../prtClassLogisticDiscriminant.html">prtClassLogisticDiscriminant</a>, <a href="./../prtClassBagging.html">prtClassBagging</a>,
+     <a href="./../prtClassMap.html">prtClassMap</a>, <a href="./../prtClassCap.html">prtClassCap</a>, <a href="./../prtClassBinaryToMaryOneVsAll.html">prtClassBinaryToMaryOneVsAll</a>, <a href="./../prtClassDlrt.html">prtClassDlrt</a>,
+     <a href="./../prtClassPlsda.html">prtClassPlsda</a>, <a href="./../prtClassFld.html">prtClassFld</a>, <a href="./../prtClassRvm.html">prtClassRvm</a>, <a href="./../prtClassGlrt.html">prtClassGlrt</a>,  <a href="./../prtClass.html">prtClass</a>
+</div>
+   </body>
+</html>

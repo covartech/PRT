@@ -1,0 +1,270 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../helpwin.css">
+      <title>MATLAB File Help: prtClassRvmFigueiredo</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtClassRvmFigueiredo</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtClassRvmFigueiredo</div>
+      <div class="helptext"><pre><!--helptext -->  <span class="helptopic">prtClassRvmFigueiredo</span>  Relevance vector machine classifier using a Jefferey's prior
+ 
+     CLASSIFIER = <span class="helptopic">prtClassRvmFigueiredo</span> returns a relevance vector 
+     machine classifier.
+ 
+     CLASSIFIER = <span class="helptopic">prtClassRvmFigueiredo</span>(PROPERTY1, VALUE1, ...) constructs a
+     prtClassRvm object CLASSIFIER with properties as specified by
+     PROPERTY/VALUE pairs.
+ 
+     A <span class="helptopic">prtClassRvmFigueiredo</span> object inherits all properties from the
+     abstract class prtClass. In addition is has the following
+     properties:
+ 
+     kernels            - A cell array of prtKernel objects specifying
+                          the kernels to use
+     verbosePlot        - Flag indicating whether or not to plot during
+                          training
+     verboseText        - Flag indicating whether or not to output
+                          verbose updates during training
+     learningMaxIterations  - The maximum number of iterations
+ 
+     A prtClassRvmFigeiredo also has the following read-only properties:
+ 
+     learningConverged  - Flag indicating if the training converged
+     beta               - The regression weights, estimated during training
+     sparseBeta         - The sparse regression weights, estimated during
+                         training
+     sparseKernels      - The sparse regression kernels, estimated during
+                         training
+ 
+    For more informatoin on the Figueiredo algorithm, please refer to
+    the following reference:
+  
+    M. Figueiredo, Adaptive sparseness for supervised learning, 
+    IEEE PAMI, vol. 25, no. 9 pp.1150-1159, September 2003.  
+ 
+    Training using the Figueiredo algorithm can provide faster
+    and more robust convergence under some circumstances.
+ 
+    A prtClassRvm object inherits the TRAIN, RUN, CROSSVALIDATE and
+    KFOLDS methods from prtAction. It also inherits the PLOT method
+    from prtClass.
+ 
+    % Example
+    TestDataSet = prtDataGenUnimodal;      % Create some test and
+    TrainingDataSet = prtDataGenUnimodal;  % training data
+     %    % Create a classifier with verbose plotting
+    classifier = <span class="helptopic">prtClassRvmFigueiredo</span>('verbosePlot',true); 
+    classifier = classifier.train(TrainingDataSet);    % Train
+    classified = run(classifier, TestDataSet);         % Test
+    % Plot the results
+    subplot(2,1,1);
+    classifier.plot;
+    subplot(2,1,2);
+    % figure
+    [pf,pd] = prtScoreRoc(classified,TestDataSet);
+    h = plot(pf,pd,'linewidth',3);
+    title('ROC'); xlabel('Pf'); ylabel('Pd');</pre></div><!--after help --><!--seeAlso--><div class="footerlinktitle">See also</div><div class="footerlink"> <a href="./prtClass.html">prtClass</a>, <a href="./prtClassRvm.html">prtClassRvm</a>, prtClassRvnSequential,
+    <a href="./prtRegressRvmSequential.html">prtRegressRvmSequential</a>
+</div>
+      <!--Class-->
+      <div class="sectiontitle">Class Details</div>
+      <table class="class-details">
+         <tr>
+            <td class="class-detail-label">Superclasses</td>
+            <td><a href="./prtClassRvm.html">prtClassRvm</a></td>
+         </tr>
+         <tr>
+            <td class="class-detail-label">Sealed</td>
+            <td>false</td>
+         </tr>
+         <tr>
+            <td class="class-detail-label">Construct on load</td>
+            <td>false</td>
+         </tr>
+      </table>
+      <!--Constructors-->
+      <div class="sectiontitle"><a name="constructors"></a>Constructor Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassRvmFigueiredo/prtClassRvmFigueiredo.html">prtClassRvmFigueiredo</a></td>
+            <td class="m-help">Relevance vector machine classifier using a Jefferey's prior&nbsp;</td>
+         </tr>
+      </table>
+      <!--Properties-->
+      <div class="sectiontitle"><a name="properties"></a>Property Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassRvmFigueiredo/beta.html">beta</a></td>
+            <td class="m-help">Regression weights&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassRvmFigueiredo/dataSet.html">dataSet</a></td>
+            <td class="m-help">The training prtDataSet, only stored if verboseStorage is true. &nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassRvmFigueiredo/dataSetSummary.html">dataSetSummary</a></td>
+            <td class="m-help">Structure that summarizes prtDataSet.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassRvmFigueiredo/internalDecider.html">internalDecider</a></td>
+            <td class="m-help">Optional prtDecider object for making decisions&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassRvmFigueiredo/isCrossValidateValid.html">isCrossValidateValid</a></td>
+            <td class="m-help">True&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassRvmFigueiredo/isNativeMary.html">isNativeMary</a></td>
+            <td class="m-help">False&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassRvmFigueiredo/isSupervised.html">isSupervised</a></td>
+            <td class="m-help">True&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassRvmFigueiredo/isTrained.html">isTrained</a></td>
+            <td class="m-help">Indicates if prtAction object has been trained.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassRvmFigueiredo/kernels.html">kernels</a></td>
+            <td class="m-help">The kernels to be used&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassRvmFigueiredo/learningConverged.html">learningConverged</a></td>
+            <td class="m-help">Flag indicating whether or not training convereged&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassRvmFigueiredo/learningConvergedTolerance.html">learningConvergedTolerance</a></td>
+            <td class="m-help">Learning tolerance; &nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassRvmFigueiredo/learningMaxIterations.html">learningMaxIterations</a></td>
+            <td class="m-help">The maximum number of iterations&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassRvmFigueiredo/learningRelevantTolerance.html">learningRelevantTolerance</a></td>
+            <td class="m-help">Tolerance below which a kernel is marked as irrelevant and removed&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassRvmFigueiredo/name.html">name</a></td>
+            <td class="m-help">Relevance Vector Machine&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassRvmFigueiredo/nameAbbreviation.html">nameAbbreviation</a></td>
+            <td class="m-help">RVM&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassRvmFigueiredo/showProgressBar.html">showProgressBar</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassRvmFigueiredo/sparseBeta.html">sparseBeta</a></td>
+            <td class="m-help">Sparse Beta&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassRvmFigueiredo/sparseKernels.html">sparseKernels</a></td>
+            <td class="m-help">Sparse Kernel array&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassRvmFigueiredo/twoClassParadigm.html">twoClassParadigm</a></td>
+            <td class="m-help">Whether the classifier retures one output (binary) or two outputs (m-ary) when there are only two unique class labels&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassRvmFigueiredo/userData.html">userData</a></td>
+            <td class="m-help">User specified data&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassRvmFigueiredo/verbosePlot.html">verbosePlot</a></td>
+            <td class="m-help">Whether or not to plot during training&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassRvmFigueiredo/verboseStorage.html">verboseStorage</a></td>
+            <td class="m-help">Specifies whether or not to store the training prtDataset.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassRvmFigueiredo/verboseText.html">verboseText</a></td>
+            <td class="m-help">Whether or not to display text during training&nbsp;</td>
+         </tr>
+      </table>
+      <!--Methods-->
+      <div class="sectiontitle"><a name="methods"></a>Method Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClassRvmFigueiredo/crossValidate.html">crossValidate</a></td>
+            <td class="m-help">Cross validate prtAction using prtDataSet and cross validation keys.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClassRvmFigueiredo/get.html">get</a></td>
+            <td class="m-help">get the object properties&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClassRvmFigueiredo/kfolds.html">kfolds</a></td>
+            <td class="m-help">Perform K-folds cross-validation of prtAction&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClassRvmFigueiredo/optimize.html">optimize</a></td>
+            <td class="m-help">Optimize action parameter by exhaustive function maximization.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClassRvmFigueiredo/plot.html">plot</a></td>
+            <td class="m-help">Plot output confidence of the prtClassRvm object&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClassRvmFigueiredo/run.html">run</a></td>
+            <td class="m-help">Run a prtAction object on a prtDataSet object.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClassRvmFigueiredo/set.html">set</a></td>
+            <td class="m-help">set the object properties&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClassRvmFigueiredo/train.html">train</a></td>
+            <td class="m-help">Train a prtAction object using training a prtDataSet object.&nbsp;</td>
+         </tr>
+      </table>
+   </body>
+</html>

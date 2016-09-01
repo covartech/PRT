@@ -1,0 +1,58 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../../helpwin.css">
+      <title>MATLAB File Help: prtRegressLslr/prtRegressLslr</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtRegressLslr/prtRegressLslr</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtRegressLslr/prtRegressLslr</div>
+      <div class="helptext"><pre><!--helptext --> prtRegresLslr  Least squares regression object
+ 
+    REGRESS = <span class="helptopic">prtRegressLslr</span> returns a <span class="helptopic">prtRegressLslr</span> object
+ 
+    REGRESS = <span class="helptopic">prtRegressLslr</span>(PROPERTY1, VALUE1, ...) constructs a
+    prtRegressGP object REGRESS with properties as specified by
+    PROPERTY/VALUE pairs.
+  
+    A <span class="helptopic">prtRegressLslr</span> object inherits all properties from the prtRegress
+    class. In addition, it has the following properties:
+ 
+    beta                   - The regression weights
+    t                      - A measure of feature importance
+    rss                    - The residual sum of squares
+    standardizedResiduals  -  The standardized residuals
+ 
+  
+    A prtRegressionLslr object inherits the PLOT method from the
+    prtRegress object, and the TRAIN, RUN, CROSSVALIDATE and KFOLDS
+    methods from the prtAction object.
+ 
+    Example:
+    
+    x = [1:.5:10]';                % Create a linear, noisy data set.
+    y = 2*x + 3 + randn(size(x));
+    dataSet = prtDataSetRegress;  % Create a prtDataSetRegress object
+    dataSet= dataSet.setX(x);
+    dataSet = dataSet.setY(y);
+    dataSet.plot;                    % Display data
+    reg = <span class="helptopic">prtRegressLslr</span>;            % Create a prtRegressRvm object
+    reg = reg.train(dataSet);        % Train the prtRegressRvm object
+    reg.plot();                      % Plot the resulting curve
+    dataSetOut = reg.run(dataSet);   % Run the regressor on the data
+    hold on;
+    plot(dataSet.getX,dataSetOut.getX,'k*') % Plot, overlaying the
+                                            % fitted points with the 
+                                            % curve and original data
+  legend('Regression line','Original Points','Fitted points',0)</pre></div><!--after help --><!--seeAlso--><div class="footerlinktitle">See also</div><div class="footerlink"> <a href="./../prtRegress.html">prtRegress</a>, <a href="./../prtRegressRvm.html">prtRegressRvm</a>, <a href="./../prtRegressGp.html">prtRegressGp</a>
+</div>
+   </body>
+</html>

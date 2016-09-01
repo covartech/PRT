@@ -1,0 +1,320 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../helpwin.css">
+      <title>MATLAB File Help: prtClassLibSvm</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtClassLibSvm</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtClassLibSvm</div>
+      <div class="helptext"><pre><!--helptext -->  <span class="helptopic">prtClassLibSvm</span>  Support vector machine classifier using LibSvm
+ 
+    CLASSIFIER = <span class="helptopic">prtClassLibSvm</span> returns a SVM Classifier using the
+    SVM toolbox "LibSvm" which provides a fast interface to training
+    and testing support vector machines.
+ 
+    Note: requires libSvm, which should be in nfPrt\util\libsvm-mat-2.91-1
+    On linux, you may need to re-build the LibSVM Binaries.  See the
+    documentation for LibSvm (link below) for more information.
+ 
+     A <span class="helptopic">prtClassLibSvm</span> object inherits all properties from the abstract class
+     prtClass. In addition is has the following properties; complete
+     documentation for these properties can be found here:
+ 
+        <a href="http://www.csie.ntu.edu.tw/~cjlin/libsvm/">http://www.csie.ntu.edu.tw/~cjlin/libsvm/</a>
+ 
+          svmType       - Whether to use a C-SVM, nu-SVM, one-class
+                         SVM, epsilon-SVR, or nu-SVR
+          kernelType    - Kernel type to use - linear (0), polynomial (1),
+                          rbf (2, default), sigmoid (3), or
+                          user-defined (4) - see below
+          degree        - Kernel function parameter (some kernels)
+          gamma         - Kernel function parameter (some kernels)
+          coef0         - Kernel function parameter (some kernels)
+          cost          - Cost parameter
+          nu            - nu parameter (nu-SVM's)
+          pEpsilon      - Loss function parameter (epsilon-SVMs)
+          cachesize     - Memory cache in MB (can affect speed,
+                         computer dependent)
+          eEpsilon      - Termination tolerance
+          shrinking     - Use shrinking heuristic?
+          probabilityEstimates - Output probability estimates?
+          weight        - Parameter in C-SCM
+ 
+    Default values are:
+      svmType = 0;
+      kernelType = 2;
+      degree = 3;
+      gamma = nan;
+      coef0 = 0;
+      cost = 1;
+      nu = .5;
+      pEpsilon = .1;
+      cachesize = 100;
+      eEpsilon = 0.001;
+      shrinking = 1;
+      probabilityEstimates = 0;
+      weight = 1;
+ 
+      userSpecKernel = [];  %only for kernelType = 4, see below
+ 
+    <span class="helptopic">prtClassLibSvm</span> allows the specification of user-defined kernels by
+    setting svm.kernelType to 4.  This requires further specification
+    of svm.userSpecKernel.  svm.userSpecKernel must be either a
+    function handle, fn(x,y) which outputs a matrix of size 
+    size(x,1) x size(y,1), or userSpecKernel can be a prtKernel object.
+ 
+    For example:
+      svm.kernelType = 4;
+      svm.userSpecKernel = @(x,y) (x*y'); % correlation kernel
+   
+      svm.kernelType = 4;
+      svm.userSpecKernel = prtKernelHyperbolicTangent; 
+ 
+ 
+    Additional options can be specified by modifying the field 
+    obj.libSvmOptions using the format found here:
+    <a href="http://www.csie.ntu.edu.tw/~cjlin/libsvm/">http://www.csie.ntu.edu.tw/~cjlin/libsvm/</a>
+ 
+    More documentation can be found here:
+    <a href="http://www.csie.ntu.edu.tw/~cjlin/papers/libsvm.pdf">http://www.csie.ntu.edu.tw/~cjlin/papers/libsvm.pdf</a>
+ 
+    Note: the LibSvm will output estimated percent correct values to
+    the screen during processing; because of the way the PRT trains and
+    tests, these should be ignored during training and plotting. (To be
+    fixed)
+ 
+    %Example usage:
+      TestDataSet = prtDataGenUnimodal;       % Create some test and
+      TrainingDataSet = prtDataGenUnimodal;   % training data
+      classifier = <span class="helptopic">prtClassLibSvm</span>;              % Create a classifier
+      classifier = classifier.train(TrainingDataSet);    % Train
+      classified = run(classifier, TestDataSet);         % Test
+      percentCorr = prtScorePercentCorrect(classified,TestDataSet);
+      subplot(2,1,1);
+      classifier.plot;
+      subplot(2,1,2);
+      [pf,pd] = prtScoreRoc(classified,TestDataSet);
+      h = plot(pf,pd,'linewidth',3);
+      title('ROC'); xlabel('Pf'); ylabel('Pd');</pre></div><!--after help -->
+      <!--Class-->
+      <div class="sectiontitle">Class Details</div>
+      <table class="class-details">
+         <tr>
+            <td class="class-detail-label">Superclasses</td>
+            <td><a href="./prtClass.html">prtClass</a></td>
+         </tr>
+         <tr>
+            <td class="class-detail-label">Sealed</td>
+            <td>false</td>
+         </tr>
+         <tr>
+            <td class="class-detail-label">Construct on load</td>
+            <td>false</td>
+         </tr>
+      </table>
+      <!--Constructors-->
+      <div class="sectiontitle"><a name="constructors"></a>Constructor Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassLibSvm/prtClassLibSvm.html">prtClassLibSvm</a></td>
+            <td class="m-help">Support vector machine classifier using LibSvm&nbsp;</td>
+         </tr>
+      </table>
+      <!--Properties-->
+      <div class="sectiontitle"><a name="properties"></a>Property Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassLibSvm/cachesize.html">cachesize</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassLibSvm/coef0.html">coef0</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassLibSvm/cost.html">cost</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassLibSvm/dataSet.html">dataSet</a></td>
+            <td class="m-help">The training prtDataSet, only stored if verboseStorage is true. &nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassLibSvm/dataSetSummary.html">dataSetSummary</a></td>
+            <td class="m-help">Structure that summarizes prtDataSet.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassLibSvm/degree.html">degree</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassLibSvm/eEpsilon.html">eEpsilon</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassLibSvm/gamma.html">gamma</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassLibSvm/internalDecider.html">internalDecider</a></td>
+            <td class="m-help">Optional prtDecider object for making decisions&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassLibSvm/isCrossValidateValid.html">isCrossValidateValid</a></td>
+            <td class="m-help">True&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassLibSvm/isNativeMary.html">isNativeMary</a></td>
+            <td class="m-help">False&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassLibSvm/isSupervised.html">isSupervised</a></td>
+            <td class="m-help">True&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassLibSvm/isTrained.html">isTrained</a></td>
+            <td class="m-help">Indicates if prtAction object has been trained.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassLibSvm/kernelType.html">kernelType</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassLibSvm/libSvmOptions.html">libSvmOptions</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassLibSvm/name.html">name</a></td>
+            <td class="m-help">Support Vector Machine&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassLibSvm/nameAbbreviation.html">nameAbbreviation</a></td>
+            <td class="m-help">SVM&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassLibSvm/nu.html">nu</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassLibSvm/pEpsilon.html">pEpsilon</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassLibSvm/probabilityEstimates.html">probabilityEstimates</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassLibSvm/showProgressBar.html">showProgressBar</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassLibSvm/shrinking.html">shrinking</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassLibSvm/svmType.html">svmType</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassLibSvm/twoClassParadigm.html">twoClassParadigm</a></td>
+            <td class="m-help">Whether the classifier retures one output (binary) or two outputs (m-ary) when there are only two unique class labels&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassLibSvm/userData.html">userData</a></td>
+            <td class="m-help">User specified data&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassLibSvm/userSpecKernel.html">userSpecKernel</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassLibSvm/verboseStorage.html">verboseStorage</a></td>
+            <td class="m-help">Specifies whether or not to store the training prtDataset.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassLibSvm/weight.html">weight</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+      </table>
+      <!--Methods-->
+      <div class="sectiontitle"><a name="methods"></a>Method Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClassLibSvm/crossValidate.html">crossValidate</a></td>
+            <td class="m-help">Cross validate prtAction using prtDataSet and cross validation keys.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClassLibSvm/get.html">get</a></td>
+            <td class="m-help">get the object properties&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClassLibSvm/kfolds.html">kfolds</a></td>
+            <td class="m-help">Perform K-folds cross-validation of prtAction&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClassLibSvm/optimize.html">optimize</a></td>
+            <td class="m-help">Optimize action parameter by exhaustive function maximization.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClassLibSvm/plot.html">plot</a></td>
+            <td class="m-help">Plot the output confidence of a prtClass object&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClassLibSvm/run.html">run</a></td>
+            <td class="m-help">Run a prtAction object on a prtDataSet object.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClassLibSvm/set.html">set</a></td>
+            <td class="m-help">set the object properties&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClassLibSvm/train.html">train</a></td>
+            <td class="m-help">Train a prtAction object using training a prtDataSet object.&nbsp;</td>
+         </tr>
+      </table>
+   </body>
+</html>

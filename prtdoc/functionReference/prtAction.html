@@ -1,0 +1,185 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../helpwin.css">
+      <title>MATLAB File Help: prtAction</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtAction</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtAction</div>
+      <div class="helptext"><pre><!--helptext -->  <span class="helptopic">prtAction</span> - Base class for many PRT components.
+  
+   <span class="helptopic">prtAction</span> is an abstract class and cannot be instantiated.
+ 
+    Classification, regression and feature selection techniques are all
+    sub-classes of <span class="helptopic">prtAction</span>.
+ 
+    All <span class="helptopic">prtAction</span> objects have the following properties:
+ 
+    name                 - Descriptive name for <span class="helptopic">prtAction</span> object
+    nameAbbreviation     - Shortened name for <span class="helptopic">prtAction</span> object
+    isTrained            - Indicates whether the current <span class="helptopic">prtAction</span> 
+                           object has been trained                          
+    isCrossValidateValid - Flag indicating whether or not
+                           cross-validation is a valid operation on 
+                           this <span class="helptopic">prtAction</span> object
+    verboseStorage       - Flag to allow or disallow verbose storage
+    dataSetSummary       - A struct, set during training, containing
+                           information about the training data set
+    dataSet              - A prtDataSet, containing the training data,
+                           only used if verboseStorage is true
+    userData             - A struct containing user-specified data
+ 
+    All <span class="helptopic">prtAction</span> objects have the following methods:
+ 
+    train             - Train the <span class="helptopic">prtAction</span> object using a prtDataSet
+    run               - Evaluate the <span class="helptopic">prtAction</span> object on a prtDataSet
+    runOnTrainingData - Evaluate the <span class="helptopic">prtAction</span> object on a prtDataSet
+                        during training prior to training of other
+                        prtActions within a prtAlgorithm
+    crossValidate     - Cross-validate the <span class="helptopic">prtAction</span> object using a 
+                        labeled prtDataSet and cross-validation keys
+    kfolds            - K-folds cross-validate the <span class="helptopic">prtAction</span> object
+                        using a labeled prtDataSet
+    optimize          - Optimize the <span class="helptopic">prtAction</span> for a specified
+                        parameter</pre></div><!--after help --><!--seeAlso--><div class="footerlinktitle">See Also</div><div class="footerlink"> <a href="./prtAction/train.html">prtAction/train</a>, <a href="./prtAction/run.html">prtAction/run</a>, <a href="./prtAction/crossValidate.html">prtAction/crossValidate</a>,
+  <a href="./prtAction/kfolds.html">prtAction/kfolds</a>, <a href="./prtClass.html">prtClass</a>, <a href="./prtRegress.html">prtRegress</a>, <a href="./prtFeatSel.html">prtFeatSel</a>, <a href="./prtPreProc.html">prtPreProc</a>,
+  <a href="./prtDataSetBase.html">prtDataSetBase</a>
+</div>
+      <!--Class-->
+      <div class="sectiontitle">Class Details</div>
+      <table class="class-details">
+         <tr>
+            <td class="class-detail-label">Sealed</td>
+            <td>false</td>
+         </tr>
+         <tr>
+            <td class="class-detail-label">Construct on load</td>
+            <td>false</td>
+         </tr>
+      </table>
+      <!--Constructors-->
+      <div class="sectiontitle"><a name="constructors"></a>Constructor Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="name"><a href="./prtAction/prtAction.html">prtAction</a></td>
+            <td class="m-help">Base class for many PRT components.&nbsp;</td>
+         </tr>
+      </table>
+      <!--Properties-->
+      <div class="sectiontitle"><a name="properties"></a>Property Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="name"><a href="./prtAction/dataSet.html">dataSet</a></td>
+            <td class="m-help">The training prtDataSet, only stored if verboseStorage is true. &nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtAction/dataSetSummary.html">dataSetSummary</a></td>
+            <td class="m-help">Structure that summarizes prtDataSet.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtAction/isCrossValidateValid.html">isCrossValidateValid</a></td>
+            <td class="m-help">Indicates whether or not cross-validation is a valid operation&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtAction/isSupervised.html">isSupervised</a></td>
+            <td class="m-help">Specifies if the prtAction requires a labeled dataSet&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtAction/isTrained.html">isTrained</a></td>
+            <td class="m-help">Indicates if prtAction object has been trained.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtAction/name.html">name</a></td>
+            <td class="m-help">Descriptive name of prtAction object.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtAction/nameAbbreviation.html">nameAbbreviation</a></td>
+            <td class="m-help">Shortened name for the prtAction object.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtAction/showProgressBar.html">showProgressBar</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtAction/userData.html">userData</a></td>
+            <td class="m-help">User specified data&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtAction/verboseStorage.html">verboseStorage</a></td>
+            <td class="m-help">Specifies whether or not to store the training prtDataset.&nbsp;</td>
+         </tr>
+      </table>
+      <!--Methods-->
+      <div class="sectiontitle"><a name="methods"></a>Method Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtAction/crossValidate.html">crossValidate</a></td>
+            <td class="m-help">Cross validate prtAction using prtDataSet and cross validation keys.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtAction/get.html">get</a></td>
+            <td class="m-help">get the object properties&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtAction/kfolds.html">kfolds</a></td>
+            <td class="m-help">Perform K-folds cross-validation of prtAction&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtAction/optimize.html">optimize</a></td>
+            <td class="m-help">Optimize action parameter by exhaustive function maximization.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtAction/run.html">run</a></td>
+            <td class="m-help">Run a prtAction object on a prtDataSet object.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtAction/set.html">set</a></td>
+            <td class="m-help">set the object properties&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtAction/train.html">train</a></td>
+            <td class="m-help">Train a prtAction object using training a prtDataSet object.&nbsp;</td>
+         </tr>
+      </table>
+   </body>
+</html>

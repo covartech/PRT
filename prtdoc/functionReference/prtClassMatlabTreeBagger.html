@@ -1,0 +1,227 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../helpwin.css">
+      <title>MATLAB File Help: prtClassMatlabTreeBagger</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtClassMatlabTreeBagger</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtClassMatlabTreeBagger</div>
+      <div class="helptext"><pre><!--helptext -->  <span class="helptopic">prtClassMatlabTreeBagger</span>  TreeBagger classifier using the MATLAB function "treeBagger.m" (requires statistics toolbox)
+ 
+   CLASSIFIER = <span class="helptopic">prtClassMatlabTreeBagger</span> returns a tree-bagger
+   classifier build using the MATLAB Statistics toolbox (additonal 
+   product, not included).  As an alternative, consider using
+   prtClassTreeBaggingCap, which also implements a random forest
+   classification scheme.
+ 
+   A <span class="helptopic">prtClassMatlabTreeBagger</span> object inherits all properties from the
+   abstract class prtClass. In addition is has the following
+   properties:
+  
+    nTrees - The number of trees to use in the MATLAB TreeBagger
+ 
+    treeBaggerParamValuePairs - A cell array of parameter value pairs
+    to be passed to the MATLAB function "treeBagger". A complete list
+    of the valid parameters and their allowed values can be found in
+    the help entru for "treeBagger.m"
+ 
+   % Example usage:
+ 
+    TestDataSet = prtDataGenBimodal;       % Create some test and
+    TrainingDataSet = prtDataGenBimodal;   % training data
+    classifier = <span class="helptopic">prtClassMatlabTreeBagger</span>;           % Create a classifier
+    classifier = classifier.train(TrainingDataSet);    % Train
+    classified = run(classifier, TestDataSet);         % Test
+    subplot(2,1,1);
+    classifier.plot;
+    subplot(2,1,2);
+    [pf,pd] = prtScoreRoc(classified,TestDataSet);
+    h = plot(pf,pd,'linewidth',3);
+    title('ROC'); xlabel('Pf'); ylabel('Pd');
+ 
+  % Example usage setting the treeBaggerParamValuePairs cell array:
+    TestDataSet = prtDataGenBimodal;       % Create some test and
+    TrainingDataSet = prtDataGenBimodal;   % training data
+    classifier = <span class="helptopic">prtClassMatlabTreeBagger</span>('treeBaggerParamValuePairs',{'nVarToSample','all'});
+    classifier = classifier.train(TrainingDataSet);    % Train
+    classified = run(classifier, TestDataSet);         % Test
+    subplot(2,1,1);
+    classifier.plot;
+    subplot(2,1,2);
+    [pf,pd] = prtScoreRoc(classified,TestDataSet);
+    h = plot(pf,pd,'linewidth',3);
+    title('ROC'); xlabel('Pf'); ylabel('Pd');</pre></div><!--after help -->
+      <!--Class-->
+      <div class="sectiontitle">Class Details</div>
+      <table class="class-details">
+         <tr>
+            <td class="class-detail-label">Superclasses</td>
+            <td><a href="./prtClass.html">prtClass</a></td>
+         </tr>
+         <tr>
+            <td class="class-detail-label">Sealed</td>
+            <td>false</td>
+         </tr>
+         <tr>
+            <td class="class-detail-label">Construct on load</td>
+            <td>false</td>
+         </tr>
+      </table>
+      <!--Constructors-->
+      <div class="sectiontitle"><a name="constructors"></a>Constructor Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassMatlabTreeBagger/prtClassMatlabTreeBagger.html">prtClassMatlabTreeBagger</a></td>
+            <td class="m-help">TreeBagger classifier using the MATLAB function "treeBagger.m" (requires statistics toolbox)&nbsp;</td>
+         </tr>
+      </table>
+      <!--Properties-->
+      <div class="sectiontitle"><a name="properties"></a>Property Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassMatlabTreeBagger/dataSet.html">dataSet</a></td>
+            <td class="m-help">The training prtDataSet, only stored if verboseStorage is true. &nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassMatlabTreeBagger/dataSetSummary.html">dataSetSummary</a></td>
+            <td class="m-help">Structure that summarizes prtDataSet.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassMatlabTreeBagger/forest.html">forest</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassMatlabTreeBagger/internalDecider.html">internalDecider</a></td>
+            <td class="m-help">Optional prtDecider object for making decisions&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassMatlabTreeBagger/isCrossValidateValid.html">isCrossValidateValid</a></td>
+            <td class="m-help">True&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassMatlabTreeBagger/isNativeMary.html">isNativeMary</a></td>
+            <td class="m-help">False&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassMatlabTreeBagger/isSupervised.html">isSupervised</a></td>
+            <td class="m-help">True&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassMatlabTreeBagger/isTrained.html">isTrained</a></td>
+            <td class="m-help">Indicates if prtAction object has been trained.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassMatlabTreeBagger/nTrees.html">nTrees</a></td>
+            <td class="m-help">The number of trees&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassMatlabTreeBagger/name.html">name</a></td>
+            <td class="m-help">MATLAB Tree Bagger&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassMatlabTreeBagger/nameAbbreviation.html">nameAbbreviation</a></td>
+            <td class="m-help">MLTB&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassMatlabTreeBagger/showProgressBar.html">showProgressBar</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassMatlabTreeBagger/treeBaggerParamValuePairs.html">treeBaggerParamValuePairs</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassMatlabTreeBagger/twoClassParadigm.html">twoClassParadigm</a></td>
+            <td class="m-help">Whether the classifier retures one output (binary) or two outputs (m-ary) when there are only two unique class labels&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassMatlabTreeBagger/userData.html">userData</a></td>
+            <td class="m-help">User specified data&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassMatlabTreeBagger/verboseStorage.html">verboseStorage</a></td>
+            <td class="m-help">Specifies whether or not to store the training prtDataset.&nbsp;</td>
+         </tr>
+      </table>
+      <!--Methods-->
+      <div class="sectiontitle"><a name="methods"></a>Method Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClassMatlabTreeBagger/crossValidate.html">crossValidate</a></td>
+            <td class="m-help">Cross validate prtAction using prtDataSet and cross validation keys.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClassMatlabTreeBagger/get.html">get</a></td>
+            <td class="m-help">get the object properties&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClassMatlabTreeBagger/kfolds.html">kfolds</a></td>
+            <td class="m-help">Perform K-folds cross-validation of prtAction&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClassMatlabTreeBagger/optimize.html">optimize</a></td>
+            <td class="m-help">Optimize action parameter by exhaustive function maximization.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClassMatlabTreeBagger/plot.html">plot</a></td>
+            <td class="m-help">Plot the output confidence of a prtClass object&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClassMatlabTreeBagger/run.html">run</a></td>
+            <td class="m-help">Run a prtAction object on a prtDataSet object.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClassMatlabTreeBagger/set.html">set</a></td>
+            <td class="m-help">set the object properties&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClassMatlabTreeBagger/train.html">train</a></td>
+            <td class="m-help">Train a prtAction object using training a prtDataSet object.&nbsp;</td>
+         </tr>
+      </table>
+   </body>
+</html>

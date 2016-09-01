@@ -1,0 +1,36 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../helpwin.css">
+      <title>MATLAB File Help: prtScorePercentCorrect</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtScorePercentCorrect</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtScorePercentCorrect</div>
+      <div class="helptext"><pre><!--helptext -->  PERCENTCORRECT = <span class="helptopic">prtScorePercentCorrect</span>(GUESS, TRUTH)
+ 
+    PERCENTCORRECT = <span class="helptopic">prtScorePercentCorrect</span>(GUESS, TRUTH) returns the
+    percent of correct guesses in GUESS as compared to the truth in TRUTH.
+    GUESS and TRUTH should both be Nx1 vectors. The elements of both
+    TRUTH and GUESS should be binary or interger class labels.
+ 
+    Example:
+    TestDataSet = prtDataGenUnimodal;       % Create some test and
+    TrainingDataSet = prtDataGenUnimodal;   % training data
+    classifier = prtClassMap;               % Create a classifier
+    % Use minimum probablity of error rule
+    classifier.internalDecider = prtDecisionBinaryMinPe;
+    classifier = classifier.train(TrainingDataSet);    % Train
+    classified = run(classifier, TestDataSet);         % Test
+    percentCorr = <span class="helptopic">prtScorePercentCorrect</span>(classified,TestDataSet)</pre></div><!--after help --><!--seeAlso--><div class="footerlinktitle">See also</div><div class="footerlink"> <a href="./prtScoreConfusionMatrix.html">prtScoreConfusionMatrix</a>, <a href="./prtScoreRoc.html">prtScoreRoc</a>, <a href="./prtScoreRmse.html">prtScoreRmse</a>
+</div>
+   </body>
+</html>

@@ -1,0 +1,196 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../helpwin.css">
+      <title>MATLAB File Help: prtPreProcPls</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtPreProcPls</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtPreProcPls</div>
+      <div class="helptext"><pre><!--helptext -->  <span class="helptopic">prtPreProcPls</span>   Partial least squares
+ 
+    PLS = <span class="helptopic">prtPreProcPls</span> creates a partial least-squares pre-processing
+    object.
+ 
+    PLS = <span class="helptopic">prtPreProcPls</span>('nComponents',N) constructs a
+    prtPreProcPLS object PLS with nComponents set to the value N.
+ 
+    A <span class="helptopic">prtPreProcPls</span> object has the following properites:
+  
+     nComponents    - The number of principle componenets
+ 
+    A <span class="helptopic">prtPreProcPls</span> object also inherits all properties and functions from
+    the prtAction class
+ 
+    Example:
+ 
+    dataSet = prtDataGenFeatureSelection;  % Load a data set
+    pls = <span class="helptopic">prtPreProcPls</span>;                   % Create a <span class="helptopic">prtPreProcPls</span> Object
+                         
+    pls = pls.train(dataSet);              % Train
+    dataSetNew = pls.run(dataSet);         % Run
+ 
+    % Plot 
+    plot(dataSetNew);
+    title('PLS Projected Data');</pre></div><!--after help --><!--seeAlso--><div class="footerlinktitle">See Also</div><div class="footerlink"> <a href="./prtPreProc.html">prtPreProc</a>, <a href="./prtPreProcPca.html">prtPreProcPca</a>, <a href="./prtPreProcPls.html">prtPreProcPls</a>,
+    <a href="./prtPreProcHistEq.html">prtPreProcHistEq</a>, <a href="./prtPreProcZeroMeanColumns.html">prtPreProcZeroMeanColumns</a>, <a href="./prtPreProcLda.html">prtPreProcLda</a>,
+    <a href="./prtPreProcZeroMeanRows.html">prtPreProcZeroMeanRows</a>, <a href="./prtPreProcLogDisc.html">prtPreProcLogDisc</a>, <a href="./prtPreProcZmuv.html">prtPreProcZmuv</a>,
+    <a href="./prtPreProcMinMaxRows.html">prtPreProcMinMaxRows</a>
+</div>
+      <!--Class-->
+      <div class="sectiontitle">Class Details</div>
+      <table class="class-details">
+         <tr>
+            <td class="class-detail-label">Superclasses</td>
+            <td><a href="./prtPreProc.html">prtPreProc</a></td>
+         </tr>
+         <tr>
+            <td class="class-detail-label">Sealed</td>
+            <td>false</td>
+         </tr>
+         <tr>
+            <td class="class-detail-label">Construct on load</td>
+            <td>false</td>
+         </tr>
+      </table>
+      <!--Constructors-->
+      <div class="sectiontitle"><a name="constructors"></a>Constructor Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="name"><a href="./prtPreProcPls/prtPreProcPls.html">prtPreProcPls</a></td>
+            <td class="m-help">Partial least squares&nbsp;</td>
+         </tr>
+      </table>
+      <!--Properties-->
+      <div class="sectiontitle"><a name="properties"></a>Property Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="name"><a href="./prtPreProcPls/dataSet.html">dataSet</a></td>
+            <td class="m-help">The training prtDataSet, only stored if verboseStorage is true. &nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtPreProcPls/dataSetSummary.html">dataSetSummary</a></td>
+            <td class="m-help">Structure that summarizes prtDataSet.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtPreProcPls/isCrossValidateValid.html">isCrossValidateValid</a></td>
+            <td class="m-help">True&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtPreProcPls/isSupervised.html">isSupervised</a></td>
+            <td class="m-help">False&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtPreProcPls/isTrained.html">isTrained</a></td>
+            <td class="m-help">Indicates if prtAction object has been trained.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtPreProcPls/nComponents.html">nComponents</a></td>
+            <td class="m-help">The number of Pls components&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtPreProcPls/name.html">name</a></td>
+            <td class="m-help">Partial Least Squares&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtPreProcPls/nameAbbreviation.html">nameAbbreviation</a></td>
+            <td class="m-help">PLS&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtPreProcPls/projectionMatrix.html">projectionMatrix</a></td>
+            <td class="m-help">Projection Matrix&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtPreProcPls/showProgressBar.html">showProgressBar</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtPreProcPls/userData.html">userData</a></td>
+            <td class="m-help">User specified data&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtPreProcPls/verboseStorage.html">verboseStorage</a></td>
+            <td class="m-help">Specifies whether or not to store the training prtDataset.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtPreProcPls/xMeanVector.html">xMeanVector</a></td>
+            <td class="m-help">X means&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtPreProcPls/yMeanVector.html">yMeanVector</a></td>
+            <td class="m-help">Y means&nbsp;</td>
+         </tr>
+      </table>
+      <!--Methods-->
+      <div class="sectiontitle"><a name="methods"></a>Method Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtPreProcPls/crossValidate.html">crossValidate</a></td>
+            <td class="m-help">Cross validate prtAction using prtDataSet and cross validation keys.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtPreProcPls/get.html">get</a></td>
+            <td class="m-help">get the object properties&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtPreProcPls/kfolds.html">kfolds</a></td>
+            <td class="m-help">Perform K-folds cross-validation of prtAction&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtPreProcPls/optimize.html">optimize</a></td>
+            <td class="m-help">Optimize action parameter by exhaustive function maximization.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtPreProcPls/run.html">run</a></td>
+            <td class="m-help">Run a prtAction object on a prtDataSet object.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtPreProcPls/set.html">set</a></td>
+            <td class="m-help">set the object properties&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtPreProcPls/train.html">train</a></td>
+            <td class="m-help">Train a prtAction object using training a prtDataSet object.&nbsp;</td>
+         </tr>
+      </table>
+   </body>
+</html>

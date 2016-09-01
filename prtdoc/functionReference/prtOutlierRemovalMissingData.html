@@ -1,0 +1,190 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../helpwin.css">
+      <title>MATLAB File Help: prtOutlierRemovalMissingData</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtOutlierRemovalMissingData</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtOutlierRemovalMissingData</div>
+      <div class="helptext"><pre><!--helptext -->  <span class="helptopic">prtOutlierRemovalMissingData</span>  Removes missing data from a prtDataSet
+ 
+    NSTDOUT = <span class="helptopic">prtOutlierRemovalMissingData</span> creates a pre-processing
+    object that removes all missing data as outliers. Missing data are
+    respresented as NaN's in the original data set.
+ 
+    A <span class="helptopic">prtOutlierRemovalMissingData</span> object also inherits all properties and
+    functions from the prtOutlierRemoval class.  For more information
+    on how to control the behaviour of outlier removal objects, see the
+    help for prtOutlierRemoval.
+ 
+    Example:
+ 
+    dataSet = prtDataGenUnimodal;               % Load a data Set
+    outlier = prtDataSetClass([NaN NaN],1);     % Create and insert
+    dataSet = catObservations(dataSet,outlier); % an Outlier
+ 
+    % Create the prtOutlierRemoval object
+    outRemove = <span class="helptopic">prtOutlierRemovalMissingData</span>('runMode','removeObservation');
+ 
+    outRemove = outRemove.train(dataSet);    % Train and run
+    dataSetNew = outRemove.run(dataSet);</pre></div><!--after help --><!--seeAlso--><div class="footerlinktitle">See Also</div><div class="footerlink">  <a href="./prtOutlierRemoval.html">prtOutlierRemoval</a>,
+    <a href="./prtOutlierRemovalNonFinite.html">prtOutlierRemovalNonFinite</a>,<a href="./prtOutlierRemovalNStd.html">prtOutlierRemovalNStd</a>
+</div>
+      <!--Class-->
+      <div class="sectiontitle">Class Details</div>
+      <table class="class-details">
+         <tr>
+            <td class="class-detail-label">Superclasses</td>
+            <td><a href="./prtOutlierRemoval.html">prtOutlierRemoval</a></td>
+         </tr>
+         <tr>
+            <td class="class-detail-label">Sealed</td>
+            <td>false</td>
+         </tr>
+         <tr>
+            <td class="class-detail-label">Construct on load</td>
+            <td>false</td>
+         </tr>
+      </table>
+      <!--Constructors-->
+      <div class="sectiontitle"><a name="constructors"></a>Constructor Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="name"><a href="./prtOutlierRemovalMissingData/prtOutlierRemovalMissingData.html">prtOutlierRemovalMissingData</a></td>
+            <td class="m-help">Need to check this with the string - setting the string in&nbsp;</td>
+         </tr>
+      </table>
+      <!--Properties-->
+      <div class="sectiontitle"><a name="properties"></a>Property Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="name"><a href="./prtOutlierRemovalMissingData/dataSet.html">dataSet</a></td>
+            <td class="m-help">The training prtDataSet, only stored if verboseStorage is true. &nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtOutlierRemovalMissingData/dataSetSummary.html">dataSetSummary</a></td>
+            <td class="m-help">Structure that summarizes prtDataSet.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtOutlierRemovalMissingData/isCrossValidateValid.html">isCrossValidateValid</a></td>
+            <td class="m-help">False&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtOutlierRemovalMissingData/isSupervised.html">isSupervised</a></td>
+            <td class="m-help">False&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtOutlierRemovalMissingData/isTrained.html">isTrained</a></td>
+            <td class="m-help">Indicates if prtAction object has been trained.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtOutlierRemovalMissingData/name.html">name</a></td>
+            <td class="m-help">Required by prtAction&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtOutlierRemovalMissingData/nameAbbreviation.html">nameAbbreviation</a></td>
+            <td class="m-help">MissingDataRemove&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtOutlierRemovalMissingData/replaceValue.html">replaceValue</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtOutlierRemovalMissingData/runMode.html">runMode</a></td>
+            <td class="m-help">Operation taken during RUN&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtOutlierRemovalMissingData/runOnTrainingMode.html">runOnTrainingMode</a></td>
+            <td class="m-help">Operation taken during TRAIN&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtOutlierRemovalMissingData/showProgressBar.html">showProgressBar</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtOutlierRemovalMissingData/userData.html">userData</a></td>
+            <td class="m-help">User specified data&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtOutlierRemovalMissingData/validModes.html">validModes</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtOutlierRemovalMissingData/verboseStorage.html">verboseStorage</a></td>
+            <td class="m-help">Specifies whether or not to store the training prtDataset.&nbsp;</td>
+         </tr>
+      </table>
+      <!--Methods-->
+      <div class="sectiontitle"><a name="methods"></a>Method Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtOutlierRemovalMissingData/crossValidate.html">crossValidate</a></td>
+            <td class="m-help">Cross validate prtAction using prtDataSet and cross validation keys.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtOutlierRemovalMissingData/get.html">get</a></td>
+            <td class="m-help">get the object properties&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtOutlierRemovalMissingData/kfolds.html">kfolds</a></td>
+            <td class="m-help">Perform K-folds cross-validation of prtAction&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtOutlierRemovalMissingData/optimize.html">optimize</a></td>
+            <td class="m-help">Optimize action parameter by exhaustive function maximization.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtOutlierRemovalMissingData/run.html">run</a></td>
+            <td class="m-help">Run a prtAction object on a prtDataSet object.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtOutlierRemovalMissingData/set.html">set</a></td>
+            <td class="m-help">set the object properties&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtOutlierRemovalMissingData/train.html">train</a></td>
+            <td class="m-help">Train a prtAction object using training a prtDataSet object.&nbsp;</td>
+         </tr>
+      </table>
+   </body>
+</html>

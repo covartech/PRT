@@ -1,0 +1,206 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../helpwin.css">
+      <title>MATLAB File Help: prtClassMap</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtClassMap</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtClassMap</div>
+      <div class="helptext"><pre><!--helptext --> <span class="helptopic">prtClassMap</span>  Maximum a Posteriori classifier
+  
+     CLASSIFIER = <span class="helptopic">prtClassMap</span> returns a Maximum a Posteriori classifier
+ 
+     CLASSIFIER = <span class="helptopic">prtClassMap</span>(PROPERTY1, VALUE1, ...) constructs a
+     prtClassMAP object CLASSIFIER with properties as specified by
+     PROPERTY/VALUE pairs.
+ 
+     A <span class="helptopic">prtClassMap</span> object inherits all properties from the abstract class
+     prtClass. In addition is has the following property:
+ 
+     rvs    - A prtRv object. This property describes the random variable 
+              model used for Maximum a Posteriori classification.
+ 
+     A <span class="helptopic">prtClassMap</span> object inherits inherits the TRAIN, RUN, CROSSVALIDATE
+     and KFOLDS methods from prtClass.
+ 
+     Example:
+ 
+     TestDataSet = prtDataGenUnimodal;       % Create some test and
+     TrainingDataSet = prtDataGenUnimodal;   % training data
+     classifier = <span class="helptopic">prtClassMap</span>;               % Create a classifier
+     classifier = classifier.train(TrainingDataSet);    % Train
+     classified = run(classifier, TestDataSet);         % Test
+ 
+     subplot(2,1,1); classifier.plot;  % Plot results
+     subplot(2,1,2); prtScoreRoc(classified,TestDataSet);
+     set(get(gca,'Children'), 'LineWidth',3)</pre></div><!--after help --><!--seeAlso--><div class="footerlinktitle">See also</div><div class="footerlink"> <a href="./prtClass.html">prtClass</a>, <a href="./prtClassLogisticDiscriminant.html">prtClassLogisticDiscriminant</a>, <a href="./prtClassBagging.html">prtClassBagging</a>,
+     <a href="./prtClassMap.html">prtClassMap</a>, <a href="./prtClassFld.html">prtClassFld</a>, <a href="./prtClassBinaryToMaryOneVsAll.html">prtClassBinaryToMaryOneVsAll</a>, <a href="./prtClassDlrt.html">prtClassDlrt</a>,
+     <a href="./prtClassPlsda.html">prtClassPlsda</a>, <a href="./prtClassFld.html">prtClassFld</a>, <a href="./prtClassRvm.html">prtClassRvm</a>, <a href="./prtClassGlrt.html">prtClassGlrt</a>,  <a href="./prtClassSvm.html">prtClassSvm</a>,
+     <a href="./prtClassTreeBaggingCap.html">prtClassTreeBaggingCap</a>, <a href="./prtClassKmsd.html">prtClassKmsd</a>, <a href="./prtClassKnn.html">prtClassKnn</a>                   
+</div>
+      <!--Class-->
+      <div class="sectiontitle">Class Details</div>
+      <table class="class-details">
+         <tr>
+            <td class="class-detail-label">Superclasses</td>
+            <td><a href="./prtClass.html">prtClass</a></td>
+         </tr>
+         <tr>
+            <td class="class-detail-label">Sealed</td>
+            <td>false</td>
+         </tr>
+         <tr>
+            <td class="class-detail-label">Construct on load</td>
+            <td>false</td>
+         </tr>
+      </table>
+      <!--Constructors-->
+      <div class="sectiontitle"><a name="constructors"></a>Constructor Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassMap/prtClassMap.html">prtClassMap</a></td>
+            <td class="m-help">Maximum a Posteriori classifier&nbsp;</td>
+         </tr>
+      </table>
+      <!--Properties-->
+      <div class="sectiontitle"><a name="properties"></a>Property Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassMap/dataSet.html">dataSet</a></td>
+            <td class="m-help">The training prtDataSet, only stored if verboseStorage is true. &nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassMap/dataSetSummary.html">dataSetSummary</a></td>
+            <td class="m-help">Structure that summarizes prtDataSet.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassMap/internalDecider.html">internalDecider</a></td>
+            <td class="m-help">Optional prtDecider object for making decisions&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassMap/isCrossValidateValid.html">isCrossValidateValid</a></td>
+            <td class="m-help">True&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassMap/isNativeMary.html">isNativeMary</a></td>
+            <td class="m-help">True&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassMap/isSupervised.html">isSupervised</a></td>
+            <td class="m-help">True&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassMap/isTrained.html">isTrained</a></td>
+            <td class="m-help">Indicates if prtAction object has been trained.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassMap/name.html">name</a></td>
+            <td class="m-help">Required by prtAction&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassMap/nameAbbreviation.html">nameAbbreviation</a></td>
+            <td class="m-help">MAP&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassMap/rvs.html">rvs</a></td>
+            <td class="m-help">Random variable object containing mean and variance&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassMap/showProgressBar.html">showProgressBar</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassMap/twoClassParadigm.html">twoClassParadigm</a></td>
+            <td class="m-help">Whether the classifier retures one output (binary) or two outputs (m-ary) when there are only two unique class labels&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassMap/userData.html">userData</a></td>
+            <td class="m-help">User specified data&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassMap/verboseStorage.html">verboseStorage</a></td>
+            <td class="m-help">Specifies whether or not to store the training prtDataset.&nbsp;</td>
+         </tr>
+      </table>
+      <!--Methods-->
+      <div class="sectiontitle"><a name="methods"></a>Method Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClassMap/crossValidate.html">crossValidate</a></td>
+            <td class="m-help">Cross validate prtAction using prtDataSet and cross validation keys.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClassMap/get.html">get</a></td>
+            <td class="m-help">get the object properties&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClassMap/kfolds.html">kfolds</a></td>
+            <td class="m-help">Perform K-folds cross-validation of prtAction&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClassMap/optimize.html">optimize</a></td>
+            <td class="m-help">Optimize action parameter by exhaustive function maximization.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClassMap/plot.html">plot</a></td>
+            <td class="m-help">Plot the output confidence of a prtClass object&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClassMap/run.html">run</a></td>
+            <td class="m-help">Run a prtAction object on a prtDataSet object.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClassMap/set.html">set</a></td>
+            <td class="m-help">set the object properties&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClassMap/train.html">train</a></td>
+            <td class="m-help">Train a prtAction object using training a prtDataSet object.&nbsp;</td>
+         </tr>
+      </table>
+   </body>
+</html>

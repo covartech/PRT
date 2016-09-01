@@ -1,0 +1,134 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Developing and testing your own algorithms</title><meta name="generator" content="MATLAB 8.0"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2013-02-19"><meta name="DC.source" content="prtDocAddYourOwn.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Developing and testing your own algorithms</h1><!--introduction--><p>The PRT provides support for incorportating your own algorithms into the PRT framework with relative ease. Template classes are provided for classifiers, clustering, kernels, outlier removal, pre processing, and regression.</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">An Example</a></li><li><a href="#2">Test suite for the PRT</a></li></ul></div><h2>An Example<a name="1"></a></h2><p>As an example, type</p><pre class="language-matlab">prtNewClass
+</pre><p>and enter "prtClassMine" when prompted by the dialog. Press save, and a skeleton classifier file will open in the MATLAB editor. This M-file will contain instructions for creating your own classification object.</p><p>Consider a simple classifier, a generalized likelihood ratio test (GLRT), where the two classes are described by multivariate normal random variables. Such a classifier would have two parameters, a random variable describing each class. So, to construct a classifier object with these parameters, in the file prtClassMine, under properties, you would place the following definitions:</p><pre class="language-matlab">rvH0 = prtRvMvn;  <span class="comment">% Mean and variance of H0</span>
+rvH1 = prtRvMvn;  <span class="comment">% Mean and variance of H1</span>
+</pre><p>A GLRT classifier must estimate these two random variables. This happens during the TRAIN operation. So, for the trainAction code, you would use the following code:</p><pre class="language-matlab">self.rvH0 = mle(self.rvH0, dataSet.getObservationsByClassInd(1));
+self.rvH1 = mle(self.rvH1, dataSet.getObservationsByClassInd(2));
+</pre><p>The above code would learn the maximal likelhiood estimates of both random variables from the training data.</p><p>Finally, for a trained classifier, you will need code that outputs a decision statistic. So for the runAction, place the following code:</p><pre class="language-matlab">logLikelihoodH0 = logPdf(self.rvH0, dataSet.getObservations());
+logLikelihoodH1 = logPdf(self.rvH1, dataSet.getObservations());
+dataSet = dataSet.setObservations(logLikelihoodH1 - logLikelihoodH0);
+</pre><p>Save your M-file and you now have a new prtClass object that can be used like any other prtClass object in the toolbox. It will be fully compatible with prtAlgorithms and all other features of the PRT.</p><h2>Test suite for the PRT<a name="2"></a></h2><p>A full test suite for the PRT is also provided. You can access it in the prtRoot\]internal\test directory. Upon intallation, you might want to run the full suite with the command prtTest. If you find yourself modifying the provided functions, it is a good idea to run this test from time to time to ensure nothing has broken. An abbreviated test, prtTestSmoke, is also provided. prtTestSmoke runs a small subset of the test suite, and is designed to quickly test the major features of the product.</p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2012b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Developing and testing your own algorithms
+% The PRT provides support for incorportating your own algorithms into the
+% PRT framework with relative ease. Template classes are provided for
+% classifiers, clustering, kernels, outlier removal, pre processing, and
+% regression.
+
+%% An Example
+% As an example, type
+% 
+%   prtNewClass
+% 
+% and enter "prtClassMine" when prompted by the dialog. Press save, and a
+% skeleton classifier file will open in the MATLAB editor. This M-file will
+% contain instructions for creating your own classification object.
+%
+% Consider a simple classifier, a generalized likelihood ratio test (GLRT), where
+% the two classes are described by multivariate normal random variables.
+% Such a classifier would have two parameters, a random variable describing
+% each class. So, to construct a classifier object with these parameters, in
+% the file prtClassMine, under properties, you would place the following
+% definitions:
+%
+%   rvH0 = prtRvMvn;  % Mean and variance of H0
+%   rvH1 = prtRvMvn;  % Mean and variance of H1  
+%
+% A GLRT classifier must estimate these two random variables. This happens
+% during the TRAIN operation. So, for the trainAction code, you would use
+% the following code:
+%
+%   self.rvH0 = mle(self.rvH0, dataSet.getObservationsByClassInd(1));
+%   self.rvH1 = mle(self.rvH1, dataSet.getObservationsByClassInd(2));
+%        
+% The above code would learn the maximal likelhiood estimates of both
+% random variables from the training data.
+%
+% Finally, for a trained classifier, you will need code that outputs a
+% decision statistic. So for the runAction, place the following code:
+%
+%   logLikelihoodH0 = logPdf(self.rvH0, dataSet.getObservations());
+%   logLikelihoodH1 = logPdf(self.rvH1, dataSet.getObservations());
+%   dataSet = dataSet.setObservations(logLikelihoodH1 - logLikelihoodH0);
+%
+% Save your M-file and you now have a new prtClass object that can be used
+% like any other prtClass object in the toolbox. It will be fully
+% compatible with prtAlgorithms and all other features of the PRT.
+
+%% Test suite for the PRT
+% A full test suite for the PRT is also provided. You can access it in the
+% prtRoot\]internal\test directory. Upon intallation, you might want to
+% run the full suite with the command prtTest. If you find yourself
+% modifying the provided functions, it is a good idea to run this test from
+% time to time to ensure nothing has broken. An abbreviated test,
+% prtTestSmoke, is also provided. prtTestSmoke runs a small subset of the
+% test suite, and is designed to quickly test the major features of the
+% product.
+##### SOURCE END #####
+--></body></html>

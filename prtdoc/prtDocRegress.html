@@ -1,0 +1,151 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>PRT Regresssion objects</title><meta name="generator" content="MATLAB 8.0"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2013-02-19"><meta name="DC.source" content="prtDocRegress.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>PRT Regresssion objects</h1><!--introduction--><p>Regression is another powerful technique available in the Pattern Recognition Toolbox. It is similar to classification, except that the target result is not a class label, but can be a non-integer value.</p><p>Since all <a href="./functionReference/prtRegress.html">prtRegress</a> objects inherit from the prtAction class, they share the TRAIN, RUN, CROSSVALIDATE and KFOLDS For more information on these methods, refer to section on the <a href="./prtDocEngine.html">prtEngine</a>.</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Using regression objects</a></li></ul></div><h2>Using regression objects<a name="1"></a></h2><p>The following is a simple example of the usage of a prtRegress object.</p><pre class="codeinput"><span class="comment">% Create a test and training dataset of a noisy Sinc wave.</span>
+dsTest  = prtDataGenNoisySinc;
+dsTrain = prtDataGenNoisySinc;
+
+<span class="comment">% Create a prtRegressRvm object</span>
+regress = prtRegressRvm;
+
+<span class="comment">% Train the regression object</span>
+regress = regress.train(dsTrain);
+
+<span class="comment">% Plot the trained regression object</span>
+plot(regress)
+</pre><img vspace="5" hspace="5" src="prtDocRegress_01.png" alt=""> <p>In the above plot, the training data points are all displayed at blue dots, and the learned regression curve is overlaid as a solid line.</p><p>To delve a little bit deeper, run the prtRegression object on the test dataset:</p><pre class="codeinput"><span class="comment">% Test it with the test dataset:</span>
+result = regress.run(dsTest);
+<span class="comment">% Plot the results</span>
+plot(dsTest.getX, result.getX,<span class="string">'-*'</span>)
+<span class="comment">% Overlay the original data points</span>
+hold <span class="string">on</span>
+plot(dsTest.getX, dsTest.getY,<span class="string">'ro'</span>)
+legend(<span class="string">'Regressed datapoints'</span>, <span class="string">'Original datapoints'</span>)
+</pre><img vspace="5" hspace="5" src="prtDocRegress_02.png" alt=""> <p>The above plot illustrates a few things. First, note that the results dataset, the regressed values are stored in observations, and the original targets from the test data set are copied over and stored in the targets of the result dataset.</p><p>In terms of a 2-d plot, you can think of the observations in the result dataset as the 'new' Y values, and the targets are the 'old' Y values. So, in order to plot in 2-d, you need the original X values, which are in dsTrain.getX, and plot those versus the regressed Y-values, which are stored in dsTrain.getX. For comparision purposes, the original Y-values, which are stored in both result.getY and dsTrain.getY, are also plotted.</p><p>The algorithm that maps the original Y values to the regressed values, varies depeding on the prtRegress object you use, however the syntax is the same for all prtRegress objects. For a list of all the different regression algorithms, and links to their individual help entries, <a href="prtDocFunctionList.html">A list of commonly used functions</a></p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2012b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% PRT Regresssion objects
+% Regression is another powerful technique available in the Pattern
+% Recognition Toolbox. It is similar to classification, except that the
+% target result is not a class label, but can be a non-integer value.
+%
+% Since all <./functionReference/prtRegress.html prtRegress> objects inherit from the
+% prtAction class, they share the TRAIN, RUN, CROSSVALIDATE and KFOLDS For
+% more information on these methods, refer to section on the
+% <./prtDocEngine.html prtEngine>.
+
+%% Using regression objects
+% The following is a simple example of the usage of a prtRegress object.
+
+% Create a test and training dataset of a noisy Sinc wave.
+dsTest  = prtDataGenNoisySinc;
+dsTrain = prtDataGenNoisySinc;
+
+% Create a prtRegressRvm object
+regress = prtRegressRvm;
+
+% Train the regression object
+regress = regress.train(dsTrain);
+
+% Plot the trained regression object
+plot(regress)
+
+%%
+% In the above plot, the training data points are all displayed at blue
+% dots, and the learned regression curve is overlaid as a solid line.
+% 
+% To delve a little bit deeper, run the prtRegression object on the test
+% dataset:
+
+% Test it with the test dataset:
+result = regress.run(dsTest);
+% Plot the results
+plot(dsTest.getX, result.getX,'-*')
+% Overlay the original data points
+hold on
+plot(dsTest.getX, dsTest.getY,'ro')
+legend('Regressed datapoints', 'Original datapoints')
+
+%%
+% The above plot illustrates a few things. First, note that the results
+% dataset, the regressed values are stored in observations, and the
+% original targets from the test data set are copied over and stored in the
+% targets of the result dataset. 
+%
+% In terms of a 2-d plot, you can think of the observations in the result
+% dataset as the 'new' Y values, and the targets are the 'old' Y values.
+% So, in order to plot in 2-d, you need the original X values, which are in
+% dsTrain.getX, and plot those versus the regressed Y-values, which are
+% stored in dsTrain.getX. For comparision purposes, the original Y-values,
+% which are stored in both result.getY and dsTrain.getY, are also plotted.
+%
+% The algorithm that maps the original Y values to the regressed values,
+% varies depeding on the prtRegress object you use, however the syntax is
+% the same for all prtRegress objects. For a list of all the different
+% regression algorithms, and links to their individual help entries,
+% <prtDocFunctionList.html A list of commonly used functions>
+##### SOURCE END #####
+--></body></html>

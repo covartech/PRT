@@ -1,0 +1,61 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../../helpwin.css">
+      <title>MATLAB File Help: prtDecisionMap/prtDecisionMap</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtDecisionMap/prtDecisionMap</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtDecisionMap/prtDecisionMap</div>
+      <div class="helptext"><pre><!--helptext -->  <span class="helptopic">prtDecisionMap</span> Maximum a-posteriori decision making
+ 
+  prtDec = <span class="helptopic">prtDecisionMap</span> creates a prtDecisionBinaryMap
+  object, which can be used to perform Maximu a-posteriori decions.
+ 
+  prtDecision objects are intended to be used either as members of
+  prtAlgorithm or prtClass objects.
+ 
+  Example 1:
+ 
+  ds = prtDataGenMary;                    % Load a data set
+  classifier = prtClassKnn;            % Create a clasifier
+  classifier = classifier.train(ds);   % Train the classifier
+  yOutClassifier = classifier.run(ds); % Run the classifier
+ 
+  % Construct a prtAlgorithm object consisting of a prtClass object and
+  % a prtDecision object
+  algo = prtClassKnn + <span class="helptopic">prtDecisionMap</span>; 
+ 
+  algo = algo.train(ds);        % Train the algorithm    
+  yOutAlgorithm = algo.run(ds); % Run the algorithm
+  
+  % Plot and compare the results
+  subplot(2,1,1); stem(yOutClassifier.getObservations); title('KNN Output');
+  subplot(2,1,2); stem(yOutAlgorithm.getObservations); title('KNN + Decision Output');
+ 
+  Example 2:
+ 
+  ds = prtDataGenMary;              % Load a data set
+  classifier = prtClassKnn;            % Create a clasifier
+  classifier = classifier.train(ds);   % Train the classifier
+ 
+  % Plot the trained classifier
+  subplot(2,1,1); plot(classifier); title('KNN');
+ 
+  % Set the classifiers internealDecider to be a prtDecsion object
+  classifier.internalDecider = <span class="helptopic">prtDecisionMap</span>;
+ 
+  classifier = classifier.train(ds); % Train the classifier
+  subplot(2,1,2); plot(classifier); title('KNN + Decision');</pre></div><!--after help --><!--seeAlso--><div class="footerlinktitle">See also</div><div class="footerlink"> <a href="./../prtDecisionBinary.html">prtDecisionBinary</a>, <a href="./../prtDecisionBinarySpecifiedPd.html">prtDecisionBinarySpecifiedPd</a>,
+  <a href="./../prtDecisionBinarySpecifiedPf.html">prtDecisionBinarySpecifiedPf</a>, <a href="./../prtDecisionMap.html">prtDecisionMap</a>
+</div>
+   </body>
+</html>

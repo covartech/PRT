@@ -1,0 +1,60 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../../helpwin.css">
+      <title>MATLAB File Help: prtRvGmm/prtRvGmm</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtRvGmm/prtRvGmm</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtRvGmm/prtRvGmm</div>
+      <div class="helptext"><pre><!--helptext -->  <span class="helptopic">prtRvGmm</span> - Gaussian Mixture Model Random Variable
+ 
+    RV = <span class="helptopic">prtRvGmm</span> creates a <span class="helptopic">prtRvGmm</span> object with empty
+    mixingProportions and prtRvMvn components. These parameters can be
+    set manually or by calling the MLE method. A <span class="helptopic">prtRvGmm</span> is a mixture
+    of multi-variance normal random variables.
+ 
+    RV = <span class="helptopic">prtRvGmm</span>(PROPERTY1, VALUE1,...) creates a <span class="helptopic">prtRvGmm</span>
+    object RV with properties as specified by PROPERTY/VALUE pairs.
+ 
+    A <span class="helptopic">prtRvGmm</span> object inherits all properties from the prtRv class.
+    In addition, it has the following properties:
+ 
+    nComponents         - A positive integer specifiying the number of
+                          MVN components in the mixture.
+    covarianceStructure - The covariance structure applied to each of
+                          the prtRvMvn objects in the mixture. See prtRvMvn.
+    covariancePool      - A logical specifying whether the components
+                          should share a common covariance. If set to
+                          true the covariance of the components are 
+                          set to the weighted average of the maximum
+                          likelihood estimate for the covariance 
+                          matrices for the components.
+    components          - An array of prtRvMvn objects.
+    mixingProportions   - A discrete probability vector, representing
+                          the probability of each component in the
+                          mixture.
+ 
+   A <span class="helptopic">prtRvGmm</span> object inherits all methods from the prtRv class.
+   The MLE method can be used to estimate the distribution parameters
+   from data.
+ 
+   Examples:
+        ds = prtDataGenOldFaithful;      % Load a data set
+        rv = <span class="helptopic">prtRvGmm</span>('nComponents',2);  % Specify 2 components
+        rv = mle(rv,ds);                 % Compute the ML estimate
+        plotPdf(rv);                     % Plot the estimated PDF
+        hold on;
+        plot(ds);                        % Overlay the original data</pre></div><!--after help --><!--seeAlso--><div class="footerlinktitle">See also</div><div class="footerlink"> <a href="./../prtRv.html">prtRv</a>, <a href="./../prtRvMvn.html">prtRvMvn</a>, <a href="./../prtRvMultinomial.html">prtRvMultinomial</a>, <a href="./../prtRvUniform.html">prtRvUniform</a>,
+              <a href="./../prtRvUniformImproper.html">prtRvUniformImproper</a>, <a href="./../prtRvVq.html">prtRvVq</a>
+</div>
+   </body>
+</html>

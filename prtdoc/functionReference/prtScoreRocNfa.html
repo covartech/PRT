@@ -1,0 +1,43 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../helpwin.css">
+      <title>MATLAB File Help: prtScoreRocNfa</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtScoreRocNfa</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtScoreRocNfa</div>
+      <div class="helptext"><pre><!--helptext -->  <span class="helptopic">prtScoreRocNfa</span>   Generate a operator characteristic curve and output the number of false alarms
+ 
+     <span class="helptopic">prtScoreRocNfa</span>(DECSTATS,LABELS) plots the receiver operator
+     characteristic curve for the decision statistics DECSTATS and the
+     corresponding labels LABELS. DECSTATS must be a Nx1 vector of decision
+     statistics. LABELS must be a Nx1 vector of binary class labels. This
+     behavior is the same as prtScoreRoc.
+ 
+     [NF,PD,THRESHOLDS,AUC] = <span class="helptopic">prtScoreRocNfa</span>(DECSTATS,LABELS) outputs the
+     number of false alarms NF, the probability of detection PD, the
+     thresholds used to obtain each PD and NF pair, and the area under the
+     ROC scurve AUC.
+ 
+     Example:     
+     TestDataSet = prtDataGenSpiral;       % Create some test and
+     TrainingDataSet = prtDataGenSpiral;   % training data
+     classifier = prtClassSvm;             % Create a classifier
+     classifier = classifier.train(TrainingDataSet);    % Train
+     classified = run(classifier, TestDataSet);     
+     % Find the number of false alarms at the corresponding PD.
+     [nf, pd ]= <span class="helptopic">prtScoreRocNfa</span>(classified.getX, TestDataSet.getY);</pre></div><!--after help --><!--seeAlso--><div class="footerlinktitle">See also</div><div class="footerlink"> <a href="./prtScoreConfusionMatrix.html">prtScoreConfusionMatrix</a>, <a href="./prtScoreRmse.html">prtScoreRmse</a>,
+    <a href="./prtScoreRocBayesianBootstrap.html">prtScoreRocBayesianBootstrap</a>, <a href="./prtScoreRocBayesianBootstrapNfa.html">prtScoreRocBayesianBootstrapNfa</a>,
+    <a href="./prtScorePercentCorrect.html">prtScorePercentCorrect</a>
+</div>
+   </body>
+</html>

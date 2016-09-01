@@ -1,0 +1,52 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../helpwin.css">
+      <title>MATLAB File Help: prtScoreRoc</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtScoreRoc</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtScoreRoc</div>
+      <div class="helptext"><pre><!--helptext -->  <span class="helptopic">prtScoreRoc</span>   Generate a reciever operator characteristic curve
+ 
+     <span class="helptopic">prtScoreRoc</span>(DECSTATS,LABELS) plots the receiver operator
+     characteristic curve for the decision statistics DECSTATS and the
+     corresponding labels LABELS. DECSTATS must be a Nx1 vector of decision
+     statistics. LABELS must be a Nx1 vector of binary class labels.
+ 
+     [PF, PD, THRESHOLDS, AUC] = <span class="helptopic">prtScoreRoc</span>(DECSTATS,LABELS) outputs the
+     probability of false alarm PF, the probability of detection PD, the
+     THREHSOLDS required to achieved each PF and PD, and the area under the
+     ROC curve AUC.
+ 
+     [PF, PD, THRESHOLDS, AUC] = <span class="helptopic">prtScoreRoc</span>(DECSTATSMAT,LABELS) outputs
+     the roc outputs for each column of DECSTATSMAT using. The output
+     values are now cell arrays containing the outputs as if <span class="helptopic">prtScoreRoc</span>
+     were called on each column of DECSTATSMAT individually.
+ 
+     [...] = <span class="helptopic">prtScoreRoc</span>(PRTDATASETCLASS) use a prtDataSetClass as input
+     DECSTATS is PRTDATASETCLASS.getObservations() and LABELS is
+     PRTDATASETCLASS.getTargets(). If PRTDATASETCLASS.nFeatures &gt; 1 cell
+     arrays are provided as outputs.
+ 
+ 
+     Example:
+     TestDataSet = prtDataGenSpiral;       % Create some test and
+     TrainingDataSet = prtDataGenSpiral;   % training data
+     classifier = prtClassSvm;             % Create a classifier
+     classifier = classifier.train(TrainingDataSet);    % Train
+     classified = run(classifier, TestDataSet);
+     %  Plot the ROC
+     <span class="helptopic">prtScoreRoc</span>(classified.getX, TestDataSet.getY);</pre></div><!--after help --><!--seeAlso--><div class="footerlinktitle">See also</div><div class="footerlink"> <a href="./prtScoreConfusionMatrix.html">prtScoreConfusionMatrix</a>, <a href="./prtScoreRmse.html">prtScoreRmse</a>, <a href="./prtScoreRocNfa.html">prtScoreRocNfa</a>,
+             <a href="./prtScorePercentCorrect.html">prtScorePercentCorrect</a>, <a href="./prtScoreAuc.html">prtScoreAuc</a>
+</div>
+   </body>
+</html>

@@ -1,0 +1,213 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../helpwin.css">
+      <title>MATLAB File Help: prtClusterGmm</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtClusterGmm</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtClusterGmm</div>
+      <div class="helptext"><pre><!--helptext -->  <span class="helptopic">prtClusterGmm</span>   Gaussian mixture model clustering object
+ 
+     CLUSTER = <span class="helptopic">prtClusterGmm</span> returns a GMM clustering object.
+ 
+     CLUSTER = <span class="helptopic">prtClusterGmm</span>(PROPERTY1, VALUE1, ...) constructs a
+     prtClassFld object CLASSIFIER with properties as specified by
+     PROPERTY/VALUE pairs.
+ 
+     A <span class="helptopic">prtClusterGmm</span> object inherits all properties from the abstract
+     class prtCluster. In addition is has the following properties:
+ 
+     nClusters          - Number of cluster centers to learn 
+ 
+     A <span class="helptopic">prtClusterGmm</span> clustering algorithm trains a prtRvGmm random
+     variable on training data, and at run time, the clustering
+     algorithm outputs the posterior probability of any particular
+     point being drawn from one of the nClusters Guassian components.
+ 
+     A <span class="helptopic">prtClusterGmm</span> object inherits the TRAIN, RUN, CROSSVALIDATE and
+     KFOLDS methods from prtAction. It also inherits the PLOT method from
+     prtCluster.
+ 
+    Example:
+ 
+    ds = prtDataGenUnimodal         % Load a data set
+    clusterAlgo = <span class="helptopic">prtClusterGmm</span>;    % Create a clustering object
+    clusterAlgo.nClusters = 2;      % Set the number of clusters
+ 
+    % Set the internal decision rule to be MAP. Not required for
+    % clustering, but necessary to plot the results.
+    clusterAlgo.internalDecider = prtDecisionMap;
+  
+    clusterAlgo = clusterAlgo.train(ds);  % Train
+    plot(clusterAlgo);                    % Plot the trained object</pre></div><!--after help --><!--seeAlso--><div class="footerlinktitle">See Also</div><div class="footerlink"> <a href="./prtCluster.html">prtCluster</a>, <a href="./prtClusterKmeans.html">prtClusterKmeans</a>
+</div>
+      <!--Class-->
+      <div class="sectiontitle">Class Details</div>
+      <table class="class-details">
+         <tr>
+            <td class="class-detail-label">Superclasses</td>
+            <td><a href="./prtCluster.html">prtCluster</a></td>
+         </tr>
+         <tr>
+            <td class="class-detail-label">Sealed</td>
+            <td>false</td>
+         </tr>
+         <tr>
+            <td class="class-detail-label">Construct on load</td>
+            <td>false</td>
+         </tr>
+      </table>
+      <!--Constructors-->
+      <div class="sectiontitle"><a name="constructors"></a>Constructor Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClusterGmm/prtClusterGmm.html">prtClusterGmm</a></td>
+            <td class="m-help">Gaussian mixture model clustering object&nbsp;</td>
+         </tr>
+      </table>
+      <!--Properties-->
+      <div class="sectiontitle"><a name="properties"></a>Property Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClusterGmm/clusterCenters.html">clusterCenters</a></td>
+            <td class="m-help">The cluster centers&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClusterGmm/dataSet.html">dataSet</a></td>
+            <td class="m-help">The training prtDataSet, only stored if verboseStorage is true. &nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClusterGmm/dataSetSummary.html">dataSetSummary</a></td>
+            <td class="m-help">Structure that summarizes prtDataSet.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClusterGmm/gmmRv.html">gmmRv</a></td>
+            <td class="m-help">The Gaussian mixture model found during training&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClusterGmm/includesDecision.html">includesDecision</a></td>
+            <td class="m-help">Flag indicating if result includes a decision&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClusterGmm/internalDecider.html">internalDecider</a></td>
+            <td class="m-help">Optional prtDecider object for making decisions&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClusterGmm/isCrossValidateValid.html">isCrossValidateValid</a></td>
+            <td class="m-help">True&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClusterGmm/isSupervised.html">isSupervised</a></td>
+            <td class="m-help">False&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClusterGmm/isTrained.html">isTrained</a></td>
+            <td class="m-help">Indicates if prtAction object has been trained.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClusterGmm/nClusters.html">nClusters</a></td>
+            <td class="m-help">The number of clusters&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClusterGmm/name.html">name</a></td>
+            <td class="m-help">GMM Clustering&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClusterGmm/nameAbbreviation.html">nameAbbreviation</a></td>
+            <td class="m-help">GMMCluster&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClusterGmm/showProgressBar.html">showProgressBar</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClusterGmm/userData.html">userData</a></td>
+            <td class="m-help">User specified data&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClusterGmm/verboseStorage.html">verboseStorage</a></td>
+            <td class="m-help">Specifies whether or not to store the training prtDataset.&nbsp;</td>
+         </tr>
+      </table>
+      <!--Methods-->
+      <div class="sectiontitle"><a name="methods"></a>Method Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClusterGmm/crossValidate.html">crossValidate</a></td>
+            <td class="m-help">Cross validate prtAction using prtDataSet and cross validation keys.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClusterGmm/get.html">get</a></td>
+            <td class="m-help">get the object properties&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClusterGmm/kfolds.html">kfolds</a></td>
+            <td class="m-help">Perform K-folds cross-validation of prtAction&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClusterGmm/optimize.html">optimize</a></td>
+            <td class="m-help">Optimize action parameter by exhaustive function maximization.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClusterGmm/plot.html">plot</a></td>
+            <td class="m-help">Plot the output of the prtCluster object&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClusterGmm/run.html">run</a></td>
+            <td class="m-help">Run a prtAction object on a prtDataSet object.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClusterGmm/set.html">set</a></td>
+            <td class="m-help">set the object properties&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClusterGmm/train.html">train</a></td>
+            <td class="m-help">Train a prtAction object using training a prtDataSet object.&nbsp;</td>
+         </tr>
+      </table>
+   </body>
+</html>

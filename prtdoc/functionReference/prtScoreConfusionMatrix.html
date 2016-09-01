@@ -1,0 +1,41 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../helpwin.css">
+      <title>MATLAB File Help: prtScoreConfusionMatrix</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtScoreConfusionMatrix</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtScoreConfusionMatrix</div>
+      <div class="helptext"><pre><!--helptext --> [confMat,occurances] = <span class="helptopic">prtScoreConfusionMatrix</span>(guess,truth)
+  <span class="helptopic">prtScoreConfusionMatrix</span> Plot or return the confusion matrix
+ 
+    CONFMAT = <span class="helptopic">prtScoreConfusionMatrix</span>(GUESS, TRUTH) returns the confusion matrix that
+    results from comparing  GUESS as compared to the truth in TRUTH.
+    GUESS and TRUTH should both be Nx1 vectors. The elements of both TRUTH
+    and GUESS should be binary or interger class labels.
+ 
+    prtScoreConfustionMatrix(GUESS,TRUTH) called without any output
+    arguments plots the confusion matrix.
+ 
+     Example:     
+     TestDataSet = prtDataGenMary;        % Create some test and
+     TrainingDataSet = prtDataGenMary;   % training data
+     classifier = prtClassMap;             % Create a classifier
+     classifier.internalDecider = prtDecisionMap;
+     classifier = classifier.train(TrainingDataSet);    % Train
+     classified = run(classifier, TestDataSet);     
+     %  Display the confusion matrix
+     <span class="helptopic">prtScoreConfusionMatrix</span>(classified, TestDataSet)</pre></div><!--after help --><!--seeAlso--><div class="footerlinktitle">See also</div><div class="footerlink"> <a href="./prtScoreRoc.html">prtScoreRoc</a>, <a href="./prtScoreRmse.html">prtScoreRmse</a>, <a href="./prtScoreRocNfa.html">prtScoreRocNfa</a>,
+     <a href="./prtScorePercentCorrect.html">prtScorePercentCorrect</a>, <a href="./prtScoreAuc.html">prtScoreAuc</a>
+</div>
+   </body>
+</html>

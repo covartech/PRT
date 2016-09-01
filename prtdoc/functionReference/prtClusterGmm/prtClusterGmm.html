@@ -1,0 +1,54 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../../helpwin.css">
+      <title>MATLAB File Help: prtClusterGmm/prtClusterGmm</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtClusterGmm/prtClusterGmm</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtClusterGmm/prtClusterGmm</div>
+      <div class="helptext"><pre><!--helptext -->  <span class="helptopic">prtClusterGmm</span>   Gaussian mixture model clustering object
+ 
+     CLUSTER = <span class="helptopic">prtClusterGmm</span> returns a GMM clustering object.
+ 
+     CLUSTER = <span class="helptopic">prtClusterGmm</span>(PROPERTY1, VALUE1, ...) constructs a
+     prtClassFld object CLASSIFIER with properties as specified by
+     PROPERTY/VALUE pairs.
+ 
+     A <span class="helptopic">prtClusterGmm</span> object inherits all properties from the abstract
+     class prtCluster. In addition is has the following properties:
+ 
+     nClusters          - Number of cluster centers to learn 
+ 
+     A <span class="helptopic">prtClusterGmm</span> clustering algorithm trains a prtRvGmm random
+     variable on training data, and at run time, the clustering
+     algorithm outputs the posterior probability of any particular
+     point being drawn from one of the nClusters Guassian components.
+ 
+     A <span class="helptopic">prtClusterGmm</span> object inherits the TRAIN, RUN, CROSSVALIDATE and
+     KFOLDS methods from prtAction. It also inherits the PLOT method from
+     prtCluster.
+ 
+    Example:
+ 
+    ds = prtDataGenUnimodal         % Load a data set
+    clusterAlgo = <span class="helptopic">prtClusterGmm</span>;    % Create a clustering object
+    clusterAlgo.nClusters = 2;      % Set the number of clusters
+ 
+    % Set the internal decision rule to be MAP. Not required for
+    % clustering, but necessary to plot the results.
+    clusterAlgo.internalDecider = prtDecisionMap;
+  
+    clusterAlgo = clusterAlgo.train(ds);  % Train
+    plot(clusterAlgo);                    % Plot the trained object</pre></div><!--after help --><!--seeAlso--><div class="footerlinktitle">See Also</div><div class="footerlink"> <a href="./../prtCluster.html">prtCluster</a>, <a href="./../prtClusterKmeans.html">prtClusterKmeans</a>
+</div>
+   </body>
+</html>

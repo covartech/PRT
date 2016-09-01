@@ -1,0 +1,53 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../../helpwin.css">
+      <title>MATLAB File Help: prtRvUniform/prtRvUniform</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtRvUniform/prtRvUniform</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtRvUniform/prtRvUniform</div>
+      <div class="helptext"><pre><!--helptext -->  <span class="helptopic">prtRvUniform</span>  Uniform random variable
+ 
+    RV = <span class="helptopic">prtRvUniform</span> creates a <span class="helptopic">prtRvUniform</span> object with empty
+    upperBounds and lowerBounds. The upperBounds and lowerBounds must
+    be set either directly, or by calling the MLE method. upperBounds
+    and lowerBounds specify the range of the uniform variable.
+ 
+    RV = <span class="helptopic">prtRvUniform</span>(PROPERTY1, VALUE1,...) creates a <span class="helptopic">prtRvUniform</span>
+    object RV with properties as specified by PROPERTY/VALUE pairs.
+ 
+    A <span class="helptopic">prtRvUniform</span> object inherits all properties from the prtRv class.
+    In addition, it has the following properties:
+ 
+    upperBounds - 1 x nDims double vector specifying the upper bound of
+                  the region with uniform density
+    lowerBounds - 1 x nDims double vector specifying the lower bound of
+                  the region with uniform density
+    
+   A <span class="helptopic">prtRvUniform</span> object inherits all methods from the prtRv class.
+   The MLE  method can be used to estimate the distribution parameters
+   from data.
+ 
+   Example:
+ 
+   dataSet = prtDataGenUnimodal;        % Load a dataset consisting of
+                                        % 2 features
+   dataSet = retainFeatures(dataSet,1); % Retain only the first feature
+ 
+   RV = <span class="helptopic">prtRvUniform</span>;                   % Create a <span class="helptopic">prtRvUniform</span> object
+   RV = RV.mle(dataSet);                % Compute the bounds
+                                        % form the data
+   RV.plotPdf                           % Plot the pdf</pre></div><!--after help --><!--seeAlso--><div class="footerlinktitle">See also</div><div class="footerlink"> <a href="./../prtRv.html">prtRv</a>, <a href="./../prtRvMvn.html">prtRvMvn</a>, <a href="./../prtRvGmm.html">prtRvGmm</a>, <a href="./../prtRvMultinomial.html">prtRvMultinomial</a>,
+    <a href="./../prtRvVq.html">prtRvVq</a>, <a href="./../prtRvKde.html">prtRvKde</a>
+</div>
+   </body>
+</html>

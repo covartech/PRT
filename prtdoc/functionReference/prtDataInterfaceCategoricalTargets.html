@@ -1,0 +1,327 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../helpwin.css">
+      <title>MATLAB File Help: prtDataInterfaceCategoricalTargets</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtDataInterfaceCategoricalTargets</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtDataInterfaceCategoricalTargets</div>
+      <div class="helptext"><pre><!--helptext -->  <span class="helptopic">prtDataInterfaceCategoricalTargets</span>
+   Super class for data sets with discrete number of possible labels.
+ 
+   Handles all logic involving classn names, class indices, etc.,
+ 
+   Also enables use of NAN as unlabeled data; use
+      hasUnlabeled
+      retainUnlabeled
+      removeUnlabeled
+      retainLabeled(obj)
+      removeLabeled(obj)
+ 
+   to handle unlabeled observations.
+ 
+   Note: NAN labels do not count towards the nClasses and will
+   not appear in uniqueClasses.  It is not possible to set the name of
+   the class corresponding to NAN.</pre></div><!--after help -->
+      <!--Class-->
+      <div class="sectiontitle">Class Details</div>
+      <table class="class-details">
+         <tr>
+            <td class="class-detail-label">Sealed</td>
+            <td>false</td>
+         </tr>
+         <tr>
+            <td class="class-detail-label">Construct on load</td>
+            <td>false</td>
+         </tr>
+      </table>
+      <!--Constructors-->
+      <div class="sectiontitle"><a name="constructors"></a>Constructor Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="name"><a href="./prtDataInterfaceCategoricalTargets/prtDataInterfaceCategoricalTargets.html">prtDataInterfaceCategoricalTargets</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+      </table>
+      <!--Properties-->
+      <div class="sectiontitle"><a name="properties"></a>Property Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="name"><a href="./prtDataInterfaceCategoricalTargets/classNames.html">classNames</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtDataInterfaceCategoricalTargets/hasUnlabeled.html">hasUnlabeled</a></td>
+            <td class="m-help">True if any of the labels are nan&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtDataInterfaceCategoricalTargets/isBinary.html">isBinary</a></td>
+            <td class="m-help">True if the number of classes = 2&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtDataInterfaceCategoricalTargets/isMary.html">isMary</a></td>
+            <td class="m-help">True if the number of classes &gt; 2&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtDataInterfaceCategoricalTargets/isUnary.html">isUnary</a></td>
+            <td class="m-help">True if the number of classes = 1&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtDataInterfaceCategoricalTargets/isZeroOne.html">isZeroOne</a></td>
+            <td class="m-help">True if the uniqueClasses are 0 and&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtDataInterfaceCategoricalTargets/nClasses.html">nClasses</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtDataInterfaceCategoricalTargets/nObservationsByClass.html">nObservationsByClass</a></td>
+            <td class="m-help">histogram of samples x class&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtDataInterfaceCategoricalTargets/uniqueClasses.html">uniqueClasses</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+      </table>
+      <!--Methods-->
+      <div class="sectiontitle"><a name="methods"></a>Method Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataInterfaceCategoricalTargets/bootstrapByClass.html">bootstrapByClass</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataInterfaceCategoricalTargets/catClasses.html">catClasses</a></td>
+            <td class="m-help">self = catClasses(self,ds1,ds2,...)&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataInterfaceCategoricalTargets/classNamesToClassInd.html">classNamesToClassInd</a></td>
+            <td class="m-help">classInds = classNamesToClassInd(dataSet,classNames)&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataInterfaceCategoricalTargets/getBinaryTargetsAsZeroOne.html">getBinaryTargetsAsZeroOne</a></td>
+            <td class="m-help">Return the target vector from a&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataInterfaceCategoricalTargets/getClassNames.html">getClassNames</a></td>
+            <td class="m-help">cn = getClassNames(self,indices)&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataInterfaceCategoricalTargets/getClassNamesByClassInd.html">getClassNamesByClassInd</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataInterfaceCategoricalTargets/getDataByClass.html">getDataByClass</a></td>
+            <td class="m-help">Return the Data by class&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataInterfaceCategoricalTargets/getDataByClassInd.html">getDataByClassInd</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataInterfaceCategoricalTargets/getDataUnlabeled.html">getDataUnlabeled</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataInterfaceCategoricalTargets/getObservationsByClass.html">getObservationsByClass</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataInterfaceCategoricalTargets/getObservationsByClassInd.html">getObservationsByClassInd</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataInterfaceCategoricalTargets/getObservationsUnlabeled.html">getObservationsUnlabeled</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataInterfaceCategoricalTargets/getTargetsAsBinaryMatrix.html">getTargetsAsBinaryMatrix</a></td>
+            <td class="m-help">binaryMatTargets  Return the targets as a binary matrix&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataInterfaceCategoricalTargets/getTargetsClassInd.html">getTargetsClassInd</a></td>
+            <td class="m-help">getTargetsClassIndex  Return the targets by class index&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataInterfaceCategoricalTargets/getUniqueClasses.html">getUniqueClasses</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataInterfaceCategoricalTargets/numClasses.html">numClasses</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataInterfaceCategoricalTargets/removeClasses.html">removeClasses</a></td>
+            <td class="m-help">remove observations corresponding to&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataInterfaceCategoricalTargets/removeClassesByInd.html">removeClassesByInd</a></td>
+            <td class="m-help">removeClasses remove observations corresponding to&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataInterfaceCategoricalTargets/removeLabeled.html">removeLabeled</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataInterfaceCategoricalTargets/removeUnlabeled.html">removeUnlabeled</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataInterfaceCategoricalTargets/retainClasses.html">retainClasses</a></td>
+            <td class="m-help">retain observations corresponding to specified&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataInterfaceCategoricalTargets/retainClassesByInd.html">retainClassesByInd</a></td>
+            <td class="m-help">retain observations corresponding to&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataInterfaceCategoricalTargets/retainLabeled.html">retainLabeled</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataInterfaceCategoricalTargets/retainUnlabeled.html">retainUnlabeled</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataInterfaceCategoricalTargets/setClassNames.html">setClassNames</a></td>
+            <td class="m-help">ds = ds.setClassNames({'fasdf','asdf','asdfdsfdsf'});&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataInterfaceCategoricalTargets/summarize.html">summarize</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">Abstract 
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataInterfaceCategoricalTargets/getTargets.html">getTargets</a></td>
+            <td class="m-help">prtDataInterfaceCategoricalTargets needs these in order to be able&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">Abstract 
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataInterfaceCategoricalTargets/retainObservations.html">retainObservations</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+      </table>
+   </body>
+</html>

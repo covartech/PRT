@@ -1,0 +1,327 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../helpwin.css">
+      <title>MATLAB File Help: prtRvKde</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtRvKde</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtRvKde</div>
+      <div class="helptext"><pre><!--helptext -->  <span class="helptopic">prtRvKde</span> - Gaussian Kernel Density Estimation Random Variable 
+    Assumes independence between each of the dimensions.
+ 
+    RV = <span class="helptopic">prtRvKde</span> creates a <span class="helptopic">prtRvKde</span> object with empty trainingData and
+    bandwidths parameters. The trainingData must be set either directly
+    or by calling the MLE method.
+ 
+    RV = <span class="helptopic">prtRvKde</span>('bandwidthMode', VALUE) enforces the bandwidths to be 
+    determined either using 'manual' or 'diffusion'. Setting this
+    property to 'manual' requires that the bandwidths also be
+    sepecified. The default, 'diffusion', uses the automatic bandwidth
+    selection method discussed in
+ 
+    Botev et al., Kernel density estimation via diffusion,
+    Ann. Statist. Volume 38, Number 5 (2010), 2916-2957. 
+    <a href="http://projecteuclid.org/DPubS?service=UI&amp;version=1.0&amp;verb=Display&amp;handle=euclid.aos/1281964340">http://projecteuclid.org/DPubS?service=UI&amp;version=1.0&amp;verb=Display&amp;handle=euclid.aos/1281964340</a>
+ 
+    RV = <span class="helptopic">prtRvKde</span>(PROPERTY1, VALUE1,...) creates a <span class="helptopic">prtRvKde</span> object RV
+    with properties as specified by PROPERTY/VALUE pairs.
+ 
+    A <span class="helptopic">prtRvKde</span> object inherits all properties from the prtRv class. In
+    addition, it has the following properties:
+ 
+    bandwidthMode    - A string specifying the method by which the
+                       bandwidths are determined. Possibilities
+                       {'diffusion'}, 'manual'
+    bandwidths       - The bandwidths of the kernels used in each
+                       dimension of the kernel density estimate. These
+                       are the diagonal values of the covariance matrix
+                       for the RBF kernels.
+    trainingData     - The training data used to determined the kernel
+                       density estimate
+    minimumBandwidth - Minium bandwidth that is aloud to be estimated.
+                       Diffusion based estimation can correctly 
+                       identify a discrete density and infer a very
+                       small bandwidth. This is sometimes undesirable
+                       and causes stability issues. The default value
+                       is []. If this value is empty it is estimated
+                       during MLE as max(std(X)/size(X,1),eps);.
+    
+   A <span class="helptopic">prtRvKde</span> object inherits all methods from the prtRv class. The MLE
+   method can be used to estimate the distribution parameters from
+   data.
+ 
+   Examples:
+ 
+    % Plot a 2D density 
+    ds = prtDataGenOldFaithful;
+    plotPdf(mle(<span class="helptopic">prtRvKde</span>,ds))
+    % or using the static method
+    <span class="helptopic">prtRvKde</span>.ezPlotPdf(ds)
+ 
+    % Diffusion bandwidth estimation can identify discrete densities
+    plotPdf(mle(<span class="helptopic">prtRvKde</span>,[0; 0; 0; 1; 1; 1; 2; 2;]))
+ 
+    % Comparison to ksdensity (Statistics toolbox required)
+    % ksdensity() is only for 1D data
+    ds = prtDataGenUnimodal;
+    subplot(2,1,1)
+    plotPdf(mle(<span class="helptopic">prtRvKde</span>,ds.getObservations(:,1)))
+    xlim([-5 5]), ylim([0 0.2])
+    subplot(2,1,2)
+    ksdensity(ds.getObservations(:,1))
+    xlim([-5 5]), ylim([0 0.2])
+  
+    % Classification comparison on multi-modal data
+    % We use a MAP classifier with three different RVs
+    ds = prtDataGenBimodal;
+ 
+    outputKde = kfolds(prtClassMap('rvs',<span class="helptopic">prtRvKde</span>),ds,5);
+    outputMvn = kfolds(prtClassMap('rvs',prtRvMvn),ds,5);
+    outputGmm = kfolds(prtClassMap('rvs',prtRvGmm('nComponents',2)),ds,5);
+ 
+    [pfKde,pdKde] = prtScoreRoc(outputKde);
+    [pfMvn,pdMvn] = prtScoreRoc(outputMvn);
+    [pfGmm,pdGmm] = prtScoreRoc(outputGmm);
+ 
+    plot(pfMvn,pdMvn,pfGmm,pdGmm,pfKde,pdKde)
+    grid on
+    xlabel('PF')
+    ylabel('PD')
+    title('Comparison of MAP Classification With Different RVs')
+    legend({'MAP - MVN','MAP - GMM(2)','MAP - KDE'},'Location','SouthEast')</pre></div><!--after help --><!--seeAlso--><div class="footerlinktitle">See also</div><div class="footerlink"> <a href="./prtRv.html">prtRv</a>, <a href="./prtRvMvn.html">prtRvMvn</a>, <a href="./prtRvGmm.html">prtRvGmm</a>, <a href="./prtRvMultinomial.html">prtRvMultinomial</a>,
+    <a href="./prtRvUniform.html">prtRvUniform</a>, <a href="./prtRvUniformImproper.html">prtRvUniformImproper</a>, <a href="./prtRvVq.html">prtRvVq</a>
+</div>
+      <!--Class-->
+      <div class="sectiontitle">Class Details</div>
+      <table class="class-details">
+         <tr>
+            <td class="class-detail-label">Superclasses</td>
+            <td><a href="./prtRv.html">prtRv</a></td>
+         </tr>
+         <tr>
+            <td class="class-detail-label">Sealed</td>
+            <td>false</td>
+         </tr>
+         <tr>
+            <td class="class-detail-label">Construct on load</td>
+            <td>false</td>
+         </tr>
+      </table>
+      <!--Constructors-->
+      <div class="sectiontitle"><a name="constructors"></a>Constructor Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRvKde/prtRvKde.html">prtRvKde</a></td>
+            <td class="m-help">Gaussian Kernel Density Estimation Random Variable &nbsp;</td>
+         </tr>
+      </table>
+      <!--Properties-->
+      <div class="sectiontitle"><a name="properties"></a>Property Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRvKde/bandwidthMode.html">bandwidthMode</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRvKde/bandwidths.html">bandwidths</a></td>
+            <td class="m-help">Will be estimated&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRvKde/dataSet.html">dataSet</a></td>
+            <td class="m-help">The training prtDataSet, only stored if verboseStorage is true. &nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRvKde/dataSetSummary.html">dataSetSummary</a></td>
+            <td class="m-help">Structure that summarizes prtDataSet.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRvKde/isCrossValidateValid.html">isCrossValidateValid</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRvKde/isSupervised.html">isSupervised</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRvKde/isTrained.html">isTrained</a></td>
+            <td class="m-help">Indicates if prtAction object has been trained.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRvKde/minimumBandwidth.html">minimumBandwidth</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRvKde/name.html">name</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRvKde/nameAbbreviation.html">nameAbbreviation</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRvKde/plotOptions.html">plotOptions</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRvKde/showProgressBar.html">showProgressBar</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRvKde/trainingData.html">trainingData</a></td>
+            <td class="m-help">Locations of kernels&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRvKde/userData.html">userData</a></td>
+            <td class="m-help">User specified data&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRvKde/verboseStorage.html">verboseStorage</a></td>
+            <td class="m-help">Specifies whether or not to store the training prtDataset.&nbsp;</td>
+         </tr>
+      </table>
+      <!--Methods-->
+      <div class="sectiontitle"><a name="methods"></a>Method Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRvKde/cdf.html">cdf</a></td>
+            <td class="m-help">Output the cdf of the random variable evaluated at the points specified&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRvKde/crossValidate.html">crossValidate</a></td>
+            <td class="m-help">Cross validate prtAction using prtDataSet and cross validation keys.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRvKde/draw.html">draw</a></td>
+            <td class="m-help">Draw random samples from the distribution described by the prtRv object&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">Static 
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRvKde/ezPlotPdf.html">ezPlotPdf</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRvKde/get.html">get</a></td>
+            <td class="m-help">get the object properties&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRvKde/kfolds.html">kfolds</a></td>
+            <td class="m-help">Perform K-folds cross-validation of prtAction&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRvKde/logPdf.html">logPdf</a></td>
+            <td class="m-help">Output the log pdf of the random variable evaluated at the points specified&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRvKde/mle.html">mle</a></td>
+            <td class="m-help">Compute the maximum likelihood estimate &nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRvKde/optimize.html">optimize</a></td>
+            <td class="m-help">Optimize action parameter by exhaustive function maximization.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRvKde/pdf.html">pdf</a></td>
+            <td class="m-help">Output the pdf of the random variable evaluated at the points specified&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRvKde/plotCdf.html">plotCdf</a></td>
+            <td class="m-help">Plot the cdf of the prtRv&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRvKde/plotLogPdf.html">plotLogPdf</a></td>
+            <td class="m-help">Plot the pdf of the prtRv&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRvKde/plotPdf.html">plotPdf</a></td>
+            <td class="m-help">Plot the pdf&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRvKde/run.html">run</a></td>
+            <td class="m-help">Run a prtAction object on a prtDataSet object.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRvKde/set.html">set</a></td>
+            <td class="m-help">set the object properties&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRvKde/train.html">train</a></td>
+            <td class="m-help">Train a prtAction object using training a prtDataSet object.&nbsp;</td>
+         </tr>
+      </table>
+   </body>
+</html>

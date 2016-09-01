@@ -1,0 +1,251 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Using kernels with the Pattern Recognition toolbox</title><meta name="generator" content="MATLAB 8.0"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2013-02-19"><meta name="DC.source" content="prtDocKernel.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Using kernels with the Pattern Recognition toolbox</h1><!--introduction--><p>Many learning algorithm rely on kernel methods, and the Pattern Recognition Toolbox provides a set of kernel functions to support these algorithms. Support vector machines, and relevance vector machines are common examples of algorithms that rely on kernel methods. These objects have as a data member a kernel object.</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Using prtKernel objects directly</a></li><li><a href="#2">Kernel objects as members of classifiers</a></li><li><a href="#6">prtKernelSet objects</a></li><li><a href="#7">prtKernel objects as part of prtRegress objects</a></li></ul></div><h2>Using prtKernel objects directly<a name="1"></a></h2><p>prtKernel objects can be used to compute the Gram matrix. When a prtKernel is trained, the kernel centers are stored in the prtKernel object. When a prtKernel object is run, the Gram matrix is computed using the stored kernel centers and the input data. For example, create a radial basis function kernel using the <a href="./functionReference/prtKernelRbf.html">prtKernelRbf</a> object:</p><pre class="codeinput">ds = prtDataGenBimodal;       <span class="comment">% Generate a dataset</span>
+k1 = prtKernelRbf;            <span class="comment">% Create a prtKernel object with</span>
+                              <span class="comment">% default value of sigma</span>
+
+k1 = k1.train(ds);            <span class="comment">% Train, storing the input data</span>
+g1 = k1.run(ds);              <span class="comment">% Evaluate, the resulting dataset g1 contains</span>
+                              <span class="comment">% the Gram matrix</span>
+</pre><h2>Kernel objects as members of classifiers<a name="2"></a></h2><p>Consider a support vector machine:</p><pre class="codeinput">classifier = prtClassSvm
+</pre><pre class="codeoutput">classifier = 
+  prtClassSvm
+
+  Properties:
+                    name: 'Support Vector Machine'
+        nameAbbreviation: 'SVM'
+            isNativeMary: 0
+                       c: 1
+                     tol: 1.0000e-05
+                 kernels: [1x1 prtKernelRbfNdimensionScale]
+                   alpha: []
+                    beta: []
+           sparseKernels: []
+             sparseAlpha: []
+        twoClassParadigm: 'binary'
+         internalDecider: []
+            isSupervised: 1
+    isCrossValidateValid: 1
+          verboseStorage: 1
+         showProgressBar: 1
+               isTrained: 0
+          dataSetSummary: []
+                 dataSet: []
+                userData: [1x1 struct]
+</pre><p>Note that the classifier has property kernels, which is set by default to be a <a href="./functionReference/prtKernelRbfNdimensionScale.html">prtKernelRbfNdimensionScale</a> object. A prtKernelRbfNdimensionScale is a radial basis function kernel, that scales with the number of dimensions, and is a commonly used kernel in classification problems. The radial basis function kernel has one user settable parameter, sigma, the inverse kernel width. When the kernel object is a member of a prtClass object, the sigma parameter can be set in the following manner:</p><pre class="codeinput">classifier.kernels.sigma = .5;   <span class="comment">% Set the sigma parameter to be .5</span>
+</pre><p>Once the classifiers kernel object is configured, the classifier can be trained, run and cross-validated normally.</p><pre class="codeinput">ds = prtDataGenBimodal;             <span class="comment">% Generate a dataset</span>
+k1 = prtKernelRbf;                  <span class="comment">% Create a prtKernel object with</span>
+                                    <span class="comment">% default value of sigma</span>
+
+classifier = classifier.train(ds); <span class="comment">% Train the classifier</span>
+plot(classifier)
+</pre><img vspace="5" hspace="5" src="prtDocKernel_01.png" alt=""> <p>Notice that on the classifier plot, certain training data points are highlighted with black circles. Those are the kernel centers selected during the training of the support vector machine. During run, the Gram matrix of those kernel centers and the input data will be computed.</p><h2>prtKernelSet objects<a name="6"></a></h2><p>prtKernelSet object allow for prtKernels to be joined together using the &amp; operation. The resulting object behaves exactly like a prtKernel object. The resulting object trains and runs each kernel individually on the provided data. Kernel sets are required for proper operation of certain techniques, such as relevance vector machines. An example of the syntax is given below:</p><pre class="codeinput">kernels = prtKernelDc &amp; prtKernelRbfNdimensionScale(<span class="string">'sigma'</span>, 2);
+</pre><h2>prtKernel objects as part of prtRegress objects<a name="7"></a></h2><p>prtKernel objects are used in prtRegress objects in the same manner. For example:</p><pre class="codeinput">dataSet = prtDataGenNoisySinc;   <span class="comment">% Load a prtDataRegress</span>
+dataSet.plot;                    <span class="comment">% Display data</span>
+reg = prtRegressRvm;             <span class="comment">% Create a prtRegressRvm object</span>
+reg.kernels = kernels            <span class="comment">% Change the kernel set to be the kernel</span>
+                                 <span class="comment">% set defined above</span>
+reg = reg.train(dataSet);        <span class="comment">% Train the prtRegressRvm object</span>
+reg.plot();                      <span class="comment">% Plot the resulting curve</span>
+dataSetOut = reg.run(dataSet);   <span class="comment">% Run the regressor on the data</span>
+hold <span class="string">on</span>;
+plot(dataSet.getX,dataSetOut.getX,<span class="string">'c.'</span>) <span class="comment">% Plot, overlaying the</span>
+<span class="comment">% fitted points with the</span>
+<span class="comment">% curve and original data</span>
+legend(<span class="string">'Regression curve'</span>,<span class="string">'Original Points'</span>,<span class="string">'Kernel Locations Used'</span>,0)
+
+
+
+<span class="comment">% All kernel objects in the Pattern Recognition Toolbox have the</span>
+<span class="comment">% same API as discussed above.  For a list of all the different objects,</span>
+<span class="comment">% and links to their individual help entries, &lt;prtDocFunctionList.html#9 A</span>
+<span class="comment">% list of commonly used functions&gt;</span>
+</pre><pre class="codeoutput">reg = 
+  prtRegressRvm
+
+  Properties:
+                    name: 'Relevance Vector Machine'
+        nameAbbreviation: 'RVM'
+                 kernels: [1x1 prtKernelSet]
+             verbosePlot: 0
+             verboseText: 0
+       learningConverged: []
+                    beta: []
+                   Sigma: []
+                  sigma2: []
+              sparseBeta: []
+           sparseKernels: {}
+             plotOptions: [1x1 prtOptions.prtOptionsRegressPlot]
+            isSupervised: 1
+    isCrossValidateValid: 1
+          verboseStorage: 1
+         showProgressBar: 1
+               isTrained: 0
+          dataSetSummary: []
+                 dataSet: []
+                userData: [1x1 struct]
+</pre><img vspace="5" hspace="5" src="prtDocKernel_02.png" alt=""> <p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2012b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Using kernels with the Pattern Recognition toolbox
+%
+% Many learning algorithm rely on kernel methods, and the Pattern
+% Recognition Toolbox provides a set of kernel functions to support these
+% algorithms. Support vector machines, and relevance vector machines are
+% common examples of algorithms that rely on kernel methods. These objects
+% have as a data member a kernel object.
+%
+
+%% Using prtKernel objects directly
+% prtKernel objects can be used to compute the Gram matrix. When a
+% prtKernel is trained, the kernel centers are stored in the prtKernel
+% object. When a prtKernel object is run, the Gram matrix is computed using
+% the stored kernel centers and the input data. For example, create a
+% radial basis function kernel using the
+% <./functionReference/prtKernelRbf.html prtKernelRbf> object:
+
+
+ds = prtDataGenBimodal;       % Generate a dataset
+k1 = prtKernelRbf;            % Create a prtKernel object with
+                              % default value of sigma
+
+k1 = k1.train(ds);            % Train, storing the input data
+g1 = k1.run(ds);              % Evaluate, the resulting dataset g1 contains
+                              % the Gram matrix
+
+
+%% Kernel objects as members of classifiers
+%
+% Consider a support vector machine:
+
+classifier = prtClassSvm
+%%
+% Note that the classifier has property kernels, which is set by default to
+% be a <./functionReference/prtKernelRbfNdimensionScale.html prtKernelRbfNdimensionScale> object.
+% A prtKernelRbfNdimensionScale is a radial basis function kernel, that
+% scales with the number of dimensions, and is a commonly used kernel in
+% classification problems. The radial basis function kernel has one user
+% settable parameter, sigma, the inverse kernel width. When the kernel
+% object is a member of a prtClass object, the sigma parameter can be set
+% in the following manner:
+
+classifier.kernels.sigma = .5;   % Set the sigma parameter to be .5
+
+%% 
+% Once the classifiers kernel object is configured, the classifier can be
+% trained, run and cross-validated normally.
+
+ds = prtDataGenBimodal;             % Generate a dataset
+k1 = prtKernelRbf;                  % Create a prtKernel object with
+                                    % default value of sigma
+                              
+classifier = classifier.train(ds); % Train the classifier
+plot(classifier)
+
+%% 
+% Notice that on the classifier plot, certain training data points are
+% highlighted with black circles. Those are the kernel centers selected
+% during the training of the support vector machine. During run, the Gram
+% matrix of those kernel centers and the input data will be computed.
+
+%% prtKernelSet objects
+% prtKernelSet object allow for prtKernels to be joined together using the
+% & operation. The resulting object behaves exactly like a prtKernel
+% object. The resulting object trains and runs each kernel individually on
+% the provided data. Kernel sets are required for proper operation of
+% certain techniques, such as relevance vector machines. An example of the
+% syntax is given below:
+
+kernels = prtKernelDc & prtKernelRbfNdimensionScale('sigma', 2);
+
+%% prtKernel objects as part of prtRegress objects
+% prtKernel objects are used in prtRegress objects in the same manner. For
+% example:
+
+dataSet = prtDataGenNoisySinc;   % Load a prtDataRegress
+dataSet.plot;                    % Display data
+reg = prtRegressRvm;             % Create a prtRegressRvm object
+reg.kernels = kernels            % Change the kernel set to be the kernel
+                                 % set defined above
+reg = reg.train(dataSet);        % Train the prtRegressRvm object
+reg.plot();                      % Plot the resulting curve
+dataSetOut = reg.run(dataSet);   % Run the regressor on the data
+hold on;
+plot(dataSet.getX,dataSetOut.getX,'c.') % Plot, overlaying the
+% fitted points with the
+% curve and original data
+legend('Regression curve','Original Points','Kernel Locations Used',0)
+
+
+
+% All kernel objects in the Pattern Recognition Toolbox have the
+% same API as discussed above.  For a list of all the different objects,
+% and links to their individual help entries, <prtDocFunctionList.html#9 A
+% list of commonly used functions>
+
+##### SOURCE END #####
+--></body></html>

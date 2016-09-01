@@ -1,0 +1,285 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../helpwin.css">
+      <title>MATLAB File Help: prtRvMultinomial</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtRvMultinomial</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtRvMultinomial</div>
+      <div class="helptext"><pre><!--helptext -->  <span class="helptopic">prtRvMultinomial</span>  Multinomial random variable
+ 
+    RV = <span class="helptopic">prtRvMultinomial</span> creates a <span class="helptopic">prtRvMultinomial</span> object
+    with an unknown number of categories with unspecified probabilities
+    These properties can be set manually or by using the MLE method.
+ 
+    <span class="helptopic">prtRvMultinomial</span> operates on count matrices. Therfore, the DRAW()
+    method outputs a matrix that is N x nCategories and has a single 1
+    in each row. To draw integer categories you can use the
+    DRAWINTEGER() method.  Similarly, the MLE function takes a count
+    matrix as an input. Type help <span class="helptopic">prtRvMultinomial</span>.mle for more
+    information.
+ 
+    RV = <span class="helptopic">prtRvMultinomial</span>(PROPERTY1, VALUE1,...) creates a
+    <span class="helptopic">prtRvMultinomial</span> object RV with properties as specified by 
+    PROPERTY/VALUE pairs.
+ 
+    A <span class="helptopic">prtRvMultinomial</span> object inherits all properties from the
+    prtRv class. In addition, it has the following properties:
+ 
+    nCategories   - number of integers modeled by the RV
+    probabilities - A 1 x nCategories vector of doubles less than 1
+                    that sum to 1, representing the probability of
+                    each of the integers
+    
+   A <span class="helptopic">prtRvMultinomial</span> object inherits all methods from the prtRv
+   class. The MLE  method can be used to set the parameters from data.
+   In addition, it has the the following methods:
+    
+    x = R.drawIntegers(N) - Draws N integers with the corresponding
+                            probabilities
+ 
+   Example:
+   
+   data = rand(100,5);                  % Uniformly random data
+   X = bsxfun(@eq,data,max(data,[],2)); % Generate data that has a 
+                                        % single 1 in each row
+ 
+   RV = <span class="helptopic">prtRvMultinomial</span>;               % Generate a <span class="helptopic">prtRvMultinomial</span>
+   RV = mle(RV,X);                      % Estimate the parameters
+ 
+   RV.plotPdf()                         % Plot the pdf (pmf)</pre></div><!--after help --><!--seeAlso--><div class="footerlinktitle">See also</div><div class="footerlink"> <a href="./prtRv.html">prtRv</a>, <a href="./prtRvMvn.html">prtRvMvn</a>, <a href="./prtRvGmm.html">prtRvGmm</a>, <a href="./prtRvVq.html">prtRvVq</a>, <a href="./prtRvKde.html">prtRvKde</a>
+</div>
+      <!--Class-->
+      <div class="sectiontitle">Class Details</div>
+      <table class="class-details">
+         <tr>
+            <td class="class-detail-label">Superclasses</td>
+            <td><a href="./prtRv.html">prtRv</a>, <a href="./prtRvMemebershipModel.html">prtRvMemebershipModel</a></td>
+         </tr>
+         <tr>
+            <td class="class-detail-label">Sealed</td>
+            <td>false</td>
+         </tr>
+         <tr>
+            <td class="class-detail-label">Construct on load</td>
+            <td>false</td>
+         </tr>
+      </table>
+      <!--Constructors-->
+      <div class="sectiontitle"><a name="constructors"></a>Constructor Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRvMultinomial/prtRvMultinomial.html">prtRvMultinomial</a></td>
+            <td class="m-help">Multinomial random variable&nbsp;</td>
+         </tr>
+      </table>
+      <!--Properties-->
+      <div class="sectiontitle"><a name="properties"></a>Property Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRvMultinomial/dataSet.html">dataSet</a></td>
+            <td class="m-help">The training prtDataSet, only stored if verboseStorage is true. &nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRvMultinomial/dataSetSummary.html">dataSetSummary</a></td>
+            <td class="m-help">Structure that summarizes prtDataSet.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRvMultinomial/isCrossValidateValid.html">isCrossValidateValid</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRvMultinomial/isSupervised.html">isSupervised</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRvMultinomial/isTrained.html">isTrained</a></td>
+            <td class="m-help">Indicates if prtAction object has been trained.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRvMultinomial/nCategories.html">nCategories</a></td>
+            <td class="m-help">The number of categories&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRvMultinomial/name.html">name</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRvMultinomial/nameAbbreviation.html">nameAbbreviation</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRvMultinomial/plotOptions.html">plotOptions</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRvMultinomial/probabilities.html">probabilities</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRvMultinomial/showProgressBar.html">showProgressBar</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRvMultinomial/userData.html">userData</a></td>
+            <td class="m-help">User specified data&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRvMultinomial/verboseStorage.html">verboseStorage</a></td>
+            <td class="m-help">Specifies whether or not to store the training prtDataset.&nbsp;</td>
+         </tr>
+      </table>
+      <!--Methods-->
+      <div class="sectiontitle"><a name="methods"></a>Method Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRvMultinomial/cdf.html">cdf</a></td>
+            <td class="m-help">Output the cdf of the random variable evaluated at the points specified&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRvMultinomial/crossValidate.html">crossValidate</a></td>
+            <td class="m-help">Cross validate prtAction using prtDataSet and cross validation keys.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRvMultinomial/draw.html">draw</a></td>
+            <td class="m-help">Draw random samples from the distribution described by the prtRv object&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRvMultinomial/drawIntegers.html">drawIntegers</a></td>
+            <td class="m-help">DRAW  Draw random integer samples from the distribution described by the prtRv object&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRvMultinomial/get.html">get</a></td>
+            <td class="m-help">get the object properties&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRvMultinomial/initializeMixtureMembership.html">initializeMixtureMembership</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRvMultinomial/kfolds.html">kfolds</a></td>
+            <td class="m-help">Perform K-folds cross-validation of prtAction&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRvMultinomial/logPdf.html">logPdf</a></td>
+            <td class="m-help">Output the log pdf of the random variable evaluated at the points specified&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRvMultinomial/mle.html">mle</a></td>
+            <td class="m-help">RV = RV.mle(X) computes the maximum likelihood estimate based&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRvMultinomial/optimize.html">optimize</a></td>
+            <td class="m-help">Optimize action parameter by exhaustive function maximization.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRvMultinomial/pdf.html">pdf</a></td>
+            <td class="m-help">Output the pdf of the random variable evaluated at the points specified&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRvMultinomial/plotCdf.html">plotCdf</a></td>
+            <td class="m-help">Not implemented for this prtRv&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRvMultinomial/plotLogPdf.html">plotLogPdf</a></td>
+            <td class="m-help">Plot the pdf of the prtRv&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRvMultinomial/plotPdf.html">plotPdf</a></td>
+            <td class="m-help">Plot the pdf of the RV&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRvMultinomial/run.html">run</a></td>
+            <td class="m-help">Run a prtAction object on a prtDataSet object.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRvMultinomial/set.html">set</a></td>
+            <td class="m-help">set the object properties&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRvMultinomial/train.html">train</a></td>
+            <td class="m-help">Train a prtAction object using training a prtDataSet object.&nbsp;</td>
+         </tr>
+      </table>
+   </body>
+</html>

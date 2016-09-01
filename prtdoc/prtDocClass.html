@@ -1,0 +1,203 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>PRT Classification Objects</title><meta name="generator" content="MATLAB 8.0"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2013-02-19"><meta name="DC.source" content="prtDocClass.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>PRT Classification Objects</h1><!--introduction--><p>One of the most powerful features of the Pattern Recognition Toolbox is classification objects, implemented as <a href="./functionReference/prtClass.html">prtClass</a> objects. Classification objects allow you to develop algorithms which will label data into discrete clases. prtClass objects are all supervised, meaning they require labeled training data during training.</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Classification object methods and properties.</a></li><li><a href="#2">Using classifiers</a></li><li><a href="#4">Internal Deciders</a></li><li><a href="#5">Plotting</a></li></ul></div><h2>Classification object methods and properties.<a name="1"></a></h2><p>All prtClass objects inherit the TRAIN, RUN, CROSSVALIDATE and KFOLDS functions from the prtAction object, for more information on these methods, refer to section on the  <a href="./prtDocEngine.html">prtEngine</a>.</p><p>In addition to the inherited methods, prtClass objects also have a few important properties. The isNativeMary field indicates whether or not the particular classifier natively handles binary and/or M-ary classification. Binary classifiers can only label data as being in class 0 or 1, whereas native M-ary classifiers can label data into an arbitrary number of classes.</p><h2>Using classifiers<a name="2"></a></h2><p>You use classifiers in the same manner as any prtAction object. The following example shows how to create a generalized likelihood ratio classifier, and perform kfolds validation on it.</p><pre class="codeinput">ds = prtDataGenUnimodal;   <span class="comment">% Load a dataset to use</span>
+classifier = prtClassGlrt;  <span class="comment">% Create a generalized likelihood ratio test</span>
+                           <span class="comment">% classifier</span>
+
+result = classifier.kfolds(ds,2);<span class="comment">% Perform a simple 2-fold cross-validation</span>
+
+result.getX(1:5)
+result.getY(1:5)
+</pre><pre class="codeoutput">ans =
+   -7.0771
+    1.6891
+  -15.2419
+   -7.3593
+  -10.2619
+ans =
+     0
+     0
+     0
+     0
+     0
+</pre><p>Note that the data stored in the observations of result correspond to the likelihood values. Also note that since ds was a labeled dataset, the original labels are copied over into the targets property of the results dataset.</p><h2>Internal Deciders<a name="4"></a></h2><p>Another important property of prtClass objects is the internalDecider. Ordinarily, a prtClass object outputs raw statistics based on the classification algorithm. However, you might just want the classification object to make class decisions based on these outputs. This can be done by setting the internalDecider property to be a prtDecisionBinaryMinPe object:</p><pre class="codeinput">classifier.internalDecider = prtDecisionBinaryMinPe;
+result = classifier.kfolds(ds,2); <span class="comment">%Perform a simple 2-fold cross-validation</span>
+
+result.getX(1:5)
+result.getY(1:5)
+
+<span class="comment">% Note that now the data stored in the observations of result are class</span>
+<span class="comment">% labels. They are likely all of class 0 in this example. By setting the</span>
+<span class="comment">% internalDecider to prtDecisionBinaryPe, an threshold was found during</span>
+<span class="comment">% training that would result in the minimum probability of error.</span>
+</pre><pre class="codeoutput">ans =
+     0
+     1
+     0
+     0
+     0
+ans =
+     0
+     0
+     0
+     0
+     0
+</pre><h2>Plotting<a name="5"></a></h2><p>Finally, prtClass objects all have an additional plot function, which can help you visulize the classifiers decision regions. To plot the classification object, it first needs to be trained.</p><pre class="codeinput">classifier = classifier.train(ds);   <span class="comment">% For example purposes,</span>
+                                     <span class="comment">% train with all the data</span>
+classifier.plot();                   <span class="comment">% Alternatively, plot(classifier)</span>
+</pre><img vspace="5" hspace="5" src="prtDocClass_01.png" alt=""> <p>In the resulting plot, you will see all the data members used to train the data. If the internalDecider is set, as in the above example, you will see the decision region boundaries. If the internalDecider is not set, you will instead see an intensity plot, indicating how likely it is that a particular point would belong to class 0 or 1, as shown below.</p><pre class="codeinput">classifier.internalDecider = [];   <span class="comment">% Clear the internalDecider</span>
+classifier = classifier.train(ds); <span class="comment">% Re-train</span>
+classifier.plot()
+</pre><img vspace="5" hspace="5" src="prtDocClass_02.png" alt=""> <p>All classification objects in the Pattern Recognition Toolbox have the same API as discussed above. The only difference is the underlying algorithms used to train and run the classifier. For a list of all the different classification algorithms, and links to their individual help entries, <a href="./prtDocFunctionList.html">A list of commonly used functions</a></p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2012b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% PRT Classification Objects
+% One of the most powerful features of the Pattern Recognition Toolbox is
+% classification objects, implemented as <./functionReference/prtClass.html prtClass>
+% objects. Classification objects allow you to develop algorithms which
+% will label data into discrete clases. prtClass objects are all
+% supervised, meaning they require labeled training data during training.
+%
+%% Classification object methods and properties.
+% All prtClass objects inherit the TRAIN, RUN, CROSSVALIDATE and KFOLDS
+% functions from the prtAction object, for more information on these
+% methods, refer to section on the  <./prtDocEngine.html prtEngine>.
+%
+% In addition to the inherited methods, prtClass objects also have a few
+% important properties. The isNativeMary field indicates whether or not the
+% particular classifier natively handles binary and/or M-ary
+% classification. Binary classifiers can only label data as being in class
+% 0 or 1, whereas native M-ary classifiers can label data into an arbitrary
+% number of classes.
+%
+%% Using classifiers
+% You use classifiers in the same manner as any prtAction object. The
+% following example shows how to create a generalized likelihood ratio
+% classifier, and perform kfolds validation on it.
+
+ds = prtDataGenUnimodal;   % Load a dataset to use
+classifier = prtClassGlrt;  % Create a generalized likelihood ratio test 
+                           % classifier
+
+result = classifier.kfolds(ds,2);% Perform a simple 2-fold cross-validation
+
+result.getX(1:5)
+result.getY(1:5)
+
+%% 
+% Note that the data stored in the observations of result correspond to the
+% likelihood values. Also note that since ds was a labeled dataset, the
+% original labels are copied over into the targets property of the results
+% dataset.
+
+%% Internal Deciders
+% Another important property of prtClass objects is the internalDecider.
+% Ordinarily, a prtClass object outputs raw statistics based on the
+% classification algorithm. However, you might just want the classification
+% object to make class decisions based on these outputs. This can be done
+% by setting the internalDecider property to be a prtDecisionBinaryMinPe
+% object:
+
+classifier.internalDecider = prtDecisionBinaryMinPe;
+result = classifier.kfolds(ds,2); %Perform a simple 2-fold cross-validation
+
+result.getX(1:5)
+result.getY(1:5)
+
+% Note that now the data stored in the observations of result are class
+% labels. They are likely all of class 0 in this example. By setting the
+% internalDecider to prtDecisionBinaryPe, an threshold was found during
+% training that would result in the minimum probability of error.
+
+%% Plotting
+% Finally, prtClass objects all have an additional plot function, which can
+% help you visulize the classifiers decision regions. To plot the
+% classification object, it first needs to be trained. 
+
+classifier = classifier.train(ds);   % For example purposes, 
+                                     % train with all the data
+classifier.plot();                   % Alternatively, plot(classifier) 
+
+%%
+% In the resulting plot, you will see all the data members used to train
+% the data. If the internalDecider is set, as in the above example, you
+% will see the decision region boundaries. If the internalDecider is not
+% set, you will instead see an intensity plot, indicating how likely it is
+% that a particular point would belong to class 0 or 1, as shown below.
+
+classifier.internalDecider = [];   % Clear the internalDecider
+classifier = classifier.train(ds); % Re-train
+classifier.plot()
+
+%%
+% All classification objects in the Pattern Recognition Toolbox have the
+% same API as discussed above. The only difference is the underlying
+% algorithms used to train and run the classifier. For a list of all the
+% different classification algorithms, and links to their individual help
+% entries, <./prtDocFunctionList.html A list of commonly used functions>
+##### SOURCE END #####
+--></body></html>

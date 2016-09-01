@@ -1,0 +1,46 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../helpwin.css">
+      <title>MATLAB File Help: prtEvalPdAtPf</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtEvalPdAtPf</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtEvalPdAtPf</div>
+      <div class="helptext"><pre><!--helptext -->  <span class="helptopic">prtEvalPdAtPf</span>   Returns the probability of false alarm at a desired
+    probability of detection on the receiver operating curve.
+ 
+    PD = <span class="helptopic">prtEvalPdAtPf</span>(prtClassifier, prtDataSet, pfDesired) returns the
+    probabilty of detection PD.  prtDataSet must be a labeled, binary
+    prtDataSetStandard object. prtClassifier must be a prtClass object.
+    pfDesired is the desired probability of false alarm and must be between
+    0 and 1.
+ 
+    pfDesired = <span class="helptopic">prtEvalPdAtPf</span>(prtClassifier, prtDataSet, pfDesired, nFolds)
+    returns the probabilty of false alarm pfDesired on the receiver
+    operating curve with K-fold cross-validation. prtDataSet must be a
+    labeled, binary prtDataSetStandard object. prtClassifier must be a
+    prtClass object. pfDesired is the desired probability of detection and
+    must be between 0 and 1. nFolds is the number of folds in the K-fold
+    cross-validation.
+ 
+    pfDesired = <span class="helptopic">prtEvalPdAtPf</span>(prtClassifier, prtDataSet, pfDesired,
+    xValInds) same as above, but use crossValidation with specified indices
+    instead of random folds.
+ 
+    Example: 
+    dataSet = prtDataGenSpiral; 
+    classifier = prtClassDlrt;
+    pf = <span class="helptopic">prtEvalPdAtPf</span>(classifier, dataSet,.01)</pre></div><!--after help --><!--seeAlso--><div class="footerlinktitle">See Also</div><div class="footerlink"> <a href="./prtEvalAuc.html">prtEvalAuc</a>, <a href="./prtEvalPfAtPd.html">prtEvalPfAtPd</a>, <a href="./prtEvalPercentCorrect.html">prtEvalPercentCorrect</a>,
+    <a href="./prtEvalMinCost.html">prtEvalMinCost</a>
+</div>
+   </body>
+</html>

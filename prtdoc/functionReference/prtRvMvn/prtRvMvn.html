@@ -1,0 +1,74 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../../helpwin.css">
+      <title>MATLAB File Help: prtRvMvn/prtRvMvn</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtRvMvn/prtRvMvn</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtRvMvn/prtRvMvn</div>
+      <div class="helptext"><pre><!--helptext -->  <span class="helptopic">prtRvMvn</span>  Multivariate normal random variable
+ 
+    RV = <span class="helptopic">prtRvMvn</span> creates a <span class="helptopic">prtRvMvn</span> object with empty mean and
+    covariance matrices. The mean and covariance matrices must be set
+    either directly, or by calling the MLE method.
+ 
+    RV = <span class="helptopic">prtRvMvn</span>('covarianceStructure', VALUE) enforces a covariance
+    structure, which may be either 'full', 'spherical', or 'diagonal'.
+    Setting this property to 'spherical' or 'diagonal' will enforce
+    this structure onto the existing covariance matrix, or one
+    estimated by calling the MLE method.
+ 
+    RV = <span class="helptopic">prtRvMvn</span>(PROPERTY1, VALUE1,...) creates a prtRvMv object RV
+    with properties as specified by PROPERTY/VALUE pairs.
+ 
+    A <span class="helptopic">prtRvMvn</span> object inherits all properties from the prtRv class. In
+    addition, it has the following properties:
+ 
+    covarianceStructure - A string specifying the structure of the
+                          covariance matrix to estimate or enforce. 
+                          Valid values are 'full','spherical', or 
+                          'diagonal'
+    mu                  - The mean of the distribution, which is
+                          a 1 x nDimensions vector.
+    sigma               - The covariance matrix of the distribution,
+                          which is a nDimensions x nDimensions 
+                          matrix.
+    
+   A <span class="helptopic">prtRvMvn</span> object inherits all methods from the prtRv class. The MLE
+   method can be used to estimate the distribution parameters from
+   data.
+ 
+   Example:
+ 
+   dataSet    = prtDataGenUnimodal;   % Load a dataset consisting of 2
+                                      % classes
+   % Extract one of the classes from the dataSet
+   dataSetOneClass = prtDataSetClass(dataSet.getObservationsByClass(1));
+ 
+   RV = <span class="helptopic">prtRvMvn</span>;                       % Create a <span class="helptopic">prtRvMvn</span> object
+   RV = RV.mle(dataSetOneClass.getX);   % Compute the maximum
+                                        % likelihood estimate from the
+                                        % data
+   RV.plotPdf                           % Plot the pdf
+ 
+   RVspec = <span class="helptopic">prtRvMvn</span>;                   % Create another <span class="helptopic">prtRvMvn</span>
+                                        % object
+   RVspec.mu = [1 2];                   % Specify the mean
+   RVspec.sigma = [2 -1; -1 2]          % Specify the covariance
+   figure;
+   RVspec.plotPdf                       % Plot the pdf
+   sample = RVspec.draw(1)              % Draw 1 random sample from the
+                                        % Distribution</pre></div><!--after help --><!--seeAlso--><div class="footerlinktitle">See also</div><div class="footerlink"> <a href="./../prtRv.html">prtRv</a>, <a href="./../prtRvGmm.html">prtRvGmm</a>, <a href="./../prtRvMultinomial.html">prtRvMultinomial</a>, <a href="./../prtRvUniform.html">prtRvUniform</a>,
+    <a href="./../prtRvUniformImproper.html">prtRvUniformImproper</a>, <a href="./../prtRvVq.html">prtRvVq</a>, <a href="./../prtRvDiscrete.html">prtRvDiscrete</a>
+</div>
+   </body>
+</html>

@@ -1,0 +1,216 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../helpwin.css">
+      <title>MATLAB File Help: prtDecisionBinarySpecifiedPf</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtDecisionBinarySpecifiedPf</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtDecisionBinarySpecifiedPf</div>
+      <div class="helptext"><pre><!--helptext -->  prtDecisionBinarySpecifiedPd Decision object for a specified Pf
+ 
+  prtDec = <span class="helptopic">prtDecisionBinarySpecifiedPf</span> creates a <span class="helptopic">prtDecisionBinarySpecifiedPf</span>
+  object, which can be used find a decision threshold in a binary
+  classification problem for a specific probability of false alarm Pf.
+ 
+  A <span class="helptopic">prtDecisionBinarySpecifiedPf</span> has the following member:
+ 
+  pf - The specified probability of false alarm, which must be between 0
+  and 1.
+ 
+  prtDecision objects are intended to be used either as members of
+  prtAlgorithm or prtClass objects.
+ 
+  Example 1:
+ 
+  ds = prtDataGenBimodal;              % Load a data set
+  classifier = prtClassKnn;            % Create a clasifier
+  classifier = classifier.train(ds);   % Train the classifier
+  yOutClassifier = classifier.run(ds); % Run the classifier
+ 
+  % Construct a prtAlgorithm object consisting of a prtClass object and
+  % a prtDecision object
+  dec = <span class="helptopic">prtDecisionBinarySpecifiedPf</span>;
+  dec.pf = .7;   % Set the desired probility of detection.
+  algo = prtClassKnn + dec;
+ 
+  algo = algo.train(ds);        % Train the algorithm
+  yOutAlgorithm = algo.run(ds); % Run the algorithm
+ 
+  % Plot and compare the results
+  subplot(2,1,1); stem(yOutClassifier.getObservations); title('KNN Output');
+  subplot(2,1,2); stem(yOutAlgorithm.getObservations); title('KNN + Decision Output');
+ 
+  Example 2:
+ 
+  ds = prtDataGenBimodal;              % Load a data set
+  classifier = prtClassKnn;            % Create a clasifier
+  classifier = classifier.train(ds);   % Train the classifier
+ 
+  % Plot the trained classifier
+  subplot(2,1,1); plot(classifier); title('KNN');
+ 
+  % Set the classifiers internealDecider to be a prtDecsion object
+  classifier.internalDecider = dec;
+ 
+  classifier = classifier.train(ds); % Train the classifier
+  subplot(2,1,2); plot(classifier); title('KNN + Decision');</pre></div><!--after help --><!--seeAlso--><div class="footerlinktitle">See also</div><div class="footerlink"> <a href="./prtDecisionBinary.html">prtDecisionBinary</a>, <a href="./prtDecisionBinaryMinPe.html">prtDecisionBinaryMinPe</a>,
+  ptDecisionBinarySpecifiedPf, <a href="./prtDecisionMap.html">prtDecisionMap</a>
+</div>
+      <!--Class-->
+      <div class="sectiontitle">Class Details</div>
+      <table class="class-details">
+         <tr>
+            <td class="class-detail-label">Superclasses</td>
+            <td><a href="./prtDecisionBinary.html">prtDecisionBinary</a></td>
+         </tr>
+         <tr>
+            <td class="class-detail-label">Sealed</td>
+            <td>false</td>
+         </tr>
+         <tr>
+            <td class="class-detail-label">Construct on load</td>
+            <td>false</td>
+         </tr>
+      </table>
+      <!--Constructors-->
+      <div class="sectiontitle"><a name="constructors"></a>Constructor Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="name"><a href="./prtDecisionBinarySpecifiedPf/prtDecisionBinarySpecifiedPf.html">prtDecisionBinarySpecifiedPf</a></td>
+            <td class="m-help">prtDecisionBinarySpecifiedPd Decision object for a specified Pf&nbsp;</td>
+         </tr>
+      </table>
+      <!--Properties-->
+      <div class="sectiontitle"><a name="properties"></a>Property Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="name"><a href="./prtDecisionBinarySpecifiedPf/classList.html">classList</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtDecisionBinarySpecifiedPf/dataSet.html">dataSet</a></td>
+            <td class="m-help">The training prtDataSet, only stored if verboseStorage is true. &nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtDecisionBinarySpecifiedPf/dataSetSummary.html">dataSetSummary</a></td>
+            <td class="m-help">Structure that summarizes prtDataSet.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtDecisionBinarySpecifiedPf/isCrossValidateValid.html">isCrossValidateValid</a></td>
+            <td class="m-help">True&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtDecisionBinarySpecifiedPf/isSupervised.html">isSupervised</a></td>
+            <td class="m-help">False&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtDecisionBinarySpecifiedPf/isTrained.html">isTrained</a></td>
+            <td class="m-help">Indicates if prtAction object has been trained.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtDecisionBinarySpecifiedPf/name.html">name</a></td>
+            <td class="m-help">SpecifiedPf&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtDecisionBinarySpecifiedPf/nameAbbreviation.html">nameAbbreviation</a></td>
+            <td class="m-help">SpecPf&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtDecisionBinarySpecifiedPf/pf.html">pf</a></td>
+            <td class="m-help">The desired probability of false alarm&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtDecisionBinarySpecifiedPf/showProgressBar.html">showProgressBar</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtDecisionBinarySpecifiedPf/userData.html">userData</a></td>
+            <td class="m-help">User specified data&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtDecisionBinarySpecifiedPf/verboseStorage.html">verboseStorage</a></td>
+            <td class="m-help">Specifies whether or not to store the training prtDataset.&nbsp;</td>
+         </tr>
+      </table>
+      <!--Methods-->
+      <div class="sectiontitle"><a name="methods"></a>Method Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDecisionBinarySpecifiedPf/crossValidate.html">crossValidate</a></td>
+            <td class="m-help">Cross validate prtAction using prtDataSet and cross validation keys.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDecisionBinarySpecifiedPf/get.html">get</a></td>
+            <td class="m-help">get the object properties&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDecisionBinarySpecifiedPf/getThreshold.html">getThreshold</a></td>
+            <td class="m-help">THRESH = getThreshold returns the objects threshold&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDecisionBinarySpecifiedPf/kfolds.html">kfolds</a></td>
+            <td class="m-help">Perform K-folds cross-validation of prtAction&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDecisionBinarySpecifiedPf/optimize.html">optimize</a></td>
+            <td class="m-help">Optimize action parameter by exhaustive function maximization.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDecisionBinarySpecifiedPf/run.html">run</a></td>
+            <td class="m-help">Run a prtAction object on a prtDataSet object.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDecisionBinarySpecifiedPf/set.html">set</a></td>
+            <td class="m-help">set the object properties&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDecisionBinarySpecifiedPf/train.html">train</a></td>
+            <td class="m-help">Train a prtAction object using training a prtDataSet object.&nbsp;</td>
+         </tr>
+      </table>
+   </body>
+</html>

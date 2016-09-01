@@ -1,0 +1,347 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Spectral Clustering - PRT Blog</title>
+  <meta name="author" content="Kenneth Morton and Peter Torrione">
+
+  
+  <meta name="description" content="Spectral Clustering Jun 24th, 2013 Hi everyone, A few weeks ago we talked about clustering with K-Means, and using K-Means distances as a pre- &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://newfolder.github.io/blog/2013/06/24/spectral-clustering">
+  <link href="/favicon.ico" rel="icon">
+  
+  <link href="/assets/bootstrap/css/spacelab.min.css" rel="stylesheet" type="text/css">
+  <link href="/assets/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet" type="text/css">
+  <link href="/assets/bootstrap/css/custom.css" rel="stylesheet" type="text/css">
+  <link href="/assets/font-awesome/css/font-awesome.css" rel="stylesheet" type="text/css">
+  
+  <link href="/atom.xml" rel="alternate" title="PRT Blog" type="application/atom+xml">
+  <style type="text/css">
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+</style>
+  
+
+</head>
+
+<body    data-spy="scroll">
+
+  <div class="container">
+    <header class="jumbotron subhead" id="overview">
+      
+<div class="subscribe">
+  <table>
+    <tr>
+      <td><span>Get Updates: &nbsp;</span></td>
+      
+      
+      <td><a href="/atom.xml" class="btn"><i class="icon-cog"></i> By RSS</a></td>
+      
+      
+    </tr>
+  </table>
+</div>
+
+<h1 class="title">PRT Blog</h1>
+
+  <p class="lead">MATLAB Pattern Recognition Open Free and Easy</p>
+
+
+      <div class="navbar">
+  <div class="navbar-inner">
+    <div class="container" style="width: auto;">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+      <div class="nav-collapse">
+                <ul class="nav">
+          <li><a href="/">Home</a></li>
+          <li><a href="/blog/archives">Blog</a></li>
+          <li><a href="https://github.com/newfolder/PRT">Code</a></li>
+          <li><a href="/prtdoc/">Documentation</a></li>
+		  <li><a href="https://github.com/newfolder/PRT/issues">Get Help</a><li>
+          <li><a href="/about">About</a></li>
+        </ul>
+
+        
+          <form action="http://google.com/search" method="get" class="navbar-search pull-left">
+            <fieldset role="search">
+              <input type="hidden" name="q" value="site:newfolder.github.io" />
+              <input type="text" name="q" results="0" placeholder="Search" class="search-query span2" />
+            </fieldset>
+          </form>
+        
+        
+      </div><!-- /.nav-collapse -->
+    </div>
+  </div><!-- /navbar-inner -->
+</div>
+
+    </header>
+    <div id="main">
+      <div id="content">
+        <div class="row">
+  
+  <div class="span8">
+    <br>
+
+  <header>
+    
+      <h1 class="entry-title">Spectral Clustering</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-06-24T13:33:00-04:00" pubdate data-updated="true">Jun 24<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Hi everyone,</p>
+
+
+<p>A few weeks ago we talked about clustering with K-Means, and using K-Means distances as a pre-processing step.  K-Means is great when euclidean distance in your input feature-space is meaningful, but what if your data instead lies on a high-dimensional manifold?</p>
+
+
+<p>We recently introduced some new clustering and distance-metric approaches suitable for these cases - spectral clustering.  The theory behind spectral clustering is beyond the scope of this entry, but as usual, the wikipedia page has a good summary - <a href="http://en.wikipedia.org/wiki/Spectral_clustering">http://en.wikipedia.org/wiki/Spectral_clustering</a>.</p>
+
+
+<!--/introduction-->
+
+
+
+
+<p>Although I&#8217;m writing the blog entry, all of the code in this demo was written by one of our graduate students @ Duke University - Dmitry Kalika, who&#8217;s a new convert to the PRT!  Welcome Dima!</p>
+
+
+
+
+<h2>Contents</h2>
+
+
+<div><ul><li><a href="#1">References</a></li><li><a href="#2">prtPreProcSpectralEmbed</a></li><li><a href="#3">prtClusterSpectralKmeans</a></li><li><a href="#4">Wrapping Up</a></li></ul></div>
+
+
+<h2>References<a name="1"></a></h2>
+
+
+<p>Throughout the following and the code for spectral clustering in the PRT, we make use of the excellent Bengio, 2003 paper - Out-of-Sample Extensions for LLE, Isomap, MDS, Eigenmaps, and Spectral Clustering <a href="http://www.iro.umontreal.ca/~lisa/pointeurs/tr1238.pdf">http://www.iro.umontreal.ca/~lisa/pointeurs/tr1238.pdf</a></p>
+
+
+<p>In particular, we use that extention for performing cluster approximation for out-of-sample embedding estimation.</p>
+
+
+<h2>prtPreProcSpectralEmbed<a name="2"></a></h2>
+
+
+<p>Spectral clustering typically relies upon what&#8217;s referred to as a spectral embedding; this is a low-dimensional representation of a high-dimensional proximity graph.</p>
+
+
+<p>We can use features derived from spectral embeddings like so:</p>
+
+
+
+
+<pre class="codeinput">ds = prtDataGenBimodal;
+dsTest = prtDataGenBimodal(10);
+algo = prtPreProcSpectralEmbed;
+algo = algo.train(ds);
+yOut = algo.run(ds);
+plot(yOut);
+</pre>
+
+
+<p><img vspace="5" hspace="5" src="/images/torrione_blog_2013_06_17_01.png" alt=""> <h2>prtClusterSpectralKmeans<a name="3"></a></h2><p>While spectral embedding provides a feature space for additional processing, we can also use prtClusterSpectralKmeans to perform direct clustering in the spectral space.</p><p>For example, the Moon data set (see prtDataGenMoon) creates two crescent moon-shapes that are not well-separated by euclidean distance metrics, but can be easily separated in spectral-cluster space.</p><pre class="codeinput">ds = prtDataGenMoon;
+preProc = prtPreProcZmuv;
+preProc = preProc.train(ds);
+dsNorm = preProc.run(ds);
+kmeans = prtClusterKmeans(<span class="string">&lsquo;nClusters&rsquo;</span>,2);
+kmeansSpect = prtClusterSpectralKmeans(<span class="string">&lsquo;nClusters&rsquo;</span>,2);
+kmeans = kmeans.train(dsNorm);
+kmeansSpect = kmeansSpect.train(dsNorm);
+subplot(1,2,1);
+plot(kmeans);
+title(<span class="string">&lsquo;K-Means Clusters&rsquo;</span>);
+subplot(1,2,2);
+plot(kmeansSpect)
+title(<span class="string">&lsquo;Spect-K-Means Clusters&rsquo;</span>);
+</pre>
+<img vspace="5" hspace="5" src="/images/torrione_blog_2013_06_17_02.png" alt=""> <h2>Wrapping Up<a name="4"></a></h2><p>Spectral clustering provides a very useful technique for non-linear and non-euclidean clustering.  Right now our spectral clustering approaches are constrained  to using RBF kernels, though there&rsquo;s nothing that prevents you from using alternate kernels in future versions.</p><p>As always, let us know if you have questions or comments.</p></p>
+</div>
+
+
+<br>
+<hr>
+<br>
+    <footer>
+      <p class="meta">
+        
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Pete</span></span>
+
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-06-24T13:33:00-04:00" pubdate data-updated="true">Jun 24<span>th</span>, 2013</time>
+        
+
+
+      </p>
+      
+        <div class="sharing">
+  <br/>
+  
+  
+  
+</div>
+
+      
+      <p class="meta">
+        
+          <a class="basic-alignment pull-left" href="/blog/2013/06/13/prtclustermeanshift/" title="Previous Post: prtClusterMeanShift">&laquo; prtClusterMeanShift</a>
+        
+        
+          <a class="basic-alignment pull-right" href="/blog/2013/07/08/twoclassparadigm/" title="Next Post: twoClassParadigm">twoClassParadigm &raquo;</a>
+        
+      </p>
+    </footer>
+    
+    
+      <section>
+        <h1>Comments</h1>
+        <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+      </section>
+    
+  </div>
+
+  
+    
+  <div class="span3 sidebar">
+    <div class="well">
+      
+        <section>
+  <h2>Recent Posts</h2>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/10/09/dude-wheres-my-help/">Dude Where's My Help?</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/09/04/verbosestorage-and-a-little-prtalgorithm-plotting/">verboseStorage and a little prtAlgorithm plotting</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/08/20/introducing-prtclassnnet/">Introducing prtClassNNET</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/07/29/supervised-learning/">Supervised Learning: An Introduction for Scientists and Engineers</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/07/24/using-svms/">Using SVMs for Scientists and Engineers</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+      
+    </div>
+  </div>
+
+
+  
+</div>
+
+
+      </div>
+    </div>
+    <footer class="footer"><p>
+  Copyright &copy; 2013 - Kenneth Morton and Peter Torrione -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span> -
+  
+    <span class="credit">Theme by <a href="http://brianarmstrong.org">Brian Armstrong</a></span>
+  
+</p>
+</footer>
+    
+
+<script type="text/javascript">
+      var disqus_shortname = 'newfolderconsulting';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://newfolder.github.io/blog/2013/06/24/spectral-clustering/';
+        var disqus_url = 'http://newfolder.github.io/blog/2013/06/24/spectral-clustering/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+<script src="/assets/bootstrap/js/bootstrap.min.js"></script>
+
+
+  </div>
+</body>
+</html>

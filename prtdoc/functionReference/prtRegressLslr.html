@@ -1,0 +1,225 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../helpwin.css">
+      <title>MATLAB File Help: prtRegressLslr</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtRegressLslr</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtRegressLslr</div>
+      <div class="helptext"><pre><!--helptext --> prtRegresLslr  Least squares regression object
+ 
+    REGRESS = <span class="helptopic">prtRegressLslr</span> returns a <span class="helptopic">prtRegressLslr</span> object
+ 
+    REGRESS = <span class="helptopic">prtRegressLslr</span>(PROPERTY1, VALUE1, ...) constructs a
+    prtRegressGP object REGRESS with properties as specified by
+    PROPERTY/VALUE pairs.
+  
+    A <span class="helptopic">prtRegressLslr</span> object inherits all properties from the prtRegress
+    class. In addition, it has the following properties:
+ 
+    beta                   - The regression weights
+    t                      - A measure of feature importance
+    rss                    - The residual sum of squares
+    standardizedResiduals  -  The standardized residuals
+ 
+  
+    A prtRegressionLslr object inherits the PLOT method from the
+    prtRegress object, and the TRAIN, RUN, CROSSVALIDATE and KFOLDS
+    methods from the prtAction object.
+ 
+    Example:
+    
+    x = [1:.5:10]';                % Create a linear, noisy data set.
+    y = 2*x + 3 + randn(size(x));
+    dataSet = prtDataSetRegress;  % Create a prtDataSetRegress object
+    dataSet= dataSet.setX(x);
+    dataSet = dataSet.setY(y);
+    dataSet.plot;                    % Display data
+    reg = <span class="helptopic">prtRegressLslr</span>;            % Create a prtRegressRvm object
+    reg = reg.train(dataSet);        % Train the prtRegressRvm object
+    reg.plot();                      % Plot the resulting curve
+    dataSetOut = reg.run(dataSet);   % Run the regressor on the data
+    hold on;
+    plot(dataSet.getX,dataSetOut.getX,'k*') % Plot, overlaying the
+                                            % fitted points with the 
+                                            % curve and original data
+  legend('Regression line','Original Points','Fitted points',0)</pre></div><!--after help --><!--seeAlso--><div class="footerlinktitle">See also</div><div class="footerlink"> <a href="./prtRegress.html">prtRegress</a>, <a href="./prtRegressRvm.html">prtRegressRvm</a>, <a href="./prtRegressGp.html">prtRegressGp</a>
+</div>
+      <!--Class-->
+      <div class="sectiontitle">Class Details</div>
+      <table class="class-details">
+         <tr>
+            <td class="class-detail-label">Superclasses</td>
+            <td><a href="./prtRegress.html">prtRegress</a></td>
+         </tr>
+         <tr>
+            <td class="class-detail-label">Sealed</td>
+            <td>false</td>
+         </tr>
+         <tr>
+            <td class="class-detail-label">Construct on load</td>
+            <td>false</td>
+         </tr>
+      </table>
+      <!--Constructors-->
+      <div class="sectiontitle"><a name="constructors"></a>Constructor Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRegressLslr/prtRegressLslr.html">prtRegressLslr</a></td>
+            <td class="m-help">prtRegresLslr  Least squares regression object&nbsp;</td>
+         </tr>
+      </table>
+      <!--Properties-->
+      <div class="sectiontitle"><a name="properties"></a>Property Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRegressLslr/beta.html">beta</a></td>
+            <td class="m-help">Regression weights estimated via least squares linear regression&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRegressLslr/dataSet.html">dataSet</a></td>
+            <td class="m-help">The training prtDataSet, only stored if verboseStorage is true. &nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRegressLslr/dataSetSummary.html">dataSetSummary</a></td>
+            <td class="m-help">Structure that summarizes prtDataSet.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRegressLslr/isCrossValidateValid.html">isCrossValidateValid</a></td>
+            <td class="m-help">True&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRegressLslr/isSupervised.html">isSupervised</a></td>
+            <td class="m-help">True&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRegressLslr/isTrained.html">isTrained</a></td>
+            <td class="m-help">Indicates if prtAction object has been trained.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRegressLslr/name.html">name</a></td>
+            <td class="m-help">Least Squares Linear Regression&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRegressLslr/nameAbbreviation.html">nameAbbreviation</a></td>
+            <td class="m-help">LSLR&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRegressLslr/plotOptions.html">plotOptions</a></td>
+            <td class="m-help">Plotting Options&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRegressLslr/rss.html">rss</a></td>
+            <td class="m-help">Resisudal sum of the squared error&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRegressLslr/showProgressBar.html">showProgressBar</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRegressLslr/standardizedResiduals.html">standardizedResiduals</a></td>
+            <td class="m-help">Standardized residuals&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRegressLslr/t.html">t</a></td>
+            <td class="m-help">Measuer of the importance of each weight&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRegressLslr/userData.html">userData</a></td>
+            <td class="m-help">User specified data&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRegressLslr/verboseStorage.html">verboseStorage</a></td>
+            <td class="m-help">Specifies whether or not to store the training prtDataset.&nbsp;</td>
+         </tr>
+      </table>
+      <!--Methods-->
+      <div class="sectiontitle"><a name="methods"></a>Method Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRegressLslr/crossValidate.html">crossValidate</a></td>
+            <td class="m-help">Cross validate prtAction using prtDataSet and cross validation keys.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRegressLslr/get.html">get</a></td>
+            <td class="m-help">get the object properties&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRegressLslr/kfolds.html">kfolds</a></td>
+            <td class="m-help">Perform K-folds cross-validation of prtAction&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRegressLslr/optimize.html">optimize</a></td>
+            <td class="m-help">Optimize action parameter by exhaustive function maximization.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRegressLslr/plot.html">plot</a></td>
+            <td class="m-help">Plot the prtRegress object&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRegressLslr/run.html">run</a></td>
+            <td class="m-help">Run a prtAction object on a prtDataSet object.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRegressLslr/runRegressorOnGrid.html">runRegressorOnGrid</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRegressLslr/set.html">set</a></td>
+            <td class="m-help">set the object properties&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRegressLslr/train.html">train</a></td>
+            <td class="m-help">Train a prtAction object using training a prtDataSet object.&nbsp;</td>
+         </tr>
+      </table>
+   </body>
+</html>

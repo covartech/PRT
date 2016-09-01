@@ -1,0 +1,517 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Getting Started Examples</title><meta name="generator" content="MATLAB 8.0"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2013-02-19"><meta name="DC.source" content="prtDocGettingStartedExamples.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Getting Started Examples</h1><!--introduction--><p>This document provides some examples of how to use the PRT to jump right in to developing data sets and performing classification.</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Data Generation: prtDataSets</a></li><li><a href="#5">Visualization</a></li><li><a href="#6">A Little Object Oriented Programming</a></li><li><a href="#7">More Visualization (plotPairs)</a></li><li><a href="#8">More Visualization (plotStar)</a></li><li><a href="#9">Explore</a></li><li><a href="#10">Data Processing</a></li><li><a href="#11">Building a Classifier</a></li><li><a href="#13">Evaluating the Classifier</a></li><li><a href="#14">One More Thing...</a></li><li><a href="#16">Data Generation: Using Your Own Data</a></li></ul></div><h2>Data Generation: prtDataSets<a name="1"></a></h2><p>Let's get started by generating and visualizing data in MATLAB.  All data that the PRT can utilize is stored in MATLAB objects called prtDataSets. When we call any function that starts with prtDataGen... the output will be a prtDataSet of some sort.  To get started, clear your workspace, and close all MATLAB figures:</p><pre class="codeinput">clear <span class="string">all</span>;
+close <span class="string">all</span>;
+format <span class="string">compact</span>;
+clc;
+
+dataSet = prtDataGenUnimodal;  <span class="comment">%Generate uni-modal data under two hypotheses</span>
+whos(<span class="string">'dataSet'</span>);
+</pre><pre class="codeoutput">  Name         Size            Bytes  Class              Attributes
+
+  dataSet      1x1             11414  prtDataSetClass              
+
+</pre><p>The output above tells us that the string 'dataSet' represents a variable in the MATLAB workspace, which is of type prtDataSetClass, and it takes up about 10000 bytes of memory.  But what can we do with this dataSet variable? We can take a look at the public properties of the dataSet variable by using the disp() function, or by failing to end any MATLAB statement with a semicolon.</p><pre class="codeinput">disp(dataSet)
+</pre><pre class="codeoutput">  prtDataSetClass
+
+  Properties:
+               nFeatures: 2
+             featureInfo: []
+                    data: [400x2 double]
+                 targets: [400x1 double]
+           nObservations: 400
+       nTargetDimensions: 1
+               isLabeled: 1
+         observationInfo: []
+                    name: 'prtDataGenUnimodal'
+             description: ''
+                userData: [1x1 struct]
+                nClasses: 2
+           uniqueClasses: [2x1 double]
+    nObservationsByClass: [2x1 double]
+              classNames: {2x1 cell}
+                 isUnary: 0
+                isBinary: 1
+                  isMary: 0
+               isZeroOne: 1
+            hasUnlabeled: 0
+</pre><p>This output shows us all of the public fields that dataSet has by virtue of being a prtDataSetClass.  You can see fields like nClasses, which represents the number of unique object types represented in this data set, nObservations, and nFeatures.  We won't go into too much detail here about the prtDataSetClass properties, but let's take a look at the methods that are available for processing prtDataSetClass:</p><pre class="codeinput">methods(dataSet)
+</pre><pre class="codeoutput">
+Methods for class prtDataSetClass:
+
+bootstrap                  plotAsTimeSeries           
+bootstrapByClass           plotBeeSwarm               
+catClasses                 plotDensity                
+catFeatures                plotFeatureDensity         
+catObservations            plotPairs                  
+catTargets                 plotStar                   
+classNamesToClassInd       plotStarIndividual         
+explore                    prtDataSetClass            
+exploreSimple              removeClasses              
+getBinaryTargetsAsZeroOne  removeClassesByInd         
+getClassNames              removeFeatures             
+getClassNamesByClassInd    removeLabeled              
+getData                    removeObservations         
+getDataByClass             removeTargets              
+getDataByClassInd          removeUnlabeled            
+getDataUnlabeled           retainClasses              
+getFeatureInfo             retainClassesByInd         
+getFeatureNames            retainFeatures             
+getFeatures                retainLabeled              
+getKFoldKeys               retainObservations         
+getNumFeatures             retainTargets              
+getNumObservations         retainUnlabeled            
+getNumTargetDimensions     select                     
+getObservationInfo         setClassNames              
+getObservationNames        setData                    
+getObservations            setFeatureInfo             
+getObservationsByClass     setFeatureNames            
+getObservationsByClassInd  setFeatures                
+getObservationsUnlabeled   setObservationInfo         
+getTargetNames             setObservationNames        
+getTargets                 setObservations            
+getTargetsAsBinaryMatrix   setObservationsAndTargets  
+getTargetsClassInd         setTargetNames             
+getUniqueClasses           setTargets                 
+getX                       setX                       
+getXY                      setXY                      
+getY                       setY                       
+numClasses                 summarize                  
+permuteFeatures            
+plot                       
+
+Static methods:
+
+loadobj                    
+
+</pre><p>There are a lot of methods there, and most have pretty self-explanatory names; we'll get to most of them eventually.  For now, all that's important to know is that prtDataSetClass objects are primarily responsible for storing and keeping track of two pieces of information for the user - the observations and targets.  In most applications, the observations will constitute a nObservations x nFeatures matrix of doubles, and similarly, targets will be a nObservations x 1 vector of target labels. These fields of the prtDataSetClass are private, but they can be accessed using getObservations (equivalently getX) or getTargets (equivalently getY):</p><pre class="codeinput">myObs = dataSet.getObservations;
+whos(<span class="string">'myObs'</span>);
+
+myTargets = dataSet.getTargets;
+whos(<span class="string">'myTargets'</span>);
+</pre><pre class="codeoutput">  Name         Size            Bytes  Class     Attributes
+
+  myObs      400x2              6400  double              
+
+  Name             Size            Bytes  Class     Attributes
+
+  myTargets      400x1              3200  double              
+
+</pre><h2>Visualization<a name="5"></a></h2><p>Visualization of data is a fundamental part of data exploration and understanding.  The PRT's data set classes provide interfaces to make visualization easy and intuitive. Let's start off by loading a different data set - this one is the famous Iris data set, with data collected for telling the difference between 3 classes of flowers.  For now, we'll use the retainFeatures method of the prtDataSetClass class to reduce the dimensionality of the data from 4 to 3 for visualization:</p><pre class="codeinput">dataSet = prtDataGenIris;
+dataSet = dataSet.retainFeatures(1:3);
+plot(dataSet);  <span class="comment">% See note below</span>
+</pre><img vspace="5" hspace="5" src="prtDocGettingStartedExamples_01.png" alt=""> <h2>A Little Object Oriented Programming<a name="6"></a></h2><p>Those last commands make the plot you can see directly above.  Note what happened here - the prtDataSet dataSet knows what the name of the data set is, and uses that as the title of the figure.  It knows the names of the classes of flowers the data was collected on, and uses those in the legend.  And if the data set knew the names of the features, it would have used those on the axes labels.</p><p>Note: For those of you familiar with MATLAB, but not with object oriented (OO) programming, you probably recognize the plot() command above, but are used to seeing it called more like so:   x = 1:10;   h = plot(x,x.^2,'b'); So, how did we call plot on the dataSet object?  That's a factor of object oriented programming, and we cover a little of that later in this book, but if you want to know more, the MATLAB website has a good reference on how OO programming works.  For now, just trust us - you can call plot(dataSet), and MATLAB knows what to do.</p><h2>More Visualization (plotPairs)<a name="7"></a></h2><p>When we wanted to plot the data in the Iris data set, we had to artificially reduce the dimensionality of the data using retainFeatures. That's because the prtDataSetClass plot command doesn't work for data sets with &gt; 3 dimensions.  However there are a number of alternative approaches to data visualization that are applicable in higher dimensions.  Let's take a look at a few below.  We'll start with plotPairs:</p><pre class="codeinput">dataSet = prtDataGenIris; <span class="comment">%4-dimensional data</span>
+dataSet.plotPairs;
+</pre><img vspace="5" hspace="5" src="prtDocGettingStartedExamples_02.png" alt=""> <h2>More Visualization (plotStar)<a name="8"></a></h2><p>As you can see, the plotPairs method of the prtDataGenIris enables us to visualize higher dimensional data by plotting all of the pair-wise combinations of the features in a grid.  The diagonal elements of the plots show ksdensity estimates of the relative density of each feature in isolation, while the off-diagonal images show pair-wise scatter matrices. Pair-wise plotting can be slow for very high dimensional data.</p><p>Up next is a technique that plots each observation as a shape with nFeatures vertices (in this case since dataSet has four feature dimensions, the resulting shapes are quadrilaterals).  This technique illustrates the differences between high dimensional data in a simple and easy to understand way.</p><pre class="codeinput">close <span class="string">all</span>;
+dataSet.plotStar;
+</pre><img vspace="5" hspace="5" src="prtDocGettingStartedExamples_03.png" alt=""> <h2>Explore<a name="9"></a></h2><p>Finally, the explore method of the prtDataSets enables interactive visualization of different dimensions of the data sets using GUI controls.  You can start the explore GUI using the command below, and you'll be greeted by the GUI Figure below.</p><pre class="codeinput">explore(dataSet);
+</pre><img vspace="5" hspace="5" src="prtDocGettingStartedExamples_04.png" alt=""> <img vspace="5" hspace="5" src="prtDocGettingStartedExamples_05.png" alt=""> <h2>Data Processing<a name="10"></a></h2><p>Now that we've explored some of the techniques available to visualize data, let's apply some transformations to the data.  To do this, we need to know a little bit about prtActions.  Most everything you can do to data in the PRT -  alorithms/classifires/regressors in the PRT are implemented as prtActions.</p><p>For now, all that's important to know is that prtActions have two important methods - "train" and "run".  The train method accepts one prtDataSet and outputs an object of the same class as the prtAction being used.  The "run" method, in contrast, accepts a prtDataSet input and outputs another prtDataSet with data changed to reflect the action undertaken.  For example:</p><pre class="codeinput">close <span class="string">all</span>;
+<span class="comment">% Generate a data set and a PCA pre-processing function:</span>
+dataSet = prtDataGenIris;
+dataSet = dataSet.retainFeatures(1:3); <span class="comment">%retain the first 3 dimensions of the Iris data</span>
+myPca = prtPreProcPca;
+myPca.nComponents = 2;  <span class="comment">%I'd like to use the first 2 principal components</span>
+
+<span class="comment">% Train the PCA to learn the principal components of the data:</span>
+myPca = myPca.train(dataSet);
+dsPca = myPca.run(dataSet);   <span class="comment">%Run the PCA analysis on the data</span>
+
+<span class="comment">% plot the data.</span>
+figure(1); plot(dataSet);
+figure(2); plot(dsPca);
+</pre><img vspace="5" hspace="5" src="prtDocGettingStartedExamples_06.png" alt=""> <img vspace="5" hspace="5" src="prtDocGettingStartedExamples_07.png" alt=""> <h2>Building a Classifier<a name="11"></a></h2><p>Let's continue processing our new data set in PCA space.  Let's say we'd like to generate a classifier that can tell the difference between the types of flowers in the Iris data set.  Since the Iris data set has multiple classes (types of flowers, you can tell this is the case since dataSet.nClasses &gt; 2), we need to use a classifier that can handle multiple hypothesis data.  KNN classification algorithms are a decent choice in this case.  Let's build and visualize a KNN classifier on the 3-PC projected Iris data.</p><pre class="codeinput">knnClassifier = prtClassKnn;
+knnClassifier = knnClassifier.train(dsPca);
+plot(knnClassifier)
+</pre><img vspace="5" hspace="5" src="prtDocGettingStartedExamples_08.png" alt=""> <p>The plot command shows the results of classification for each hypothesis in one 2-D axes.  Red regions of the axes correspond to regions where the classification algorithm's most likely guess is "Iris-versicolor", and similarly for blue regions (Iris-setosa) and green (Iris-virginica).</p><h2>Evaluating the Classifier<a name="13"></a></h2><p>Now that we have a classifier, and are comfortable with the decision boundaries, we can evaluate our classifier.  Let's use k-folds cross-validation to see how well our classifier would perform in a realistic test scenario.</p><pre class="codeinput">truth = dsPca.getTargets; <span class="comment">%the true class labels</span>
+yOutKfolds = knnClassifier.kfolds(dsPca,10); <span class="comment">%10-Fold cross-validation</span>
+
+<span class="comment">%We need to parse the output of the KNN classifier to turn vote counts into</span>
+<span class="comment">%class guesses - for each observation, our guess is the column with the</span>
+<span class="comment">%most votes!</span>
+[nVotes,guess] = max(yOutKfolds.getObservations,[],2);
+
+subplot(1,1,1); <span class="comment">%don't plot in the last figure window.</span>
+prtScoreConfusionMatrix(guess,truth,dsPca.uniqueClasses,dsPca.getClassNames);
+title(<span class="string">'Iris Classification Confusion Matrix'</span>);
+</pre><img vspace="5" hspace="5" src="prtDocGettingStartedExamples_09.png" alt=""> <h2>One More Thing...<a name="14"></a></h2><p>Above, we had to do a bunch of work after we ran our classification to turn the outputs of a classification algorithm into a set of decisions. Luckily, the PRT provides some utilities to automatically do this for you, including one object prtDecisionMap, which performs maximum a-posteriori decision making.</p><p>But now, you might be thinking "Wait, I have to keep track of a PCA object, a KNN object, and a MAP Decision object all at once, and make sure to run K-folds at the right places?  What if I wanted to include PCA in the k-folds cross validation, and not worry about running the MAP after everything else?"</p><p>The PRT has a solution for you.  Basically, you'd like to be able to string together a set of prtActions into one long action that you can treat as one entity.  The PRT has overloaded the MATLAB operator "+" to do this for you.  So, you can write:</p><p>myAlgo = prtPreProcPca + prtClassKnn;</p><p>To string together PCA and KNN into one object (we refer to combinations of prtActions like this as "algorithms", since they are implemented in a M-file called prtAlgorithm, which you actually never have to call). Let's see how this affects our development from our last set of code:</p><pre class="codeinput">dsIris = prtDataGenIris;
+algo = prtPreProcPca(<span class="string">'nComponents'</span>,2) + prtClassKnn + prtDecisionMap;
+plot(algo);  <span class="comment">%Note: this plots a block diagram of the algorithm!</span>
+</pre><img vspace="5" hspace="5" src="prtDocGettingStartedExamples_10.png" alt=""> <p>Now, running the algorithm and scoring it is very simple:</p><pre class="codeinput">close <span class="string">all</span>;
+yOutAlgoKfolds = algo.kfolds(dsIris,10);
+
+prtScoreConfusionMatrix(yOutAlgoKfolds,dsIris);
+title(<span class="string">'Iris Classification Confusion Matrix'</span>);
+
+<span class="comment">% These results show pretty good performance for separating Iris-setosa</span>
+<span class="comment">% from the other two classes, and less separation between versicolor and</span>
+<span class="comment">% virginica (your results may vary depending on the random folds chosen in</span>
+<span class="comment">% kfolds.</span>
+</pre><img vspace="5" hspace="5" src="prtDocGettingStartedExamples_11.png" alt=""> <h2>Data Generation: Using Your Own Data<a name="16"></a></h2><p>In many cases, you will already have some data you've collected that you'd like to work with in the PRT.  If the data is a classification data set (i.e. each observation has a corresponding class label - "target"/"non-target", or "type 1"/"type 2"/"type 3") it's easy to make a prtDataSetClass object from your data.</p><p>To get started using your data, you'll need to have your data stored in two matrices.  Your observations should be in a matrix of size nObservations x nFeatures, and class labels should be in a vector of size nObservations x 1.  Each element of the class labels vector should correspond to a class index.  For binary classification problems, y should take values 0 and 1.  For M-ary classification problems, and set of M unique values will work.</p><p>For example, the following code generates a prtDataSetClass using raw data in matrices x and y:</p><pre class="codeinput">nSamplesPerClass = 100;
+nFeatures = 2;
+
+mean_0 = 0;
+mean_1 = 2;
+
+x_0 = randn(nSamplesPerClass,nFeatures) + mean_0;
+y_0 = zeros(nSamplesPerClass,1);
+
+x_1 = randn(nSamplesPerClass,nFeatures) + mean_1;
+y_1 = ones(nSamplesPerClass,1);
+
+x = cat(1,x_0,x_1);
+y = cat(1,y_0,y_1);
+
+dataSet = prtDataSetClass(x,y);
+plot(dataSet);
+</pre><img vspace="5" hspace="5" src="prtDocGettingStartedExamples_12.png" alt=""> <p>At this point you're pretty ready to start playing with the PRT. Definitely check out the rest of the documentation, which is small, but growing.  If you have any questions about a specific M-file, make sure to check the M-file's help entry with "help MFILE" or "prtDoc MFILE".</p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2012b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Getting Started Examples
+% This document provides some examples of how to use the PRT to jump right
+% in to developing data sets and performing classification.  
+%
+%% Data Generation: prtDataSets
+% Let's get started by generating and visualizing data in MATLAB.  All data
+% that the PRT can utilize is stored in MATLAB objects called prtDataSets.
+% When we call any function that starts with prtDataGen... the output will
+% be a prtDataSet of some sort.  To get started, clear your
+% workspace, and close all MATLAB figures:
+
+clear all;
+close all;
+format compact;
+clc;
+
+dataSet = prtDataGenUnimodal;  %Generate uni-modal data under two hypotheses
+whos('dataSet');
+
+%% 
+% The output above tells us that the string 'dataSet' represents a variable in
+% the MATLAB workspace, which is of type prtDataSetClass, and it takes up
+% about 10000 bytes of memory.  But what can we do with this dataSet variable?
+% We can take a look at the public properties of the dataSet variable by using
+% the disp() function, or by failing to end any MATLAB statement with a
+% semicolon. 
+
+disp(dataSet)
+
+%% 
+% This output shows us all of the public fields that dataSet has by virtue of
+% being a prtDataSetClass.  You can see fields like nClasses, which
+% represents the number of unique object types represented in this data
+% set, nObservations, and nFeatures.  We won't go into too much detail here
+% about the prtDataSetClass properties, but let's take a look at the
+% methods that are available for processing prtDataSetClass:
+
+methods(dataSet)
+
+%% 
+% There are a lot of methods there, and most have pretty self-explanatory
+% names; we'll get to most of them eventually.  For now, all that's important 
+% to know is that prtDataSetClass objects are primarily responsible for 
+% storing and keeping track of two pieces of information for the user - the
+% observations and targets.  In most applications, the observations will
+% constitute a nObservations x nFeatures matrix of doubles, and 
+% similarly, targets will be a nObservations x 1 vector of target labels.
+% These fields of the prtDataSetClass are private, but they can be accessed
+% using getObservations (equivalently getX) or getTargets (equivalently
+% getY):
+
+myObs = dataSet.getObservations;
+whos('myObs');
+
+myTargets = dataSet.getTargets;
+whos('myTargets');
+
+%% Visualization
+% Visualization of data is a fundamental part of data exploration and
+% understanding.  The PRT's data set classes provide interfaces to make
+% visualization easy and intuitive. Let's start off by loading a different
+% data set - this one is the famous Iris data set, with data collected for
+% telling the difference between 3 classes of flowers.  For now, we'll use
+% the retainFeatures method of the prtDataSetClass class to reduce the
+% dimensionality of the data from 4 to 3 for visualization:
+
+dataSet = prtDataGenIris;
+dataSet = dataSet.retainFeatures(1:3);
+plot(dataSet);  % See note below
+
+%% A Little Object Oriented Programming
+% Those last commands make the plot you can see directly above.  Note what
+% happened here - the prtDataSet dataSet knows what the name of the data set is,
+% and uses that as the title of the figure.  It knows the names of the
+% classes of flowers the data was collected on, and uses those in the
+% legend.  And if the data set knew the names of the features, it would
+% have used those on the axes labels.  
+%
+% Note: 
+% For those of you familiar with MATLAB, but not with object oriented (OO)
+% programming, you probably recognize the plot() command above, but are
+% used to seeing it called more like so:
+%   x = 1:10;
+%   h = plot(x,x.^2,'b');
+% So, how did we call plot on the dataSet object?  That's a factor of object
+% oriented programming, and we cover a little of that later in this book,
+% but if you want to know more, the MATLAB website has a good reference on
+% how OO programming works.  For now, just trust us - you can call
+% plot(dataSet), and MATLAB knows what to do.
+%
+
+%% More Visualization (plotPairs)
+% When we wanted to plot the data in the Iris data set, we had to 
+% artificially reduce the dimensionality of the data using retainFeatures.
+% That's because the prtDataSetClass plot command doesn't work for data
+% sets with > 3 dimensions.  However there are a number of alternative
+% approaches to data visualization that are applicable in higher
+% dimensions.  Let's take a look at a few below.  We'll start with plotPairs: 
+
+dataSet = prtDataGenIris; %4-dimensional data
+dataSet.plotPairs;
+
+%% More Visualization (plotStar)
+% As you can see, the plotPairs method of the prtDataGenIris enables us to
+% visualize higher dimensional data by plotting all of the pair-wise
+% combinations of the features in a grid.  The diagonal elements of the
+% plots show ksdensity estimates of the relative density of each feature in
+% isolation, while the off-diagonal images show pair-wise scatter matrices.
+% Pair-wise plotting can be slow for very high dimensional data.
+% 
+% Up next is a technique that plots each observation as a shape with 
+% nFeatures vertices (in this case since dataSet has four feature dimensions,
+% the resulting shapes are quadrilaterals).  This technique illustrates the
+% differences between high dimensional data in a simple and easy to
+% understand way.
+
+close all;
+dataSet.plotStar;
+
+%% Explore
+% Finally, the explore method of the prtDataSets enables interactive
+% visualization of different dimensions of the data sets using GUI
+% controls.  You can start the explore GUI using the command below, and
+% you'll be greeted by the GUI Figure below.
+
+explore(dataSet);
+
+%% Data Processing
+% Now that we've explored some of the techniques available to visualize
+% data, let's apply some transformations to the data.  To do this, we need
+% to know a little bit about prtActions.  Most everything you can do to
+% data in the PRT -  alorithms/classifires/regressors in the PRT are
+% implemented as prtActions.  
+%
+% For now, all that's important to know is that prtActions have two
+% important methods - "train" and "run".  The train method accepts one
+% prtDataSet and outputs an object of the same class as the prtAction being
+% used.  The "run" method, in contrast, accepts a prtDataSet input and
+% outputs another prtDataSet with data changed to reflect the action
+% undertaken.  For example:
+
+close all;
+% Generate a data set and a PCA pre-processing function:
+dataSet = prtDataGenIris;
+dataSet = dataSet.retainFeatures(1:3); %retain the first 3 dimensions of the Iris data
+myPca = prtPreProcPca;
+myPca.nComponents = 2;  %I'd like to use the first 2 principal components
+
+% Train the PCA to learn the principal components of the data:
+myPca = myPca.train(dataSet);
+dsPca = myPca.run(dataSet);   %Run the PCA analysis on the data
+
+% plot the data.
+figure(1); plot(dataSet);
+figure(2); plot(dsPca);
+
+%% Building a Classifier
+% Let's continue processing our new data set in PCA space.  Let's say we'd
+% like to generate a classifier that can tell the difference between the
+% types of flowers in the Iris data set.  Since the Iris data set has
+% multiple classes (types of flowers, you can tell this is the case since
+% dataSet.nClasses > 2), we need to use a classifier that can handle multiple
+% hypothesis data.  KNN classification algorithms are a decent choice in
+% this case.  Let's build and visualize a KNN classifier on the 3-PC
+% projected Iris data.
+
+knnClassifier = prtClassKnn;
+knnClassifier = knnClassifier.train(dsPca);
+plot(knnClassifier)
+
+%%
+% The plot command shows the results of classification for each hypothesis
+% in one 2-D axes.  Red regions of the axes correspond to regions where the
+% classification algorithm's most likely guess is "Iris-versicolor", and
+% similarly for blue regions (Iris-setosa) and green (Iris-virginica).
+
+%% Evaluating the Classifier
+% Now that we have a classifier, and are comfortable with the decision
+% boundaries, we can evaluate our classifier.  Let's use k-folds
+% cross-validation to see how well our classifier would perform in a
+% realistic test scenario.
+
+truth = dsPca.getTargets; %the true class labels
+yOutKfolds = knnClassifier.kfolds(dsPca,10); %10-Fold cross-validation
+
+%We need to parse the output of the KNN classifier to turn vote counts into
+%class guesses - for each observation, our guess is the column with the
+%most votes!
+[nVotes,guess] = max(yOutKfolds.getObservations,[],2);
+
+subplot(1,1,1); %don't plot in the last figure window.
+prtScoreConfusionMatrix(guess,truth,dsPca.uniqueClasses,dsPca.getClassNames);
+title('Iris Classification Confusion Matrix');
+
+%% One More Thing...
+% Above, we had to do a bunch of work after we ran our classification to
+% turn the outputs of a classification algorithm into a set of decisions.
+% Luckily, the PRT provides some utilities to automatically do this for
+% you, including one object prtDecisionMap, which performs maximum
+% a-posteriori decision making.  
+%
+% But now, you might be thinking "Wait, I have to keep track of a PCA
+% object, a KNN object, and a MAP Decision object all at once, and make
+% sure to run K-folds at the right places?  What if I wanted to include PCA
+% in the k-folds cross validation, and not worry about running the MAP
+% after everything else?"
+%
+% The PRT has a solution for you.  Basically, you'd like to be able to
+% string together a set of prtActions into one long action that you can
+% treat as one entity.  The PRT has overloaded the MATLAB operator "+" to
+% do this for you.  So, you can write:
+%
+% myAlgo = prtPreProcPca + prtClassKnn;
+%
+% To string together PCA and KNN into one object (we refer to combinations
+% of prtActions like this as "algorithms", since they are implemented in a
+% M-file called prtAlgorithm, which you actually never have to call).
+% Let's see how this affects our development from our last set of code:
+
+dsIris = prtDataGenIris;
+algo = prtPreProcPca('nComponents',2) + prtClassKnn + prtDecisionMap;
+plot(algo);  %Note: this plots a block diagram of the algorithm!
+
+%%
+% Now, running the algorithm and scoring it is very simple:
+close all;
+yOutAlgoKfolds = algo.kfolds(dsIris,10);
+
+prtScoreConfusionMatrix(yOutAlgoKfolds,dsIris);
+title('Iris Classification Confusion Matrix');
+
+% These results show pretty good performance for separating Iris-setosa
+% from the other two classes, and less separation between versicolor and
+% virginica (your results may vary depending on the random folds chosen in
+% kfolds.
+
+%% Data Generation: Using Your Own Data
+%
+% In many cases, you will already have some data you've collected that
+% you'd like to work with in the PRT.  If the data is a classification data
+% set (i.e. each observation has a corresponding class label -
+% "target"/"non-target", or "type 1"/"type 2"/"type 3") it's easy to make a
+% prtDataSetClass object from your data.  
+%
+% To get started using your data, you'll need to have your data stored in
+% two matrices.  Your observations should be in a matrix of size
+% nObservations x nFeatures, and class labels should be in a vector of size
+% nObservations x 1.  Each element of the class labels vector should
+% correspond to a class index.  For binary classification problems, y
+% should take values 0 and 1.  For M-ary classification problems, and set
+% of M unique values will work.  
+%
+% For example, the following code generates a prtDataSetClass using raw
+% data in matrices x and y:
+
+nSamplesPerClass = 100;
+nFeatures = 2;
+
+mean_0 = 0;
+mean_1 = 2;
+
+x_0 = randn(nSamplesPerClass,nFeatures) + mean_0;
+y_0 = zeros(nSamplesPerClass,1);
+
+x_1 = randn(nSamplesPerClass,nFeatures) + mean_1;
+y_1 = ones(nSamplesPerClass,1);
+
+x = cat(1,x_0,x_1);
+y = cat(1,y_0,y_1);
+
+dataSet = prtDataSetClass(x,y);
+plot(dataSet);
+
+
+%%
+%
+% At this point you're pretty ready to start playing with the PRT. 
+% Definitely check out the rest of the documentation, which is small,
+% but growing.  If you have any questions about a specific M-file,
+% make sure to check the M-file's help entry with "help MFILE" or
+% "prtDoc MFILE".
+%
+% 
+##### SOURCE END #####
+--></body></html>

@@ -1,0 +1,202 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../helpwin.css">
+      <title>MATLAB File Help: prtKernelRbfNdimensionScale</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtKernelRbfNdimensionScale</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtKernelRbfNdimensionScale</div>
+      <div class="helptext"><pre><!--helptext -->  <span class="helptopic">prtKernelRbfNdimensionScale</span>  Auto-scale radial basis function kernel
+ 
+   kernelObj = <span class="helptopic">prtKernelRbfNdimensionScale</span> generates a
+   prtKenrelNdimensionScale object implementing a radial basis
+   function, but with sigma parameter scaled by the number of features
+   in the training data set.  Kernel objects are widely used in several
+   prt classifiers, such as prtClassRvm and prtClassSvm.  RBF kernels
+   implement the following function for 1 x N vectors x1 and x2:
+ 
+    k(x1,x2) = exp(-sum((x1-x2).^2)./(sigma^2*N));
+ 
+   KERNOBJ = <span class="helptopic">prtKernelRbfNdimensionScale</span>(PROPERTY1, VALUE1, ...) constructs a
+   <span class="helptopic">prtKernelRbfNdimensionScale</span> object KERNOBJ with properties as specified by
+   PROPERTY/VALUE pairs. <span class="helptopic">prtKernelRbfNdimensionScale</span> objects have the following
+   user-settable properties:
+ 
+    sigma   - Positive scalar value specifying the width of the
+              Gaussian kernel in the RBF function.  (Default value is 1 )
+              This is further scaled by the square root of the number
+              of dimensions of the data.
+ 
+   Radial basis function kernels are widely used in the machine
+   learning literature. For more information on these kernels, please
+   refer to:
+    
+   <a href="http://en.wikipedia.org/wiki/Support_vector_machine#Non-linear_classification">http://en.wikipedia.org/wiki/Support_vector_machine#Non-linear_classification</a>
+ 
+    <span class="helptopic">prtKernelRbfNdimensionScale</span> objects inherit the TRAIN, RUN, and AND
+    methods from prtKernel.
+ 
+   Radial basis function kernels are widely used in the machine
+   learning literature. Auto-scaling these kernels allows for relative
+   invariance to the number of dimensions of the data under
+   consideration.  For more information on these kernels, please refer
+   to:
+    
+   <a href="http://en.wikipedia.org/wiki/Support_vector_machine#Non-linear_classification">http://en.wikipedia.org/wiki/Support_vector_machine#Non-linear_classification</a>
+ 
+   % Example:
+    ds = prtDataGenBimodal;            % Load a data set
+    k1 = <span class="helptopic">prtKernelRbfNdimensionScale</span>;  % Create two
+                                       % <span class="helptopic">prtKernelRbfNdimensionScale</span>
+                                       % objects
+    k2 = <span class="helptopic">prtKernelRbfNdimensionScale</span>('sigma',2);
+    
+    k1 = k1.train(ds); % Train
+    g1 = k1.run(ds);    % Evaluate
+ 
+    k2 = k2.train(ds); % Train
+    g2 = k2.run(ds);   % Evaluate
+ 
+    subplot(2,1,1); imagesc(g1.getObservations);  %Plot the results
+    subplot(2,1,2); imagesc(g2.getObservations);</pre></div><!--after help --><!--seeAlso--><div class="footerlinktitle">See also</div><div class="footerlink"> <a href="./prtKernel.html">prtKernel</a>,<a href="./prtKernelSet.html">prtKernelSet</a>, <a href="./prtKernelDc.html">prtKernelDc</a>, <a href="./prtKernelDirect.html">prtKernelDirect</a>,
+    <a href="./prtKernelHyperbolicTangent.html">prtKernelHyperbolicTangent</a>, <a href="./prtKernelPolynomial.html">prtKernelPolynomial</a>,
+    <a href="./prtKernelRbf.html">prtKernelRbf</a> 
+</div>
+      <!--Class-->
+      <div class="sectiontitle">Class Details</div>
+      <table class="class-details">
+         <tr>
+            <td class="class-detail-label">Superclasses</td>
+            <td><a href="./prtKernelRbf.html">prtKernelRbf</a></td>
+         </tr>
+         <tr>
+            <td class="class-detail-label">Sealed</td>
+            <td>false</td>
+         </tr>
+         <tr>
+            <td class="class-detail-label">Construct on load</td>
+            <td>false</td>
+         </tr>
+      </table>
+      <!--Constructors-->
+      <div class="sectiontitle"><a name="constructors"></a>Constructor Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="name"><a href="./prtKernelRbfNdimensionScale/prtKernelRbfNdimensionScale.html">prtKernelRbfNdimensionScale</a></td>
+            <td class="m-help">Auto-scale radial basis function kernel&nbsp;</td>
+         </tr>
+      </table>
+      <!--Properties-->
+      <div class="sectiontitle"><a name="properties"></a>Property Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="name"><a href="./prtKernelRbfNdimensionScale/dataSet.html">dataSet</a></td>
+            <td class="m-help">The training prtDataSet, only stored if verboseStorage is true. &nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtKernelRbfNdimensionScale/dataSetSummary.html">dataSetSummary</a></td>
+            <td class="m-help">Structure that summarizes prtDataSet.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtKernelRbfNdimensionScale/isCrossValidateValid.html">isCrossValidateValid</a></td>
+            <td class="m-help">False&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtKernelRbfNdimensionScale/isSupervised.html">isSupervised</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtKernelRbfNdimensionScale/isTrained.html">isTrained</a></td>
+            <td class="m-help">Indicates if prtAction object has been trained.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtKernelRbfNdimensionScale/name.html">name</a></td>
+            <td class="m-help">RBF Kernel&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtKernelRbfNdimensionScale/nameAbbreviation.html">nameAbbreviation</a></td>
+            <td class="m-help">RBF&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtKernelRbfNdimensionScale/showProgressBar.html">showProgressBar</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtKernelRbfNdimensionScale/sigma.html">sigma</a></td>
+            <td class="m-help">The inverse kernel width&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtKernelRbfNdimensionScale/userData.html">userData</a></td>
+            <td class="m-help">User specified data&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtKernelRbfNdimensionScale/verboseStorage.html">verboseStorage</a></td>
+            <td class="m-help">Specifies whether or not to store the training prtDataset.&nbsp;</td>
+         </tr>
+      </table>
+      <!--Methods-->
+      <div class="sectiontitle"><a name="methods"></a>Method Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtKernelRbfNdimensionScale/and.html">and</a></td>
+            <td class="m-help">Combine 2 prtKernels into a prtKernelSet&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtKernelRbfNdimensionScale/get.html">get</a></td>
+            <td class="m-help">get the object properties&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtKernelRbfNdimensionScale/optimize.html">optimize</a></td>
+            <td class="m-help">Optimize action parameter by exhaustive function maximization.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtKernelRbfNdimensionScale/run.html">run</a></td>
+            <td class="m-help">Run a prtAction object on a prtDataSet object.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtKernelRbfNdimensionScale/set.html">set</a></td>
+            <td class="m-help">set the object properties&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtKernelRbfNdimensionScale/train.html">train</a></td>
+            <td class="m-help">Train a prtAction object using training a prtDataSet object.&nbsp;</td>
+         </tr>
+      </table>
+   </body>
+</html>

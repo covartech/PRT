@@ -1,0 +1,72 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../../helpwin.css">
+      <title>MATLAB File Help: prtRegressRvm/prtRegressRvm</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtRegressRvm/prtRegressRvm</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtRegressRvm/prtRegressRvm</div>
+      <div class="helptext"><pre><!--helptext -->  <span class="helptopic">prtRegressRvm</span>  Relevance vector machine regression object
+ 
+    REGRESS = <span class="helptopic">prtRegressRvm</span> returns a <span class="helptopic">prtRegressRvm</span> object
+ 
+     REGRESS = prtRegressRVM(PROPERTY1, VALUE1, ...) constructs a
+     <span class="helptopic">prtRegressRvm</span> object REGRESS with properties as specified by
+     PROPERTY/VALUE pairs.
+  
+     A <span class="helptopic">prtRegressRvm</span> object inherits all properties from the prtRegress
+     class. In addition, it has the following properties:
+ 
+    SetAccess = public:
+     kernels            - A cell array of prtKernel objects specifying
+                          the kernels to use
+     verbosePlot        - Flag indicating whether or not to plot during
+                          training
+     verboseText        - Flag indicating whether or not to display
+                          a message during training
+ 
+    SetAccess = private/protected:
+     learningConverged  - Flag indicating if the training converged
+     learningResults    - Struct with information about the convergence
+     beta               - The weights on each of the kernel elements;
+                          learned during training
+     Sigma              - The learned covariance
+     sparseBeta         - The weights on the retained kernel elements;
+                          learned durning training
+     sparseKernels      - The retained kernels
+ 
+    This code is based on:
+        Michael E Tipping, Sparse bayesian learning and the relevance 
+    vector machine, The Journal of Machine Learning Research, Vol 1.
+ 
+    Also see <a href="http://en.wikipedia.org/wiki/Relevance_vector_machine">http://en.wikipedia.org/wiki/Relevance_vector_machine</a>
+  
+    A prtRegressionRvm object inherits the PLOT method from the
+    prtRegress object, and the TRAIN, RUN, CROSSVALIDATE and KFOLDS
+    methods from the prtAction object.
+ 
+    Example:
+    
+    dataSet = prtDataGenNoisySinc;           % Load a prtDataRegress
+    dataSet.plot;                    % Display data
+    reg = <span class="helptopic">prtRegressRvm</span>;             % Create a <span class="helptopic">prtRegressRvm</span> object
+    reg = reg.train(dataSet);        % Train the <span class="helptopic">prtRegressRvm</span> object
+    reg.plot();                      % Plot the resulting curve
+    dataSetOut = reg.run(dataSet);   % Run the regressor on the data
+    hold on;
+    plot(dataSet.getX,dataSetOut.getX,'c.') % Plot, overlaying the
+                                            % fitted points with the 
+                                            % curve and original data
+    legend('Regression curve','Original Points','Kernel Locations Used',0)</pre></div><!--after help --><!--seeAlso--><div class="footerlinktitle">See also</div><div class="footerlink"> <a href="./../prtRegress.html">prtRegress</a>, <a href="./../prtRegressGp.html">prtRegressGp</a>, <a href="./../prtRegressLslr.html">prtRegressLslr</a>
+</div>
+   </body>
+</html>

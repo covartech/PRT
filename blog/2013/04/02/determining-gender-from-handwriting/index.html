@@ -1,0 +1,483 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Determining Gender from Handwriting - A Kaggle Competition! - PRT Blog</title>
+  <meta name="author" content="Kenneth Morton and Peter Torrione">
+
+  
+  <meta name="description" content="Determining Gender From Handwriting - a Kaggle Competition! Apr 2nd, 2013 Hi everyone, today I wanted to introduce a new data set and some &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://newfolder.github.io/blog/2013/04/02/determining-gender-from-handwriting">
+  <link href="/favicon.ico" rel="icon">
+  
+  <link href="/assets/bootstrap/css/spacelab.min.css" rel="stylesheet" type="text/css">
+  <link href="/assets/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet" type="text/css">
+  <link href="/assets/bootstrap/css/custom.css" rel="stylesheet" type="text/css">
+  <link href="/assets/font-awesome/css/font-awesome.css" rel="stylesheet" type="text/css">
+  
+  <link href="/atom.xml" rel="alternate" title="PRT Blog" type="application/atom+xml">
+  <style type="text/css">
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+</style>
+  
+
+</head>
+
+<body    data-spy="scroll">
+
+  <div class="container">
+    <header class="jumbotron subhead" id="overview">
+      
+<div class="subscribe">
+  <table>
+    <tr>
+      <td><span>Get Updates: &nbsp;</span></td>
+      
+      
+      <td><a href="/atom.xml" class="btn"><i class="icon-cog"></i> By RSS</a></td>
+      
+      
+    </tr>
+  </table>
+</div>
+
+<h1 class="title">PRT Blog</h1>
+
+  <p class="lead">MATLAB Pattern Recognition Open Free and Easy</p>
+
+
+      <div class="navbar">
+  <div class="navbar-inner">
+    <div class="container" style="width: auto;">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+      <div class="nav-collapse">
+                <ul class="nav">
+          <li><a href="/">Home</a></li>
+          <li><a href="/blog/archives">Blog</a></li>
+          <li><a href="https://github.com/newfolder/PRT">Code</a></li>
+          <li><a href="/prtdoc/">Documentation</a></li>
+		  <li><a href="https://github.com/newfolder/PRT/issues">Get Help</a><li>
+          <li><a href="/about">About</a></li>
+        </ul>
+
+        
+          <form action="http://google.com/search" method="get" class="navbar-search pull-left">
+            <fieldset role="search">
+              <input type="hidden" name="q" value="site:newfolder.github.io" />
+              <input type="text" name="q" results="0" placeholder="Search" class="search-query span2" />
+            </fieldset>
+          </form>
+        
+        
+      </div><!-- /.nav-collapse -->
+    </div>
+  </div><!-- /navbar-inner -->
+</div>
+
+    </header>
+    <div id="main">
+      <div id="content">
+        <div class="row">
+  
+  <div class="span8">
+    <br>
+
+  <header>
+    
+      <h1 class="entry-title">Determining Gender From Handwriting - a Kaggle Competition!</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-04-02T18:21:00-04:00" pubdate data-updated="true">Apr 2<span>nd</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Hi everyone, today I wanted to introduce a new data set and some preliminary processing that helps us perform better than a random forest (gasp!).</p>
+
+
+<p>The data we&#8217;re going to use is from a Kaggle competition that&#8217;s going on from now (March 28, 2013) until April 15, 2013.  Kaggle is a company that specializes in connecting data analysts with interesting data - it&#8217;s pretty great for hobbyists and individuals to get started with some data, and potentially win some money!  And they just generally have a lot of cool data from a lot of interesting problems.</p>
+
+
+<p>The data we&#8217;re going to use is based on identifying an author&#8217;s gender from samples of their handwriting.  Here&#8217;s the URL for the competition home page, which gives some details on the data:</p>
+
+
+<pre class="language-matlab"><a href="http://www.kaggle.com/c/icdar2013-gender-prediction-from-handwriting">http://www.kaggle.com/c/icdar2013-gender-prediction-from-handwriting</a>
+    
+</pre>
+
+
+<p>The competition includes several sets of images,as well as some pre-extracted features.  The image files can be gigantic, so we&#8217;re only going to use the pre-extracted features for today.  Go ahead and download train.csv, train_answers.csv, and test.csv, from the link above, and put them in</p>
+
+
+<pre class="codeinput">fullfile(prtRoot,<span class="string">'dataGen'</span>,<span class="string">'dataStorage'</span>,<span class="string">'kaggleTextGender_2013'</span>);
+</pre>
+
+
+<p>Once the files are in the correct location, you should be able to use:</p>
+
+
+<pre class="codeinput">[dsTrain,dsTest] = prtDataGenTextGender;</pre>
+
+
+<p>to load in the data.</p>
+
+
+<!--/introduction-->
+
+
+<h2>Contents</h2>
+
+
+<div><ul><li><a href="#1">M-Files You Need</a></li><li><a href="#4">Naive Random Forest</a></li><li><a href="#6">Remove Meaningless features</a></li><li><a href="#8">Slight improvement</a></li><li><a href="#10">Aggregating Over Writers</a></li><li><a href="#13">PLSDA</a></li><li><a href="#14">Plotting Results</a></li><li><a href="#16">Submit it!</a></li><li><a href="#19">Results</a></li><li><a href="#21">Feature Selection</a></li><li><a href="#23">Adding in some post-processing</a></li><li><a href="#25">Our New Submission</a></li><li><a href="#29">Final Results</a></li></ul></div>
+
+
+<h2>M-Files You Need<a name="1"></a></h2>
+
+
+<p>Obviously, prtDataGenTextGender.m is new, as are a number of other files we&#8217;re going to use throughout this example.  These include prtEvalLogLoss.m, prtScoreLogLoss.m, prtUtilAccumArrayLike.m, and prtUtilAccumDataSetLike.m.  You&#8217;ll need to update your PRT to the newest version (as of March, 2013, anyway) to get access to these files.  You can always get the PRT here: <a href="http://github.com/newfolder/PRT">http://github.com/newfolder/PRT</a></p>
+
+
+<p>Once you&#8217;ve done all that, go ahead and try the following:</p>
+
+
+<pre class="codeinput">
+[dsTrain,dsTest] = prtDataGenTextGender;
+</pre>
+
+
+
+
+<p>That should load in the data.  As always, we can visualize the data using someting simple, like PCA:</p>
+
+
+<pre class="codeinput">pca = prtPreProcPca;
+pca = pca.train(dsTrain);
+dsPca = pca.run(dsTrain);
+plot(dsPca);
+title(<span class="string">'Kaggle Handwriting/Gender ICDAR 2013 Data'</span>);
+</pre>
+
+
+<p><img vspace="5" hspace="5" src="/images/torrione_blog_Kaggle_TextGender_01.png" alt=""> <h2>Naive Random Forest<a name="4"></a></h2><p>Kaggle competitions will often provide a baseline performance metric for some standard classification algorithms.  In this example they told us that the baseline random forest performamce they&rsquo;ve observed obtains a log-loss of about 0.65.  We can confirm this using our random forest, 3-fold cross-validation, and our new function prtScoreLogLoss:</p><pre class="codeinput">yOut = kfolds(prtClassTreeBaggingCap,dsTrain,3);
+logLossInitialRf = prtScoreLogLoss(yOut);
+fprintf(<span class="string">&lsquo;Random Forest LogLoss: %.2f\n&rsquo;</span>,logLossInitialRf);
+</pre><pre class="codeoutput">Random Forest LogLoss: 0.64
+</pre><p>About 0.65, so we&rsquo;re right in the ball-park.  Can we do better?</p><h2>Remove Meaningless features<a name="6"></a></h2><p>That performance wasn&rsquo;t that great.  And the leaderboard shows us that some clever people have already done significantly better than the basic random forest.</p><p>Let&rsquo;s investigate the data a little and see what&rsquo;s going on.  First, what is the standard deviation of the features?</p><pre class="codeinput">stem(log(std(dsTrain.X)));
+xlabel(<span class="string">&lsquo;Feature Number&rsquo;</span>);
+ylabel(<span class="string">&lsquo;Log-\sigma&rsquo;</span>);
+title(<span class="string">&lsquo;Log(\sigma) vs. Feature Number&rsquo;</span>);
+</pre><img vspace="5" hspace="5" src="/images/torrione_blog_Kaggle_TextGender_02.png" alt=""> <p>Wow, there are a lot of features with a standard deviation of zero!  That means that we can&rsquo;t learn anything from these features, since they always take the exact same value in the training set.  Let&rsquo;s go ahead and remove these features.</p><pre class="codeinput">fprintf(<span class="string">&lsquo;There are %d features that only take one value&hellip; \n&rsquo;</span>,length(find(std(dsTrain.X)==0)));
+removeFeats = std(dsTrain.X) == 0;
+dsTrainRemove = dsTrain.removeFeatures(removeFeats);
+dsTestRemove = dsTest.removeFeatures(removeFeats);
+</pre><pre class="codeoutput">There are 2414 features that only take one value&hellip;
+</pre><h2>Slight improvement<a name="8"></a></h2><p>What happens if we re-run the random forest on this data with the new features removed?  The random forest is pretty robust to meaningless features, but not totally impervious&hellip; let&rsquo;s try it:</p><pre class="codeinput">yOutRf = kfolds(prtClassTreeBaggingCap,dsTrainRemove,3);
+logLossRfFeatsRemoved = prtScoreLogLoss(yOutRf);
+fprintf(<span class="string">&lsquo;Random Forest LogLoss with meaningless features removed: %.2f\n&rsquo;</span>,logLossRfFeatsRemoved);
+</pre><pre class="codeoutput">Random Forest LogLoss with meaningless features removed: 0.61
+</pre><p>Hey!  That did marginally better &ndash; our log-loss went from about 0.65 to 0.61 or so.  Nothing to write home about, but a slight improvement.  What else can we do?</p><h2>Aggregating Over Writers<a name="10"></a></h2><p>If you pay attention to the data set, you&rsquo;ll notice something interesting &ndash; we have a lot of writing samples (4) from each writer.  And our real goal is to identify the gender of each writer &ndash; so we should be able to average our classifications over each writer and get better performance.</p><p>This blog entry introduces a new function called &ldquo;prtUtilAccumDataSetLike&rdquo;, which acts a lot like &ldquo;accumarray&rdquo; in base MATLAB.  Basically, prtUtilAccumDataSetLike takes a set of keys of size dataSet.nObservations x 1, and for each observation corresponding to each unique key, aggregates the data in X and Y and outputs a new data set.</p><p>It&rsquo;s a little complicated to explain &ndash; take a look at the help entry for accumarray, and then take a look at this example:</p><pre class="codeinput">writerIds = [dsTrainRemove.observationInfo.writerId]&lsquo;;
+yOutAccum = prtUtilAccumDataSetLike(writerIds,yOutRf,@(x)mean(x));
+</pre><p>The code above outputs a new data set generated by averaging the confidences in yOutRf across sets of writerIds.</p><p>Does this help performance?</p><pre class="codeinput">logLossAccum = prtScoreLogLoss(yOutAccum);
+fprintf(<span class="string">'Writer ID Accumulated Random Forest LogLoss: %.2f\n&rsquo;</span>,logLossAccum);
+</pre><pre class="codeoutput">Writer ID Accumulated Random Forest LogLoss: 0.59
+</pre><p>That&rsquo;s marginally better still!  What else can we try&hellip;</p><h2>PLSDA<a name="13"></a></h2><p>When a random forest seems to be doing somewhat poorly, often it&rsquo;s a good idea to take a step back and run a linear classifier in lieu of a nice fancy random forest.  I&rsquo;m partial to PLSDA as a classifier (see the help entry for prtClassPlsda for more information).</p><p>PLSDA has one parameter &ndash; the number of components to use, that we should optimize over.  Since each kfolds-run is random, we&rsquo;ll run 10 experiments of 3-Fold Cross-validation for each of 1 &ndash; 30 components in PLSDA&hellip; This might take a little while depending on your computer&hellip;</p><p>We&rsquo;re also going to do something a little tricky here &ndash; PLSDA is a linear classifier, and won&rsquo;t output values between zero and one by default.  But the outputs from PLSDA should be linearly correlated with confidence that the author of a particular text was a male.  We can translate from PLSDA outputs to values with probabilistic interpretations by attaching a logistic-discriminant function to the end of our PLSDA classifier. That&rsquo;s easy to do in the PRT like so:</p><pre>classifier = prtClassPlsda(&lsquo;nComponents&rsquo;,nComp) + prtClassLogisticDiscriminant;</pre><pre class="codeinput">nIter = 10;
+maxComp = 30;
+logLossPlsda = nan(maxComp,nIter);
+logLossPlsdaAccum = nan(maxComp,nIter);
+<span class="keyword">for</span> nComp = 1:maxComp;</p>
+
+<pre><code>classifier = prtClassPlsda(&lt;span class="string"&gt;'nComponents'&lt;/span&gt;,nComp) + prtClassLogisticDiscriminant;
+classifier.showProgressBar = false;
+&lt;span class="keyword"&gt;for&lt;/span&gt; iter = 1:nIter
+    yOutPlsda = kfolds(classifier,dsTrainRemove,3);
+    logLossPlsda(nComp,iter) = prtScoreLogLoss(yOutPlsda);
+
+    yOutAccum = prtUtilAccumDataSetLike(writerIds,yOutPlsda,@(x)mean(x));
+    logLossPlsdaAccum(nComp,iter) = prtScoreLogLoss(yOutAccum);
+&lt;span class="keyword"&gt;end&lt;/span&gt;
+fprintf(&lt;span class="string"&gt;'%d '&lt;/span&gt;,nComp);
+</code></pre>
+
+<p><span class="keyword">end</span>
+fprintf(<span class="string">&lsquo;\n&rsquo;</span>);
+</pre><pre class="codeoutput">1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30
+</pre><h2>Plotting Results<a name="14"></a></h2><p>Let&rsquo;s take a look at the PLSDA classifier performance as a function of the number of components we used.  The following code generates box-plots (recall, we ran 3-fold cross-validation 10 times for each # of components between 1 and 30&hellip;</p><pre class="codeinput">boxplot(logLossPlsdaAccum')
+hold <span class="string">on</span>;
+h2 = plot(1:maxComp,repmat(logLossInitialRf,1,maxComp),<span class="string">&lsquo;k:&rsquo;</span>,1:maxComp,repmat(logLossRfFeatsRemoved,1,maxComp),<span class="string">&lsquo;b:&rsquo;</span>,1:maxComp,repmat(logLossAccum,1,maxComp),<span class="string">&lsquo;g:&rsquo;</span>);
+hold <span class="string">off</span>;
+legend(h2,{<span class="string">&lsquo;Random Forest Log-Loss&rsquo;</span>,<span class="string">&lsquo;Random Forest &ndash; Removed Features&rsquo;</span>,<span class="string">&lsquo;Random Forest &ndash; Removed Features &ndash; Accum&rsquo;</span>});
+h = findobj(gca,<span class="string">&lsquo;type&rsquo;</span>,<span class="string">&lsquo;line&rsquo;</span>);
+set(h,<span class="string">&lsquo;linewidth&rsquo;</span>,2);
+xlabel(<span class="string">&lsquo;#PLSDA Components&rsquo;</span>);
+ylabel(<span class="string">&lsquo;Log-Loss&rsquo;</span>);
+title(<span class="string">&lsquo;Log-Loss For PLSDA With Accumumation (vs. # Components) and Random Forest&rsquo;</span>)
+</pre><img vspace="5" hspace="5" src="/images/torrione_blog_Kaggle_TextGender_03.png" alt=""> <p>Wow!  The dotted lines here represent the random forest performance we&rsquo;ve seen, and the boxes represent the performance we get with PLSDA &ndash; PLSDA is significantly outperforming our RF classifier on this data!</p><p>PLSDA performance seems to plateau around 17 components, so we&rsquo;ll use 17 from now on.</p><h2>Submit it!<a name="16"></a></h2><p>I think we might have something here &ndash; our code gets Log-Losses around 0.46 many times.  Let&rsquo;s actually submit an experiment to Kaggle.</p><p>First we&rsquo;ll train our classifier and test it:</p><pre class="codeinput">classifier = prtClassPlsda(<span class="string">&lsquo;nComponents&rsquo;</span>,17) + prtClassLogisticDiscriminant;
+classifier = classifier.train(dsTrainRemove);
+yOutTest = classifier.run(dsTestRemove);</p>
+
+<p>writerIdsTest = [dsTestRemove.observationInfo.writerId]&lsquo;;
+</pre><p>Don&rsquo;t forget to accumulate:</p><pre class="codeinput">[yOutPlsdaTestAccum,uKeys] = prtUtilAccumDataSetLike(writerIdsTest,yOutTest,@(x)mean(x));
+matrixOut = cat(2,uKeys,yOutPlsdaTestAccum.X);
+</pre><p>And write the output the way Kaggle wants us to.</p><pre class="codeinput">csvwrite(<span class="string">'outputPlsda.csv&rsquo;</span>,matrixOut);
+</pre><h2>Results<a name="19"></a></h2><p>I made a screen-cap of the results from the output above &ndash; here it is:</p><pre class="codeinput">imshow(<span class="string">&lsquo;leaderBoard_2013_03_20.PNG&rsquo;</span>);
+</pre><img vspace="5" hspace="5" src="/images/torrione_blog_Kaggle_TextGender_04.PNG" alt=""> <p>That&rsquo;s me in the middle there &ndash; #38 out of about 100.  And way better than the naive random forest implementation &ndash; not too bad!</p><p>Can we do better?</p><h2>Feature Selection<a name="21"></a></h2><p>One way we can reduce variation and improve performance is to not include all 4652 features left in our data set.  We can use feature selection to pick the ones we want!</p><p>I&rsquo;m going to go ahead and warn you &ndash; don&rsquo;t run this code unless you want to leave it running overnight.  It takes forever&hellip;  but it gets the job done:</p></p>
+
+<pre class="codeinput">
+warning <span class="string">off</span>;
+c = prtClassPlsda(<span class="string">'nComponents' </span>,17,<span class="string"> 'showProgressBar'</span>,false);
+sfs = prtFeatSelSfs(<span class="string">'nFeatures'</span>,100,<span class="string"> 'evaluationMetric'</span>,@(ds)-1*prtEvalLogLoss(c,ds,2));
+sfs = sfs.train(dsTrainRemove);
+</pre>
+
+
+<p>Instead, we already ran that code, and saved the results in sfs.mat, which you can down-load at the end of this post.</p>
+
+
+<p>For now, let&#8217;s look at how performance is affected by the number of features retained:</p>
+
+
+<pre class="codeinput">load <span class="string">sfs.mat</span> <span class="string">sfs</span>
+set(gcf,<span class="string">'position'</span>,[403   246   560   420]); <span class="comment">%fix from IMSHOW</span>
+plot(-sfs.performance)
+xlabel(<span class="string">'# Features'</span>);
+ylabel(<span class="string">'Log-Loss'</span>);
+title(<span class="string">'Log-Loss vs. # Features Retained'</span>);
+</pre>
+
+
+<p><img vspace="5" hspace="5" src="/images/torrione_blog_Kaggle_TextGender_05.png" alt=""> <p>It looks like performance is bottoming out around 60 or so features, and anything past that isn&rsquo;t adding performance (though maybe if we selected 1000 or 2000 we could do better!)</p><p>We can confirm this with the following code, which also takes quite a while to run a bunch of experiments on all the sub-sets SFS found for us:</p><pre class="codeinput">logLossClassifierFeatSel = nan(100,10);
+<span class="keyword">for</span> nFeats = 1:100;</p>
+
+<pre><code>&lt;span class="keyword"&gt;for&lt;/span&gt; iter = 1:10
+    dsTrainRemoveFeatSel = dsTrainRemove.retainFeatures(sfs.selectedFeatures(1:nFeats));
+    yOutPlsdaFeatSel = classifier.kfolds(dsTrainRemoveFeatSel,3);
+
+    xOutAccum = prtUtilAccumArrayLike(writerIds,yOutPlsdaFeatSel.X,[],@(x)mean(x));
+    yOutAccum = prtUtilAccumArrayLike(writerIds,yOutPlsdaFeatSel.Y,[],@(x)unique(x));
+    yOutAccumFeatSel = prtDataSetClass(xOutAccum,yOutAccum);
+    logLossClassifierFeatSel(nFeats,iter) = prtScoreLogLoss(yOutAccumFeatSel);
+&lt;span class="keyword"&gt;end&lt;/span&gt;
+</code></pre>
+
+<p><span class="keyword">end</span></p>
+
+<p>boxplot(logLossClassifierFeatSel&#8217;)
+drawnow;</p>
+
+<p>ylabel(<span class="string">&lsquo;Log-Loss&rsquo;</span>);
+xlabel(<span class="string">&lsquo;# Features&rsquo;</span>)
+title(<span class="string">&lsquo;Log-Loss vs. # Features&rsquo;</span>)
+</pre><img vspace="5" hspace="5" src="/images/torrione_blog_Kaggle_TextGender_06.png" alt=""> <h2>Adding in some post-processing<a name="23"></a></h2><p>In a minute we&rsquo;ll down-select the number of features we want to use &ndash; but first let&rsquo;s do one more thing.  Recall that we added a logistic discriminant at the end of our PLSDA classifier.  That was clever, but after that, we accumulted a bunch of data together.  We might be able to run <b>another</b> logistic discriminant after the accumultion to do even better!</p><p>Let&rsquo;s see what that code looks like:</p><pre class="codeinput">classifier = prtClassPlsda(<span class="string">&lsquo;nComponents&rsquo;</span>,17) + prtClassLogisticDiscriminant;
+classifier = classifier.train(dsTrainRemove);
+yOutPlsdaKfolds = classifier.kfolds(dsTrainRemove,3);</p>
+
+<p>yOutAccum = prtUtilAccumDataSetLike(writerIds,yOutPlsdaKfolds,@(x)mean(x));
+yOutAccumLogDisc = kfolds(prtClassLogisticDiscriminant,yOutAccum,3);</p>
+
+<p>logLossPlsdaAccum = prtScoreLogLoss(yOutAccum);
+logLossPlsdaAccumLogDisc = prtScoreLogLoss(yOutAccumLogDisc);
+fprintf(<span class="string">&lsquo;Without post-Log-Disc: %.3f; With: %.3f\n&rsquo;</span>,logLossPlsdaAccum,logLossPlsdaAccumLogDisc);
+</pre><pre class="codeoutput">Without post-Log-Disc: 0.479; With: 0.461
+</pre><p>That&rsquo;s a slight improvement, too!</p><h2>Our New Submission<a name="25"></a></h2><p>Let&rsquo;s put everything together, and see what happens:</p><p>First, pick the right # of features based on our big experiment above:</p><pre class="codeinput">[minVal,nFeatures] = min(mean(logLossClassifierFeatSel'));
+dsTrainTemp = dsTrainRemove.retainFeatures(sfs.selectedFeatures(1:nFeatures));
+dsTestTemp = dsTestRemove.retainFeatures(sfs.selectedFeatures(1:nFeatures));
+</pre><p>Now, train a classifier, and a logistic discriminant:</p><pre class="codeinput">classifier = prtClassPlsda(<span class="string">&lsquo;nComponents&rsquo;</span>,17) + prtClassLogisticDiscriminant;
+classifier = classifier.train(dsTrainRemove);
+yOutPlsdaKfolds = classifier.kfolds(dsTrainRemove,3);</p>
+
+<p>yOutAccum = prtUtilAccumDataSetLike(writerIds,yOutPlsdaKfolds,@(x)mean(x));
+yOutPostLogDisc = kfolds(prtClassLogisticDiscriminant,yOutAccum,3);
+postLogDisc = train(prtClassLogisticDiscriminant,yOutAccum);
+logLossPlsdaEstimate = prtScoreLogLoss(yOutPostLogDisc);
+</pre><p>And run the same classifier, followed by the post-processing logistic discriminant:</p><pre class="codeinput">yOut = classifier.run(dsTestRemove);
+[xOutAccumSplit,uLike] = prtUtilAccumDataSetLike(writerIdsTest,yOut,@(x)mean(x));
+dsTestPost = prtDataSetClass(xOutAccumSplit);
+yOutPost = postLogDisc.run(dsTestPost);</p>
+
+<p>matrixOut = cat(2,uLike,yOutPost.X);
+csvwrite(<span class="string">&lsquo;outputPlsda_FeatSelPostProc.csv&rsquo;</span>,matrixOut);
+</pre><h2>Final Results<a name="29"></a></h2><p>We submitted this version to Kaggle also.  The results are shown below:</p><pre class="codeinput">imshow(<span class="string">&lsquo;leaderBoard_2013_03_21.PNG&rsquo;</span>);
+</pre><img vspace="5" hspace="5" src="/images/torrione_blog_Kaggle_TextGender_07.PNG" alt=""> <p>That bumped us up by just a little bit in terms of overall log-loss, but quite a bit in the leader-list!</p><p>A lot of people are still doing way better than this blog entry (and have gotten better since a week ago, when we did this analysis!), but that&rsquo;s not bad performance for what turns out to be about 20 lines of code, don&rsquo;t you think?</p><p>If you have any success with the text/gender analysis data using the PRT, let us know &ndash; either post on the Kaggle boards, or here, or drop us an e-mail.</p></p>
+</div>
+
+
+<br>
+<hr>
+<br>
+    <footer>
+      <p class="meta">
+        
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Pete</span></span>
+
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-04-02T18:21:00-04:00" pubdate data-updated="true">Apr 2<span>nd</span>, 2013</time>
+        
+
+
+      </p>
+      
+        <div class="sharing">
+  <br/>
+  
+  
+  
+</div>
+
+      
+      <p class="meta">
+        
+          <a class="basic-alignment pull-left" href="/blog/2013/03/24/rvs-part-2/" title="Previous Post: RVs Part 2 - Mixture Models">&laquo; RVs Part 2 - Mixture Models</a>
+        
+        
+          <a class="basic-alignment pull-right" href="/blog/2013/04/08/rt/" title="Next Post: rt()">rt() &raquo;</a>
+        
+      </p>
+    </footer>
+    
+    
+      <section>
+        <h1>Comments</h1>
+        <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+      </section>
+    
+  </div>
+
+  
+    
+  <div class="span3 sidebar">
+    <div class="well">
+      
+        <section>
+  <h2>Recent Posts</h2>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/10/09/dude-wheres-my-help/">Dude Where's My Help?</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/09/04/verbosestorage-and-a-little-prtalgorithm-plotting/">verboseStorage and a little prtAlgorithm plotting</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/08/20/introducing-prtclassnnet/">Introducing prtClassNNET</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/07/29/supervised-learning/">Supervised Learning: An Introduction for Scientists and Engineers</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/07/24/using-svms/">Using SVMs for Scientists and Engineers</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+      
+    </div>
+  </div>
+
+
+  
+</div>
+
+
+      </div>
+    </div>
+    <footer class="footer"><p>
+  Copyright &copy; 2013 - Kenneth Morton and Peter Torrione -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span> -
+  
+    <span class="credit">Theme by <a href="http://brianarmstrong.org">Brian Armstrong</a></span>
+  
+</p>
+</footer>
+    
+
+<script type="text/javascript">
+      var disqus_shortname = 'newfolderconsulting';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://newfolder.github.io/blog/2013/04/02/determining-gender-from-handwriting/';
+        var disqus_url = 'http://newfolder.github.io/blog/2013/04/02/determining-gender-from-handwriting/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+<script src="/assets/bootstrap/js/bootstrap.min.js"></script>
+
+
+  </div>
+</body>
+</html>

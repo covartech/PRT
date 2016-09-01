@@ -1,0 +1,42 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../helpwin.css">
+      <title>MATLAB File Help: prtScoreCost</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtScoreCost</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtScoreCost</div>
+      <div class="helptext"><pre><!--helptext -->  <span class="helptopic">prtScoreCost</span>  Return the cost vector
+ 
+     COST = <span class="helptopic">prtScoreCost</span>(DECSTATS,LABELS, COSTMAT) returns the cost vector
+     COST for the decision statistics DECSTATS and the corresponding labels
+     LABELS, according to the cost matrix COSTMAT. DECSTATS must be a Nx1
+     vector of decision statistics. LABELS must be a Nx1 vector of binary
+     class labels. COST must be a 2x2 matrix, where Cij is the cost of
+     deciding i when the truth is j.
+ 
+     [COST, PF, PD] = prtScoreRoc(DECSTATS,LABELS) returns the probability
+     of false alarm PF, the probability of detection PD at the
+     corresponding COST.
+ 
+     Example:     
+     TestDataSet = prtDataGenSpiral;       % Create some test and
+     TrainingDataSet = prtDataGenSpiral;   % training data
+     classifier = prtClassSvm;             % Create a classifier
+     classifier = classifier.train(TrainingDataSet);    % Train
+     classified = run(classifier, TestDataSet);     
+     %  Compute the cost vector
+     C = <span class="helptopic">prtScoreCost</span>(classified.getX, TestDataSet.getY, [1 .1; .1 1]);</pre></div><!--after help --><!--seeAlso--><div class="footerlinktitle">See also</div><div class="footerlink"> <a href="./prtScoreConfusionMatrix.html">prtScoreConfusionMatrix</a>, <a href="./prtScoreRmse.html">prtScoreRmse</a>,
+    <a href="./prtScorePercentCorrect.html">prtScorePercentCorrect</a>
+</div>
+   </body>
+</html>

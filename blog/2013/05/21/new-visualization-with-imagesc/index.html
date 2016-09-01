@@ -1,0 +1,311 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>New Visualization with IMAGESC - PRT Blog</title>
+  <meta name="author" content="Kenneth Morton and Peter Torrione">
+
+  
+  <meta name="description" content="New Visualization With IMAGESC May 21st, 2013 In the last entry, we introduced a data set - the Cylinder-Bell-Funnel data set, &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://newfolder.github.io/blog/2013/05/21/new-visualization-with-imagesc">
+  <link href="/favicon.ico" rel="icon">
+  
+  <link href="/assets/bootstrap/css/spacelab.min.css" rel="stylesheet" type="text/css">
+  <link href="/assets/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet" type="text/css">
+  <link href="/assets/bootstrap/css/custom.css" rel="stylesheet" type="text/css">
+  <link href="/assets/font-awesome/css/font-awesome.css" rel="stylesheet" type="text/css">
+  
+  <link href="/atom.xml" rel="alternate" title="PRT Blog" type="application/atom+xml">
+  <style type="text/css">
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+</style>
+  
+
+</head>
+
+<body    data-spy="scroll">
+
+  <div class="container">
+    <header class="jumbotron subhead" id="overview">
+      
+<div class="subscribe">
+  <table>
+    <tr>
+      <td><span>Get Updates: &nbsp;</span></td>
+      
+      
+      <td><a href="/atom.xml" class="btn"><i class="icon-cog"></i> By RSS</a></td>
+      
+      
+    </tr>
+  </table>
+</div>
+
+<h1 class="title">PRT Blog</h1>
+
+  <p class="lead">MATLAB Pattern Recognition Open Free and Easy</p>
+
+
+      <div class="navbar">
+  <div class="navbar-inner">
+    <div class="container" style="width: auto;">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+      <div class="nav-collapse">
+                <ul class="nav">
+          <li><a href="/">Home</a></li>
+          <li><a href="/blog/archives">Blog</a></li>
+          <li><a href="https://github.com/newfolder/PRT">Code</a></li>
+          <li><a href="/prtdoc/">Documentation</a></li>
+		  <li><a href="https://github.com/newfolder/PRT/issues">Get Help</a><li>
+          <li><a href="/about">About</a></li>
+        </ul>
+
+        
+          <form action="http://google.com/search" method="get" class="navbar-search pull-left">
+            <fieldset role="search">
+              <input type="hidden" name="q" value="site:newfolder.github.io" />
+              <input type="text" name="q" results="0" placeholder="Search" class="search-query span2" />
+            </fieldset>
+          </form>
+        
+        
+      </div><!-- /.nav-collapse -->
+    </div>
+  </div><!-- /navbar-inner -->
+</div>
+
+    </header>
+    <div id="main">
+      <div id="content">
+        <div class="row">
+  
+  <div class="span8">
+    <br>
+
+  <header>
+    
+      <h1 class="entry-title">New Visualization With IMAGESC</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-05-21T08:42:00-04:00" pubdate data-updated="true">May 21<span>st</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>In the last entry, we introduced a data set - the Cylinder-Bell-Funnel data set, prtDataGenCylinderBellFunnel.  To visualize it easily, we used the MATLAB function imagesc, which makes an image out of the data, with automatically determined colormap settings.  Today we&#8217;ll expand on that, and make the process a lot easier.
+    
+</p>
+
+
+<!--/introduction-->
+
+
+<h2>Contents</h2>
+
+
+<div><ul><li><a href="#1">Example</a></li><li><a href="#2">Other Data Sets</a></li><li><a href="#3">Wrapping Up</a></li></ul></div>
+
+
+<h2>Example<a name="1"></a></h2>
+
+
+<p>For a lot of high-dimensional data sets, it turns out creating an observations x features image of the data is a great way to visualize and understand your data.  This week we made that process a little easier and cleaner by introducing a method of prtDataSetClass - imagesc.</p>
+
+
+<p>The method takes care of a number of things that were a little tricky to do previously - first, it makes sure the observations are sorted by class index, next it creates an image of all the data with black bars denoting the class boundaries, and finally, it makes the y-tick-marks contain the relevant class names.</p>
+
+
+<p>It&#8217;s now easy to generate clean visualizations like so:</p>
+
+
+<pre class="codeinput">ds = prtDataGenCylinderBellFunnel;
+ds.imagesc;
+</pre>
+
+
+<p><img vspace="5" hspace="5" src="/images/torrione_blog_imagesc_2013_05_21_01.png" alt=""> <h2>Other Data Sets<a name="2"></a></h2><p>Of course, you can do the same thing with other data sets, too.  Look at how easy it is to see which features are important in prtDataGenFeatureSelection:</p><pre class="codeinput">ds = prtDataGenFeatureSelection;
+ds.imagesc;
+</pre><img vspace="5" hspace="5" src="/images/torrione_blog_imagesc_2013_05_21_02.png" alt=""> <h2>Wrapping Up<a name="3"></a></h2><p>That&rsquo;s it for this week.  We use imagesc-based visualization all the time, and hopefully you&rsquo;ll find it interesting and useful, too.</p></p>
+</div>
+
+
+<br>
+<hr>
+<br>
+    <footer>
+      <p class="meta">
+        
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Pete</span></span>
+
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-05-21T08:42:00-04:00" pubdate data-updated="true">May 21<span>st</span>, 2013</time>
+        
+
+
+      </p>
+      
+        <div class="sharing">
+  <br/>
+  
+  
+  
+</div>
+
+      
+      <p class="meta">
+        
+          <a class="basic-alignment pull-left" href="/blog/2013/05/15/prtdatagensandp500-and-prtdatagencylinderbellfunnel/" title="Previous Post: prtDataGenSandP500 and prtDataGenCylinderBellFunnel">&laquo; prtDataGenSandP500 and prtDataGenCylinderBellFunnel</a>
+        
+        
+          <a class="basic-alignment pull-right" href="/blog/2013/06/03/using-k-means-as-a-feature-extractor/" title="Next Post: Using K-Means As a Feature Extractor">Using K-Means As a Feature Extractor &raquo;</a>
+        
+      </p>
+    </footer>
+    
+    
+      <section>
+        <h1>Comments</h1>
+        <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+      </section>
+    
+  </div>
+
+  
+    
+  <div class="span3 sidebar">
+    <div class="well">
+      
+        <section>
+  <h2>Recent Posts</h2>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/10/09/dude-wheres-my-help/">Dude Where's My Help?</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/09/04/verbosestorage-and-a-little-prtalgorithm-plotting/">verboseStorage and a little prtAlgorithm plotting</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/08/20/introducing-prtclassnnet/">Introducing prtClassNNET</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/07/29/supervised-learning/">Supervised Learning: An Introduction for Scientists and Engineers</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/07/24/using-svms/">Using SVMs for Scientists and Engineers</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+      
+    </div>
+  </div>
+
+
+  
+</div>
+
+
+      </div>
+    </div>
+    <footer class="footer"><p>
+  Copyright &copy; 2013 - Kenneth Morton and Peter Torrione -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span> -
+  
+    <span class="credit">Theme by <a href="http://brianarmstrong.org">Brian Armstrong</a></span>
+  
+</p>
+</footer>
+    
+
+<script type="text/javascript">
+      var disqus_shortname = 'newfolderconsulting';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://newfolder.github.io/blog/2013/05/21/new-visualization-with-imagesc/';
+        var disqus_url = 'http://newfolder.github.io/blog/2013/05/21/new-visualization-with-imagesc/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+<script src="/assets/bootstrap/js/bootstrap.min.js"></script>
+
+
+  </div>
+</body>
+</html>

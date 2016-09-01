@@ -1,0 +1,178 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Creating algorithms with the Pattern Recognition Toolbox</title><meta name="generator" content="MATLAB 8.0"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2013-02-19"><meta name="DC.source" content="prtDocAlgorithm.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Creating algorithms with the Pattern Recognition Toolbox</h1><!--introduction--><p>One of the most useful features of the Pattern Recognition Toolbox is the ability to create <a href="./functionReference/prtAlgorithm.html">prtAlgorithm</a> objects. prtAlgorithm objects allow you to combine together prtAction objects, and then train and run them as if they were a single object.</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Creating a prtAlgorithm object</a></li><li><a href="#3">Plotting a prtAlgorithm object</a></li><li><a href="#4">Overloaded operators</a></li><li><a href="#6">Connecting objects in parallel</a></li><li><a href="#8">Accessing the inddividual actions in the actionCell</a></li></ul></div><h2>Creating a prtAlgorithm object<a name="1"></a></h2><p>The easiest way to create prtAlgorithm objects is to use the overloaded + and - operators. The following simple example connects a pre processing object to a classifier, in series.</p><pre class="codeinput">ds = prtDataGenUnimodal;    <span class="comment">% Load a dataset</span>
+preProc = prtPreProcPca;    <span class="comment">% Create a pre processing object</span>
+classifier = prtClassGlrt;  <span class="comment">% Create a generalized likelihood ratio</span>
+                            <span class="comment">% classifier</span>
+
+algo = preProc + classifier;  <span class="comment">% Cascade the 2 objects together</span>
+results = algo.kfolds(ds,3);  <span class="comment">% Perform kfolds validation</span>
+</pre><p>Note that you use the prtAlgorithm object in exactly the same maner as you would any other prtAction object such as a classifier or preprocessor.</p><h2>Plotting a prtAlgorithm object<a name="3"></a></h2><p>If you want to display the objects that make up a prtAlgorithm object, you can call the plot function:</p><pre class="codeinput">plot(algo)   <span class="comment">% Alternatively, algo.plot();</span>
+</pre><img vspace="5" hspace="5" src="prtDocAlgorithm_01.png" alt=""> <h2>Overloaded operators<a name="4"></a></h2><p>To add an object to the left or right of the processing chain, use the + operator. Suppose for example, you wanted to add a decision object after the prtClass object, and you also wanted to normalize the input data so that it was zero-mean and unit variance prior to performing PCA. You could do that with the following commands:</p><pre class="codeinput"><span class="comment">%Or: algo = prtPreProcZmuv + algo + prtDecisionBinaryMinPe;</span>
+algo = prtPreProcZmuv + algo;
+algo = algo + prtDecisionBinaryMinPe;
+
+algo.plot();
+</pre><img vspace="5" hspace="5" src="prtDocAlgorithm_02.png" alt=""> <p>Now you can train, run, or crossvalidate the algorithm just like any other prtAction.</p><pre class="codeinput">results = algo.kfolds(ds,3);
+</pre><h2>Connecting objects in parallel<a name="6"></a></h2><p>You can use the / and \ operators to connect objects in parallel in a prtAlgorithm. There is no difference in functionality between these two operators, they just control where the object gets placed when displayed with the plot command.</p><p>As an example, create a new algorithm that normalizes the data, and then feeds the result into 2 prtClass objects, operating in parallel.  The results of these two classifiers are then fused together in another classifier</p><pre class="codeinput">clear <span class="string">all</span>;                <span class="comment">% Clear the current objects</span>
+ds = prtDataGenUnimodal;  <span class="comment">% Load a dataset</span>
+
+
+algo = prtPreProcZmuv + prtClassMap/prtClassGlrt + prtClassMap;
+algo = algo.train(ds);
+
+plot(algo)
+</pre><img vspace="5" hspace="5" src="prtDocAlgorithm_03.png" alt=""> <p>Note, this is not a particularly good classifier, it is only intended as a simple example of how to combine prtActions into a prtAlgorithm.</p><h2>Accessing the inddividual actions in the actionCell<a name="8"></a></h2><p>Inside each prtAlgorithm, there is a data member called actionCell. This is a cell array which contains all of the individual actions that make up the prtAlgorithm object. You can index into this cell array to set properties, or call methods, on the underlying prtAction objects. For example, suppose you would like to plot the decision region contours of the second prtClassMap classifier in the previous example. You could do so in the following manner:</p><pre class="codeinput">algo.actionCell{4}.plot
+</pre><img vspace="5" hspace="5" src="prtDocAlgorithm_04.png" alt=""> <p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2012b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Creating algorithms with the Pattern Recognition Toolbox
+%
+% One of the most useful features of the Pattern Recognition Toolbox is the
+% ability to create <./functionReference/prtAlgorithm.html prtAlgorithm> objects.
+% prtAlgorithm objects allow you to combine together prtAction objects, and
+% then train and run them as if they were a single object.
+
+%% Creating a prtAlgorithm object
+% The easiest way to create prtAlgorithm objects is to use the overloaded
+% + and - operators. The following simple example connects a pre
+% processing object to a classifier, in series.
+
+ds = prtDataGenUnimodal;    % Load a dataset
+preProc = prtPreProcPca;    % Create a pre processing object
+classifier = prtClassGlrt;  % Create a generalized likelihood ratio 
+                            % classifier
+
+algo = preProc + classifier;  % Cascade the 2 objects together
+results = algo.kfolds(ds,3);  % Perform kfolds validation
+
+%%
+% Note that you use the prtAlgorithm object in exactly the same maner as
+% you would any other prtAction object such as a classifier or
+% preprocessor.
+%
+%% Plotting a prtAlgorithm object
+% If you want to display the objects that make up a prtAlgorithm object,
+% you can call the plot function:
+
+plot(algo)   % Alternatively, algo.plot();
+
+%% Overloaded operators
+% To add an object to the left or right of the processing chain, use the +
+% operator. Suppose for example, you wanted to add a decision object after the prtClass object,
+% and you also wanted to normalize the input data so that it was zero-mean
+% and unit variance prior to performing PCA. You could do that with the
+% following commands:
+
+%Or: algo = prtPreProcZmuv + algo + prtDecisionBinaryMinPe;
+algo = prtPreProcZmuv + algo;
+algo = algo + prtDecisionBinaryMinPe;
+
+algo.plot();
+
+%%
+% Now you can train, run, or crossvalidate the algorithm just like any
+% other prtAction. 
+
+results = algo.kfolds(ds,3);
+
+%% Connecting objects in parallel
+% You can use the / and \ operators to connect objects in parallel in a
+% prtAlgorithm. There is no difference in functionality between these two
+% operators, they just control where the object gets placed when displayed
+% with the plot command.
+%
+% As an example, create a new algorithm that normalizes the data, and then
+% feeds the result into 2 prtClass objects, operating in parallel.  The
+% results of these two classifiers are then fused together in another
+% classifier
+
+clear all;                % Clear the current objects
+ds = prtDataGenUnimodal;  % Load a dataset
+
+
+algo = prtPreProcZmuv + prtClassMap/prtClassGlrt + prtClassMap;
+algo = algo.train(ds);
+
+plot(algo)
+%%
+% Note, this is not a particularly good classifier, it is only intended as
+% a simple example of how to combine prtActions into a prtAlgorithm.
+
+%% Accessing the inddividual actions in the actionCell
+% Inside each prtAlgorithm, there is a data member called actionCell. This
+% is a cell array which contains all of the individual actions that make up
+% the prtAlgorithm object. You can index into this cell array to set
+% properties, or call methods, on the underlying prtAction objects. For
+% example, suppose you would like to plot the decision region contours of
+% the second prtClassMap classifier in the previous example. You could do
+% so in the following manner:
+
+algo.actionCell{4}.plot
+
+##### SOURCE END #####
+--></body></html>

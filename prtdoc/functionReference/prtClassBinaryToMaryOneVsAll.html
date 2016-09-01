@@ -1,0 +1,217 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../helpwin.css">
+      <title>MATLAB File Help: prtClassBinaryToMaryOneVsAll</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtClassBinaryToMaryOneVsAll</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtClassBinaryToMaryOneVsAll</div>
+      <div class="helptext"><pre><!--helptext -->  <span class="helptopic">prtClassBinaryToMaryOneVsAll</span>  M-Ary Emulation Classifier
+ 
+     CLASSIFIER = <span class="helptopic">prtClassBinaryToMaryOneVsAll</span> returns a M-ary "one
+     versus all" classifier. A one versus all classifier utilizes a
+     binary classifier to make M-ary decisions. For all M classes, it
+     selects each class, and makes a binary comparison to all the
+     others.
+ 
+     CLASSIFIER = <span class="helptopic">prtClassBinaryToMaryOneVsAll</span>(PROPERTY1, VALUE1, ...)
+     constructs a <span class="helptopic">prtClassBinaryToMaryOneVsAll</span> object CLASSIFIER with
+     properties as specified by PROPERTY/VALUE pairs.
+ 
+     A <span class="helptopic">prtClassBinaryToMaryOneVsAll</span> object inherits all properties from the
+     abstract class prtClass. In addition is has the following
+     properties:
+ 
+     baseClassifier - The classifier to be used to make the binary
+                   decisions. Must be a prtClass object, and defaults 
+                   to a prtClassLogisticDiscriminant classifier.
+  
+     A <span class="helptopic">prtClassBinaryToMaryOneVsAll</span> object inherits the TRAIN, RUN,
+     CROSSVALIDATE and KFOLDS methods from prtAction. It also inherits
+     the PLOT method from prtClass.
+ 
+     Example:
+ 
+      TestDataSet = prtDataGenMary;      % Create some test and 
+      TrainingDataSet = prtDataGenMary;  % training data
+      classifier = <span class="helptopic">prtClassBinaryToMaryOneVsAll</span>;   % Create a classifier
+      classifier.baseClassifier = prtClassGlrt;    % Set the binary 
+                                                   % Classifier
+      % Set the internal Decider
+      classifier.internalDecider = prtDecisionMap;
+ 
+      classifier = classifier.train(TrainingDataSet);    % Train
+      classes    = run(classifier, TestDataSet);         % Test
+ 
+      % Evaluate, plot results
+      percentCorr = prtScorePercentCorrect(classes.getX,TestDataSet.getTargets)
+      classifier.plot;</pre></div><!--after help --><!--seeAlso--><div class="footerlinktitle">See also</div><div class="footerlink"> <a href="./prtClass.html">prtClass</a>, <a href="./prtClassLogisticDiscriminant.html">prtClassLogisticDiscriminant</a>, <a href="./prtClassBagging.html">prtClassBagging</a>,
+     <a href="./prtClassMap.html">prtClassMap</a>, <a href="./prtClassCap.html">prtClassCap</a>, <a href="./prtClassBinaryToMaryOneVsAll.html">prtClassBinaryToMaryOneVsAll</a>, <a href="./prtClassDlrt.html">prtClassDlrt</a>,
+     <a href="./prtClassPlsda.html">prtClassPlsda</a>, <a href="./prtClassFld.html">prtClassFld</a>, <a href="./prtClassRvm.html">prtClassRvm</a>, <a href="./prtClassGlrt.html">prtClassGlrt</a>,  <a href="./prtClass.html">prtClass</a>
+</div>
+      <!--Class-->
+      <div class="sectiontitle">Class Details</div>
+      <table class="class-details">
+         <tr>
+            <td class="class-detail-label">Superclasses</td>
+            <td><a href="./prtClass.html">prtClass</a></td>
+         </tr>
+         <tr>
+            <td class="class-detail-label">Sealed</td>
+            <td>false</td>
+         </tr>
+         <tr>
+            <td class="class-detail-label">Construct on load</td>
+            <td>false</td>
+         </tr>
+      </table>
+      <!--Constructors-->
+      <div class="sectiontitle"><a name="constructors"></a>Constructor Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassBinaryToMaryOneVsAll/prtClassBinaryToMaryOneVsAll.html">prtClassBinaryToMaryOneVsAll</a></td>
+            <td class="m-help">M-Ary Emulation Classifier&nbsp;</td>
+         </tr>
+      </table>
+      <!--Properties-->
+      <div class="sectiontitle"><a name="properties"></a>Property Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassBinaryToMaryOneVsAll/baseClassifier.html">baseClassifier</a></td>
+            <td class="m-help">The classifier to be used&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassBinaryToMaryOneVsAll/dataSet.html">dataSet</a></td>
+            <td class="m-help">The training prtDataSet, only stored if verboseStorage is true. &nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassBinaryToMaryOneVsAll/dataSetSummary.html">dataSetSummary</a></td>
+            <td class="m-help">Structure that summarizes prtDataSet.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassBinaryToMaryOneVsAll/internalDecider.html">internalDecider</a></td>
+            <td class="m-help">Optional prtDecider object for making decisions&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassBinaryToMaryOneVsAll/isCrossValidateValid.html">isCrossValidateValid</a></td>
+            <td class="m-help">True&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassBinaryToMaryOneVsAll/isNativeMary.html">isNativeMary</a></td>
+            <td class="m-help">True&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassBinaryToMaryOneVsAll/isSupervised.html">isSupervised</a></td>
+            <td class="m-help">True&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassBinaryToMaryOneVsAll/isTrained.html">isTrained</a></td>
+            <td class="m-help">Indicates if prtAction object has been trained.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassBinaryToMaryOneVsAll/name.html">name</a></td>
+            <td class="m-help">M-Ary Emaulation One vs. All&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassBinaryToMaryOneVsAll/nameAbbreviation.html">nameAbbreviation</a></td>
+            <td class="m-help">OVA&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassBinaryToMaryOneVsAll/showProgressBar.html">showProgressBar</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassBinaryToMaryOneVsAll/twoClassParadigm.html">twoClassParadigm</a></td>
+            <td class="m-help">Whether the classifier retures one output (binary) or two outputs (m-ary) when there are only two unique class labels&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassBinaryToMaryOneVsAll/userData.html">userData</a></td>
+            <td class="m-help">User specified data&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassBinaryToMaryOneVsAll/verboseStorage.html">verboseStorage</a></td>
+            <td class="m-help">Specifies whether or not to store the training prtDataset.&nbsp;</td>
+         </tr>
+      </table>
+      <!--Methods-->
+      <div class="sectiontitle"><a name="methods"></a>Method Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClassBinaryToMaryOneVsAll/crossValidate.html">crossValidate</a></td>
+            <td class="m-help">Cross validate prtAction using prtDataSet and cross validation keys.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClassBinaryToMaryOneVsAll/get.html">get</a></td>
+            <td class="m-help">get the object properties&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClassBinaryToMaryOneVsAll/kfolds.html">kfolds</a></td>
+            <td class="m-help">Perform K-folds cross-validation of prtAction&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClassBinaryToMaryOneVsAll/optimize.html">optimize</a></td>
+            <td class="m-help">Optimize action parameter by exhaustive function maximization.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClassBinaryToMaryOneVsAll/plot.html">plot</a></td>
+            <td class="m-help">Plot the output confidence of a prtClass object&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClassBinaryToMaryOneVsAll/run.html">run</a></td>
+            <td class="m-help">Run a prtAction object on a prtDataSet object.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClassBinaryToMaryOneVsAll/set.html">set</a></td>
+            <td class="m-help">set the object properties&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClassBinaryToMaryOneVsAll/train.html">train</a></td>
+            <td class="m-help">Train a prtAction object using training a prtDataSet object.&nbsp;</td>
+         </tr>
+      </table>
+   </body>
+</html>

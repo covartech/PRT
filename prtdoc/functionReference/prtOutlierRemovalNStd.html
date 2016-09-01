@@ -1,0 +1,213 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../helpwin.css">
+      <title>MATLAB File Help: prtOutlierRemovalNStd</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtOutlierRemovalNStd</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtOutlierRemovalNStd</div>
+      <div class="helptext"><pre><!--helptext -->  <span class="helptopic">prtOutlierRemovalNStd</span>  Removes outliers from a prtDataSet
+ 
+    NSTDOUT = <span class="helptopic">prtOutlierRemovalNStd</span> creates a pre-processing
+    object that flags as outliers data where any of the feature values is
+    more then nStd standard deviations from the mean of that feature.
+  
+    <span class="helptopic">prtOutlierRemovalNStd</span> has the following properties:
+ 
+        nStd - The number of standard deviations at which to flag an
+               observation as an outlier an observation (default = 3)
+ 
+    A <span class="helptopic">prtOutlierRemovalNStd</span> object also inherits all properties and
+    functions from the prtOutlierRemoval class.  For more information
+    on how to control the behaviour of outlier removal objects, see the
+    help for prtOutlierRemoval.
+ 
+    Example:
+ 
+    dataSet = prtDataGenUnimodal;               % Load a data Set
+    outlier = prtDataSetClass([-10 -10],1);     % Create and insert
+    dataSet = catObservations(dataSet,outlier); % an outlier
+ 
+    % Create the prtOutlierRemoval object
+    nStdRemove = <span class="helptopic">prtOutlierRemovalNStd</span>('runMode','removeObservation');
+ 
+    nStdRemove = nStdRemove.train(dataSet);    % Train and run    
+    dataSetNew = nStdRemove.run(dataSet);  
+  
+    % Plot the results
+    subplot(2,1,1); plot(dataSet);
+    title('Original Data');
+    subplot(2,1,2); plot(dataSetNew);
+    title('NstdOutlierRemove Data');</pre></div><!--after help --><!--seeAlso--><div class="footerlinktitle">See Also</div><div class="footerlink">  <a href="./prtOutlierRemoval.html">prtOutlierRemoval</a>,
+    <a href="./prtOutlierRemovalNonFinite.html">prtOutlierRemovalNonFinite</a>,<a href="./prtOutlierRemovalMissingData.html">prtOutlierRemovalMissingData</a>
+</div>
+      <!--Class-->
+      <div class="sectiontitle">Class Details</div>
+      <table class="class-details">
+         <tr>
+            <td class="class-detail-label">Superclasses</td>
+            <td><a href="./prtOutlierRemoval.html">prtOutlierRemoval</a></td>
+         </tr>
+         <tr>
+            <td class="class-detail-label">Sealed</td>
+            <td>false</td>
+         </tr>
+         <tr>
+            <td class="class-detail-label">Construct on load</td>
+            <td>false</td>
+         </tr>
+      </table>
+      <!--Constructors-->
+      <div class="sectiontitle"><a name="constructors"></a>Constructor Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="name"><a href="./prtOutlierRemovalNStd/prtOutlierRemovalNStd.html">prtOutlierRemovalNStd</a></td>
+            <td class="m-help">Removes outliers from a prtDataSet&nbsp;</td>
+         </tr>
+      </table>
+      <!--Properties-->
+      <div class="sectiontitle"><a name="properties"></a>Property Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="name"><a href="./prtOutlierRemovalNStd/dataSet.html">dataSet</a></td>
+            <td class="m-help">The training prtDataSet, only stored if verboseStorage is true. &nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtOutlierRemovalNStd/dataSetSummary.html">dataSetSummary</a></td>
+            <td class="m-help">Structure that summarizes prtDataSet.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtOutlierRemovalNStd/isCrossValidateValid.html">isCrossValidateValid</a></td>
+            <td class="m-help">False&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtOutlierRemovalNStd/isSupervised.html">isSupervised</a></td>
+            <td class="m-help">False&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtOutlierRemovalNStd/isTrained.html">isTrained</a></td>
+            <td class="m-help">Indicates if prtAction object has been trained.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtOutlierRemovalNStd/meanVector.html">meanVector</a></td>
+            <td class="m-help">The mean vector&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtOutlierRemovalNStd/nStd.html">nStd</a></td>
+            <td class="m-help">The number of standard deviations beyond which to remove data&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtOutlierRemovalNStd/name.html">name</a></td>
+            <td class="m-help">Standard Deviation Based Outlier Removal&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtOutlierRemovalNStd/nameAbbreviation.html">nameAbbreviation</a></td>
+            <td class="m-help">nStd&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtOutlierRemovalNStd/replaceValue.html">replaceValue</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtOutlierRemovalNStd/runMode.html">runMode</a></td>
+            <td class="m-help">Operation taken during RUN&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtOutlierRemovalNStd/runOnTrainingMode.html">runOnTrainingMode</a></td>
+            <td class="m-help">Operation taken during TRAIN&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtOutlierRemovalNStd/showProgressBar.html">showProgressBar</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtOutlierRemovalNStd/stdVector.html">stdVector</a></td>
+            <td class="m-help">The standard deviation vector&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtOutlierRemovalNStd/userData.html">userData</a></td>
+            <td class="m-help">User specified data&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtOutlierRemovalNStd/validModes.html">validModes</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtOutlierRemovalNStd/verboseStorage.html">verboseStorage</a></td>
+            <td class="m-help">Specifies whether or not to store the training prtDataset.&nbsp;</td>
+         </tr>
+      </table>
+      <!--Methods-->
+      <div class="sectiontitle"><a name="methods"></a>Method Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtOutlierRemovalNStd/crossValidate.html">crossValidate</a></td>
+            <td class="m-help">Cross validate prtAction using prtDataSet and cross validation keys.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtOutlierRemovalNStd/get.html">get</a></td>
+            <td class="m-help">get the object properties&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtOutlierRemovalNStd/kfolds.html">kfolds</a></td>
+            <td class="m-help">Perform K-folds cross-validation of prtAction&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtOutlierRemovalNStd/optimize.html">optimize</a></td>
+            <td class="m-help">Optimize action parameter by exhaustive function maximization.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtOutlierRemovalNStd/run.html">run</a></td>
+            <td class="m-help">Run a prtAction object on a prtDataSet object.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtOutlierRemovalNStd/set.html">set</a></td>
+            <td class="m-help">set the object properties&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtOutlierRemovalNStd/train.html">train</a></td>
+            <td class="m-help">Train a prtAction object using training a prtDataSet object.&nbsp;</td>
+         </tr>
+      </table>
+   </body>
+</html>

@@ -1,0 +1,186 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Random variable objects in the Pattern Recognition Toolbox</title><meta name="generator" content="MATLAB 8.0"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2013-02-19"><meta name="DC.source" content="prtDocRv.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Random variable objects in the Pattern Recognition Toolbox</h1><!--introduction--><p>The Pattern Recognition Toolbox offers a set of random variable objects with a wide range of functionality. prtRv objects can compute pdf or cdf values of a random variable, be used as a random variable generator, or perform a maximum likelihood fit of a random variable from a data set.</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Specifying a random variable object</a></li><li><a href="#2">Maximum likelihood estimation of the parameters of a prtRv</a></li></ul></div><h2>Specifying a random variable object<a name="1"></a></h2><p>If you wish to specify the parameters of the random variable, you can do so in the following manner.</p><pre class="codeinput"> <span class="comment">% Create a multi-variate normal random variable object</span>
+rv = prtRvMvn;
+rv.mu = [1 1];         <span class="comment">% Set the mean to be the coordinates [1 1]</span>
+rv.sigma = [1 0; 0 1]; <span class="comment">% Specify the covariance matrix</span>
+
+rv.plotPdf;            <span class="comment">% Plot the pdf</span>
+
+randomDraw = rv.draw(1)       <span class="comment">% Draw one sample from this distribution</span>
+
+pdfVal = rv.pdf([1.5 1])      <span class="comment">% Evaluate the pdf of this random variable</span>
+                              <span class="comment">% at the point [1.5 1]</span>
+</pre><pre class="codeoutput">randomDraw =
+    2.4473    1.4084
+pdfVal =
+    0.1405
+</pre><img vspace="5" hspace="5" src="prtDocRv_01.png" alt=""> <h2>Maximum likelihood estimation of the parameters of a prtRv<a name="2"></a></h2><p>If you have a dataset that you would like to fit to a prtRv object, you can use the mle method to find the parameters. For example:</p><pre class="codeinput">data = randn(1000,2);   <span class="comment">% Create a zero mean 2 dimensional Normal vector</span>
+
+rv = rv.mle(data)       <span class="comment">% Call the MLE function to estimate the</span>
+                        <span class="comment">% parameters of this data set</span>
+</pre><pre class="codeoutput">rv = 
+  prtRvMvn
+
+  Properties:
+                    name: 'Multi-Variate Normal'
+        nameAbbreviation: 'RVMVN'
+            isSupervised: 0
+    isCrossValidateValid: 1
+     covarianceStructure: 'full'
+                      mu: [-0.0066 0.0440]
+                   sigma: [2x2 double]
+             plotOptions: [1x1 prtOptions.prtOptionsRvPlot]
+          verboseStorage: 1
+         showProgressBar: 1
+               isTrained: 0
+          dataSetSummary: []
+                 dataSet: []
+                userData: [1x1 struct]
+</pre><p>You can fit any data set to any prtRv object. For example, you could fit a uniform random variable to the same set of data in the following manner:</p><pre class="codeinput">rvUni = prtRvUniform;    <span class="comment">% Create a uniform random variable object</span>
+rvUni = rvUni.mle(data)  <span class="comment">% Call the MLE function</span>
+</pre><pre class="codeoutput">rvUni = 
+  prtRvUniform
+
+  Properties:
+                    name: 'Uniform Random Variable'
+        nameAbbreviation: 'RVUnif'
+            isSupervised: 0
+    isCrossValidateValid: 1
+             upperBounds: [3.1655 2.9978]
+             lowerBounds: [-3.3042 -4.1145]
+             plotOptions: [1x1 prtOptions.prtOptionsRvPlot]
+          verboseStorage: 1
+         showProgressBar: 1
+               isTrained: 0
+          dataSetSummary: []
+                 dataSet: []
+                userData: [1x1 struct]
+</pre><p>Note, now the parameters of rvUni are set, and you can call any of the other prtRv functions, such as plotPdf or draw:</p><pre class="codeinput">rvUni.plotPdf;              <span class="comment">% Plot the pdf</span>
+randomDraw = rvUni.draw(2)  <span class="comment">% Draw 2 samples</span>
+</pre><pre class="codeoutput">randomDraw =
+   -3.0211   -1.9934
+    0.1665   -2.0092
+</pre><img vspace="5" hspace="5" src="prtDocRv_02.png" alt=""> <p>For a list of other functions related to to prtRv objects, see <a href="./functionReference/prtRv.html">prtRv</a>. All random variable objects in the Pattern Recognition Toolbox have the same API as discussed above.  For a list of all the different random variables supported, and links to their individual help entries, <a href="prtDocFunctionList.html#13">A list of commonly used functions</a></p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2012b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Random variable objects in the Pattern Recognition Toolbox
+% 
+% The Pattern Recognition Toolbox offers a set of random variable objects
+% with a wide range of functionality. prtRv objects can compute pdf or cdf
+% values of a random variable, be used as a random variable generator, or
+% perform a maximum likelihood fit of a random variable from a data set.
+
+%% Specifying a random variable object
+% If you wish to specify the parameters of the random variable, you can do
+% so in the following manner. 
+
+ % Create a multi-variate normal random variable object
+rv = prtRvMvn;        
+rv.mu = [1 1];         % Set the mean to be the coordinates [1 1]
+rv.sigma = [1 0; 0 1]; % Specify the covariance matrix
+
+rv.plotPdf;            % Plot the pdf
+
+randomDraw = rv.draw(1)       % Draw one sample from this distribution
+
+pdfVal = rv.pdf([1.5 1])      % Evaluate the pdf of this random variable
+                              % at the point [1.5 1]
+                              
+                           
+%% Maximum likelihood estimation of the parameters of a prtRv
+% If you have a dataset that you would like to fit to a prtRv object, you
+% can use the mle method to find the parameters. For example:
+
+data = randn(1000,2);   % Create a zero mean 2 dimensional Normal vector
+
+rv = rv.mle(data)       % Call the MLE function to estimate the 
+                        % parameters of this data set
+
+%%
+% You can fit any data set to any prtRv object. For example, you could fit
+% a uniform random variable to the same set of data in the following manner:
+
+rvUni = prtRvUniform;    % Create a uniform random variable object
+rvUni = rvUni.mle(data)  % Call the MLE function
+
+%%
+% Note, now the parameters of rvUni are set, and you can call any of the
+% other prtRv functions, such as plotPdf or draw:
+
+rvUni.plotPdf;              % Plot the pdf
+randomDraw = rvUni.draw(2)  % Draw 2 samples
+
+%% 
+% For a list of other functions related to to prtRv objects, see
+% <./functionReference/prtRv.html prtRv>. All random variable objects in the Pattern
+% Recognition Toolbox have the same API as discussed above.  For a list of
+% all the different random variables supported, and links to their
+% individual help entries, <prtDocFunctionList.html#13 A list of commonly
+% used functions>
+##### SOURCE END #####
+--></body></html>

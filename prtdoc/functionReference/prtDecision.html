@@ -1,0 +1,206 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../helpwin.css">
+      <title>MATLAB File Help: prtDecision</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtDecision</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtDecision</div>
+      <div class="helptext"><pre><!--helptext -->  <span class="helptopic">prtDecision</span> Base class for sll prt decision objects
+ 
+   This is a base class from which all prt decision objects inherit. It
+   cannot be instantiated. <span class="helptopic">prtDecision</span> objects inherit the RUN function
+   from prtAction objects. 
+ 
+  <span class="helptopic">prtDecision</span> objects accept the outputs of classifiers or clusterers
+  and return class or cluster labels.  The output of a <span class="helptopic">prtDecision</span> 
+  object's run function is always a nObservations x 1 data set where
+  the observations are integer valued and specify the hypothesized
+  class for each observation
+ 
+  Decisions can be used in two ways - either as part of an algorithm:
+ 
+  algo = prtClassKnn + prtDecisionBinaryMinPe;
+ 
+  Or as the internalDecider object inside a prtClass object:
+ 
+   myKnn = prtClassKnn;
+   myKnn.internalDecider = prtDecisionBinaryMinPe;
+   myKnn = myKnn.train(dsTrain);
+  
+  In the first case, the resulting object is a prtAlgorithm, which
+  changes the behavior of PLOT.  In the second case, the decision is
+  incorporated into the classifier, allowing the decision contours to
+  be plotted easily.
+ 
+  Note that the regardless of how one uses a decider, the outputs of
+  the RUN function should be identical.
+ 
+   % Example 1:
+  
+  % This example demonstrates use of a <span class="helptopic">prtDecision</span> object to perform
+  % class labeling as part of a prtAlgorithm
+ 
+  dsTrain = prtDataGenUnimodal;
+  dsTest = prtDataGenUnimodal;
+  algo = prtClassKnn + prtDecisionBinaryMinPe;
+  algo = algo.train(dsTrain);
+  plot(algo); title('Algorithm implementation');
+  outAlgo = algo.run(dsTest);
+ 
+   % Example 2:
+  
+   % This example demonstrtes the use of a <span class="helptopic">prtDecision</span> objet to perform
+   % class labeling as prtClass objects internalDecider
+ 
+   myKnn = prtClassKnn;
+   myKnn.internalDecider = prtDecisionBinaryMinPe;
+   myKnn = myKnn.train(dsTrain);
+   outIntDec = myKnn.run(dsTest);
+   figure; plot(myKnn); title('internalDecider implementation');</pre></div><!--after help -->
+      <!--Class-->
+      <div class="sectiontitle">Class Details</div>
+      <table class="class-details">
+         <tr>
+            <td class="class-detail-label">Superclasses</td>
+            <td><a href="./prtAction.html">prtAction</a></td>
+         </tr>
+         <tr>
+            <td class="class-detail-label">Sealed</td>
+            <td>false</td>
+         </tr>
+         <tr>
+            <td class="class-detail-label">Construct on load</td>
+            <td>false</td>
+         </tr>
+      </table>
+      <!--Constructors-->
+      <div class="sectiontitle"><a name="constructors"></a>Constructor Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="name"><a href="./prtDecision/prtDecision.html">prtDecision</a></td>
+            <td class="m-help">As an action subclass we must set the properties to reflect&nbsp;</td>
+         </tr>
+      </table>
+      <!--Properties-->
+      <div class="sectiontitle"><a name="properties"></a>Property Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="name"><a href="./prtDecision/classList.html">classList</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtDecision/dataSet.html">dataSet</a></td>
+            <td class="m-help">The training prtDataSet, only stored if verboseStorage is true. &nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtDecision/dataSetSummary.html">dataSetSummary</a></td>
+            <td class="m-help">Structure that summarizes prtDataSet.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtDecision/isCrossValidateValid.html">isCrossValidateValid</a></td>
+            <td class="m-help">True&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtDecision/isSupervised.html">isSupervised</a></td>
+            <td class="m-help">False&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtDecision/isTrained.html">isTrained</a></td>
+            <td class="m-help">Indicates if prtAction object has been trained.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtDecision/name.html">name</a></td>
+            <td class="m-help">Descriptive name of prtAction object.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtDecision/nameAbbreviation.html">nameAbbreviation</a></td>
+            <td class="m-help">Shortened name for the prtAction object.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtDecision/showProgressBar.html">showProgressBar</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtDecision/userData.html">userData</a></td>
+            <td class="m-help">User specified data&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtDecision/verboseStorage.html">verboseStorage</a></td>
+            <td class="m-help">Specifies whether or not to store the training prtDataset.&nbsp;</td>
+         </tr>
+      </table>
+      <!--Methods-->
+      <div class="sectiontitle"><a name="methods"></a>Method Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDecision/crossValidate.html">crossValidate</a></td>
+            <td class="m-help">Cross validate prtAction using prtDataSet and cross validation keys.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDecision/get.html">get</a></td>
+            <td class="m-help">get the object properties&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDecision/kfolds.html">kfolds</a></td>
+            <td class="m-help">Perform K-folds cross-validation of prtAction&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDecision/optimize.html">optimize</a></td>
+            <td class="m-help">Optimize action parameter by exhaustive function maximization.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDecision/run.html">run</a></td>
+            <td class="m-help">Run a prtAction object on a prtDataSet object.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDecision/set.html">set</a></td>
+            <td class="m-help">set the object properties&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDecision/train.html">train</a></td>
+            <td class="m-help">Train a prtAction object using training a prtDataSet object.&nbsp;</td>
+         </tr>
+      </table>
+   </body>
+</html>

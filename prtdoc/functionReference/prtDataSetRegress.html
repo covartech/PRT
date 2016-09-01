@@ -1,0 +1,544 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../helpwin.css">
+      <title>MATLAB File Help: prtDataSetRegress</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtDataSetRegress</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtDataSetRegress</div>
+      <div class="helptext"><pre><!--helptext -->  <span class="helptopic">prtDataSetRegress</span>   Data set object for regression
+ 
+    DATASET = <span class="helptopic">prtDataSetRegress</span> returns a <span class="helptopic">prtDataSetRegress</span> object
+ 
+    DATASET = <span class="helptopic">prtDataSetRegress</span>(PROPERTY1, VALUE1, ...) constructs a
+    <span class="helptopic">prtDataSetRegress</span> object DATASET with properties as specified by
+    PROPERTY/VALUE pairs.
+ 
+    A <span class="helptopic">prtDataSetRegress</span> object inherits all properties from the
+    prtDataSetStandard class. 
+ 
+    A <span class="helptopic">prtDataSetRegress</span> inherits all methods from the
+    prtDataSetStandard object. In addition it overloads the following
+    functions:
+ 
+    plot      - Plot the <span class="helptopic">prtDataSetRegress</span> object
+    summarize - Summarize the <span class="helptopic">prtDataSetRegress</span> object.</pre></div><!--after help --><!--seeAlso--><div class="footerlinktitle">See also</div><div class="footerlink"> <a href="./prtDataSetStandard.html">prtDataSetStandard</a>, <a href="./prtDataSetClass.html">prtDataSetClass</a>, <a href="./prtDataSetBase.html">prtDataSetBase</a>
+</div>
+      <!--Class-->
+      <div class="sectiontitle">Class Details</div>
+      <table class="class-details">
+         <tr>
+            <td class="class-detail-label">Superclasses</td>
+            <td><a href="./prtDataSetStandard.html">prtDataSetStandard</a></td>
+         </tr>
+         <tr>
+            <td class="class-detail-label">Sealed</td>
+            <td>false</td>
+         </tr>
+         <tr>
+            <td class="class-detail-label">Construct on load</td>
+            <td>false</td>
+         </tr>
+      </table>
+      <!--Constructors-->
+      <div class="sectiontitle"><a name="constructors"></a>Constructor Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="name"><a href="./prtDataSetRegress/prtDataSetRegress.html">prtDataSetRegress</a></td>
+            <td class="m-help">Data set object for regression&nbsp;</td>
+         </tr>
+      </table>
+      <!--Properties-->
+      <div class="sectiontitle"><a name="properties"></a>Property Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="name"><a href="./prtDataSetRegress/data.html">data</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtDataSetRegress/description.html">description</a></td>
+            <td class="m-help">A string with a verbose description of the data set&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtDataSetRegress/featureInfo.html">featureInfo</a></td>
+            <td class="m-help">Additional data (structure) per feature&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtDataSetRegress/featureInfoInternal.html">featureInfoInternal</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtDataSetRegress/featureNameModificationFunctionInternal.html">featureNameModificationFunctionInternal</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtDataSetRegress/featureNameModificationMaskInternal.html">featureNameModificationMaskInternal</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtDataSetRegress/internalData.html">internalData</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtDataSetRegress/internalSizeConsitencyCheck.html">internalSizeConsitencyCheck</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtDataSetRegress/internalTargets.html">internalTargets</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtDataSetRegress/isLabeled.html">isLabeled</a></td>
+            <td class="m-help">Whether or not the data has target labels&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtDataSetRegress/nFeatures.html">nFeatures</a></td>
+            <td class="m-help">The number of features&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtDataSetRegress/nObservations.html">nObservations</a></td>
+            <td class="m-help">The number of observations&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtDataSetRegress/nTargetDimensions.html">nTargetDimensions</a></td>
+            <td class="m-help">The number of target dimensions&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtDataSetRegress/name.html">name</a></td>
+            <td class="m-help">A string naming the data set&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtDataSetRegress/observationInfo.html">observationInfo</a></td>
+            <td class="m-help">Struct of observation information&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtDataSetRegress/observationInfoInternal.html">observationInfoInternal</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtDataSetRegress/observationNamesInternal.html">observationNamesInternal</a></td>
+            <td class="m-help">The observations names&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtDataSetRegress/targetNamesInternal.html">targetNamesInternal</a></td>
+            <td class="m-help">The target names.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtDataSetRegress/targets.html">targets</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtDataSetRegress/userData.html">userData</a></td>
+            <td class="m-help">Additional data per data set&nbsp;</td>
+         </tr>
+      </table>
+      <!--Methods-->
+      <div class="sectiontitle"><a name="methods"></a>Method Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetRegress/bootstrap.html">bootstrap</a></td>
+            <td class="m-help">dsBoot = bootstrap(dataSet,nSamples)&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetRegress/catFeatures.html">catFeatures</a></td>
+            <td class="m-help">dsOut = catFeatures(dataSet1,dataSet2)&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">protected 
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetRegress/catObservationInfo.html">catObservationInfo</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetRegress/catObservations.html">catObservations</a></td>
+            <td class="m-help">dsOut = catObservations(dataSet1,dataSet2)&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetRegress/catTargets.html">catTargets</a></td>
+            <td class="m-help">dsOut = catTargets(dataSet1,dataSet2)&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">protected Static 
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetRegress/checkConsistency.html">checkConsistency</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetRegress/getData.html">getData</a></td>
+            <td class="m-help">data = getData(dataSet)&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetRegress/getFeatureInfo.html">getFeatureInfo</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetRegress/getFeatureNames.html">getFeatureNames</a></td>
+            <td class="m-help">names = getFeatureNames(dataSet)&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetRegress/getFeatures.html">getFeatures</a></td>
+            <td class="m-help">Return the features of a prtDataSetStandard&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetRegress/getKFoldKeys.html">getKFoldKeys</a></td>
+            <td class="m-help">keys = getKFoldKeys(dataSet,K)&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetRegress/getNumFeatures.html">getNumFeatures</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetRegress/getNumObservations.html">getNumObservations</a></td>
+            <td class="m-help">nObs = getNumObservations(dataSet)&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetRegress/getNumTargetDimensions.html">getNumTargetDimensions</a></td>
+            <td class="m-help">nTargets = getNumTargetDimensions(dataSet)&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetRegress/getObservationInfo.html">getObservationInfo</a></td>
+            <td class="m-help">obsInfo = getObservationInfo(dataSet)&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetRegress/getObservationNames.html">getObservationNames</a></td>
+            <td class="m-help">Return DataSet's Observation Names&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetRegress/getObservations.html">getObservations</a></td>
+            <td class="m-help">d = getObservations(dataSet)&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetRegress/getTargetNames.html">getTargetNames</a></td>
+            <td class="m-help">Return the target names from a dataset&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetRegress/getTargets.html">getTargets</a></td>
+            <td class="m-help">targets = getTargets(dataSet)&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetRegress/getX.html">getX</a></td>
+            <td class="m-help">Shortcut for GetObservations&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetRegress/getXY.html">getXY</a></td>
+            <td class="m-help">Shortcut for getObservationsAndTargets&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetRegress/getY.html">getY</a></td>
+            <td class="m-help">Shortcut for getTargets&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">Static 
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetRegress/loadobj.html">loadobj</a></td>
+            <td class="m-help">We allow input baseClass here so that we can make a class of&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetRegress/permuteFeatures.html">permuteFeatures</a></td>
+            <td class="m-help">dsOut = permuteFeatures(dataSet,permuteFeatureInds)&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetRegress/plot.html">plot</a></td>
+            <td class="m-help">Plot the prtDataSetRegress object&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetRegress/removeFeatures.html">removeFeatures</a></td>
+            <td class="m-help">dsOut = removeFeatures(dataSet,removeFeatureInds)&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetRegress/removeObservations.html">removeObservations</a></td>
+            <td class="m-help">dsOut = removeObservations(dataSet,indices)&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetRegress/removeTargets.html">removeTargets</a></td>
+            <td class="m-help">dsOut = removeTargets(dataSet,indices)&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">protected 
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetRegress/retainFeatureNames.html">retainFeatureNames</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetRegress/retainFeatures.html">retainFeatures</a></td>
+            <td class="m-help">dsOut = retainFeatures(dataSet,retainFeatureInds)&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">protected 
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetRegress/retainObservationInfo.html">retainObservationInfo</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetRegress/retainObservations.html">retainObservations</a></td>
+            <td class="m-help">dsOut = removeObservations(dataSet,indices)&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetRegress/retainTargets.html">retainTargets</a></td>
+            <td class="m-help">dsOut = retainTargets(dataSet,indices)&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetRegress/select.html">select</a></td>
+            <td class="m-help">observations to retain by specifying a function&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetRegress/setData.html">setData</a></td>
+            <td class="m-help">dsOut = setData(dataSet,dataIn)&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetRegress/setFeatureInfo.html">setFeatureInfo</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetRegress/setFeatureNames.html">setFeatureNames</a></td>
+            <td class="m-help">dataSet = setFeatureNames(dataSet,names)&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetRegress/setFeatures.html">setFeatures</a></td>
+            <td class="m-help">dsOut = setFeatures(dataSet,data,indices)&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetRegress/setObservationInfo.html">setObservationInfo</a></td>
+            <td class="m-help">dataSet = setObservationInfo(dataSet,obsInfoStruct)&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetRegress/setObservationNames.html">setObservationNames</a></td>
+            <td class="m-help">Set the observation names of a data set&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetRegress/setObservations.html">setObservations</a></td>
+            <td class="m-help">dataSet = setObservations(dataSet,data)&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetRegress/setObservationsAndTargets.html">setObservationsAndTargets</a></td>
+            <td class="m-help">dataSet = setObservationsAndTargets(dataSet,data,targets)&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetRegress/setTargetNames.html">setTargetNames</a></td>
+            <td class="m-help">Set the data set target names&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetRegress/setTargets.html">setTargets</a></td>
+            <td class="m-help">dsOut = setTargets(dataSet,dataIn)&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetRegress/setX.html">setX</a></td>
+            <td class="m-help">Shortcut for setObservations&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetRegress/setXY.html">setXY</a></td>
+            <td class="m-help">Shortcut for setObservationsAndTargets&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetRegress/setY.html">setY</a></td>
+            <td class="m-help">Shortcut for setTargets&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">protected 
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetRegress/update.html">update</a></td>
+            <td class="m-help">default behaviour is to do nothing&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">protected 
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtDataSetRegress/updateObservationsCache.html">updateObservationsCache</a></td>
+            <td class="m-help">default behaviour is to do nothing&nbsp;</td>
+         </tr>
+      </table>
+   </body>
+</html>

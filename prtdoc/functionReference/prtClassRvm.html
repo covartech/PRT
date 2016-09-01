@@ -1,0 +1,296 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../helpwin.css">
+      <title>MATLAB File Help: prtClassRvm</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtClassRvm</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtClassRvm</div>
+      <div class="helptext"><pre><!--helptext -->  <span class="helptopic">prtClassRvm</span>  Relevance vector machine classifier
+ 
+    CLASSIFIER = <span class="helptopic">prtClassRvm</span> returns a relevance vector machine classifier
+ 
+    CLASSIFIER = <span class="helptopic">prtClassRvm</span>(PROPERTY1, VALUE1, ...) constructs a
+    <span class="helptopic">prtClassRvm</span> object CLASSIFIER with properties as specified by
+    PROPERTY/VALUE pairs.
+ 
+    A <span class="helptopic">prtClassRvm</span> object inherits all properties from the abstract class
+    prtClass. In addition is has the following properties:
+ 
+    kernels                - A cell array of prtKernel objects specifying
+                             the kernels to use
+    verbosePlot            - Flag indicating whether or not to plot during
+                             training
+    verboseText            - Flag indicating whether or not to output
+                             verbose updates during training
+    learningMaxIterations  - The maximum number of iterations
+ 
+    A <span class="helptopic">prtClassRvm</span> also has the following read-only properties:
+ 
+    learningConverged  - Flag indicating if the training converged
+    beta               - The regression weights, estimated during training
+    sparseBeta         - The sparse regression weights, estimated during
+                         training
+    sparseKernels      - The sparse regression kernels, estimated during
+                         training
+ 
+    For information on relevance vector machines, please
+    refer to the following URL:
+ 
+    <a href="http://en.wikipedia.org/wiki/Relevance_vector_machine">http://en.wikipedia.org/wiki/Relevance_vector_machine</a>
+ 
+    By default, <span class="helptopic">prtClassRvm</span> uses the Laplacian approximation as found
+    in the paper:
+ 
+    Michael E. Tipping. 2001. Sparse bayesian learning and the
+    relevance vector machine. J. Mach. Learn. Res. 1 (September 2001),
+ 
+    The code is based on the algorithm in: 
+ 
+    Herbrich, Learning Kernel Classifiers, The MIT Press, 2002
+    <a href="http://www.learning-kernel-classifiers.org/">http://www.learning-kernel-classifiers.org/</a>
+ 
+    A <span class="helptopic">prtClassRvm</span> object inherits the TRAIN, RUN, CROSSVALIDATE and
+    KFOLDS methods from prtAction. It also inherits the PLOT method
+    from prtClass.
+ 
+    Example:
+ 
+    TestDataSet = prtDataGenUnimodal;      % Create some test and
+    TrainingDataSet = prtDataGenUnimodal;  % training data
+    classifier = <span class="helptopic">prtClassRvm</span>;              % Create a classifier
+    classifier = classifier.train(TrainingDataSet);    % Train
+    classified = run(classifier, TestDataSet);         % Test
+    % Plot the results
+    subplot(2,1,1);
+    classifier.plot;
+    subplot(2,1,2);
+    [pf,pd] = prtScoreRoc(classified,TestDataSet);
+    h = plot(pf,pd,'linewidth',3);
+    title('ROC'); xlabel('Pf'); ylabel('Pd');
+ 
+    % Example 2, using a different kernel 
+ 
+    TestDataSet = prtDataGenUnimodal;      % Create some test and
+    TrainingDataSet = prtDataGenUnimodal;  % training data
+    classifier = <span class="helptopic">prtClassRvm</span>;              % Create a classifier
+  
+    % Create a prtKernelSet object with a different pair of
+    % prtKernels and assign them to the classifier
+    kernSet = prtKernelDirect &amp; prtKernelRbf;
+    classifier.kernels = kernSet;
+ 
+    classifier = classifier.train(TrainingDataSet);    % Train
+    classified = run(classifier, TestDataSet);         % Test
+    % Plot
+    subplot(2,1,1);
+    classifier.plot;
+    subplot(2,1,2);
+    [pf,pd] = prtScoreRoc(classified,TestDataSet);
+    h = plot(pf,pd,'linewidth',3);
+    title('ROC'); xlabel('Pf'); ylabel('Pd');</pre></div><!--after help --><!--seeAlso--><div class="footerlinktitle">See also</div><div class="footerlink"> <a href="./prtClass.html">prtClass</a>, <a href="./prtClassLogisticDiscriminant.html">prtClassLogisticDiscriminant</a>, <a href="./prtClassBagging.html">prtClassBagging</a>,
+    <a href="./prtClassMap.html">prtClassMap</a>, <a href="./prtClassCap.html">prtClassCap</a>, <a href="./prtClassBinaryToMaryOneVsAll.html">prtClassBinaryToMaryOneVsAll</a>, <a href="./prtClassDlrt.html">prtClassDlrt</a>,
+    <a href="./prtClassPlsda.html">prtClassPlsda</a>, <a href="./prtClassFld.html">prtClassFld</a>, <a href="./prtClassRvmFigueiredo.html">prtClassRvmFigueiredo</a>, <a href="./prtClassRvmSequential.html">prtClassRvmSequential</a>, <a href="./prtClassGlrt.html">prtClassGlrt</a>,  <a href="./prtClass.html">prtClass</a>
+</div>
+      <!--Class-->
+      <div class="sectiontitle">Class Details</div>
+      <table class="class-details">
+         <tr>
+            <td class="class-detail-label">Superclasses</td>
+            <td><a href="./prtClass.html">prtClass</a></td>
+         </tr>
+         <tr>
+            <td class="class-detail-label">Sealed</td>
+            <td>false</td>
+         </tr>
+         <tr>
+            <td class="class-detail-label">Construct on load</td>
+            <td>false</td>
+         </tr>
+      </table>
+      <!--Constructors-->
+      <div class="sectiontitle"><a name="constructors"></a>Constructor Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassRvm/prtClassRvm.html">prtClassRvm</a></td>
+            <td class="m-help">Relevance vector machine classifier&nbsp;</td>
+         </tr>
+      </table>
+      <!--Properties-->
+      <div class="sectiontitle"><a name="properties"></a>Property Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassRvm/beta.html">beta</a></td>
+            <td class="m-help">Regression weights&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassRvm/dataSet.html">dataSet</a></td>
+            <td class="m-help">The training prtDataSet, only stored if verboseStorage is true. &nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassRvm/dataSetSummary.html">dataSetSummary</a></td>
+            <td class="m-help">Structure that summarizes prtDataSet.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassRvm/internalDecider.html">internalDecider</a></td>
+            <td class="m-help">Optional prtDecider object for making decisions&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassRvm/isCrossValidateValid.html">isCrossValidateValid</a></td>
+            <td class="m-help">True&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassRvm/isNativeMary.html">isNativeMary</a></td>
+            <td class="m-help">False&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassRvm/isSupervised.html">isSupervised</a></td>
+            <td class="m-help">True&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassRvm/isTrained.html">isTrained</a></td>
+            <td class="m-help">Indicates if prtAction object has been trained.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassRvm/kernels.html">kernels</a></td>
+            <td class="m-help">The kernels to be used&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassRvm/learningConverged.html">learningConverged</a></td>
+            <td class="m-help">Flag indicating whether or not training convereged&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassRvm/learningConvergedTolerance.html">learningConvergedTolerance</a></td>
+            <td class="m-help">Learning tolerance; &nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassRvm/learningMaxIterations.html">learningMaxIterations</a></td>
+            <td class="m-help">The maximum number of iterations&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassRvm/learningRelevantTolerance.html">learningRelevantTolerance</a></td>
+            <td class="m-help">Tolerance below which a kernel is marked as irrelevant and removed&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassRvm/name.html">name</a></td>
+            <td class="m-help">Relevance Vector Machine&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassRvm/nameAbbreviation.html">nameAbbreviation</a></td>
+            <td class="m-help">RVM&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassRvm/showProgressBar.html">showProgressBar</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassRvm/sparseBeta.html">sparseBeta</a></td>
+            <td class="m-help">Sparse Beta&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassRvm/sparseKernels.html">sparseKernels</a></td>
+            <td class="m-help">Sparse Kernel array&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassRvm/twoClassParadigm.html">twoClassParadigm</a></td>
+            <td class="m-help">Whether the classifier retures one output (binary) or two outputs (m-ary) when there are only two unique class labels&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassRvm/userData.html">userData</a></td>
+            <td class="m-help">User specified data&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassRvm/verbosePlot.html">verbosePlot</a></td>
+            <td class="m-help">Whether or not to plot during training&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassRvm/verboseStorage.html">verboseStorage</a></td>
+            <td class="m-help">Specifies whether or not to store the training prtDataset.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassRvm/verboseText.html">verboseText</a></td>
+            <td class="m-help">Whether or not to display text during training&nbsp;</td>
+         </tr>
+      </table>
+      <!--Methods-->
+      <div class="sectiontitle"><a name="methods"></a>Method Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClassRvm/crossValidate.html">crossValidate</a></td>
+            <td class="m-help">Cross validate prtAction using prtDataSet and cross validation keys.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClassRvm/get.html">get</a></td>
+            <td class="m-help">get the object properties&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClassRvm/kfolds.html">kfolds</a></td>
+            <td class="m-help">Perform K-folds cross-validation of prtAction&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClassRvm/optimize.html">optimize</a></td>
+            <td class="m-help">Optimize action parameter by exhaustive function maximization.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClassRvm/plot.html">plot</a></td>
+            <td class="m-help">Plot output confidence of the prtClassRvm object&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClassRvm/run.html">run</a></td>
+            <td class="m-help">Run a prtAction object on a prtDataSet object.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClassRvm/set.html">set</a></td>
+            <td class="m-help">set the object properties&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClassRvm/train.html">train</a></td>
+            <td class="m-help">Train a prtAction object using training a prtDataSet object.&nbsp;</td>
+         </tr>
+      </table>
+   </body>
+</html>

@@ -1,0 +1,169 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../helpwin.css">
+      <title>MATLAB File Help: prtKernelDirect</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtKernelDirect</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtKernelDirect</div>
+      <div class="helptext"><pre><!--helptext -->  <span class="helptopic">prtKernelDirect</span>  Direct kernel
+ 
+   kernelObj = <span class="helptopic">prtKernelDirect</span> Generates a <span class="helptopic">prtKernelDirect</span> object implementing a
+   direct kernel function.  Kernel objects are widely used in several
+   prt classifiers, such as prtClassRvm and prtClassSvm.  Direct kernels
+   implement the following function for 1 x N vectors x1 and x2:
+ 
+    k(x1,x2) = x2;
+ 
+   Direct kernel functions can be used sparse machine learning contexts
+   to perform sparse linear feature selection.
+    
+   <span class="helptopic">prtKernelDirect</span> objects inherit the TRAIN, RUN, and AND
+   methods from prtKernel.
+ 
+   % Example:
+    ds = prtDataGenUnimodal;   % Load a data set
+    k1 = <span class="helptopic">prtKernelDirect</span>;      % Create a <span class="helptopic">prtKernelDirect</span> object
+    
+    k1 = k1.train(ds);         % Train
+    g1 = k1.run(ds);           % Run
+ 
+    % Plot the results
+    imagesc(g1.getObservations);</pre></div><!--after help --><!--seeAlso--><div class="footerlinktitle">See also</div><div class="footerlink"> <a href="./prtKernel.html">prtKernel</a>,<a href="./prtKernelSet.html">prtKernelSet</a>, <a href="./prtKernelDc.html">prtKernelDc</a>,
+    <a href="./prtKernelHyperbolicTangent.html">prtKernelHyperbolicTangent</a>, <a href="./prtKernelPolynomial.html">prtKernelPolynomial</a>, <a href="./prtKernelRbf.html">prtKernelRbf</a>,
+    <a href="./prtKernelRbfNdimensionScale.html">prtKernelRbfNdimensionScale</a>, 
+</div>
+      <!--Class-->
+      <div class="sectiontitle">Class Details</div>
+      <table class="class-details">
+         <tr>
+            <td class="class-detail-label">Superclasses</td>
+            <td><a href="./prtKernel.html">prtKernel</a></td>
+         </tr>
+         <tr>
+            <td class="class-detail-label">Sealed</td>
+            <td>false</td>
+         </tr>
+         <tr>
+            <td class="class-detail-label">Construct on load</td>
+            <td>false</td>
+         </tr>
+      </table>
+      <!--Constructors-->
+      <div class="sectiontitle"><a name="constructors"></a>Constructor Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="name"><a href="./prtKernelDirect/prtKernelDirect.html">prtKernelDirect</a></td>
+            <td class="m-help">Direct kernel&nbsp;</td>
+         </tr>
+      </table>
+      <!--Properties-->
+      <div class="sectiontitle"><a name="properties"></a>Property Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="name"><a href="./prtKernelDirect/dataSet.html">dataSet</a></td>
+            <td class="m-help">The training prtDataSet, only stored if verboseStorage is true. &nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtKernelDirect/dataSetSummary.html">dataSetSummary</a></td>
+            <td class="m-help">Structure that summarizes prtDataSet.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtKernelDirect/isCrossValidateValid.html">isCrossValidateValid</a></td>
+            <td class="m-help">False&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtKernelDirect/isSupervised.html">isSupervised</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtKernelDirect/isTrained.html">isTrained</a></td>
+            <td class="m-help">Indicates if prtAction object has been trained.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtKernelDirect/name.html">name</a></td>
+            <td class="m-help">Direct Kernel&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtKernelDirect/nameAbbreviation.html">nameAbbreviation</a></td>
+            <td class="m-help">DirectKernel&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtKernelDirect/showProgressBar.html">showProgressBar</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtKernelDirect/userData.html">userData</a></td>
+            <td class="m-help">User specified data&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtKernelDirect/verboseStorage.html">verboseStorage</a></td>
+            <td class="m-help">Specifies whether or not to store the training prtDataset.&nbsp;</td>
+         </tr>
+      </table>
+      <!--Methods-->
+      <div class="sectiontitle"><a name="methods"></a>Method Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtKernelDirect/and.html">and</a></td>
+            <td class="m-help">Combine 2 prtKernels into a prtKernelSet&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtKernelDirect/get.html">get</a></td>
+            <td class="m-help">get the object properties&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtKernelDirect/optimize.html">optimize</a></td>
+            <td class="m-help">Optimize action parameter by exhaustive function maximization.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtKernelDirect/run.html">run</a></td>
+            <td class="m-help">Run a prtAction object on a prtDataSet object.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtKernelDirect/set.html">set</a></td>
+            <td class="m-help">set the object properties&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtKernelDirect/train.html">train</a></td>
+            <td class="m-help">Train a prtAction object using training a prtDataSet object.&nbsp;</td>
+         </tr>
+      </table>
+   </body>
+</html>

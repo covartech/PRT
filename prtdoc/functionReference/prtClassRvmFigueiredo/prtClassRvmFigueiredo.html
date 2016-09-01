@@ -1,0 +1,79 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../../helpwin.css">
+      <title>MATLAB File Help: prtClassRvmFigueiredo/prtClassRvmFigueiredo</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtClassRvmFigueiredo/prtClassRvmFigueiredo</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtClassRvmFigueiredo/prtClassRvmFigueiredo</div>
+      <div class="helptext"><pre><!--helptext -->  <span class="helptopic">prtClassRvmFigueiredo</span>  Relevance vector machine classifier using a Jefferey's prior
+ 
+     CLASSIFIER = <span class="helptopic">prtClassRvmFigueiredo</span> returns a relevance vector 
+     machine classifier.
+ 
+     CLASSIFIER = <span class="helptopic">prtClassRvmFigueiredo</span>(PROPERTY1, VALUE1, ...) constructs a
+     prtClassRvm object CLASSIFIER with properties as specified by
+     PROPERTY/VALUE pairs.
+ 
+     A <span class="helptopic">prtClassRvmFigueiredo</span> object inherits all properties from the
+     abstract class prtClass. In addition is has the following
+     properties:
+ 
+     kernels            - A cell array of prtKernel objects specifying
+                          the kernels to use
+     verbosePlot        - Flag indicating whether or not to plot during
+                          training
+     verboseText        - Flag indicating whether or not to output
+                          verbose updates during training
+     learningMaxIterations  - The maximum number of iterations
+ 
+     A prtClassRvmFigeiredo also has the following read-only properties:
+ 
+     learningConverged  - Flag indicating if the training converged
+     beta               - The regression weights, estimated during training
+     sparseBeta         - The sparse regression weights, estimated during
+                         training
+     sparseKernels      - The sparse regression kernels, estimated during
+                         training
+ 
+    For more informatoin on the Figueiredo algorithm, please refer to
+    the following reference:
+  
+    M. Figueiredo, Adaptive sparseness for supervised learning, 
+    IEEE PAMI, vol. 25, no. 9 pp.1150-1159, September 2003.  
+ 
+    Training using the Figueiredo algorithm can provide faster
+    and more robust convergence under some circumstances.
+ 
+    A prtClassRvm object inherits the TRAIN, RUN, CROSSVALIDATE and
+    KFOLDS methods from prtAction. It also inherits the PLOT method
+    from prtClass.
+ 
+    % Example
+    TestDataSet = prtDataGenUnimodal;      % Create some test and
+    TrainingDataSet = prtDataGenUnimodal;  % training data
+     %    % Create a classifier with verbose plotting
+    classifier = <span class="helptopic">prtClassRvmFigueiredo</span>('verbosePlot',true); 
+    classifier = classifier.train(TrainingDataSet);    % Train
+    classified = run(classifier, TestDataSet);         % Test
+    % Plot the results
+    subplot(2,1,1);
+    classifier.plot;
+    subplot(2,1,2);
+    % figure
+    [pf,pd] = prtScoreRoc(classified,TestDataSet);
+    h = plot(pf,pd,'linewidth',3);
+    title('ROC'); xlabel('Pf'); ylabel('Pd');</pre></div><!--after help --><!--seeAlso--><div class="footerlinktitle">See also</div><div class="footerlink"> <a href="./../prtClass.html">prtClass</a>, <a href="./../prtClassRvm.html">prtClassRvm</a>, prtClassRvnSequential,
+    <a href="./../prtRegressRvmSequential.html">prtRegressRvmSequential</a>
+</div>
+   </body>
+</html>

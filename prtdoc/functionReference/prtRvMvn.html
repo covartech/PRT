@@ -1,0 +1,301 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../helpwin.css">
+      <title>MATLAB File Help: prtRvMvn</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtRvMvn</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtRvMvn</div>
+      <div class="helptext"><pre><!--helptext -->  <span class="helptopic">prtRvMvn</span>  Multivariate normal random variable
+ 
+    RV = <span class="helptopic">prtRvMvn</span> creates a <span class="helptopic">prtRvMvn</span> object with empty mean and
+    covariance matrices. The mean and covariance matrices must be set
+    either directly, or by calling the MLE method.
+ 
+    RV = <span class="helptopic">prtRvMvn</span>('covarianceStructure', VALUE) enforces a covariance
+    structure, which may be either 'full', 'spherical', or 'diagonal'.
+    Setting this property to 'spherical' or 'diagonal' will enforce
+    this structure onto the existing covariance matrix, or one
+    estimated by calling the MLE method.
+ 
+    RV = <span class="helptopic">prtRvMvn</span>(PROPERTY1, VALUE1,...) creates a prtRvMv object RV
+    with properties as specified by PROPERTY/VALUE pairs.
+ 
+    A <span class="helptopic">prtRvMvn</span> object inherits all properties from the prtRv class. In
+    addition, it has the following properties:
+ 
+    covarianceStructure - A string specifying the structure of the
+                          covariance matrix to estimate or enforce. 
+                          Valid values are 'full','spherical', or 
+                          'diagonal'
+    mu                  - The mean of the distribution, which is
+                          a 1 x nDimensions vector.
+    sigma               - The covariance matrix of the distribution,
+                          which is a nDimensions x nDimensions 
+                          matrix.
+    
+   A <span class="helptopic">prtRvMvn</span> object inherits all methods from the prtRv class. The MLE
+   method can be used to estimate the distribution parameters from
+   data.
+ 
+   Example:
+ 
+   dataSet    = prtDataGenUnimodal;   % Load a dataset consisting of 2
+                                      % classes
+   % Extract one of the classes from the dataSet
+   dataSetOneClass = prtDataSetClass(dataSet.getObservationsByClass(1));
+ 
+   RV = <span class="helptopic">prtRvMvn</span>;                       % Create a <span class="helptopic">prtRvMvn</span> object
+   RV = RV.mle(dataSetOneClass.getX);   % Compute the maximum
+                                        % likelihood estimate from the
+                                        % data
+   RV.plotPdf                           % Plot the pdf
+ 
+   RVspec = <span class="helptopic">prtRvMvn</span>;                   % Create another <span class="helptopic">prtRvMvn</span>
+                                        % object
+   RVspec.mu = [1 2];                   % Specify the mean
+   RVspec.sigma = [2 -1; -1 2]          % Specify the covariance
+   figure;
+   RVspec.plotPdf                       % Plot the pdf
+   sample = RVspec.draw(1)              % Draw 1 random sample from the
+                                        % Distribution</pre></div><!--after help --><!--seeAlso--><div class="footerlinktitle">See also</div><div class="footerlink"> <a href="./prtRv.html">prtRv</a>, <a href="./prtRvGmm.html">prtRvGmm</a>, <a href="./prtRvMultinomial.html">prtRvMultinomial</a>, <a href="./prtRvUniform.html">prtRvUniform</a>,
+    <a href="./prtRvUniformImproper.html">prtRvUniformImproper</a>, <a href="./prtRvVq.html">prtRvVq</a>, <a href="./prtRvDiscrete.html">prtRvDiscrete</a>
+</div>
+      <!--Class-->
+      <div class="sectiontitle">Class Details</div>
+      <table class="class-details">
+         <tr>
+            <td class="class-detail-label">Superclasses</td>
+            <td><a href="./prtRv.html">prtRv</a>, <a href="./prtRvMemebershipModel.html">prtRvMemebershipModel</a></td>
+         </tr>
+         <tr>
+            <td class="class-detail-label">Sealed</td>
+            <td>false</td>
+         </tr>
+         <tr>
+            <td class="class-detail-label">Construct on load</td>
+            <td>false</td>
+         </tr>
+      </table>
+      <!--Constructors-->
+      <div class="sectiontitle"><a name="constructors"></a>Constructor Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRvMvn/prtRvMvn.html">prtRvMvn</a></td>
+            <td class="m-help">Multivariate normal random variable&nbsp;</td>
+         </tr>
+      </table>
+      <!--Properties-->
+      <div class="sectiontitle"><a name="properties"></a>Property Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRvMvn/covarianceStructure.html">covarianceStructure</a></td>
+            <td class="m-help">The covariance structure&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRvMvn/dataSet.html">dataSet</a></td>
+            <td class="m-help">The training prtDataSet, only stored if verboseStorage is true. &nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRvMvn/dataSetSummary.html">dataSetSummary</a></td>
+            <td class="m-help">Structure that summarizes prtDataSet.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRvMvn/isCrossValidateValid.html">isCrossValidateValid</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRvMvn/isSupervised.html">isSupervised</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRvMvn/isTrained.html">isTrained</a></td>
+            <td class="m-help">Indicates if prtAction object has been trained.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRvMvn/mu.html">mu</a></td>
+            <td class="m-help">The mean vector&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRvMvn/name.html">name</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRvMvn/nameAbbreviation.html">nameAbbreviation</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRvMvn/plotOptions.html">plotOptions</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRvMvn/showProgressBar.html">showProgressBar</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRvMvn/sigma.html">sigma</a></td>
+            <td class="m-help">The covariance matrix&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRvMvn/userData.html">userData</a></td>
+            <td class="m-help">User specified data&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRvMvn/verboseStorage.html">verboseStorage</a></td>
+            <td class="m-help">Specifies whether or not to store the training prtDataset.&nbsp;</td>
+         </tr>
+      </table>
+      <!--Methods-->
+      <div class="sectiontitle"><a name="methods"></a>Method Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRvMvn/cdf.html">cdf</a></td>
+            <td class="m-help">Output the cdf of the random variable evaluated at the points specified&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRvMvn/crossValidate.html">crossValidate</a></td>
+            <td class="m-help">Cross validate prtAction using prtDataSet and cross validation keys.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRvMvn/draw.html">draw</a></td>
+            <td class="m-help">Draw random samples from the distribution described by the prtRv object&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRvMvn/get.html">get</a></td>
+            <td class="m-help">get the object properties&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">protected 
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRvMvn/getNumDimensions.html">getNumDimensions</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRvMvn/initializeMixtureMembership.html">initializeMixtureMembership</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRvMvn/kfolds.html">kfolds</a></td>
+            <td class="m-help">Perform K-folds cross-validation of prtAction&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRvMvn/logPdf.html">logPdf</a></td>
+            <td class="m-help">Output the log pdf of the random variable evaluated at the points specified&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRvMvn/mle.html">mle</a></td>
+            <td class="m-help">Compute the maximum likelihood estimate &nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRvMvn/optimize.html">optimize</a></td>
+            <td class="m-help">Optimize action parameter by exhaustive function maximization.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRvMvn/pdf.html">pdf</a></td>
+            <td class="m-help">Output the pdf of the random variable evaluated at the points specified&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRvMvn/plotCdf.html">plotCdf</a></td>
+            <td class="m-help">Plots the CDF of the prtRv&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRvMvn/plotLogPdf.html">plotLogPdf</a></td>
+            <td class="m-help">Plot the pdf of the prtRv&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRvMvn/plotPdf.html">plotPdf</a></td>
+            <td class="m-help">Plot the pdf of the prtRv&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRvMvn/run.html">run</a></td>
+            <td class="m-help">Run a prtAction object on a prtDataSet object.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRvMvn/set.html">set</a></td>
+            <td class="m-help">set the object properties&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRvMvn/train.html">train</a></td>
+            <td class="m-help">Train a prtAction object using training a prtDataSet object.&nbsp;</td>
+         </tr>
+      </table>
+   </body>
+</html>

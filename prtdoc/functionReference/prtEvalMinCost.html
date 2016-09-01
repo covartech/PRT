@@ -1,0 +1,49 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../helpwin.css">
+      <title>MATLAB File Help: prtEvalMinCost</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtEvalMinCost</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtEvalMinCost</div>
+      <div class="helptext"><pre><!--helptext -->  <span class="helptopic">prtEvalMinCost</span>   Returns the minimum cost of classification
+ 
+    cost = <span class="helptopic">prtEvalMinCost</span>(prtClassifier, prtDataSet, costMat) returns the
+    minimum cost of classification of dataset prtDataSet with classifier
+    prtClassifier according to the cost matrix costMat. prtDataSet must be
+    a labeled, prtDataSetStandard object. prtClassifier must be a prtClass
+    object. costMat must be a 2x2 matrix consisting of the costs. costMat
+    = [C00, C10; C01 C11], where Cij is the cost for deciding i when j is
+    the truth.
+ 
+    cost = <span class="helptopic">prtEvalMinCost</span>(prtClassifier, prtDataSet,costMat, nFolds)
+    returns the minimum cost of classification of dataset prtDataSet with
+    classifier prtClassifier according to the cost matrix costMat with
+    K-fold cross-validation. prtDataSet must be a labeled, binary
+    prtDataSetStandard object. prtClassifier must be a prtClass object.
+    nFolds is the number of folds in the K-fold cross-validation.
+ 
+    cost = <span class="helptopic">prtEvalMinCost</span>(prtClassifier, prtDataSet,costMat, xValInds) same
+    as above, but use crossValidation with specified indices instead of
+    random folds.
+ 
+    [cost, PF, PD] =  prtScoreMinCost(...) returns the probability of false
+    alarm PF and the probability of detection PD.
+ 
+    Example: 
+    dataSet = prtDataGenSpiral; 
+    classifier = prtClassDlrt;
+    cost = <span class="helptopic">prtEvalMinCost</span>(classifier, dataSet,[ 0 1; 1 0])</pre></div><!--after help --><!--seeAlso--><div class="footerlinktitle">See Also</div><div class="footerlink"> <a href="./prtEvalAuc.html">prtEvalAuc</a>, <a href="./prtEvalPfAtPd.html">prtEvalPfAtPd</a>, <a href="./prtEvalPdAtPf.html">prtEvalPdAtPf</a>
+    <a href="./prtEvalPercentCorrect.html">prtEvalPercentCorrect</a>
+</div>
+   </body>
+</html>

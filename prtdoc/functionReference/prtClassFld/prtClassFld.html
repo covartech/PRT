@@ -1,0 +1,63 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../../helpwin.css">
+      <title>MATLAB File Help: prtClassFld/prtClassFld</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtClassFld/prtClassFld</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtClassFld/prtClassFld</div>
+      <div class="helptext"><pre><!--helptext --> <span class="helptopic">prtClassFld</span> Fisher linear discriminant classifier
+  
+     CLASSIFIER = <span class="helptopic">prtClassFld</span> returns a Fisher linear discriminant classifier
+ 
+     CLASSIFIER = <span class="helptopic">prtClassFld</span>(PROPERTY1, VALUE1, ...) constructs a
+     <span class="helptopic">prtClassFld</span> object CLASSIFIER with properties as specified by
+     PROPERTY/VALUE pairs.
+ 
+     A <span class="helptopic">prtClassFld</span> object inherits all properties from the abstract class
+     prtClass. In addition is has the following properties:
+ 
+     w                  - regression weights, estimated during training
+     plotBasis          - Flag indicating whether to plot the basis
+                          functions when the PLOT function is called
+     plotProjections    - Flag indicating whether to plot the projection
+                          of points to the basis when the PLOT function is
+                          called
+ 
+     For information on the Fisher Linear Discriminant algorithm, please
+     refer to the following URL:
+ 
+     <a href="http://en.wikipedia.org/wiki/Linear_discriminant_analysis#Fisher.27s_linear_discriminant">http://en.wikipedia.org/wiki/Linear_discriminant_analysis#Fisher.27s_linear_discriminant</a>
+ 
+     A <span class="helptopic">prtClassFld</span> object inherits the TRAIN, RUN, CROSSVALIDATE and
+     KFOLDS methods from prtAction. It also inherits the PLOT method from
+     prtClass.
+ 
+     Example:
+ 
+     TestDataSet = prtDataGenUniModal;       % Create some test and
+     TrainingDataSet = prtDataGenUniModal;   % training data
+     classifier = <span class="helptopic">prtClassFld</span>;           % Create a classifier
+     classifier = classifier.train(TrainingDataSet);    % Train
+     classified = run(classifier, TestDataSet);         % Test
+     subplot(2,1,1);
+     classifier.plot;
+     subplot(2,1,2);
+     [pf,pd] = prtScoreRoc(classified,TestDataSet);
+     h = plot(pf,pd,'linewidth',3);
+     title('ROC'); xlabel('Pf'); ylabel('Pd');</pre></div><!--after help --><!--seeAlso--><div class="footerlinktitle">See also</div><div class="footerlink"> <a href="./../prtClass.html">prtClass</a>, <a href="./../prtClassLogisticDiscriminant.html">prtClassLogisticDiscriminant</a>, <a href="./../prtClassBagging.html">prtClassBagging</a>,
+    <a href="./../prtClassMap.html">prtClassMap</a>, <a href="./../prtClassCap.html">prtClassCap</a>, <a href="./../prtClassBinaryToMaryOneVsAll.html">prtClassBinaryToMaryOneVsAll</a>, <a href="./../prtClassDlrt.html">prtClassDlrt</a>,
+    <a href="./../prtClassPlsda.html">prtClassPlsda</a>, <a href="./../prtClassKnn.html">prtClassKnn</a>, <a href="./../prtClassRvm.html">prtClassRvm</a>, <a href="./../prtClassGlrt.html">prtClassGlrt</a>,  <a href="./../prtClassSvm.html">prtClassSvm</a>,
+    <a href="./../prtClassTreeBaggingCap.html">prtClassTreeBaggingCap</a>, <a href="./../prtClassKmsd.html">prtClassKmsd</a>, <a href="./../prtClassKnn.html">prtClassKnn</a>  
+</div>
+   </body>
+</html>

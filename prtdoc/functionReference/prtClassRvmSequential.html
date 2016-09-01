@@ -1,0 +1,299 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../helpwin.css">
+      <title>MATLAB File Help: prtClassRvmSequential</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtClassRvmSequential</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtClassRvmSequential</div>
+      <div class="helptext"><pre><!--helptext -->  <span class="helptopic">prtClassRvmSequential</span>  Relevance vector machine classifier using sequential training
+  
+    CLASSIFIER = <span class="helptopic">prtClassRvmSequential</span> returns a relevance vector
+    machine classifier based using sequential training.
+ 
+    CLASSIFIER = <span class="helptopic">prtClassRvmSequential</span>(PROPERTY1, VALUE1, ...)
+    constructs a <span class="helptopic">prtClassRvmSequential</span> object CLASSIFIER with properties as
+    specified by PROPERTY/VALUE pairs.
+ 
+     A <span class="helptopic">prtClassRvmSequential</span> object inherits all properties from the abstract class
+     prtClass. In addition is has the following properties:
+ 
+     kernels                - A cell array of prtKernel objects specifying
+                              the kernels to use
+     verbosePlot            - Flag indicating whether or not to plot during
+                              training
+     verboseText            - Flag indicating whether or not to output
+                              verbose updates during training
+     learningMaxIterations  - The maximum number of iterations
+ 
+     A <span class="helptopic">prtClassRvmSequential</span> also has the following read-only properties:
+ 
+     learningConverged  - Flag indicating if the training converged
+     beta               - The regression weights, estimated during training
+     sparseBeta         - The sparse regression weights, estimated during
+                          training
+     sparseKernels      - The sparse regression kernels, estimated during
+                          training
+ 
+    For more information on the algorithm and the above properties, see
+    the following reference:
+ 
+    Tipping, M. E. and A. C. Faul (2003). Fast marginal likelihood
+    maximisation for sparse Bayesian models. In C. M. Bishop and B. J.
+    Frey (Eds.), Proceedings of the Ninth International Workshop on
+    Artificial Intelligence and Statistics, Key West, FL, Jan 3-6.
+ 
+    <span class="helptopic">prtClassRvmSequential</span> is most useful for datasets with a large
+    number of observations for which the gram matrix can not be held in
+    memory. The sequential RVM training algorithm is capable of
+    operating by generating necessary portions of the gram matrix when
+    needed. The size of the generated portion of the gram matrix is
+    determined by the property, largestNumberOfGramColumns. Sequential
+    RVM training will attempt to generate portions of the gram matrix
+    that are TraingData.nObservations x largesNumberofGramColums in
+    size. If the entire gram matrix is this size or smaller it need
+    only be generated once. Therefore if the entire gram matrix can be
+    stored in memory, training is much faster. For quickest operation,
+    largestNumberOfGramColumns should be set as large as possible
+    without exceeding RAM limitations.
+ 
+     Example:
+ 
+     TestDataSet = prtDataGenUnimodal;      % Create some test and
+     TrainingDataSet = prtDataGenUnimodal;  % training data classifier
+     classifier = <span class="helptopic">prtClassRvmSequential</span>('verbosePlot',true); % Create a classifier
+     classifier = classifier.train(TrainingDataSet);    % Train
+     classified = run(classifier, TestDataSet);         % Test
+     % Plot
+     subplot(2,1,1); classifier.plot;
+     subplot(2,1,2); [pf,pd] = prtScoreRoc(classified,TestDataSet);
+     h = plot(pf,pd,'linewidth',3);
+     title('ROC'); xlabel('Pf'); ylabel('Pd');</pre></div><!--after help --><!--seeAlso--><div class="footerlinktitle">See also</div><div class="footerlink"> <a href="./prtClass.html">prtClass</a>, <a href="./prtClassRvm.html">prtClassRvm</a>, prtClassRvnFiguerido,
+    <a href="./prtRegressRvmSequential.html">prtRegressRvmSequential</a>
+</div>
+      <!--Class-->
+      <div class="sectiontitle">Class Details</div>
+      <table class="class-details">
+         <tr>
+            <td class="class-detail-label">Superclasses</td>
+            <td><a href="./prtClassRvm.html">prtClassRvm</a></td>
+         </tr>
+         <tr>
+            <td class="class-detail-label">Sealed</td>
+            <td>false</td>
+         </tr>
+         <tr>
+            <td class="class-detail-label">Construct on load</td>
+            <td>false</td>
+         </tr>
+      </table>
+      <!--Constructors-->
+      <div class="sectiontitle"><a name="constructors"></a>Constructor Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassRvmSequential/prtClassRvmSequential.html">prtClassRvmSequential</a></td>
+            <td class="m-help">Relevance vector machine classifier using sequential training&nbsp;</td>
+         </tr>
+      </table>
+      <!--Properties-->
+      <div class="sectiontitle"><a name="properties"></a>Property Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassRvmSequential/beta.html">beta</a></td>
+            <td class="m-help">Regression weights&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassRvmSequential/dataSet.html">dataSet</a></td>
+            <td class="m-help">The training prtDataSet, only stored if verboseStorage is true. &nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassRvmSequential/dataSetSummary.html">dataSetSummary</a></td>
+            <td class="m-help">Structure that summarizes prtDataSet.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassRvmSequential/internalDecider.html">internalDecider</a></td>
+            <td class="m-help">Optional prtDecider object for making decisions&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassRvmSequential/isCrossValidateValid.html">isCrossValidateValid</a></td>
+            <td class="m-help">True&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassRvmSequential/isNativeMary.html">isNativeMary</a></td>
+            <td class="m-help">False&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassRvmSequential/isSupervised.html">isSupervised</a></td>
+            <td class="m-help">True&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassRvmSequential/isTrained.html">isTrained</a></td>
+            <td class="m-help">Indicates if prtAction object has been trained.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassRvmSequential/kernels.html">kernels</a></td>
+            <td class="m-help">The kernels to be used&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassRvmSequential/largestNumberOfGramColumns.html">largestNumberOfGramColumns</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassRvmSequential/learningConverged.html">learningConverged</a></td>
+            <td class="m-help">Flag indicating whether or not training convereged&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassRvmSequential/learningConvergedTolerance.html">learningConvergedTolerance</a></td>
+            <td class="m-help">Learning tolerance; &nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassRvmSequential/learningCorrelationRemovalThreshold.html">learningCorrelationRemovalThreshold</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassRvmSequential/learningFactorRemove.html">learningFactorRemove</a></td>
+            <td class="m-help">Remove kernels during train?&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassRvmSequential/learningLikelihoodIncreaseThreshold.html">learningLikelihoodIncreaseThreshold</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassRvmSequential/learningMaxIterations.html">learningMaxIterations</a></td>
+            <td class="m-help">The maximum number of iterations&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassRvmSequential/learningPoorlyScaledLikelihoodThreshold.html">learningPoorlyScaledLikelihoodThreshold</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassRvmSequential/learningRelevantTolerance.html">learningRelevantTolerance</a></td>
+            <td class="m-help">Tolerance below which a kernel is marked as irrelevant and removed&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassRvmSequential/learningRepeatedActionLimit.html">learningRepeatedActionLimit</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassRvmSequential/name.html">name</a></td>
+            <td class="m-help">Relevance Vector Machine&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassRvmSequential/nameAbbreviation.html">nameAbbreviation</a></td>
+            <td class="m-help">RVM&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassRvmSequential/showProgressBar.html">showProgressBar</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassRvmSequential/sparseBeta.html">sparseBeta</a></td>
+            <td class="m-help">Sparse Beta&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassRvmSequential/sparseKernels.html">sparseKernels</a></td>
+            <td class="m-help">Sparse Kernel array&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassRvmSequential/twoClassParadigm.html">twoClassParadigm</a></td>
+            <td class="m-help">Whether the classifier retures one output (binary) or two outputs (m-ary) when there are only two unique class labels&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassRvmSequential/userData.html">userData</a></td>
+            <td class="m-help">User specified data&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassRvmSequential/verbosePlot.html">verbosePlot</a></td>
+            <td class="m-help">Whether or not to plot during training&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassRvmSequential/verboseStorage.html">verboseStorage</a></td>
+            <td class="m-help">Specifies whether or not to store the training prtDataset.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClassRvmSequential/verboseText.html">verboseText</a></td>
+            <td class="m-help">Whether or not to display text during training&nbsp;</td>
+         </tr>
+      </table>
+      <!--Methods-->
+      <div class="sectiontitle"><a name="methods"></a>Method Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClassRvmSequential/crossValidate.html">crossValidate</a></td>
+            <td class="m-help">Cross validate prtAction using prtDataSet and cross validation keys.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClassRvmSequential/get.html">get</a></td>
+            <td class="m-help">get the object properties&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClassRvmSequential/kfolds.html">kfolds</a></td>
+            <td class="m-help">Perform K-folds cross-validation of prtAction&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClassRvmSequential/optimize.html">optimize</a></td>
+            <td class="m-help">Optimize action parameter by exhaustive function maximization.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClassRvmSequential/plot.html">plot</a></td>
+            <td class="m-help">Plot output confidence of the prtClassRvm object&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClassRvmSequential/run.html">run</a></td>
+            <td class="m-help">Run a prtAction object on a prtDataSet object.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClassRvmSequential/set.html">set</a></td>
+            <td class="m-help">set the object properties&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClassRvmSequential/train.html">train</a></td>
+            <td class="m-help">Train a prtAction object using training a prtDataSet object.&nbsp;</td>
+         </tr>
+      </table>
+   </body>
+</html>

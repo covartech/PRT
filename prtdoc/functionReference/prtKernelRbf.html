@@ -1,0 +1,194 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../helpwin.css">
+      <title>MATLAB File Help: prtKernelRbf</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtKernelRbf</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtKernelRbf</div>
+      <div class="helptext"><pre><!--helptext -->  <span class="helptopic">prtKernelRbf</span>  Radial basis function kernel
+ 
+   KERNOBJ = <span class="helptopic">prtKernelRbf</span> Generates a kernel object implementing a
+   radial basis function.  Kernel objects are widely used in several
+   prt classifiers, such as prtClassRvm and prtClassSvm.  RBF kernels
+   implement the following function for 1 x N vectors x1 and x2:
+ 
+    k(x1,x2) = exp(-sum((x1-x2).^2)./sigma.^2);
+ 
+   KERNOBJ = <span class="helptopic">prtKernelRbf</span>(PROPERTY1, VALUE1, ...) constructs a
+   prtKernelRbfNdimensionScale object KERNOBJ with properties as specified by
+   PROPERTY/VALUE pairs. <span class="helptopic">prtKernelRbf</span> objects have the following
+   user-settable properties:
+ 
+   KERNOBJ = <span class="helptopic">prtKernelRbf</span>(param,value,...) with parameter value
+   strings sets the relevant fields of the <span class="helptopic">prtKernelRbf</span> object to have
+   the corresponding values.  <span class="helptopic">prtKernelRbf</span> objects have the following
+   user-settable properties:
+ 
+    sigma   - Positive scalar value specifying the width of the
+              Gaussian kernel in the RBF function.  (Default value is 1)
+ 
+   Radial basis function kernels are widely used in the machine
+   learning literature. For more information on these kernels, please
+   refer to:
+    
+   <a href="http://en.wikipedia.org/wiki/Support_vector_machine#Non-linear_classification">http://en.wikipedia.org/wiki/Support_vector_machine#Non-linear_classification</a>
+ 
+    <span class="helptopic">prtKernelRbf</span> objects inherit the TRAIN and RUN methods from prtKernel.
+ 
+    % Example
+    ds = prtDataGenBimodal;       % Generate a dataset
+    k1 = <span class="helptopic">prtKernelRbf</span>;            % Create a prtKernel object with 
+                                  % default value of sigma 
+    k2 = <span class="helptopic">prtKernelRbf</span>('sigma',2); % Create a prtKernel object with
+                                  % specified value of sigma
+    
+    k1 = k1.train(ds); % Train
+    g1 = k1.run(ds); % Evaluate
+ 
+    k2 = k2.train(ds); % Train
+    g2 = k2.run(ds); % Evaluate
+ 
+    subplot(2,1,1); imagesc(g1.getObservations);  %Plot the results
+    subplot(2,1,2); imagesc(g2.getObservations);</pre></div><!--after help --><!--seeAlso--><div class="footerlinktitle">See also</div><div class="footerlink"> <a href="./prtKernel.html">prtKernel</a>,<a href="./prtKernelSet.html">prtKernelSet</a>, <a href="./prtKernelDc.html">prtKernelDc</a>, <a href="./prtKernelDirect.html">prtKernelDirect</a>,
+    <a href="./prtKernelHyperbolicTangent.html">prtKernelHyperbolicTangent</a>, <a href="./prtKernelPolynomial.html">prtKernelPolynomial</a>,
+    <a href="./prtKernelRbfNdimensionScale.html">prtKernelRbfNdimensionScale</a>, 
+</div>
+      <!--Class-->
+      <div class="sectiontitle">Class Details</div>
+      <table class="class-details">
+         <tr>
+            <td class="class-detail-label">Superclasses</td>
+            <td><a href="./prtKernel.html">prtKernel</a></td>
+         </tr>
+         <tr>
+            <td class="class-detail-label">Sealed</td>
+            <td>false</td>
+         </tr>
+         <tr>
+            <td class="class-detail-label">Construct on load</td>
+            <td>false</td>
+         </tr>
+      </table>
+      <!--Constructors-->
+      <div class="sectiontitle"><a name="constructors"></a>Constructor Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="name"><a href="./prtKernelRbf/prtKernelRbf.html">prtKernelRbf</a></td>
+            <td class="m-help">Radial basis function kernel&nbsp;</td>
+         </tr>
+      </table>
+      <!--Properties-->
+      <div class="sectiontitle"><a name="properties"></a>Property Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="name"><a href="./prtKernelRbf/dataSet.html">dataSet</a></td>
+            <td class="m-help">The training prtDataSet, only stored if verboseStorage is true. &nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtKernelRbf/dataSetSummary.html">dataSetSummary</a></td>
+            <td class="m-help">Structure that summarizes prtDataSet.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtKernelRbf/isCrossValidateValid.html">isCrossValidateValid</a></td>
+            <td class="m-help">False&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtKernelRbf/isSupervised.html">isSupervised</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtKernelRbf/isTrained.html">isTrained</a></td>
+            <td class="m-help">Indicates if prtAction object has been trained.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtKernelRbf/name.html">name</a></td>
+            <td class="m-help">RBF Kernel&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtKernelRbf/nameAbbreviation.html">nameAbbreviation</a></td>
+            <td class="m-help">RBF&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtKernelRbf/showProgressBar.html">showProgressBar</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtKernelRbf/sigma.html">sigma</a></td>
+            <td class="m-help">The inverse kernel width&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtKernelRbf/userData.html">userData</a></td>
+            <td class="m-help">User specified data&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtKernelRbf/verboseStorage.html">verboseStorage</a></td>
+            <td class="m-help">Specifies whether or not to store the training prtDataset.&nbsp;</td>
+         </tr>
+      </table>
+      <!--Methods-->
+      <div class="sectiontitle"><a name="methods"></a>Method Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtKernelRbf/and.html">and</a></td>
+            <td class="m-help">Combine 2 prtKernels into a prtKernelSet&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtKernelRbf/get.html">get</a></td>
+            <td class="m-help">get the object properties&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtKernelRbf/optimize.html">optimize</a></td>
+            <td class="m-help">Optimize action parameter by exhaustive function maximization.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtKernelRbf/run.html">run</a></td>
+            <td class="m-help">Run a prtAction object on a prtDataSet object.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtKernelRbf/set.html">set</a></td>
+            <td class="m-help">set the object properties&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtKernelRbf/train.html">train</a></td>
+            <td class="m-help">Train a prtAction object using training a prtDataSet object.&nbsp;</td>
+         </tr>
+      </table>
+   </body>
+</html>

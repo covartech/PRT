@@ -1,0 +1,67 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../../helpwin.css">
+      <title>MATLAB File Help: prtKernelRbf/prtKernelRbf</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtKernelRbf/prtKernelRbf</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtKernelRbf/prtKernelRbf</div>
+      <div class="helptext"><pre><!--helptext -->  <span class="helptopic">prtKernelRbf</span>  Radial basis function kernel
+ 
+   KERNOBJ = <span class="helptopic">prtKernelRbf</span> Generates a kernel object implementing a
+   radial basis function.  Kernel objects are widely used in several
+   prt classifiers, such as prtClassRvm and prtClassSvm.  RBF kernels
+   implement the following function for 1 x N vectors x1 and x2:
+ 
+    k(x1,x2) = exp(-sum((x1-x2).^2)./sigma.^2);
+ 
+   KERNOBJ = <span class="helptopic">prtKernelRbf</span>(PROPERTY1, VALUE1, ...) constructs a
+   prtKernelRbfNdimensionScale object KERNOBJ with properties as specified by
+   PROPERTY/VALUE pairs. <span class="helptopic">prtKernelRbf</span> objects have the following
+   user-settable properties:
+ 
+   KERNOBJ = <span class="helptopic">prtKernelRbf</span>(param,value,...) with parameter value
+   strings sets the relevant fields of the <span class="helptopic">prtKernelRbf</span> object to have
+   the corresponding values.  <span class="helptopic">prtKernelRbf</span> objects have the following
+   user-settable properties:
+ 
+    sigma   - Positive scalar value specifying the width of the
+              Gaussian kernel in the RBF function.  (Default value is 1)
+ 
+   Radial basis function kernels are widely used in the machine
+   learning literature. For more information on these kernels, please
+   refer to:
+    
+   <a href="http://en.wikipedia.org/wiki/Support_vector_machine#Non-linear_classification">http://en.wikipedia.org/wiki/Support_vector_machine#Non-linear_classification</a>
+ 
+    <span class="helptopic">prtKernelRbf</span> objects inherit the TRAIN and RUN methods from prtKernel.
+ 
+    % Example
+    ds = prtDataGenBimodal;       % Generate a dataset
+    k1 = <span class="helptopic">prtKernelRbf</span>;            % Create a prtKernel object with 
+                                  % default value of sigma 
+    k2 = <span class="helptopic">prtKernelRbf</span>('sigma',2); % Create a prtKernel object with
+                                  % specified value of sigma
+    
+    k1 = k1.train(ds); % Train
+    g1 = k1.run(ds); % Evaluate
+ 
+    k2 = k2.train(ds); % Train
+    g2 = k2.run(ds); % Evaluate
+ 
+    subplot(2,1,1); imagesc(g1.getObservations);  %Plot the results
+    subplot(2,1,2); imagesc(g2.getObservations);</pre></div><!--after help --><!--seeAlso--><div class="footerlinktitle">See also</div><div class="footerlink"> <a href="./../prtKernel.html">prtKernel</a>,<a href="./../prtKernelSet.html">prtKernelSet</a>, <a href="./../prtKernelDc.html">prtKernelDc</a>, <a href="./../prtKernelDirect.html">prtKernelDirect</a>,
+    <a href="./../prtKernelHyperbolicTangent.html">prtKernelHyperbolicTangent</a>, <a href="./../prtKernelPolynomial.html">prtKernelPolynomial</a>,
+    <a href="./../prtKernelRbfNdimensionScale.html">prtKernelRbfNdimensionScale</a>, 
+</div>
+   </body>
+</html>

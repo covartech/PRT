@@ -1,0 +1,62 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../../helpwin.css">
+      <title>MATLAB File Help: prtClassBinaryToMaryOneVsAll/prtClassBinaryToMaryOneVsAll</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtClassBinaryToMaryOneVsAll/prtClassBinaryToMaryOneVsAll</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtClassBinaryToMaryOneVsAll/prtClassBinaryToMaryOneVsAll</div>
+      <div class="helptext"><pre><!--helptext -->  <span class="helptopic">prtClassBinaryToMaryOneVsAll</span>  M-Ary Emulation Classifier
+ 
+     CLASSIFIER = <span class="helptopic">prtClassBinaryToMaryOneVsAll</span> returns a M-ary "one
+     versus all" classifier. A one versus all classifier utilizes a
+     binary classifier to make M-ary decisions. For all M classes, it
+     selects each class, and makes a binary comparison to all the
+     others.
+ 
+     CLASSIFIER = <span class="helptopic">prtClassBinaryToMaryOneVsAll</span>(PROPERTY1, VALUE1, ...)
+     constructs a <span class="helptopic">prtClassBinaryToMaryOneVsAll</span> object CLASSIFIER with
+     properties as specified by PROPERTY/VALUE pairs.
+ 
+     A <span class="helptopic">prtClassBinaryToMaryOneVsAll</span> object inherits all properties from the
+     abstract class prtClass. In addition is has the following
+     properties:
+ 
+     baseClassifier - The classifier to be used to make the binary
+                   decisions. Must be a prtClass object, and defaults 
+                   to a prtClassLogisticDiscriminant classifier.
+  
+     A <span class="helptopic">prtClassBinaryToMaryOneVsAll</span> object inherits the TRAIN, RUN,
+     CROSSVALIDATE and KFOLDS methods from prtAction. It also inherits
+     the PLOT method from prtClass.
+ 
+     Example:
+ 
+      TestDataSet = prtDataGenMary;      % Create some test and 
+      TrainingDataSet = prtDataGenMary;  % training data
+      classifier = <span class="helptopic">prtClassBinaryToMaryOneVsAll</span>;   % Create a classifier
+      classifier.baseClassifier = prtClassGlrt;    % Set the binary 
+                                                   % Classifier
+      % Set the internal Decider
+      classifier.internalDecider = prtDecisionMap;
+ 
+      classifier = classifier.train(TrainingDataSet);    % Train
+      classes    = run(classifier, TestDataSet);         % Test
+ 
+      % Evaluate, plot results
+      percentCorr = prtScorePercentCorrect(classes.getX,TestDataSet.getTargets)
+      classifier.plot;</pre></div><!--after help --><!--seeAlso--><div class="footerlinktitle">See also</div><div class="footerlink"> <a href="./../prtClass.html">prtClass</a>, <a href="./../prtClassLogisticDiscriminant.html">prtClassLogisticDiscriminant</a>, <a href="./../prtClassBagging.html">prtClassBagging</a>,
+     <a href="./../prtClassMap.html">prtClassMap</a>, <a href="./../prtClassCap.html">prtClassCap</a>, <a href="./../prtClassBinaryToMaryOneVsAll.html">prtClassBinaryToMaryOneVsAll</a>, <a href="./../prtClassDlrt.html">prtClassDlrt</a>,
+     <a href="./../prtClassPlsda.html">prtClassPlsda</a>, <a href="./../prtClassFld.html">prtClassFld</a>, <a href="./../prtClassRvm.html">prtClassRvm</a>, <a href="./../prtClassGlrt.html">prtClassGlrt</a>,  <a href="./../prtClass.html">prtClass</a>
+</div>
+   </body>
+</html>

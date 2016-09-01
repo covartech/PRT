@@ -1,0 +1,277 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../helpwin.css">
+      <title>MATLAB File Help: prtRvVq</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtRvVq</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtRvVq</div>
+      <div class="helptext"><pre><!--helptext -->  <span class="helptopic">prtRvVq</span>  Vector quantization random variable
+ 
+    RV = <span class="helptopic">prtRvVq</span> creates a <span class="helptopic">prtRvVq</span> object with empty means and
+    probabilities. The means and probabilties must be set either
+    directly, or by calling the MLE method.
+   
+    Vector quanitization uses k-means to discretize the data space
+    using nCategories means. The means are the discrete points in space and
+    have probabilies representing their prominence in the data. The
+    pdf is calculated by mapping to the nearest entry of the means and
+    giving the data point the corresponding entry in probabilities.
+ 
+    RV = <span class="helptopic">prtRvVq</span>(PROPERTY1, VALUE1,...) creates a <span class="helptopic">prtRvVq</span> object RV
+    with properties as specified by PROPERTY/VALUE pairs.
+ 
+    A <span class="helptopic">prtRvVq</span> object inherits all properties from the prtRv class. In
+    addition, it has the following properties:
+ 
+    nCategories   - The number of categories
+    means         - The means of each catergory that are used to 
+                    approximate the density
+    probabilities - The probabilities of each category
+    
+   A <span class="helptopic">prtRvVq</span> object inherits all methods from the prtRv class. The MLE
+   method can be used to estimate the distribution parameters from
+   data.
+ 
+   Example:
+ 
+   dataSet = prtDataGenUnimodal;        % Load a dataset consisting of
+                                        % 2 features
+   dataSet = retainFeatures(dataSet,1); % Retain only the first feature
+ 
+   RV = <span class="helptopic">prtRvVq</span>;                        % Create a <span class="helptopic">prtRvVq</span> object
+   RV = RV.mle(dataSet);                % Compute the VQ parameters
+                                        % form the data
+   RV.plotPdf                           % Plot the pdf</pre></div><!--after help --><!--seeAlso--><div class="footerlinktitle">See also</div><div class="footerlink"> <a href="./prtRv.html">prtRv</a>, <a href="./prtRvMvn.html">prtRvMvn</a>, <a href="./prtRvGmm.html">prtRvGmm</a>, <a href="./prtRvMultinomial.html">prtRvMultinomial</a>,
+    <a href="./prtRvUniform.html">prtRvUniform</a>, <a href="./prtRvUniformImproper.html">prtRvUniformImproper</a>
+</div>
+      <!--Class-->
+      <div class="sectiontitle">Class Details</div>
+      <table class="class-details">
+         <tr>
+            <td class="class-detail-label">Superclasses</td>
+            <td><a href="./prtRv.html">prtRv</a></td>
+         </tr>
+         <tr>
+            <td class="class-detail-label">Sealed</td>
+            <td>false</td>
+         </tr>
+         <tr>
+            <td class="class-detail-label">Construct on load</td>
+            <td>false</td>
+         </tr>
+      </table>
+      <!--Constructors-->
+      <div class="sectiontitle"><a name="constructors"></a>Constructor Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRvVq/prtRvVq.html">prtRvVq</a></td>
+            <td class="m-help">Vector quantization random variable&nbsp;</td>
+         </tr>
+      </table>
+      <!--Properties-->
+      <div class="sectiontitle"><a name="properties"></a>Property Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRvVq/dataSet.html">dataSet</a></td>
+            <td class="m-help">The training prtDataSet, only stored if verboseStorage is true. &nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRvVq/dataSetSummary.html">dataSetSummary</a></td>
+            <td class="m-help">Structure that summarizes prtDataSet.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRvVq/isCrossValidateValid.html">isCrossValidateValid</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRvVq/isSupervised.html">isSupervised</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRvVq/isTrained.html">isTrained</a></td>
+            <td class="m-help">Indicates if prtAction object has been trained.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRvVq/means.html">means</a></td>
+            <td class="m-help">The means&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRvVq/nCategories.html">nCategories</a></td>
+            <td class="m-help">The number of categories&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRvVq/name.html">name</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRvVq/nameAbbreviation.html">nameAbbreviation</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRvVq/plotOptions.html">plotOptions</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRvVq/probabilities.html">probabilities</a></td>
+            <td class="m-help">The probabilities&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRvVq/showProgressBar.html">showProgressBar</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRvVq/userData.html">userData</a></td>
+            <td class="m-help">User specified data&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRvVq/verboseStorage.html">verboseStorage</a></td>
+            <td class="m-help">Specifies whether or not to store the training prtDataset.&nbsp;</td>
+         </tr>
+      </table>
+      <!--Methods-->
+      <div class="sectiontitle"><a name="methods"></a>Method Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRvVq/cdf.html">cdf</a></td>
+            <td class="m-help">Output the cdf of the random variable evaluated at the points specified&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRvVq/crossValidate.html">crossValidate</a></td>
+            <td class="m-help">Cross validate prtAction using prtDataSet and cross validation keys.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRvVq/draw.html">draw</a></td>
+            <td class="m-help">Draw random samples from the distribution described by the prtRv object&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRvVq/get.html">get</a></td>
+            <td class="m-help">get the object properties&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRvVq/kfolds.html">kfolds</a></td>
+            <td class="m-help">Perform K-folds cross-validation of prtAction&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRvVq/logPdf.html">logPdf</a></td>
+            <td class="m-help">Output the log pdf of the random variable evaluated at the points specified&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRvVq/mle.html">mle</a></td>
+            <td class="m-help">Compute the maximum likelihood estimate &nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRvVq/optimize.html">optimize</a></td>
+            <td class="m-help">Optimize action parameter by exhaustive function maximization.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRvVq/pdf.html">pdf</a></td>
+            <td class="m-help">Output the pdf of the random variable evaluated at the points specified&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRvVq/plotCdf.html">plotCdf</a></td>
+            <td class="m-help">Plot the cdf of the prtRv&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRvVq/plotLogPdf.html">plotLogPdf</a></td>
+            <td class="m-help">Plot the pdf of the prtRv&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRvVq/plotPdf.html">plotPdf</a></td>
+            <td class="m-help">Plot the pdf of the prtRv&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRvVq/run.html">run</a></td>
+            <td class="m-help">Run a prtAction object on a prtDataSet object.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRvVq/set.html">set</a></td>
+            <td class="m-help">set the object properties&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRvVq/train.html">train</a></td>
+            <td class="m-help">Train a prtAction object using training a prtDataSet object.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRvVq/vq.html">vq</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+      </table>
+   </body>
+</html>

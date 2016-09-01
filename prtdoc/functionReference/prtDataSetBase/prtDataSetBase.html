@@ -1,0 +1,77 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../../helpwin.css">
+      <title>MATLAB File Help: prtDataSetBase/prtDataSetBase</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtDataSetBase/prtDataSetBase</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtDataSetBase/prtDataSetBase</div>
+      <div class="helptext"><pre><!--helptext -->  <span class="helptopic">prtDataSetBase</span>    Base class for all prt data sets.
+ 
+  This is an abstract class from which all prt data sets inherit from.
+  It can not be instantiated. It contains the following properties:
+ 
+    name            - Data set descriptive name
+    description     - Description of the data set
+    userData        - Structure for holding additional related to the
+                      data set
+ 
+    observationInfo - Structure array holding additional
+                      data per related to each observation
+ 
+    nObservations     - Number of observations in the data set
+    nTargetDimensions - Number of target dimensions
+    isLabeled         - Whether or not the data set is labeled
+ 
+  The <span class="helptopic">prtDataSetBase</span> class has the following methods
+ 
+    getObservationNames - get the observation names
+    setObservationNames - set the observation names
+ 
+    getTargetNames      - get the target names
+    setTargetNames      - set the target names
+ 
+    getX - Shortcut for getObservations
+    setX - Shortcut for setObservations
+    getY - Shortcut for getTargets
+    setY - Shortcut for setTargets
+ 
+    setXY - Shortcut for setObservationsAndTargets
+ 
+  The <span class="helptopic">prtDataSetBase</span> class also specifies the following abstract
+  functions, which are implemented by all derived classes:
+ 
+    getObservations - Return an array of observations
+    setObservations - Set the array of observations
+ 
+    getTargets - Return an array of targets (empty if unlabeled)
+    setTargets - Set the array of targets
+ 
+    setObservationsAndTargets - Set the array of observations and
+                                targets
+    catFeatures               - Combine the features from a data set
+                                with another data set
+    catObservations           - Combine the Observations from a data
+                                set with another data set
+    catTargets                - Combine the targets from a data set
+                                with another data set
+    removeObservations        - Remove observations from a data set
+    retainObservations        - Retain observatons (remove all others)
+                                from a data set
+ 
+    removeTargets - Remove columns of targets from a data set
+    retainTargets - Retain columns of targets from a data set
+    plot          - Plot the data set
+    summarize     - Output a summary of the data set</pre></div><!--after help --><!--seeAlso--><div class="footerlinktitle">See also</div><div class="footerlink"> <a href="./../prtDataSetStandard.html">prtDataSetStandard</a>, <a href="./../prtDataSetClass.html">prtDataSetClass</a>, <a href="./../prtDataSetRegress.html">prtDataSetRegress</a>,
+</div>
+   </body>
+</html>

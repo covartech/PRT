@@ -1,0 +1,255 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../helpwin.css">
+      <title>MATLAB File Help: prtRv</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtRv</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtRv</div>
+      <div class="helptext"><pre><!--helptext -->  <span class="helptopic">prtRv</span> Base class for all prt random variables
+ 
+    This is an abstract class from which all prt random variables
+    inherit. It can not be instantiated. <span class="helptopic">prtRv</span> contains the following 
+    properties:
+ 
+    name           - Name of the random variable.
+    userData       - Structure for holding additional related to the
+                     random variable.
+    nDimensions    - Number of dimensions of the vector space
+                     represented by the random variable.
+ 
+    The <span class="helptopic">prtRv</span> class has the following methods
+ 
+    plotPdf - Plot the pdf of the random variable
+    plotCdf - Plot the cdf of the random variable
+ 
+    The <span class="helptopic">prtRv</span> class has the following methods, most of which are
+    overloaded. If a method is not overloaded, it is because it is not
+    possible to implement the functionality.
+ 
+    pdf - Output the pdf of the random variable evaluated at the points
+          specified
+ 
+    logPdf - Output the log-pdf of the random variable evaluated at the
+             points specified (for many distributions, this can be
+             calculated more easily than simply log(pdf(R,X))
+ 
+    cdf - Output the cdf of the random variable evaluated at the
+          points specified
+ 
+    draw - Draw samples from the random variable
+ 
+    mle - Perform maximum likelihood estimation of the objects parameters 
+          using the specified data</pre></div><!--after help --><!--seeAlso--><div class="footerlinktitle">See also</div><div class="footerlink"> <a href="./prtRvMvn.html">prtRvMvn</a>, <a href="./prtRvGmm.html">prtRvGmm</a>, <a href="./prtRvMultinomial.html">prtRvMultinomial</a>, <a href="./prtRvUniform.html">prtRvUniform</a>,
+    <a href="./prtRvUniformImproper.html">prtRvUniformImproper</a>, <a href="./prtRvVq.html">prtRvVq</a>
+</div>
+      <!--Class-->
+      <div class="sectiontitle">Class Details</div>
+      <table class="class-details">
+         <tr>
+            <td class="class-detail-label">Superclasses</td>
+            <td><a href="./prtAction.html">prtAction</a></td>
+         </tr>
+         <tr>
+            <td class="class-detail-label">Sealed</td>
+            <td>false</td>
+         </tr>
+         <tr>
+            <td class="class-detail-label">Construct on load</td>
+            <td>false</td>
+         </tr>
+      </table>
+      <!--Constructors-->
+      <div class="sectiontitle"><a name="constructors"></a>Constructor Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRv/prtRv.html">prtRv</a></td>
+            <td class="m-help">Base class for all prt random variables&nbsp;</td>
+         </tr>
+      </table>
+      <!--Properties-->
+      <div class="sectiontitle"><a name="properties"></a>Property Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRv/dataSet.html">dataSet</a></td>
+            <td class="m-help">The training prtDataSet, only stored if verboseStorage is true. &nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRv/dataSetSummary.html">dataSetSummary</a></td>
+            <td class="m-help">Structure that summarizes prtDataSet.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRv/isCrossValidateValid.html">isCrossValidateValid</a></td>
+            <td class="m-help">Indicates whether or not cross-validation is a valid operation&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRv/isSupervised.html">isSupervised</a></td>
+            <td class="m-help">Specifies if the prtAction requires a labeled dataSet&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRv/isTrained.html">isTrained</a></td>
+            <td class="m-help">Indicates if prtAction object has been trained.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRv/name.html">name</a></td>
+            <td class="m-help">Descriptive name of prtAction object.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRv/nameAbbreviation.html">nameAbbreviation</a></td>
+            <td class="m-help">Shortened name for the prtAction object.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRv/plotOptions.html">plotOptions</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRv/showProgressBar.html">showProgressBar</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRv/userData.html">userData</a></td>
+            <td class="m-help">User specified data&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRv/verboseStorage.html">verboseStorage</a></td>
+            <td class="m-help">Specifies whether or not to store the training prtDataset.&nbsp;</td>
+         </tr>
+      </table>
+      <!--Methods-->
+      <div class="sectiontitle"><a name="methods"></a>Method Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRv/cdf.html">cdf</a></td>
+            <td class="m-help">Output the cdf of the random variable evaluated at the points specified&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRv/crossValidate.html">crossValidate</a></td>
+            <td class="m-help">Cross validate prtAction using prtDataSet and cross validation keys.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRv/draw.html">draw</a></td>
+            <td class="m-help">Draw random samples from the distribution described by the prtRv object&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRv/get.html">get</a></td>
+            <td class="m-help">get the object properties&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRv/kfolds.html">kfolds</a></td>
+            <td class="m-help">Perform K-folds cross-validation of prtAction&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRv/logPdf.html">logPdf</a></td>
+            <td class="m-help">Output the log pdf of the random variable evaluated at the points specified&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRv/mle.html">mle</a></td>
+            <td class="m-help">Compute the maximum likelihood estimate &nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRv/optimize.html">optimize</a></td>
+            <td class="m-help">Optimize action parameter by exhaustive function maximization.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRv/pdf.html">pdf</a></td>
+            <td class="m-help">Output the pdf of the random variable evaluated at the points specified&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRv/plotCdf.html">plotCdf</a></td>
+            <td class="m-help">Plot the cdf of the prtRv&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRv/plotLogPdf.html">plotLogPdf</a></td>
+            <td class="m-help">Plot the pdf of the prtRv&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRv/plotPdf.html">plotPdf</a></td>
+            <td class="m-help">Plot the pdf of the prtRv&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRv/run.html">run</a></td>
+            <td class="m-help">Run a prtAction object on a prtDataSet object.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRv/set.html">set</a></td>
+            <td class="m-help">set the object properties&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRv/train.html">train</a></td>
+            <td class="m-help">Train a prtAction object using training a prtDataSet object.&nbsp;</td>
+         </tr>
+      </table>
+   </body>
+</html>

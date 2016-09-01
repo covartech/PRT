@@ -1,0 +1,181 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Outlier removal in the Pattern Recognition Toolbox</title><meta name="generator" content="MATLAB 8.0"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2013-02-19"><meta name="DC.source" content="prtDocOutlierRemoval.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Outlier removal in the Pattern Recognition Toolbox</h1><!--introduction--><p>Often, in real data sets, there exist samples that are considered outliers, that for whatever reason, do not accurately represent the actual data. It is often beneficial to remove outliers from data prior to training, as they can badly skew results. The Pattern Recognition Toolbox provides several functions for the removal of outliers.</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Removal of missing or non-finite data</a></li><li><a href="#2">Run mode options</a></li><li><a href="#3">Removal of outliers beyond a number of standard deviations</a></li></ul></div><h2>Removal of missing or non-finite data<a name="1"></a></h2><p>In some data sets, it is possible that some samples have missing or non-finite elements, that need to be removed. Missing data is commonly marked as NaN. As a simple example, consider the following:</p><pre class="codeinput">dataSet = prtDataGenUnimodal;               <span class="comment">% Load a data Set</span>
+outlier = prtDataSetClass([NaN NaN],1);     <span class="comment">% Create and insert</span>
+dataSet = catObservations(dataSet,outlier); <span class="comment">% an Outlier</span>
+
+<span class="comment">% Create the prtOutlierRemoval object, specifying that on run, any NaNs</span>
+<span class="comment">% will be removed.</span>
+outRemove = prtOutlierRemovalMissingData(<span class="string">'runMode'</span>,<span class="string">'removeObservation'</span>);
+
+outRemove = outRemove.train(dataSet);    <span class="comment">% Train and run</span>
+dataSetNew = outRemove.run(dataSet);
+</pre><h2>Run mode options<a name="2"></a></h2><p>The above code removes all NaN data from the data set when the run function is called. The runMode property specifies what the outlier removal object should do when a data member is determined to be an outlier. There are four options for this property:</p><pre>       'noAction' - When running the outlier removal action, do
+       nothing.  This ensures that the outlier removal action outputs
+       data sets of the same size as the input data set.</pre><pre>       'replaceWithNan' - When running the outlier removal action
+       replace outlier values with nans.  This ensures that the
+       outlier removal action outputs data sets of the same size as
+       the input data set.</pre><pre>       'removeObservation' - When running the outlier removal action,
+       remove observations where any feature value is flagged as an
+       outlier.  This can change the size of the data set during
+       running and can result in invalid cross-validation folds.</pre><pre>       'removeFeature'  - When running the outlier removal action,
+       remove features where any observation contains an outlier.</pre><h2>Removal of outliers beyond a number of standard deviations<a name="3"></a></h2><p>Another common outlier removal technique is to remove any data members that lie beyond a certain number of standard deviations from the average data member. For example:</p><pre class="codeinput">dataSet = prtDataGenUnimodal;               <span class="comment">% Load a data Set</span>
+outlier = prtDataSetClass([-10 -10],1);     <span class="comment">% Create and insert</span>
+dataSet = catObservations(dataSet,outlier); <span class="comment">% an outlier</span>
+
+<span class="comment">% Create the prtOutlierRemoval object</span>
+nStdRemove = prtOutlierRemovalNStd(<span class="string">'runMode'</span>,<span class="string">'removeObservation'</span>);
+
+nStdRemove = nStdRemove.train(dataSet);    <span class="comment">% Train and run</span>
+dataSetNew = nStdRemove.run(dataSet);
+
+<span class="comment">% Plot the results</span>
+subplot(2,1,1); plot(dataSet);
+title(<span class="string">'Original Data'</span>);
+subplot(2,1,2); plot(dataSetNew);
+title(<span class="string">'NstdOutlierRemove Data'</span>);
+</pre><img vspace="5" hspace="5" src="prtDocOutlierRemoval_01.png" alt=""> <p>Notice in the above plot, the outlier at [-10 -10] has been removed.</p><p>All outlier removal objects in the Pattern Recognition Toolbox have the same API as discussed above.  For a list of all the different objects, and links to their individual help entries, <a href="prtDocFunctionList.html#10">A list of commonly used functions</a></p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2012b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Outlier removal in the Pattern Recognition Toolbox
+% Often, in real data sets, there exist samples that are considered
+% outliers, that for whatever reason, do not accurately represent the
+% actual data. It is often beneficial to remove outliers from data prior to
+% training, as they can badly skew results. The Pattern Recognition Toolbox
+% provides several functions for the removal of outliers.
+
+%% Removal of missing or non-finite data
+% In some data sets, it is possible that some samples have missing or
+% non-finite elements, that need to be removed. Missing data is commonly
+% marked as NaN. As a simple example, consider the following:
+
+dataSet = prtDataGenUnimodal;               % Load a data Set
+outlier = prtDataSetClass([NaN NaN],1);     % Create and insert
+dataSet = catObservations(dataSet,outlier); % an Outlier
+
+% Create the prtOutlierRemoval object, specifying that on run, any NaNs
+% will be removed.
+outRemove = prtOutlierRemovalMissingData('runMode','removeObservation');
+
+outRemove = outRemove.train(dataSet);    % Train and run
+dataSetNew = outRemove.run(dataSet);
+%% Run mode options
+%
+% The above code removes all NaN data from the data set when the run
+% function is called. The runMode property specifies what the outlier
+% removal object should do when a data member is determined to be an
+% outlier. There are four options for this property:
+%  
+%         'noAction' - When running the outlier removal action, do
+%         nothing.  This ensures that the outlier removal action outputs
+%         data sets of the same size as the input data set.
+%  
+%         'replaceWithNan' - When running the outlier removal action
+%         replace outlier values with nans.  This ensures that the
+%         outlier removal action outputs data sets of the same size as
+%         the input data set.
+%  
+%         'removeObservation' - When running the outlier removal action,
+%         remove observations where any feature value is flagged as an
+%         outlier.  This can change the size of the data set during
+%         running and can result in invalid cross-validation folds.
+%  
+%         'removeFeature'  - When running the outlier removal action,
+%         remove features where any observation contains an outlier.
+
+%% Removal of outliers beyond a number of standard deviations
+% Another common outlier removal technique is to remove any data members
+% that lie beyond a certain number of standard deviations from the average
+% data member. For example:
+
+dataSet = prtDataGenUnimodal;               % Load a data Set
+outlier = prtDataSetClass([-10 -10],1);     % Create and insert
+dataSet = catObservations(dataSet,outlier); % an outlier
+
+% Create the prtOutlierRemoval object
+nStdRemove = prtOutlierRemovalNStd('runMode','removeObservation');
+
+nStdRemove = nStdRemove.train(dataSet);    % Train and run
+dataSetNew = nStdRemove.run(dataSet);
+
+% Plot the results
+subplot(2,1,1); plot(dataSet);
+title('Original Data');
+subplot(2,1,2); plot(dataSetNew);
+title('NstdOutlierRemove Data');
+
+%%
+% Notice in the above plot, the outlier at [-10 -10] has been removed.
+% 
+% 
+% All outlier removal objects in the Pattern Recognition Toolbox have the
+% same API as discussed above.  For a list of all the different objects,
+% and links to their individual help entries, <prtDocFunctionList.html#10 A
+% list of commonly used functions>
+
+##### SOURCE END #####
+--></body></html>

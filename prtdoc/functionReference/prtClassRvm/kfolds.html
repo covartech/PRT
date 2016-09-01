@@ -1,0 +1,59 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../../helpwin.css">
+      <title>MATLAB File Help: prtClassRvm/kfolds</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtClassRvm/kfolds</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtClassRvm/kfolds</div>
+      <div class="helptext"><pre><!--helptext -->  <span class="helptopic">kfolds</span>  Perform K-folds cross-validation of prtAction
+  
+     OUTPUTDATASET = self.<span class="helptopic">kfolds</span>(DATASET, K) performs K-folds
+     cross-validation of the prtAction object OBJ using the
+     prtDataSet DATASET. DATASET must be a labeled prtDataSet,
+     and K must be a scalar integer, representing the number
+     of folds. <span class="helptopic">kfolds</span> Generates cross-validation keys by
+     partitioning the dataSet into K groups such that the
+     number of samples of each unique target type is held
+     approximately constant.
+ 
+     [OUTPUTDATASET, TRAINEDACTIONS, CROSSVALKEYS] =
+     self.<span class="helptopic">kfolds</span>(DATASET, K)  outputs the trained prtAction
+     objects TRAINEDACTIONS, and the generated cross-validation
+     keys CROSSVALKEYS.
+ 
+     To manually set which observations are in which folds, see
+     crossValidate.
+
+Help for <span class="helptopic">prtClassRvm/kfolds</span> is inherited from superclass <a href="./../prtAction.html">prtAction</a></pre></div><!--after help -->
+      <!--Method-->
+      <div class="sectiontitle">Method Details</div>
+      <table class="class-details">
+         <tr>
+            <td class="class-detail-label">Defining Class</td>
+            <td>prtAction</td>
+         </tr>
+         <tr>
+            <td class="class-detail-label">Access</td>
+            <td>public</td>
+         </tr>
+         <tr>
+            <td class="class-detail-label">Sealed</td>
+            <td>false</td>
+         </tr>
+         <tr>
+            <td class="class-detail-label">Static</td>
+            <td>false</td>
+         </tr>
+      </table>
+   </body>
+</html>

@@ -1,0 +1,40 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../helpwin.css">
+      <title>MATLAB File Help: prtDistanceSquare</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtDistanceSquare</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtDistanceSquare</div>
+      <div class="helptext"><pre><!--helptext -->  <span class="helptopic">prtDistanceSquare</span>  Compute distance squared
+ 
+    DIST = prtDistanceChebychev(DS1,DS2) calculates the Distance square distance
+    from all the observations in datasets DS1 to DS2, and ouputs a distance
+    matrix of size DS1.nObservations x DS2.nObservations. DS1 and DS2
+    should have the same number of features. DS1 and DS2 should be
+    prtDataSet objects. This distance is the same as the Chebychev disance
+    
+    For more information, see:
+    
+    <a href="http://en.wikipedia.org/wiki/Chebyshev_distance">http://en.wikipedia.org/wiki/Chebyshev_distance</a>
+ 
+  Example:
+ 
+    % Create 2 data sets
+    dsx = prtDataSetStandard('Observations', [0 0; 1 1]);
+    dsy = prtDataSetStandard('Observations', [1 0;2 2; 3 3]);
+    % Compute distance
+    distance = <span class="helptopic">prtDistanceSquare</span>(dsx,dsy)</pre></div><!--after help --><!--seeAlso--><div class="footerlinktitle">See also</div><div class="footerlink">  <a href="./prtDistanceCityBlock.html">prtDistanceCityBlock</a>, <a href="./prtDistanceEuclidean.html">prtDistanceEuclidean</a>,
+  <a href="./prtDistanceMahalanobis.html">prtDistanceMahalanobis</a>, <a href="./prtDistanceChebychev.html">prtDistanceChebychev</a>, <a href="./prtDistanceLNorm.html">prtDistanceLNorm</a>
+</div>
+   </body>
+</html>

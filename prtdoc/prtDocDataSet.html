@@ -1,0 +1,383 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Datasets in the Pattern Recognition Toolbox</title><meta name="generator" content="MATLAB 8.0"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2013-02-19"><meta name="DC.source" content="prtDocDataSet.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Datasets in the Pattern Recognition Toolbox</h1><!--introduction--><p>Before you can perform any actions with the PRT, your data must be stored in a PRT dataset object.</p><p>There are 3 basic types of dataset objects, prtDataSetStandard, prtDataSetClass, and prtDataSetRegress. The prtDataSetStandard object is a generic object, containing much of the functionality needed to work with the PRT. In general however, you will probably want to work with either prtDataSetClass, or prtDataSetRegress, depending on if you are interested in classification or regression, respectively. All prtDataSet objects inherit from the prtDataSetBase class, which provides most of the basic functionality for setting and getting data members. For more information on the base data class, see <a href="./functionReference/prtDataSetBase.html">prtDataSetBase</a>.</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">prtDataSetStandard</a></li><li><a href="#8">prtDataSetClass</a></li><li><a href="#13">prtDataSetRegress</a></li></ul></div><h2>prtDataSetStandard<a name="1"></a></h2><p>prtDataSetStandard objects can hold either labeled or unlabled data. To create am empty prtDataSetStandard object, you can use the following command:</p><pre class="codeinput">ds = prtDataSetStandard
+</pre><pre class="codeoutput">ds = 
+  prtDataSetStandard
+
+  Properties:
+            nFeatures: 0
+          featureInfo: []
+                 data: []
+              targets: []
+        nObservations: 0
+    nTargetDimensions: 0
+            isLabeled: 0
+      observationInfo: []
+                 name: ''
+          description: ''
+             userData: [1x1 struct]
+</pre><p>The resulting object has no observations (nObservations = 0), no features, and is not labeled. To assign some observations, you can use the following command:</p><pre class="codeinput">ds = ds.setX([1; 2; 3])
+</pre><pre class="codeoutput">ds = 
+  prtDataSetStandard
+
+  Properties:
+            nFeatures: 1
+          featureInfo: []
+                 data: [3x1 double]
+              targets: []
+        nObservations: 3
+    nTargetDimensions: 0
+            isLabeled: 0
+      observationInfo: []
+                 name: ''
+          description: ''
+             userData: [1x1 struct]
+</pre><p>This result of this command illustrates a few very important features of the PRT to remember. First, since prtDataSets are not MATLAB handle objects, if you want to set the data or label properties, you need to say ds = ds.setX([1;2;3]). If you just say ds.setX([1;2;3]), then the result will be returned and stored in the ans variable, and the original ds object will be unchanged.</p><p>The second important feature this command illustrates is the orientation of observations and features. Note that ds is now an object with 3 observations, since we passed setX a 3x1 column vector. So, each row of the observation vector corresponds to a single observation. Each observation can have multiple features, where each column corresponds to a different feature. For example:</p><pre class="codeinput">ds = ds.setX([1 2; 3 4; 5 6])
+</pre><pre class="codeoutput">ds = 
+  prtDataSetStandard
+
+  Properties:
+            nFeatures: 2
+          featureInfo: []
+                 data: [3x2 double]
+              targets: []
+        nObservations: 3
+    nTargetDimensions: 0
+            isLabeled: 0
+      observationInfo: []
+                 name: ''
+          description: ''
+             userData: [1x1 struct]
+</pre><p>ds is now a prtDataSetStandard object with 3 observations, and 2 features per observation. The first observation, feature 1 equals 1, feature 2 equals 2, etc.</p><p>Right now, the dataset is not labeled. To set labels, we can use the setY (or setTargets) function. Suppose we want to simply label the data as being a member of class 0 or class 1, you can do the following:</p><pre class="codeinput">ds = ds.setY([1;0;1])
+</pre><pre class="codeoutput">ds = 
+  prtDataSetStandard
+
+  Properties:
+            nFeatures: 2
+          featureInfo: []
+                 data: [3x2 double]
+              targets: [3x1 double]
+        nObservations: 3
+    nTargetDimensions: 1
+            isLabeled: 1
+      observationInfo: []
+                 name: ''
+          description: ''
+             userData: [1x1 struct]
+</pre><p>Note that the number of targets was equal to the number of observations. This must be so, or else the setTargets function will error. You should also see that the object is now labeled (isLabeled = 1), and the number of target dimensions equals 1. In general, if your number of target dimensions equals 1, then you are likely performing a classification, and you should use the prtDataSetClass object. If your number of target dimensions is greater than 1, you should probably be using the prtDataSetRegress object.</p><p>Finally, note that the ds object has fields observationInfo, and featureInfo. These fields are to store whatever other information about the observations or features that you might wish to carry around. For example:</p><pre class="codeinput">ds = ds.setObservationInfo(<span class="string">'info1'</span>,[7 8 9]')
+</pre><pre class="codeoutput">ds = 
+  prtDataSetStandard
+
+  Properties:
+            nFeatures: 2
+          featureInfo: []
+                 data: [3x2 double]
+              targets: [3x1 double]
+        nObservations: 3
+    nTargetDimensions: 1
+            isLabeled: 1
+      observationInfo: [3x1 struct]
+                 name: ''
+          description: ''
+             userData: [1x1 struct]
+</pre><p>Assigns a structure with 1 field named 'info1', where the value 7 corresponds to observation 1, etc. The same functionality works for features:</p><pre class="codeinput">ds = ds.setFeatureInfo(<span class="string">'featInfo1'</span>, [11 12]')
+</pre><pre class="codeoutput">ds = 
+  prtDataSetStandard
+
+  Properties:
+            nFeatures: 2
+          featureInfo: [1x2 struct]
+                 data: [3x2 double]
+              targets: [3x1 double]
+        nObservations: 3
+    nTargetDimensions: 1
+            isLabeled: 1
+      observationInfo: [3x1 struct]
+                 name: ''
+          description: ''
+             userData: [1x1 struct]
+</pre><p>Where the value 11 corresponds to feature 1. Note, in general, it is not required to use the observationInfo or featureInfo fields. They just exist in case you have additional data that you wish to carry around, but do not necessarily want it to be processed by any of the PRT functions.</p><h2>prtDataSetClass<a name="8"></a></h2><p>The prtDataSetClass object is an extension of the prtDataSetStandard, with several additional properties and methods specific to data that is to be used for classification.  All PRT classification objects require prtDataSetClass object for training and running. To illustrate, load a binary dataset using the funcion prtDataGenUnimodal:</p><pre class="codeinput">ds = prtDataGenUnimodal
+</pre><pre class="codeoutput">ds = 
+  prtDataSetClass
+
+  Properties:
+               nFeatures: 2
+             featureInfo: []
+                    data: [400x2 double]
+                 targets: [400x1 double]
+           nObservations: 400
+       nTargetDimensions: 1
+               isLabeled: 1
+         observationInfo: []
+                    name: 'prtDataGenUnimodal'
+             description: ''
+                userData: [1x1 struct]
+                nClasses: 2
+           uniqueClasses: [2x1 double]
+    nObservationsByClass: [2x1 double]
+              classNames: {2x1 cell}
+                 isUnary: 0
+                isBinary: 1
+                  isMary: 0
+               isZeroOne: 1
+            hasUnlabeled: 0
+</pre><p>prtDataGenUnimodal randomly generates a dataset with 2 classes, with 2 dimensions, and 200 observations per class. Note the additional properties such as nClasses, which equals 2. isBinary is therefore set to true because it is a binary data set. Since this dataset has 2 dimensions, it can be plotted with the following command:</p><pre class="codeinput">ds.plot
+</pre><img vspace="5" hspace="5" src="prtDocDataSet_01.png" alt=""> <p>When a dataset has 3 or fewer dimensions, it can be plotted on a scatterplot in this manner. When the dataset has more than 3 dimensions, the PRT provides several ways for visualizing the data, such as the PRT explorer, or methods such as plotStar, plotAsTimeSeries, plotPairs. For an example of a higher dimension prtDataSetClass, load the Iris dataset:</p><pre class="codeinput">ds = prtDataGenIris
+</pre><pre class="codeoutput">ds = 
+  prtDataSetClass
+
+  Properties:
+               nFeatures: 4
+             featureInfo: []
+                    data: [150x4 double]
+                 targets: [150x1 double]
+           nObservations: 150
+       nTargetDimensions: 1
+               isLabeled: 1
+         observationInfo: []
+                    name: 'UCI Iris Data'
+             description: ''
+                userData: [1x1 struct]
+                nClasses: 3
+           uniqueClasses: [3x1 double]
+    nObservationsByClass: [3x1 double]
+              classNames: {3x1 cell}
+                 isUnary: 0
+                isBinary: 0
+                  isMary: 1
+               isZeroOne: 0
+            hasUnlabeled: 0
+</pre><p>This dataset has 4 classes, and 4 features per class. The isMary property is therefore set to true. Experiment with the different ways to visualize this dataset. For example, try the plotStar function:</p><pre class="codeinput">ds.plotStar
+</pre><img vspace="5" hspace="5" src="prtDocDataSet_02.png" alt=""> <p>For more information on the prtDataSetClass, please refer to <a href="./functionReference/prtDataSetClass.html">prtDataSetClass</a></p><h2>prtDataSetRegress<a name="13"></a></h2><p>prtDataSetRegress is also an extension of prtDataSetStandard, with methods overloaded with functionality specific to plotting regression data. All PRT classification objects require prtDataSetClass object for training and running. For example, load a regression data set, and plot it:</p><pre class="codeinput">ds = prtDataGenNoisySinc
+ds.plot
+</pre><pre class="codeoutput">ds = 
+  prtDataSetRegress
+
+  Properties:
+            nFeatures: 1
+          featureInfo: []
+                 data: [100x1 double]
+              targets: [100x1 double]
+        nObservations: 100
+    nTargetDimensions: 1
+            isLabeled: 1
+      observationInfo: []
+                 name: 'Noisy Sinc'
+          description: ''
+             userData: [1x1 struct]
+</pre><img vspace="5" hspace="5" src="prtDocDataSet_03.png" alt=""> <p>For more information on prtDataSetRegress, please refer to <a href="./functionReference/prtDataSetRegress.html">prtDataSetRegress</a></p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2012b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Datasets in the Pattern Recognition Toolbox
+% Before you can perform any actions with the PRT, your data must be stored
+% in a PRT dataset object.
+%
+% There are 3 basic types of dataset objects, prtDataSetStandard,
+% prtDataSetClass, and prtDataSetRegress. The prtDataSetStandard object is
+% a generic object, containing much of the functionality needed to work
+% with the PRT. In general however, you will probably want to work with
+% either prtDataSetClass, or prtDataSetRegress, depending on if you are
+% interested in classification or regression, respectively. All prtDataSet
+% objects inherit from the prtDataSetBase class, which provides most of the
+% basic functionality for setting and getting data members. For more
+% information on the base data class, see
+% <./functionReference/prtDataSetBase.html prtDataSetBase>.
+
+%% prtDataSetStandard
+%
+% prtDataSetStandard objects can hold either labeled or unlabled data. To
+% create am empty prtDataSetStandard object, you can use the following
+% command:
+
+ds = prtDataSetStandard
+
+%%
+%
+% The resulting object has no observations (nObservations = 0), no
+% features, and is not labeled. To assign some observations, you can use
+% the following command:
+
+ds = ds.setX([1; 2; 3])
+
+%%
+% This result of this command illustrates a few very important features of
+% the PRT to remember. First, since prtDataSets are not MATLAB handle
+% objects, if you want to set the data or label properties, you need to say
+% ds = ds.setX([1;2;3]). If you just say ds.setX([1;2;3]), then the result
+% will be returned and stored in the ans variable, and the original ds
+% object will be unchanged.
+%
+% The second important feature this command illustrates is the orientation
+% of observations and features. Note that ds is now an object with 3
+% observations, since we passed setX a 3x1 column vector. So, each row of
+% the observation vector corresponds to a single observation. Each
+% observation can have multiple features, where each column corresponds to
+% a different feature. For example:
+
+ds = ds.setX([1 2; 3 4; 5 6])
+
+%%
+% ds is now a prtDataSetStandard object with 3 observations, and 2 features
+% per observation. The first observation, feature 1 equals 1, feature 2
+% equals 2, etc.
+%
+% Right now, the dataset is not labeled. To set labels, we can use the setY
+% (or setTargets) function. Suppose we want to simply label the data as
+% being a member of class 0 or class 1, you can do the following:
+
+ds = ds.setY([1;0;1])
+
+%%
+% Note that the number of targets was equal to the number of observations.
+% This must be so, or else the setTargets function will error. You should
+% also see that the object is now labeled (isLabeled = 1), and the number
+% of target dimensions equals 1. In general, if your number of target
+% dimensions equals 1, then you are likely performing a classification, and
+% you should use the prtDataSetClass object. If your number of target
+% dimensions is greater than 1, you should probably be using the
+% prtDataSetRegress object.
+%
+% Finally, note that the ds object has fields observationInfo, and
+% featureInfo. These fields are to store whatever other information about
+% the observations or features that you might wish to carry around. For
+% example:
+
+ds = ds.setObservationInfo('info1',[7 8 9]')
+
+%%
+% Assigns a structure with 1 field named 'info1', where the value 7
+% corresponds to observation 1, etc. The same functionality works for
+% features:
+
+ds = ds.setFeatureInfo('featInfo1', [11 12]')
+
+%%
+% Where the value 11 corresponds to feature 1. Note, in general, it is not
+% required to use the observationInfo or featureInfo fields. They just
+% exist in case you have additional data that you wish to carry around,
+% but do not necessarily want it to be processed by any of the PRT
+% functions.
+
+%% prtDataSetClass
+%
+% The prtDataSetClass object is an extension of the prtDataSetStandard,
+% with several additional properties and methods specific to data that is
+% to be used for classification.  All PRT classification objects require
+% prtDataSetClass object for training and running. To illustrate, load a
+% binary dataset using the funcion prtDataGenUnimodal:
+
+ds = prtDataGenUnimodal
+
+%%
+% prtDataGenUnimodal randomly generates a dataset with 2 classes, with 2
+% dimensions, and 200 observations per class. Note the additional
+% properties such as nClasses, which equals 2. isBinary is therefore set
+% to true because it is a binary data set. Since this dataset has 2
+% dimensions, it can be plotted with the following command:
+
+ds.plot
+
+%%
+% When a dataset has 3 or fewer dimensions, it can be plotted on a
+% scatterplot in this manner. When the dataset has more than 3 dimensions,
+% the PRT provides several ways for visualizing the data, such as the PRT
+% explorer, or methods such as plotStar, plotAsTimeSeries, plotPairs. For
+% an example of a higher dimension prtDataSetClass, load the Iris dataset:
+
+ds = prtDataGenIris
+
+
+%%
+% This dataset has 4 classes, and 4 features per class. The isMary
+% property is therefore set to true. Experiment with the different ways to
+% visualize this dataset. For example, try the plotStar function:
+
+ds.plotStar
+
+%%
+% For more information on the prtDataSetClass, please refer to
+% <./functionReference/prtDataSetClass.html prtDataSetClass>
+
+%% prtDataSetRegress
+%
+% prtDataSetRegress is also an extension of prtDataSetStandard, with
+% methods overloaded with functionality specific to plotting regression
+% data. All PRT classification objects require prtDataSetClass object for
+% training and running. For example, load a regression data set, and plot
+% it:
+
+ds = prtDataGenNoisySinc
+ds.plot
+
+%%
+% For more information on prtDataSetRegress, please refer to
+% <./functionReference/prtDataSetRegress.html prtDataSetRegress>
+
+
+
+##### SOURCE END #####
+--></body></html>

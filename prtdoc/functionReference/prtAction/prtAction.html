@@ -1,0 +1,58 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../../helpwin.css">
+      <title>MATLAB File Help: prtAction/prtAction</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtAction/prtAction</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtAction/prtAction</div>
+      <div class="helptext"><pre><!--helptext -->  <span class="helptopic">prtAction</span> - Base class for many PRT components.
+  
+   <span class="helptopic">prtAction</span> is an abstract class and cannot be instantiated.
+ 
+    Classification, regression and feature selection techniques are all
+    sub-classes of <span class="helptopic">prtAction</span>.
+ 
+    All <span class="helptopic">prtAction</span> objects have the following properties:
+ 
+    name                 - Descriptive name for <span class="helptopic">prtAction</span> object
+    nameAbbreviation     - Shortened name for <span class="helptopic">prtAction</span> object
+    isTrained            - Indicates whether the current <span class="helptopic">prtAction</span> 
+                           object has been trained                          
+    isCrossValidateValid - Flag indicating whether or not
+                           cross-validation is a valid operation on 
+                           this <span class="helptopic">prtAction</span> object
+    verboseStorage       - Flag to allow or disallow verbose storage
+    dataSetSummary       - A struct, set during training, containing
+                           information about the training data set
+    dataSet              - A prtDataSet, containing the training data,
+                           only used if verboseStorage is true
+    userData             - A struct containing user-specified data
+ 
+    All <span class="helptopic">prtAction</span> objects have the following methods:
+ 
+    train             - Train the <span class="helptopic">prtAction</span> object using a prtDataSet
+    run               - Evaluate the <span class="helptopic">prtAction</span> object on a prtDataSet
+    runOnTrainingData - Evaluate the <span class="helptopic">prtAction</span> object on a prtDataSet
+                        during training prior to training of other
+                        prtActions within a prtAlgorithm
+    crossValidate     - Cross-validate the <span class="helptopic">prtAction</span> object using a 
+                        labeled prtDataSet and cross-validation keys
+    kfolds            - K-folds cross-validate the <span class="helptopic">prtAction</span> object
+                        using a labeled prtDataSet
+    optimize          - Optimize the <span class="helptopic">prtAction</span> for a specified
+                        parameter</pre></div><!--after help --><!--seeAlso--><div class="footerlinktitle">See Also</div><div class="footerlink"> <a href="./../prtAction/train.html">prtAction/train</a>, <a href="./../prtAction/run.html">prtAction/run</a>, <a href="./../prtAction/crossValidate.html">prtAction/crossValidate</a>,
+  <a href="./../prtAction/kfolds.html">prtAction/kfolds</a>, <a href="./../prtClass.html">prtClass</a>, <a href="./../prtRegress.html">prtRegress</a>, <a href="./../prtFeatSel.html">prtFeatSel</a>, <a href="./../prtPreProc.html">prtPreProc</a>,
+  <a href="./../prtDataSetBase.html">prtDataSetBase</a>
+</div>
+   </body>
+</html>

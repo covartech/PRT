@@ -1,0 +1,51 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../../helpwin.css">
+      <title>MATLAB File Help: prtClassMap/prtClassMap</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtClassMap/prtClassMap</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtClassMap/prtClassMap</div>
+      <div class="helptext"><pre><!--helptext --> <span class="helptopic">prtClassMap</span>  Maximum a Posteriori classifier
+  
+     CLASSIFIER = <span class="helptopic">prtClassMap</span> returns a Maximum a Posteriori classifier
+ 
+     CLASSIFIER = <span class="helptopic">prtClassMap</span>(PROPERTY1, VALUE1, ...) constructs a
+     prtClassMAP object CLASSIFIER with properties as specified by
+     PROPERTY/VALUE pairs.
+ 
+     A <span class="helptopic">prtClassMap</span> object inherits all properties from the abstract class
+     prtClass. In addition is has the following property:
+ 
+     rvs    - A prtRv object. This property describes the random variable 
+              model used for Maximum a Posteriori classification.
+ 
+     A <span class="helptopic">prtClassMap</span> object inherits inherits the TRAIN, RUN, CROSSVALIDATE
+     and KFOLDS methods from prtClass.
+ 
+     Example:
+ 
+     TestDataSet = prtDataGenUnimodal;       % Create some test and
+     TrainingDataSet = prtDataGenUnimodal;   % training data
+     classifier = <span class="helptopic">prtClassMap</span>;               % Create a classifier
+     classifier = classifier.train(TrainingDataSet);    % Train
+     classified = run(classifier, TestDataSet);         % Test
+ 
+     subplot(2,1,1); classifier.plot;  % Plot results
+     subplot(2,1,2); prtScoreRoc(classified,TestDataSet);
+     set(get(gca,'Children'), 'LineWidth',3)</pre></div><!--after help --><!--seeAlso--><div class="footerlinktitle">See also</div><div class="footerlink"> <a href="./../prtClass.html">prtClass</a>, <a href="./../prtClassLogisticDiscriminant.html">prtClassLogisticDiscriminant</a>, <a href="./../prtClassBagging.html">prtClassBagging</a>,
+     <a href="./../prtClassMap.html">prtClassMap</a>, <a href="./../prtClassFld.html">prtClassFld</a>, <a href="./../prtClassBinaryToMaryOneVsAll.html">prtClassBinaryToMaryOneVsAll</a>, <a href="./../prtClassDlrt.html">prtClassDlrt</a>,
+     <a href="./../prtClassPlsda.html">prtClassPlsda</a>, <a href="./../prtClassFld.html">prtClassFld</a>, <a href="./../prtClassRvm.html">prtClassRvm</a>, <a href="./../prtClassGlrt.html">prtClassGlrt</a>,  <a href="./../prtClassSvm.html">prtClassSvm</a>,
+     <a href="./../prtClassTreeBaggingCap.html">prtClassTreeBaggingCap</a>, <a href="./../prtClassKmsd.html">prtClassKmsd</a>, <a href="./../prtClassKnn.html">prtClassKnn</a>                   
+</div>
+   </body>
+</html>

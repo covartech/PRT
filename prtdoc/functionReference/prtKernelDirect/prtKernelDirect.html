@@ -1,0 +1,46 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../../helpwin.css">
+      <title>MATLAB File Help: prtKernelDirect/prtKernelDirect</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtKernelDirect/prtKernelDirect</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtKernelDirect/prtKernelDirect</div>
+      <div class="helptext"><pre><!--helptext -->  <span class="helptopic">prtKernelDirect</span>  Direct kernel
+ 
+   kernelObj = <span class="helptopic">prtKernelDirect</span> Generates a <span class="helptopic">prtKernelDirect</span> object implementing a
+   direct kernel function.  Kernel objects are widely used in several
+   prt classifiers, such as prtClassRvm and prtClassSvm.  Direct kernels
+   implement the following function for 1 x N vectors x1 and x2:
+ 
+    k(x1,x2) = x2;
+ 
+   Direct kernel functions can be used sparse machine learning contexts
+   to perform sparse linear feature selection.
+    
+   <span class="helptopic">prtKernelDirect</span> objects inherit the TRAIN, RUN, and AND
+   methods from prtKernel.
+ 
+   % Example:
+    ds = prtDataGenUnimodal;   % Load a data set
+    k1 = <span class="helptopic">prtKernelDirect</span>;      % Create a <span class="helptopic">prtKernelDirect</span> object
+    
+    k1 = k1.train(ds);         % Train
+    g1 = k1.run(ds);           % Run
+ 
+    % Plot the results
+    imagesc(g1.getObservations);</pre></div><!--after help --><!--seeAlso--><div class="footerlinktitle">See also</div><div class="footerlink"> <a href="./../prtKernel.html">prtKernel</a>,<a href="./../prtKernelSet.html">prtKernelSet</a>, <a href="./../prtKernelDc.html">prtKernelDc</a>,
+    <a href="./../prtKernelHyperbolicTangent.html">prtKernelHyperbolicTangent</a>, <a href="./../prtKernelPolynomial.html">prtKernelPolynomial</a>, <a href="./../prtKernelRbf.html">prtKernelRbf</a>,
+    <a href="./../prtKernelRbfNdimensionScale.html">prtKernelRbfNdimensionScale</a>, 
+</div>
+   </body>
+</html>

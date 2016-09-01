@@ -1,0 +1,39 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../../helpwin.css">
+      <title>MATLAB File Help: prtDataSetClass/prtDataSetClass</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtDataSetClass/prtDataSetClass</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtDataSetClass/prtDataSetClass</div>
+      <div class="helptext"><pre><!--helptext -->  <span class="helptopic">prtDataSetClass</span> Constructor for class <span class="helptopic">prtDataSetClass</span>
+ 
+  class = <span class="helptopic">prtDataSetClass</span>(X,Y)
+    Create a <span class="helptopic">prtDataSetClass</span> object with data X and targets Y.
+    X shouls be a #obs x #feat matrix, and Y should be a #obs x
+    1 vector of target labels.
+ 
+  class = <span class="helptopic">prtDataSetClass</span>(X,Y,field1,val1,field2,val2,...)
+    As above, but also set additional public fields field1,
+    field2,... to values val1, val2, etc.
+ 
+  x = randn(100,2);
+  y = prtUtilY(50,50);
+  ds = <span class="helptopic">prtDataSetClass</span>(x,y);
+  plot(ds); % An unseparable data set
+ 
+  x = randn(100,2);
+  y = prtUtilY(50,50);
+  ds = <span class="helptopic">prtDataSetClass</span>(x,y,'name','My Data Set');
+  plot(ds); % An unseparable data set</pre></div><!--after help -->
+   </body>
+</html>

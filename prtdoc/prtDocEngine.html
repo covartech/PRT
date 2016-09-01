@@ -1,0 +1,329 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>The Pattern Recognition Toolbox Engine</title><meta name="generator" content="MATLAB 8.0"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2013-02-19"><meta name="DC.source" content="prtDocEngine.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>The Pattern Recognition Toolbox Engine</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">Training</a></li><li><a href="#6">Run</a></li><li><a href="#12">Cross Validation</a></li><li><a href="#14">K-folds</a></li><li><a href="#16">Optimize</a></li></ul></div><p>In the Pattern Recogntion toolbox, all actions (classification, regression, etc...) are implemented as  <a href="./functionReference/prtAction.html">prtAction</a> objects. All prtAction objects share fundamental operations such as training, running and validating results share this common API. There are 4 methods, <a href="./functionReference/prtAction/train.html">train</a>, <a href="./functionReference/prtAction/run.html">run</a>, <a href="./functionReference/prtAction/crossValidate.html">crossValidate</a>, <a href="./functionReference/prtAction/kfolds.html">kfolds</a>, and <a href="./functionReference/prtAction/optimize.html">optimize</a>.</p><h2>Training<a name="2"></a></h2><p>Training is the first fundamental method in the Pattern Recognition Toolbox. Training occurs whenever a PRT object needs to learn some parameters from the data. All PRT objects require that training be done before the run function can be called. Training can be supervised or unsupervised, depending on the action. Supervised training makes use of labeled PRT data sets. A common example of supervised training is classification, where a classification objsct is trained using labeled datasets, and then performs classification on an unlabeled data set. For example:</p><pre class="codeinput">ds = prtDataGenUnimodal;
+classifier = prtClassGlrt;
+classifier = classifier.train(ds);
+</pre><p>Note that ds is a labeleled prtDataSetClass object. The object 'classsifier' is now a trained generalized likelihood ratio test classifier.</p><pre class="codeinput">classifier.isTrained
+</pre><pre class="codeoutput">ans =
+     1
+</pre><p>Unsupervised learing is when labels are not necessary for training. An example of this would be clustering. Suppose we remove the labels from ds, and train a K-means clustering algorithm:</p><pre class="codeinput">ds = ds.setY([]); <span class="comment">% setY is a shortcut for setTargets</span>
+
+<span class="comment">% Create a K-means clustering object with 2 clusters.</span>
+cluster = prtClusterKmeans(<span class="string">'nClusters'</span>, 2);
+cluster = cluster.train(ds);
+</pre><p>The 'cluster' object is now a trained prtClusterKmeans object, and the run function can be invoked. Note, if you try to train a supervised object with unlabeled data, you will get an error. If you train an unsupervised object with labeled data, the labels are ignored.</p><h2>Run<a name="6"></a></h2><p>The next fundamental method in the Pattern Recognition Toolbox is the run function. Invoking the run method calls whatever functionaly the prtAction object implements. For example, calling run on a prtClassGlrt object will perform the likelihood ratio test and output the likelihood ratio values. The result will be stored in a prtDataSet.</p><p>For example, create a new dataset, drawn from the same distribution as our training dataset ds:</p><pre class="codeinput">dsTest = prtDataGenUnimodal;
+</pre><p>Now, call the run function, and pass the test data set:</p><pre class="codeinput">result = classifier.run(dsTest)
+</pre><pre class="codeoutput">result = 
+  prtDataSetClass
+
+  Properties:
+               nFeatures: 1
+             featureInfo: []
+                    data: [400x1 double]
+                 targets: [400x1 double]
+           nObservations: 400
+       nTargetDimensions: 1
+               isLabeled: 1
+         observationInfo: []
+                    name: 'prtDataGenUnimodal'
+             description: ''
+                userData: [1x1 struct]
+                nClasses: 2
+           uniqueClasses: [2x1 double]
+    nObservationsByClass: [2x1 double]
+              classNames: {2x1 cell}
+                 isUnary: 0
+                isBinary: 1
+                  isMary: 0
+               isZeroOne: 1
+            hasUnlabeled: 0
+</pre><p>Have a look at the first few elements of the result dataset:</p><pre class="codeinput">result.getX(1:5)    <span class="comment">% getX() is a shortcut for getObservations()</span>
+</pre><pre class="codeoutput">ans =
+  -10.2214
+   -8.1628
+   -5.3055
+   -5.1473
+  -11.2557
+</pre><p>The values in results.observations correspond to the values of the likelihood ratio test for each observation in dsTest, as performed by the classifier that was trained with the data from the dataset ds. To make a decision based on these outputs, you will need to use a <a href="./functionReference/prtDecision.html">prtDecision</a> Object.</p><p>The cluster object operates in exactly the same way:</p><pre class="codeinput">result = cluster.run(dsTest)
+</pre><pre class="codeoutput">result = 
+  prtDataSetClass
+
+  Properties:
+               nFeatures: 2
+             featureInfo: []
+                    data: [400x2 double]
+                 targets: [400x1 double]
+           nObservations: 400
+       nTargetDimensions: 1
+               isLabeled: 1
+         observationInfo: []
+                    name: 'prtDataGenUnimodal'
+             description: ''
+                userData: [1x1 struct]
+                nClasses: 2
+           uniqueClasses: [2x1 double]
+    nObservationsByClass: [2x1 double]
+              classNames: {2x1 cell}
+                 isUnary: 0
+                isBinary: 1
+                  isMary: 0
+               isZeroOne: 1
+            hasUnlabeled: 0
+</pre><p>However, the output is different for clustering. In this case the elements are assigned to a particular cluster:</p><pre class="codeinput">result.getX(1:5,:)
+</pre><pre class="codeoutput">ans =
+     1     0
+     1     0
+     1     0
+     1     0
+     1     0
+</pre><p>Indicating that the first 5 results correspond to either class 1 or class 2. Note in clustering there is some ambiguity because cluster labeling is arbitrary.</p><h2>Cross Validation<a name="12"></a></h2><p><a href="./functionReference/prtAction/crossValidate.html">Cross validation</a> allows you to perform training and running of an action in one command, by partitioning a labeled dataset into training and test data using keys. This also ensures that all data will be used for both training and testing. To illustrate, here is an example of how to use this functionality with a PRT clustering object:</p><pre class="codeinput">keys = mod(1:ds.nObservations,3)'; <span class="comment">% The keys will have values 1, 2 and 3</span>
+result = cluster.crossValidate(ds,keys);
+</pre><p>This divides the dataset ds into 3 partitions, or folds. To test the first fold, the classifier will first be trained with the 2nd and 3rd folds. Then the classifier will be run using the data in the 1st fold. This will be repeated for all folds.</p><p>The keys must be a single column vector, with the same number of observations in the data set.  In the example above, the first observation corresponds to key 1, the second to key 3, the third to key 3, and the 4th corresponds to key 1 again, and so forth.</p><h2>K-folds<a name="14"></a></h2><p>In the above example of cross validation, the user manually picked which data belonged to which fold. An alternative method is to use the <a href="./functionReference/prtAction/kfolds.html">kfolds</a> function. When calling kfolds, specify the number of folds you would like the data divided into. Kfolds will then randomly subdivide the data into the specified number of folds, and perform cross validation. For example:</p><pre class="codeinput">nFolds = 3;
+result = cluster.kfolds(ds,nFolds);
+</pre><p>A final note about cross validation and kfolds, there are some actions that cross validation does not make sense, or is not possible (certain forms of outlier removal for example). In this case, a flag is set, indicating that cross-validation is not a valid operation, and calling crossValidate or kfolds on such an object will error.</p><h2>Optimize<a name="16"></a></h2><p>Optimize is a function that allows the user to specify a range of values for a single parameter, and exhaustively determine which value of the parameter gives the best performance. The prtAction is run for every value of the parameter, and the performance is evaluated by a function specified in a function handle. Consider the following example, where we attempt to determine the optimal number of nearest neighbors for a K-nearest neigbor classifier:</p><pre class="codeinput">ds = prtDataGenBimodal;  <span class="comment">% Load a data set</span>
+knn = prtClassKnn;       <span class="comment">% Create a classifier</span>
+kVec = 3:5:50;          <span class="comment">% Create a vector of parameters to</span>
+                        <span class="comment">% optimize over</span>
+
+<span class="comment">% Optimize over the range of k values, using the area under the</span>
+<span class="comment">% receiver operating curve as the evaluation metric. Validation</span>
+<span class="comment">% is performed by a k-folds cross validation with</span>
+<span class="comment">%10 folds as specified by the call to prtEvalAuc.</span>
+
+[knnOptimize, percentCorrects] = <span class="keyword">...</span>
+    knn.optimize(ds,@(class,ds)prtEvalAuc(class,ds,10), <span class="string">'k'</span>,kVec);
+plot(kVec, percentCorrects);
+xlabel(<span class="string">'K values'</span>); ylabel(<span class="string">'Percent Correct'</span>);
+title(<span class="string">'Number of neighbors vs. classifier accuracy'</span>)
+</pre><img vspace="5" hspace="5" src="prtDocEngine_01.png" alt=""> <p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2012b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% The Pattern Recognition Toolbox Engine
+%
+%%
+% In the Pattern Recogntion toolbox, all actions (classification,
+% regression, etc...) are implemented as  <./functionReference/prtAction.html prtAction>
+% objects. All prtAction objects share fundamental operations
+% such as training, running and validating results share this common API.
+% There are 4 methods, <./functionReference/prtAction/train.html train>,
+% <./functionReference/prtAction/run.html run>, 
+% <./functionReference/prtAction/crossValidate.html crossValidate>,
+% <./functionReference/prtAction/kfolds.html kfolds>, and
+% <./functionReference/prtAction/optimize.html optimize>.
+%
+%% Training
+% Training is the first fundamental method in the Pattern Recognition
+% Toolbox. Training occurs whenever a PRT object needs to learn some
+% parameters from the data. All PRT objects require that training be done
+% before the run function can be called. Training can be supervised or
+% unsupervised, depending on the action. Supervised training makes use of
+% labeled PRT data sets. A common example of supervised training is
+% classification, where a classification objsct is trained using labeled
+% datasets, and then performs classification on an unlabeled data set. For
+% example:
+
+ds = prtDataGenUnimodal;
+classifier = prtClassGlrt;
+classifier = classifier.train(ds);
+
+%% 
+% Note that ds is a labeleled prtDataSetClass object. The object
+% 'classsifier' is now a trained generalized likelihood ratio
+% test classifier. 
+
+classifier.isTrained 
+
+%%
+% Unsupervised learing is when labels are not necessary for training. An
+% example of this would be clustering. Suppose we remove the labels from
+% ds, and train a K-means clustering algorithm:
+
+ds = ds.setY([]); % setY is a shortcut for setTargets
+
+% Create a K-means clustering object with 2 clusters.
+cluster = prtClusterKmeans('nClusters', 2);  
+cluster = cluster.train(ds);
+
+%%
+% The 'cluster' object is now a trained prtClusterKmeans object, and the
+% run function can be invoked. Note, if you try to train a supervised
+% object with unlabeled data, you will get an error. If you train an
+% unsupervised object with labeled data, the labels are ignored.
+
+%% Run
+% The next fundamental method in the Pattern Recognition Toolbox is the run
+% function. Invoking the run method calls whatever functionaly the
+% prtAction object implements. For example, calling run on a prtClassGlrt
+% object will perform the likelihood ratio test and output the likelihood
+% ratio values. The result will be stored in a prtDataSet. 
+%
+% For example, create a new dataset, drawn from the same distribution
+% as our training dataset ds:
+
+dsTest = prtDataGenUnimodal;
+
+%%
+% Now, call the run function, and pass the test data set:
+
+result = classifier.run(dsTest)
+
+%%
+% Have a look at the first few elements of the result dataset:
+
+result.getX(1:5)    % getX() is a shortcut for getObservations()
+
+%% 
+% The values in results.observations correspond to the values of the
+% likelihood ratio test for each observation in dsTest, as performed by the
+% classifier that was trained with the data from the dataset ds. To make a
+% decision based on these outputs, you will need to use a
+% <./functionReference/prtDecision.html prtDecision> Object.
+%
+% The cluster object operates in exactly the same way:
+
+result = cluster.run(dsTest)
+
+%%
+% However, the output is different for clustering. In this case the
+% elements are assigned to a particular cluster:
+
+result.getX(1:5,:)
+
+%% 
+% Indicating that the first 5 results correspond to either class 1 or class
+% 2. Note in clustering there is some ambiguity because cluster labeling is
+% arbitrary.
+
+%% Cross Validation
+%
+% <./functionReference/prtAction/crossValidate.html Cross validation> allows you to
+% perform training and running of an action in one command, by partitioning
+% a labeled dataset into training and test data using keys. This also
+% ensures that all data will be used for both training and testing. To
+% illustrate, here is an example of how to use this functionality with a
+% PRT clustering object:
+
+keys = mod(1:ds.nObservations,3)'; % The keys will have values 1, 2 and 3
+result = cluster.crossValidate(ds,keys);
+
+%%
+% This divides the dataset ds into 3 partitions, or folds. To test the
+% first fold, the classifier will first be trained with the 2nd and 3rd
+% folds. Then the classifier will be run using the data in the 1st fold.
+% This will be repeated for all folds.
+%
+% The keys must be a single column vector, with the same number of
+% observations in the data set.  In the example above, the first
+% observation corresponds to key 1, the second to key 3, the third to key
+% 3, and the 4th corresponds to key 1 again, and so forth. 
+%
+
+%% K-folds
+% In the above example of cross validation, the user manually picked which
+% data belonged to which fold. An alternative method is to use the
+% <./functionReference/prtAction/kfolds.html kfolds> function. When calling kfolds,
+% specify the number of folds you would like the data divided into. Kfolds
+% will then randomly subdivide the data into the specified number of folds,
+% and perform cross validation. For example:
+
+nFolds = 3;
+result = cluster.kfolds(ds,nFolds);
+
+%%
+% A final note about cross validation and kfolds, there are some actions
+% that cross validation does not make sense, or is not possible (certain
+% forms of outlier removal for example). In this case, a flag is set,
+% indicating that cross-validation is not a valid operation, and calling
+% crossValidate or kfolds on such an object will error.
+
+%% Optimize
+% Optimize is a function that allows the user to specify a range of values
+% for a single parameter, and exhaustively determine which value of the
+% parameter gives the best performance. The prtAction is run for every
+% value of the parameter, and the performance is evaluated by a function
+% specified in a function handle. Consider the following example, where we
+% attempt to determine the optimal number of nearest neighbors for a
+% K-nearest neigbor classifier:
+
+ds = prtDataGenBimodal;  % Load a data set
+knn = prtClassKnn;       % Create a classifier
+kVec = 3:5:50;          % Create a vector of parameters to
+                        % optimize over
+
+% Optimize over the range of k values, using the area under the
+% receiver operating curve as the evaluation metric. Validation
+% is performed by a k-folds cross validation with
+%10 folds as specified by the call to prtEvalAuc.
+
+[knnOptimize, percentCorrects] = ...
+    knn.optimize(ds,@(class,ds)prtEvalAuc(class,ds,10), 'k',kVec);
+plot(kVec, percentCorrects);
+xlabel('K values'); ylabel('Percent Correct'); 
+title('Number of neighbors vs. classifier accuracy')
+
+##### SOURCE END #####
+--></body></html>

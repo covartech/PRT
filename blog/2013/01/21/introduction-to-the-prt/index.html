@@ -1,0 +1,415 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>An Introduction to the PRT with MNIST - PRT Blog</title>
+  <meta name="author" content="Kenneth Morton and Peter Torrione">
+
+  
+  <meta name="description" content="An Introduction to the PRT With MNIST Jan 21st, 2013 The MNIST Database (http://yann.lecun.com/exdb/mnist/) is a very well-known machine learning &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://newfolder.github.io/blog/2013/01/21/introduction-to-the-prt">
+  <link href="/favicon.ico" rel="icon">
+  
+  <link href="/assets/bootstrap/css/spacelab.min.css" rel="stylesheet" type="text/css">
+  <link href="/assets/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet" type="text/css">
+  <link href="/assets/bootstrap/css/custom.css" rel="stylesheet" type="text/css">
+  <link href="/assets/font-awesome/css/font-awesome.css" rel="stylesheet" type="text/css">
+  
+  <link href="/atom.xml" rel="alternate" title="PRT Blog" type="application/atom+xml">
+  <style type="text/css">
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+</style>
+  
+
+</head>
+
+<body    data-spy="scroll">
+
+  <div class="container">
+    <header class="jumbotron subhead" id="overview">
+      
+<div class="subscribe">
+  <table>
+    <tr>
+      <td><span>Get Updates: &nbsp;</span></td>
+      
+      
+      <td><a href="/atom.xml" class="btn"><i class="icon-cog"></i> By RSS</a></td>
+      
+      
+    </tr>
+  </table>
+</div>
+
+<h1 class="title">PRT Blog</h1>
+
+  <p class="lead">MATLAB Pattern Recognition Open Free and Easy</p>
+
+
+      <div class="navbar">
+  <div class="navbar-inner">
+    <div class="container" style="width: auto;">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+      <div class="nav-collapse">
+                <ul class="nav">
+          <li><a href="/">Home</a></li>
+          <li><a href="/blog/archives">Blog</a></li>
+          <li><a href="https://github.com/newfolder/PRT">Code</a></li>
+          <li><a href="/prtdoc/">Documentation</a></li>
+		  <li><a href="https://github.com/newfolder/PRT/issues">Get Help</a><li>
+          <li><a href="/about">About</a></li>
+        </ul>
+
+        
+          <form action="http://google.com/search" method="get" class="navbar-search pull-left">
+            <fieldset role="search">
+              <input type="hidden" name="q" value="site:newfolder.github.io" />
+              <input type="text" name="q" results="0" placeholder="Search" class="search-query span2" />
+            </fieldset>
+          </form>
+        
+        
+      </div><!-- /.nav-collapse -->
+    </div>
+  </div><!-- /navbar-inner -->
+</div>
+
+    </header>
+    <div id="main">
+      <div id="content">
+        <div class="row">
+  
+  <div class="span8">
+    <br>
+
+  <header>
+    
+      <h1 class="entry-title">An Introduction to the PRT With MNIST</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-01-21T18:58:00-05:00" pubdate data-updated="true">Jan 21<span>st</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>The MNIST Database (<a href="http://yann.lecun.com/exdb/mnist/">http://yann.lecun.com/exdb/mnist/</a>) is a very well-known machine learning dataset consisting of a few thousand instances of handwritten digits from 0-9.  MNIST is actually a subset of a larger NIST database, but the authors (see the linked page above) were kind enough to do some basic pre-processing of MNIST for us.  MNIST was for a long time very widely used in the ML literature as an example of an easy to use real data set to evaluate new ideas.</p>
+
+
+
+
+<!--/introduction-->
+
+
+<h2>Contents</h2>
+
+
+<div><ul><li><a href="#1">Obtaining, Loading, and Visualizing MNIST Data</a></li><li><a href="#5">Classification: PLSDA</a></li><li><a href="#8">Classification: SVM</a></li><li><a href="#12">Exploring the Results</a></li></ul></div>
+
+
+<h2>Obtaining, Loading, and Visualizing MNIST Data<a name="1"></a></h2>
+
+
+<p>Tools to read in the MNIST database into the PRT are available in the newest PRT version.  To conserve bandwidth, the actual MNIST data isn&#8217;t included in the PRT (it would kill our subversion servers).  Instead you can download the MNIST database from the website linked above.  Once you&#8217;ve downloaded it, extract the data into:</p>
+
+
+<pre class="codeinput">fullfile(prtRoot,<span class="string">'dataGen'</span>,<span class="string">'dataStorage'</span>,<span class="string">'MNIST'</span>) <span class="comment">%MATLAB command will tell you the directory</span>
+</pre>
+
+
+<pre class="codeoutput">
+ans =
+
+C:\Users\Pete\Documents\MATLAB\toolboxes\nfPrt\dataGen\dataStorage\MNIST
+
+</pre>
+
+
+<p>For example, on my system:</p>
+
+
+<pre class="codeinput">ls(fullfile(prtRoot,<span class="string">'dataGen'</span>,<span class="string">'dataStorage'</span>,<span class="string">'MNIST'</span>))
+</pre>
+
+
+<pre class="codeoutput">
+.                        t10k-labels.idx1-ubyte   
+..                       train-images.idx3-ubyte  
+t10k-images.idx3-ubyte   train-labels.idx1-ubyte  
+
+</pre>
+
+
+<p>Once the MNIST files are in the right place, execute the PRT command:</p>
+
+
+<pre class="codeinput">dsTrain = prtDataGenMnist;
+</pre>
+
+
+<p>to extract the data.  ( Note, prtDataGenMnist makes use of a M-file function called readMNIST by Siddharth Hegde.  It&#8217;s available from: <a href="http://www.mathworks.com/matlabcentral/fileexchange/27675-read-digits-and-labels-from-mnist-database">http://www.mathworks.com/matlabcentral/fileexchange/27675-read-digits-and-labels-from-mnist-database</a> ).</p>
+
+
+<p>Once loaded, we can use a number of different tools to visualize the data.  First, let&#8217;s visualize the data as images.  We know that the images are size 28x28, but since the prtDataSetClass object expects each observation to correspond to a 1xN vector, we store all the 28x28 images as 1x784 vectors.</p>
+
+
+<pre class="codeinput">imageSize = [28 28];
+
+<span class="keyword">for</span> i = 1:9;
+    subplot(3,3,i);
+    x = dsTrain.getX(i); <span class="comment">%1x784</span>
+    y = dsTrain.getY(i);
+    imagesc(reshape(x,imageSize));
+    colormap <span class="string">gray</span>;
+    title(sprintf(<span class="string">'MNIST; Digit = %d'</span>,y));
+<span class="keyword">end</span>
+</pre>
+
+
+<p><img vspace="5" hspace="5" src="/images/testBlog_01.png" alt=""> <h2>Classification: PLSDA<a name="5"></a></h2><p>What kinds of classification approaches can we apply to this data set? We need to satisfy a few requirements: 1) M-Ary classification, 2) Relatively fast, 3) Relatively insensitive to a large number of dimensions (784 dimensional vectors). One particularly fast, linear approach to classification that&#8217;s relatively insensitive to the number of feature dimensions is partial-least squares discriminant analysis, implemented in the PRT as prtClassPLSDA.  With only a few lines of code we can implement and evaluate a PLSDA classifier on the MNIST data, for example:</p><pre class="codeinput">algo = prtClassPlsda(<span class="string">&lsquo;nComponents&rsquo;</span>,20) + prtDecisionMap; <span class="comment">%we include the Max-A-Posteriori classifier</span>
+yOut = algo.kfolds(dsTrain,3); <span class="comment">%3 folds x-val</span>
+pc = prtScorePercentCorrect(yOut);
+subplot(1,1,1);
+prtScoreConfusionMatrix(yOut);
+title(sprintf(<span class="string">&lsquo;3-Fold X-Val PLSDA on 10,000 MNIST Database Train Samples; %.0f%% Correct&rsquo;</span>,pc*100));
+</pre><img vspace="5" hspace="5" src="/images/testBlog_02.png" alt=""> <p>This basic example results in the above figure, where we see we&#8217;ve achieved about 84% correct classification, and we can analyze confusions between digits.  For example, the digits 4 and 9 are often confused, which seems intuitive since they look relatively similar.</p><p>We can also evaluate the PLSDA classifier trained on 10,000 training points and evaluated on the MNIST testing data.  To do so we first load the testing data, then train our classifier and evaluate it:</p></p>
+
+<pre class="codeinput">dsTest = prtDataGenMnistTest;
+algo = algo.train(dsTrain);
+yOut = algo.run(dsTest);
+pc = prtScorePercentCorrect(yOut);
+subplot(1,1,1);
+prtScoreConfusionMatrix(yOut);
+title(sprintf(<span class="string">'PLSDA on 10,000 MNIST Database Test Samples; %.0f%% Correct'</span>,pc*100));
+</pre>
+
+
+<p><img vspace="5" hspace="5" src="/images/testBlog_03.png" alt=""> <p>Performance on the test set is relatively similar to performance in cross-validation as can be seen above.</p><p>Overall, our performance is hovering around a 15% error rate.  That&#8217;s roughly comparable to the 12% error reported in LeCun et al., 1988, and here we&#8217;re not using a lot of the techniques in the Le Cun paper (and this is with barely 5 lines of code!).</p><h2>Classification: SVM<a name="8"></a></h2><p>As the results on <a href="http://yann.lecun.com/exdb/mnist/"><a href="http://yann.lecun.com/exdb/mnist/">http://yann.lecun.com/exdb/mnist/</a></a> illustrate, other approaches to digit classification have done much better than our simple PLSDA classifier.  We can use the PRT to apply more complicated classifiers to the same data also, and hopefully decrease our error rate.</p><p>For example, consider a simple application of an SVM classifier to the digit recognition problem.  Since the SVM is not an M-ary classification technique, we need to wrap our SVM in a One-Vs-All classifier to perform M-ary classification (Warning: the following code took about 30 minutes to run on my laptop):</p><pre class="codeinput">marySvm = prtPreProcZmuv + prtClassBinaryToMaryOneVsAll(<span class="string">&lsquo;baseClassifier&rsquo;</span>,prtClassLibSvm) + prtDecisionMap;
+yOut = marySvm.kfolds(dsTrain,3);
+pc = prtScorePercentCorrect(yOut);
+subplot(1,1,1);
+prtScoreConfusionMatrix(yOut);
+title(sprintf(<span class="string">&lsquo;3-Fold X-Val SVM on 10,000 MNIST Database Train Samples; %.0f%% Correct&rsquo;</span>,pc*100));
+</pre><pre class="codeoutput">Warning: Non-finite or zero standard deviation encountered.  Replacing invalid
+standard deviations with 1
+Warning: Non-finite or zero standard deviation encountered.  Replacing invalid
+standard deviations with 1
+Warning: Non-finite or zero standard deviation encountered.  Replacing invalid
+standard deviations with 1
+</pre><img vspace="5" hspace="5" src="/images/testBlog_04.png" alt=""> <p>As can be seen above, the SVM achieves an error rate of 5% on this data set!  That&#8217;s a significant improvement over the PLSDA classification we showed before.  Similarly to with PLSDA, we can also evaluate the algorithm on completely separate testing data:</p></p>
+
+<pre class="codeinput">marySvm = marySvm.train(dsTrain);
+yOut = marySvm.run(dsTest);
+pc = prtScorePercentCorrect(yOut);
+subplot(1,1,1);
+prtScoreConfusionMatrix(yOut);
+title(sprintf(<span class="string">'PLSDA on 10,000 MNIST Database Test Samples; %.0f%% Correct'</span>,pc*100));
+</pre>
+
+
+<pre class="codeoutput">Warning: Non-finite or zero standard deviation encountered.  Replacing invalid
+standard deviations with 1 
+</pre>
+
+
+<p><img vspace="5" hspace="5" src="/images/testBlog_05.png" alt=""> <p>And we see that performance is comparable to the cross-validated results. (Note that more advanced applications of SVM classifiers can do even better than the results reported here &#8211; Le Cun et al., 1998 reported 1.4% error rates with an SVM and some additional processing).</p><h2>Exploring the Results<a name="12"></a></h2><p>If we wanted to improve classification, we could optimize over the SVM parameters, kernel, pre-processing etc.  But before we did that, it might be instructive to investigate what digits the SVM classifier is mislabeling, and see if some of them seem like reasonable mistakes to make.  The following code will pick 9 instances where the SVM output label was different from the actual data label, and plot them in a subplot.</p></p>
+
+<pre class="codeinput">incorrect = find(yOut.getX ~= yOut.getY);
+yOutTestMisLabeled = yOut.retainObservations(incorrect);
+dsTestMisLabeled = dsTest.retainObservations(incorrect);
+<span class="keyword">for</span> i = 1:9; <span class="comment">%dsTestMisLabeled.nObservations;</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;randWrong = ceil(rand*dsTestMisLabeled.nObservations); <span class="comment">%pick a random wrong element</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;subplot(3,3,i);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x = dsTestMisLabeled.getX(randWrong);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;img = reshape(x,imageSize);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;imagesc(img);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;colormap <span class="string">gray</span>;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+title(sprintf(<span class="string">'Actual: %d; SVM Label: %d'</span>,yOutTestMisLabeled.getY(randWrong),yOutTestMisLabeled.getX(randWrong)));
+<span class="keyword">end</span>
+</pre>
+
+
+<p><img vspace="5" hspace="5" src="/images/testBlog_06.png" alt=""> <p>Visual inspection of these mistakes illustrate some of the causes of confusions in the SVM.  For example, highly slanted digits are often mis-labeled.  Mitigating some of these mistakes may require significantly more than simply optimizing SVM parameters!</p><p>Interested readers can refer to a large body of literature that has previously investigated this data set (<a href="http://yann.lecun.com/exdb/mnist/"><a href="http://yann.lecun.com/exdb/mnist/">http://yann.lecun.com/exdb/mnist/</a></a>) for tips, tricks, and ideas for further improving performance on this data set.  One particularly exciting recent advance is based on Hinton&#8217;s deep learning networks, which enables very efficient learning on the MNIST database <a href="www.cs.toronto.edu/~hinton/science.pdf">www.cs.toronto.edu/~hinton/science.pdf</a>).</p><p>We hope this example shows how quickly you can get from data to results with the PRT.  Please let us know if you have comments or questions!</p></p>
+</div>
+
+
+<br>
+<hr>
+<br>
+    <footer>
+      <p class="meta">
+        
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Pete</span></span>
+
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-01-21T18:58:00-05:00" pubdate data-updated="true">Jan 21<span>st</span>, 2013</time>
+        
+
+
+      </p>
+      
+        <div class="sharing">
+  <br/>
+  
+  
+  
+</div>
+
+      
+      <p class="meta">
+        
+          <a class="basic-alignment pull-left" href="/blog/2013/01/21/hi/" title="Previous Post: Hi">&laquo; Hi</a>
+        
+        
+          <a class="basic-alignment pull-right" href="/blog/2013/01/25/decisions-decisions/" title="Next Post: Decisions Decisions">Decisions Decisions &raquo;</a>
+        
+      </p>
+    </footer>
+    
+    
+      <section>
+        <h1>Comments</h1>
+        <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+      </section>
+    
+  </div>
+
+  
+    
+  <div class="span3 sidebar">
+    <div class="well">
+      
+        <section>
+  <h2>Recent Posts</h2>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/10/09/dude-wheres-my-help/">Dude Where's My Help?</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/09/04/verbosestorage-and-a-little-prtalgorithm-plotting/">verboseStorage and a little prtAlgorithm plotting</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/08/20/introducing-prtclassnnet/">Introducing prtClassNNET</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/07/29/supervised-learning/">Supervised Learning: An Introduction for Scientists and Engineers</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/07/24/using-svms/">Using SVMs for Scientists and Engineers</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+      
+    </div>
+  </div>
+
+
+  
+</div>
+
+
+      </div>
+    </div>
+    <footer class="footer"><p>
+  Copyright &copy; 2013 - Kenneth Morton and Peter Torrione -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span> -
+  
+    <span class="credit">Theme by <a href="http://brianarmstrong.org">Brian Armstrong</a></span>
+  
+</p>
+</footer>
+    
+
+<script type="text/javascript">
+      var disqus_shortname = 'newfolderconsulting';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://newfolder.github.io/blog/2013/01/21/introduction-to-the-prt/';
+        var disqus_url = 'http://newfolder.github.io/blog/2013/01/21/introduction-to-the-prt/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+<script src="/assets/bootstrap/js/bootstrap.min.js"></script>
+
+
+  </div>
+</body>
+</html>

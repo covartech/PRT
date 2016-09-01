@@ -1,0 +1,65 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../../helpwin.css">
+      <title>MATLAB File Help: prtClassDlrt/prtClassDlrt</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtClassDlrt/prtClassDlrt</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtClassDlrt/prtClassDlrt</div>
+      <div class="helptext"><pre><!--helptext -->  <span class="helptopic">prtClassDlrt</span>  Distance likelihood ratio test classifier
+ 
+     CLASSIFIER = <span class="helptopic">prtClassDlrt</span> returns a Dlrt classifier
+ 
+     CLASSIFIER = <span class="helptopic">prtClassDlrt</span>(PROPERTY1, VALUE1, ...) constructs a
+     <span class="helptopic">prtClassDlrt</span> object CLASSIFIER with properties as specified by
+     PROPERTY/VALUE pairs.
+ 
+     A <span class="helptopic">prtClassDlrt</span> object inherits all properties from the abstract class
+     prtClass. In addition is has the following properties:
+ 
+     k                  - The number of neigbors to be considered
+     distanceFunction   - The function to be used to compute the
+                          distance from samples to cluster centers. 
+                          It must be a function handle of the form:
+                          @(x1,x2)distFun(x1,x2). Most prtDistance*
+                          functions will work.
+ 
+     For more information on Dlrt classifiers, refer to the
+     following paper:
+ 
+     Remus, J.J. et al., "Comparison of a distance-based likelihood ratio
+     test and k-nearest neighbor classification methods" Machine Learning
+     for Signal Processing, 2008. MLSP 2008. IEEE Workshop on, October,
+     2008.
+ 
+     A <span class="helptopic">prtClassDlrt</span> object inherits the TRAIN, RUN, CROSSVALIDATE and
+     KFOLDS methods from prtAction. It also inherits the PLOT method
+     from prtClass.
+ 
+     Example:
+ 
+      TestDataSet = prtDataGenUniModal;       % Create some test and
+      TrainingDataSet = prtDataGenUniModal;   % training data
+      classifier = <span class="helptopic">prtClassDlrt</span>;              % Create a classifier
+      classifier = classifier.train(TrainingDataSet);    % Train
+      classified = run(classifier, TestDataSet);         % Test
+      subplot(2,1,1);
+      classifier.plot;
+      subplot(2,1,2);
+      [pf,pd] = prtScoreRoc(classified,TestDataSet);
+      h = plot(pf,pd,'linewidth',3);
+      title('ROC'); xlabel('Pf'); ylabel('Pd');</pre></div><!--after help --><!--seeAlso--><div class="footerlinktitle">See also</div><div class="footerlink"> <a href="./../prtClass.html">prtClass</a>, <a href="./../prtClassLogisticDiscriminant.html">prtClassLogisticDiscriminant</a>, <a href="./../prtClassBagging.html">prtClassBagging</a>,
+     <a href="./../prtClassMap.html">prtClassMap</a>, <a href="./../prtClassCap.html">prtClassCap</a>, <a href="./../prtClassBinaryToMaryOneVsAll.html">prtClassBinaryToMaryOneVsAll</a>, <a href="./../prtClassDlrt.html">prtClassDlrt</a>,
+     <a href="./../prtClassPlsda.html">prtClassPlsda</a>, <a href="./../prtClassFld.html">prtClassFld</a>, <a href="./../prtClassRvm.html">prtClassRvm</a>, <a href="./../prtClassDlrt.html">prtClassDlrt</a>,  <a href="./../prtClass.html">prtClass</a>
+</div>
+   </body>
+</html>

@@ -1,0 +1,382 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Principal Component Analysis - prtPreProcPca - PRT Blog</title>
+  <meta name="author" content="Kenneth Morton and Peter Torrione">
+
+  
+  <meta name="description" content="Principal Component Analysis - prtPreProcPca Apr 16th, 2013 Today I&#8217;d like to give a quick tour of how to use PCA in the PRT to easily reduce &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://newfolder.github.io/blog/2013/04/16/principal-component-analysis">
+  <link href="/favicon.ico" rel="icon">
+  
+  <link href="/assets/bootstrap/css/spacelab.min.css" rel="stylesheet" type="text/css">
+  <link href="/assets/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet" type="text/css">
+  <link href="/assets/bootstrap/css/custom.css" rel="stylesheet" type="text/css">
+  <link href="/assets/font-awesome/css/font-awesome.css" rel="stylesheet" type="text/css">
+  
+  <link href="/atom.xml" rel="alternate" title="PRT Blog" type="application/atom+xml">
+  <style type="text/css">
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+</style>
+  
+
+</head>
+
+<body    data-spy="scroll">
+
+  <div class="container">
+    <header class="jumbotron subhead" id="overview">
+      
+<div class="subscribe">
+  <table>
+    <tr>
+      <td><span>Get Updates: &nbsp;</span></td>
+      
+      
+      <td><a href="/atom.xml" class="btn"><i class="icon-cog"></i> By RSS</a></td>
+      
+      
+    </tr>
+  </table>
+</div>
+
+<h1 class="title">PRT Blog</h1>
+
+  <p class="lead">MATLAB Pattern Recognition Open Free and Easy</p>
+
+
+      <div class="navbar">
+  <div class="navbar-inner">
+    <div class="container" style="width: auto;">
+      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </a>
+      <div class="nav-collapse">
+                <ul class="nav">
+          <li><a href="/">Home</a></li>
+          <li><a href="/blog/archives">Blog</a></li>
+          <li><a href="https://github.com/newfolder/PRT">Code</a></li>
+          <li><a href="/prtdoc/">Documentation</a></li>
+		  <li><a href="https://github.com/newfolder/PRT/issues">Get Help</a><li>
+          <li><a href="/about">About</a></li>
+        </ul>
+
+        
+          <form action="http://google.com/search" method="get" class="navbar-search pull-left">
+            <fieldset role="search">
+              <input type="hidden" name="q" value="site:newfolder.github.io" />
+              <input type="text" name="q" results="0" placeholder="Search" class="search-query span2" />
+            </fieldset>
+          </form>
+        
+        
+      </div><!-- /.nav-collapse -->
+    </div>
+  </div><!-- /navbar-inner -->
+</div>
+
+    </header>
+    <div id="main">
+      <div id="content">
+        <div class="row">
+  
+  <div class="span8">
+    <br>
+
+  <header>
+    
+      <h1 class="entry-title">Principal Component Analysis - prtPreProcPca</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-04-16T19:56:00-04:00" pubdate data-updated="true">Apr 16<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Today I&#8217;d like to give a quick tour of how to use PCA in the PRT to easily reduce the dimensionality of your data set in a meaningful, principled way.
+
+</p>
+
+
+<!--/introduction-->
+
+
+<h2>Contents</h2>
+
+
+<div><ul><li><a href="#1">Introduction &amp; Theory</a></li><li><a href="#2">In the PRT</a></li><li><a href="#7">How Many Components?</a></li><li><a href="#8">Normalization</a></li><li><a href="#10">Conclusion</a></li></ul></div>
+
+
+<h2>Introduction &amp; Theory<a name="1"></a></h2>
+
+
+<p>Principal component analysis (PCA) is a widely used technique in the statistics and signal processing literature.  Even if you haven&#8217;t heard of PCA, if you know some linear algebra, you may have heard of the singular value decomposition (SVD), or, if you come from the signal processing literature, you&#8217;ve probably heard of the  Karhunen&#8211;Loeve transformation (KLT).  Both of these are identical in form to PCA.  Turns out a lot of different groups have re-created the same algorithm in a lot of different fields!</p>
+
+
+
+
+<p>We won&#8217;t have time to delve into the nitty gritty about PCA here.  For our purposes it&#8217;s enough to say that given a (zero-mean) data set X of nObservations x nFeatures, we often want to find a linear transformation of X, S = X*Z, for a matrix Z of size nPca x nFeatures where:</p>
+
+
+<pre>1) nPca &lt; nFeatures
+2) The resulting data, S, contains "most of the information from" X.</pre>
+
+
+<p>As you can imagine, the phrase &#8220;most of the information&#8221; is vague, and subject to interpretation&#8230; Mathematically, PCA considers &#8220;most of the information in X&#8221; to be equivalent to &#8220;explains most of the variance in X.  It turns out that this statement of the problem has some very nice mathematical solutions - e.g., the columns of S can be viewed as the dominant eigenvectors in the covariance of X!</p>
+
+
+<p>You can find our more about PCA on the fabulous wikipedia article: https://en.wikipedia.org/wiki/Principal_component_analysis.</p>
+
+
+<h2>In the PRT<a name="2"></a></h2>
+
+
+<p>PCA is implemented in the PRT using prtPreProcPca.  Older versions of prtPreProcPca used to make use of different algorithms for different sized data sets (there are a lot of ways to do PCA quickly depending on matrix dimensions).  Since 2012, we found that the MATLAB function SVDS was beating all of our approaches in terms of speed and accuracy, so have switched over to using SVDS to solve for the principal component vectors.</p>
+
+
+<p>Let&#8217;s take a quick look at some PCA projections.  First, we&#8217;ll need some data:</p>
+
+
+<pre class="codeinput">ds = prtDataGenUnimodal;
+</pre>
+
+
+<p>We also need to make a prtPreProcPca object, and we&#8217;ll use 2 components in the PCA projection:</p>
+
+
+<pre class="codeinput">pca = prtPreProcPca(<span class="string">'nComponents'</span>,2);
+</pre>
+
+
+<p>prtPreProc* objects can be trained and run just like any other objects:</p>
+
+
+<pre class="codeinput">pca = pca.train(ds);
+</pre>
+
+
+<p>Let&#8217;s visualize the results, first we&#8217;ll look at the original data, and the vectors from the PCA analysis:</p>
+
+
+<pre class="codeinput">plot(ds);
+hold <span class="string">on</span>;
+h1 = plot([0 pca.pcaVectors(1,1)],[0,pca.pcaVectors(2,1)],<span class="string">'k'</span>);
+h2 = plot([0 pca.pcaVectors(1,2)],[0,pca.pcaVectors(2,2)],<span class="string">'k--'</span>);
+set([h1,h2],<span class="string">'linewidth'</span>,3);
+hold <span class="string">off</span>;
+axis <span class="string">equal</span>;
+title(<span class="string">'Original Data &amp; Two PCA Vectors'</span>);
+</pre>
+
+
+<p><img vspace="5" hspace="5" src="/images/torrione_blog_2013_04_16_01.png" alt=""> <p>From this plot, we can see that the PCA vectors are oriented first along the dimension of largest variance in the data (diagonal wiht a positive slope), and the second PCA is oriented orthogonal to the first PCA.</p><p>We can project our data onto this space using the RUN method:</p><pre class="codeinput">dsPca = pca.run(ds);
+plot(dsPca);
+title(<span class="string">&lsquo;PCA-Projected Data&rsquo;</span>);
+</pre><img vspace="5" hspace="5" src="/images/torrione_blog_2013_04_16_02.png" alt=""> <h2>How Many Components?<a name="7"></a></h2><p>In general, it might be somewhat complicated to determine how many PCA components are necessary to explain most of the variance in a particular data set.  Above we used 2, but for higher dimensional data sets, how many should we use in general?</p><p>We can measure how much variance each PC explains during training by exploring the vector pca.totalPercentVarianceCumulative which is set during training.  This vector contains the percent of the total variance of the data set explained by 1:N PCA components.  For example, totalPercentVarianceCumulative(3) contains the percent variance explained by components 1 through 3.  When this metric plateaus, that&rsquo;s a pretty good sign that we have enough components.</p><p>For example:</p><pre class="codeinput">ds = prtDataGenProstate;
+pca = prtPreProcPca(<span class="string">&lsquo;nComponents&rsquo;</span>,ds.nFeatures);
+pca = pca.train(ds);</p>
+
+<p>stem(pca.totalPercentVarianceCumulative,<span class="string">&lsquo;linewidth&rsquo;</span>,3);
+xlabel(<span class="string">&lsquo;#Components&rsquo;</span>);
+ylabel(<span class="string">&lsquo;Percent Variance Explained&rsquo;</span>);
+title(<span class="string">&lsquo;Prostate Data &ndash; PCA Percent Variance Explained&rsquo;</span>);
+</pre><img vspace="5" hspace="5" src="/images/torrione_blog_2013_04_16_03.png" alt=""> <h2>Normalization<a name="8"></a></h2><p>For PCA to be meaningful, the data used has to have zero-mean columns, and prtPreProcPca takes care of that for you (so you don&rsquo;t have to zero mean the columns yourself).  However, different authors disagree about whether or not the columns provided to PCA should all have the same variance before PCA analysis.  Depending on normalization, you can get very different PCA projections.  To leave the option open, the PRT does <b>not</b> automatically normalize the columns of the input data to have uniform variance.  You can manually enforce this before your PCA processing with prtPreProcZmuv.</p><p>Here&rsquo;s a simplified example, where we do the two processes separately to show the differences.</p><pre class="codeinput">ds = prtDataGenProstate;
+dsNorm = rt(prtPreProcZmuv,ds);
+pca = prtPreProcPca(<span class="string">&lsquo;nComponents&rsquo;</span>,ds.nFeatures);
+pca = pca.train(ds);
+pcaNorm = pca.train(dsNorm);</p>
+
+<p>subplot(2,1,1);
+stem(pca.totalPercentVarianceCumulative,<span class="string">&lsquo;linewidth&rsquo;</span>,3);
+xlabel(<span class="string">&lsquo;#Components&rsquo;</span>);
+ylabel(<span class="string">&lsquo;Percent Variance Explained&rsquo;</span>);
+title(<span class="string">&lsquo;Prostate Data &ndash; PCA Percent Variance Explained&rsquo;</span>);</p>
+
+<p>subplot(2,1,2);
+stem(pcaNorm.totalPercentVarianceCumulative,<span class="string">&lsquo;linewidth&rsquo;</span>,3);
+xlabel(<span class="string">&lsquo;#Components&rsquo;</span>);
+ylabel(<span class="string">&lsquo;Percent Variance Explained&rsquo;</span>);
+title(<span class="string">&lsquo;Prostate Data &ndash; PCA Percent Variance Explained (Normalized Data)&rsquo;</span>);
+</pre><img vspace="5" hspace="5" src="/images/torrione_blog_2013_04_16_04.png" alt=""> <p>As you can see, processing normalized and un-normalized data results in quite different assessments of how many PCA components are required to summarize the data.</p><p>Our recommendation is that if your data comes from different sources, with different sensor ranges or variances (as in the prostate data), it&rsquo;s imperative that you perform standard-deviation normalization prior to PCA processing.</p><p>Otherwise, it&rsquo;s worthwhile to try both with and without ZMUV pre-processing and see what gives better performance.</p><h2>Conclusion<a name="10"></a></h2><p>That&rsquo;s about it for PCA processing.  Of course, you can use PCA as a pre-processor for any algorithm you&rsquo;re developing, to reduce the dimensionality of your data, for example:</p><pre>algo = prtPreProcPca + prtClassLibSvm;</pre><p>Let us know if you have questions or comments about using prtPreProcPca.</p></p>
+</div>
+
+
+<br>
+<hr>
+<br>
+    <footer>
+      <p class="meta">
+        
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Pete</span></span>
+
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-04-16T19:56:00-04:00" pubdate data-updated="true">Apr 16<span>th</span>, 2013</time>
+        
+
+
+      </p>
+      
+        <div class="sharing">
+  <br/>
+  
+  
+  
+</div>
+
+      
+      <p class="meta">
+        
+          <a class="basic-alignment pull-left" href="/blog/2013/04/08/rt/" title="Previous Post: rt()">&laquo; rt()</a>
+        
+        
+          <a class="basic-alignment pull-right" href="/blog/2013/04/22/prtkernel/" title="Next Post: prtKernel">prtKernel &raquo;</a>
+        
+      </p>
+    </footer>
+    
+    
+      <section>
+        <h1>Comments</h1>
+        <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+      </section>
+    
+  </div>
+
+  
+    
+  <div class="span3 sidebar">
+    <div class="well">
+      
+        <section>
+  <h2>Recent Posts</h2>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/10/09/dude-wheres-my-help/">Dude Where's My Help?</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/09/04/verbosestorage-and-a-little-prtalgorithm-plotting/">verboseStorage and a little prtAlgorithm plotting</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/08/20/introducing-prtclassnnet/">Introducing prtClassNNET</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/07/29/supervised-learning/">Supervised Learning: An Introduction for Scientists and Engineers</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/07/24/using-svms/">Using SVMs for Scientists and Engineers</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+      
+    </div>
+  </div>
+
+
+  
+</div>
+
+
+      </div>
+    </div>
+    <footer class="footer"><p>
+  Copyright &copy; 2013 - Kenneth Morton and Peter Torrione -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span> -
+  
+    <span class="credit">Theme by <a href="http://brianarmstrong.org">Brian Armstrong</a></span>
+  
+</p>
+</footer>
+    
+
+<script type="text/javascript">
+      var disqus_shortname = 'newfolderconsulting';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://newfolder.github.io/blog/2013/04/16/principal-component-analysis/';
+        var disqus_url = 'http://newfolder.github.io/blog/2013/04/16/principal-component-analysis/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+<script src="/assets/bootstrap/js/bootstrap.min.js"></script>
+
+
+  </div>
+</body>
+</html>

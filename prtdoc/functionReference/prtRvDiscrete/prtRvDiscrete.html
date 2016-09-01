@@ -1,0 +1,53 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../../helpwin.css">
+      <title>MATLAB File Help: prtRvDiscrete/prtRvDiscrete</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtRvDiscrete/prtRvDiscrete</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtRvDiscrete/prtRvDiscrete</div>
+      <div class="helptext"><pre><!--helptext -->  <span class="helptopic">prtRvDiscrete</span>  Discrete random variable.
+ 
+    RV = <span class="helptopic">prtRvDiscrete</span> creates a <span class="helptopic">prtRvDiscrete</span> object with an unknown
+    symbols and unspecified probabilities. These properties
+    can be set manually or by using the MLE method. Both of these
+    properties must be set to make the RV valid.
+ 
+    RV = <span class="helptopic">prtRvDiscrete</span>(PROPERTY1, VALUE1,...) creates a
+    <span class="helptopic">prtRvDiscrete</span> object RV with properties as specified by
+    PROPERTY/VALUE pairs.
+ 
+    A <span class="helptopic">prtRvDiscrete</span> object inherits all properties from the
+    prtRv class. In addition, it has the following properties:
+ 
+    nCategories   - number of integers modeled by the RV
+    probabilities - 1 x nCategories vector of doubles less than 1
+                    that sum to 1, representing the probability of
+                    each of the integers
+    symbols       - nCategories x M matrix of symbols
+                    M specifies the dimensionality of the RV object.
+ 
+   A <span class="helptopic">prtRvDiscrete</span> object inherits all methods from the prtRv
+   class. The MLE  method can be used to set the parameters from data.
+ 
+   Example:
+ 
+       rv = <span class="helptopic">prtRvDiscrete</span>('symbols',(10:12)','probabilities',[0.3 0.3 0.4]);
+       plotPdf(rv);
+ 
+       % Plot MVN distributed data as discrete
+       rv = mle(<span class="helptopic">prtRvDiscrete</span>,draw(prtRvMvn('mu',[1 2],'sigma',2*eye(2)),100));
+       plotPdf(rv);</pre></div><!--after help --><!--seeAlso--><div class="footerlinktitle">See also</div><div class="footerlink"> <a href="./../prtRv.html">prtRv</a>, <a href="./../prtRvMvn.html">prtRvMvn</a>, <a href="./../prtRvGmm.html">prtRvGmm</a>, <a href="./../prtRvVq.html">prtRvVq</a>, <a href="./../prtRvKde.html">prtRvKde</a>,
+              <a href="./../prtRvMultinomial.html">prtRvMultinomial</a>
+</div>
+   </body>
+</html>

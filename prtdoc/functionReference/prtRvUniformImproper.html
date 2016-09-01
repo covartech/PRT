@@ -1,0 +1,272 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../helpwin.css">
+      <title>MATLAB File Help: prtRvUniformImproper</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtRvUniformImproper</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtRvUniformImproper</div>
+      <div class="helptext"><pre><!--helptext -->  <span class="helptopic">prtRvUniformImproper</span>  Improper uniform random variable
+ 
+    RV = <span class="helptopic">prtRvUniformImproper</span> creates a <span class="helptopic">prtRvUniformImproper</span> object
+    with unknown dimensionality nDimensions. nDimensions can be set
+    manually or using the MLE method. A <span class="helptopic">prtRvUniformImproper</span>
+    models an improper pdf that always yields a value of 1 no matter
+    the input. <span class="helptopic">prtRvUniformImproper</span> is sometimes useful for creating 
+    one class classifiers. See the examples below for more information
+ 
+    The draw method of <span class="helptopic">prtRvUniformImproper</span> draws values uniformly
+    distributed from realmin to realmax in each dimension.
+ 
+    RV = <span class="helptopic">prtRvUniformImproper</span>(PROPERTY1, VALUE1,...) creates a
+    prtRvMultinomial object RV with properties as specified by
+    PROPERTY/VALUE pairs.
+ 
+    A <span class="helptopic">prtRvUniformImproper</span> object inherits all properties from the
+    prtRv class. In addition, it has the following properties:
+ 
+    nDimensions - dimensionality of the data modeled by this RV.
+    
+   A <span class="helptopic">prtRvUniformImproper</span> object inherits all methods from the prtRv
+   class. The MLE  method can be used to set the parameters from data.
+ 
+   Example:
+ 
+   % In this example we show that the PDF of a <span class="helptopic">prtRvUniformImproper</span> is
+   % always 1
+   dataSet = prtDataGenUnimodal;        % Load a dataset consisting of
+                                        % 2 features
+   dataSet = retainFeatures(dataSet,1); % Retain only the first feature
+                                        % only for the example.
+ 
+   RV = <span class="helptopic">prtRvUniformImproper</span>;           % Create a prtRvUniform object
+   RV = RV.mle(dataSet);                % Compute the bounds
+ 
+   RV.plotPdf([-10 10]);                % We must manually specify
+                                        % plot limits since
+                                        % <span class="helptopic">prtRvUniformImproper</span> does not
+                                        % have actual plot limits
+ 
+ 
+   % In this example we show how to build a one class MAP classifier
+   dataSet = prtDataGenUnimodal;        % Load a dataset consisting of
+                                        % 2 features
+   
+   % Create and train a GLRT classifier that uses a 
+   % <span class="helptopic">prtRvUniformImproper</span> to model class 0 and a prtRvMvn to model
+   % class 1
+   glrtClass = train(prtClassGlrt('rvH0',<span class="helptopic">prtRvUniformImproper</span>,'rvH1',prtRvMvn),dataSet);
+ 
+   plot(glrtClass) % Contours only show the log-likelihood of class 1</pre></div><!--after help --><!--seeAlso--><div class="footerlinktitle">See also</div><div class="footerlink"> <a href="./prtRv.html">prtRv</a>, <a href="./prtRvMvn.html">prtRvMvn</a>, <a href="./prtRvGmm.html">prtRvGmm</a>, <a href="./prtRvMultinomial.html">prtRvMultinomial</a>,
+    <a href="./prtRvVq.html">prtRvVq</a>, <a href="./prtRvKde.html">prtRvKde</a>
+</div>
+      <!--Class-->
+      <div class="sectiontitle">Class Details</div>
+      <table class="class-details">
+         <tr>
+            <td class="class-detail-label">Superclasses</td>
+            <td><a href="./prtRv.html">prtRv</a></td>
+         </tr>
+         <tr>
+            <td class="class-detail-label">Sealed</td>
+            <td>false</td>
+         </tr>
+         <tr>
+            <td class="class-detail-label">Construct on load</td>
+            <td>false</td>
+         </tr>
+      </table>
+      <!--Constructors-->
+      <div class="sectiontitle"><a name="constructors"></a>Constructor Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRvUniformImproper/prtRvUniformImproper.html">prtRvUniformImproper</a></td>
+            <td class="m-help">Improper uniform random variable&nbsp;</td>
+         </tr>
+      </table>
+      <!--Properties-->
+      <div class="sectiontitle"><a name="properties"></a>Property Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRvUniformImproper/dataSet.html">dataSet</a></td>
+            <td class="m-help">The training prtDataSet, only stored if verboseStorage is true. &nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRvUniformImproper/dataSetSummary.html">dataSetSummary</a></td>
+            <td class="m-help">Structure that summarizes prtDataSet.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRvUniformImproper/isCrossValidateValid.html">isCrossValidateValid</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRvUniformImproper/isSupervised.html">isSupervised</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRvUniformImproper/isTrained.html">isTrained</a></td>
+            <td class="m-help">Indicates if prtAction object has been trained.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRvUniformImproper/name.html">name</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRvUniformImproper/nameAbbreviation.html">nameAbbreviation</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRvUniformImproper/plotOptions.html">plotOptions</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRvUniformImproper/showProgressBar.html">showProgressBar</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRvUniformImproper/userData.html">userData</a></td>
+            <td class="m-help">User specified data&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtRvUniformImproper/verboseStorage.html">verboseStorage</a></td>
+            <td class="m-help">Specifies whether or not to store the training prtDataset.&nbsp;</td>
+         </tr>
+      </table>
+      <!--Methods-->
+      <div class="sectiontitle"><a name="methods"></a>Method Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRvUniformImproper/cdf.html">cdf</a></td>
+            <td class="m-help">Output the cdf of the random variable evaluated at the points specified&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRvUniformImproper/crossValidate.html">crossValidate</a></td>
+            <td class="m-help">Cross validate prtAction using prtDataSet and cross validation keys.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRvUniformImproper/draw.html">draw</a></td>
+            <td class="m-help">Draw random samples from the distribution described by the prtRv object&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRvUniformImproper/get.html">get</a></td>
+            <td class="m-help">get the object properties&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRvUniformImproper/kfolds.html">kfolds</a></td>
+            <td class="m-help">Perform K-folds cross-validation of prtAction&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRvUniformImproper/logPdf.html">logPdf</a></td>
+            <td class="m-help">Output the log pdf of the random variable evaluated at the points specified&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRvUniformImproper/mle.html">mle</a></td>
+            <td class="m-help">Compute the maximum likelihood estimate &nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRvUniformImproper/optimize.html">optimize</a></td>
+            <td class="m-help">Optimize action parameter by exhaustive function maximization.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRvUniformImproper/pdf.html">pdf</a></td>
+            <td class="m-help">Output the pdf of the random variable evaluated at the points specified&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRvUniformImproper/plotCdf.html">plotCdf</a></td>
+            <td class="m-help">Plot the cdf of the prtRv&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRvUniformImproper/plotLogPdf.html">plotLogPdf</a></td>
+            <td class="m-help">Plot the pdf of the prtRv&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRvUniformImproper/plotPdf.html">plotPdf</a></td>
+            <td class="m-help">Plot the pdf of the prtRv&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRvUniformImproper/run.html">run</a></td>
+            <td class="m-help">Run a prtAction object on a prtDataSet object.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRvUniformImproper/set.html">set</a></td>
+            <td class="m-help">set the object properties&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtRvUniformImproper/train.html">train</a></td>
+            <td class="m-help">Train a prtAction object using training a prtDataSet object.&nbsp;</td>
+         </tr>
+      </table>
+   </body>
+</html>

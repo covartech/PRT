@@ -1,0 +1,211 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Feature selection in the Pattern Recognition Toolbox</title><meta name="generator" content="MATLAB 8.0"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2013-02-19"><meta name="DC.source" content="prtDocFeatSel.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Feature selection in the Pattern Recognition Toolbox</h1><!--introduction--><p>Feature selection is a technique that is used to determine which features of a data set are most relevant to performing classification. In general, for a fixed size training set, incorporating more features in classifier training can lead to declining performance due to the curse of dimensionality.  Therefore, it is often desirable to reduce the amount of features used to perform classification to the smallest amount possible that still gives the desired performance. prtFeatSel objects provide a way to select features based on a performance criteria.</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Exhaustive feature selection</a></li><li><a href="#4">Sequential forward selection</a></li></ul></div><h2>Exhaustive feature selection<a name="1"></a></h2><pre>Exhaustive feature selection works by exhaustively comparing all
+possible combinations of features that could be selected. The number of
+features to be selected must be determined beforehand. The feature
+selection algorithm will then evaluate the classifier with all
+combinations of features and select the set that gives the best
+performance. The classifier performance is determined by specifying a
+prtEval object. Note that the computational complexity of exhaustive
+feature selection grows very rapidly, so that for even moderately sized
+data sets, exhaustive feature selection is impractical.  The following
+example illustrates exhaustive feature selection:</pre><pre class="codeinput"><span class="comment">% Generate a data set, this data set has a redundant feature intentionally</span>
+<span class="comment">% inserted for example purposes.</span>
+dataSet = prtDataGenFeatureSelection;
+
+featSel = prtFeatSelExhaustive;   <span class="comment">% Create a feature selction object</span>
+featSel.nFeatures = 3;            <span class="comment">% Select three features of the data</span>
+
+ <span class="comment">% The classification will be done using a prtClassGlrt object.</span>
+classifier = prtClassGlrt;
+
+<span class="comment">%   Change the evaluation metric to prtScoreAuc, the area under the</span>
+<span class="comment">%   receiver operating curve.</span>
+featSel.evaluationMetric = @(DS)prtEvalAuc(classifier, DS);
+
+featSel = featSel.train(dataSet);  <span class="comment">% Train the feature selection object</span>
+outDataSet = featSel.run(dataSet); <span class="comment">% Run the classifier on the data set</span>
+                                   <span class="comment">% using only the selected features</span>
+</pre><p>The above example illustrates several important things about feature selection. First, the clasification algorithm must be specified, as is done by passing a prtClassGlrt object to the prtEval function. You can instantiate and configure the prtClass object just like any other prtClass object. Second, the evaluation is done by a prtEval object, which takes the classifier and data set, and evaluates it in terms of a given performance metric.</p><p>By calling the train method on the prtFeatSel object, all possible combinations of 3 features are evaluated, and the set resulting in the best performance, is selected. The selected features are:</p><pre class="codeinput">featSel.selectedFeatures
+</pre><pre class="codeoutput">ans =
+     2     6    10
+</pre><p>Finally, calling the run function on the dataset, runs the prtGlrt classifier object, but only using the features that were found during training, and outputs the result.</p><h2>Sequential forward selection<a name="4"></a></h2><p>Exhaustive feature selection can take a considerable amount of time to train, particularly if the number of features is large. Sequential feature selection can potentially resolve this problem while reducing the amount of training time. Sequential forward selection starts by selecting one feature by and evaluating the classifier on each feature individually. The feature that gives the best performance is then selected. If more than one feature is requested, the feature selection object will then repeat this, adding features, and selecting the one that most improves performance, until the desired number of features has been met. For example:</p><pre class="codeinput"><span class="comment">% Create a sequential forward selection object</span>
+featSel = prtFeatSelSfs;
+
+<span class="comment">% For fair comparision, leave the evaluation and classifier the same:</span>
+featSel.evaluationMetric = @(DS)prtEvalAuc(classifier, DS);
+
+featSel = featSel.train(dataSet);  <span class="comment">% Train the feature selection object</span>
+featSel.selectedFeatures
+</pre><pre class="codeoutput">ans =
+     2     6    10
+</pre><p>Observe that the selected features are [3 1 7]. Notice that they are the same features as found in the exhaustive feature selection, but in different order. This is because feature 3 contributes the most to the performance metric, follwed by feature 1, then feature 7. Note that it is not guaranteed that sequential forward selection will select the same features as exhaustive selection, it is merely a coincidence in this case. Sequential forward selection does not evaluate all possible combinations of features as exhaustive feature selection does.</p><pre class="codeinput"><span class="comment">% All feature selection objects in the Pattern Recognition Toolbox have the</span>
+<span class="comment">% same API as discussed above.  For a list of all the different objects,</span>
+<span class="comment">% and links to their individual help entries, &lt;prtDocFunctionList.html#8 A</span>
+<span class="comment">% list of commonly used functions&gt;</span>
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2012b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Feature selection in the Pattern Recognition Toolbox
+% 
+% Feature selection is a technique that is used to determine which features
+% of a data set are most relevant to performing classification. In general,
+% for a fixed size training set, incorporating more features in classifier
+% training can lead to declining performance due to the curse of
+% dimensionality.  Therefore, it is often desirable to reduce
+% the amount of features used to perform classification to the smallest
+% amount possible that still gives the desired performance. prtFeatSel
+% objects provide a way to select features based on a performance criteria.
+
+%% Exhaustive feature selection
+%
+%  Exhaustive feature selection works by exhaustively comparing all
+%  possible combinations of features that could be selected. The number of
+%  features to be selected must be determined beforehand. The feature
+%  selection algorithm will then evaluate the classifier with all
+%  combinations of features and select the set that gives the best
+%  performance. The classifier performance is determined by specifying a
+%  prtEval object. Note that the computational complexity of exhaustive
+%  feature selection grows very rapidly, so that for even moderately sized
+%  data sets, exhaustive feature selection is impractical.  The following
+%  example illustrates exhaustive feature selection:
+
+% Generate a data set, this data set has a redundant feature intentionally
+% inserted for example purposes.
+dataSet = prtDataGenFeatureSelection;
+
+featSel = prtFeatSelExhaustive;   % Create a feature selction object
+featSel.nFeatures = 3;            % Select three features of the data
+
+ % The classification will be done using a prtClassGlrt object.
+classifier = prtClassGlrt;       
+
+%   Change the evaluation metric to prtScoreAuc, the area under the
+%   receiver operating curve.
+featSel.evaluationMetric = @(DS)prtEvalAuc(classifier, DS);
+
+featSel = featSel.train(dataSet);  % Train the feature selection object
+outDataSet = featSel.run(dataSet); % Run the classifier on the data set 
+                                   % using only the selected features
+                                   
+%%
+% The above example illustrates several important things about feature
+% selection. First, the clasification algorithm must be specified, as is
+% done by passing a prtClassGlrt object to the prtEval function. You can
+% instantiate and configure the prtClass object just like any other
+% prtClass object. Second, the evaluation is done by a prtEval object,
+% which takes the classifier and data set, and evaluates it in terms of a
+% given performance metric.
+%
+% By calling the train method on the prtFeatSel object, all possible
+% combinations of 3 features are evaluated, and the set resulting in the
+% best performance, is selected. The selected features are:
+
+featSel.selectedFeatures
+
+%%
+% Finally, calling the run function on the dataset, runs the prtGlrt
+% classifier object, but only using the features that were found during
+% training, and outputs the result.
+
+%% Sequential forward selection
+% Exhaustive feature selection can take a considerable amount of time to
+% train, particularly if the number of features is large. Sequential
+% feature selection can potentially resolve this problem while reducing the
+% amount of training time. Sequential forward selection starts by selecting
+% one feature by and evaluating the classifier on each feature
+% individually. The feature that gives the best performance is then
+% selected. If more than one feature is requested, the feature selection
+% object will then repeat this, adding features, and selecting the one that
+% most improves performance, until the desired number of features has been
+% met. For example:
+
+% Create a sequential forward selection object
+featSel = prtFeatSelSfs;
+
+% For fair comparision, leave the evaluation and classifier the same:
+featSel.evaluationMetric = @(DS)prtEvalAuc(classifier, DS);
+
+featSel = featSel.train(dataSet);  % Train the feature selection object
+featSel.selectedFeatures
+
+%%
+% Observe that the selected features are [3 1 7]. Notice that they are the
+% same features as found in the exhaustive feature selection, but in
+% different order. This is because feature 3 contributes the most to the
+% performance metric, follwed by feature 1, then feature 7. Note that it is
+% not guaranteed that sequential forward selection will select the same
+% features as exhaustive selection, it is merely a coincidence in this
+% case. Sequential forward selection does not evaluate all possible
+% combinations of features as exhaustive feature selection does.
+
+% All feature selection objects in the Pattern Recognition Toolbox have the
+% same API as discussed above.  For a list of all the different objects,
+% and links to their individual help entries, <prtDocFunctionList.html#8 A
+% list of commonly used functions>
+##### SOURCE END #####
+--></body></html>

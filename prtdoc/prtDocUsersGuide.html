@@ -1,0 +1,160 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>The Pattern Recognition Toolbox Users Guide</title><meta name="generator" content="MATLAB 8.0"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2013-02-19"><meta name="DC.source" content="prtDocUsersGuide.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>The Pattern Recognition Toolbox Users Guide</h1><p>The Pattern Recognition Toolbox Users Guide begins with an introduction to the various dataset objects that are necessary to perform classification or regression.</p><div><ul><li><a href="./prtDocDataSet.html">Pattern Recognition Toolbox DataSets</a></li></ul></div><p>The next topic is the Pattern Recognition Toolbox Engine, which discusses the syntax for prtAction objects. This syntax is common for most of the functionality in the Pattern Recognition Toolbox.</p><div><ul><li><a href="./prtDocEngine.html">Pattern Recognition Toolbox Engine</a></li></ul></div><p>Following, Classifiers and Pre-processing techniques are presented.</p><div><ul><li><a href="./prtDocClass.html">Pattern Recognition Toolbox Classification Objects</a></li><li><a href="./prtDocPreProc.html">Pattern Recognition Toolbox Preprocessing Objects</a></li></ul></div><p>Algorithm objects allow multiple prtActions to be connected together, and use the same training, running and evaluation syntax as a single prtAction.</p><div><ul><li><a href="./prtDocAlgorithm.html">Pattern Recognition Toolbox Algorithm Objects</a></li></ul></div><p>Regression is similar to classification, but maps observations to a continuum of numbers, as opposed to a discrete set of class labels.</p><div><ul><li><a href="./prtDocRegress.html">Pattern Recognition Toolbox Regression Objects</a></li></ul></div><p>Clustering is also closely related to classification, however, in clustering, class labels are not used during training.</p><div><ul><li><a href="./prtDocCluster.html">Pattern Recognition Toolbox Clustering Objects</a></li></ul></div><p>Scoring and evaulation provide methods to analyze the results of your classification, regression or clustering. Scoring functions work on prtDataSets, while evaluation functions work on prtAction objects.</p><div><ul><li><a href="./prtDocScore.html">Pattern Recognition Toolbox Scoring functions</a></li><li><a href="./prtDocEval.html">Pattern Recognition Toolbox Evaluation functions</a></li></ul></div><p>Decision objects take the outputs of a prtAction object and make decisions according to particular criteria, such as the minimum probability of error.</p><div><ul><li><a href="./prtDocDecision.html">Pattern Recognition Toolbox Decision Objects</a></li></ul></div><p>Kernels are useful in many nonlinear classification and regression problems. The Pattern Recognition Toolbox provides a suite of common kernels to be used in conjunction with prtClass and prtRegress objects.</p><div><ul><li><a href="./prtDocKernel.html">Pattern Recognition Toolbox Kernel Objects</a></li></ul></div><p>The Pattern Recognition Toolbox also provides a set of distance functions, such as Euclidean, Mahalonobis and other distance metrics, to be used in conjunction with prtActions.</p><div><ul><li><a href="./prtDocDistance.html">Pattern Recognition Toolbox Distance Functions</a></li></ul></div><p>Random variables often form important components of prtActions, and a set of random variable objects is provided.</p><div><ul><li><a href="./prtDocRv.html">Pattern Recognition Toolbox Random Variable Objects</a></li></ul></div><p>Feature selection is a technique that helps select the features that have the greatest effect on the performance of prtActions.</p><div><ul><li><a href="./prtDocFeatSel.html">Pattern Recognition Toolbox Feature Selection Objects</a></li></ul></div><p>Often, data collected from real world applications may contain outliers that are not relevant, and that may skew results. The Pattern Recognition Toolbox provides a set of outlier removal objects.</p><div><ul><li><a href="./prtDocOutlierRemoval.html">Pattern Recognition Toolbox Outlier Removal Objects</a></li></ul></div><p>The Pattern Recognition Toolbox provides a set of data generation functions, which can be useful for creating example or prototying.</p><div><ul><li><a href="./prtDocDataGen.html">Pattern Recognition Toolbox Data Generation Functions</a></li></ul></div><p>Finally, the Patern Recognition Toolbox provides support for developing and implementing your own features.</p><div><ul><li><a href="./prtDocAddYourOwn.html">Developing and testing your own algorithms</a></li></ul></div><p>Copyright 2013 New Folder Consulting L.L.C.</p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2012b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% The Pattern Recognition Toolbox Users Guide
+%
+% The Pattern Recognition Toolbox Users Guide begins with an introduction
+% to the various dataset objects that are necessary to perform
+% classification or regression. 
+%
+% * <./prtDocDataSet.html Pattern Recognition Toolbox DataSets>
+%
+% The next topic is the Pattern Recognition Toolbox Engine, which discusses
+% the syntax for prtAction objects. This syntax is common for most of the
+% functionality in the Pattern Recognition Toolbox.
+%
+% * <./prtDocEngine.html Pattern Recognition Toolbox Engine>
+%
+% Following, Classifiers and Pre-processing techniques are presented. 
+%
+% * <./prtDocClass.html Pattern Recognition Toolbox Classification Objects>
+% * <./prtDocPreProc.html Pattern Recognition Toolbox Preprocessing Objects>
+%
+% Algorithm objects allow multiple prtActions to be connected together,
+% and use the same training, running and evaluation syntax as a single
+% prtAction.
+%
+% * <./prtDocAlgorithm.html Pattern Recognition Toolbox Algorithm Objects>
+%
+% Regression is similar to classification, but maps observations to a
+% continuum of numbers, as opposed to a discrete set of class labels.
+%
+% * <./prtDocRegress.html Pattern Recognition Toolbox Regression Objects>
+%
+% Clustering is also closely related to classification, however, in
+% clustering, class labels are not used during training.
+%
+% * <./prtDocCluster.html Pattern Recognition Toolbox Clustering Objects>
+%
+% Scoring and evaulation provide methods to analyze the results of your
+% classification, regression or clustering. Scoring functions work on
+% prtDataSets, while evaluation functions work on prtAction objects.
+%
+% * <./prtDocScore.html Pattern Recognition Toolbox Scoring functions>
+% * <./prtDocEval.html Pattern Recognition Toolbox Evaluation functions>
+%
+% Decision objects take the outputs of a prtAction object and make
+% decisions according to particular criteria, such as the minimum probability
+% of error. 
+% 
+% * <./prtDocDecision.html Pattern Recognition Toolbox Decision Objects>
+%
+% Kernels are useful in many nonlinear classification and regression
+% problems. The Pattern Recognition Toolbox provides a suite of common
+% kernels to be used in conjunction with prtClass and prtRegress objects.
+%
+% * <./prtDocKernel.html Pattern Recognition Toolbox Kernel Objects>
+%
+% The Pattern Recognition Toolbox also provides a set of distance
+% functions, such as Euclidean, Mahalonobis and other distance metrics, to
+% be used in conjunction with prtActions.
+%
+% * <./prtDocDistance.html Pattern Recognition Toolbox Distance Functions>
+%
+% Random variables often form important components of prtActions, and a
+% set of random variable objects is provided.
+%
+% * <./prtDocRv.html Pattern Recognition Toolbox Random Variable Objects>
+%
+% Feature selection is a technique that helps select the features that
+% have the greatest effect on the performance of prtActions. 
+%
+% * <./prtDocFeatSel.html Pattern Recognition Toolbox Feature Selection Objects>
+%
+% Often, data collected from real world applications may contain outliers
+% that are not relevant, and that may skew results. The Pattern
+% Recognition Toolbox provides a set of outlier removal objects.
+%
+% * <./prtDocOutlierRemoval.html Pattern Recognition Toolbox Outlier Removal Objects>
+%
+% The Pattern Recognition Toolbox provides a set of data
+% generation functions, which can be useful for creating example or
+% prototying.
+%
+% * <./prtDocDataGen.html Pattern Recognition Toolbox Data Generation Functions>
+%
+% Finally, the Patern Recognition Toolbox provides support for developing
+% and implementing your own features.
+% 
+% * <./prtDocAddYourOwn.html Developing and testing your own algorithms>
+%
+% Copyright 2013 New Folder Consulting L.L.C.
+
+##### SOURCE END #####
+--></body></html>

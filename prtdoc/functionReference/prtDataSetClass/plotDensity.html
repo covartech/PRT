@@ -1,0 +1,60 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../../helpwin.css">
+      <title>MATLAB File Help: prtDataSetClass/plotDensity</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtDataSetClass/plotDensity</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtDataSetClass/plotDensity</div>
+      <div class="helptext"><pre><!--helptext -->  Plot the density of each feature independently as a volume.
+ 
+  <span class="helptopic">plotDensity</span>(ds)
+  patchHandles = <span class="helptopic">plotDensity</span>(ds);
+ 
+  <span class="helptopic">plotDensity</span>(ds,'PARMNAME',PARAMVALUE)
+    Additional parameters:
+        nDensitySamples        - Number of linearly spaced
+                                 samples used to construct the
+                                 density estimate. Default 500.
+        faceAlpha              - Face alpha value of the patch
+                                 for each density. Must be a
+                                 value between 0 and 1. Default
+                                 0.5
+        minimumKernelBandwidth - minimumBandwidth parameter of
+                                 prtRvKde that is used to
+                                 estimate each density. default
+                                 []. See prtRvKde
+ 
+  Example:
+     ds = prtDataGenMary;
+     <span class="helptopic">plotDensity</span>(ds)
+ 
+     ds = prtDataGenIris;
+     <span class="helptopic">plotDensity</span>(ds,'minimumKernelBandwidth',5e-3);</pre></div><!--after help -->
+      <!--Method-->
+      <div class="sectiontitle">Method Details</div>
+      <table class="class-details">
+         <tr>
+            <td class="class-detail-label">Access</td>
+            <td>public</td>
+         </tr>
+         <tr>
+            <td class="class-detail-label">Sealed</td>
+            <td>false</td>
+         </tr>
+         <tr>
+            <td class="class-detail-label">Static</td>
+            <td>false</td>
+         </tr>
+      </table>
+   </body>
+</html>

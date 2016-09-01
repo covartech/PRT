@@ -1,0 +1,207 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Evaluating results using scoring functions in the PRT</title><meta name="generator" content="MATLAB 8.0"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2013-02-19"><meta name="DC.source" content="prtDocScore.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Evaluating results using scoring functions in the PRT</h1><!--introduction--><p>The Pattern Recognition Toolbox offers several functions for evaluating your results. The functions described in this section all operate on PRT data sets, generally these will be the data sets returned from a classification, clustering or regression operation.</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Binary scoring functions</a></li><li><a href="#6">Scoring M-ary classifiers</a></li><li><a href="#7">Scoring regression algorithms</a></li></ul></div><h2>Binary scoring functions<a name="1"></a></h2><p>The first set of scoring functions work on binary data, to evaluate percent error, plot receiver operating curves and similar operations. In the following example, a simple binary classifier is created and scored</p><pre class="codeinput">ds = prtDataGenUnimodal;    <span class="comment">% Load a binary data set</span>
+class = prtClassGlrt;       <span class="comment">% Create a classifier.</span>
+result = class.kfolds(ds,3);<span class="comment">% Perform a k-fold validation, score the result</span>
+
+prtScoreRoc(result);         <span class="comment">% Plot the receiver operating curve</span>
+</pre><img vspace="5" hspace="5" src="prtDocScore_01.png" alt=""> <p>Related to the receiver operating curve, another useful metric is the area under the ROC curve, which can be computed using prtScoreAuc:</p><pre class="codeinput">auc = prtScoreAuc(result)
+</pre><pre class="codeoutput">auc =
+    0.9980
+</pre><p>Note, in the above example, the data stored in result are decision statistics. By setting the decision rule, you can compute a percent correct:</p><pre class="codeinput">class.internalDecider = prtDecisionBinaryMinPe;  <span class="comment">% Set the internal decider</span>
+result = class.kfolds(ds,3);                     <span class="comment">% K-folds validation</span>
+
+prtScorePercentCorrect(result)                <span class="comment">% Compute the percent correct</span>
+</pre><pre class="codeoutput">ans =
+    0.9725
+</pre><p>Recall that when a PRT class object is run or cross-validated, the output is stored in the observations of the resulting dataset, and the class labels, if present, are copied and stored in the tagets of the resulting dataset. When prtScorePercentCorrect is called on a data set, these two fields are compared.</p><p>Another common method of scoring is to evaluate the cost vector for a set of decision statistics. First, clear the internal decider, then perform cross-validation again. Finally, evaluate the decision statistics for a particular cost matrix using the prtScoreCost function:</p><pre class="codeinput">class.internalDecider = [];
+result = class.kfolds(ds,3);
+costMatrix = [0 1; 2 0];  <span class="comment">% Define a cost matrix. This cost structure makes</span>
+                          <span class="comment">% deciding H1 when H0 is truth twice as costly as</span>
+                          <span class="comment">% deciding H0 when H1 is truth.</span>
+
+<span class="comment">%prtScoreCost(result, costMatrix)</span>
+cost = prtScoreCost(result.getX, result.getY, costMatrix);
+</pre><h2>Scoring M-ary classifiers<a name="6"></a></h2><p>To score M-ary classifier, you can again use the prtScorePercentCorrect function. In addition, it is often useful to plot the confusion matrix Consider the following example:</p><pre class="codeinput">ds = prtDataGenMary;        <span class="comment">% Load a data set</span>
+class = prtClassMap;        <span class="comment">% Create an M-ary classifier</span>
+<span class="comment">% Set the internal decider</span>
+class.internalDecider = prtDecisionMap;
+
+result = class.kfolds(ds,3);   <span class="comment">% Perform K-folds validation</span>
+
+prtScoreConfusionMatrix(result);
+prtScorePercentCorrect(result)
+</pre><pre class="codeoutput">ans =
+    0.8200
+</pre><img vspace="5" hspace="5" src="prtDocScore_02.png" alt=""> <h2>Scoring regression algorithms<a name="7"></a></h2><p>To score regression algorithms, use the prtScoreRmse function. Consider the following example:</p><pre class="codeinput">dataSet = prtDataGenNoisySinc;   <span class="comment">% Load a prtDataRegress data set, a</span>
+                                 <span class="comment">% noisy Sinc function</span>
+reg = prtRegressRvm;             <span class="comment">% Create a prtRegressRvm object</span>
+reg = reg.train(dataSet);        <span class="comment">% Train the prtRegressRvm object</span>
+dataSetOut = reg.run(dataSet);   <span class="comment">% Run the regressor on the data</span>
+
+<span class="comment">% Compute the truth and the guess and evaluate:</span>
+truth = sinc(dataSet.getX);
+guess = dataSetOut.getX;
+prtScoreRmse(truth, guess)
+</pre><pre class="codeoutput">ans =
+    0.3941
+</pre><p>All scoring functions in the Pattern Recognition Toolbox have the same API as discussed above. The difference is in the performance metric to be evaluated. For a list of all the different functions, and links to their individual help entries, <a href="./prtDocFunctionList.html#14">A list of commonly used functions</a></p><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2012b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Evaluating results using scoring functions in the PRT
+% The Pattern Recognition Toolbox offers several functions for evaluating
+% your results. The functions described in this section all operate on PRT
+% data sets, generally these will be the data sets returned from a
+% classification, clustering or regression operation.
+
+%% Binary scoring functions
+% The first set of scoring functions work on binary data, to evaluate
+% percent error, plot receiver operating curves and similar operations. In
+% the following example, a simple binary classifier is created and scored
+
+ds = prtDataGenUnimodal;    % Load a binary data set
+class = prtClassGlrt;       % Create a classifier.
+result = class.kfolds(ds,3);% Perform a k-fold validation, score the result
+
+prtScoreRoc(result);         % Plot the receiver operating curve
+%%
+% Related to the receiver operating curve, another useful metric is the
+% area under the ROC curve, which can be computed using prtScoreAuc:
+
+auc = prtScoreAuc(result)
+
+%%
+% Note, in the above example, the data stored in result are decision
+% statistics. By setting the decision rule, you can compute a percent
+% correct:
+
+class.internalDecider = prtDecisionBinaryMinPe;  % Set the internal decider
+result = class.kfolds(ds,3);                     % K-folds validation
+
+prtScorePercentCorrect(result)                % Compute the percent correct
+
+%%
+% Recall that when a PRT class object is run or cross-validated, the output
+% is stored in the observations of the resulting dataset, and the class
+% labels, if present, are copied and stored in the tagets of the resulting
+% dataset. When prtScorePercentCorrect is called on a data set, these two
+% fields are compared.
+
+%%
+% Another common method of scoring is to evaluate the cost vector for a set
+% of decision statistics. First, clear the internal decider, then perform
+% cross-validation again. Finally, evaluate the decision statistics for a
+% particular cost matrix using the prtScoreCost function:
+
+class.internalDecider = [];
+result = class.kfolds(ds,3);
+costMatrix = [0 1; 2 0];  % Define a cost matrix. This cost structure makes
+                          % deciding H1 when H0 is truth twice as costly as
+                          % deciding H0 when H1 is truth.
+                          
+%prtScoreCost(result, costMatrix)
+cost = prtScoreCost(result.getX, result.getY, costMatrix);
+
+%% Scoring M-ary classifiers
+% To score M-ary classifier, you can again use the prtScorePercentCorrect
+% function. In addition, it is often useful to plot the confusion matrix
+% Consider the following example:
+
+ds = prtDataGenMary;        % Load a data set
+class = prtClassMap;        % Create an M-ary classifier
+% Set the internal decider
+class.internalDecider = prtDecisionMap;
+
+result = class.kfolds(ds,3);   % Perform K-folds validation
+
+prtScoreConfusionMatrix(result);
+prtScorePercentCorrect(result)
+
+%% Scoring regression algorithms
+% To score regression algorithms, use the prtScoreRmse function. Consider
+% the following example:
+
+dataSet = prtDataGenNoisySinc;   % Load a prtDataRegress data set, a
+                                 % noisy Sinc function
+reg = prtRegressRvm;             % Create a prtRegressRvm object
+reg = reg.train(dataSet);        % Train the prtRegressRvm object
+dataSetOut = reg.run(dataSet);   % Run the regressor on the data
+
+% Compute the truth and the guess and evaluate:
+truth = sinc(dataSet.getX);
+guess = dataSetOut.getX;
+prtScoreRmse(truth, guess)
+
+%%
+% All scoring functions in the Pattern Recognition Toolbox have the same
+% API as discussed above. The difference is in the performance metric to be
+% evaluated. For a list of all the different functions, and links to their
+% individual help entries, <./prtDocFunctionList.html#14 A list of commonly
+% used functions>
+
+##### SOURCE END #####
+--></body></html>

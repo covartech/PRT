@@ -1,0 +1,72 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../../helpwin.css">
+      <title>MATLAB File Help: prtRvDiscrete/optimize</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtRvDiscrete/optimize</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtRvDiscrete/optimize</div>
+      <div class="helptext"><pre><!--helptext -->  <span class="helptopic">optimize</span> Optimize action parameter by exhaustive function maximization.
+ 
+   OPTIMACT = <span class="helptopic">optimize</span>(DS, EVALFN, PARAMNAME, PARAMVALS)
+   returns an optimized prtAction object, with parameter
+   PARAMNAME set to the optimal value. DS must be a prtDataSet
+   object. EVALFN must be a function handle that returns a
+   scalar value that indicates a performance metric for the
+   prtAction object, for example a prtEval function. PARAMNAME
+   must be a string that indicates the parameter of the
+   prtAction that is to be optimized. PARAMVALS must be a
+   vector of possible values of the parameter at which
+   prtAction will be evaluated.
+ 
+   [OPTIMACT, PERF]  = <span class="helptopic">optimize</span>(...) returns a vector of
+   performance values that correspond to each element of
+   PARAMVALS.
+ 
+  Example:
+ 
+   ds = prtDataGenBimodal;  % Load a data set
+   knn = prtClassKnn;       % Create a classifier
+   kVec = 3:5:50;           % Create a vector of parameters to
+                            % optimze over
+ 
+  % Optimize over the range of k values, using the area under
+  % the receiver operating curve as the evaluation metric.
+  % Validation is performed by a k-folds cross validation with
+  % 10 folds as specified by the call to prtEvalAuc.
+            
+  [knnOptimize, percentCorrects] = knn.optimize(ds, @(class,ds)prtEvalAuc(class,ds,10), 'k',kVec);
+  plot(kVec, percentCorrects)
+
+Help for <span class="helptopic">prtRvDiscrete/optimize</span> is inherited from superclass <a href="./../prtAction.html">prtAction</a></pre></div><!--after help -->
+      <!--Method-->
+      <div class="sectiontitle">Method Details</div>
+      <table class="class-details">
+         <tr>
+            <td class="class-detail-label">Defining Class</td>
+            <td>prtAction</td>
+         </tr>
+         <tr>
+            <td class="class-detail-label">Access</td>
+            <td>public</td>
+         </tr>
+         <tr>
+            <td class="class-detail-label">Sealed</td>
+            <td>false</td>
+         </tr>
+         <tr>
+            <td class="class-detail-label">Static</td>
+            <td>false</td>
+         </tr>
+      </table>
+   </body>
+</html>

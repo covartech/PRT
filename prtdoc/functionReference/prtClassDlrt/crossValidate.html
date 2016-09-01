@@ -1,0 +1,59 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../../helpwin.css">
+      <title>MATLAB File Help: prtClassDlrt/crossValidate</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtClassDlrt/crossValidate</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtClassDlrt/crossValidate</div>
+      <div class="helptext"><pre><!--helptext -->  <span class="helptopic">crossValidate</span>  Cross validate prtAction using prtDataSet and cross validation keys.
+ 
+   OUTPUTDATASET = OBJ.<span class="helptopic">crossValidate</span>(DATASET, KEYS) cross-
+   validates the prtAction object OBJ using the prtDataSet
+   DATASET and the KEYS. DATASET must be a labeled prtDataSet.
+   KEYS must be a vector of integers with the same number of
+   elements as DATASET has observations.
+ 
+   The KEYS are are used to parition the input DATASET into
+   test and training data sets. For each unique key, a test set
+   will be created out of the corresponding observations of the
+   prtDataSet. The remaining observations will be used as
+   training data.
+ 
+   [OUTPUTDATASET, TRAINEDACTIONS] = OBJ.<span class="helptopic">crossValidate</span>(DATASET,
+   KEYS) outputs the trained prtAction objects TRAINEDACTIONS.
+   TRAINEDACTIONS will have a length equal to the number of
+   unique KEYS.
+
+Help for <span class="helptopic">prtClassDlrt/crossValidate</span> is inherited from superclass <a href="./../prtAction.html">prtAction</a></pre></div><!--after help -->
+      <!--Method-->
+      <div class="sectiontitle">Method Details</div>
+      <table class="class-details">
+         <tr>
+            <td class="class-detail-label">Defining Class</td>
+            <td>prtAction</td>
+         </tr>
+         <tr>
+            <td class="class-detail-label">Access</td>
+            <td>public</td>
+         </tr>
+         <tr>
+            <td class="class-detail-label">Sealed</td>
+            <td>false</td>
+         </tr>
+         <tr>
+            <td class="class-detail-label">Static</td>
+            <td>false</td>
+         </tr>
+      </table>
+   </body>
+</html>

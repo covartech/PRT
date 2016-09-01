@@ -1,0 +1,81 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../../helpwin.css">
+      <title>MATLAB File Help: prtClassAdaBoost/prtClassAdaBoost</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtClassAdaBoost/prtClassAdaBoost</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtClassAdaBoost/prtClassAdaBoost</div>
+      <div class="helptext"><pre><!--helptext --> <span class="helptopic">prtClassAdaBoost</span> AdaBoost classifier
+ 
+     CLASSIFIER = <span class="helptopic">prtClassAdaBoost</span> returns a AdaBoost classifier
+ 
+     CLASSIFIER = <span class="helptopic">prtClassAdaBoost</span>(PROPERTY1, VALUE1, ...) constructs a
+     <span class="helptopic">prtClassAdaBoost</span> object CLASSIFIER with properties as specified by
+     PROPERTY/VALUE pairs.
+ 
+     A <span class="helptopic">prtClassAdaBoost</span> object inherits all properties from the abstract
+     class prtClass. In addition is has the following properties:
+ 
+     baseClassifier     - the prtClass object that forms the "weak" or
+                          "Base" classifier for the AdaBoost.  This
+                          classifier is iteratively trained on each of
+                          the features in succession.
+     maxIters            - Number of iterations to run (maximum number of weak
+                          classifiers to train)
+     deltaPeThreshold (.05) - Specify the minimum error distance (from
+                         0.5) allowed.  Smaller values result in more
+                         complicated adaBoost classifiers, larger
+                         values in less complicated classifiers.
+     
+     downSampleBootstrap (false) - Specify whether (and how many)
+                            bootstrap-by class bootstrap samples to
+                            take at each iteration.  False or 0 uses
+                            the default number of bootstrap samples.
+                            Any other integer specifies the number of
+                            samples to use from
+                            ds.bootstrapDataByClass.
+ 
+     AdaBoost is a meta algorithm for training ensembles of weak
+     classifiers on different sub-sets of the complete data set, with
+     later classifiers trained to focus on data points that were
+     mis-classified in earlier iterations.  A complete description of the
+     algorithm for AdaBoost is beyond the scope of this help entry, but
+     more information AdaBoost can be found at the following URL:
+ 
+     <a href="http://en.wikipedia.org/wiki/AdaBoost">http://en.wikipedia.org/wiki/AdaBoost</a>
+ 
+     The PRT AdaBoost uses individual features to constitute each weak
+     learner in each iteration.  At each iteration, the feature
+     corresponding to the best weak learner operating on the current
+     weighted data distribution is used in the aggregate classifier.
+ 
+     A <span class="helptopic">prtClassAdaBoost</span> object inherits the TRAIN, RUN, CROSSVALIDATE and
+     KFOLDS methods from prtAction. It also inherits the PLOT
+     method from prtClass.
+ 
+     Example:
+ 
+     TestDataSet = prtDataGenUnimodal;       % Create some test and
+     TrainingDataSet = prtDataGenUnimodal;   % training data
+     classifier = <span class="helptopic">prtClassAdaBoost</span>;                     % Create a classifier
+     classifier = classifier.train(TrainingDataSet);    % Train
+     classified = run(classifier, TestDataSet);         % Test
+     subplot(2,1,1);
+     classifier.plot;
+     subplot(2,1,2);
+     [pf,pd] = prtScoreRoc(classified,TestDataSet);
+     h = plot(pf,pd,'linewidth',3);
+     title('ROC'); xlabel('Pf'); ylabel('Pd');</pre></div><!--after help --><!--seeAlso--><div class="footerlinktitle">See also</div><div class="footerlink"> <a href="./../prtClassAdaBoostFastAuc.html">prtClassAdaBoostFastAuc</a>
+</div>
+   </body>
+</html>

@@ -1,0 +1,109 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../../helpwin.css">
+      <title>MATLAB File Help: prtClassLibSvm/prtClassLibSvm</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtClassLibSvm/prtClassLibSvm</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtClassLibSvm/prtClassLibSvm</div>
+      <div class="helptext"><pre><!--helptext -->  <span class="helptopic">prtClassLibSvm</span>  Support vector machine classifier using LibSvm
+ 
+    CLASSIFIER = <span class="helptopic">prtClassLibSvm</span> returns a SVM Classifier using the
+    SVM toolbox "LibSvm" which provides a fast interface to training
+    and testing support vector machines.
+ 
+    Note: requires libSvm, which should be in nfPrt\util\libsvm-mat-2.91-1
+    On linux, you may need to re-build the LibSVM Binaries.  See the
+    documentation for LibSvm (link below) for more information.
+ 
+     A <span class="helptopic">prtClassLibSvm</span> object inherits all properties from the abstract class
+     prtClass. In addition is has the following properties; complete
+     documentation for these properties can be found here:
+ 
+        <a href="http://www.csie.ntu.edu.tw/~cjlin/libsvm/">http://www.csie.ntu.edu.tw/~cjlin/libsvm/</a>
+ 
+          svmType       - Whether to use a C-SVM, nu-SVM, one-class
+                         SVM, epsilon-SVR, or nu-SVR
+          kernelType    - Kernel type to use - linear (0), polynomial (1),
+                          rbf (2, default), sigmoid (3), or
+                          user-defined (4) - see below
+          degree        - Kernel function parameter (some kernels)
+          gamma         - Kernel function parameter (some kernels)
+          coef0         - Kernel function parameter (some kernels)
+          cost          - Cost parameter
+          nu            - nu parameter (nu-SVM's)
+          pEpsilon      - Loss function parameter (epsilon-SVMs)
+          cachesize     - Memory cache in MB (can affect speed,
+                         computer dependent)
+          eEpsilon      - Termination tolerance
+          shrinking     - Use shrinking heuristic?
+          probabilityEstimates - Output probability estimates?
+          weight        - Parameter in C-SCM
+ 
+    Default values are:
+      svmType = 0;
+      kernelType = 2;
+      degree = 3;
+      gamma = nan;
+      coef0 = 0;
+      cost = 1;
+      nu = .5;
+      pEpsilon = .1;
+      cachesize = 100;
+      eEpsilon = 0.001;
+      shrinking = 1;
+      probabilityEstimates = 0;
+      weight = 1;
+ 
+      userSpecKernel = [];  %only for kernelType = 4, see below
+ 
+    <span class="helptopic">prtClassLibSvm</span> allows the specification of user-defined kernels by
+    setting svm.kernelType to 4.  This requires further specification
+    of svm.userSpecKernel.  svm.userSpecKernel must be either a
+    function handle, fn(x,y) which outputs a matrix of size 
+    size(x,1) x size(y,1), or userSpecKernel can be a prtKernel object.
+ 
+    For example:
+      svm.kernelType = 4;
+      svm.userSpecKernel = @(x,y) (x*y'); % correlation kernel
+   
+      svm.kernelType = 4;
+      svm.userSpecKernel = prtKernelHyperbolicTangent; 
+ 
+ 
+    Additional options can be specified by modifying the field 
+    obj.libSvmOptions using the format found here:
+    <a href="http://www.csie.ntu.edu.tw/~cjlin/libsvm/">http://www.csie.ntu.edu.tw/~cjlin/libsvm/</a>
+ 
+    More documentation can be found here:
+    <a href="http://www.csie.ntu.edu.tw/~cjlin/papers/libsvm.pdf">http://www.csie.ntu.edu.tw/~cjlin/papers/libsvm.pdf</a>
+ 
+    Note: the LibSvm will output estimated percent correct values to
+    the screen during processing; because of the way the PRT trains and
+    tests, these should be ignored during training and plotting. (To be
+    fixed)
+ 
+    %Example usage:
+      TestDataSet = prtDataGenUnimodal;       % Create some test and
+      TrainingDataSet = prtDataGenUnimodal;   % training data
+      classifier = <span class="helptopic">prtClassLibSvm</span>;              % Create a classifier
+      classifier = classifier.train(TrainingDataSet);    % Train
+      classified = run(classifier, TestDataSet);         % Test
+      percentCorr = prtScorePercentCorrect(classified,TestDataSet);
+      subplot(2,1,1);
+      classifier.plot;
+      subplot(2,1,2);
+      [pf,pd] = prtScoreRoc(classified,TestDataSet);
+      h = plot(pf,pd,'linewidth',3);
+      title('ROC'); xlabel('Pf'); ylabel('Pd');</pre></div><!--after help -->
+   </body>
+</html>

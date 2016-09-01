@@ -1,0 +1,45 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../helpwin.css">
+      <title>MATLAB File Help: prtDistanceMahalanobis</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtDistanceMahalanobis</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtDistanceMahalanobis</div>
+      <div class="helptext"><pre><!--helptext -->  <span class="helptopic">prtDistanceMahalanobis</span>   Mahalanobis distance.
+ 
+    DIST = <span class="helptopic">prtDistanceMahalanobis</span>(DS1,DS2) calculates the Mahalanobis
+    distance from all the observations in datasets DS1 to DS2, and ouputs a
+    distance matrix of size DS1.nObservations x DS2.nObservations.  The
+    covariance matrix in the Mahalanobis is estimated from both the data in
+    DS1 and DS2. DS1 and DS2 should have the same number of features. DS1
+    and DS2 should be prtDataSet objects.
+ 
+    DIST = <span class="helptopic">prtDistanceMahalanobis</span>(DS1,DS2, COVAR) specifies the covariance
+    matrix to use.
+ 
+    For more information on the Mahalanobis distance, see:
+    <a href="http://en.wikipedia.org/wiki/Mahalanobis_distance">http://en.wikipedia.org/wiki/Mahalanobis_distance</a>
+    
+   % Example:
+    
+   X = [0 0; 1 1];      % Create some data, store  in prtDataSetStandard
+   Y = [1 0; 2 2; 3 3;];
+   dsx = prtDataSetStandard(X);
+   dsy = prtDataSetStandard(Y);
+   covMat = [1 0; 0 2;];         % Specify the covariance matrix
+   % Compute the distance
+   distance = <span class="helptopic">prtDistanceMahalanobis</span>(dsx,dsy,covMat)</pre></div><!--after help --><!--seeAlso--><div class="footerlinktitle">See also</div><div class="footerlink"> <a href="./prtDistanceCityBlock.html">prtDistanceCityBlock</a>, <a href="./prtDistanceLNorm.html">prtDistanceLNorm</a>, <a href="./prtDistanceEuclidean.html">prtDistanceEuclidean</a>,
+  <a href="./prtDistanceSquare.html">prtDistanceSquare</a>, <a href="./prtDistanceChebychev.html">prtDistanceChebychev</a>
+</div>
+   </body>
+</html>

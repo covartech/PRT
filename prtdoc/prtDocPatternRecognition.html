@@ -1,0 +1,172 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>What is Pattern Recognition?</title><meta name="generator" content="MATLAB 8.0"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2013-02-19"><meta name="DC.source" content="prtDocPatternRecognition.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, tt, code { font-size:12px; }
+pre { margin:0px 0px 20px; }
+pre.error { color:red; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>What is Pattern Recognition?</h1><!--introduction--><p>This document will provide a very brief introduction to the problem of pattern recognition and provide pointers on how to find out how the PRT can help solve your pattern recognition problems.  The first sub-section provides a concise mathematical overview of the problem of pattern recognition, and the second sub-section provides a real-world example to make the mathematics more concrete.</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">A Brief Tutorial</a></li><li><a href="#2">A Simple Example</a></li></ul></div><h2>A Brief Tutorial<a name="1"></a></h2><p>Pattern recognition is the science of making inferences based on data. Two of the main forms of pattern recognition are <i>classification</i> and <i>regression</i>.  In classification problems, data are collected and given discrete class labels.  In a regression problem, on the other hand, data labels are typically continuous values, not categorical.</p><p>Basic pattern recognition approaches seek a function, f, that takes an observation <img src="prtDocPatternRecognition_eq43159.png" alt="$$ x_{j} $$"> and predicts the unseen label, <img src="prtDocPatternRecognition_eq67427.png" alt="$$ y_{j} $$"> :</p><p><img src="prtDocPatternRecognition_eq26166.png" alt="$$\hat{y}_{j} = f(x_{j})$$"></p><p>The goals of <i>learning</i> in pattern recognition are to develop the function, f, given only a (possibly small) set of training data, <img src="prtDocPatternRecognition_eq64723.png" alt="$$ X = \{\{x_{i},y_{i}\}\} $$"> , <img src="prtDocPatternRecognition_eq47983.png" alt="$$i = 1...N$"> . As such, pattern recognition is fundamentally an ill-posed problem, since it is trivially easy to define a function that performs arbitrarily well on the training data ( <img src="prtDocPatternRecognition_eq72156.png" alt="$$f(x_{j}) = y_{j}) \forall {x_{j},y_{j}} \in X$"> ).</p><p>Since learning in pattern recognition is ill-posed, a wide number of different algorithms have been proposed to map from a set of training data to a function capable of performing inference on new observations.</p><p>A complete review of pattern recognition approaches and techniques is beyond the scope of this document, but the interested reader is referred to some of our favorite books on the subject:</p><p>Duda, Hart, Stork, Pattern Classification <a href="http://www.amazon.com/Pattern-Classification-2nd-Richard-Duda/dp/0471056693">http://www.amazon.com/Pattern-Classification-2nd-Richard-Duda/dp/0471056693</a></p><p>Bishop, Pattern Recognition and Machine Learning <a href="http://www.amazon.com/Pattern-Recognition-Learning-Information-Statistics/dp/0387310738">http://www.amazon.com/Pattern-Recognition-Learning-Information-Statistics/dp/0387310738</a></p><h2>A Simple Example<a name="2"></a></h2><p>Considering a simple example can often make the problem of pattern recognition clearer.  Assume that we run a scrap metal processing yard, and we'd like to have a machine automatically sort pieces of scrap metal into different piles depending on if they are zinc or copper.  As pieces of metal move down our conveyor belt, we use our Trusty ACME DensAndRef machine to measure the density of each piece of scrap, and it's reflectance at a particular wavelength (how much light the object reflects).  As pieces come down the conveyor belt, we need to make decisions (copper or zinc) based on these two pieces of data.</p><p>Since we might know something ahead of time about the reflectance and densities of these two types of metal, it might make sense to make up some rules even if we haven't seen any data from our sensors.  For example, we might develop an algorithm that says:</p><p><tt>if (density &lt; 0.15 lb/in^3) and (reflectance &gt; 80%)</tt>       object is aluminum</p><p>However making decision boundaries like this is an error-prone approach. First of all, we haven't incorporated any information about our actual sensing apparatus into these rules.  It might turn out that our sensing apparatus has a strong bias, and all reflectances are measured at 1/2 their true reflectances.  Or we might find out that our density measuring equipment has a large degree of noise, so that densities of very light objects are sometimes recorded as very large.  Second, we haven't incorporated any information about the kind of data we might actually see.  The equations above are suitable for accurate and precise measurements of pure metals, but is not suitable for detecting some amount of aluminum mixed in alloys with other components.  To overcome these limitations, we need to have some <i>training data</i>.</p><p>Luckily, in most learning tasks, data will be available on which we can perform learning.  This data will typically consist of N sets of <i>observations</i> and <i>labels</i> (or <i>targets</i>).  Usually observation vectors are designated with x_{i} and targets or labels with y_{i}, where i indexes each observation/target pair.  A set of N measurements can then be denoted <img src="prtDocPatternRecognition_eq59982.png" alt="$$X = {x_{i},y_{i}}$"> for i = 1...N.  In our example, the <img src="prtDocPatternRecognition_eq30994.png" alt="$$x_{i}$"> are 1 x 2 vectors where <img src="prtDocPatternRecognition_eq38215.png" alt="$$x_{i}(1)$"> is the mesaured density, and <img src="prtDocPatternRecognition_eq59637.png" alt="$$x_{i}(2)$"> is the measured reflectance.  <img src="prtDocPatternRecognition_eq00008.png" alt="$$y_{i}$"> in our case is a binary variable where 0 represents "measured from copper", and 1 represents "measured from aluminum".</p><p>The goal now is, given some set of training data, how can we define a boundary between the two classes to optimally separate them and best tell aluminum from copper?  This boundary will define our function, <img src="prtDocPatternRecognition_eq66556.png" alt="$$f(x_{j})$">.</p><p>For examples of how to use the PRT to solve this problem and other problems like it, take a look at the rest of the PRT documentation, especially:</p><div><ul><li><a href="prtDocProductOverview.html">Product Overview</a></li><li><a href="prtDocGettingStartedExamples.html">Some examples of using the PRT</a></li></ul></div><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2012b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% What is Pattern Recognition?
+%
+% This document will provide a very brief introduction to the problem of
+% pattern recognition and provide pointers on how to find out how the PRT
+% can help solve your pattern recognition problems.  The first sub-section
+% provides a concise mathematical overview of the problem of pattern
+% recognition, and the second sub-section provides a real-world example to
+% make the mathematics more concrete.
+%
+%% A Brief Tutorial
+% 
+% Pattern recognition is the science of making inferences based on data.
+% Two of the main forms of pattern recognition are _classification_ and
+% _regression_.  In classification problems, data are collected and given
+% discrete class labels.  In a regression problem, on the other hand,
+% data labels are typically continuous values, not categorical.  
+%
+% Basic pattern recognition approaches seek a function, f, that takes an
+% observation $$ x_{j} $$ and predicts the unseen label, $$ y_{j} $$ :
+%
+% $$\hat{y}_{j} = f(x_{j})$$
+%
+% The goals of _learning_ in pattern recognition are to develop the
+% function, f, given only a (possibly small) set of training data, $$ X = \{\{x_{i},y_{i}\}\} $$ , $$i = 1...N$ .  
+% As such, pattern recognition is fundamentally an ill-posed problem, since
+% it is trivially easy to define a function that performs arbitrarily well
+% on the training data ( $$f(x_{j}) = y_{j}) \forall {x_{j},y_{j}} \in X$
+% ).
+%
+% Since learning in pattern recognition is ill-posed, a wide number of
+% different algorithms have been proposed to map from a set of training
+% data to a function capable of performing inference on new observations.  
+%
+% A complete review of pattern recognition approaches and techniques is
+% beyond the scope of this document, but the interested reader is referred
+% to some of our favorite books on the subject:
+%
+% Duda, Hart, Stork, Pattern Classification
+% http://www.amazon.com/Pattern-Classification-2nd-Richard-Duda/dp/0471056693
+%
+% Bishop, Pattern Recognition and Machine Learning
+% http://www.amazon.com/Pattern-Recognition-Learning-Information-Statistics/dp/0387310738
+%   
+%
+%% A Simple Example
+%
+% Considering a simple example can often make the problem of pattern
+% recognition clearer.  Assume that we run a scrap metal processing yard,
+% and we'd like to have a machine automatically sort pieces of scrap metal
+% into different piles depending on if they are zinc or copper.  As pieces
+% of metal move down our conveyor belt, we use our Trusty ACME DensAndRef
+% machine to measure the density of each piece of scrap, and it's
+% reflectance at a particular wavelength (how much light the object
+% reflects).  As pieces come down the conveyor belt, we need to make
+% decisions (copper or zinc) based on these two pieces of data.
+% 
+% Since we might know something ahead of time about the reflectance and
+% densities of these two types of metal, it might make sense to make up
+% some rules even if we haven't seen any data from our sensors.  For
+% example, we might develop an algorithm that says:
+%
+% |if (density < 0.15 lb/in^3) and (reflectance > 80%)|
+%       object is aluminum
+%
+% However making decision boundaries like this is an error-prone approach.
+% First of all, we haven't incorporated any information about our actual
+% sensing apparatus into these rules.  It might turn out that our sensing
+% apparatus has a strong bias, and all reflectances are measured at 1/2
+% their true reflectances.  Or we might find out that our density measuring
+% equipment has a large degree of noise, so that densities of very light
+% objects are sometimes recorded as very large.  Second, we haven't
+% incorporated any information about the kind of data we might actually
+% see.  The equations above are suitable for accurate and precise
+% measurements of pure metals, but is not suitable for detecting some
+% amount of aluminum mixed in alloys with other components.  To overcome
+% these limitations, we need to have some _training data_.
+%
+% Luckily, in most learning tasks, data will be available on which we can
+% perform learning.  This data will typically consist of N sets of
+% _observations_ and _labels_ (or _targets_).  Usually observation vectors
+% are designated with x_{i} and targets or labels with y_{i}, where i
+% indexes each observation/target pair.  A set of N measurements can then
+% be denoted $$X = {x_{i},y_{i}}$ for i = 1...N.  In our example, the $$x_{i}$
+% are 1 x 2 vectors where $$x_{i}(1)$ is the mesaured density, and $$x_{i}(2)$ is
+% the measured reflectance.  $$y_{i}$ in our case is a binary variable where 0
+% represents "measured from copper", and 1 represents "measured from
+% aluminum".
+%
+% The goal now is, given some set of training data, how can we define a
+% boundary between the two classes to optimally separate them and best tell
+% aluminum from copper?  This boundary will define our function,
+% $$f(x_{j})$.
+%
+% For examples of how to use the PRT to solve this problem and other
+% problems like it, take a look at the rest of the PRT documentation,
+% especially:
+%
+% * <prtDocProductOverview.html Product Overview>
+% * <prtDocGettingStartedExamples.html Some examples of using the PRT>
+%
+% 
+##### SOURCE END #####
+--></body></html>

@@ -1,0 +1,227 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <link rel="stylesheet" href="./../helpwin.css">
+      <title>MATLAB File Help: prtClusterKmeans</title>
+   </head>
+   <body>
+      <!--Single-page help-->
+      <table border="0" cellspacing="0" width="100%">
+         <tr class="subheader">
+            <td class="headertitle">MATLAB File Help: prtClusterKmeans</td>
+            
+            
+         </tr>
+      </table>
+      <div class="title">prtClusterKmeans</div>
+      <div class="helptext"><pre><!--helptext -->  <span class="helptopic">prtClusterKmeans</span>   Kmeans clustering object
+ 
+     CLUSTER = <span class="helptopic">prtClusterKmeans</span> returns a Kmeans clustering object.
+ 
+     CLUSTER = <span class="helptopic">prtClusterKmeans</span>(PROPERTY1, VALUE1, ...) constructs a
+     prtClassFld object CLASSIFIER with properties as specified by
+     PROPERTY/VALUE pairs.
+ 
+     A <span class="helptopic">prtClusterKmeans</span> object inherits all properties from the abstract
+     class prtCluster. In addition is has the following properties:
+ 
+     nClusters                 - Number of cluster centers to learn 
+ 
+     kmeansHandleEmptyClusters - Speficies operation when degerate clusters found
+                                 occur during training.  Allowed values are 'remove'
+                                 and 'random'.  'remove' eliminates the
+                                 empty cluster. 'random' sets the
+                                 cluster mean to a random vector.
+ 
+     For information on the K-Means algorithm, please
+     refer to the following URL:
+ 
+     <a href="http://en.wikipedia.org/wiki/K-means_clustering">http://en.wikipedia.org/wiki/K-means_clustering</a>
+ 
+     A <span class="helptopic">prtClusterKmeans</span> object inherits the TRAIN, RUN, CROSSVALIDATE and
+     KFOLDS methods from prtAction. It also inherits the PLOT method from
+     prtCluster.
+ 
+     Invoking the RUN method on a <span class="helptopic">prtClusterKmeans</span> object classifies
+     the input data by assigning each observation a label according to
+     the cluster center it is closest to. The cluster centers are found
+     during training.
+ 
+    Example:
+ 
+    ds = prtDataGenMary                  % Load a prtDataSet
+    clusterAlgo = <span class="helptopic">prtClusterKmeans</span>;      % Create a <span class="helptopic">prtClusterKmeans</span> object
+    clusterAlgo.nClusters = 3;           % Set the number of desired clusters
+ 
+    % Set the internal decision rule to be MAP. Not required for
+    % clustering, but necessary to plot the results.
+    clusterAlgo.internalDecider = prtDecisionMap;
+    clusterAlgo = clusterAlgo.train(ds); % Train the cluster algorithm
+    plot(clusterAlgo);                   % Plot the results</pre></div><!--after help --><!--seeAlso--><div class="footerlinktitle">See also</div><div class="footerlink"> <a href="./prtCluster.html">prtCluster</a>, <a href="./prtClusterGmm.html">prtClusterGmm</a>
+</div>
+      <!--Class-->
+      <div class="sectiontitle">Class Details</div>
+      <table class="class-details">
+         <tr>
+            <td class="class-detail-label">Superclasses</td>
+            <td><a href="./prtCluster.html">prtCluster</a></td>
+         </tr>
+         <tr>
+            <td class="class-detail-label">Sealed</td>
+            <td>false</td>
+         </tr>
+         <tr>
+            <td class="class-detail-label">Construct on load</td>
+            <td>false</td>
+         </tr>
+      </table>
+      <!--Constructors-->
+      <div class="sectiontitle"><a name="constructors"></a>Constructor Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClusterKmeans/prtClusterKmeans.html">prtClusterKmeans</a></td>
+            <td class="m-help">Allow for string, value pairs&nbsp;</td>
+         </tr>
+      </table>
+      <!--Properties-->
+      <div class="sectiontitle"><a name="properties"></a>Property Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClusterKmeans/clusterCenters.html">clusterCenters</a></td>
+            <td class="m-help">The cluster centers&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClusterKmeans/dataSet.html">dataSet</a></td>
+            <td class="m-help">The training prtDataSet, only stored if verboseStorage is true. &nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClusterKmeans/dataSetSummary.html">dataSetSummary</a></td>
+            <td class="m-help">Structure that summarizes prtDataSet.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClusterKmeans/distanceMetricFn.html">distanceMetricFn</a></td>
+            <td class="m-help">The distance metric; should be a function like D = prtDistanceEuclidean(dataSet1,dataSet2)&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClusterKmeans/includesDecision.html">includesDecision</a></td>
+            <td class="m-help">Flag indicating if result includes a decision&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClusterKmeans/internalDecider.html">internalDecider</a></td>
+            <td class="m-help">Optional prtDecider object for making decisions&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClusterKmeans/isCrossValidateValid.html">isCrossValidateValid</a></td>
+            <td class="m-help">True&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClusterKmeans/isSupervised.html">isSupervised</a></td>
+            <td class="m-help">False&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClusterKmeans/isTrained.html">isTrained</a></td>
+            <td class="m-help">Indicates if prtAction object has been trained.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClusterKmeans/kmeansHandleEmptyClusters.html">kmeansHandleEmptyClusters</a></td>
+            <td class="m-help">Action to take when an empty cluster occurs &nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClusterKmeans/nClusters.html">nClusters</a></td>
+            <td class="m-help">The number of clusters to find&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClusterKmeans/name.html">name</a></td>
+            <td class="m-help">K-Means Clustering&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClusterKmeans/nameAbbreviation.html">nameAbbreviation</a></td>
+            <td class="m-help">K-MeansCluster&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClusterKmeans/showProgressBar.html">showProgressBar</a></td>
+            <td class="m-help">&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClusterKmeans/userData.html">userData</a></td>
+            <td class="m-help">User specified data&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="name"><a href="./prtClusterKmeans/verboseStorage.html">verboseStorage</a></td>
+            <td class="m-help">Specifies whether or not to store the training prtDataset.&nbsp;</td>
+         </tr>
+      </table>
+      <!--Methods-->
+      <div class="sectiontitle"><a name="methods"></a>Method Summary
+      </div>
+      <table class="summary-list">
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClusterKmeans/crossValidate.html">crossValidate</a></td>
+            <td class="m-help">Cross validate prtAction using prtDataSet and cross validation keys.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClusterKmeans/get.html">get</a></td>
+            <td class="m-help">get the object properties&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClusterKmeans/kfolds.html">kfolds</a></td>
+            <td class="m-help">Perform K-folds cross-validation of prtAction&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClusterKmeans/optimize.html">optimize</a></td>
+            <td class="m-help">Optimize action parameter by exhaustive function maximization.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClusterKmeans/plot.html">plot</a></td>
+            <td class="m-help">Plot the output of the prtCluster object&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClusterKmeans/run.html">run</a></td>
+            <td class="m-help">Run a prtAction object on a prtDataSet object.&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClusterKmeans/set.html">set</a></td>
+            <td class="m-help">set the object properties&nbsp;</td>
+         </tr>
+         <tr class="summary-item">
+            <td class="attributes">
+               &nbsp;
+               
+            </td>
+            <td class="name"><a href="./prtClusterKmeans/train.html">train</a></td>
+            <td class="m-help">Train a prtAction object using training a prtDataSet object.&nbsp;</td>
+         </tr>
+      </table>
+   </body>
+</html>
