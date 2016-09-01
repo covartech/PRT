@@ -4,8 +4,12 @@ function imageHandle = prtPlotUtilPlotGriddedEvaledFunction(DS, linGrid, gridSiz
 
 p = inputParser;
 p.addParameter('slicerLocations',[]);
+% slice properties
 p.addParameter('edgecolor','none');
 p.addParameter('facealpha',1);
+% image properties
+p.addParameter('alphadata',1);
+
 p.parse(varargin{:});
 
 nDims = size(linGrid,2);
@@ -22,8 +26,7 @@ switch nDims
         xx = reshape(linGrid(:,1),gridSize);
         yy = reshape(linGrid(:,2),gridSize);
         imageHandle = imagesc(xx(1,:),yy(:,1),reshape(DS,gridSize));
-        set(imageHandle,'edgecolor',p.Results.edgecolor)
-        set(imageHandle,'facealpha',p.Results.facealpha)
+        set(imageHandle,'alphadata',p.Results.alphadata)
         colormap(cMap)
     case 3
         xx = reshape(linGrid(:,1),gridSize);
