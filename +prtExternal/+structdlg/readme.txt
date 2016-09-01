@@ -1,1 +1,0 @@
-We don't actualy use this function direclty in the PRT. It was edited heavily and formed into prtUiStructDlg.
