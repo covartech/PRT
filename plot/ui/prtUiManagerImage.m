@@ -122,6 +122,19 @@ classdef prtUiManagerImage < prtUiManagerAxes
             
         end
         
+        function shapePoint = getRoiPoint(self)
+            % Output either a struct or an empty array
+            self.checkValid;
+            
+            axes(self.managedHandle); %#ok<MAXES>  %Because imcrop doesn't let you specify axes
+            [xi, yi] = getpts;
+            shapePoint = [];
+            if ~isempty(xi)
+                shapePoint = struct('type','point','xi',xi(end),'yi',yi(end));
+            end
+            
+        end
+        
         function is = checkValid(self)
             assert(ishandle(self.imageHandle),'prt:prtUiManagerImage:badHandle','Some or all of the requested handles are no longer valid. The axes may have been deleted.');
             is = true;
@@ -138,7 +151,7 @@ classdef prtUiManagerImage < prtUiManagerAxes
             try
                 for i = 1:length(shapeArray)
                     if length(shapeArray(i).xi) == 1
-                        h(i) = plot(shapeArray(i).xi,shapeArray(i).yi,'b.'); %points
+                        h(i) = plot(shapeArray(i).xi,shapeArray(i).yi,'bo'); %points
                     else
                         h(i) = plot(shapeArray(i).xi,shapeArray(i).yi,'b');
                     end
