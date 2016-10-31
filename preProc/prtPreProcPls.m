@@ -78,18 +78,21 @@ classdef prtPreProcPls < prtPreProc
     methods (Access=protected,Hidden=true)
         
         function Obj = trainAction(Obj,DataSet)
-            DataSet = DataSet.retainLabeled;
             
+            if isa(DataSet,'prtDataSetClass')
+                DataSet = DataSet.retainLabeled;
+                if DataSet.nClasses > 2
+                    Y = DataSet.getTargetsAsBinaryMatrix;
+                else %Get binary indicator vector as appropriate
+                    Y = DataSet.getTargetsAsBinaryMatrix;
+                    Y = Y(:,2); %0's and 1's for H1
+                end
+            elseif isa(DataSet,'prtDataSetRegress')
+                Y = DataSet.getY;
+            end
+            % No matter what, get X
             X = DataSet.getObservations;
-%             if DataSet.nClasses > 2
-%                 Y = DataSet.getTargetsAsBinaryMatrix;
-%             else
-%                 Y = DataSet.getTargetsAsBinaryMatrix;
-%                 Y = Y(:,2); %0's and 1's for H1
-%             end
-            %           
-
-            Y = DataSet.getY;
+            
             maxComps = min(size(X));
             if Obj.nComponents > maxComps;
                 warning('prt:prtPreProcPls','nComponents (%d) > maximum components for the data set (%d); setting nComponents = %d',Obj.nComponents,maxComps,maxComps);
@@ -101,7 +104,7 @@ classdef prtPreProcPls < prtPreProc
             X = bsxfun(@minus, X, Obj.xMeanVector);
             Y = bsxfun(@minus, Y, Obj.yMeanVector);
             
-            [garbage,garbage, P] = prtUtilSimpls(X,Y,Obj.nComponents);
+            [~,~,P] = prtUtilSimpls(X,Y,Obj.nComponents);
             
             Obj.projectionMatrix = pinv(P');
             Obj.projectionMatrix = bsxfun(@rdivide,Obj.projectionMatrix,sqrt(sum(Obj.projectionMatrix.^2,1)));
