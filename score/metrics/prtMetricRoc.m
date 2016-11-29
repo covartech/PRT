@@ -158,8 +158,28 @@ classdef prtMetricRoc
                 varargout = {};
             end
         end
+        function varargout = plotNfa(self,varargin)
+            
+            holdState = ishold;
+            
+            h = gobjects(length(self),1);
+            for i = 1:numel(self)
+                h(i) = plot(self(i).nfa,self(i).pd,varargin{:});
+                hold on;
+            end
+            if ~holdState
+                hold off
+            end
+            
+            if nargout
+                varargout = {h};
+            else
+                varargout = {};
+            end
+        end
         
-        function varargout = plotRocFar(self,varargin)
+        
+        function varargout = plotFar(self,varargin)
             
             holdState = ishold;
             
@@ -179,7 +199,10 @@ classdef prtMetricRoc
             end
             
         end
-        
+        function varargout = plotRocFar(self,varargin)
+            varargout = cell(nargout,1);
+            [varargout{:}] = plotFar(self,varargin{:});
+        end
         
         function ds = assignValue(self, ds, fieldName)
             % Find the closest tau and use the corresponding field name as the updated X confidence
