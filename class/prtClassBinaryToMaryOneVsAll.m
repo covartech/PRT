@@ -155,6 +155,12 @@ classdef prtClassBinaryToMaryOneVsAll < prtClass & prtActionBig
             end
         end
         
+        function y = runActionFast(Obj,x)
+            for iY = 1:length(Obj.baseClassifier)
+                y(:,iY) = runFast(Obj.baseClassifier(iY), x);
+            end
+        end
+        
     end
     
 end
