@@ -50,7 +50,7 @@ for iPair = 1:length(paramStrs)
     
     cParamNameRealInd = find(strcmpi(propNames,cParamName));
     if isempty(cParamNameRealInd)
-        error('prt:prtUtilAssignStringValuePairs','No public field %s exists for class %s',cParamName, ObjMeta.Name);
+        error('prt:prtUtilAssignStringValuePairs','No public field %s exists',cParamName);
     end
     
     cParamNameReal = propNames{cParamNameRealInd};
