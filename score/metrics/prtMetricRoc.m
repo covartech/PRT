@@ -241,6 +241,9 @@ classdef prtMetricRoc
                         end
                     else
                         cBin = find(cVal >= flippedTau,1,'last');
+                        if isempty(cBin)
+                            cBin = 1; % First bin?..?
+                        end
                     end
                     binInd(iObs) = cBin;
                 end
