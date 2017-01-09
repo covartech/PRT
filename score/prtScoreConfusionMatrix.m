@@ -129,7 +129,7 @@ if nargout
     varargout = {confusionMat, occurances};
 else
     %prtUtilPlotConfusionMatrix(bsxfun(@rdivide,confusionMat,occurances),guessClassNames,truthClassNames);
-    prtUtilPlotConfusionMatrix(confusionMat,guessClassNames,truthClassNames);
+    prtPlotUtilConfusionMatrix(confusionMat,guessClassNames,truthClassNames);
     
     pc = prtScorePercentCorrect(guess,truth);
     title(sprintf('%.2f%% Correct',pc*100));
