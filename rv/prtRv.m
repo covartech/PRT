@@ -128,10 +128,9 @@ classdef prtRv < prtAction
                 else
                     plotLims = plotLimits(R);
                 end
-                
                 [linGrid, gridSize] = prtPlotUtilGenerateGrid(plotLims(1:2:end), plotLims(2:2:end), R.plotOptions.nSamplesPerDim);
                 
-                imageHandle = prtPlotUtilPlotGriddedEvaledFunction(R.pdf(linGrid), linGrid, gridSize, R.plotOptions.colorMapFunction(R.plotOptions.nColorMapSamples));
+                imageHandle = prtPlotUtilPlotGriddedEvaledFunction(R.pdf(linGrid), linGrid, gridSize, R.plotOptions.colorMapFunction(R.plotOptions.nColorMapSamples),varargin{2:end});
                 
                 if nargout
                     varargout = {imageHandle};
@@ -162,7 +161,7 @@ classdef prtRv < prtAction
                 
                 [linGrid, gridSize] = prtPlotUtilGenerateGrid(plotLims(1:2:end), plotLims(2:2:end), R.plotOptions.nSamplesPerDim);
                 
-                imageHandle = prtPlotUtilPlotGriddedEvaledFunction(R.logPdf(linGrid), linGrid, gridSize, R.plotOptions.colorMapFunction(R.plotOptions.nColorMapSamples));
+                imageHandle = prtPlotUtilPlotGriddedEvaledFunction(R.logPdf(linGrid), linGrid, gridSize, R.plotOptions.colorMapFunction(R.plotOptions.nColorMapSamples),varargin{2:end});
                 
                 if nargout
                     varargout = {imageHandle};

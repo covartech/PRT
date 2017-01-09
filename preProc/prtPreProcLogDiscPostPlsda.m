@@ -72,7 +72,7 @@ classdef prtPreProcLogDiscPostPlsda < prtPreProcClass
         function DataSet = runAction(Obj,DataSet)
 			sigmaFn = @(x) 1./(1 + exp(-x));
 			for iFeature = 1:length(Obj.logDiscWeights)
-				DataSet = DataSet.setObservations(sigmaFn(DataSet.X(:,iFeature)*Obj.logDiscWeights(iFeature) + Obj.logDiscMeans(iFeature)),:,iFeature);
+                DataSet.X(:,iFeature) = sigmaFn(DataSet.X(:,iFeature)*Obj.logDiscWeights(iFeature) + Obj.logDiscMeans(iFeature));
 			end
             
 			if length(Obj.logDiscWeights) > 1
