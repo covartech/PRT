@@ -172,6 +172,19 @@ classdef prtDataSetInMem < prtDataSetBase
             %   observations specified by indices from the input dataSet.
             %
             
+            if isa(indices,'char')
+                indices = {indices};
+            end
+            
+            if isa(indices,'cell')
+                origObsNames = indices;
+                [isActuallyAnObs, indices] = ismember(origObsNames,self.observationNames); %#ok<ASGLU>
+                if any(~isActuallyAnObs)
+                    invalid = find(~isActuallyAnObs);
+                    error('prtDataSetInMem:retainObservations:invalidString','The string %s did not match any observation names of the data set',origObsNames{invalid(1)});
+                end
+            end
+            
             self = self.retainObservationInfo(indices);
             self = self.retainObservationData(indices);
             self = self.update;

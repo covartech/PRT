@@ -1,34 +1,13 @@
 function keys = prtUtilUidToXvalKeys(ids,varargin)
 %keys = prtUtilUidToXvalKeys(uids,[labels],[nKeys])
 %   For a vector of scalars OR cell-vector of strings, return a scalar
-%   array of crossvaliation keys
+%   array of crossvalidation keys
 %
 % Example:
 % ids = {'a','b','c','b','a','c','d','d'};
 % labels = [0,0,0,1,1,1,1,1];
 % nKeys = 3;
 % prtUtilUidToXvalKeys(ids,labels,nKeys)
-
-% Copyright (c) 2015 CoVar Applied Technologies
-%
-% Permission is hereby granted, free of charge, to any person obtaining a
-% copy of this software and associated documentation files (the
-% "Software"), to deal in the Software without restriction, including
-% without limitation the rights to use, copy, modify, merge, publish,
-% distribute, sublicense, and/or sell copies of the Software, and to permit
-% persons to whom the Software is furnished to do so, subject to the
-% following conditions:
-%
-% The above copyright notice and this permission notice shall be included
-% in all copies or substantial portions of the Software.
-%
-% THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-% OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-% MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-% NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-% DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-% OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-% USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 nObservations = length(ids);
 
@@ -60,18 +39,19 @@ assert(length(labels)==nObservations,'The number of ids and labels should be the
 % extract the number and indices of each id in each class
 ulabels = unique(labels);
 nClasses = length(ulabels);
-uids = cell(nClasses,1);
-ic = cell(nClasses,1);
 nUids = nan(nClasses,1);
+
+icByClass = cell(nClasses,1);
+[uids,~,ic] = unique(ids);
 for iClass = 1:nClasses % for each class
-	[uids{iClass},~,ic{iClass}] = unique(ids(labels==ulabels(iClass)));
-	nUids(iClass) = length(uids{iClass});
+	icByClass{iClass} = unique(ic(labels==ulabels(iClass)));
+	nUids(iClass) = length(icByClass{iClass});
 end
 
 % sort by increasing number of ids per class
 [nUids,classOrder] = sort(nUids);
-ic = ic(classOrder);
 ulabels = ulabels(classOrder);
+icByClass = icByClass(classOrder);
 
 % are too many keys requested? fix it.
 if nKeys>min(nUids)
@@ -81,26 +61,20 @@ if nKeys>min(nUids)
 	nKeys = minNUids;
 end
 
-% Assign keys to unique ids such that each key ends up with approximately
-% equal numbers of uids.
-ukeys = cell(nClasses,1);
-% Assign keys uniformly across the ids found in all classes.
-ukeys{1} = ceil(randperm(min(nUids))'/min(nUids)*nKeys);
-% What follows was written assuming that nClasses==2, though it may not be
-% readily apparent. DO NOT expect it to work for nClasses>2.
-if nClasses>2
-	warning('This is not yet implemented for >2 classes. The results may not be what you want.')
-end
+% Assign keys uniformly across the ids found in the smallest class.
+ukeys(icByClass{1}) = ceil(randperm(min(nUids))'/min(nUids)*nKeys);
+assigned = icByClass{1};
 % Assign keys uniformly across the remaining ids
-% but backwards, to help keep the assignments uniform.
+% but backwards, to help keep the assignments uniform-ish.
 for iClass = 2:nClasses
-	ukeys{iClass} = cat(1,ceil(randperm(min(nUids))'/min(nUids)*nKeys),...
-		nKeys+1-ceil(randperm((max(nUids)-min(nUids)))'/(max(nUids)-min(nUids))*nKeys));
+    toAssign = setdiff(icByClass{iClass},assigned);
+	ukeys(toAssign) = nKeys+1-ceil(randperm(length(toAssign))'/length(toAssign)*nKeys);
+    assigned = cat(1,assigned,toAssign);
 end
 % Assign the keys to the observations.
 keys = nan(nObservations,1);
-for iClass = 1:nClasses
-	keys(labels==ulabels(iClass)) = ukeys{iClass}(ic{iClass});
+for iUid = 1:length(uids)
+    keys(ic==iUid) = ukeys(iUid);
 end
 
 % TESTING

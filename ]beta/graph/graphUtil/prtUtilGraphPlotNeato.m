@@ -1,12 +1,6 @@
 function pos = prtUtilGraphPlotNeato(graph)
 % pos = prtUtilGraphPlotNeato(graph)
 
-
-
-
-
-
-
 fileIn = fullfile(tempdir,'_tempIn.dot');
 fileOut = fullfile(tempdir,'_tempOut.dot');
 prtPlotUtilGraphVizWriteDot(graph, fileIn);
