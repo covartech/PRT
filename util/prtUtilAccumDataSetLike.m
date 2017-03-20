@@ -42,7 +42,10 @@ for i = 1:size(xOut,2)
 end
 
 if ds.isLabeled
-    yOut = accumarray(uInds,ds.Y,sz,yFun);
+    yOut = nan(size(xOut,1), ds.nTargetDimensions);
+    for i = 1:ds.nTargetDimensions
+        yOut(:,i) = accumarray(uInds,ds.Y(:,i),sz,yFun);
+    end
 else
     yOut = [];
 end

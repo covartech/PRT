@@ -66,9 +66,9 @@ imageAxes = gca;
 imagesc(X,cLim);
 colormap(cMap);
 fontSize = max(getBestFontSize(imageAxes),1);
-textHandles = nan(size(X));
-verticleLineHandles = zeros(nRows,1);
-horizontalLineHandles = zeros(nCols,1);
+textHandles = prtUtilPreAllocateHandles(size(X));
+verticleLineHandles = prtUtilPreAllocateHandles(nRows,1);
+horizontalLineHandles = prtUtilPreAllocateHandles(nCols,1);
 hold on;
 
 [dontNeed, textCMapInds] = histc( (X-cLim(1))./(cLim(2)-cLim(1)) , linspace(0,1+eps,size(textCMap,1)+1)); %#ok<ASGLU>
