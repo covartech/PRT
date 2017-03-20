@@ -1,12 +1,11 @@
-classdef prtDecisionBinaryMinPe < prtDecisionBinary
-    % prtDecisionBinaryMinPe Decision object for minimum probability of
-    % error in binary classification
+classdef prtDecisionBinaryMinCost < prtDecisionBinary
+    % prtDecisionBinaryMinCost Decision object for minimum cost
     %
-    % prtDec = prtDecisionBinaryMinPe creates a prtDecisionBinaryMinPe
+    % prtDec = prtDecisionBinaryMinCost creates a prtDecisionBinaryMinCost
     % object, which can be used find a decision threshold in a binary
-    % classification problem that minimizes the probability of error.
+    % classification problem that minimizes the cost;
     %
-    % prtDecision objects are intended to be used either as members of
+    % prtDecisionBinaryMinCost objects are intended to be used either as members of
     % prtAlgorithm or prtClass objects.
     %
     % Properties:
@@ -15,45 +14,8 @@ classdef prtDecisionBinaryMinPe < prtDecisionBinary
     %
     % Example 1:
     %
-    % ds = prtDataGenBimodal;              % Load a data set
-    % classifier = prtClassKnn;            % Create a clasifier
-    % classifier = classifier.train(ds);   % Train the classifier
-    % yOutClassifier = classifier.run(ds); % Run the classifier
-    %
-    % % Construct a prtAlgorithm object consisting of a prtClass object and
-    % % a prtDecision object
-    % algo = prtClassKnn + prtDecisionBinaryMinPe; 
-    %
-    % algo = algo.train(ds);        % Train the algorithm    
-    % yOutAlgorithm = algo.run(ds); % Run the algorithm
-    % 
-    % % Plot and compare the results
-    % subplot(2,1,1); stem(yOutClassifier.getObservations); title('KNN Output');
-    % subplot(2,1,2); stem(yOutAlgorithm.getObservations); title('KNN + Decision Output');
-    %
-    % Example 2:
-    %
-    % ds = prtDataGenBimodal;              % Load a data set
-    % classifier = prtClassKnn;            % Create a clasifier
-    % classifier = classifier.train(ds);   % Train the classifier
-    %
-    % % Plot the trained classifier
-    % subplot(2,1,1); plot(classifier); title('KNN');
-    %
-    % % Set the classifiers internealDecider to be a prtDecsion object
-    % classifier.internalDecider = prtDecisionBinaryMinPe;
-    %
-    % classifier = classifier.train(ds); % Train the classifier
-    % subplot(2,1,2); plot(classifier); title('KNN + Decision');
-    %    	
     % See also: prtDecisionBinary, prtDecisionBinarySpecifiedPd,
     % prtDecisionBinarySpecifiedPf, prtDecisionMap
-
-
-
-
-
-
 
     properties (SetAccess = private)
         name = 'MinPe'   % MinPe
@@ -65,10 +27,12 @@ classdef prtDecisionBinaryMinPe < prtDecisionBinary
     end
     properties
         priors = 'equal'; % 'equal', 'empirical' (estimated from data), or [pH0, pH1]
+        costMatrix = [0 -1; -1 0]; % Cost of [0|0, 1|0; 0|1, 1|1] - a.k.a. [true reject, false positive; false negative, true positive];
     end
+    
     methods
         
-        function self = prtDecisionBinaryMinPe(varargin)
+        function self = prtDecisionBinaryMinCost(varargin)
             self = prtUtilAssignStringValuePairs(self,varargin{:});
         end
     end
@@ -83,7 +47,8 @@ classdef prtDecisionBinaryMinPe < prtDecisionBinary
             end
             
             
-            [pf,pd,thresh] = prtScoreRoc(dataSet.getObservations,dataSet.getTargets);
+            [pFalsePositive,pTruePositive,thresh] = prtScoreRoc(dataSet.getObservations,dataSet.getTargets);
+            
             if isa(self.priors,'char')
                 switch lower(self.priors);
                     case 'equal'
@@ -94,6 +59,9 @@ classdef prtDecisionBinaryMinPe < prtDecisionBinary
                         nH1 = sum(dataSet.targets == 1);
                         pH0 = nH0./dataSet.nObservations;
                         pH1 = nH1./dataSet.nObservations;
+                    case 'empiricalcounts'
+                        pH0 = sum(dataSet.targets == 0);
+                        pH1 = sum(dataSet.targets == 1);
                     otherwise
                         error('Invalid string: %s',self.priors);
                 end
@@ -103,9 +71,9 @@ classdef prtDecisionBinaryMinPe < prtDecisionBinary
             else
                 error('Invalid prior type: %s',class(self.priors));
             end
-            pe = prtUtilPfPd2Pe(pf,pd,pH0,pH1);
-            
-            [v,minPeIndex] = min(pe); %#ok<ASGLU>
+            costs = prtUtilPfPd2Cost(pFalsePositive,pTruePositive,self.costMatrix,pH0,pH1);
+                        
+            [v,minPeIndex] = min(costs); %#ok<ASGLU>
             self.threshold = thresh(minPeIndex);
             self.classList = dataSet.uniqueClasses;
         end

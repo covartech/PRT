@@ -207,10 +207,10 @@ else
     thresholds = cat(1,inf,sortedDS(:));
     varargout = {pFa,pD,thresholds,auc};
     if nargout == 1
-        varargout{1} = prtMetricRoc('pf',pFa,'pd',pD,'nfa',nFa,'tau',thresholds,'auc',auc);
+        varargout{1} = prtMetricRoc('pf',pFa,'pd',pD,'nfa',nFa,'tau',thresholds,'auc',auc,'nTargets', nH1,'nNonTargets',nH0);
     end
     if inputs.outputStructure
-        varargout{1} = struct('pf',pFa,'pd',pD,'tau',thresholds,'auc',auc);
+        varargout{1} = struct('pf',pFa,'pd',pD,'nfa',nFa,'tau',thresholds,'auc',auc,'nTargets', nH1,'nNonTargets',nH0);
     end
 end
 

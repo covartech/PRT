@@ -388,14 +388,14 @@ classdef prtClass < prtAction
                 % Called by runfast
                 OutputDataSet = OutputDataSet(:,end);
                 return
-						end
+            end
             
-						% Changed OutputDataSet.getObservations(:,end) to .X(:,end)
-						% because submitting the colon to a function errors in 2015b
-						% DO NOT call .getObservations(':',end)! For some unknown
-						% reason, this arrives in getObservations with NO ARGUMENTS,
-						% which will not error, but gives unexpected results
-						% It may be OK to call OutputDataSet.getObservations(':',OutputDataSet.nFeatures)
+            % Changed OutputDataSet.getObservations(:,end) to .X(:,end)
+            % because submitting the colon to a function errors in 2015b
+            % DO NOT call .getObservations(':',end)! For some unknown
+            % reason, this arrives in getObservations with NO ARGUMENTS,
+            % which will not error, but gives unexpected results
+            % It may be OK to call OutputDataSet.getObservations(':',OutputDataSet.nFeatures)
             OutputDataSet = OutputDataSet.setObservations(OutputDataSet.X(:,end));
         end
         function xOut = maryOutput2binaryOutputFast(ClassObj,xOut) %#ok

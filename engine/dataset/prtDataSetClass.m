@@ -50,13 +50,6 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
     %     prtDataInterfaceCategoricalTargets for more information.
     %
     %
-
-
-
-
-
-
-
     
     properties (Hidden = true)
         plotOptions = prtDataSetClass.initializePlotOptions();
@@ -970,14 +963,15 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
         
         
         function varargout = plotTimeSeriesDensity(obj,featureIndices,xData,varargin)
+            % plotTimeSeriesDensity  Plot the data set density as time series data
+            %
+            % dataSet.plotTimeSeriesDensity() plots the density of the data contained in
+            % dataSet as if it were a time series.
+            
             opts.linewidth = 3;
             opts.faceAlpha = 0.2;
             opts.quantileValue = 0.1;
             opts = prtUtilAssignStringValuePairs(opts,varargin{:});
-            % plotAsTimeSeries  Plot the data set as time series data
-            %
-            % dataSet.plotAsTimeSeries() plots the data contained in
-            % dataSet as if it were a time series.
             
             if ~obj.isLabeled
                 obj = obj.setTargets(zeros(obj.nObservations,1));
