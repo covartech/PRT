@@ -93,32 +93,32 @@ classdef prtDataSetRegress < prtDataSetStandard
                 dsTest.plotOptions = obj.plotOptions;
                 dsTest.plotOptions.colorsFunction = dsTest.plotOptions.plotAsClassColorsFunction;
                 plot(dsTest);
-                return;
+                
             elseif nPlotDimensions ~= 1 & nPlotDimensions~= 2
                 error('prt:plot:NoPlotDimensionality','Regression plots are currently only valid for 1-3 dimensional data, but the requested plot has %d dimensions',nPlotDimensions);
-            end
-            
-            holdState = get(gca,'nextPlot');
-            
-            classColors = obj.plotOptions.colorsFunction(obj.nTargetDimensions);
-            markerSize = obj.plotOptions.symbolSize;
-            lineWidth = obj.plotOptions.symbolLineWidth;
-            classSymbols = obj.plotOptions.symbolsFunction(obj.nTargetDimensions);
-            
-            h = prtUtilPreAllocateHandles(obj.nTargetDimensions);
-            for iPlot = 1:obj.nTargetDimensions
-                classEdgeColor = obj.plotOptions.symbolEdgeModificationFunction(classColors(iPlot,:));
+            else
                 
-                if length(featureIndices) == 1
-                    h(iPlot) = plot(obj.X(:,featureIndices),obj.Y(:,iPlot), classSymbols(iPlot), 'MarkerFaceColor', classColors(iPlot,:), 'MarkerEdgeColor', classEdgeColor,'linewidth',lineWidth,'MarkerSize',markerSize);
-                else
-                    h(iPlot) = plot3(obj.X(:,featureIndices(1)),obj.X(:,featureIndices(2)),obj.Y(:,iPlot), classSymbols(iPlot), 'MarkerFaceColor', classColors(iPlot,:), 'MarkerEdgeColor', classEdgeColor,'linewidth',lineWidth,'MarkerSize',markerSize);
+                holdState = get(gca,'nextPlot');
+                
+                classColors = obj.plotOptions.colorsFunction(obj.nTargetDimensions);
+                markerSize = obj.plotOptions.symbolSize;
+                lineWidth = obj.plotOptions.symbolLineWidth;
+                classSymbols = obj.plotOptions.symbolsFunction(obj.nTargetDimensions);
+                
+                h = prtUtilPreAllocateHandles(obj.nTargetDimensions);
+                for iPlot = 1:obj.nTargetDimensions
+                    classEdgeColor = obj.plotOptions.symbolEdgeModificationFunction(classColors(iPlot,:));
+                    
+                    if length(featureIndices) == 1
+                        h(iPlot) = plot(obj.X(:,featureIndices),obj.Y(:,iPlot), classSymbols(iPlot), 'MarkerFaceColor', classColors(iPlot,:), 'MarkerEdgeColor', classEdgeColor,'linewidth',lineWidth,'MarkerSize',markerSize);
+                    else
+                        h(iPlot) = plot3(obj.X(:,featureIndices(1)),obj.X(:,featureIndices(2)),obj.Y(:,iPlot), classSymbols(iPlot), 'MarkerFaceColor', classColors(iPlot,:), 'MarkerEdgeColor', classEdgeColor,'linewidth',lineWidth,'MarkerSize',markerSize);
+                    end
+                    hold on
                 end
-                hold on
+                
+                set(gca,'nextPlot',holdState);
             end
-			
-            set(gca,'nextPlot',holdState);
-            
             % Set title
             title(obj.name);
             switch nPlotDimensions
@@ -129,6 +129,10 @@ classdef prtDataSetRegress < prtDataSetStandard
                     xlabel(obj.getFeatureNames(1));
                     ylabel(obj.getFeatureNames(2));
                     zlabel(obj.getTargetNames(1));
+                case 3
+                    xlabel(obj.getFeatureNames(1));
+                    ylabel(obj.getFeatureNames(2));
+                    zlabel(obj.getFeatureNames(3));
                 otherwise
                     error('prt:plot:NoPlotDimensionality','Regression plots are currently only valid for 1 dimensional data, but DataSet has %d dimensions',obj.nFeatures);
             end
