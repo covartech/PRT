@@ -1,12 +1,16 @@
-function imageHandle = prtPlotUtilPlotGriddedEvaledFunction(DS, linGrid, gridSize, cMap)
+function imageHandle = prtPlotUtilPlotGriddedEvaledFunction(DS, linGrid, gridSize, cMap, varargin)
 % Internal function
 % xxx Need Help xxx
 
+p = inputParser;
+p.addParameter('slicerLocations',[]);
+% slice properties
+p.addParameter('edgecolor','none');
+p.addParameter('facealpha',1);
+% image properties
+p.addParameter('alphadata',1);
 
-
-
-
-
+p.parse(varargin{:});
 
 nDims = size(linGrid,2);
 switch nDims
@@ -22,14 +26,19 @@ switch nDims
         xx = reshape(linGrid(:,1),gridSize);
         yy = reshape(linGrid(:,2),gridSize);
         imageHandle = imagesc(xx(1,:),yy(:,1),reshape(DS,gridSize));
+        set(imageHandle,'alphadata',p.Results.alphadata)
         colormap(cMap)
     case 3
         xx = reshape(linGrid(:,1),gridSize);
         yy = reshape(linGrid(:,2),gridSize);
         zz = reshape(linGrid(:,3),gridSize);
-        imageHandle = slice(xx,yy,zz,reshape(DS,gridSize),max(xx(:)),max(yy(:)),[min(zz(:)),mean(zz(:))]);
-        set(imageHandle,'edgecolor','none')
-           
+        slicerLocations = p.Results.slicerLocations;
+        if isempty(p.Results.slicerLocations);
+            slicerLocations = {max(xx(:)),max(yy(:)),[min(zz(:)),mean(zz(:))]};
+        end
+        imageHandle = slice(xx,yy,zz,reshape(DS,gridSize),slicerLocations{:});
+        set(imageHandle,'edgecolor',p.Results.edgecolor)
+        set(imageHandle,'facealpha',p.Results.facealpha)
         
         view(3)
         colormap(cMap)

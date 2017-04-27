@@ -37,6 +37,10 @@ function B = prtUtilStructVCatMergeFields(A,B)
 if isempty(A)  %base case
     return;
 end
+if isempty(B)
+    B = A;
+    return;
+end
 
 assert(isstruct(A) && isstruct(B),'prt:prtUtilMergeStructureArrays','inputs must be structure arrays');
 
@@ -56,7 +60,6 @@ if ~isequal(fnA,fnB)
         A(1).(fieldsNotInA{iField}) = [];
     end
 end
-
 % We need to make sure the fields are in the right order
 B = orderfields(B, A);
 

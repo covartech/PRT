@@ -42,10 +42,11 @@ classdef prtPreProcFunction < prtPreProc
     end
     properties
         transformationFunction = @(x)x;
-    end
+    end 
     
     properties (Hidden)
         operateOnMatrix = false; % Set to true for faster operation, but be careful
+        operateOnDataStream = false;
     end
     
     methods
@@ -61,10 +62,17 @@ classdef prtPreProcFunction < prtPreProc
         end
         
         function ds = runAction(self,ds)
-           ds.X = runActionFast(self,ds.X);
+            if self.operateOnDataStream
+                ds = self.transformationFunction(ds);
+            else
+               ds.X = runActionFast(self,ds.X);
+            end
         end
         
         function x = runActionFast(self,x)
+            if self.operateOnDataStream
+                error('Can''t use runActionFast with operateOnDataStream = true');
+            end
             if self.operateOnMatrix
                 x = feval(self.transformationFunction,x);
                 

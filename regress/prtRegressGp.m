@@ -3,19 +3,20 @@ classdef prtRegressGp < prtRegress
     %
     %   REGRESS = prtRegressGP returns a prtRegressGP object
     %
-    %    REGRESS = prtRegressGP(PROPERTY1, VALUE1, ...) constructs a
-    %    prtRegressGP object REGRESS with properties as specified by
-    %    PROPERTY/VALUE pairs.
+    %   REGRESS = prtRegressGP(PROPERTY1, VALUE1, ...) constructs a
+    %   prtRegressGP object REGRESS with properties as specified by
+    %   PROPERTY/VALUE pairs.
     % 
-    %    A prtRegressGP object inherits all properties from the prtRegress
-    %    class. In addition, it has the following properties:
+    %   A prtRegressGP object inherits all properties from the prtRegress
+    %   class. In addition, it has the following properties:
     %
-    %   covarianceFunction = @(x1,x2)prtUtillQuadExpCovariance(x1,x2, 1, 4, 0, 0);
+    %   covarianceFunction = @(x1,x2)prtUtilQuadExpCovariance(x1,x2, 1, 4, 0, 0);
     %   noiseVariance = 0.01;
     %   CN ?
     %   weights?
     %
-    %   Need reference 
+    %   M Ebden. Gaussian processes for regression: a quick introduction.
+    %   2008. https://arxiv.org/abs/1505.02965
     % 
     %   A prtRegressionGP object inherits the PLOT method from the
     %   prtRegress object, and the TRAIN, RUN, CROSSVALIDATE and KFOLDS
@@ -33,13 +34,10 @@ classdef prtRegressGp < prtRegress
     %   plot(dataSet.getX,dataSetOut.getX,'c.') % Plot, overlaying the
     %                                           % fitted points with the 
     %                                           % curve and original data
-    % legend('Regression curve','Original Points','Fitted points',0)
+    %   legend('Regression curve','Original Points','Fitted points',0)
     %
     %
     %   See also prtRegress, prtRegressRvm, prtRegressLslr
-
-
-
 
 
 
@@ -50,9 +48,12 @@ classdef prtRegressGp < prtRegress
     end
     
     properties
-        % Optional parameters
+        % flags
+        refineParameters = true;
         
-        covarianceFunction = @(x1,x2)prtUtillQuadExpCovariance(x1,x2, 1, 4, 0, 0);
+        % Optional parameters
+        theta = [1, 4, 0, 0]'; % covariance function parameters
+        covarianceFunction = @(x1,x2,params)prtUtilQuadExpCovariance(x1,x2,params);
         noiseVariance = 0.01;
         
     end
@@ -86,19 +87,39 @@ classdef prtRegressGp < prtRegress
     methods (Access = protected, Hidden = true)
         
         function Obj = trainAction(Obj,DataSet)
-            Obj.CN = feval(Obj.covarianceFunction, DataSet.getObservations(), DataSet.getObservations()) + Obj.noiseVariance*eye(DataSet.nObservations);
+            if Obj.refineParameters
+                Obj.theta = fminsearch(@(params)-Obj.loglike(DataSet.Y,Obj.covarianceFunction2(DataSet,params)),Obj.theta);
+            end
+            
+            Obj.CN = Obj.covarianceFunction2(DataSet, Obj.theta);
             
             Obj.weights = Obj.CN\DataSet.getTargets();
         end
         
         function [DataSet,variance] = runAction(Obj,DataSet)
-            k = feval(Obj.covarianceFunction, Obj.dataSet.getObservations(), DataSet.getObservations());
-            c = diag(feval(Obj.covarianceFunction, DataSet.getObservations(), DataSet.getObservations())) + Obj.noiseVariance;
+            k = feval(Obj.covarianceFunction, Obj.dataSet.getObservations(), DataSet.getObservations(), Obj.theta);
+            c = diag(feval(Obj.covarianceFunction, DataSet.getObservations(), DataSet.getObservations(), Obj.theta)) + Obj.noiseVariance;
             
             DataSet = prtDataSetRegress(k'*Obj.weights);
             variance = c - prtUtilCalcDiagXcInvXT(k', Obj.CN);
         end
         
+        function K = covarianceFunction2(Obj,DataSet,params)
+            % with the additional variance term
+            
+            K = Obj.covarianceFunction(DataSet.getObservations(), DataSet.getObservations(), params)...
+                + Obj.noiseVariance*eye(DataSet.nObservations);
+        end
+    end
+    
+    methods (Static)
+        function val = loglike(x,Sigma)
+            % multivariate Gaussian log likelihood
+            % mean is assumed zero
+            
+            x = x(:); % ensure that x is a column vector
+            val = -1/2*x'/Sigma*x-1/2*log(det(Sigma))-length(x)/2*log(2*pi);
+        end
     end
     
 end

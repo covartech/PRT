@@ -64,7 +64,7 @@ classdef prtKernel < prtAction
         isCrossValidateValid = false; % False
     end
     
-    properties (Access = protected, Hidden = true)
+    properties (Hidden = true)
         internalDataSet
     end
         
