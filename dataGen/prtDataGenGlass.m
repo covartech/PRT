@@ -6,7 +6,7 @@ function ds = prtDataGenGlass
 
 
 
-file = fullfile(prtRoot,']beta','dataGen','dataStorage','glass','glass.data');
+file = fullfile(fileparts(mfilename),'dataGen','dataStorage','glass','glass.data');
 if ~exist(file,'file')
     error('prtDataGenGlass:MissingFile','The UCI Glass file, glass.data, was not found in %s',fileparts(file));
 end
