@@ -690,6 +690,9 @@ classdef prtAction
         function self = setDataSet(self, val)
             self.dataSet = val;
         end
+        function self = clearDataSet(self)
+            self.dataSet = [];
+        end
         function self = setDataSetSummary(self, summary)
             self.dataSetSummary = summary;
         end
