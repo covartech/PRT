@@ -27,6 +27,28 @@ classdef prtMetricRoc
             val = self.nfa./self.farDenominator;
         end
         
+        function [meanRoc,stdRoc,pfVals] = getRocStatistics(self,pfVals)
+            % [meanRoc,stdRoc] = getRocStatistics(self,nPoints)
+            % [meanRoc,stdRoc] = getRocStatistics(self,farVals)
+            % get mean & std of a bunch of ROCs
+            if nargin < 2
+                pfVals = 250;
+            end
+            
+            if numel(pfVals) == 1
+                allPf = cat(1,self(:).pf);
+                pfVals = linspace(0,max(allPf),pfVals);
+            end
+            
+            pdVals = self.pdAtPfValues(pfVals);
+            pdVals = cat(2,pdVals{:});
+            
+            meanRoc = nanmean(pdVals,2);
+            stdRoc = nanstd(pdVals,[],2);
+            
+        end
+        
+        
         function [meanRoc,stdRoc,farVals] = getRocFarStatistics(self,farVals)
             % [meanRoc,stdRoc] = getRocStatistics(self,nPoints)
             % [meanRoc,stdRoc] = getRocStatistics(self,farVals)
@@ -36,9 +58,8 @@ classdef prtMetricRoc
             end
             
             if numel(farVals) == 1
-                nPoints = 250;
                 allFar = cat(1,self(:).far);
-                farVals = linspace(0,max(allFar),nPoints);
+                farVals = linspace(0,max(allFar),farVals);
             end
             
             pdVals = self.pdAtFarValues(farVals);
