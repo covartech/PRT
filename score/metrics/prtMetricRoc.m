@@ -312,8 +312,5 @@ classdef prtMetricRoc
                 pauc(iRoc) = trapz(cX,cY);
             end
         end
-        function [muRoc, sigmaRoc] = mean(rocs)
-            keyboard
-        end
     end
 end
