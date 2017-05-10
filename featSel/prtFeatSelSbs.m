@@ -1,4 +1,4 @@
-classdef prtFeatSelSfs < prtFeatSel
+classdef prtFeatSelSbs < prtFeatSel
 % prtFeatSelSfs   Sequential forward feature selection object.
 %
 %    FEATSEL = prtFeatSelSfs creates a sequental forward feature selection
@@ -57,8 +57,8 @@ classdef prtFeatSelSfs < prtFeatSel
 
 
     properties (SetAccess=private)
-        name = 'Sequentual Feature Selection' % Sequentual Feature Selection
-        nameAbbreviation = 'SFS' % SFS
+        name = 'Sequentual Backward Search'
+        nameAbbreviation = 'SBS'
     end
     
     properties
@@ -74,7 +74,7 @@ classdef prtFeatSelSfs < prtFeatSel
     
     
     methods
-        function Obj = prtFeatSelSfs(varargin)
+        function Obj = prtFeatSelSbs(varargin)
             Obj.isCrossValidateValid = false;
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
         end
@@ -98,17 +98,18 @@ classdef prtFeatSelSfs < prtFeatSel
             
             nFeatsTotal = DS.nFeatures;
             nSelectFeatures = min(nFeatsTotal,Obj.nFeatures);
+            nFeatsToRemove = nFeatsTotal-nSelectFeatures;
             
             Obj.performance = nan(1,nSelectFeatures);
             Obj.selectedFeatures = nan(1,nSelectFeatures);
             
-            sfsSelectedFeatures = [];
+            sbsSelectedFeatures = 1:nFeatsTotal;
             
             if Obj.showProgressBar
-                h = prtUtilProgressBar(0,'Feature Selection - SFS','autoClose',true);
+                h = prtUtilProgressBar(0,'Feature Selection - SBS','autoClose',true);
             end
             
-            for j = 1:nSelectFeatures
+            for j = 1:nFeatsToRemove
                 
                 if Obj.showProgressBar && j == 1
                     h2 = prtUtilProgressBar(0,sprintf('Selecting Feature %d',j),'autoClose',false);
@@ -117,16 +118,16 @@ classdef prtFeatSelSfs < prtFeatSel
                     h2.update(0);
                 end
                 
-                availableFeatures = setdiff(1:nFeatsTotal,sfsSelectedFeatures);
-                cPerformance = nan(size(availableFeatures));
-                for i = 1:length(availableFeatures)
-                    currentFeatureSet = cat(2,sfsSelectedFeatures,availableFeatures(i));
+                cPerformance = nan(1,length(sbsSelectedFeatures));
+                for i = 1:length(sbsSelectedFeatures)
+                    currentFeatureSet = sbsSelectedFeatures;
+                    currentFeatureSet(i) = [];
                     tempDataSet = DS.retainFeatures(currentFeatureSet);
                     
                     cPerformance(i) = Obj.evaluationMetric(tempDataSet);
                     
                     if Obj.showProgressBar
-                        h2.update(i/length(availableFeatures));
+                        h2.update(i/length(sbsSelectedFeatures));
                     end
                 end
                 
@@ -140,19 +141,16 @@ classdef prtFeatSelSfs < prtFeatSel
                 end
                 
                 % Randomly choose the next feature if more than one provide the same performance
-                val = max(cPerformance);
-                newFeatInd = find(cPerformance == val);
-                newFeatInd = newFeatInd(max(1,ceil(rand*length(newFeatInd))));
-                
-                % In the (degenerate) case when rand==0, set the index to the first one
-                Obj.performance(j) = val;
-                sfsSelectedFeatures = cat(2,sfsSelectedFeatures,availableFeatures(newFeatInd));
+                [val,worstFeatInd] = max(cPerformance);
+                sbsSelectedFeatures(worstFeatInd) = [];
                 
                 if Obj.showProgressBar
-                    h.update(j/nSelectFeatures);
+                    h.update(j/nFeatsToRemove);
                 end
             end
-            Obj.selectedFeatures = sfsSelectedFeatures;
+            Obj.performance = val;
+            Obj.selectedFeatures = sbsSelectedFeatures;
+            
             if Obj.showProgressBar
                 % Make sure it's closed.
                 h.update(1);

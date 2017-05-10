@@ -1,12 +1,6 @@
 function mat = prtUtilMatrixCornerCat(mat1,mat2,padValueFn)
 % xxx Need Help xxx
 
-
-
-
-
-
-
 if nargin < 3
     padValueFn = @zeros;
 end

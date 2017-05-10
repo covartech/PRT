@@ -219,13 +219,15 @@ classdef prtMetricRoc
                 useFar = true;
             end
             
-            
+            flipTau = false;
             newX = nan([ds.nObservations length(self)]);
             for iRoc = 1:length(self)
                 
                 cX = ds.X(:,iRoc);
-                
-                flippedTau = flipud(self(iRoc).tau);
+                nTau = numel(self(iRoc).tau);
+                if flipTau
+                    flippedTau = flipud(self(iRoc).tau);
+                end
                 
                 binInd = zeros(size(cX,1),1);
                 for iObs = 1:size(cX,1)
@@ -234,15 +236,28 @@ classdef prtMetricRoc
                         cBin = nan;
                     elseif ~isfinite(cVal)
                         % +/-Inf
-                        if cVal > 0
-                            cBin = size(cX,1);
+                        if flipTau
+                            if cVal > 0 % +Inf
+                                cBin = nTau;
+                            else %-Inf
+                                cBin = 1;
+                            end
                         else
-                            cBin = 1;
+                            if cVal > 0 % Inf
+                                cBin = 1;
+                            else
+                                cBin = nTau; % -Inf
+                            end
                         end
                     else
-                        cBin = find(cVal >= flippedTau,1,'last');
+                        if flipTau
+                            cBin = find(cVal >= flippedTau,1,'last');
+                        else
+                            cBin = find(self(iRoc).tau >= cVal, 1, 'last');
+                        end
+                        
                         if isempty(cBin)
-                            cBin = 1; % First bin?..?
+                            cBin = 1; % First bin?..
                         end
                     end
                     binInd(iObs) = cBin;
@@ -250,11 +265,13 @@ classdef prtMetricRoc
                 
                 %[~, binInd] = histc(cX,flippedTau);
                 
-                flippedField = flipud(self(iRoc).(fieldName));
-                
                 nonNans = ~isnan(binInd);
-                
-                newX(nonNans,iRoc) = flippedField(binInd(nonNans)); 
+                if flipTau
+                    flippedField = flipud(self(iRoc).(fieldName));
+                    newX(nonNans,iRoc) = flippedField(binInd(nonNans)); 
+                else
+                    newX(nonNans,iRoc) = self(iRoc).(fieldName)(binInd(nonNans)); 
+                end
             end
             
             if useFar
