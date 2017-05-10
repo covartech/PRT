@@ -620,18 +620,28 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
             xLoc = linspace(Summary.lowerBounds, Summary.upperBounds, nKSDsamples);
             
             F = zeros([nKSDsamples, nClasses+obj.hasUnlabeled]);
-            for cY = 1:nClasses;
+            for cY = 1:nClasses
                 if obj.nClasses == 0
                     cX = obj.X;
                 else
                     cX = obj.getObservationsByClassInd(cY);
                 end
-                    
-                F(:,cY) = pdf(mle(prtRvKde('minimumBandwidth',Options.minimumKernelBandwidth),cX),xLoc(:));
+                cX = cX(~isnan(cX));
+                if ~isempty(cX)
+                    F(:,cY) = pdf(mle(prtRvKde('minimumBandwidth',Options.minimumKernelBandwidth),cX),xLoc(:));
+                else
+                    F(:,cY) = nan(size(xLoc(:)));
+                end
             end
             
             if obj.hasUnlabeled
-                F(:,end) = pdf(mle(prtRvKde('minimumBandwidth',Options.minimumKernelBandwidth),obj.getDataUnlabeled),xLoc(:));
+                cX = obj.getDataUnlabeled;
+                cX = cX(~isnan(cX));
+                if ~isempty(cX)
+                    F(:,end) = pdf(mle(prtRvKde('minimumBandwidth',Options.minimumKernelBandwidth),obj.getDataUnlabeled),xLoc(:));
+                else
+                    F(:,end) = nan(size(xLoc(:)));
+                end
             end
             
             hs = plot(xLoc,F);
@@ -733,14 +743,28 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
                 high = high + range/10;
                 
                 xLoc = linspace(low, high, Options.nDensitySamples);
-                xLoc = sort(cat(1,xLoc(:),ds.X(:,iFeature)),'ascend');
+                
+                isMissing = isnan(ds.X(:,iFeature));
+                xLoc = sort(cat(1,xLoc(:),ds.X(~isMissing,iFeature)),'ascend');
                 
                 F = zeros([length(xLoc), nClasses+ ds.hasUnlabeled]);
                 for cY = 1:nClasses
-                    F(:,cY) = pdf(mle(prtRvKde('minimumBandwidth',Options.minimumKernelBandwidth),ds.getObservationsByClassInd(cY,iFeature)),xLoc(:));
+                    cX = ds.getObservationsByClassInd(cY,iFeature);
+                    cX = cX(~isnan(cX));
+                    if ~isempty(cX)
+                        F(:,cY) = pdf(mle(prtRvKde('minimumBandwidth',Options.minimumKernelBandwidth),cX),xLoc(:));
+                    else
+                        F(:,cY) = nan(size(xLoc(:)));
+                    end
                 end
                 if ds.hasUnlabeled
-                    F(:,end) = pdf(mle(prtRvKde('minimumBandwidth',Options.minimumKernelBandwidth),ds.getDataUnlabeled(iFeature)),xLoc(:));
+                    cX = ds.getDataUnlabeled(iFeature);
+                    cX = cX(~isnan(cX));
+                    if ~isempty(cX)
+                        F(:,end) = pdf(mle(prtRvKde('minimumBandwidth',Options.minimumKernelBandwidth),cX),xLoc(:));
+                    else
+                        F(:,end) = nan(size(xLoc(:)));
+                    end
                 end
                 
                 %F = bsxfun(@rdivide,F,trapz(xLoc, F));
