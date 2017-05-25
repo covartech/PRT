@@ -1251,97 +1251,133 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
             
         end
         
-        function varargout = plot(obj, featureIndices)
-            % Plot   Plot the prtDataSetClass object
+        function varargout = plot(self, varargin)
+            % Plot   Scatter plot the prtDataSetClass
             %
             %   dataSet.plot() Plots the prtDataSetClass object.
+            %   dataSet.plot(featureInds) Plots the prtDataSetClass object.
+            %   dataSet.plot(featureInds, ax) Plots the prtDataSetClass object.
+            %   dataSet.plot(ax) Plots the prtDataSetClass object.
             
-            if nargin < 2 || isempty(featureIndices)
-                featureIndices = 1:obj.nFeatures;
-            end
-            if islogical(featureIndices)
-                featureIndices = find(featureIndices);
+            switch nargin
+                case 1
+                    ax = gca;
+                    featureInds = 1:self.nFeatures;
+                case 2
+                    if isa(varargin{1},'matlab.graphics.axis.Axes')
+                        ax = varargin{1};
+                        featureInds = 1:self.nFeatures;
+                    else
+                        ax = gca; % This call to gca will create a figure if it doesn't already exist
+                        featureInds = varargin{1};
+                    end
+                case 3
+                    if isa(varargin{1},'matlab.graphics.axis.Axes')
+                        ax = varargin{1};
+                        featureInds = varargin{2};
+                    elseif isa(varargin{2},'matlab.graphics.axis.Axes')
+                        ax = varargin{2};
+                        featureInds = varargin{1};
+                    else
+                        error('At least one of the two supplied additional inputs must be an axes handle')
+                    end
+                        
+                otherwise
             end
             
-            nPlotDimensions = length(featureIndices);
+            nPlotDimensions = length(featureInds);
             if nPlotDimensions < 1
-                warning('prt:plot:NoPlotDimensionality','No plot dimensions requested.');
+                warning('prt:plot:NoPlotDimensionality','No dimensions requested for scatter plot.');
                 varargout = {};
-                return
+                return                
             elseif nPlotDimensions > 3
-                %Too many dimensions; default to explore()
-                explore(obj);
-                varargout = {};
-                return
-            end
-            nClasses = obj.nClasses;
-            if nClasses == 0 && ~obj.hasUnlabeled
-                obj.Y = zeros(obj.nObservations,1);
-                nClasses = obj.nClasses;
+                warning('prt:plot:TooManyScatterDimensionality','Too many dimensions requested for scatter resorting to the first two dimensions only.');
+                self = self.retainFeatures([1 2]);
+            else
+                self = self.retainFeatures(featureInds);
             end
             
-            classColors = obj.plotOptions.colorsFunction(obj.nClasses);
-            classSymbols = obj.plotOptions.symbolsFunction(obj.nClasses);
-            lineWidth = obj.plotOptions.symbolLineWidth;
-            markerSize = obj.plotOptions.symbolSize;
+            
+            nClasses = self.nClasses;
+            if nClasses == 0 && ~self.hasUnlabeled % No labels
+                self.Y = zeros(self.nObservations,1);
+                nClasses = self.nClasses;
+            end
             
             handleArray = prtUtilPreAllocateHandles(nClasses,1);
             
-            holdState = get(gca,'nextPlot');
-            % This call to gca will create a figure if it doesn't already
-            % exist
+            holdState = get(ax,'nextPlot');
             
-            if obj.hasUnlabeled
+            if self.hasUnlabeled
                 % There are unlabeled observations so we should plot those
-                % first That way they appear underneath of the labeled
+                % first that way they appear underneath of the labeled
                 % observations
                 
-                featureNames = obj.getFeatureNames(featureIndices);
-                cX = obj.getDataUnlabeled(featureIndices);
-                classEdgeColor = prtPlotUtilClassColorUnlabeled; % FIX: Move to plotOptions?
-                classColor = prtPlotUtilClassColorUnlabeled; % FIX: Move to plotOptions?
-                classSymbol = prtPlotUtilClassSymbolsUnlabeled; % FIX: Move to plotOptions
-                unlabaledLegenedName = prtPlotUtilUnlabeledLegendString; % FIX: Move to plotOptions
-                unlabeledHandle = prtPlotUtilScatter(cX,featureNames,classSymbol,classColor,classEdgeColor,lineWidth, markerSize);
-                
+                cX = self.getDataUnlabeled();
+                unlabeledHandle = prtPlotUtilScatterCall(cX);
                 hold on;
             end
             
             % Loop through classes and plot
-            uniqueClasses = obj.uniqueClasses;
-            for i = 1:nClasses
-                cX = obj.getObservationsByClassInd(i, featureIndices);
-                %Note, class colors should really be linked to
-                %uniqueClasses(i), not i
-                classEdgeColor = obj.plotOptions.symbolEdgeModificationFunction(classColors(i,:));
+            uniqueClasses = self.uniqueClasses;
+            for iClass = 1:nClasses
+                cX = self.getObservationsByClassInd(iClass);
                 
-                featureNames = obj.getFeatureNames(featureIndices);
                 if size(cX,2) == 1
                     if ~isempty(uniqueClasses)
-                        cX = cat(2,cX,repmat(uniqueClasses(i),size(cX,1),1));
+                        cX = cat(2,cX,repmat(uniqueClasses(iClass),size(cX,1),1));
                     else
-                        %Default behaviour:
-                        cX = cat(2,cX,ones(size(cX,1),1));
+                        cX = cat(2,cX,zeros(size(cX,1),1));
                     end
-                    featureNames{end+1} = 'Target'; %#ok<AGROW>
                 end
-                handleArray(i) = prtPlotUtilScatter(cX,featureNames,classSymbols(i),classColors(i,:),classEdgeColor,lineWidth, markerSize);
-                
+                handleArray(iClass) = prtPlotUtilScatterCall(cX);
                 hold on;
             end
             set(gca,'nextPlot',holdState);
-            % Set title
-            title(obj.name);
             
-            if obj.hasUnlabeled
+            alpha = 0.6;
+            if self.hasUnlabeled
+                set(unlabeledHandle,'MarkerFaceColor',prtPlotUtilClassColorUnlabeled,...
+                    'MarkerEdgeColor',prtPlotUtilClassColorUnlabeled,...
+                    'MarkerFaceAlpha',alpha,...
+                    'Marker',prtPlotUtilClassSymbolsUnlabeled);
+            end
+            
+            symbols = self.plotOptions.symbolsFunction(nClasses);
+            colors = self.plotOptions.colorsFunction(nClasses);
+            edgeColors = prtPlotUtilDarkenColors(colors);
+            for iClass = 1:nClasses
+                set(handleArray(iClass),'MarkerFaceColor',colors(iClass,:),...
+                    'MarkerEdgeColor',edgeColors(iClass,:),...
+                    'MarkerFaceAlpha',alpha,...
+                    'Marker',symbols(iClass))
+            end
+            
+            fNames = self.getFeatureNames;
+            xlabel(fNames{1});
+            if nPlotDimensions > 1
+                ylabel(fNames{2})
+            else
+                if self.isLabeled
+                    ylabel('Targets')
+                end
+            end
+            if nPlotDimensions > 2
+                zlabel(fNames{3})
+            end
+            
+            % Set title
+            title(self.name);
+            
+            if self.hasUnlabeled
                 handleArray = cat(1, handleArray(:), unlabeledHandle);
             end
             
             % Create legend
             legendStrings = [];
-            if obj.isLabeled
-                legendStrings = getClassNamesInterp(obj);
-                if obj.hasUnlabeled
+            if self.isLabeled
+                legendStrings = getClassNamesInterp(self);
+                if self.hasUnlabeled
                     legendStrings = cat(1,legendStrings,{unlabaledLegenedName});
                 end
                 legend(handleArray,legendStrings,'Location','SouthEast');
@@ -1353,6 +1389,7 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
                 varargout = {handleArray,legendStrings};
             end
         end
+        
         function varargout = plotSortedFeature(obj, featureIndex)
             % PlotSortedFeature   Plots a feature of a prtDataSetClass
             % object sorted 

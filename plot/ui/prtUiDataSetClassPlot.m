@@ -29,10 +29,10 @@ classdef prtUiDataSetClassPlot < hgsetget
         handles
         
         defaultColorFunction = @(n)prtPlotUtilClassColors(n);
-        defaultEdgeColorFunction = @(n)prtPlotUtilSymbolEdgeColorModification(prtPlotUtilClassColors(n));
+        defaultEdgeColorFunction = @(n)prtPlotUtilDarkenColors(prtPlotUtilClassColors(n));
         defaultMarkerFunction = @(n)prtPlotUtilClassSymbols(n);
         defaultMarkerLineWidth = 1;
-        defaultMarkerSize = 8;
+        defaultMarkerSize = 36;
         defaultIsVisible = true;
         
         % These will be set
@@ -49,10 +49,11 @@ classdef prtUiDataSetClassPlot < hgsetget
         featureNames = {};
         
         colorUnlabeled = prtPlotUtilClassColorUnlabeled;
-        edgeColorUnlabeled = prtPlotUtilClassColorUnlabeled;
+        edgeColorUnlabeled = prtPlotUtilDarkenColors(prtPlotUtilClassColorUnlabeled);
         markerUnlabeled = prtPlotUtilClassSymbolsUnlabeled;
+        markerFaceAlpha = 0.6;
         markerLineWidthUnlabeled = 1;
-        markerSizeUnlabeled = 8;
+        markerSizeUnlabeled = 36;
         isVisibleUnlabeled = true;
         
         legendStringUnlabeled = prtPlotUtilUnlabeledLegendString;
@@ -113,7 +114,7 @@ classdef prtUiDataSetClassPlot < hgsetget
                 end
                 
                 maybeGca = get(self.handles.figure,'CurrentAxes');
-                if isempty(maybeGca);
+                if isempty(maybeGca)
                     self.initAxes();
                 else
                     self.handles.axes = gca;
@@ -191,7 +192,10 @@ classdef prtUiDataSetClassPlot < hgsetget
                     cX = cRealX;
                 end
                 
-                self.handles.lineUnlabeled = prtPlotUtilScatter(cX, self.featureNames, self.markerUnlabeled, self.colorUnlabeled, self.edgeColorUnlabeled, self.markerLineWidthUnlabeled, self.markerSizeUnlabeled);
+                self.handles.lineUnlabeled = prtPlotUtilScatter(cX);
+                
+                self.setUnlabeledAttributes(true);
+                
                 hold on;
             end
             
@@ -210,14 +214,21 @@ classdef prtUiDataSetClassPlot < hgsetget
                     cX = self.dataSet.getObservationsByClassInd(iClass, selFeatsNoZeros);
                 end
                 
-                self.handles.lines(iClass) = prtPlotUtilScatter(cX, self.featureNames, self.markerUnlabeled , self.colorUnlabeled, self.edgeColorUnlabeled, self.markerLineWidthUnlabeled, self.markerSizeUnlabeled); % For now
+                %self.handles.lines(iClass) = prtPlotUtilScatter(cX, self.featureNames, self.markerUnlabeled , self.colorUnlabeled, self.edgeColorUnlabeled, self.markerLineWidthUnlabeled, self.markerSizeUnlabeled); % For now
+                self.handles.lines(iClass) = prtPlotUtilScatter(cX);
+                
                 
                 hold on;
             end
             
             set(gca,'nextPlot',holdState);
             
+            grid(self.handles.axes,'on')
+            grid(self.handles.axes,'minor');
+            
             self.setAllClassAttributes();
+            
+            self.setAxesLabels();
             
             % Turn on the click callback and turn off the line hittests
             set(self.handles.axes,'ButtonDownFcn',@self.axesOnClickCallback);
@@ -246,7 +257,13 @@ classdef prtUiDataSetClassPlot < hgsetget
                 %hgfeval(callback,[],[]);
             end
         end
-        
+        function setAxesLabels(self)
+            xlabel(self.handles.axes,self.featureNames{1});
+            ylabel(self.handles.axes,self.featureNames{2});
+            if length(self.featureNames) > 2
+                zlabel(self.handles.axes,self.featureNames{3});
+            end
+        end
         function setAllClassAttributes(self)
             if ~isempty(self.handles) && isfield(self.handles,'lines') && ~isempty(self.handles.lines)
                 for iClass = 1:length(self.handles.lines)
@@ -262,24 +279,37 @@ classdef prtUiDataSetClassPlot < hgsetget
             
             if (byPass || (~isempty(self.handles) && isfield(self.handles,'lines') && ~isempty(self.handles.lines))) && (length(self.handles.lines) >= iClass) && ishandle(self.handles.lines(iClass))
                 onOff = {'off','on'};
-                set(self.handles.lines(iClass),'marker',self.markers(iClass),...
-                    'markerSize',self.markerSizes(iClass),...
-                    'markerFaceColor',self.colors(iClass,:),...
+                %                 set(self.handles.lines(iClass),'marker',self.markers(iClass),...
+                %                     'markerSize',self.markerSizes(iClass),...
+                %                     'markerFaceColor',self.colors(iClass,:),...
+                %                     'MarkerEdgeColor',self.edgeColors(iClass,:),...
+                %                     'lineWidth',self.markerLineWidths(iClass),...
+                %                     'visible',onOff{self.isVisible(iClass)+1});
+                set(self.handles.lines(iClass),'MarkerFaceColor',self.colors(iClass,:),...
                     'MarkerEdgeColor',self.edgeColors(iClass,:),...
-                    'lineWidth',self.markerLineWidths(iClass),...
+                    'MarkerFaceAlpha',self.markerFaceAlpha,...
+                    'Marker',self.markers(iClass),...
+                    'SizeData',self.markerSizes(iClass),...
                     'visible',onOff{self.isVisible(iClass)+1});
+                
+                    %'lineWidth',self.markerLineWidths(iClass),...
+                    
             end
         end
         
-        function setUnlabeledAttributes(self)
-            if ~isempty(self.handles) && isfield(self.handles,'lines') && ~isempty(self.handles.lineUnlabeled) && ishandle(self.handles.lineUnlabeled)
+        function setUnlabeledAttributes(self, byPass)
+            if nargin < 2
+                byPass = false;
+            end
+            if byPass || (~isempty(self.handles) && isfield(self.handles,'lines') && ~isempty(self.handles.lineUnlabeled) && ishandle(self.handles.lineUnlabeled))
                 onOff = {'off','on'};
-                set(self.handles.lineUnlabeled,'marker', self.symbolUnlabeled, ...
-                    'markerFaceColor',self.colorUnlabeled, ...
-                    'markerEdgeColor',self.edgeColorUnlabeled, ...
-                    'lineWidth',self.symbolLineWidthUnlabeled, ...
-                    'markerSize',self.makerSizeUnlabeled,...
-                    'visible',onOff{self.isVisibleUnlabeled(iClass)+1});
+                set(self.handles.lineUnlabeled,'marker', self.markerUnlabeled, ...
+                    'MarkerFaceColor',self.colorUnlabeled, ...
+                    'MarkerFaceAlpha',self.markerFaceAlpha,...
+                    'MarkerEdgeColor',self.edgeColorUnlabeled, ...
+                    'LineWidth',self.markerLineWidthUnlabeled, ...
+                    'SizeData',self.markerSizeUnlabeled,...
+                    'visible',onOff{self.isVisibleUnlabeled+1});
             end
         end
         

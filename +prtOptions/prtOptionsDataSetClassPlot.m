@@ -14,10 +14,10 @@ classdef prtOptionsDataSetClassPlot
         symbolsFunction = @prtPlotUtilClassSymbols; 
         symbolsFunctionBw = @prtPlotUtilClassSymbolsBW;
         
-        symbolEdgeModificationFunction = @(color)prtPlotUtilSymbolEdgeColorModification(color);
+        symbolEdgeModificationFunction = @(color)prtPlotUtilDarkenColors(color);
         
-        symbolLineWidth = 0.1;
-        symbolSize = 8;
+        symbolLineWidth = 1;
+        symbolSize = 36;
         
         starLineWidth = 0.5;
     end
