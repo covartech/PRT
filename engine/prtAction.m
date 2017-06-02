@@ -811,7 +811,7 @@ classdef prtAction
                 error('prt:prtAction','showProgressBar must be a scalar logical.');
             end
             self.showProgressBarInternal = val;
-        end
+        end        
         
         function varargout = export(obj,exportType,varargin)
             % export(obj,fileSpec);
