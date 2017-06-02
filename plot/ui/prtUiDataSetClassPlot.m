@@ -1,8 +1,5 @@
-classdef prtUiDataSetClassPlot < hgsetget
+classdef prtUiDataSetClassPlot < matlab.mixin.SetGet
 
-
-    
-    
     % ds = prtDataGenIris;
     % p = prtUiDataSetClassPlot(ds);
     %
@@ -216,7 +213,6 @@ classdef prtUiDataSetClassPlot < hgsetget
                 
                 %self.handles.lines(iClass) = prtPlotUtilScatter(cX, self.featureNames, self.markerUnlabeled , self.colorUnlabeled, self.edgeColorUnlabeled, self.markerLineWidthUnlabeled, self.markerSizeUnlabeled); % For now
                 self.handles.lines(iClass) = prtPlotUtilScatter(cX);
-                
                 
                 hold on;
             end
