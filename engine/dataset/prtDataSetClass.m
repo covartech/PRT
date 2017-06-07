@@ -1330,7 +1330,7 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
                         cX = cat(2,cX,zeros(size(cX,1),1));
                     end
                 end
-                handleArray(iClass) = prtPlotUtilScatterCall(cX);
+                handleArray(iClass) = prtPlotUtilScatter(cX);
                 hold on;
             end
             set(gca,'nextPlot',holdState);
