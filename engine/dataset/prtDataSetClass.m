@@ -1368,6 +1368,8 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
             
             % Set title
             title(self.name);
+            grid on
+            grid minor
             
             if self.hasUnlabeled
                 handleArray = cat(1, handleArray(:), unlabeledHandle);
