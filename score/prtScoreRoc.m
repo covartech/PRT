@@ -118,7 +118,7 @@ if length(uY) ~= 2
     % Changed 2015.04.07 --> ROC curves no longer error for single-class
     % inputs as long as the input class is either Y == 1 or Y == 0. 
     if (length(uY) == 1 && uY == 0) || (length(uY) == 1 && uY == 1)
-        warning('One-class of data (Class: %d) was provided to prtScoreRoc; this will result in NaN PD or PF values',uY);
+        warning('PRT:roc:oneClass','One-class of data (Class: %d) was provided to prtScoreRoc; this will result in NaN PD or PF values',uY);
         uY = [0 1];
     else
         error('prt:prtUtilScoreRoc:wrongNumberClasses','ROC requires input labels to have 2 unique classes or the single class must have class number 0 or 1, but unique(y(:)) = %s\n',mat2str(unique(y(:))));
