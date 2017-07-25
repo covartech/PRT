@@ -20,6 +20,12 @@ function varargout = prtScoreConfusionMatrix(guess, truth, possibleTruthValues, 
 %    %  Display the confusion matrix
 %    prtScoreConfusionMatrix(classified, TestDataSet)
 %
+%Use:
+%   [confMat,occurances] = prtScoreConfusionMatrix(guess,truth,possibleClassValues) 
+%       To handle the case where one of "guess" or "truth" are not
+%       guaranteed to have one of each class.
+%   
+%
 %    See also: prtScoreRoc, prtScoreRmse, prtScoreRocNfa,
 %    prtScorePercentCorrect, prtScoreAuc
 
@@ -42,7 +48,6 @@ if (nargin == 1 || isempty(truth)) && isa(guess,'prtDataSetClass')
 end
 
 [guess, truth, allClassNames, uniqueTruthValues, guessClassNames, truthClassNames, uClassesGuess, uClassesTruth] = prtUtilScoreParseFirstTwoInputs(guess,truth); %#ok<ASGLU>
-
 assert(size(guess,2)==1,'guess should be a prtDataSet with 1 feature or a vector');
 
 % Parse 3rd and 4th inputs
