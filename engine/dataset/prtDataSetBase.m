@@ -304,6 +304,82 @@ classdef prtDataSetBase
         %
         %             ds1 = ds1.catObservations(ds2);
         %         end
+        function [self, sampleIndices] = bootstrapUnique(self,nSamples, p)
+            % dsBoot = bootstrapUnique(dataSet,nSamples)
+            %   Sample without replacement nSamples from the data
+            %   set dataSet, and return the new data in dsBoot.
+            %
+            % [dsBoot,indices] = bootstrapUnique(dataSet,nSamples) also returns
+            % the indices of the extracted data points in dataSet.
+            %
+            % [...] = bootstrapUnique(dataSet,nSamples,p) sample from a
+            % non-uniform distribution specified by the nObservations x 1
+            % vector p.  p should "approximately" sum to 1, e.g.
+            %    prtUtilApproxEqual(sum(p),1,eps(self.nObservations))
+            % Should return "true"
+            %
+            % %%
+            % ds = prtDataSetClass((1:10)');
+            %
+            % dsB = ds.bootstrapUnique(5);
+            % dsB.X
+            % %%
+            % p = [0; rand(9,1)];
+            % p = p/sum(p);
+            %
+            % dsB = ds.bootstrapUnique(9,p);
+            % dsB.X
+            
+            if self.nObservations == 0
+                error('prtDataSetStandard:BootstrapEmpty','Cannot bootstrap empty data set');
+            end
+            
+            if nargin < 2 || isempty(nSamples)
+                nSamples = self.nObservations;
+            end
+            
+            assert(nSamples <= self.nObservations,'prtDataSetStandard:BootstrapUniqueToMany','Can not bootstrapUnique more elements than are in dataset');
+            
+            pSpecified = nargin >= 3;
+            if pSpecified
+                
+                assert(isvector(p) & all(p) <= 1 & all(p) >= 0 & prtUtilApproxEqual(sum(p),1,eps(self.nObservations)) & length(p) == self.nObservations,'prt:prtDataSetStandard:bootstrapUnique','invalid input probability distribution; distribution must be a vector of size self.nObservations x 1, and must sum to 1')
+                
+                pNorm = p;
+                pSamples = 1:length(p);
+                sampleIndices = zeros(nSamples,1);
+                for iSample = 1:nSamples
+                    cSample = prtRvUtilRandomSample(pNorm,1);
+                    sampleIndices(iSample) = pSamples(cSample);
+                    
+                    if iSample < nSamples
+                        pSamples(cSample) = [];
+                        pNorm(cSample) = [];
+                        pNorm = pNorm / sum(pNorm);
+                        
+                        if any(isnan(pNorm))
+                            % We had zeros and removed too much stuff
+                            warning('prtDataSetStandard:BootstrapUniqueSampling','Sampling from specified probability vector cannot yeild the specified number of samples');
+                            sampleIndices = sampleIndices(1:iSample-1);
+                            break
+                        end
+                    end
+                end
+            else
+                % Random vector
+                randVec = rand(self.nObservations,1);
+                
+                [~, sampleIndices] = sort(randVec); % Sort
+                
+                % Trim to nSamples
+                sampleIndices = sampleIndices(1:nSamples);
+                
+                % A lazy MATLAB version of 
+                % https://en.wikipedia.org/wiki/Fisher?Yates_shuffle
+            end
+            
+            self = self.retainObservations(sampleIndices);
+        end
         
         function [self, sampleIndices] = bootstrap(self,nSamples,p)
             % dsBoot = bootstrap(dataSet,nSamples)
