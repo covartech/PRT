@@ -166,6 +166,9 @@ classdef prtMetricRoc
             
             h = gobjects(length(self),1);
             for i = 1:numel(self)
+                if isempty(self(i).pf)
+                    continue
+                end
                 h(i) = plot(self(i).pf,self(i).pd,varargin{:});
                 hold on;
             end

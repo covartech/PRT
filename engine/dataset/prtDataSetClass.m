@@ -93,7 +93,8 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
                 return;
             end
             if isa(varargin{1},'prtDataSetClass')
-                obj = varargin{1};
+                obj = obj.acquireNonDataAttributesFrom(varargin{1});
+                obj.data = varargin{1}.data;
                 varargin = varargin(2:end);
             end
             
@@ -1559,7 +1560,7 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
             dsFoldOut = crossValidateCheckFoldResultsWarnNumberOfClassesBad(dsIn, dsTrain, dsTest, dsFoldOut);
         end
         function self = acquireNonDataAttributesFrom(self, dataSet)
-            self = acquireNonDataAttributesFrom@prtDataSetBase(self, dataSet);
+            self = acquireNonDataAttributesFrom@prtDataSetStandard(self, dataSet);
             self = acquireCategoricalTargetsNonDataAttributes(self, dataSet);
         end
         

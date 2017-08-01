@@ -478,6 +478,7 @@ classdef prtDataSetBase
 			
 			% Combine all of the folds via catObservations
 			dsOut = catObservations(dsTestCell{:});
+            dsOut.userData = prtUtilStructVCatMergeFields(cellfun(@(a){a.userData},dsTestCell));
 			
 			% Resort to the original order using retainObservations
 			[sortedTestIndices, unsortingInds] = sort(cat(1,testIndices{:}),'ascend');
