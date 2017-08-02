@@ -571,6 +571,7 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
             %                                prtRvKde that is used to
             %                                estimate each density. default
             %                                []. See prtRvKde.
+            %       type                   - cdf or pdf, default: pdf
             %
             % Example:
             %    ds = prtDataGenMary;
@@ -598,6 +599,7 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
             % Parse Options (additional string value pairs)
             Options.nDensitySamples = 500;
             Options.minimumKernelBandwidth = [];
+            Options.type = 'pdf';
             
             if nargin > 1
                 assert(mod(length(inputs),2)==0,'Additional inputs must be string value pairs')
@@ -629,7 +631,15 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
                 end
                 cX = cX(~isnan(cX));
                 if ~isempty(cX)
-                    F(:,cY) = pdf(mle(prtRvKde('minimumBandwidth',Options.minimumKernelBandwidth),cX),xLoc(:));
+                    trainedRv = mle(prtRvKde('minimumBandwidth',Options.minimumKernelBandwidth),cX);
+                    switch lower(Options.type)
+                        case 'pdf'
+                            F(:,cY) = pdf(trainedRv, xLoc(:));
+                        case 'cdf'
+                            F(:,cY) = cdf(trainedRv, xLoc(:));
+                        otherwise
+                            error('Invalid type specified')
+                    end
                 else
                     F(:,cY) = nan(size(xLoc(:)));
                 end
@@ -639,7 +649,15 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
                 cX = obj.getDataUnlabeled;
                 cX = cX(~isnan(cX));
                 if ~isempty(cX)
-                    F(:,end) = pdf(mle(prtRvKde('minimumBandwidth',Options.minimumKernelBandwidth),obj.getDataUnlabeled),xLoc(:));
+                    trainedRv = mle(prtRvKde('minimumBandwidth',Options.minimumKernelBandwidth),obj.getDataUnlabeled);
+                    switch lower(Options.type)
+                        case 'pdf'
+                            F(:,end) = pdf(trainedRv, xLoc(:));
+                        case 'cdf'
+                            F(:,end) = cdf(trainedRv, xLoc(:));
+                        otherwise
+                            error('Invalid type specified')
+                    end
                 else
                     F(:,end) = nan(size(xLoc(:)));
                 end
