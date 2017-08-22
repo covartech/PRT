@@ -43,7 +43,7 @@ classdef prtDataSetInMem < prtDataSetBase
     
     % Only prtDataSetBase knows about these, use getObs... and getFeat.. to
     % get and set these, they handle the dirty stuff
-    properties (GetAccess = 'protected',SetAccess = 'protected')
+    properties (Hidden)
         observationNamesInternal    % The observations names
         observationInfoInternal     % The observation info struct
         targetNamesInternal         % The target names.
@@ -270,6 +270,7 @@ classdef prtDataSetInMem < prtDataSetBase
             %
             self.Y = self.Y(:,indices);
             self.targetNamesInternal = self.targetNamesInternal.retain(indices);
+            self.targetNamesInternal.integerKeys = 1:length(self.targetNamesInternal.cellValues);
             self = self.update;
         end
         

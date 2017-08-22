@@ -45,13 +45,22 @@ classdef prtRegressGp < prtRegress
     properties (SetAccess=private)
         name = 'Gaussian Process'
         nameAbbreviation = 'GP'
+        
     end
     
     properties
+<<<<<<< HEAD
         meanRegressor = [];  % If non-empty, use this regressor first, then regress a GP onto the residual error
         
         refineParameters = false;
         covarianceFunctionParameters = [1, 4, 0, 0]'; % covariance function parameters
+=======
+        % flags
+        refineParameters = true;
+        includeVarianceInX = false;
+        % Optional parameters
+        theta = [1, 4, 0, 0]'; % covariance function parameters
+>>>>>>> f67908243ff68c24602e1ef88b23ddbbf41aadf3
         covarianceFunction = @(x1,x2,params)prtUtilQuadExpCovariance(x1,x2,params);
         noiseVariance = 0.01;
         
@@ -67,7 +76,7 @@ classdef prtRegressGp < prtRegress
         % Allow for string, value pairs
         function self = prtRegressGp(varargin)
             self = prtUtilAssignStringValuePairs(self,varargin{:});
-        end
+		end
         function self = set.noiseVariance(self,value)
             assert(isscalar(value) && value > 0,'Invalid noiseVariance specified; noise variance must be scalar and greater than 0, but specified value is %s',mat2str(value));
             self.noiseVariance = value;
@@ -127,6 +136,10 @@ classdef prtRegressGp < prtRegress
             dataSet = prtDataSetRegress(k'*self.weights);
             dataSet.X = dataSet.X + dataSetEst.X;
             variance = c - prtUtilCalcDiagXcInvXT(k', self.CN);
+            if self.includeVarianceInX
+                dataSet.X = cat(2,dataSet.X,variance);
+            end
+            dataSet.actionData.variance = variance;
         end
         
         function K = covarianceFunction2(self,dataSet,params)
