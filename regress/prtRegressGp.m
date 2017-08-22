@@ -48,16 +48,16 @@ classdef prtRegressGp < prtRegress
     end
     
     properties
-        % flags
-        refineParameters = true;
+        meanRegressor = [];  % If non-empty, use this regressor first, then regress a GP onto the residual error
         
-        % Optional parameters
-        theta = [1, 4, 0, 0]'; % covariance function parameters
+        refineParameters = false;
+        covarianceFunctionParameters = [1, 4, 0, 0]'; % covariance function parameters
         covarianceFunction = @(x1,x2,params)prtUtilQuadExpCovariance(x1,x2,params);
         noiseVariance = 0.01;
         
     end
-    % Infered parameters
+    
+	% Inferred parameters
     properties (SetAccess = protected)
         CN = [];
         weights = [];
@@ -65,18 +65,18 @@ classdef prtRegressGp < prtRegress
     
     methods
         % Allow for string, value pairs
-        function Obj = prtRegressGP(varargin)
-            Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
+        function self = prtRegressGp(varargin)
+            self = prtUtilAssignStringValuePairs(self,varargin{:});
         end
-        function Obj = set.noiseVariance(Obj,value)
+        function self = set.noiseVariance(self,value)
             assert(isscalar(value) && value > 0,'Invalid noiseVariance specified; noise variance must be scalar and greater than 0, but specified value is %s',mat2str(value));
-            Obj.noiseVariance = value;
+            self.noiseVariance = value;
         end
-        function Obj = set.covarianceFunction(Obj,value)
+        function self = set.covarianceFunction(self,value)
             assert(isa(value,'function_handle'),'Invalid covarianceFunction specified; noise variance must be a function_handle, but specified value is a %s',class(value));
-            Obj.covarianceFunction = value;
+            self.covarianceFunction = value;
         end
-        function Obj = setVerboseStorage(Obj,value)
+        function self = setVerboseStorage(self,value)
             assert(prtUtilIsLogicalScalar(value),'verboseStorage must be a scalar logical');
             if ~value
                 warning('prt:prtRegressGp:verboseStorage','prtRegressGp requires verboseStorage to be true. Ignoring request to set to false.');
@@ -84,31 +84,56 @@ classdef prtRegressGp < prtRegress
         end                
     end
     
+	methods (Hidden)
+		% Used to train/run the .meanRegressor object and calculate the residual error
+        function self = trainMeanRegressor(self,dataSet)
+            if ~isempty(self.meanRegressor)
+                self.meanRegressor = self.meanRegressor.train(dataSet);
+            end
+        end
+        function [dataSetEst,dataSetDeMeanTargets] = runMeanRegressor(self,dataSet)
+            if ~isempty(self.meanRegressor)
+                dataSetEst = self.meanRegressor.run(dataSet);
+            else
+                dataSetEst = prtDataSetRegress(zeros(size(dataSet.X)),zeros(size(dataSet.Y)));
+            end
+            dataSetDeMeanTargets = dataSet;
+            if nargout > 1
+                dataSetDeMeanTargets.Y = dataSet.Y - dataSetEst.X;
+            end
+        end
+    end
     methods (Access = protected, Hidden = true)
         
-        function Obj = trainAction(Obj,DataSet)
-            if Obj.refineParameters
-                Obj.theta = fminsearch(@(params)-Obj.loglike(DataSet.Y,Obj.covarianceFunction2(DataSet,params)),Obj.theta);
+        function self = trainAction(self,dataSet)
+            
+            self = self.trainMeanRegressor(dataSet);
+            [~,dataSetDeMean] = self.runMeanRegressor(dataSet);
+            
+            if self.refineParameters
+                self.covarianceFunctionParameters = fminsearch(@(params)-self.loglike(dataSetDeMean.Y,self.covarianceFunction2(dataSetDeMean,params)),self.covarianceFunctionParameters);
             end
+            self.CN = self.covarianceFunction2(dataSetDeMean, self.covarianceFunctionParameters);
             
-            Obj.CN = Obj.covarianceFunction2(DataSet, Obj.theta);
-            
-            Obj.weights = Obj.CN\DataSet.getTargets();
+            self.weights = self.CN\dataSetDeMean.getTargets();
         end
         
-        function [DataSet,variance] = runAction(Obj,DataSet)
-            k = feval(Obj.covarianceFunction, Obj.dataSet.getObservations(), DataSet.getObservations(), Obj.theta);
-            c = diag(feval(Obj.covarianceFunction, DataSet.getObservations(), DataSet.getObservations(), Obj.theta)) + Obj.noiseVariance;
+        function [dataSet,variance] = runAction(self,dataSet)
+            dataSetEst = runMeanRegressor(self,dataSet);
             
-            DataSet = prtDataSetRegress(k'*Obj.weights);
-            variance = c - prtUtilCalcDiagXcInvXT(k', Obj.CN);
+            k = feval(self.covarianceFunction, self.dataSet.getObservations(), dataSet.getObservations(), self.covarianceFunctionParameters);
+            c = diag(feval(self.covarianceFunction, dataSet.getObservations(), dataSet.getObservations(), self.covarianceFunctionParameters)) + self.noiseVariance;
+            
+            dataSet = prtDataSetRegress(k'*self.weights);
+            dataSet.X = dataSet.X + dataSetEst.X;
+            variance = c - prtUtilCalcDiagXcInvXT(k', self.CN);
         end
         
-        function K = covarianceFunction2(Obj,DataSet,params)
+        function K = covarianceFunction2(self,dataSet,params)
             % with the additional variance term
             
-            K = Obj.covarianceFunction(DataSet.getObservations(), DataSet.getObservations(), params)...
-                + Obj.noiseVariance*eye(DataSet.nObservations);
+            K = self.covarianceFunction(dataSet.getObservations(), dataSet.getObservations(), params)...
+                + self.noiseVariance*eye(dataSet.nObservations);
         end
     end
     
