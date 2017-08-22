@@ -49,18 +49,12 @@ classdef prtRegressGp < prtRegress
     end
     
     properties
-<<<<<<< HEAD
         meanRegressor = [];  % If non-empty, use this regressor first, then regress a GP onto the residual error
         
         refineParameters = false;
         covarianceFunctionParameters = [1, 4, 0, 0]'; % covariance function parameters
-=======
-        % flags
-        refineParameters = true;
         includeVarianceInX = false;
-        % Optional parameters
-        theta = [1, 4, 0, 0]'; % covariance function parameters
->>>>>>> f67908243ff68c24602e1ef88b23ddbbf41aadf3
+        
         covarianceFunction = @(x1,x2,params)prtUtilQuadExpCovariance(x1,x2,params);
         noiseVariance = 0.01;
         
