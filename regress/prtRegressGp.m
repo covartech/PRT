@@ -133,7 +133,7 @@ classdef prtRegressGp < prtRegress
             if self.includeVarianceInX
                 dataSet.X = cat(2,dataSet.X,variance);
             end
-            dataSet.actionData.variance = variance;
+            %             dataSet.actionData.variance = variance;
         end
         
         function K = covarianceFunction2(self,dataSet,params)
