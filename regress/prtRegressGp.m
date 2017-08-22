@@ -45,12 +45,13 @@ classdef prtRegressGp < prtRegress
     properties (SetAccess=private)
         name = 'Gaussian Process'
         nameAbbreviation = 'GP'
+        
     end
     
     properties
         % flags
         refineParameters = true;
-        
+        includeVarianceInX = false;
         % Optional parameters
         theta = [1, 4, 0, 0]'; % covariance function parameters
         covarianceFunction = @(x1,x2,params)prtUtilQuadExpCovariance(x1,x2,params);
@@ -65,7 +66,7 @@ classdef prtRegressGp < prtRegress
     
     methods
         % Allow for string, value pairs
-        function Obj = prtRegressGP(varargin)
+        function Obj = prtRegressGp(varargin)
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
         end
         function Obj = set.noiseVariance(Obj,value)
@@ -102,6 +103,10 @@ classdef prtRegressGp < prtRegress
             
             DataSet = prtDataSetRegress(k'*Obj.weights);
             variance = c - prtUtilCalcDiagXcInvXT(k', Obj.CN);
+            if Obj.includeVarianceInX
+                DataSet.X = cat(2,DataSet.X,variance);
+            end
+            % DataSet.actionData.variance = variance;
         end
         
         function K = covarianceFunction2(Obj,DataSet,params)
