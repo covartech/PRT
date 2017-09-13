@@ -54,7 +54,7 @@ for iStruct = 1:nStructs
     missingFields = setdiff(allFields,fn{iStruct});
     for iField = 1:length(missingFields)
         tmp = cell(size(structCell{iStruct}));
-        [structCell{iStruct}(:).(missingFields{iField})] = deal(tmp);
+        [structCell{iStruct}(:).(missingFields{iField})] = tmp{:};
     end
     structCell{iStruct} = orderfields(structCell{iStruct});
 end
