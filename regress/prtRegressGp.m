@@ -95,10 +95,20 @@ classdef prtRegressGp < prtRegress
             end
         end
         function [dataSetEst,dataSetDeMeanTargets] = runMeanRegressor(self,dataSet)
+            % Run the mean-regressor object and make:
+            %   dataSetEst - The output of the mean-regressor run on the
+            %   dataSet
+            %
+            %   dataSetDeMeanTargets - The same dataSet, but with the
+            %   targets (Y) replaced with the residual error:
+            %       dataSet.Y - dataSetEst.X
             if ~isempty(self.meanRegressor)
                 dataSetEst = self.meanRegressor.run(dataSet);
             else
-                dataSetEst = prtDataSetRegress(zeros(size(dataSet.X)),zeros(size(dataSet.Y)));
+                % The mean regressor will output dataSet.X of the same size
+                % as dataSet.Y, with all zeros!  dataSetEst.Y should be
+                % dataSet.Y
+                dataSetEst = prtDataSetRegress(zeros(size(dataSet.Y)),dataSet.Y);
             end
             dataSetDeMeanTargets = dataSet;
             if nargout > 1
