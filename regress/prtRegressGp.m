@@ -94,12 +94,12 @@ classdef prtRegressGp < prtRegress
                 self.meanRegressor = self.meanRegressor.train(dataSet);
             end
         end
-        function [dataSetEst,dataSetDeMeanTargets] = runMeanRegressor(self,dataSet)
+        function [dataSetEst,dataSetTargetResiduals] = runMeanRegressor(self,dataSet)
             % Run the mean-regressor object and make:
             %   dataSetEst - The output of the mean-regressor run on the
             %   dataSet
             %
-            %   dataSetDeMeanTargets - The same dataSet, but with the
+            %   dataSetTargetResiduals - The same dataSet, but with the
             %   targets (Y) replaced with the residual error:
             %       dataSet.Y - dataSetEst.X
             if ~isempty(self.meanRegressor)
@@ -110,9 +110,9 @@ classdef prtRegressGp < prtRegress
                 % dataSet.Y
                 dataSetEst = prtDataSetRegress(zeros(size(dataSet.Y)),dataSet.Y);
             end
-            dataSetDeMeanTargets = dataSet;
+            dataSetTargetResiduals = dataSet;
             if nargout > 1
-                dataSetDeMeanTargets.Y = dataSet.Y - dataSetEst.X;
+                dataSetTargetResiduals.Y = dataSet.Y - dataSetEst.X;
             end
         end
     end
@@ -121,14 +121,14 @@ classdef prtRegressGp < prtRegress
         function self = trainAction(self,dataSet)
             
             self = self.trainMeanRegressor(dataSet);
-            [~,dataSetDeMean] = self.runMeanRegressor(dataSet);
+            [~,dataSetTargetResiduals] = self.runMeanRegressor(dataSet);
             
             if self.refineParameters
-                self.covarianceFunctionParameters = fminsearch(@(params)-self.loglike(dataSetDeMean.Y,self.covarianceFunction2(dataSetDeMean,params)),self.covarianceFunctionParameters);
+                self.covarianceFunctionParameters = fminsearch(@(params)-self.loglike(dataSetTargetResiduals.Y,self.covarianceFunction2(dataSetTargetResiduals,params)),self.covarianceFunctionParameters);
             end
-            self.CN = self.covarianceFunction2(dataSetDeMean, self.covarianceFunctionParameters);
+            self.CN = self.covarianceFunction2(dataSetTargetResiduals, self.covarianceFunctionParameters);
             
-            self.weights = self.CN\dataSetDeMean.getTargets();
+            self.weights = self.CN\dataSetTargetResiduals.getTargets();
         end
         
         function [dataSet,variance] = runAction(self,dataSet)
