@@ -11,9 +11,11 @@ classdef prtRegressGp < prtRegress
     %   class. In addition, it has the following properties:
     %
     %   covarianceFunction = @(x1,x2)prtUtilQuadExpCovariance(x1,x2, 1, 4, 0, 0);
-    %   noiseVariance = 0.01;
-    %   CN ?
-    %   weights?
+    %       See: prtUtilQuadExpCovariance
+    %
+    %   meanRegressor (none) - A prtRegress object to be used to estimate
+    %       dataSet.Y from dataSet.X.  The GP object is then used to model
+    %       any residual error between the meanRegressor and the targets.
     %
     %   M Ebden. Gaussian processes for regression: a quick introduction.
     %   2008. https://arxiv.org/abs/1505.02965
@@ -35,6 +37,18 @@ classdef prtRegressGp < prtRegress
     %                                           % fitted points with the 
     %                                           % curve and original data
     %   legend('Regression curve','Original Points','Fitted points',0)
+    %
+    %
+    %   Example 2:
+    %   
+    %     ds = prtDataGenNoisyLine('slope',10,'xRange',[-1 5]);
+    %     ds = ds.retainObservations(ds.X < 2 | ds.X > 4);
+    %     r = prtRegressGp;
+    %     r = r.train(ds);
+    %     rLinear = prtRegressGp('meanRegressor',prtRegressLslr);
+    %     rLinear = rLinear.train(ds);
+    %     subplot(2,1,1); plot(r)
+    %     subplot(2,1,2); plot(rLinear)
     %
     %
     %   See also prtRegress, prtRegressRvm, prtRegressLslr
@@ -107,8 +121,12 @@ classdef prtRegressGp < prtRegress
             else
                 % The mean regressor will output dataSet.X of the same size
                 % as dataSet.Y, with all zeros!  dataSetEst.Y should be
-                % dataSet.Y
-                dataSetEst = prtDataSetRegress(zeros(size(dataSet.Y)),dataSet.Y);
+                % dataSet.Y.  Note - at test-time, there may not be
+                % dataSet.Y (e.g., running on new testing data).
+                % prtRegressGp assumes that the number of desired targets
+                % (size(dataSet.Y,2)) is 1, even if there werent any
+                % targets provided (dataSet.Y is empty)
+                dataSetEst = prtDataSetRegress(zeros(size(dataSet.X,1),1),dataSet.Y);
             end
             dataSetTargetResiduals = dataSet;
             if nargout > 1
