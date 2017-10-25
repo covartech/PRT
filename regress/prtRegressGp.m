@@ -11,9 +11,11 @@ classdef prtRegressGp < prtRegress
     %   class. In addition, it has the following properties:
     %
     %   covarianceFunction = @(x1,x2)prtUtilQuadExpCovariance(x1,x2, 1, 4, 0, 0);
-    %   noiseVariance = 0.01;
-    %   CN ?
-    %   weights?
+    %       See: prtUtilQuadExpCovariance
+    %
+    %   meanRegressor (none) - A prtRegress object to be used to estimate
+    %       dataSet.Y from dataSet.X.  The GP object is then used to model
+    %       any residual error between the meanRegressor and the targets.
     %
     %   M Ebden. Gaussian processes for regression: a quick introduction.
     %   2008. https://arxiv.org/abs/1505.02965
@@ -37,6 +39,18 @@ classdef prtRegressGp < prtRegress
     %   legend('Regression curve','Original Points','Fitted points',0)
     %
     %
+    %   Example 2:
+    %   
+    %     ds = prtDataGenNoisyLine('slope',10,'xRange',[-1 5]);
+    %     ds = ds.retainObservations(ds.X < 2 | ds.X > 4);
+    %     r = prtRegressGp;
+    %     r = r.train(ds);
+    %     rLinear = prtRegressGp('meanRegressor',prtRegressLslr);
+    %     rLinear = rLinear.train(ds);
+    %     subplot(2,1,1); plot(r)
+    %     subplot(2,1,2); plot(rLinear)
+    %
+    %
     %   See also prtRegress, prtRegressRvm, prtRegressLslr
 
 
@@ -45,19 +59,22 @@ classdef prtRegressGp < prtRegress
     properties (SetAccess=private)
         name = 'Gaussian Process'
         nameAbbreviation = 'GP'
+        
     end
     
     properties
-        % flags
-        refineParameters = true;
+        meanRegressor = [];  % If non-empty, use this regressor first, then regress a GP onto the residual error
         
-        % Optional parameters
-        theta = [1, 4, 0, 0]'; % covariance function parameters
+        refineParameters = false;
+        covarianceFunctionParameters = [1, 4, 0, 0]'; % covariance function parameters
+        includeVarianceInX = false;
+        
         covarianceFunction = @(x1,x2,params)prtUtilQuadExpCovariance(x1,x2,params);
         noiseVariance = 0.01;
         
     end
-    % Infered parameters
+    
+	% Inferred parameters
     properties (SetAccess = protected)
         CN = [];
         weights = [];
@@ -65,18 +82,18 @@ classdef prtRegressGp < prtRegress
     
     methods
         % Allow for string, value pairs
-        function Obj = prtRegressGP(varargin)
-            Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
-        end
-        function Obj = set.noiseVariance(Obj,value)
+        function self = prtRegressGp(varargin)
+            self = prtUtilAssignStringValuePairs(self,varargin{:});
+		end
+        function self = set.noiseVariance(self,value)
             assert(isscalar(value) && value > 0,'Invalid noiseVariance specified; noise variance must be scalar and greater than 0, but specified value is %s',mat2str(value));
-            Obj.noiseVariance = value;
+            self.noiseVariance = value;
         end
-        function Obj = set.covarianceFunction(Obj,value)
+        function self = set.covarianceFunction(self,value)
             assert(isa(value,'function_handle'),'Invalid covarianceFunction specified; noise variance must be a function_handle, but specified value is a %s',class(value));
-            Obj.covarianceFunction = value;
+            self.covarianceFunction = value;
         end
-        function Obj = setVerboseStorage(Obj,value)
+        function self = setVerboseStorage(self,value)
             assert(prtUtilIsLogicalScalar(value),'verboseStorage must be a scalar logical');
             if ~value
                 warning('prt:prtRegressGp:verboseStorage','prtRegressGp requires verboseStorage to be true. Ignoring request to set to false.');
@@ -84,31 +101,74 @@ classdef prtRegressGp < prtRegress
         end                
     end
     
+	methods (Hidden)
+		% Used to train/run the .meanRegressor object and calculate the residual error
+        function self = trainMeanRegressor(self,dataSet)
+            if ~isempty(self.meanRegressor)
+                self.meanRegressor = self.meanRegressor.train(dataSet);
+            end
+        end
+        function [dataSetEst,dataSetTargetResiduals] = runMeanRegressor(self,dataSet)
+            % Run the mean-regressor object and make:
+            %   dataSetEst - The output of the mean-regressor run on the
+            %   dataSet
+            %
+            %   dataSetTargetResiduals - The same dataSet, but with the
+            %   targets (Y) replaced with the residual error:
+            %       dataSet.Y - dataSetEst.X
+            if ~isempty(self.meanRegressor)
+                dataSetEst = self.meanRegressor.run(dataSet);
+            else
+                % The mean regressor will output dataSet.X of the same size
+                % as dataSet.Y, with all zeros!  dataSetEst.Y should be
+                % dataSet.Y.  Note - at test-time, there may not be
+                % dataSet.Y (e.g., running on new testing data).
+                % prtRegressGp assumes that the number of desired targets
+                % (size(dataSet.Y,2)) is 1, even if there werent any
+                % targets provided (dataSet.Y is empty)
+                dataSetEst = prtDataSetRegress(zeros(size(dataSet.X,1),1),dataSet.Y);
+            end
+            dataSetTargetResiduals = dataSet;
+            if nargout > 1
+                dataSetTargetResiduals.Y = dataSet.Y - dataSetEst.X;
+            end
+        end
+    end
     methods (Access = protected, Hidden = true)
         
-        function Obj = trainAction(Obj,DataSet)
-            if Obj.refineParameters
-                Obj.theta = fminsearch(@(params)-Obj.loglike(DataSet.Y,Obj.covarianceFunction2(DataSet,params)),Obj.theta);
+        function self = trainAction(self,dataSet)
+            
+            self = self.trainMeanRegressor(dataSet);
+            [~,dataSetTargetResiduals] = self.runMeanRegressor(dataSet);
+            
+            if self.refineParameters
+                self.covarianceFunctionParameters = fminsearch(@(params)-self.loglike(dataSetTargetResiduals.Y,self.covarianceFunction2(dataSetTargetResiduals,params)),self.covarianceFunctionParameters);
             end
+            self.CN = self.covarianceFunction2(dataSetTargetResiduals, self.covarianceFunctionParameters);
             
-            Obj.CN = Obj.covarianceFunction2(DataSet, Obj.theta);
-            
-            Obj.weights = Obj.CN\DataSet.getTargets();
+            self.weights = self.CN\dataSetTargetResiduals.getTargets();
         end
         
-        function [DataSet,variance] = runAction(Obj,DataSet)
-            k = feval(Obj.covarianceFunction, Obj.dataSet.getObservations(), DataSet.getObservations(), Obj.theta);
-            c = diag(feval(Obj.covarianceFunction, DataSet.getObservations(), DataSet.getObservations(), Obj.theta)) + Obj.noiseVariance;
+        function [dataSet,variance] = runAction(self,dataSet)
+            dataSetEst = runMeanRegressor(self,dataSet);
             
-            DataSet = prtDataSetRegress(k'*Obj.weights);
-            variance = c - prtUtilCalcDiagXcInvXT(k', Obj.CN);
+            k = feval(self.covarianceFunction, self.dataSet.getObservations(), dataSet.getObservations(), self.covarianceFunctionParameters);
+            c = diag(feval(self.covarianceFunction, dataSet.getObservations(), dataSet.getObservations(), self.covarianceFunctionParameters)) + self.noiseVariance;
+            
+            dataSet = prtDataSetRegress(k'*self.weights);
+            dataSet.X = dataSet.X + dataSetEst.X;
+            variance = c - prtUtilCalcDiagXcInvXT(k', self.CN);
+            if self.includeVarianceInX
+                dataSet.X = cat(2,dataSet.X,variance);
+            end
+            %             dataSet.actionData.variance = variance;
         end
         
-        function K = covarianceFunction2(Obj,DataSet,params)
+        function K = covarianceFunction2(self,dataSet,params)
             % with the additional variance term
             
-            K = Obj.covarianceFunction(DataSet.getObservations(), DataSet.getObservations(), params)...
-                + Obj.noiseVariance*eye(DataSet.nObservations);
+            K = self.covarianceFunction(dataSet.getObservations(), dataSet.getObservations(), params)...
+                + self.noiseVariance*eye(dataSet.nObservations);
         end
     end
     
