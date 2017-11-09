@@ -6,9 +6,14 @@ function DataSet = prtDataGenNoisyLine(varargin)
 %   noise. By default, the slope is 1 and the y-intercept is 0. The noise
 %   variance is .1.
 %
-%   DATASET = prtDataGenNoisyLine(slope, y_intercept) returns a
-%   prtDataSetRegress with 100 samples of a line on x = [-1, 1] with
-%   zero-mean additive Gaussian noise. The noise variance is .1.
+%   DATASET = prtDataGenNoisyLine(param,val) enables setting the following
+%   parameters:
+%       slope: 1
+%       yIntercept: 0
+%       xRange: [-1, 1]
+%       xRange: [-1, 1]
+%       nSamples: 1000
+%       stdev: 0.1
 %
 %   Example:
 %
@@ -19,29 +24,23 @@ function DataSet = prtDataGenNoisyLine(varargin)
 
 
 
+p = inputParser;
+p.addParameter('slope',1);
+p.addParameter('yIntercept',0);
+p.addParameter('xRange',[-1 1]);
+p.addParameter('nSamples',100);
+p.addParameter('stdev',0.1);
 
+p.parse(varargin{:});
 
-
-if nargin~=2
-	slope = 1;
-	y_intercept = 0;
-else
-	slope = varargin{1};
-	y_intercept = varargin{2};
-end
-
-nSamples = 100;
-noiseVar = 0.1;
-
-t = linspace(-1,1,1000);
-x = prtUtilRandSample(t,nSamples)';
-t = x*slope + y_intercept;
-y = t + noiseVar*randn(size(x));
+x = rand(p.Results.nSamples,1)*range(p.Results.xRange)+p.Results.xRange(1);
+t = x*p.Results.slope + p.Results.yIntercept;
+y = t + p.Results.stdev*randn(size(x));
 
 DataSet = prtDataSetRegress(x,y,'name','Noisy Line');
 
-function x = prtUtilRandSample(vector,nSamples)
-
-ind = randperm(length(vector));
-ind = ind(1:nSamples);
-x = vector(sort(ind));
+% function x = prtUtilRandSample(vector,nSamples)
+% 
+% ind = randperm(length(vector));
+% ind = ind(1:nSamples);
+% x = vector(sort(ind));

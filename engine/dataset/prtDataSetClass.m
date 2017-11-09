@@ -104,11 +104,11 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
                 varargin = varargin(2:end);
                 %handle first input data, second input targets:
                 if length(varargin) >= 1 && ~isa(varargin{1},'char')
-                    if isnumeric(varargin{1}) %(isa(varargin{1},'double') || isa(varargin{1},'logical'))
+                    if isnumeric(varargin{1}) || isa(varargin{1},'logical')
                         obj = obj.setTargets(varargin{1});
                         varargin = varargin(2:end);
                     else
-                        error('prtDataSet:InvalidTargets','Targets must be a numeric array; but targets provided is a %s',class(varargin{1}));
+                        error('prtDataSet:InvalidTargets','Targets must be a numeric or logical array; but targets provided is a %s',class(varargin{1}));
                     end
                 end
             end
