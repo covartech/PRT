@@ -15,11 +15,10 @@ classdef prtRegressBayesianLinear < prtRegress
         includeBias = true;
         
         priorWeightsMean = 0; % If scalar will be initialized by replication
-        priorWeightsPrecision = eps; % If scalar will be 
+        priorWeightsPrecision = eps; % If scalar will be initialized by replication
         
         priorPrecisionA = 0.1;
         priorPrecisionB = 0.1;
-        
         
         mu
         lambda
@@ -36,10 +35,11 @@ classdef prtRegressBayesianLinear < prtRegress
     
     methods
         
-          % Allow for string, value pairs
         function self = prtRegressBayesianLinear(varargin)
+            % Allow for string, value pairs
             self = prtUtilAssignStringValuePairs(self,varargin{:});
         end
+        
     end
     
     methods (Access = protected, Hidden = true)
@@ -65,9 +65,7 @@ classdef prtRegressBayesianLinear < prtRegress
            end
            y = ds.Y;
            
-           XtX = X'*X;
-           
-           self.lambda = (XtX + lambda0);
+           self.lambda = (X'*X + lambda0);
            self.mu = (mu0*lambda0+ y'*X)/(self.lambda);
            
            self.a = a0 + size(X,1)/2;

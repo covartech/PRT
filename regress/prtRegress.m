@@ -41,7 +41,6 @@ classdef prtRegress < prtAction %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             
             
             assert(Obj.isTrained,'Regressor must be trained before it can be plotted.');
-            % assert(Obj.dataSetSummary.nFeatures < 2, 'nFeatures in the training dataset must be 1');
             
             [OutputDataSet, linGrid] = runRegressorOnGrid(Obj);
             
