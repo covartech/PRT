@@ -515,6 +515,25 @@ classdef prtAlgorithm < prtAction & prtActionBig
                 error('prt:prtAlgorithm:plotAsClassifier','This prtAlgorithm cannot be plotted as a classifier');
             end
         end
+        function plotAsRegressor(self)
+            % plotAsRegressor(self)
+            %   Plot an algorithm as though it were a regressor - e.g.,
+            %   build the decision surface and visualize it.  Valid for
+            %   algorithms trained with data sets with 3 or fewer features,
+            %   and when the *very last* action is a prtRegress.
+            %
+            % e.g.
+            %   ds = prtDataGenBimodal;
+            %   algoKmeans = prtPreProcKmeans('nClusters',4) + prtClassLogisticDiscriminant;
+            %   algoKmeans = train(algoKmeans,ds);
+            %   algoKmeans.plotAsClassifier;
+            
+            if isPlottableAsRegressor(self)
+                plot(prtUtilRegressAlgorithmWrapper('trainedAlgorithm',self));
+            else
+                error('prt:prtAlgorithm:plotAsRegressor','This prtAlgorithm cannot be plotted as a regressor');
+            end
+        end
         function tf = isPlottableAsClassifier(self)
             
             tf = false;
@@ -527,6 +546,24 @@ classdef prtAlgorithm < prtAction & prtActionBig
                     lastNodes = self.connectivityMatrix(find(self.outputNodes,1,'first'),:);
                     if sum(lastNodes)==1
                         if isa(self.actionCell{find(lastNodes,1,'first')-1},'prtClass')
+                            tf = true;
+                        end
+                    end
+                end
+            end
+        end
+        function tf = isPlottableAsRegressor(self)
+            
+            tf = false;
+            if isempty(self.dataSetSummary)
+                return
+            end
+            
+            if self.dataSetSummary.nFeatures <= 3
+                if sum(self.outputNodes)==1
+                    lastNodes = self.connectivityMatrix(find(self.outputNodes,1,'first'),:);
+                    if sum(lastNodes)==1
+                        if isa(self.actionCell{find(lastNodes,1,'first')-1},'prtRegress')
                             tf = true;
                         end
                     end
