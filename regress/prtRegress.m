@@ -41,13 +41,28 @@ classdef prtRegress < prtAction %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             
             
             assert(Obj.isTrained,'Regressor must be trained before it can be plotted.');
-            assert(Obj.dataSetSummary.nFeatures < 2, 'nFeatures in the training dataset must be 1');
+            % assert(Obj.dataSetSummary.nFeatures < 2, 'nFeatures in the training dataset must be 1');
             
             [OutputDataSet, linGrid] = runRegressorOnGrid(Obj);
             
             colors = Obj.plotOptions.colorsFunction(Obj.dataSetSummary.nTargetDimensions);
             lineWidth = Obj.plotOptions.lineWidth;
-            HandleStructure.regressorPlotHandle = plot(linGrid,OutputDataSet.getObservations,'color',colors(1,:),'lineWidth',lineWidth);
+            
+            switch Obj.dataSetSummary.nFeatures
+                case 1
+                    HandleStructure.regressorPlotHandle = plot(linGrid,OutputDataSet.getObservations,'color',colors(1,:),'lineWidth',lineWidth);
+                case 2
+                    sz = ones(1,Obj.dataSetSummary.nFeatures)*Obj.plotOptions.nSamplesPerDim(Obj.dataSetSummary.nFeatures);
+                    HandleStructure.regressorPlotHandle = surf(...
+                        reshape(linGrid(:,1),sz),...
+                        reshape(linGrid(:,2),sz),...
+                        reshape(OutputDataSet.getObservations,sz));
+                    HandleStructure.regressorPlotHandle.EdgeColor = colors(1,:);
+                    HandleStructure.regressorPlotHandle.FaceColor = 'none';
+                    HandleStructure.regressorPlotHandle.LineWidth = lineWidth;
+                otherwise
+                    error('nFeatures in the training dataset must be 1 or 2');
+            end
             
             holdState = get(gca,'nextPlot');
             if ~isempty(Obj.dataSet)
