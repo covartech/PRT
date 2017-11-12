@@ -73,4 +73,4 @@ if recurse
     end
 end
 outputList = [outputList;cellfun(@(x)fullfile(directory,x),{fileList.name}','uniformoutput',false)];
-outputStruct = fileList(:);
+outputStruct = cat(1,outputStruct,fileList(:));
