@@ -43,12 +43,14 @@ void mexFunction(
     
     if (nrhs != 1){
         mexErrMsgTxt("sumexp() requires exactly 1 argument.");
+        return;
     }
     xNDims = mxGetNumberOfDimensions(prhs[0]);
     xSize = (int *) mxGetDimensions(prhs[0]);
     x = mxGetPr(prhs[0]);
     if (xNDims != 2){
         mexErrMsgTxt("sumexp() only accepts 2D input.");
+        return;
     }
     if (nrhs != 1){
         mexErrMsgTxt("Invalid number of inputs. Must be 1.");
