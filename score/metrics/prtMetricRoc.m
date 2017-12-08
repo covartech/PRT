@@ -15,7 +15,42 @@ classdef prtMetricRoc
         thresholds = [];
     end
     properties (Dependent)
-        far
+        sensitivity
+        hitRate
+        recall
+        truePositiveRate
+        
+        specificity
+        trueNegativeRate
+        
+        precision
+        positivePredictiveValue
+        
+        negativePredictiveValue
+        
+        missRate
+        falseNegativeRate
+        
+        fallOut
+        falsePositiveRate
+        
+        falseDiscoveryRate
+        falseOmissionRate
+        
+        accuracy
+        f1 % f1 score
+        mmc % mathews correlation coefficient
+        bm % informedness or Bookmaker informedness
+        mk % markedness
+        
+        
+        % Counds rather than pd/pf
+        tp
+        fp
+        tn
+        fn
+        
+        far % nfa / farDenominator
     end
     
     methods
@@ -23,9 +58,87 @@ classdef prtMetricRoc
             self = prtUtilAssignStringValuePairs(self,varargin{:});
         end
         
+        function val = get.sensitivity(self)
+            val = self.pd;
+        end
+        function val = get.hitRate(self)
+            val = self.pd;
+        end
+        function val = get.truePositiveRate(self)
+            val = self.pd;
+        end
+        function val = get.recall(self)
+            val = self.pd;
+        end
+        
+        function val = get.specificity(self)
+            val = self.tn ./ self.nNonTargets;
+        end
+        function val = get.trueNegativeRate(self)
+            val = self.specificity;
+        end
+        
+        function val = get.precision(self)
+            val = self.tp ./ (self.tp + self.fp);
+        end
+        function val = get.positivePredictiveValue(self)
+            val = self.precision;
+        end
+        
+        function val = get.falseNegativeRate(self)
+            val = self.fn ./ (self.fn + self.tp);
+        end
+        function val = get.missRate(self)
+            val = self.falseNegativeRate;
+        end
+        function val = get.falsePositiveRate(self)
+            val = self.fp ./ (self.fp + self.tn);
+        end
+        function val = get.fallOut(self)
+            val = self.falsePositiveRate;
+        end
+        function val = get.falseDiscoveryRate(self)
+            val = self.fp ./ (self.fp + self.tp);
+        end
+        
+        function val = get.falseOmissionRate(self)
+            val = self.fn ./ (self.fn + self.tn);
+        end
+            
+        function val = get.accuracy(self)
+            val = (self.tp + self.tn) ./ (self.tp + self.tn + self.fp + self.fn);
+        end
+        function val = get.f1(self)
+            val = (2*self.tp)./(2*self.tp + self.fp + self.fn);
+        end
+        function val = get.mmc(self)
+            val = (self.tp.*self.tn - self.fp.*self.fn) ./ sqrt( (self.tp + self.fp).*(self.tp + self.fn).*(self.tn + self.fp).*(self.tn + self.fn) ); 
+        end
+        function val = get.bm(self)
+            val = self.truePositiveRate + self.trueNegativeRate - 1;
+        end
+        function val = get.mk(self)
+            val = self.positivePredictiveValue + self.negativePredictiveValue - 1;
+        end
+        
         function val = get.far(self)
             val = self.nfa./self.farDenominator;
         end
+        
+        function val = get.tp(self)
+            val = self.pd * self.nTargets;
+        end
+        function val = get.tn(self)
+            val = (1-self.pf) * self.nNonTargets;
+        end
+        function val = get.fp(self)
+            val = self.pf * self.nNonTargets;
+        end
+        function val = get.fn(self)
+            val = (1-self.pd) * self.nTargets;
+        end
+        
+
         
         function [meanRoc,stdRoc,pfVals] = getRocStatistics(self,pfVals)
             % [meanRoc,stdRoc] = getRocStatistics(self,nPoints)
