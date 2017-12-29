@@ -123,6 +123,8 @@ set(gcf,'NextPlot','new')
                     plot(BlockObject);
                 elseif (blockIndex == length(Layout.Blocks)) && algo.isPlottableAsClassifier
                     plotAsClassifier(algo);
+                elseif (blockIndex == length(Layout.Blocks)) && algo.isPlottableAsRegressor
+                    plotAsRegressor(algo);
                 end
                 
             otherwise % case 'normal'
@@ -192,7 +194,7 @@ set(gcf,'NextPlot','new')
             set(Layout.Blocks(iBlock).handle,'lineWidth',4);
         end
         
-        if (iBlock == Layout.nBlocks) && algo.isPlottableAsClassifier
+        if (iBlock == Layout.nBlocks) && (algo.isPlottableAsClassifier || algo.isPlottableAsRegressor)
             set(Layout.Blocks(iBlock).handle,'lineWidth',4);
         end
         
