@@ -1232,6 +1232,9 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
             %
             %   dataSet.plot() Plots the prtDataSetClass object.
             
+            if length(obj) > 1
+                error('Cannot plot multiple prtDataSetClass Objects simultaneously');
+            end
             if nargin < 2 || isempty(featureIndices)
                 featureIndices = 1:obj.nFeatures;
             end
