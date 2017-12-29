@@ -329,18 +329,28 @@ classdef prtDataSetStandard < prtDataSetInMem
 			%             obj = updateObservationsCache(obj);
 			obj = obj.update;
 		end
-		
-		function [obj,retainFeatureInds] = removeFeatures(obj,removeFeatureInds)
-			% dsOut = removeFeatures(dataSet,removeFeatureInds)
-			%  Return a data set formed by removing the specified features.
-			
-			if islogical(removeFeatureInds)
-				removeFeatureInds = find(removeFeatureInds);
-			end
-			retainFeatureInds = setdiff(1:obj.nFeatures,removeFeatureInds);
-			[obj,retainFeatureInds] = retainFeatures(obj,retainFeatureInds);
-			obj = obj.update;
-		end
+        
+        function [obj,retainFeatureInds] = removeFeatures(obj,removeFeatureInds)
+            % dsOut = removeFeatures(dataSet,removeFeatureInds)
+            %  Return a data set formed by removing the specified features.
+            
+            if islogical(removeFeatureInds)
+                removeFeatureInds = find(removeFeatureInds);
+            end
+            
+            if isa(removeFeatureInds,'cell')
+                origFeatureNames = removeFeatureInds;
+                [isActuallyAMember, removeFeatureInds] = ismember(origFeatureNames,obj.getFeatureNames);
+                if any(~isActuallyAMember)
+                    invalid = find(~isActuallyAMember);
+                    error('prtDataSetStandard:retainFeatures:invalidString','The string %s did not match any feature names of the data set',origFeatureNames{invalid(1)});
+                end
+            end
+            
+            retainFeatureInds = setdiff(1:obj.nFeatures,removeFeatureInds);
+            [obj,retainFeatureInds] = retainFeatures(obj,retainFeatureInds);
+            % obj = obj.update; % This is done in retainFeatures
+        end
 		
 		function [obj,retainFeatureInds] = retainFeatures(obj,retainFeatureInds)
 			% dsOut = retainFeatures(dataSet,retainFeatureInds)
@@ -352,23 +362,18 @@ classdef prtDataSetStandard < prtDataSetInMem
             
             if isa(retainFeatureInds,'cell')
                 origFeatureNames = retainFeatureInds;
-                [isActuallyAClass, retainFeatureInds] = ismember(origFeatureNames,obj.getFeatureNames); %#ok<ASGLU>
-                if any(~isActuallyAClass)
-                    invalid = find(~isActuallyAClass);
+                [isActuallyAMember, retainFeatureInds] = ismember(origFeatureNames,obj.getFeatureNames); 
+                if any(~isActuallyAMember)
+                    invalid = find(~isActuallyAMember);
                     error('prtDataSetStandard:retainFeatures:invalidString','The string %s did not match any feature names of the data set',origFeatureNames{invalid(1)});
                 end
             end
             
-% 			try
-				obj = obj.retainFeatureNames(retainFeatureInds);
-				obj.data = obj.data(:,retainFeatureInds);
-				if ~isempty(obj.featureInfo)
-					obj.featureInfo = obj.featureInfo(retainFeatureInds);
-				end
-% 			catch ME
-% 				prtDataSetBase.parseIndices(obj.nFeatures, retainFeatureInds);
-% 				throw(ME);
-% 			end
+            obj = obj.retainFeatureNames(retainFeatureInds);
+            obj.data = obj.data(:,retainFeatureInds);
+            if ~isempty(obj.featureInfo)
+                obj.featureInfo = obj.featureInfo(retainFeatureInds);
+            end
 			obj = obj.update;
 		end
 		
