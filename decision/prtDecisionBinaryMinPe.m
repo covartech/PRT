@@ -106,6 +106,11 @@ classdef prtDecisionBinaryMinPe < prtDecisionBinary
             pe = prtUtilPfPd2Pe(pf,pd,pH0,pH1);
             
             [v,minPeIndex] = min(pe); %#ok<ASGLU>
+            if minPeIndex < length(thresh)
+                self.threshold = mean(thresh([minPeIndex,minPeIndex+1]));
+            else
+                self.threshold = thresh(minPeIndex);
+            end
             self.threshold = thresh(minPeIndex);
             self.classList = dataSet.uniqueClasses;
         end
