@@ -1303,7 +1303,10 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
                         
                 otherwise
             end
-            featureInds = find(featureInds); 
+            if islogical(featureInds)
+                featureInds = find(featureInds); 
+            end
+            
             nPlotDimensions = length(featureInds);
             if nPlotDimensions < 1
                 warning('prt:plot:NoPlotDimensionality','No dimensions requested for scatter plot.');
@@ -1311,7 +1314,7 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
                 return                
             elseif nPlotDimensions > 3
                 warning('prt:plot:TooManyScatterDimensionality','Too many dimensions requested for scatter resorting to the first two dimensions only.');
-                self = self.retainFeatures([1 2]);
+                self = self.retainFeatures([1 2 3]);
             else
                 self = self.retainFeatures(featureInds);
             end
