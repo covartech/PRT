@@ -119,7 +119,6 @@ classdef prtRegressGp < prtRegress
             if ~isempty(self.meanRegressor)
                 dataSetEst = self.meanRegressor.run(dataSet);
             else
-<<<<<<< Updated upstream
                 % The mean regressor will output dataSet.X of the same size
                 % as dataSet.Y, with all zeros!  dataSetEst.Y should be
                 % dataSet.Y.  Note - at test-time, there may not be
@@ -127,10 +126,7 @@ classdef prtRegressGp < prtRegress
                 % prtRegressGp assumes that the number of desired targets
                 % (size(dataSet.Y,2)) is 1, even if there werent any
                 % targets provided (dataSet.Y is empty)
-                dataSetEst = prtDataSetRegress(zeros(size(dataSet.X,1),1),dataSet.Y);
-=======
                 dataSetEst = prtDataSetRegress(zeros(dataSet.nObservations,1),zeros(dataSet.nObservations,1));
->>>>>>> Stashed changes
             end
             dataSetTargetResiduals = dataSet;
             if nargout > 1
