@@ -30,6 +30,8 @@ classdef prtRegressLslrNonNeg < prtRegress
     
     properties
         beta = [];  % Regression weights estimated via least squares linear regression
+        rss = [];  % Resisudal sum of the squared error
+        rSquared = [];
     end
     
     properties (Hidden)
@@ -52,11 +54,17 @@ classdef prtRegressLslrNonNeg < prtRegress
             y = dataSet.getTargets;
             if self.includeDcOffset
                 x = cat(2,ones(size(x,1),1),x);
-            end
-            self.beta = lsqnonneg(x,y);
-            if ~self.includeDcOffset
+                self.beta = lsqnonneg(x,y);
+                yHat = x*self.beta;
+            elseif ~self.includeDcOffset
+                self.beta = lsqnonneg(x,y);
+                yHat = x*self.beta;
                 self.beta = cat(1,0,self.beta);
-            end
+            end                
+            
+            e = yHat - y;
+            self.rss = sum(e(:).^2);
+            self.rSquared = 1 - sum(e(:).^2)./sum((y - mean(y)).^2);
         end
         
         function dataSet = runAction(self,dataSet)

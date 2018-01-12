@@ -126,7 +126,7 @@ classdef prtRegressGp < prtRegress
                 % prtRegressGp assumes that the number of desired targets
                 % (size(dataSet.Y,2)) is 1, even if there werent any
                 % targets provided (dataSet.Y is empty)
-                dataSetEst = prtDataSetRegress(zeros(size(dataSet.X,1),1),dataSet.Y);
+                dataSetEst = prtDataSetRegress(zeros(dataSet.nObservations,1),zeros(dataSet.nObservations,1));
             end
             dataSetTargetResiduals = dataSet;
             if nargout > 1

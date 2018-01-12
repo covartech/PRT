@@ -1303,7 +1303,7 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
                         
                 otherwise
             end
-            
+            featureInds = find(featureInds); 
             nPlotDimensions = length(featureInds);
             if nPlotDimensions < 1
                 warning('prt:plot:NoPlotDimensionality','No dimensions requested for scatter plot.');
