@@ -46,8 +46,30 @@ classdef prtDataSetRegress < prtDataSetStandard
     end
     
     methods
-        %% Constructor %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        
+        function dsC = toPrtDataSetClass(self)
+            % dsClass = dsReg.toPrtDataSetRegress();
+            %   Converts the prtDataSetRegress object to a prtDataSetClass
+            %   object.  dsClass will have the same .X and .Y,
+            %   .observationInfo, .featureNames, etc., and will have empty
+            %   .classNames
+            %
+            %   X = randn(100,2);
+            %   Y = X(:,1) > 0.5;
+            %   dsR = prtDataSetRegress(X,double(Y));
+            %   dsR.observationInfo = struct('rand',num2cell(randn(100,1)));
+            %   dsC = dsR.toPrtDataSetClass;
+            %   subplot(2,1,1);
+            %   plot(dsR);
+            %   title('Original');
+            %   subplot(2,1,2);
+            %   plot(dsC);
+            %   title('toPrtDataSetClass Converted');
+            dsC = prtDataSetClass(self.X,self.Y);
+            dsC = acquireNonDataAttributesFrom(dsC, self);
+        end
+        
+        % Constructor
         function prtDataSet = prtDataSetRegress(varargin)
   
             prtDataSet = prtDataSet@prtDataSetStandard(varargin{:});
