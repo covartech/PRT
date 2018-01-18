@@ -1336,7 +1336,7 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
                 % observations
                 
                 cX = self.getDataUnlabeled();
-                unlabeledHandle = prtPlotUtilScatterCall(cX);
+                unlabeledHandle = prtPlotUtilScatter(cX);
                 hold on;
             end
             
@@ -1402,6 +1402,7 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
             if self.isLabeled
                 legendStrings = getClassNamesInterp(self);
                 if self.hasUnlabeled
+                    unlabaledLegenedName = 'unknown';
                     legendStrings = cat(1,legendStrings,{unlabaledLegenedName});
                 end
                 legend(handleArray,legendStrings,'Location','SouthEast');
