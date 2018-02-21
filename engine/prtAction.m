@@ -785,14 +785,17 @@ classdef prtAction
     end
     
     methods (Hidden = true)
-        function [out,varargout] = rt(self,in)
+        function [out,varargout] = rt(self,in1,in2)
             % Train and then run an action on a dataset
+            if nargin < 3
+                in2 = in1;
+            end
             switch nargout
                 case 1
-                    out = run(train(self,in),in);
+                    out = run(train(self,in1),in2);
                 otherwise
                     varargout = cell(1,nargout-1);
-                    [out,varargout{:}] = run(train(self,in),in);
+                    [out,varargout{:}] = run(train(self,in1),in2);
             end
         end
         

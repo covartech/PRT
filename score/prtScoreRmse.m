@@ -23,9 +23,6 @@ function rmse = prtScoreRmse(dataSet1, dataSet2)
 
 
 
-
-
-
 if nargin < 2
     dataSet2 = dataSet1;
 end 
@@ -34,7 +31,11 @@ end
 
 if size(guesses,2) == 1
     rmse = sqrt(mean((guesses-targets).^2));
-else %M-ary regression
+elseif size(guesses,2) == size(targets,2)
+    % M-ary regression
     eSquared = (guesses-targets).^2;
     rmse = sqrt(mean(eSquared(:)));
+else
+    eSquared = (guesses-targets).^2;
+    rmse = sqrt(mean(eSquared));
 end

@@ -367,6 +367,14 @@ classdef prtDataSetInMem < prtDataSetBase
             % Return a new data set, dsOut, with targets specified by dataIn.
             %
             
+            if isa(dataIn,'cell')
+                [targets,classNames] = prtUtilStringsToClassNumbers(dataIn);
+                self.internalTargets = targets;
+                self = self.update;
+                self.classNames = classNames;
+                return
+            end
+            
             if nargin > 2
                 self.internalTargets(varargin{:}) = dataIn;
             else
