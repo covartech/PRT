@@ -66,6 +66,34 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
     end
     
     methods
+        function dsR = toPrtDataSetRegress(self)
+            % dsReg = dsClass.toPrtDataSetRegress();
+            %   Converts the prtDataSetClass object to a prtDataSetRegress
+            %   object.  dsR will have the same .X and .Y,
+            %   .observationInfo, .featureNames, etc., but since it is a
+            %   prtDataSetRegress, it will have no classNames,
+            %   uniqueClasses, etc.
+            %
+            %   X = randn(100,2);
+            %   Y = X(:,1) > 0.5;
+            %   dsC = prtDataSetClass(X,Y);
+            %   dsC.observationInfo = struct('rand',num2cell(randn(100,1)));
+            %   dsC.classNames = {'C1','C2'};
+            %   dsR = dsC.toPrtDataSetRegress;
+            %   subplot(2,1,1);
+            %   plot(dsC);
+            %   title('Original');
+            %   subplot(2,1,2);
+            %   plot(dsR);
+            %   title('toPrtDataSetClass Converted');
+            
+            y = self.Y;
+            if islogical(y)
+                y = double(y);
+            end
+            dsR = prtDataSetRegress(self.X,y);
+            dsR = acquireNonDataAttributesFrom(dsR, self);
+        end
         
         function obj = prtDataSetClass(varargin)
             % prtDataSetClass Constructor for class prtDataSetClass
@@ -1336,7 +1364,7 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
                 % observations
                 
                 cX = self.getDataUnlabeled();
-                unlabeledHandle = prtPlotUtilScatterCall(cX);
+                unlabeledHandle = prtPlotUtilScatter(cX);
                 hold on;
             end
             
@@ -1402,6 +1430,7 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
             if self.isLabeled
                 legendStrings = getClassNamesInterp(self);
                 if self.hasUnlabeled
+                    unlabaledLegenedName = 'unknown';
                     legendStrings = cat(1,legendStrings,{unlabaledLegenedName});
                 end
                 legend(handleArray,legendStrings,'Location','SouthEast');
