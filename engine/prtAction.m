@@ -279,31 +279,46 @@ classdef prtAction
             val = self.showProgressBarInternal;
         end
         
-        function [dsOut, trainedActions] = crossValidate(self, dsIn, validationKeys)
+        function [dsOut, trainedActions] = crossValidate(self, dsIn, validationKeys, varargin)
             % CROSSVALIDATE  Cross validate prtAction using prtDataSet and cross validation keys.
             %
-            %  OUTPUTDATASET = OBJ.crossValidate(DATASET, KEYS) cross-
-            %  validates the prtAction object OBJ using the prtDataSet
-            %  DATASET and the KEYS. DATASET must be a labeled prtDataSet.
-            %  KEYS must be a vector of integers with the same number of
-            %  elements as DATASET has observations.
+            %  [dsOut, trainedActions] = act.crossValidate(ds,keys) cross-
+            %  validates the prtAction object act using the prtDataSet
+            %  ds and the keys. ds must be a labeled prtDataSet.
+            %  keys must be a vector of integers with the same number of
+            %  elements as ds has observations.
             %
-            %  The KEYS are are used to parition the input DATASET into
+            %  The keys are are used to parition the input ds into
             %  test and training data sets. For each unique key, a test set
             %  will be created out of the corresponding observations of the
             %  prtDataSet. The remaining observations will be used as
             %  training data.
             %
-            %  [OUTPUTDATASET, TRAINEDACTIONS] = OBJ.crossValidate(DATASET,
-            %  KEYS) outputs the trained prtAction objects TRAINEDACTIONS.
-            %  TRAINEDACTIONS will have a length equal to the number of
-            %  unique KEYS.
+            %  [ds, acts] = act.crossValidate(ds, keys) outputs the trained
+            %  prtAction objects acts. acts will have a
+            %  length equal to the number of unique keys.
+            %
+            %  [..] = act.crossValidate(ds, keys, 'stripObservationInfo', true)
+            %   Removes the observation info from ds during
+            %   cross-validation.  This can significantly speed up
+            %   the process, but prevents any actions in act from using the
+            %   observation info.  
+            %
+            %
             
             
             % Check for isCrossValidateValid removed - 2012-11-08
             % This now handled by allowing the dataset to check the fold
             % results.
+            p = inputParser;
+            p.addParameter('stripObservationInfo',false);
+            p.parse(varargin{:});
             
+            localObsInfo = [];
+            if p.Results.stripObservationInfo
+                localObsInfo = dsIn.observationInfo;
+                dsIn.observationInfo = [];
+            end
 
             if ~isvector(validationKeys) || (numel(validationKeys) ~= dsIn.nObservations)
                 error('prt:prtAction:crossValidate','validationKeys must be a vector with a length equal to the number of observations in the data set');
@@ -326,58 +341,61 @@ classdef prtAction
             
 			testingIndiciesCell = cell(length(uKeys),1);
 			outputDataSetCell = cell(length(uKeys),1);
-			for uInd = 1:length(uKeys);
-				
-				if actuallyShowProgressBar
-					waitBarself.update((uInd-1)/length(uKeys));
-				end
-				
-				% Get the testing indices
-				if isa(uKeys(uInd),'cell')
-					cTestLogical = strcmp(uKeys(uInd),validationKeys);
-				else
-					cTestLogical = uKeys(uInd) == validationKeys;
-				end
-				
-				% Store the indicies for resorting later
-				testingIndiciesCell{uInd} = find(cTestLogical);
-				testDs = dsIn.retainObservations(cTestLogical);
-				
-				% Get the training dataset
-				if length(uKeys) == 1  %1-fold, incestuous train and test
-					trainDs = testDs;
-				else
-					trainDs = dsIn.removeObservations(cTestLogical);
-				end
-				
-				% Train the action using the training dataset
-				trainedAction = self.train(trainDs);
-				
-				% Run the trained action on the test dataset
-				outputDataSetCell{uInd} = trainedAction.run(testDs);
+            for uInd = 1:length(uKeys)
                 
-				% Ask the input dataset to assess the quality of the fold
-				% and the results.
-				% This check allows prtDataSetClass to check to make sure
-				% that all classes are represented in each fold.
-				outputDataSetCell{uInd} = crossValidateCheckFoldResults(dsIn, trainDs, testDs, outputDataSetCell{uInd});
-				
-				% Only do this if the output is requested; otherwise this
-				% cell of actions can get large if verboseStorage is true
-				if nargout >= 2
-					if uInd == 1
-						% First iteration pre-allocate
-						trainedActions = repmat(trainedAction,length(uKeys),1);
-					else
-						trainedActions(uInd) = trainedAction;
-					end
-				end
+                if actuallyShowProgressBar
+                    waitBarself.update((uInd-1)/length(uKeys));
+                end
+                
+                % Get the testing indices
+                if isa(uKeys(uInd),'cell')
+                    cTestLogical = strcmp(uKeys(uInd),validationKeys);
+                else
+                    cTestLogical = uKeys(uInd) == validationKeys;
+                end
+                
+                % Store the indicies for resorting later
+                testingIndiciesCell{uInd} = find(cTestLogical);
+                testDs = dsIn.retainObservations(cTestLogical);
+                
+                % Get the training dataset
+                if length(uKeys) == 1  %1-fold, incestuous train and test
+                    trainDs = testDs;
+                else
+                    trainDs = dsIn.removeObservations(cTestLogical);
+                end
+                
+                % Train the action using the training dataset
+                trainedAction = self.train(trainDs);
+                
+                % Run the trained action on the test dataset
+                outputDataSetCell{uInd} = trainedAction.run(testDs);
+                
+                % Ask the input dataset to assess the quality of the fold
+                % and the results.
+                % This check allows prtDataSetClass to check to make sure
+                % that all classes are represented in each fold.
+                outputDataSetCell{uInd} = crossValidateCheckFoldResults(dsIn, trainDs, testDs, outputDataSetCell{uInd});
+                
+                % Only do this if the output is requested; otherwise this
+                % cell of actions can get large if verboseStorage is true
+                if nargout >= 2
+                    if uInd == 1
+                        % First iteration pre-allocate
+                        trainedActions = repmat(trainedAction,length(uKeys),1);
+                    else
+                        trainedActions(uInd) = trainedAction;
+                    end
+                end
             end
             
 			
 			dsOut = crossValidateCombineFoldResults(outputDataSetCell{1}, outputDataSetCell, testingIndiciesCell);
-			
 			dsOut = dsOut.acquireNonDataAttributesFrom(dsIn);
+            if p.Results.stripObservationInfo
+                dsOut.observationInfo = localObsInfo;
+            end
+
             
             function cleanUpHandles(wbHandle)
                 wbHandle.update(1);
@@ -412,10 +430,13 @@ classdef prtAction
             % This now handled by allowing the dataset to check the fold
             % results.
             
-
-            if (size(validationKeys,1) ~= dsIn.nObservations) && (~isvector(validationKeys) || (numel(validationKeys) ~= dsIn.nObservations))
-                error('prt:prtAction:crossValidate','validationKeys must have length equal to the number of observations in the data set');
-			end
+            
+            if (size(validationKeys,1) ~= dsIn.nObservations) ...
+                    && (~isvector(validationKeys) || ...
+                    (numel(validationKeys) ~= dsIn.nObservations))
+                error('prt:prtAction:crossValidate',...
+                    'validationKeys must have length equal to the number of observations in the data set');
+            end
             
 			if isvector(validationKeys)
 				validationKeys = validationKeys(:);
@@ -436,55 +457,55 @@ classdef prtAction
             
 			testingIndiciesCell = cell(length(uKeys),1);
 			outputDataSetCell = cell(length(uKeys),1);
-			for uInd = 1:size(uKeys,1);
-				
-				if actuallyShowProgressBar
-					waitBarself.update((uInd-1)/length(uKeys));
-				end
-				
-				% Get the testing indices
-				if isa(uKeys(uInd),'cell')
-					cTestLogical = strcmp(uKeys(uInd),validationKeys);
-					cTrainLogical = ~cTestLogical;
-				else
-					cmp = bsxfun(@eq,uKeys(uInd,:),validationKeys);
-					cTestLogical = all(cmp,2);
-					cTrainLogical = ~any(cmp,2);
-				end
-				
-				% Store the indicies for resorting later
-				testingIndiciesCell{uInd} = find(cTestLogical);
-				testDs = dsIn.retainObservations(cTestLogical);
-				
-				% Get the training dataset
-				if length(uKeys) == 1  %1-fold, incestuous train and test
-					trainDs = testDs;
-				else
-					trainDs = dsIn.retainObservations(cTrainLogical);
-				end
-				
-				% Train the action using the training dataset
-				trainedAction = self.train(trainDs);
-				
-				% Run the trained action on the test dataset
-				outputDataSetCell{uInd} = trainedAction.run(testDs);
+            for uInd = 1:size(uKeys,1)
                 
-				% Ask the input dataset to assess the quality of the fold
-				% and the results.
-				% This check allows prtDataSetClass to check to make sure
-				% that all classes are represented in each fold.
-				outputDataSetCell{uInd} = crossValidateCheckFoldResults(dsIn, trainDs, testDs, outputDataSetCell{uInd});
-				
-				% Only do this if the output is requested; otherwise this
-				% cell of actions can get large if verboseStorage is true
-				if nargout >= 2
-					if uInd == 1
-						% First iteration pre-allocate
-						trainedActions = repmat(trainedAction,length(uKeys),1);
-					else
-						trainedActions(uInd) = trainedAction;
-					end
-				end
+                if actuallyShowProgressBar
+                    waitBarself.update((uInd-1)/length(uKeys));
+                end
+                
+                % Get the testing indices
+                if isa(uKeys(uInd),'cell')
+                    cTestLogical = strcmp(uKeys(uInd),validationKeys);
+                    cTrainLogical = ~cTestLogical;
+                else
+                    cmp = bsxfun(@eq,uKeys(uInd,:),validationKeys);
+                    cTestLogical = all(cmp,2);
+                    cTrainLogical = ~any(cmp,2);
+                end
+                
+                % Store the indicies for resorting later
+                testingIndiciesCell{uInd} = find(cTestLogical);
+                testDs = dsIn.retainObservations(cTestLogical);
+                
+                % Get the training dataset
+                if length(uKeys) == 1  %1-fold, incestuous train and test
+                    trainDs = testDs;
+                else
+                    trainDs = dsIn.retainObservations(cTrainLogical);
+                end
+                
+                % Train the action using the training dataset
+                trainedAction = self.train(trainDs);
+                
+                % Run the trained action on the test dataset
+                outputDataSetCell{uInd} = trainedAction.run(testDs);
+                
+                % Ask the input dataset to assess the quality of the fold
+                % and the results.
+                % This check allows prtDataSetClass to check to make sure
+                % that all classes are represented in each fold.
+                outputDataSetCell{uInd} = crossValidateCheckFoldResults(dsIn, trainDs, testDs, outputDataSetCell{uInd});
+                
+                % Only do this if the output is requested; otherwise this
+                % cell of actions can get large if verboseStorage is true
+                if nargout >= 2
+                    if uInd == 1
+                        % First iteration pre-allocate
+                        trainedActions = repmat(trainedAction,length(uKeys),1);
+                    else
+                        trainedActions(uInd) = trainedAction;
+                    end
+                end
             end
             
 			
@@ -497,22 +518,24 @@ classdef prtAction
             end
         end
 		
-        function varargout = kfolds(self, ds , k)
+        function varargout = kfolds(self, ds, k, varargin)
             % KFOLDS  Perform K-folds cross-validation of prtAction
             % 
-            %    OUTPUTDATASET = self.KFOLDS(DATASET, K) performs K-folds
-            %    cross-validation of the prtAction object OBJ using the
-            %    prtDataSet DATASET. DATASET must be a labeled prtDataSet,
+            %    ds = act.kfolds(ds, k) performs K-folds
+            %    cross-validation of the prtAction object act using the
+            %    prtDataSet ds. ds must be a labeled prtDataSet,
             %    and K must be a scalar integer, representing the number
-            %    of folds. KFOLDS Generates cross-validation keys by
-            %    partitioning the dataSet into K groups such that the
+            %    of folds. kfolds Generates cross-validation keys by
+            %    partitioning the dataSet into k groups such that the
 			%    number of samples of each unique target type is held
 			%    approximately constant.
             %
-            %    [OUTPUTDATASET, TRAINEDACTIONS, CROSSVALKEYS] =
-            %    self.KFOLDS(DATASET, K)  outputs the trained prtAction
-            %    objects TRAINEDACTIONS, and the generated cross-validation
-            %    keys CROSSVALKEYS.
+            %    [ds, acts, keys] = act.kfolds(ds, k)  outputs the trained
+            %    prtAction objects acts, and the generated
+            %    cross-validation keys keys.
+            %
+            %    [ds, acts, keys] = act.kfolds(ds, k, ...)  passes
+            %    additional inputs (...) to crossValidate when called.
             %
             %    To manually set which observations are in which folds, see
             %    crossValidate.
@@ -527,7 +550,7 @@ classdef prtAction
             assert(prtUtilIsPositiveScalarInteger(k),'prt:prtAction:kfolds','k must be a positive scalar integer');
             
             nObs = ds.nObservations;
-            if k > nObs;
+            if k > nObs
                 warning('prt:prtAction:kfolds:nFolds','Number of folds (%d) is greater than number of data points (%d); assuming Leave One Out training and testing',k,nObs);
                 k = nObs;
             elseif k < 1
@@ -538,7 +561,7 @@ classdef prtAction
             keys = ds.getKFoldKeys(k);
             
             outputs = cell(1,min(max(nargout,1),2));
-            [outputs{:}] = self.crossValidate(ds,keys);
+            [outputs{:}] = self.crossValidate(ds, keys, varargin{:});
             
             varargout = outputs(:);
             if nargout > 2
@@ -655,7 +678,7 @@ classdef prtAction
             %   xOut = preRunProcessingFast(ActionObj, xIn, ds)
         end
         
-        function xOut = postRunProcessingFast(self, xIn, xOut, dsIn) %#ok<INUSL,MANU,INUSD>
+        function xOut = postRunProcessingFast(self, xIn, xOut, dsIn) %#ok<INUSL,INUSD>
             % postRunProcessingFast - Processing done after runAction()
             %   Called by runFast(). Can be overloaded by prtActions to
             %   alter the results of run() using parameters of the
@@ -810,7 +833,7 @@ classdef prtAction
         end
         
         function self = setShowProgressBar(self,val)
-            if ~prtUtilIsLogicalScalar(val);
+            if ~prtUtilIsLogicalScalar(val)
                 error('prt:prtAction','showProgressBar must be a scalar logical.');
             end
             self.showProgressBarInternal = val;
@@ -851,7 +874,7 @@ classdef prtAction
                         file = varargin{1};
                     end
                     
-                    [filePath, file, fileExt] = fileparts(file); %#ok<NASGU>
+                    [filePath, file, ~] = fileparts(file);
                     
                     if ~isvarname(file)
                         error('prt:prtAction:export','When using EML export, file must be a string that is a valid MATLAB function name (optionally it can also contain a path.)');
@@ -967,10 +990,10 @@ classdef prtAction
 	end
 	
 	methods (Hidden = true)
-        function str = exportSimpleText(self) %#ok<MANU>
+        function str = exportSimpleText(self) %#ok<STOUT,MANU>
             error('exportSimpleText must be overloaded in sub-classes');
         end
-        function str = textSummary(self) %#ok<MANU>
+        function str = textSummary(self)
             % str = textSummary(self)
             %   Give a short textual summary of the object in the output
             %   str.  The summary shows what a call to "display" would call
@@ -987,9 +1010,9 @@ classdef prtAction
             %       algo = train(prtPreProcPls('nComponents',2) + prtClassLibSvm,prtDataGenBimodal);
             %       algo.textSummary
             
-            warning off; %#ok<WNOFF>
+            warning off;
             s = struct(self);
-            warning on; %#ok<WNON>
+            warning on;
             rmFieldNames = {'nameAbbreviation','isNativeMary','plotBasis','plotProjections','twoClassParadigm','internalDecider','isSupervised','isCrossValidateValid','verboseStorage','showProgressBar','isTrained','dataSetSummary','dataSet','userData'};
             publicFieldNames = properties(self);
             totalFieldNames = fieldnames(s);
