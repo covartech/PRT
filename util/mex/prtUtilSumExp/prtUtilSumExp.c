@@ -2,7 +2,7 @@
 #include <math.h>
 
 void addexp(double* x, 
-            int* xSize,
+            const size_t* xSize, // formerly int*
             double* z,
             double* maxLogs)
 {
@@ -38,7 +38,9 @@ void mexFunction(
         )
 {
     double *x, *z;
-    int xNDims, *xSize, *zSize;
+    int xNDims;
+    const size_t *xSize;
+    size_t *zSize;
     double *maxLogs;
     
     if (nrhs != 1){
@@ -46,7 +48,8 @@ void mexFunction(
         return;
     }
     xNDims = mxGetNumberOfDimensions(prhs[0]);
-    xSize = (int *) mxGetDimensions(prhs[0]);
+    xSize = mxGetDimensions(prhs[0]);
+    
     x = mxGetPr(prhs[0]);
     if (xNDims != 2){
         mexErrMsgTxt("sumexp() only accepts 2D input.");
@@ -83,7 +86,6 @@ void mexFunction(
     
     /* Call the actual addexp */
     addexp(x, xSize, z, maxLogs);
-    
     
     /* Clean up */
     mxFree(zSize);
