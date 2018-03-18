@@ -76,6 +76,7 @@ classdef prtRegressLslr < prtRegress
         
         rss = [];  % Resisudal sum of the squared error
         
+        rSquared = [];
         % standardizedResiduals are standardized residuals (see Hastie...)
         
         standardizedResiduals = []; % Standardized residuals
@@ -125,6 +126,8 @@ classdef prtRegressLslr < prtRegress
             yHat = z*Obj.beta;
             e = yHat - y;
             Obj.rss = sum(e(:).^2);
+            Obj.rSquared = 1 - sum(e(:).^2)./sum((y - mean(y)).^2);
+            
             sigmaHat = sqrt(Obj.rss./(size(x,1) - size(x,2) - 1));
             
             if size(x,1) < 1000

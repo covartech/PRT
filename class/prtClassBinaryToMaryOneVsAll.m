@@ -148,11 +148,14 @@ classdef prtClassBinaryToMaryOneVsAll < prtClass & prtActionBig
             DataSetOut = dataSet;
             DataSetOut.X = nan(DataSetOut.nObservations,1);
             
+            cOutput = cell(length(Obj.baseClassifier),1);
             for iY = 1:length(Obj.baseClassifier)
-                cOutput = run(Obj.baseClassifier(iY), dataSet);
+                cOutput{iY} = run(Obj.baseClassifier(iY), dataSet);
                 
-                DataSetOut = DataSetOut.setObservations(cOutput.getObservations(),1:DataSetOut.nObservations,iY);
+                DataSetOut = DataSetOut.setObservations(cOutput{iY}.getObservations(),1:DataSetOut.nObservations,iY);
             end
+            DataSetOut = DataSetOut.acquireNonDataAttributesFrom(dataSet);
+            DataSetOut.userData = prtUtilStructVCatMergeFields(cellfun(@(a){a.userData},cOutput));
         end
         
         function y = runActionFast(Obj,x)

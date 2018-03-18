@@ -66,6 +66,34 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
     end
     
     methods
+        function dsR = toPrtDataSetRegress(self)
+            % dsReg = dsClass.toPrtDataSetRegress();
+            %   Converts the prtDataSetClass object to a prtDataSetRegress
+            %   object.  dsR will have the same .X and .Y,
+            %   .observationInfo, .featureNames, etc., but since it is a
+            %   prtDataSetRegress, it will have no classNames,
+            %   uniqueClasses, etc.
+            %
+            %   X = randn(100,2);
+            %   Y = X(:,1) > 0.5;
+            %   dsC = prtDataSetClass(X,Y);
+            %   dsC.observationInfo = struct('rand',num2cell(randn(100,1)));
+            %   dsC.classNames = {'C1','C2'};
+            %   dsR = dsC.toPrtDataSetRegress;
+            %   subplot(2,1,1);
+            %   plot(dsC);
+            %   title('Original');
+            %   subplot(2,1,2);
+            %   plot(dsR);
+            %   title('toPrtDataSetClass Converted');
+            
+            y = self.Y;
+            if islogical(y)
+                y = double(y);
+            end
+            dsR = prtDataSetRegress(self.X,y);
+            dsR = acquireNonDataAttributesFrom(dsR, self);
+        end
         
         function obj = prtDataSetClass(varargin)
             % prtDataSetClass Constructor for class prtDataSetClass
@@ -93,7 +121,8 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
                 return;
             end
             if isa(varargin{1},'prtDataSetClass')
-                obj = varargin{1};
+                obj = obj.acquireNonDataAttributesFrom(varargin{1});
+                obj.data = varargin{1}.data;
                 varargin = varargin(2:end);
             end
             
@@ -570,6 +599,7 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
             %                                prtRvKde that is used to
             %                                estimate each density. default
             %                                []. See prtRvKde.
+            %       type                   - cdf or pdf, default: pdf
             %
             % Example:
             %    ds = prtDataGenMary;
@@ -597,6 +627,7 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
             % Parse Options (additional string value pairs)
             Options.nDensitySamples = 500;
             Options.minimumKernelBandwidth = [];
+            Options.type = 'pdf';
             
             if nargin > 1
                 assert(mod(length(inputs),2)==0,'Additional inputs must be string value pairs')
@@ -620,18 +651,44 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
             xLoc = linspace(Summary.lowerBounds, Summary.upperBounds, nKSDsamples);
             
             F = zeros([nKSDsamples, nClasses+obj.hasUnlabeled]);
-            for cY = 1:nClasses;
+            for cY = 1:nClasses
                 if obj.nClasses == 0
                     cX = obj.X;
                 else
                     cX = obj.getObservationsByClassInd(cY);
                 end
-                    
-                F(:,cY) = pdf(mle(prtRvKde('minimumBandwidth',Options.minimumKernelBandwidth),cX),xLoc(:));
+                cX = cX(~isnan(cX));
+                if ~isempty(cX)
+                    trainedRv = mle(prtRvKde('minimumBandwidth',Options.minimumKernelBandwidth),cX);
+                    switch lower(Options.type)
+                        case 'pdf'
+                            F(:,cY) = pdf(trainedRv, xLoc(:));
+                        case 'cdf'
+                            F(:,cY) = cdf(trainedRv, xLoc(:));
+                        otherwise
+                            error('Invalid type specified')
+                    end
+                else
+                    F(:,cY) = nan(size(xLoc(:)));
+                end
             end
             
             if obj.hasUnlabeled
-                F(:,end) = pdf(mle(prtRvKde('minimumBandwidth',Options.minimumKernelBandwidth),obj.getDataUnlabeled),xLoc(:));
+                cX = obj.getDataUnlabeled;
+                cX = cX(~isnan(cX));
+                if ~isempty(cX)
+                    trainedRv = mle(prtRvKde('minimumBandwidth',Options.minimumKernelBandwidth),obj.getDataUnlabeled);
+                    switch lower(Options.type)
+                        case 'pdf'
+                            F(:,end) = pdf(trainedRv, xLoc(:));
+                        case 'cdf'
+                            F(:,end) = cdf(trainedRv, xLoc(:));
+                        otherwise
+                            error('Invalid type specified')
+                    end
+                else
+                    F(:,end) = nan(size(xLoc(:)));
+                end
             end
             
             hs = plot(xLoc,F);
@@ -733,14 +790,28 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
                 high = high + range/10;
                 
                 xLoc = linspace(low, high, Options.nDensitySamples);
-                xLoc = sort(cat(1,xLoc(:),ds.X(:,iFeature)),'ascend');
+                
+                isMissing = isnan(ds.X(:,iFeature));
+                xLoc = sort(cat(1,xLoc(:),ds.X(~isMissing,iFeature)),'ascend');
                 
                 F = zeros([length(xLoc), nClasses+ ds.hasUnlabeled]);
                 for cY = 1:nClasses
-                    F(:,cY) = pdf(mle(prtRvKde('minimumBandwidth',Options.minimumKernelBandwidth),ds.getObservationsByClassInd(cY,iFeature)),xLoc(:));
+                    cX = ds.getObservationsByClassInd(cY,iFeature);
+                    cX = cX(~isnan(cX));
+                    if ~isempty(cX)
+                        F(:,cY) = pdf(mle(prtRvKde('minimumBandwidth',Options.minimumKernelBandwidth),cX),xLoc(:));
+                    else
+                        F(:,cY) = nan(size(xLoc(:)));
+                    end
                 end
                 if ds.hasUnlabeled
-                    F(:,end) = pdf(mle(prtRvKde('minimumBandwidth',Options.minimumKernelBandwidth),ds.getDataUnlabeled(iFeature)),xLoc(:));
+                    cX = ds.getDataUnlabeled(iFeature);
+                    cX = cX(~isnan(cX));
+                    if ~isempty(cX)
+                        F(:,end) = pdf(mle(prtRvKde('minimumBandwidth',Options.minimumKernelBandwidth),cX),xLoc(:));
+                    else
+                        F(:,end) = nan(size(xLoc(:)));
+                    end
                 end
                 
                 %F = bsxfun(@rdivide,F,trapz(xLoc, F));
@@ -1227,100 +1298,139 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
             
         end
         
-        function varargout = plot(obj, featureIndices)
-            % Plot   Plot the prtDataSetClass object
+        function varargout = plot(self, varargin)
+            % Plot   Scatter plot the prtDataSetClass
             %
             %   dataSet.plot() Plots the prtDataSetClass object.
+            %   dataSet.plot(featureInds) Plots the prtDataSetClass object.
+            %   dataSet.plot(featureInds, ax) Plots the prtDataSetClass object.
+            %   dataSet.plot(ax) Plots the prtDataSetClass object.
             
-            if length(obj) > 1
-                error('Cannot plot multiple prtDataSetClass Objects simultaneously');
+            switch nargin
+                case 1
+                    ax = gca;
+                    featureInds = 1:self.nFeatures;
+                case 2
+                    if isa(varargin{1},'matlab.graphics.axis.Axes')
+                        ax = varargin{1};
+                        featureInds = 1:self.nFeatures;
+                    else
+                        ax = gca; % This call to gca will create a figure if it doesn't already exist
+                        featureInds = varargin{1};
+                    end
+                case 3
+                    if isa(varargin{1},'matlab.graphics.axis.Axes')
+                        ax = varargin{1};
+                        featureInds = varargin{2};
+                    elseif isa(varargin{2},'matlab.graphics.axis.Axes')
+                        ax = varargin{2};
+                        featureInds = varargin{1};
+                    else
+                        error('At least one of the two supplied additional inputs must be an axes handle')
+                    end
+                        
+                otherwise
             end
-            if nargin < 2 || isempty(featureIndices)
-                featureIndices = 1:obj.nFeatures;
-            end
-            if islogical(featureIndices)
-                featureIndices = find(featureIndices);
+            if islogical(featureInds)
+                featureInds = find(featureInds); 
             end
             
-            nPlotDimensions = length(featureIndices);
+            nPlotDimensions = length(featureInds);
             if nPlotDimensions < 1
-                warning('prt:plot:NoPlotDimensionality','No plot dimensions requested.');
+                warning('prt:plot:NoPlotDimensionality','No dimensions requested for scatter plot.');
                 varargout = {};
-                return
+                return                
             elseif nPlotDimensions > 3
-                %Too many dimensions; default to explore()
-                explore(obj);
-                varargout = {};
-                return
-            end
-            nClasses = obj.nClasses;
-            if nClasses == 0 && ~obj.hasUnlabeled
-                obj.Y = zeros(obj.nObservations,1);
-                nClasses = obj.nClasses;
+                warning('prt:plot:TooManyScatterDimensionality','Too many dimensions requested for scatter resorting to the first two dimensions only.');
+                self = self.retainFeatures([1 2 3]);
+            else
+                self = self.retainFeatures(featureInds);
             end
             
-            classColors = obj.plotOptions.colorsFunction(obj.nClasses);
-            classSymbols = obj.plotOptions.symbolsFunction(obj.nClasses);
-            lineWidth = obj.plotOptions.symbolLineWidth;
-            markerSize = obj.plotOptions.symbolSize;
+            
+            nClasses = self.nClasses;
+            if nClasses == 0 && ~self.hasUnlabeled % No labels
+                self.Y = zeros(self.nObservations,1);
+                nClasses = self.nClasses;
+            end
             
             handleArray = prtUtilPreAllocateHandles(nClasses,1);
             
-            holdState = get(gca,'nextPlot');
-            % This call to gca will create a figure if it doesn't already
-            % exist
+            holdState = get(ax,'nextPlot');
             
-            if obj.hasUnlabeled
+            if self.hasUnlabeled
                 % There are unlabeled observations so we should plot those
-                % first That way they appear underneath of the labeled
+                % first that way they appear underneath of the labeled
                 % observations
                 
-                featureNames = obj.getFeatureNames(featureIndices);
-                cX = obj.getDataUnlabeled(featureIndices);
-                classEdgeColor = prtPlotUtilClassColorUnlabeled; % FIX: Move to plotOptions?
-                classColor = prtPlotUtilClassColorUnlabeled; % FIX: Move to plotOptions?
-                classSymbol = prtPlotUtilClassSymbolsUnlabeled; % FIX: Move to plotOptions
-                unlabaledLegenedName = prtPlotUtilUnlabeledLegendString; % FIX: Move to plotOptions
-                unlabeledHandle = prtPlotUtilScatter(cX,featureNames,classSymbol,classColor,classEdgeColor,lineWidth, markerSize);
-                
+                cX = self.getDataUnlabeled();
+                unlabeledHandle = prtPlotUtilScatter(cX);
                 hold on;
             end
             
             % Loop through classes and plot
-            uniqueClasses = obj.uniqueClasses;
-            for i = 1:nClasses
-                cX = obj.getObservationsByClassInd(i, featureIndices);
-                %Note, class colors should really be linked to
-                %uniqueClasses(i), not i
-                classEdgeColor = obj.plotOptions.symbolEdgeModificationFunction(classColors(i,:));
+            uniqueClasses = self.uniqueClasses;
+            for iClass = 1:nClasses
+                cX = self.getObservationsByClassInd(iClass);
                 
-                featureNames = obj.getFeatureNames(featureIndices);
                 if size(cX,2) == 1
                     if ~isempty(uniqueClasses)
-                        cX = cat(2,cX,repmat(uniqueClasses(i),size(cX,1),1));
+                        cX = cat(2,cX,repmat(uniqueClasses(iClass),size(cX,1),1));
                     else
-                        %Default behaviour:
-                        cX = cat(2,cX,ones(size(cX,1),1));
+                        cX = cat(2,cX,zeros(size(cX,1),1));
                     end
-                    featureNames{end+1} = 'Target'; %#ok<AGROW>
                 end
-                handleArray(i) = prtPlotUtilScatter(cX,featureNames,classSymbols(i),classColors(i,:),classEdgeColor,lineWidth, markerSize);
-                
+                handleArray(iClass) = prtPlotUtilScatter(cX);
                 hold on;
             end
             set(gca,'nextPlot',holdState);
-            % Set title
-            title(obj.name);
             
-            if obj.hasUnlabeled
+            alpha = 0.6;
+            if self.hasUnlabeled
+                set(unlabeledHandle,'MarkerFaceColor',prtPlotUtilClassColorUnlabeled,...
+                    'MarkerEdgeColor',prtPlotUtilClassColorUnlabeled,...
+                    'MarkerFaceAlpha',alpha,...
+                    'Marker',prtPlotUtilClassSymbolsUnlabeled);
+            end
+            
+            symbols = self.plotOptions.symbolsFunction(nClasses);
+            colors = self.plotOptions.colorsFunction(nClasses);
+            edgeColors = prtPlotUtilDarkenColors(colors);
+            for iClass = 1:nClasses
+                set(handleArray(iClass),'MarkerFaceColor',colors(iClass,:),...
+                    'MarkerEdgeColor',edgeColors(iClass,:),...
+                    'MarkerFaceAlpha',alpha,...
+                    'Marker',symbols(iClass))
+            end
+            
+            fNames = self.getFeatureNames;
+            xlabel(fNames{1});
+            if nPlotDimensions > 1
+                ylabel(fNames{2})
+            else
+                if self.isLabeled
+                    ylabel('Targets')
+                end
+            end
+            if nPlotDimensions > 2
+                zlabel(fNames{3})
+            end
+            
+            % Set title
+            title(self.name);
+            grid on
+            grid minor
+            
+            if self.hasUnlabeled
                 handleArray = cat(1, handleArray(:), unlabeledHandle);
             end
             
             % Create legend
             legendStrings = [];
-            if obj.isLabeled
-                legendStrings = getClassNamesInterp(obj);
-                if obj.hasUnlabeled
+            if self.isLabeled
+                legendStrings = getClassNamesInterp(self);
+                if self.hasUnlabeled
+                    unlabaledLegenedName = 'unknown';
                     legendStrings = cat(1,legendStrings,{unlabaledLegenedName});
                 end
                 legend(handleArray,legendStrings,'Location','SouthEast');
@@ -1332,6 +1442,7 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
                 varargout = {handleArray,legendStrings};
             end
         end
+        
         function varargout = plotSortedFeature(obj, featureIndex)
             % PlotSortedFeature   Plots a feature of a prtDataSetClass
             % object sorted 
@@ -1499,7 +1610,7 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
             dsFoldOut = crossValidateCheckFoldResultsWarnNumberOfClassesBad(dsIn, dsTrain, dsTest, dsFoldOut);
         end
         function self = acquireNonDataAttributesFrom(self, dataSet)
-            self = acquireNonDataAttributesFrom@prtDataSetBase(self, dataSet);
+            self = acquireNonDataAttributesFrom@prtDataSetStandard(self, dataSet);
             self = acquireCategoricalTargetsNonDataAttributes(self, dataSet);
         end
         

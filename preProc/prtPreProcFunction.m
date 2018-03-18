@@ -88,6 +88,12 @@ classdef prtPreProcFunction < prtPreProc
     end
     methods
         function self = set.transformationFunction(self,val)
+            if isa(val,'char')
+                % convert strings to function handles
+                % might be a good idea to do this to avoid other bundling
+                % the current workspace into the function used
+                val = str2func(val);
+            end
             assert(isa(val,'function_handle'), 'transformationFunction must be a function handle that accepts at least one input argument.');
             self.transformationFunction = val;
         end

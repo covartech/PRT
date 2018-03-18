@@ -85,7 +85,7 @@ classdef prtDecisionBinaryMinPe < prtDecisionBinary
             
             [pf,pd,thresh] = prtScoreRoc(dataSet.getObservations,dataSet.getTargets);
             if isa(self.priors,'char')
-                switch lower(self.priors);
+                switch lower(self.priors)
                     case 'equal'
                         pH0 = 0.5;
                         pH1 = 0.5;
@@ -106,7 +106,11 @@ classdef prtDecisionBinaryMinPe < prtDecisionBinary
             pe = prtUtilPfPd2Pe(pf,pd,pH0,pH1);
             
             [v,minPeIndex] = min(pe); %#ok<ASGLU>
-            self.threshold = thresh(minPeIndex);
+            if minPeIndex < length(thresh)
+                self.threshold = mean(thresh([minPeIndex,minPeIndex+1]));
+            else
+                self.threshold = thresh(minPeIndex);
+            end
             self.classList = dataSet.uniqueClasses;
         end
     end

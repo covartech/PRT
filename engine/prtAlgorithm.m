@@ -109,7 +109,13 @@ classdef prtAlgorithm < prtAction & prtActionBig
     end
     
     methods (Hidden = true)
-		
+		function self = clearDataSet(self)
+            self.dataSet = [];
+            % Also clear dataSets for each actionCell element
+            for iAction = 1:length(self.actionCell)
+                self.actionCell{iAction} = self.actionCell{iAction}.clearDataSet;
+            end
+        end
         function str = textSummary(self)
             str = '';
             for i = 1:length(self.actionCell)

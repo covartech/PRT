@@ -116,7 +116,7 @@ addParamValue(parser,'markerFaceColors',options.markerFaceColors, @(s)(isempty(s
 addParamValue(parser,'markerEdgeColors',options.markerEdgeColors, @(s)(isempty(s) || (isnumeric(s) && size(s,2)==3) || isa(s,'function_handle')));
 addParamValue(parser,'markers',options.markers, @(s)((iscell(s) && all(cellfun(@(s2)ismember(s2,{'none','+','o','*','.','x','s','square','d','diamond','^','v','<','>','p','pentagram','h','hexagram'}),s)) || (ischar(s) && (all(ismember(s,'+o*.xsd^v><ph')))) || isa(s,'function_handle'))));
 addParamValue(parser,'lineStyles',options.lineStyles, @(s)(iscell(s) && all(cellfun(@(s2)ismember(s2,{'-','--',':','-.','none'}),s)) || isa(s,'function_handle')));
-addParamValue(parser,'markerSizes',options.markers, @(s)isnumeric(s));
+addParamValue(parser,'markerSizes',options.markerSizes, @(s)isnumeric(s));
 addParamValue(parser,'lineWidths',options.lineWidths, @(s)isnumeric(s));
 addParamValue(parser,'markerEdgeColorModificationFunction',options.markerEdgeColorModificationFunction, @(s)isempty(s) || isa(s,'function_handle'));
 addParamValue(parser,'legendStrings',options.legendStrings, @(s)iscell(s));

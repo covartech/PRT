@@ -123,8 +123,9 @@ classdef prtClusterKmodes < prtCluster %prtClass %prtAction %should extent prtCl
                 distanceMat = self.distanceMetricFn(data,self.clusterCenters);
                 [twiddle,clusterIndex] = min(distanceMat,[],2); %#ok<ASGLU>
     
-                self.trainingIterationPlotVisualization(data,self.clusterCenters,clusterIndex,iteration);
-                
+                if self.trainingPlotVisualization
+                    self.trainingIterationPlotVisualization(data,self.clusterCenters,clusterIndex,iteration);
+                end
                 %Handle empty clusters:
                 nMaxFixSteps = 10;
                 for iFix = 1:nMaxFixSteps

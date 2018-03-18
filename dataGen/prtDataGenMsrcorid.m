@@ -80,8 +80,11 @@ for i = 1:length(classList)
     if ~exist(cDir,'dir')
         error('prt:MissingData','Could not locate the MSRCORID sub-folder %s',cDir);
     end
-
-    fList = subDir(cDir,'*.jpg');
+    
+    fList = prtUtilSubDir(cDir,'*.jpg');
+    if isempty(fList)
+        fList = prtUtilSubDir(cDir,'*.JPG');
+    end
     
     imgCell{i} = cell(min([maxNumExamplesPerClass,length(fList)]),1);
     for imgInd = 1:min([maxNumExamplesPerClass,length(fList)]);

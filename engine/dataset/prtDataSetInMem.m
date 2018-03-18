@@ -367,6 +367,14 @@ classdef prtDataSetInMem < prtDataSetBase
             % Return a new data set, dsOut, with targets specified by dataIn.
             %
             
+            if isa(dataIn,'cell')
+                [targets,classNames] = prtUtilStringsToClassNumbers(dataIn);
+                self.internalTargets = targets;
+                self = self.update;
+                self.classNames = classNames;
+                return
+            end
+            
             if nargin > 2
                 self.internalTargets(varargin{:}) = dataIn;
             else
@@ -735,9 +743,7 @@ classdef prtDataSetInMem < prtDataSetBase
     
     methods (Hidden = true)
         function self = acquireNonDataAttributesFrom(self, dataSet)
-            if ~isempty(dataSet.targets) && isempty(self.targets)
-                self.targets = dataSet.targets;
-            end
+            self = acquireNonDataAttributesFrom@prtDataSetBase(self, dataSet);
             
             if ~isempty(dataSet.observationInfo) && isempty(self.observationInfo)
                 self.observationInfo = dataSet.observationInfo;
@@ -754,10 +760,6 @@ classdef prtDataSetInMem < prtDataSetBase
             if dataSet.hasTargetNames && ~self.hasTargetNames
                 self = self.setTargetNames(dataSet.getTargetNames);
             end
-            
-            self.name = dataSet.name;
-            self.description = dataSet.description;
-            self.userData = dataSet.userData;
         end
         
         function has = hasObservationNames(self)

@@ -210,6 +210,16 @@ classdef prtDataInterfaceCategoricalTargets
             if isa(cellIn,'char')
                 cellIn = {cellIn};
             end
+            if isa(cellIn,'containers.Map')
+                map = cellIn;
+                cellIn = cell(cellIn.Count,1);
+                keys = map.keys;
+                for i = 1:map.Count
+                    cellIn{i}{1} = keys{i};
+                    cellIn{i}{2} = map(keys{i});
+                end
+            end
+            
             if isa(cellIn{1},'char')
                 targets = self.uniqueClasses;
                 for i = 1:length(targets)

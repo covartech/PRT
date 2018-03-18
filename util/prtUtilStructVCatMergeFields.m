@@ -1,11 +1,5 @@
-function B = prtUtilStructVCatMergeFields(A,B)
+function B = prtUtilStructVCatMergeFields(varargin)
 % B = prtUtilStructVCatMergeFields(A,B)
-
-
-
-
-
-
 
 % Some sanity checks
 %
@@ -33,38 +27,40 @@ function B = prtUtilStructVCatMergeFields(A,B)
 % S2(1,3).d = 'qwer';
 %  
 % Out = prtUtilStructVCatMergeFields(S1,S2); % This errors
+
 %%
-if isempty(A)  %base case
-    return;
+if nargin==1 && iscell(varargin{1})
+    structCell = varargin{1};
+else
+    structCell = varargin;
 end
-if isempty(B)
-    B = A;
-    return;
+structCell(cellfun(@isempty,structCell)) = [];
+nStructs = length(structCell);
+
+if nStructs<2
+    B = structCell{1};
+    return
 end
 
-assert(isstruct(A) && isstruct(B),'prt:prtUtilMergeStructureArrays','inputs must be structure arrays');
+assert(all(cellfun(@isstruct,structCell)),'prt:prtUtilMergeStructureArrays','inputs must be structure arrays');
 
-fnA = fieldnames(A);
-fnB = fieldnames(B);
+fn = cellfun(@(a){fieldnames(a)},structCell);
+allFields = {};
+for iStruct = 1:nStructs
+    allFields = union(allFields,fn{iStruct});
+end
 
-if ~isequal(fnA,fnB)
-    % The two structures have different fields
-    % We only need to reference the first entry in order to force matlab to
-    % initialize everything else to []
-    fieldsNotInB = setdiff(fnA,fnB);
-    for iField = 1:length(fieldsNotInB)
-        B(1).(fieldsNotInB{iField}) = [];
+for iStruct = 1:nStructs
+    missingFields = setdiff(allFields,fn{iStruct});
+    for iField = 1:length(missingFields)
+        tmp = cell(size(structCell{iStruct}));
+        [structCell{iStruct}(:).(missingFields{iField})] = tmp{:};
     end
-    fieldsNotInA= setdiff(fnB,fnA);
-    for iField = 1:length(fieldsNotInA)
-        A(1).(fieldsNotInA{iField}) = [];
-    end
+    structCell{iStruct} = orderfields(structCell{iStruct});
 end
-% We need to make sure the fields are in the right order
-B = orderfields(B, A);
 
 try
-    B = cat(1,A,B);
+    B = cat(1,structCell{:});
 catch
     error('prt:prtUtilStructVCatMergeFields','arguments dimensions are not consistent.');
 end
