@@ -1385,7 +1385,7 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
             end
             set(gca,'nextPlot',holdState);
             
-            alpha = 0.6;
+            alpha = self.plotOptions.markerFaceAlpha;
             if self.hasUnlabeled
                 set(unlabeledHandle,'MarkerFaceColor',prtPlotUtilClassColorUnlabeled,...
                     'MarkerEdgeColor',prtPlotUtilClassColorUnlabeled,...

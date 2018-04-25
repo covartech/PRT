@@ -18,6 +18,7 @@ classdef prtOptionsDataSetClassPlot
         
         symbolLineWidth = 1;
         symbolSize = 36;
+        markerFaceAlpha = 0.6;
         
         starLineWidth = 0.5;
     end
