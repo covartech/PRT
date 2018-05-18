@@ -44,7 +44,7 @@ classdef prtClusterSphericalKmeans < prtCluster
         nIters = 10;
     end
     
-    properties (SetAccess = protected)
+    properties
         clusterCenters = [];   % The cluster centers
     end
     
@@ -74,7 +74,6 @@ classdef prtClusterSphericalKmeans < prtCluster
             
             clusters = bsxfun(@rdivide,clusters,sqrt(sum(clusters.^2,1)));
             clusters(isnan(clusters)) = 0;
-            
             inner = X*clusters;
             [val,indJ] = max(inner,[],2);
             
@@ -96,13 +95,13 @@ classdef prtClusterSphericalKmeans < prtCluster
                 boolMat(matInd) = true;
                 inner(~boolMat) = 0;
             end
-            self.clusterCenters = clusters;
+            self.clusterCenters = clusters';
         end
         
         function dataSet = runAction(self,dataSet)
             
             X = dataSet.X;
-            inner = X*self.clusterCenters;  
+            inner = X*self.clusterCenters';  
             dataSet.X = inner;
             %             [val,indJ] = max(inner,[],2);
             %             matInd = sub2ind(size(inner),(1:length(indJ))',indJ);

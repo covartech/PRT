@@ -50,8 +50,7 @@ classdef prtClusterGmm < prtCluster
     properties
         nClusters = 3; % The number of clusters
     end
-    properties (SetAccess = protected)
-        clusterCenters = [];  % The cluster centers
+    properties
         gmmRv = prtRvGmm;     % The Gaussian mixture model found during training
     end
     
@@ -67,8 +66,15 @@ classdef prtClusterGmm < prtCluster
         % Allow for string, value pairs
         % Allow for string, value pairs
         function Obj = prtClusterGmm(varargin)
-            
             Obj = prtUtilAssignStringValuePairs(Obj,varargin{:});
+        end
+    end
+    
+    methods
+        function self = sortClusters(self)
+            means = cat(1,self.gmmRv.components.mu);
+            [~,inds] = sort(means(:,1));
+            self.gmmRv.components = self.gmmRv.components(inds);
         end
     end
     

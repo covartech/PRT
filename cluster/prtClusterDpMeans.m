@@ -39,6 +39,7 @@ classdef prtClusterDpMeans < prtCluster
     end
     
     methods
+        
         function self = prtClusterDpMeans(varargin)
             self = prtUtilAssignStringValuePairs(self,varargin{:});
         end
@@ -54,6 +55,8 @@ classdef prtClusterDpMeans < prtCluster
         
         function self = trainAction(self,ds)
             self.clusterCenters = prtUtilDpMeans(ds.X, self.lambda);
+            [~,inds] = sort(self.clusterCenters(:,1));
+            
             self.nClusters  = size(self.clusterCenters,1);
         end
         

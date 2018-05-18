@@ -59,7 +59,7 @@ classdef prtClusterMeanShiftEuclidean < prtCluster
         distanceFunction = @(ds,mu)prtDistanceEuclidean(ds,mu);
 
     end
-    properties (SetAccess = protected)
+    properties
         clusterCenters = [];   % The cluster centers
     end
     

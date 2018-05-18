@@ -13,6 +13,14 @@ classdef prtCluster < prtAction
     %                   has been trained with a data set of 3 dimensions or
     %                   less.
     %
+    %   prtCluster also implements the default "sortClusters" method, which
+    %   assumes the existance of a property "clusterCenters" which is
+    %   nClusters x nFeatures and represents the centers of the clusters.
+    %   If the field clusterCenters does not exist in the clustering
+    %   object, or you want to change how sortClusters works, have your
+    %   class overload the sortClusters method (see prtClusterGmm for an
+    %   example).
+    %
     %   A prtCluster object inherits the TRAIN, RUN, CROSSVALIDATE and KFOLDS
     %   functions from the prtAction object.
     %
@@ -45,9 +53,13 @@ classdef prtCluster < prtAction
     properties (SetAccess = protected)
         isSupervised = false;  % False
         isCrossValidateValid = true; % True
-	end
+    end
+    properties 
+        generateSortedClusters = true;
+    end
 	
 	methods (Hidden = true)
+        
         function featureNameModificationFunction = getFeatureNameModificationFunction(self)
             if ~self.includesDecision
 				featureNameModificationFunction = prtUtilFeatureNameModificationFunctionHandleCreator('%s Membership in cluster #index#', self.nameAbbreviation);
@@ -58,6 +70,15 @@ classdef prtCluster < prtAction
 	end
 	
     methods
+        function self = sortClusters(self)
+            if isprop(self,'clusterCenters')
+                [~,inds] = sort(self.clusterCenters(:,1));
+                self.clusterCenters = self.clusterCenters(inds,:);
+            else
+                disp('Could not automatically sort clusters');
+            end
+        end
+        
         function self = prtCluster()
             % As an action subclass we must set the properties to reflect
             % our dataset requirements
@@ -136,7 +157,11 @@ classdef prtCluster < prtAction
     methods (Access = protected, Hidden = true)
 
         function self = postTrainProcessing(self,ds)
-             if ~isempty(self.internalDecider)
+            
+            if self.generateSortedClusters
+                self = self.sortClusters();
+            end
+            if ~isempty(self.internalDecider)
                 tempself = self;
                 tempself.internalDecider = [];
                 yOut = tempself.run(ds);

@@ -82,7 +82,7 @@ classdef prtClusterKmeans < prtCluster %prtClass %prtAction %should extent prtCl
         distanceMetricFn = @prtDistanceEuclidean;  % The distance metric; should be a function like D = prtDistanceEuclidean(dataSet1,dataSet2)
         initialMeans = 'plusplus';
     end
-    properties (SetAccess = protected)
+    properties
         clusterCenters = [];   % The cluster centers
     end
     properties (SetAccess = private, Hidden = true)

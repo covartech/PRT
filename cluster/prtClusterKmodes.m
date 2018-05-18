@@ -52,7 +52,7 @@ classdef prtClusterKmodes < prtCluster %prtClass %prtAction %should extent prtCl
         trainingPlotVisualization = false;
     end
     
-    properties (SetAccess = protected)
+    properties
         clusterCenters = [];   % The cluster centers
     end
     properties (SetAccess = private, Hidden = true)
@@ -109,7 +109,7 @@ classdef prtClusterKmodes < prtCluster %prtClass %prtAction %should extent prtCl
                 nInitializeKMeansIterations = 1;
                 self.clusterCenters = prtUtilKmeans(ds.getObservations,self.nClusters,'distanceMetricFn',self.distanceMetricFn,'handleEmptyClusters',self.handleEmptyClusters,'initialMeans',self.initialClusterCenters,'maxIterations',nInitializeKMeansIterations);
             else
-                self.clusterCenters = self.initialClusterCenters;e
+                self.clusterCenters = self.initialClusterCenters;
             end
             
             data = ds.data;

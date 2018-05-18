@@ -105,7 +105,7 @@ classdef prtClusterSpectralKmeans < prtCluster %prtClass %prtAction %should exte
         
     end
     
-    properties (SetAccess = protected)
+    properties
         clusterCenters = [];   % The cluster centers
         eigValues=[];          % Eigenvalue output from Spectral Dimensionality reduction
         eigVectors=[];         % EigenVectors output from Spectral Dimensionality reduction
@@ -123,7 +123,6 @@ classdef prtClusterSpectralKmeans < prtCluster %prtClass %prtAction %should exte
             end
             Obj.nClusters = value;
         end
-        
         
         
         function Obj = prtClusterSpectralKmeans(varargin)
@@ -145,8 +144,6 @@ classdef prtClusterSpectralKmeans < prtCluster %prtClass %prtAction %should exte
             [Obj.eigValues, Obj.eigVectors] = prtUtilSpectralDimensionalityReduction(DataSet.X, Obj.nEigs,'sigma',Obj.sigma);          %Spectral dimensionality reduction
             embeddedDataSet=prtDataSetClass(Obj.eigVectors,DataSet.Y);                                                         %Generate prtDatSetClass of data in truncated eigenspace
             Obj.clusterCenters = prtUtilKmeans(embeddedDataSet.getObservations,Obj.nClusters,'distanceMetricFn',Obj.distanceMetricFn,'handleEmptyClusters',Obj.kmeansHandleEmptyClusters);   %Kmeans on spectral
-            
-            
         end
         
         function DataSet = runAction(Obj,DataSet)
