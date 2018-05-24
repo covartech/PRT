@@ -73,6 +73,31 @@ classdef prtClusterDpMeans < prtCluster
             ds = ds.setObservations(binaryMatrix);
         end
     end
+    
+    methods (Hidden)
+        function self = optimizeLambda(self,ds,nClustersGoal,minMaxLambda)
+            % self = optimizeLambda(self,ds,nClustersGoal,minMaxLambda)
+            %   Determine the lambda to get as close as possible to
+            %   nClustersGoal # of clusters.  minMaxLambda is a 1x2 vector
+            %   of the min and max lambda values allowed.
+            %
+            
+            centerNumClusters = nan;
+            while (centerNumClusters ~= nClustersGoal && ...
+                    range(minMaxLambda) > 1e-6)
+                if centerNumClusters > nClustersGoal
+                    minMaxLambda(1) = mean(minMaxLambda);
+                elseif centerNumClusters < nClustersGoal
+                    minMaxLambda(2) = mean(minMaxLambda);
+                else
+                    % OK Initializing, centerNumClusters = nan!
+                end
+                self.lambda = mean(minMaxLambda);
+                self = self.train(ds);
+                centerNumClusters = self.nClusters;
+            end
+        end
+    end
     methods (Hidden = true)
         function self = pruneSmallClusters(self, requiredMinObservations, ds)
             
