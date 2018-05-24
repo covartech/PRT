@@ -93,6 +93,9 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
             end
             dsR = prtDataSetRegress(self.X,y);
             dsR = acquireNonDataAttributesFrom(dsR, self);
+            dsR.featureNames = self.featureNames;
+            dsR.featureInfo = self.featureInfo;
+            
         end
         
         function obj = prtDataSetClass(varargin)
