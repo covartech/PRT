@@ -281,32 +281,55 @@ classdef prtDataSetStandard < prtDataSetInMem
 			% object
 			%
 			% data = dataSet.getFeatures() returns dataSet.data
-			%
-			% data = dataSet.getFeatures(indices) returns only the
-			% features of the dataSet object specified by indices, e.g.,
-			%  data = dataSet.data(:,indices);
-			
-			if nargin == 1
-				featureIndices = 1:obj.nFeatures;
-			else
-				featureIndices = varargin{1};
-                if isa(featureIndices,'char')
-                    featureIndices = {featureIndices};
+            %
+            % data = dataSet.getFeatures(indices) returns only the
+            % features of the dataSet object specified by indices, e.g.,
+            %  data = dataSet.data(:,indices);
+            % 
+            % data = dataSet.getFeatures({f1,f2,...}) returns only the
+            % features of the dataSet object where dataSet.featureNames
+            % match f1, f2, etc.
+            %   
+            %   ds = prtDataGenUnimodal;
+            %   ds.featureNames = {'a','b'};
+            %   isequal(ds.data(:,1),ds.getFeatures(1))
+            %   isequal(ds.getFeatures(1),ds.getFeatures('a'))
+            %   isequal(ds.getFeatures(2),ds.getFeatures('b'))
+            %   ds.featureNames = {'bb','aa'};
+            %   isequal(ds.getFeatures(2),ds.getFeatures('aa'))
+            %   isequal(ds.getFeatures(1),ds.getFeatures('bb'))
+            %   % This should error!
+            %   % ds.getFeatures('c') 
+            
+            if nargin > 2
+                error('dataSet.getFeatures(...) requires 0 or 1 input arguments');
+            elseif nargin == 1
+                featureIndices = 1:obj.nFeatures;
+            elseif isnumeric(varargin{1}) || islogical(varargin{1})
+                featureIndices = varargin{1};
+            elseif ischar(varargin{1}) || iscellstr(varargin{1})
+                featureStrCell = varargin{1};
+                if isa(featureStrCell,'char')
+                    featureStrCell = {featureStrCell};
                 end
-                if isa(featureIndices,'cell')
-                    featureNames = obj.featureNames;
-                    for i = 1:length(featureIndices)
-                        cName = featureIndices{i};
-                        featureIndices{i} = find(strcmpi(featureNames,cName));
-                        if isempty(featureIndices{i})
-                            error('prt:getFeatures:invalidFeature','The feature name provided: %s, does not match any of the available feature names',cName);
-                        elseif ~isscalar(featureIndices{i})
-                            warning('prt:getFeatures:duplicateFeature','The feature name provided: %s, matches more than one feature in the data set',cName);
-                        end
+                
+                % featureIndices is a 1 x N cell since cell2mat works even
+                % for {1, [1 2]} but not for {1, [1 2]}'
+                featureIndices = cell(1,numel(featureStrCell)); 
+                featureNamesLocal = obj.featureNames;
+                
+                for i = 1:numel(featureStrCell)
+                    cName = featureStrCell{i};
+                    featureIndices{i} = find(strcmpi(featureNamesLocal,cName));
+                    if isempty(featureIndices{i})
+                        error('prt:getFeatures:invalidFeature','The feature name provided: %s, does not match any of the available feature names',cName);
+                    elseif ~isscalar(featureIndices{i})
+                        warning('prt:getFeatures:duplicateFeature','The feature name provided: %s, matches more than one feature in the data set',cName);
                     end
-                    featureIndices = cell2mat(featureIndices);
                 end
-			end
+                featureIndices = cell2mat(featureIndices);
+            end
+            
 			try
 				data = obj.data(:,featureIndices);
 			catch ME
