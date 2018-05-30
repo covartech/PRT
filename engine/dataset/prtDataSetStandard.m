@@ -56,29 +56,6 @@ classdef prtDataSetStandard < prtDataSetInMem
 			val = self.featureNameModificationMaskInternal;
 		end
 		
-        function data = getData(self,varargin)
-            % data = getData(dataSet)
-            %  Return dataSet.data
-            %
-            % ds = prtDataGenUnimodal;
-            % data = ds.getData(1:3,:);
-            % data = ds.getData(1:3,2);
-            % data = ds.getData({'Feature 1','Feature 2'});  %call getFeatures
-            % 
-            
-            % IF there is one input specified, and either:
-            %   it's a string, its not a colon
-            % OR
-            %   it's a cell array of strings
-            % THEN 
-            %   Use getFeatures(...)
-            if nargin == 2 && ((ischar(varargin{1}) && ~isequal(varargin{1},':')) || iscellstr(varargin{1}))
-                data = self.getFeatures(varargin{:});
-                return;
-            end
-            data = getData@prtDataSetInMem(self,varargin{:});
-        end
-		
 		
 	end
 	
