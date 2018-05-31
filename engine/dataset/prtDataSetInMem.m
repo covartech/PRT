@@ -315,11 +315,40 @@ classdef prtDataSetInMem < prtDataSetBase
         end
         
         function data = getData(self,varargin)
-            % data = getData(dataSet)
+            % data = ds.getData()
             %  Return dataSet.data
-            
+            % data = ds.getData(ind1)
+            %   Return the rows of dataSet.data corresponding to ind1
+            % data = ds.getData(ind1,ind2)
+            %   Return the rows of dataSet.data corresponding to ind1 and
+            %   columns corresponding to ind2
+            %
+            %   ind1 and ind2 must be numerical, logical, or the string ':'
+            %   
             if nargin == 2
                 varargin{2} = ':';
+            end
+            
+            % Check input arguments: 
+            %   Inputs must be:
+            %       Numeric, Logical, or ':'
+            if ~isempty(varargin)
+                if ~(isequal(varargin{1},':') || isnumeric(varargin{1}) || islogical(varargin{1}))
+                    if ischar(varargin{1})
+                        classStr = sprintf('(%s (%s))',class(varargin{1}),varargin{1});
+                    else
+                        classStr = sprintf('(%s)',class(varargin{1}));
+                    end
+                    error('dataSet.getData(ind1,...) is only supported for numerical, logical or '':'' arguments, but ind1 was of type %s',classStr);
+                end
+                if ~(isequal(varargin{2},':') || isnumeric(varargin{2}) || islogical(varargin{2}))
+                    if ischar(varargin{2})
+                        classStr = sprintf('(%s (%s))',class(varargin{2}),varargin{2});
+                    else
+                        classStr = sprintf('(%s)',class(varargin{2}));
+                    end
+                    error('dataSet.getData(...,ind2) is only supported for numerical, logical or '':'' arguments, but ind2 was of type %s',classStr);
+                end
             end
             
             try
