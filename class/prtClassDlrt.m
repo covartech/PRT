@@ -140,7 +140,8 @@ classdef prtClassDlrt < prtClass
                 y = log(n0./n1) + TestDataSet.nFeatures*log(dH0./dH1);
             end
             
-            DataSetOut = prtDataSetClass(y);
+            DataSetOut = TestDataSet;
+            DataSetOut.X = y;
         end
         
     end
