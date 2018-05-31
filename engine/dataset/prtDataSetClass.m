@@ -1353,7 +1353,7 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
             
             nClasses = self.nClasses;
             if nClasses == 0 && ~self.hasUnlabeled % No labels
-                self.Y = zeros(self.nObservations,1);
+                self.Y = nan(self.nObservations,1);
                 nClasses = self.nClasses;
             end
             
@@ -1475,7 +1475,7 @@ classdef prtDataSetClass < prtDataSetStandard & prtDataInterfaceCategoricalTarge
             
             nClasses = obj.nClasses;
             if nClasses == 0 && ~obj.hasUnlabeled
-                obj.Y = zeros(obj.nObservations,1);
+                obj.Y = nan(obj.nObservations,1);
                 nClasses = obj.nClasses;
             end
             
