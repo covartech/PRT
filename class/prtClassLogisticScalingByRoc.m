@@ -44,7 +44,7 @@ classdef prtClassLogisticScalingByRoc < prtClass
             end
             
             % interp1 does not like non-uniqueness
-            [uFar,~,uInd] = unique(modelFars);
+            [uFar,uInd] = unique(modelFars);
             uConf = modelConfs(uInd);
             
             % NOTE: farLow maps to confHigh, farHigh maps to confLow
