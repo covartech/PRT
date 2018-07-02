@@ -166,4 +166,15 @@ classdef prtFeatSelSfs < prtFeatSel
             DataSet = DataSet.retainFeatures(Obj.selectedFeatures);
         end
     end
+	
+	methods
+        function hStem = stem(self)
+            
+            sortedFeatureNames = self.dataSet.featureNames(self.selectedFeatures);
+            hStem = stem(self.performance);
+            set(gca,'xtick',1:length(self.performance));
+            set(gca,'XTickLabel',sortedFeatureNames);
+            set(gca,'XTickLabelRotation',20);
+        end
+    end
 end

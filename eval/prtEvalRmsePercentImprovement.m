@@ -1,4 +1,4 @@
-function rmseImprovement = prtEvalRmsePercentImprovement(regressor,dataSet,nFolds)
+function rmseImprovement = prtEvalRmsePercentImprovement(regressor,dataSet,nFolds, varargin)
 % prtEvalRmsePercentImprovement Calculate the percent RMSE improvement from
 % training the regressor on the data set (vs. using the mean of the
 % dataSet.targets)
@@ -12,7 +12,7 @@ assert(isa(regressor,'prtAction') && isa(dataSet,'prtDataSetBase'),'prt:prtEvalM
 if nargin < 3 || isempty(nFolds)
     nFolds = 1;
 end
-results = prtUtilEvalParseAndRun(regressor,dataSet,nFolds);
+results = prtUtilEvalParseAndRun(regressor,dataSet,nFolds, varargin{:});
 
 rmseImprovement = prtScoreRmsePercentImprovement( results.getX, dataSet.getY);
 
