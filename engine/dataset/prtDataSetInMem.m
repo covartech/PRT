@@ -143,6 +143,9 @@ classdef prtDataSetInMem < prtDataSetBase
                 end
             end
             if isa(val, 'table')
+                assert(self.nObservations == size(val,1) || size(val, 1) == 0, ...
+                    'observationInfo is length %d; should be a table of size %d x n', ...
+                    size(val, 1), self.nObservations);
                 self.observationInfoInternal = val;
             else
                 if ~isa(val,'struct')
