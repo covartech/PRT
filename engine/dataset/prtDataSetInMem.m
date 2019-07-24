@@ -108,7 +108,11 @@ classdef prtDataSetInMem < prtDataSetBase
                     
                     return;
                 else
-                    val = self.observationInfoInternal(varargin{:});
+                    if istable(self.observationInfoInternal)
+                        val = self.observationInfoInternal(varargin{1},:);
+                    else
+                        val = self.observationInfoInternal(varargin{:});
+                    end
                 end
             end
         end
@@ -129,19 +133,29 @@ classdef prtDataSetInMem < prtDataSetBase
             if length(varargin) == 1
                 val = varargin{1};
             else
-                origStruct = self.observationInfoInternal;
-                val = prtUtilSimpleStruct(origStruct,varargin{:});
+                if istable(self.observationInfoInternal)
+                    temp = struct(varargin{:});
+                    temp = struct2table(temp);
+                    val = cat(2, self.observationInfoInternal, temp);
+                else
+                    origStruct = self.observationInfoInternal;
+                    val = prtUtilSimpleStruct(origStruct,varargin{:});
+                end
             end
-            if ~isa(val,'struct')
-                error('observationInfo must be a structure array');
+            if isa(val, 'table')
+                self.observationInfoInternal = val;
+            else
+                if ~isa(val,'struct')
+                    error('observationInfo must be a structure array');
+                end
+                if ~isvector(val)
+                    error('observationInfo must be a structure array');
+                end
+                if numel(val) ~= self.nObservations && self.nObservations ~= 0
+                    error('observationInfo is length %d; should be a structure array of length %d',length(val),self.nObservations);
+                end
+                self.observationInfoInternal = val(:);
             end
-            if ~isvector(val)
-                error('observationInfo must be a structure array');
-            end
-            if numel(val) ~= self.nObservations && self.nObservations ~= 0
-                error('observationInfo is length %d; should be a structure array of length %d',length(val),self.nObservations);
-            end
-            self.observationInfoInternal = val(:);
         end
         
     end
@@ -704,7 +718,40 @@ classdef prtDataSetInMem < prtDataSetBase
         end
         
         function self = catObservationInfo(self,varargin)
+            % self = catObservationInfo(self,varargin)
             
+            
+            % For some reason:
+            %   ds = prtDataSetClass(randn(10,2));
+            %   ds.catObservations(randn(10,2));
+            % is valid!?  We have to handle this; for now
+            % we need to remove these insane input arguments.  Note that
+            % prtTestDataSetStandard actually exercises this
+            % functionality!? But the functionality is fundamentally broken
+            % See:
+            %
+            %   ds = prtDataSetStandard;
+            %   ds = ds.setObservations([1 2; 3 4; 5 6]);
+            %   ds.observationInfo = struct('a', num2cell(nan(3,1));
+            %   ds = ds.catObservations([4 6]) % observationInfo is the WRONG SIZE
+            %
+            isDataSet = cellfun(@(c)isa(c,'prtDataSetBase'), varargin);
+            varargin = varargin(isDataSet);
+            % Handle table concatenation properly:
+            if all(cellfun(@(c)istable(c.observationInfo),[{self},varargin]))
+                tables = cellfun(@(c)c.observationInfo, [{self},varargin], ...
+                    'UniformOutput', false);
+                self.observationInfoInternal = cat(1, tables{:});
+                return;
+            elseif any(cellfun(@(c)istable(c.observationInfo),[{self},varargin]))
+                error(['Cannot combine data sets with some table and ',...
+                    'some non-table observationInfo']);
+            end
+            
+            % ToDo: this makes all code error prone, IMO (Pete) - we should
+            % not be inferring properties and values when the struct types
+            % do not match.  That is best left in user-space and we should
+            % error gracefully when the structs do not match / are empty.
             for argin = 1:length(varargin)
                 currInput = varargin{argin};
                 if ~isa(currInput,'prtDataSetBase')
@@ -723,8 +770,7 @@ classdef prtDataSetInMem < prtDataSetBase
                         self.observationInfoInternal = prtUtilStructVCatMergeFields(self.observationInfo(:),currInput.observationInfo(:));
                     end
                 end
-            end
-            
+            end 
         end
         
         function self = retainObservationInfo(self,indices)
@@ -734,7 +780,7 @@ classdef prtDataSetInMem < prtDataSetBase
                 self = self.retainObservationNames(indices);
             end
             if ~isempty(self.observationInfo)
-                self.observationInfoInternal = self.observationInfoInternal(indices);
+                self.observationInfoInternal = self.observationInfoInternal(indices,:);
             end
             
         end
