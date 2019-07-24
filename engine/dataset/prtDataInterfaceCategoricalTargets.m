@@ -207,6 +207,12 @@ classdef prtDataInterfaceCategoricalTargets
             %ds = ds.setClassNames({'fasdf','asdf','asdfdsfdsf'});
             %ds = ds.setClassNames({{1,'fasdf'},{2,'fasdc'}})
             cellIn = varargin{1};
+            
+            if isempty(cellIn)
+                self.classNamesArray = ...
+                    prtUtilIntegerAssociativeArrayClassNames;
+                return
+            end
             if isa(cellIn,'char')
                 cellIn = {cellIn};
             end
@@ -219,7 +225,6 @@ classdef prtDataInterfaceCategoricalTargets
                     cellIn{i}{2} = map(keys{i});
                 end
             end
-            
             if isa(cellIn{1},'char')
                 targets = self.uniqueClasses;
                 for i = 1:length(targets)
