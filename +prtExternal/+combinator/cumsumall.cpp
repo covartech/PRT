@@ -115,7 +115,7 @@ void cs_int32(const mxArray *inp,const mxArray *oup,int row, int col)
 void mexFunction( int nlhs,mxArray *plhs[],int nrhs,const mxArray *prhs[])
 {
     mxClassID   category;
-    const int *dm;  // Rows and Columns.
+    const unsigned long *dm;  // Rows and Columns.
     int nd; // Number of dimensions.
     
     category = mxGetClassID(prhs[0]);
